@@ -33,8 +33,7 @@ plot3d_split = function(someneuronlist,
   for (n in 1:length(someneuronlist)){
     neuron = someneuronlist[[n]]
     if(is.null(neuron$d$flow.cent)){
-      warning("No flow centrality calculated, dropping neuron")
-      break
+      stop("No flow centrality calculated, dropping neuron")
     }
     dendrites.v = subset(rownames(neuron$d), neuron$d$Label == 3)
     axon.v = subset(rownames(neuron$d), neuron$d$Label == 2)
