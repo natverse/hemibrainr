@@ -172,8 +172,8 @@ axonic_cable.neuron <- function(x, mixed=FALSE, ...){
     chosen = c(-2,2)
   }
   v = subset(rownames(x$d), x$d$Label %in% chosen)
-  if("catmaidneuron"%in%class(x)){
-    neuron = nat::prune_vertices.catmaidneuron(x=x,verticestoprune=v,invert=TRUE)
+  if("neuprintneuron"%in%class(x)){
+    neuron = prune_vertices.neuprintneuron(x=x,verticestoprune=v,invert=TRUE)
   }else{
     neuron = nat::prune_vertices(x,verticestoprune=v,invert=TRUE)
   }
@@ -182,7 +182,7 @@ axonic_cable.neuron <- function(x, mixed=FALSE, ...){
 }
 #' @export
 #' @rdname extract_cable
-axonic_cable.catmaidneuron <- axonic_cable.neuron
+axonic_cable.neuprintneuron <- axonic_cable.neuron
 #' @export
 #' @rdname extract_cable
 dendritic_cable.neuron <- function(x, mixed = FALSE, ...){
@@ -193,8 +193,8 @@ dendritic_cable.neuron <- function(x, mixed = FALSE, ...){
     chosen = c(-3,3)
   }
   v = subset(rownames(x$d), x$d$Label %in% chosen)
-  if("catmaidneuron"%in%class(x)){
-    neuron = nat::prune_vertices.catmaidneuron(x,verticestoprune=v,invert=TRUE)
+  if("neuprintneuron"%in%class(x)){
+    neuron = prune_vertices.neuprintneuron(x,verticestoprune=v,invert=TRUE)
   }else{
     neuron = nat::prune_vertices(x,verticestoprune=v,invert=TRUE)
   }
@@ -203,7 +203,7 @@ dendritic_cable.neuron <- function(x, mixed = FALSE, ...){
 }
 #' @export
 #' @rdname extract_cable
-dendritic_cable.catmaidneuron <- dendritic_cable.neuron
+dendritic_cable.neuprintneuron <- dendritic_cable.neuron
 #' @export
 #' @rdname extract_cable
 arbour_cable.neuron <- function(x, mixed = FALSE, ...){
@@ -214,9 +214,9 @@ arbour_cable.neuron <- function(x, mixed = FALSE, ...){
     chosen = c(-3,3,2,-2)
   }
   v = subset(rownames(x$d), x$d$Label %in% chosen)
-  if("catmaidneuron"%in%class(x)){
-    neuron = nat::prune_vertices.catmaidneuron(x,verticestoprune=v,invert=TRUE)
-    class(neuron) = c("catmaidneuron","neuron")
+  if("neuprintneuron"%in%class(x)){
+    neuron = prune_vertices.neuprintneuron(x,verticestoprune=v,invert=TRUE)
+    class(neuron) = c("neuprintneuron","neuron")
   }else{
     neuron = nat::prune_vertices(x,verticestoprune=v,invert=TRUE)
   }
@@ -224,16 +224,16 @@ arbour_cable.neuron <- function(x, mixed = FALSE, ...){
 }
 #' @export
 #' @rdname extract_cable
-arbour_cable.catmaidneuron <- arbour_cable.neuron
+arbour_cable.neuprintneuron <- arbour_cable.neuron
 #' @export
 #' @rdname extract_cable
 unsure_cable.neuron <- function(x, mixed=FALSE, ...){
   points=x$d
   chosen = c(-8,8:100)
   v = subset(rownames(x$d), x$d$Label %in% chosen)
-  if("catmaidneuron"%in%class(x)){
-    neuron = nat::prune_vertices.catmaidneuron(x,verticestoprune=v,invert=TRUE)
-    class(neuron) = c("catmaidneuron","neuron")
+  if("neuprintneuron"%in%class(x)){
+    neuron = prune_vertices.neuprintneuron(x,verticestoprune=v,invert=TRUE)
+    class(neuron) = c("neuprintneuron","neuron")
   }else{
     neuron = nat::prune_vertices(x,verticestoprune=v,invert=TRUE)
   }
@@ -242,14 +242,14 @@ unsure_cable.neuron <- function(x, mixed=FALSE, ...){
 }
 #' @export
 #' @rdname extract_cable
-unsure_cable.catmaidneuron <- unsure_cable.neuron
+unsure_cable.neuprintneuron <- unsure_cable.neuron
 #' @export
 #' @rdname extract_cable
 primary_dendrite_cable.neuron <- function(x, ...){
   points=x$d
   v = subset(rownames(x$d), x$d$Label %in% 4)
-  if("catmaidneuron"%in%class(x)){
-    neuron = nat::prune_vertices.catmaidneuron(x,verticestoprune=v,invert=TRUE)
+  if("neuprintneuron"%in%class(x)){
+    neuron = prune_vertices.neuprintneuron(x,verticestoprune=v,invert=TRUE)
   }else{
     neuron = nat::prune_vertices(x,verticestoprune=v,invert=TRUE)
   }
@@ -258,7 +258,7 @@ primary_dendrite_cable.neuron <- function(x, ...){
 }
 #' @export
 #' @rdname extract_cable
-primary_dendrite_cable.catmaidneuron <- primary_dendrite_cable.neuron
+primary_dendrite_cable.neuprintneuron <- primary_dendrite_cable.neuron
 #' @export
 #' @rdname extract_cable
 axonic_cable.neuronlist <- function(x,mixed=FALSE, ...){
@@ -283,4 +283,24 @@ unsure_cable.neuronlist <- function(x, ...){
 #' @rdname extract_cable
 primary_dendrite_cable.neuronlist <- function(x, ...){
   nat::nlapply(x,primary_dendrite_cable.neuron,OmitFailures = T, ...)
+}
+
+
+# hidden
+prune_vertices.neuprintneuron <- function (x, verticestoprune, invert = FALSE, ...){
+  pruned = nat::prune_vertices(x, verticestoprune, invert = invert,
+                               ...)
+  pruned$connectors = x$connectors[x$connectors$treenode_id %in%
+                                     pruned$d$PointNo, ]
+  relevant.points = subset(x$d, PointNo %in% pruned$d$PointNo)
+  y = pruned
+  y$d = relevant.points[match(pruned$d$PointNo, relevant.points$PointNo),
+                        ]
+  y$d$Parent = pruned$d$Parent
+  y$tags = lapply(x$tags, function(t) t[t %in% pruned$d$PointNo])
+  y$url = x$url
+  y$headers = x$headers
+  y$AD.segregation.index = x$AD.segregation.index
+  class(y) = c("neuprintneuron", "neuron")
+  y
 }
