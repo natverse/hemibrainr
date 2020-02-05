@@ -24,11 +24,13 @@ Depends:
     R (>= 3.1),
     neuprintr,
     nabor
-Imports: 
+Imports:
     igraph,
     nat,
     rgl,
-    yaml
+    yaml,
+    dplyr,
+    magrittr
 Remotes: 
     natverse/neuprintr
 Language: en-GB

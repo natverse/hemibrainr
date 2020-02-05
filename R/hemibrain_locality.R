@@ -30,7 +30,7 @@ compartment_metrics <- function(x, resample = 1000, delta = 1000, locality = TRU
 
   # Axon-dendrite split?
   if(!sum(x$d$Label%in%c(2,3))){
-    warning("Axon and dendrite missing")
+    warning("Axon / dendrite missing")
   }
 
   # Synapses
