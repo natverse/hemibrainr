@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1580866169096.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "36AF0946",
+    "lastKnownWriteTime" : 1580864823,
+    "last_content_update" : 1580864823,
+    "path" : "~/projects/flyconnectome/hemibrainr/R/hemibrain_meshes.R",
+    "project_path" : "R/hemibrain_meshes.R",
+    "properties" : {
+        "cursorPosition" : "5,2",
+        "scrollLine" : "0"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
