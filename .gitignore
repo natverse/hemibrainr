@@ -4,7 +4,6 @@ packrat/lib*/
 .RData
 .RDatatmp
 .RDataTmp
-R/analysis.R
 examples
 .httr-oauth
 .Renviron
