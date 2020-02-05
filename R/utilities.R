@@ -4,6 +4,7 @@
 
 # hidden
 nullToNA <- function(x) {
+  x = ifelse(is.null(x),NA,x)
   x[sapply(x, is.null)] <- NA
   return(x)
 }

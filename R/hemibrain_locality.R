@@ -17,7 +17,12 @@
 hemibrain_compartment_metrics <- function(x, resample = 1000, delta = 1000, locality = TRUE, ...){
   mets = nat::nlapply(x, compartment_metrics, resample = resample, delta = delta, locality = locality, ...)
   mets.df = do.call(rbind, mets)
-  cbind(x[,],mets.df)
+  if(nrow(mets.df)==length(x)){
+    cbind(x[,],mets.df)
+  }else{
+    warning("Some neurons were dropped ...")
+    mets.df
+  }
 }
 
 # hidden
@@ -26,21 +31,16 @@ compartment_metrics <- function(x, resample = 1000, delta = 1000, locality = TRU
   # Axon-dendrite split?
   if(!sum(x$d$Label%in%c(2,3))){
     warning("Axon and dendrite missing")
-    NA
   }
 
   # Synapses
-  syns = hemibrain_extract_synapses(x)
+  syns = tryCatch(hemibrain_extract_synapses(x), error = function(e) NULL)
   axon.pre = sum(syns$prepost==0&syns$Label==2)
   dend.pre = sum(syns$prepost==0&syns$Label==3)
   axon.post = sum(syns$prepost==1&syns$Label==2)
   dend.post = sum(syns$prepost==1&syns$Label==3)
   total.pre = sum(syns$prepost==0)
   total.post = sum(syns$prepost==1)
-
-  # Linker length
-  pd = primary_dendrite_cable(x)
-  pd.length = summary(pd)$cable.length
 
   # Segregation
   si = x$AD.segregation.index
@@ -51,26 +51,24 @@ compartment_metrics <- function(x, resample = 1000, delta = 1000, locality = TRU
   }
 
   # Cable length
-  pd = primary_dendrite_cable(x)
-  axon = axonic_cable(x)
-  dend = dendritic_cable(x)
-  axon.length = summary(axon)$cable.length
-  dend.length = summary(dend)$cable.length
-  pd.length = summary(pd)$cable.length
+  axon.length = tryCatch(summary(axonic_cable(x))$cable.length, error = function(e) NA)
+  dend.length = tryCatch(summary(dendritic_cable(x))$cable.length, error = function(e) NA)
+  pd.length = tryCatch(summary(primary_dendrite_cable(x))$cable.length, error = function(e) NA)
+  total.length = tryCatch(summary(x)$cable.length, error = function(e) NA)
 
   # Assemble
   met = data.frame(
-                   total.pre = total.pre,
-                   total.post = total.post,
-                   axon.pre = axon.pre,
-             dend.pre = dend.pre,
-             axon.post = axon.post,
-             dend.post = dend.post,
-             axon.length=axon.length,
-             dend.length=dend.length,
-             pd.length=pd.length,
-             segregation_index = si,
-             overlap_locality = locality)
+                   total.pre = nullToNA(total.pre),
+                   total.post = nullToNA(total.post),
+                   axon.pre = nullToNA(axon.pre),
+             dend.pre = nullToNA(dend.pre),
+             axon.post = nullToNA(axon.post),
+             dend.post = nullToNA(dend.post),
+             axon.length= nullToNA(axon.length),
+             dend.length= nullToNA(dend.length),
+             pd.length= nullToNA(pd.length),
+             segregation_index = nullToNA(si),
+             overlap_locality = nullToNA(locality))
   met
 }
 
