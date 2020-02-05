@@ -23,6 +23,11 @@ VignetteBuilder: knitr
 Depends:
     R (>= 3.1),
     neuprintr
+Imports: 
+    igraph,
+    nat,
+    rgl,
+    yaml
 Remotes: 
     natverse/neuprintr
 Language: en-GB

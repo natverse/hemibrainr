@@ -77,5 +77,5 @@ Plots coloured neuron(s)
 Plot neurons split up by flow centrality
 }
 \seealso{
-\code{\link{flow.centrality}} \code{\link{get.synapses}}
+\code{\link{flow_centrality}}
 }

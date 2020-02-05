@@ -24,7 +24,7 @@
 #'
 #' @return Plots coloured neuron(s)
 #' @export
-#' @seealso \code{\link{flow.centrality}} \code{\link{get.synapses}}
+#' @seealso \code{\link{flow_centrality}}
 #' @importFrom stats sd
 plot3d_split = function(someneuronlist,
                         col = c("#1BB6AF", "#EF7C12", "#C70E7B", "#8FDA04", "#4D4D4D", "#FC6882"),
@@ -53,8 +53,8 @@ plot3d_split = function(someneuronlist,
     #rgl::plot3d(nulls, col = col[5], WithNodes = WithNodes, soma = FALSE, lwd = lwd)
     #rgl::plot3d(neuron, col = col[3], WithNodes = WithNodes, soma = soma)
     if (WithConnectors){
-      rgl::spheres3d(subset(xyzmatrix(neuron$d),neuron$d$post>0), col = 'cyan', radius = radius,...)
-      rgl::spheres3d(subset(xyzmatrix(neuron$d),neuron$d$pre>0), col = 'red', radius = radius,...)
+      rgl::spheres3d(subset(nat::xyzmatrix(neuron$d),neuron$d$post>0), col = 'cyan', radius = radius,...)
+      rgl::spheres3d(subset(nat::xyzmatrix(neuron$d),neuron$d$pre>0), col = 'red', radius = radius,...)
     }
     if (highflow == T){
       highest = max(neuron$d[,"flow.cent"])

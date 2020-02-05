@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1580868364675.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "E254B0AD",
+    "lastKnownWriteTime" : 1580868494,
+    "last_content_update" : 1580868494636,
+    "path" : "~/projects/flyconnectome/hemibrainr/R/hemibrain_reroot.R",
+    "project_path" : "R/hemibrain_reroot.R",
+    "properties" : {
+        "cursorPosition" : "114,4",
+        "scrollLine" : "105"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 5,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
