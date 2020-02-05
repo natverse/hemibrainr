@@ -103,29 +103,41 @@
 <a class="sourceLine" id="cb3-4" data-line-number="4">neuprint_dataset =<span class="st"> "hemibrain:v1.0.1"</span></a></code></pre></div>
 <p>Make sure you have a blank line at the end of your <code>.Renviron</code> file. For further information try about neuprintr login, see the help for <code>neuprint_login()</code>.</p>
 <p>Finally you can also login on the command line once per session, like so:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">conn =<span class="st"> </span><span class="kw">neuprint_login</span>(<span class="dt">server=</span> <span class="st">"https://neuprint.janelia.org/"</span>,</a>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">conn =<span class="st"> </span>neuprintr<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/neuprintr/man/neuprint_login.html">neuprint_login</a></span>(<span class="dt">server=</span> <span class="st">"https://neuprint.janelia.org/"</span>,</a>
 <a class="sourceLine" id="cb4-2" data-line-number="2">   <span class="dt">token=</span> <span class="st">"asBatEsiOIJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImIsImxldmVsIjoicmVhZHdyaXRlIiwiaW1hZ2UtdXJsIjoiaHR0cHM7Ly9saDQuZ29vZ2xldXNlcmNvbnRlbnQuY29tLy1QeFVrTFZtbHdmcy9BQUFBQUFBQUFBDD9BQUFBQUFBQUFBQS9BQ0hpM3JleFZMeEI4Nl9FT1asb0dyMnV0QjJBcFJSZlI6MTczMjc1MjU2HH0.jhh1nMDBPl5A1HYKcszXM518NZeAhZG9jKy3hzVOWEU"</span>)</a></code></pre></div>
 <p>This is also the approach that you would take if you were working with more than two neuPrint servers.</p>
 </div>
 <div id="example" class="section level2">
 <h2 class="hasAnchor">
 <a href="#example" class="anchor"></a>Example</h2>
-<p>Now we can have a look at what is available</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="co"># What data sets are available?</span></a>
-<a class="sourceLine" id="cb5-2" data-line-number="2"><span class="kw">neuprint_datasets</span>()</a>
-<a class="sourceLine" id="cb5-3" data-line-number="3"></a>
-<a class="sourceLine" id="cb5-4" data-line-number="4"><span class="co"># What's the underlying database</span></a>
-<a class="sourceLine" id="cb5-5" data-line-number="5"><span class="kw">neuprint_database</span>()</a>
-<a class="sourceLine" id="cb5-6" data-line-number="6"></a>
-<a class="sourceLine" id="cb5-7" data-line-number="7"><span class="co"># What are the regions of interrst in your default datasest (specified in R.environ, see ?neuprint_login)</span></a>
-<a class="sourceLine" id="cb5-8" data-line-number="8"><span class="kw">neuprint_ROIs</span>()</a></code></pre></div>
-<p>Use the client to request data from neuprint. The <code>neuprint_fetch_custom</code> method will run an arbitrary cypher query against the database. For information about the neuprint data model, see the neuprint explorer web help: <a href="https://neuprint.janelia.org/help" class="uri">https://neuprint.janelia.org/help</a>.</p>
-<p>Some cyphers and other API endpoints have been explored by this package. Have a look a the functions, for example, that give you neuron skeletons, synapse locations, connectivity matrices, etc.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">?neuprint_search</a>
-<a class="sourceLine" id="cb6-2" data-line-number="2">?neuprint_get_adjacency_matrix</a>
-<a class="sourceLine" id="cb6-3" data-line-number="3">?neuprint_ROI_connectivity</a>
-<a class="sourceLine" id="cb6-4" data-line-number="4">?neuprint_get_synapses</a>
-<a class="sourceLine" id="cb6-5" data-line-number="5">?neuprint_read_neurons</a></code></pre></div>
+<p>Let’s get started with a useful function for splitting a neuron into its axon and dendrite:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="co"># Choose neurons</span></a>
+<a class="sourceLine" id="cb5-2" data-line-number="2"><span class="co">## These neurons are some 'tough' examples from the hemibrain:v1.0.1</span></a>
+<a class="sourceLine" id="cb5-3" data-line-number="3"><span class="co">### They will split differently depending on the parameters you use.</span></a>
+<a class="sourceLine" id="cb5-4" data-line-number="4">tough =<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"5813056323"</span>, <span class="st">"579912201"</span>, <span class="st">"5813015982"</span>, <span class="st">"973765182"</span>, <span class="st">"885788485"</span>,</a>
+<a class="sourceLine" id="cb5-5" data-line-number="5"><span class="st">"915451074"</span>, <span class="st">"5813032740"</span>, <span class="st">"1006854683"</span>, <span class="st">"5813013913"</span>, <span class="st">"5813020138"</span>,</a>
+<a class="sourceLine" id="cb5-6" data-line-number="6"><span class="st">"853726809"</span>, <span class="st">"916828438"</span>, <span class="st">"5813078494"</span>, <span class="st">"420956527"</span>, <span class="st">"486116439"</span>,</a>
+<a class="sourceLine" id="cb5-7" data-line-number="7"><span class="st">"573329873"</span>, <span class="st">"5813010494"</span>, <span class="st">"5813040095"</span>, <span class="st">"514396940"</span>, <span class="st">"665747387"</span>,</a>
+<a class="sourceLine" id="cb5-8" data-line-number="8"><span class="st">"793702856"</span>, <span class="st">"451644891"</span>, <span class="st">"482002701"</span>, <span class="st">"391631218"</span>, <span class="st">"390948259"</span>,</a>
+<a class="sourceLine" id="cb5-9" data-line-number="9"><span class="st">"390948580"</span>, <span class="st">"452677169"</span>, <span class="st">"511262901"</span>, <span class="st">"422311625"</span>, <span class="st">"451987038"</span></a>
+<a class="sourceLine" id="cb5-10" data-line-number="10">)</a>
+<a class="sourceLine" id="cb5-11" data-line-number="11"></a>
+<a class="sourceLine" id="cb5-12" data-line-number="12"><span class="co"># Get neurons</span></a>
+<a class="sourceLine" id="cb5-13" data-line-number="13">neurons =<span class="st"> </span><span class="kw">neuprint_read_neurons</span>(tough)</a>
+<a class="sourceLine" id="cb5-14" data-line-number="14"></a>
+<a class="sourceLine" id="cb5-15" data-line-number="15"><span class="co"># Now make sure the neurons have a soma marked</span></a>
+<a class="sourceLine" id="cb5-16" data-line-number="16"><span class="co">## Some hemibrain neurons do not, as the soma was chopped off</span></a>
+<a class="sourceLine" id="cb5-17" data-line-number="17">neurons.checked =<span class="st"> </span><span class="kw"><a href="reference/hemibrain_skeleton_check.html">hemibrain_skeleton_check</a></span>(neurons, <span class="dt">meshes =</span> hemibrain.rois)</a>
+<a class="sourceLine" id="cb5-18" data-line-number="18"></a>
+<a class="sourceLine" id="cb5-19" data-line-number="19"><span class="co"># Split neuron</span></a>
+<a class="sourceLine" id="cb5-20" data-line-number="20"><span class="co">## These are the recommended parameters for hemibrain neurons</span></a>
+<a class="sourceLine" id="cb5-21" data-line-number="21">neurons.flow =<span class="st"> </span><span class="kw"><a href="reference/flow_centrality.html">flow_centrality</a></span>(neurons.checked, <span class="dt">polypre =</span> <span class="ot">TRUE</span>,</a>
+<a class="sourceLine" id="cb5-22" data-line-number="22"><span class="dt">mode =</span> <span class="st">"centrifugal"</span>,</a>
+<a class="sourceLine" id="cb5-23" data-line-number="23"><span class="dt">split =</span> <span class="st">"distance"</span>)</a>
+<a class="sourceLine" id="cb5-24" data-line-number="24"></a>
+<a class="sourceLine" id="cb5-25" data-line-number="25"><span class="co"># Plot the split to check it</span></a>
+<a class="sourceLine" id="cb5-26" data-line-number="26">nat<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/nat/man/nopen3d.html">nopen3d</a></span>()</a>
+<a class="sourceLine" id="cb5-27" data-line-number="27"><span class="kw"><a href="reference/plot3d_split.html">nlscan_split</a></span>(neurons.flow, <span class="dt">WithConnectors =</span> <span class="ot">TRUE</span>)</a></code></pre></div>
 </div>
 <div id="data" class="section level2">
 <h2 class="hasAnchor">
@@ -139,7 +151,7 @@
 <a href="#acknowledging-the-tools" class="anchor"></a>Acknowledging the tools</h2>
 <p>neuPrint comprises a set of tools for loading and analyzing connectome data into a Neo4j database. Analyze and explore connectome data stored in Neo4j using the neuPrint ecosystem: <a href="https://github.com/connectome-neuprint/neuPrintHTTP">neuPrintHTTP</a>, <a href="https://github.com/connectome-neuprint/neuPrintExplorer">neuPrintExplorer</a>, <a href="https://github.com/connectome-neuprint/neuprint-python">Python API</a>.</p>
 <p>This package was created by <a href="https://scholar.google.com/citations?user=BOVTiXIAAAAJ&amp;hl=en">Alexander Shakeel Bates</a> and <a href="https://en.wikipedia.org/wiki/Gregory_Jefferis">Gregory Jefferis</a>. You can cite this package as:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/utils/citation.html">citation</a></span>(<span class="dt">package =</span> <span class="st">"hemibrainr"</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/utils/citation.html">citation</a></span>(<span class="dt">package =</span> <span class="st">"hemibrainr"</span>)</a></code></pre></div>
 <p><strong>Bates AS, Jefferis GSXE</strong> (2020). <em>hemibrainr: Code for working with data from Janelia FlyEM’s hemibrain project.</em> <strong>R package</strong> version 0.1.0. <a href="https://github.com/natverse/neuprintr" class="uri">https://github.com/natverse/neuprintr</a></p>
 </div>
 </div>
