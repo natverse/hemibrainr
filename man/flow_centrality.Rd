@@ -16,7 +16,9 @@ flow_centrality(
 )
 }
 \arguments{
-\item{x}{a \code{nat::neuronlist} or \code{nat::neuron} object}
+\item{x}{a \code{nat::neuronlist} or \code{nat::neuron} object. It is assumed
+that this neuron has been read in by \code{neuprintr::neuprint_read_neurons} or
+possibly \code{catmaid::read.neurons.catmaid}.}
 
 \item{mode}{type of flow centrality to calculate. There are three flavors:
 (1) centrifugal, which counts paths from proximal inputs to distal outputs;
@@ -96,6 +98,9 @@ tough = c("5813056323", "579912201", "5813015982", "973765182", "885788485",
 
 # Get neurons
 neurons = neuprint_read_neurons(tough)
+
+# Get all the roi meshes
+hemibrain.rois = hemibrain_roi_meshes()
 
 # Now make sure the neurons have a soma marked
 ## Some hemibrain neurons do not, as the soma was chopped off

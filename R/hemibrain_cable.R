@@ -106,42 +106,42 @@ primary_dendrite_points.neuron <- function(x){ # Mised also means that I do not 
 }
 #' @rdname extract_cable
 dendritic_points.neuronlist <- function(x, ...){
-  do.call(rbind,nlapply(x,dendritic_points.neuron, ...))
+  do.call(rbind,nat::nlapply(x,dendritic_points.neuron, ...))
 }
 #' @rdname extract_cable
 axonic_points.neuronlist <- function(x, ...){
-  do.call(rbind,nlapply(x,axonic_points.neuron, ...))
+  do.call(rbind,nat::nlapply(x,axonic_points.neuron, ...))
 }
 #' @rdname extract_cable
 mixed_points.neuronlist <- function(x, ...){
-  do.call(rbind,nlapply(x, mixed_points.neuron, ...))
+  do.call(rbind,nat::nlapply(x, mixed_points.neuron, ...))
 }
 #' @rdname extract_cable
 primary_dendrite_points.neuronlist <- function(x, ...){
-  do.call(rbind,nlapply(x, primary_dendrite_points.neuron, ...))
+  do.call(rbind,nat::nlapply(x, primary_dendrite_points.neuron, ...))
 }
 #' @export
 #' @rdname extract_cable
 axonal_endings <- function(x){
-  points=x$d[nat::endpoints(x)[which(endpoints(x)!=rootpoints(x))],]
+  points=x$d[nat::endpoints(x)[which(nat::endpoints(x)!=nat::rootpoints(x))],]
   nat::xyzmatrix(points[points$Label%in%c(-2,2),])
 }
 #' @export
 #' @rdname extract_cable
 dendritic_endings <- function(x){
-  points=x$d[nat::endpoints(x)[which(endpoints(x)!=rootpoints(x))],]
+  points=x$d[nat::endpoints(x)[which(nat::endpoints(x)!=nat::rootpoints(x))],]
   nat::xyzmatrix(points[points$Label%in%c(-3,3),])
 }
 #' @export
 #' @rdname extract_cable
 axonic_endings <- function(x){
-  points=x$d[nat::endpoints(x)[which(endpoints(x)!=rootpoints(x))],]
+  points=x$d[nat::endpoints(x)[which(nat::endpoints(x)!=nat::rootpoints(x))],]
   nat::xyzmatrix(points[points$Label%in%c(-2,2),])
 }
 #' @export
 #' @rdname extract_cable
 primary_dendrite_endings <- function(x){
-  if(is.neuron(x)){
+  if(nat::is.neuron(x)){
     x = primary_dendrite_cable.neuron(x)
     points=x$d[nat::endpoints(x),]
   }else{
@@ -173,7 +173,7 @@ axonic_cable.neuron <- function(x, mixed=FALSE, ...){
   }
   v = subset(rownames(x$d), x$d$Label %in% chosen)
   if("catmaidneuron"%in%class(x)){
-    neuron = prune_vertices.catmaidneuron(x=x,verticestoprune=v,invert=TRUE)
+    neuron = nat::prune_vertices.catmaidneuron(x=x,verticestoprune=v,invert=TRUE)
   }else{
     neuron = nat::prune_vertices(x,verticestoprune=v,invert=TRUE)
   }
@@ -194,7 +194,7 @@ dendritic_cable.neuron <- function(x, mixed = FALSE, ...){
   }
   v = subset(rownames(x$d), x$d$Label %in% chosen)
   if("catmaidneuron"%in%class(x)){
-    neuron = prune_vertices.catmaidneuron(x,verticestoprune=v,invert=TRUE)
+    neuron = nat::prune_vertices.catmaidneuron(x,verticestoprune=v,invert=TRUE)
   }else{
     neuron = nat::prune_vertices(x,verticestoprune=v,invert=TRUE)
   }
@@ -215,7 +215,7 @@ arbour_cable.neuron <- function(x, mixed = FALSE, ...){
   }
   v = subset(rownames(x$d), x$d$Label %in% chosen)
   if("catmaidneuron"%in%class(x)){
-    neuron = prune_vertices.catmaidneuron(x,verticestoprune=v,invert=TRUE)
+    neuron = nat::prune_vertices.catmaidneuron(x,verticestoprune=v,invert=TRUE)
     class(neuron) = c("catmaidneuron","neuron")
   }else{
     neuron = nat::prune_vertices(x,verticestoprune=v,invert=TRUE)
@@ -232,7 +232,7 @@ unsure_cable.neuron <- function(x, mixed=FALSE, ...){
   chosen = c(-8,8:100)
   v = subset(rownames(x$d), x$d$Label %in% chosen)
   if("catmaidneuron"%in%class(x)){
-    neuron = prune_vertices.catmaidneuron(x,verticestoprune=v,invert=TRUE)
+    neuron = nat::prune_vertices.catmaidneuron(x,verticestoprune=v,invert=TRUE)
     class(neuron) = c("catmaidneuron","neuron")
   }else{
     neuron = nat::prune_vertices(x,verticestoprune=v,invert=TRUE)
@@ -249,7 +249,7 @@ primary_dendrite_cable.neuron <- function(x, ...){
   points=x$d
   v = subset(rownames(x$d), x$d$Label %in% 4)
   if("catmaidneuron"%in%class(x)){
-    neuron = prune_vertices.catmaidneuron(x,verticestoprune=v,invert=TRUE)
+    neuron = nat::prune_vertices.catmaidneuron(x,verticestoprune=v,invert=TRUE)
   }else{
     neuron = nat::prune_vertices(x,verticestoprune=v,invert=TRUE)
   }
