@@ -47,8 +47,8 @@ hemibrain_reroot <-function(x, meshes, ...) UseMethod("hemibrain_reroot")
 hemibrain_reroot.neuron <- function(x, meshes){
   # Find out of volume points
   x$d$roi = NA
-  for(roi in names(hemibrain.rois)){
-    inside = nat::pointsinside(xyzmatrix(x$d), surf = hemibrain.rois[[roi]])
+  for(roi in names(meshes)){
+    inside = nat::pointsinside(nat::xyzmatrix(x$d), surf = meshes[[roi]])
     x$d$roi[inside] = roi
   }
   # Find longest path outside
@@ -151,7 +151,7 @@ hemibrain_remove_bad_synapses.neuron <- function(x, meshes = NULL, soma = TRUE,
   if(!is.null(meshes)){
     x$inside = NA
     for(roi in names(meshes)){
-      inside = nat::pointsinside(xyzmatrix(x$connectors), surf = meshes[[roi]])
+      inside = nat::pointsinside(nat::xyzmatrix(x$connectors), surf = meshes[[roi]])
       x$connectors$inside[inside] = roi
     }
     if(sum(is.na(x$connectors$inside))>0){
