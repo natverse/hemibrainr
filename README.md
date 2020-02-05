@@ -85,7 +85,7 @@ Finally you can also login on the command line once per session, like
 so:
 
 ``` r
-conn = neuprint_login(server= "https://neuprint.janelia.org/",
+conn = neuprintr::neuprint_login(server= "https://neuprint.janelia.org/",
    token= "asBatEsiOIJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImIsImxldmVsIjoicmVhZHdyaXRlIiwiaW1hZ2UtdXJsIjoiaHR0cHM7Ly9saDQuZ29vZ2xldXNlcmNvbnRlbnQuY29tLy1QeFVrTFZtbHdmcy9BQUFBQUFBQUFBDD9BQUFBQUFBQUFBQS9BQ0hpM3JleFZMeEI4Nl9FT1asb0dyMnV0QjJBcFJSZlI6MTczMjc1MjU2HH0.jhh1nMDBPl5A1HYKcszXM518NZeAhZG9jKy3hzVOWEU")
 ```
 
@@ -95,35 +95,37 @@ more than two neuPrint servers.
 Example
 -------
 
-Now we can have a look at what is available
+Let’s get started with a useful function for splitting a neuron into its
+axon and dendrite:
 
 ``` r
-# What data sets are available?
-neuprint_datasets()
+# Choose neurons
+## These neurons are some 'tough' examples from the hemibrain:v1.0.1
+### They will split differently depending on the parameters you use.
+tough = c("5813056323", "579912201", "5813015982", "973765182", "885788485",
+"915451074", "5813032740", "1006854683", "5813013913", "5813020138",
+"853726809", "916828438", "5813078494", "420956527", "486116439",
+"573329873", "5813010494", "5813040095", "514396940", "665747387",
+"793702856", "451644891", "482002701", "391631218", "390948259",
+"390948580", "452677169", "511262901", "422311625", "451987038"
+)
 
-# What's the underlying database
-neuprint_database()
+# Get neurons
+neurons = neuprint_read_neurons(tough)
 
-# What are the regions of interrst in your default datasest (specified in R.environ, see ?neuprint_login)
-neuprint_ROIs()
-```
+# Now make sure the neurons have a soma marked
+## Some hemibrain neurons do not, as the soma was chopped off
+neurons.checked = hemibrain_skeleton_check(neurons, meshes = hemibrain.rois)
 
-Use the client to request data from neuprint. The
-`neuprint_fetch_custom` method will run an arbitrary cypher query
-against the database. For information about the neuprint data model, see
-the neuprint explorer web help:
-<a href="https://neuprint.janelia.org/help" class="uri">https://neuprint.janelia.org/help</a>.
+# Split neuron
+## These are the recommended parameters for hemibrain neurons
+neurons.flow = flow_centrality(neurons.checked, polypre = TRUE,
+mode = "centrifugal",
+split = "distance")
 
-Some cyphers and other API endpoints have been explored by this package.
-Have a look a the functions, for example, that give you neuron
-skeletons, synapse locations, connectivity matrices, etc.
-
-``` r
-?neuprint_search
-?neuprint_get_adjacency_matrix
-?neuprint_ROI_connectivity
-?neuprint_get_synapses
-?neuprint_read_neurons
+# Plot the split to check it
+nat::nopen3d()
+nlscan_split(neurons.flow, WithConnectors = TRUE)
 ```
 
 Data

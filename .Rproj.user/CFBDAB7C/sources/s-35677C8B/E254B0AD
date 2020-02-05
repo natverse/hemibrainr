@@ -7,13 +7,13 @@
     "folds" : "",
     "hash" : "0",
     "id" : "E254B0AD",
-    "lastKnownWriteTime" : 1580868494,
-    "last_content_update" : 1580868494636,
+    "lastKnownWriteTime" : 1580868829,
+    "last_content_update" : 1580868829520,
     "path" : "~/projects/flyconnectome/hemibrainr/R/hemibrain_reroot.R",
     "project_path" : "R/hemibrain_reroot.R",
     "properties" : {
-        "cursorPosition" : "114,4",
-        "scrollLine" : "105"
+        "cursorPosition" : "111,30",
+        "scrollLine" : "100"
     },
     "read_only" : false,
     "read_only_alternatives" : [

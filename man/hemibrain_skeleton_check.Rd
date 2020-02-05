@@ -20,12 +20,16 @@ hemibrain_skeleton_check(
 
 \item{min.nodes.from.soma}{the minimum number of nodes (geodesic distance) a
 synapse can be from the soma. Synapses closes than this will be removed. For
-comparable results across neurons, recommended to use \coe{nat::resample} on
+comparable results across neurons, recommended to use \code{nat::resample} on
 your neurons before using.}
 
 \item{min.nodes.from.pnt}{the minimum number of nodes (geodesic distance) a
 synapse can be from a point along the primary neurite.
 Synapses closes than this will be removed.}
+
+\item{OmitFailures}{Whether to omit neurons for which FUN gives an error.
+The default value (NA) will result in nlapply stopping with an error
+message the moment there is an error.}
 
 \item{...}{methods sent to \code{nat::nlapply}}
 }

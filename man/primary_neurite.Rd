@@ -9,7 +9,10 @@ primary_neurite(x, neuron = TRUE, invert = FALSE, ...)
 \arguments{
 \item{x}{a \code{nat::neuronlist} or \code{nat::neuron} object}
 
-\item{neuron}{logical, whether to return the primary neurite (TRUE) or the rest
+\item{neuron}{logical, whether to return a neuron/neuronlist objet (TRUE) or
+the IDs for nodes in the primary neurite}
+
+\item{invert}{logical, whether to return the primary neurite (TRUE) or the rest
 of the neuron with its primary neurite removed (FALSE).
 (note: not x$d$PointNo, but rownames(x$d)).}
 

@@ -108,7 +108,7 @@ hemibrain_reroot.neuronlist <- function(x, meshes, ...){
 #' @param meshes a list/a single object of class \code{mesh3d} or \code{hxsurf}.
 #' @param min.nodes.from.soma the minimum number of nodes (geodesic distance) a
 #'  synapse can be from the soma. Synapses closes than this will be removed. For
-#'  comparable results across neurons, recommended to use \coe{nat::resample} on
+#'  comparable results across neurons, recommended to use \code{nat::resample} on
 #'  your neurons before using.
 #' @param min.nodes.from.pnt the minimum number of nodes (geodesic distance) a
 #'  synapse can be from a point along the primary neurite.
@@ -192,6 +192,10 @@ hemibrain_remove_bad_synapses.neuronlist <- function(x, meshes, OmitFailures = F
 #' the hemibrain neuprintr project, that have no marked soma, and
 #' \code{\link{hemibrain_remove_bad_synapses}} on all neurons.
 #' @inheritParams hemibrain_remove_bad_synapses
+#' @inheritParams hemibrain_reroot
+#' @param OmitFailures Whether to omit neurons for which FUN gives an error.
+#' The default value (NA) will result in nlapply stopping with an error
+#' message the moment there is an error.
 #'
 #' @return a \code{nat::neuronlist} or \code{nat::neuron} object
 #'
