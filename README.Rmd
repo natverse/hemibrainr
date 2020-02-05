@@ -124,4 +124,4 @@ This package was created by [Alexander Shakeel Bates](https://scholar.google.com
 citation(package = "hemibrainr")
 ```
 
-**Bates AS, Jefferis GSXE** (2020). *hemibrainr: Code for working with data from Janelia FlyEM's hemibrain project.* **R package** version 0.1.0. https://github.com/natverse/neuprintr
+**Bates AS, Jefferis GSXE** (2020). *hemibrainr: Code for working with data from Janelia FlyEM's hemibrain project.* **R package** version 0.1.0. https://github.com/flyconnectome/hemibrainr
