@@ -1,0 +1,13 @@
+destination: docs
+reference:
+- title: All functions
+  desc: ~
+  contents:
+  - '`hemibrain_reroot`'
+  - '`primary_neurite`'
+  - '`hemibrain_skeleton_check`'
+  - '`flow_centrality`'
+  - '`plot3d_split`'
+  - '`hemibrain_extract_synapses`'
+  - '`hemibrain_remove_bad_synapses`'
+  - '`hemibrain_roi_meshes`'
