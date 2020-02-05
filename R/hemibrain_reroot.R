@@ -106,6 +106,8 @@ hemibrain_reroot.neuronlist <- function(x, meshes, ...){
 #' primay neurite.
 #' @param x a \code{nat::neuronlist} or \code{nat::neuron} object
 #' @param meshes a list/a single object of class \code{mesh3d} or \code{hxsurf}.
+#' @param soma logical, if TRUE it is assumed that the neuron being given has the soma
+#' as its route and an intact primary neurite tract. Synapses will then be pruned from both.
 #' @param min.nodes.from.soma the minimum number of nodes (geodesic distance) a
 #'  synapse can be from the soma. Synapses closes than this will be removed. For
 #'  comparable results across neurons, recommended to use \code{nat::resample} on
@@ -140,6 +142,7 @@ hemibrain_reroot.neuronlist <- function(x, meshes, ...){
 #' @seealso \code{\link{hemibrain_reroot}}
 hemibrain_remove_bad_synapses <- function(x,
                                           meshes,
+                                          soma = TRUE,
                                           min.nodes.from.soma = 100,
                                           min.nodes.from.pnt = 5,
                                           ...) UseMethod("hemibrain_remove_bad_synapses")
@@ -177,11 +180,13 @@ hemibrain_remove_bad_synapses.neuron <- function(x, meshes = NULL, soma = TRUE,
 }
 
 # hidden
-hemibrain_remove_bad_synapses.neuronlist <- function(x, meshes, OmitFailures = FALSE, ...){
-  neurons = suppressWarnings(nat::nlapply(x,
-                                          hemibrain_remove_bad_synapses.neuron,
-                                          meshes,
-                                          OmitFailures = OmitFailures, ...))
+hemibrain_remove_bad_synapses.neuronlist <- function(x, meshes, soma = TRUE, OmitFailures = FALSE, ...){
+  neurons = nat::nlapply(x,
+                        hemibrain_remove_bad_synapses.neuron,
+                        meshes = meshes,
+                        soma = soma,
+                        OmitFailures = OmitFailures,
+                        ...)
   neurons
 }
 
@@ -241,15 +246,15 @@ hemibrain_skeleton_check <- function(x, # as read by neuprint_read_neurons
                                      ...){
 
   # Re-root somas where necessary
-  message("Re-rooting neurons without a soma")
   x.nosoma = x[!x[,"soma"]]
-  x.soma = nat:::setdiff.neuronlist(x,x.nosoma)
-  x.estsoma = hemibrain_reroot(x = x.nosoma, meshes = meshes, OmitFailures = OmitFailures, ...)
-  x.new = nat:::c.neuronlist(x.soma, x.estsoma)[names(x)]
+  x.soma = setdiff(x,x.nosoma)
+  message("Re-rooting ", length(x.nosoma), " neurons without a soma")
+  x.estsoma = hemibrain_reroot.neuronlist(x = x.nosoma, meshes = meshes, OmitFailures = OmitFailures, ...)
+  x.new = c(x.soma, x.estsoma)[names(x)]
 
   # Remove erroneous synapses, out of mesh and on pnt/soma
   message("Removing synapses at somas and along primary neurite")
-  x.goodsyn = hemibrain_remove_bad_synapses(x.new,
+  x.goodsyn = hemibrain_remove_bad_synapses.neuronlist(x.new,
                                             meshes,
                                             soma = TRUE,
                                             min.nodes.from.soma = min.nodes.from.soma,
