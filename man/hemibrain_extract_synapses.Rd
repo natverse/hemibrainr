@@ -23,7 +23,7 @@ position on a neuron's axon/dendrite.
 \examples{
 \donttest{
 \dontrun{
-# Choose some known troble makers
+# Choose a bodyid
 id = c("452677169")
 
 # Read in these neurons
