@@ -1,8 +1,106 @@
 ##################################################################################
-################################ Locality Score ##################################
+################################ overlap_locality Score ##################################
 ##################################################################################
 
-hemibrain_locality.neuron <- function(x, resample = 1000){
+#' Get useful metrics for each neuron's axon and dendrite
+#'
+#' @description Calculates/retreives useful metrics for the axon and dendrites of a neuron, and its
+#' split.
+#'
+#' @inheritParams hemibrain_overlap_locality
+#' @param locality if TRUE \code{hemibrain_overlap_locality} is called and the
+#' overlap locality score will be returned in addition to other metrics.
+#'
+#' @return a named vector of overlap_locality scores
+#' @seealso \code{\link{hemibrain_overlap_locality}}
+#' @export
+hemibrain_compartment_metrics <- function(x, resample = 1000, delta = 1000, locality = TRUE, ...){
+  mets = nat::nlapply(x, compartment_metrics, resample = resample, delta = delta, locality = locality, ...)
+  mets.df = do.call(rbind, mets)
+  cbind(x[,],mets.df)
+}
+
+# hidden
+compartment_metrics <- function(x, resample = 1000, delta = 1000, locality = TRUE){
+
+  # Axon-dendrite split?
+  if(!sum(x$d$Label%in%c(2,3))){
+    warning("Axon and dendrite missing")
+    NA
+  }
+
+  # Synapses
+  syns = hemibrain_extract_synapses(x)
+  axon.pre = sum(syns$prepost==0&syns$Label==2)
+  dend.pre = sum(syns$prepost==0&syns$Label==3)
+  axon.post = sum(syns$prepost==1&syns$Label==2)
+  dend.post = sum(syns$prepost==1&syns$Label==3)
+  total.pre = sum(syns$prepost==0)
+  total.post = sum(syns$prepost==1)
+
+  # Linker length
+  pd = primary_dendrite_cable(x)
+  pd.length = summary(pd)$cable.length
+
+  # Segregation
+  si = x$AD.segregation.index
+  if(locality){
+    locality = overlap_locality(x, resample = resample, delta = delta)
+  }else{
+    locality = NA
+  }
+
+  # Cable length
+  pd = primary_dendrite_cable(x)
+  axon = axonic_cable(x)
+  dend = dendritic_cable(x)
+  axon.length = summary(axon)$cable.length
+  dend.length = summary(dend)$cable.length
+  pd.length = summary(pd)$cable.length
+
+  # Assemble
+  met = data.frame(
+                   total.pre = total.pre,
+                   total.post = total.post,
+                   axon.pre = axon.pre,
+             dend.pre = dend.pre,
+             axon.post = axon.post,
+             dend.post = dend.post,
+             axon.length=axon.length,
+             dend.length=dend.length,
+             pd.length=pd.length,
+             segregation_index = si,
+             overlap_locality = locality)
+  met
+}
+
+
+#' Calculate the overlap score between a neurons axon dendrite
+#'
+#' @description Calculates an overlap score using \code{overlap_score} between a neuron's axon and dendrite,
+#' if axon and dendrite have been marked out in the neuron object, e.g. by using \code{flow_centrality}.
+#'
+#' @inheritParams flow_centrality
+#' @inheritParams overlap_score
+#' @param resample stepsize to which to resample neurons. If set to \code{NULL},
+#' neurons are not resampled.
+#'
+#' @return a named vector of overlap_locality scores
+#' @seealso \code{\link{overlap_score}}
+#' @export
+hemibrain_overlap_locality <- function(x, resample = 1000, delta = 1000, ...){
+  x = nat::as.neuronlist(x)
+  l.scores = nat::nlapply(x, overlap_locality, resample = resample, delta = delta, ...)
+  unlist(l.scores)
+}
+
+# hidden
+overlap_locality <- function(x, resample = 1000, delta = 1000){
+
+  # Axon-dendrite split?
+  if(!sum(x$d$Label%in%c(2,3))){
+    stop("Axon and dendrite missing")
+  }
 
   # Extract compartment cable
   axon = axonic_cable(x)
@@ -10,26 +108,24 @@ hemibrain_locality.neuron <- function(x, resample = 1000){
 
   # Resample compartments
   if(!is.null(resample)){
-    axon.res = rnat::resample(axon, stepsize = resample)
-    dend.res = rnat::resample(dend, stepsize = resample)
+    axon.res = nat::resample(axon, stepsize = resample)
+    dend.res = nat::resample(dend, stepsize = resample)
   }else{
     axon.res = axon
     dend.res = dend
   }
 
   # Calculate compartment overlap scores
-  oad = overlap_score(axon.res, dend.res)
-  oda = overlap_score(dend.res, axon.res)
+  oad = overlap_score(axon.res, dend.res, delta = delta)
+  oa = overlap_score(axon.res, axon.res, delta = delta)
+  od = overlap_score(dend.res, dend.res, delta = delta)
+  omax = max(oa,od)
+  onorm = oad/omax
 
-  #
-
+  # Return
+  onorm
 
 }
-
-
-
-
-
 
 
 #' Generate a connectivity matrix based on euclidean distance between points
@@ -41,8 +137,7 @@ hemibrain_locality.neuron <- function(x, resample = 1000){
 #'
 #' @param output.neurons first set of neurons
 #' @param input.neurons second set of neurons
-#' @param delta the distance (in um) at which a synapse might occur
-#' @param progress whether or not to have a progress bar
+#' @param delta the distance at which a synapse might occur
 #'
 #' @examples
 #' \dontrun{
@@ -55,20 +150,20 @@ hemibrain_locality.neuron <- function(x, resample = 1000){
 #' heatmap(Cell07PNs_overlap)
 #' }
 #' @return a matrix of overlap scores
-#' @seealso \code{\link{hemibrain_locality}}
+#' @seealso \code{\link{hemibrain_overlap_locality}}
 #' @export
-overlap_score <- function(output.neurons, input.neurons, delta =1, progress = TRUE){
-  score.matrix = matrix(0,nrow = length(output.neurons),ncol = length(input.neurons))
+overlap_score <- function(output.neurons, input.neurons, delta = 100){
+  output.neurons = nat::as.neuronlist(output.neurons)
+  input.neurons = nat::as.neuronlist(input.neurons)
+  score.matrix = matrix(0,nrow = length(output.neurons), ncol = length(input.neurons))
   rownames(score.matrix) = names(output.neurons)
   colnames(score.matrix) = names(input.neurons)
   for (n in 1:length(output.neurons)){
-    a = xyzmatrix(output.neurons[[n]])
-    input.neurons.d = nlapply(input.neurons, xyzmatrix, .progress = "none")
-    s = sapply(input.neurons.d, function(x)sum(exp(-nabor::knn(query = a, data = x,k=nrow(x))$nn.dists^2/(2*delta^2)))) # Score similar to that in Schlegel et al. 2015
+    a = nat::xyzmatrix(output.neurons[[n]])
+    input.neurons.d = nat::nlapply(input.neurons, nat::xyzmatrix, .progress = "none")
+    s = sapply(input.neurons.d, function(x)sum(exp(-nabor::knn(query = a, data = x,k=nrow(x))$nn.dists^2/(2*delta^2))))
+    # Score similar to that in Schlegel et al. 2015
     score.matrix[n,] = s
-    if(progress){
-      nat_progress(x = n/length(output.neurons)*100, message = "calculating overlap")
-    }
   }
   score.matrix
 }
