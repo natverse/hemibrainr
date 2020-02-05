@@ -109,6 +109,7 @@ split = "distance")
 
 # Plot the split to check it
 nat::nopen3d()
+nlscan_split(neurons.flow, WithConnectors = TRUE)
 
 }}
 }
