@@ -223,6 +223,8 @@ flow_centrality.neuron <- function(x,
     p.n = unlist(x$SegList[which.max(sapply(x$SegList, function(x) sum(nodes[x,"flow.cent"]==0)))])
   }
   nodes[p.n, "Label"] = 7
+  primary.branch.point = p.n[length(p.n)]
+  primary.branch.point.downstream = suppressWarnings(unique(unlist(igraph::shortest_paths(n, primary.branch.point, to = leaves, mode = "in")$vpath)))
   if (!is.null(primary.dendrite)) {
     highs = subset(rownames(nodes), nodes[, "flow.cent"] >=primary.dendrite * max(nodes[, "flow.cent"]))
     nodes[as.character(highs), "Label"] = 4
@@ -230,40 +232,36 @@ flow_centrality.neuron <- function(x,
     primary.dendrite = 0.9
     highs = subset(rownames(nodes), nodes[, "flow.cent"] >=primary.dendrite * max(nodes[, "flow.cent"]))
   }
-  downstream.unclassed = downstream[!downstream %in% c(p.n,highs)]
-  remove = rownames(nodes)[!rownames(nodes) %in% downstream.unclassed]
+  downstream.unclassed = downstream[!downstream %in% c(p.n,highs, root, leaves, primary.branch.point)]
+  remove = rownames(nodes)[!rownames(nodes) %in% intersect(downstream.unclassed,primary.branch.point.downstream)]
   downstream.g = igraph::delete_vertices(n, v = as.character(remove))
   main1 = igraph::components(downstream.g)
   main1 = names(main1$membership[main1$membership %in% 1])
   nodes.downstream = nodes[as.character(main1), ]
-  tract.parent = unique(nodes.downstream$Parent[!nodes.downstream$Parent %in% nodes.downstream$PointNo])
-  downstream.tract.parent = match(tract.parent, nodes$PointNo)
-  if (sum(match(tract.parent, nodes$PointNo) %in% p.n) > 0) {
-    bps.all = rownames(nodes)[match(as.numeric(nat::branchpoints(nodes)),nodes$PointNo)]
+  downstream.tract.parent = unique(nodes.downstream$Parent[!nodes.downstream$Parent %in% nodes.downstream$PointNo])
+  downstream.tract.parent = rownames(nodes)[match(downstream.tract.parent,nodes$PointNo)]
+  if (sum(downstream.tract.parent %in% c(p.n,highs,primary.branch.point)) > 0) {
+    bps.all = intersect(nat::branchpoints(nodes),main1)
     bps.downstream = bps.all[bps.all %in% downstream.unclassed]
     runstoprimarybranchpoint = unlist(lapply(bps.downstream,
                                              function(x) length(unlist(suppressWarnings(igraph::shortest_paths(n,to = downstream.tract.parent, from = x)$vpath)))))
     downstream.tract.parent = bps.downstream[which.min(runstoprimarybranchpoint)]
   }
-  downstream.tract.parent = nodes[downstream.tract.parent,]
-  upstream.unclassed = upstream[!upstream %in% c(p.n, highs)]
-  remove = rownames(nodes)[!rownames(nodes) %in% upstream.unclassed]
+  upstream.unclassed = upstream[!upstream %in% c(p.n, highs, root, leaves, primary.branch.point)]
+  remove = rownames(nodes)[!rownames(nodes) %in% intersect(upstream.unclassed,primary.branch.point.downstream)]
   upstream.g = igraph::delete_vertices(n, v = as.character(remove))
-  main1 = igraph::components(upstream.g)
-  main1 = names(main1$membership[main1$membership %in% 1])
-  nodes.upstream = nodes[as.character(main1), ]
-  tract.parent = unique(nodes.upstream$Parent[!nodes.upstream$Parent %in%nodes.upstream$PointNo])
-  upstream.tract.parent = ifelse(tract.parent==-1,root,match(tract.parent, nodes$PointNo))
-  if (sum(match(tract.parent, nodes$PointNo) %in% p.n) > 0) {
-    bps.all = rownames(nodes)[match(as.numeric(nat::branchpoints(nodes)),nodes$PointNo)]
+  main2 = igraph::components(upstream.g)
+  main2 = names(main2$membership[main2$membership %in% 1])
+  nodes.upstream = nodes[as.character(main2), ]
+  upstream.tract.parent = unique(nodes.upstream$Parent[!nodes.upstream$Parent %in%nodes.upstream$PointNo])
+  upstream.tract.parent = ifelse(upstream.tract.parent==-1,root,upstream.tract.parent)
+  upstream.tract.parent = rownames(nodes)[match(upstream.tract.parent,nodes$PointNo)]
+  if (sum(upstream.tract.parent %in% c(p.n,highs,primary.branch.point)) > 0) {
+    bps.all = intersect(nat::branchpoints(nodes),main2)
     bps.upstream = bps.all[bps.all %in% upstream.unclassed]
     runstoprimarybranchpoint = unlist(lapply(bps.upstream,function(x) length(unlist(suppressWarnings(igraph::shortest_paths(n,to = upstream.tract.parent, from = x)$vpath)))))
     upstream.tract.parent = bps.upstream[which.min(runstoprimarybranchpoint)]
   }
-  upstream.tract.parent = nodes[upstream.tract.parent, ]
-  neurite.nodes = nodes[!rownames(nodes) %in% p.n, ]
-  p.n.PointNo = nodes[p.n, "PointNo"]
-  primary.branch.point = p.n[p.n.PointNo %in% neurite.nodes$Parent]
   if (grepl("synapses", split)) {
     synapse.choice = gsub("synapses", "", split)
     choice = mean(nodes[as.character(downstream.unclassed),
@@ -281,10 +279,8 @@ flow_centrality.neuron <- function(x,
     }
   }
   if (split == "distance") {
-    primary.branch.point.xyz = as.matrix(nat::xyzmatrix(nodes[primary.branch.point, ]))
-    secondary.branch.points.xyz = nat::xyzmatrix(rbind(upstream.tract.parent,downstream.tract.parent))
-    dist.upstream.to.primary.branchpoint = length(unlist(igraph::shortest_paths(n,to = primary.branch.point, from = rownames(upstream.tract.parent))$vpath))
-    dist.downstream.to.primary.branchpoint = length(unlist(igraph::shortest_paths(n,to = primary.branch.point, from = rownames(downstream.tract.parent))$vpath))
+    dist.upstream.to.primary.branchpoint = length(unlist(igraph::shortest_paths(n,to = primary.branch.point, from = upstream.tract.parent)$vpath))
+    dist.downstream.to.primary.branchpoint = length(unlist(igraph::shortest_paths(n,to = primary.branch.point, from = downstream.tract.parent)$vpath))
     if (dist.upstream.to.primary.branchpoint < dist.downstream.to.primary.branchpoint) {
       nodes[as.character(downstream.unclassed), "Label"] = 2
     }
@@ -329,10 +325,13 @@ flow_centrality.neuron <- function(x,
   if (is.na(segregation.index)) {
     segregation.index = 0
   }
+  secondary.branch.points = as.numeric(c(downstream.tract.parent, upstream.tract.parent))
   x$d = nodes
   x$AD.segregation.index = segregation.index
   x$primary.branch.point = as.numeric(primary.branch.point)
-  x$secondary.branch.points = as.numeric(c(downstream.tract.parent$PointNo, upstream.tract.parent$PointNo))
+  x$axon.start = nullToNA(rownames(subset(nodes[secondary.branch.points,],Label==2)))
+  x$dendrite.start = nullToNA(rownames(subset(nodes[secondary.branch.points,],Label==3)))
+  x$secondary.branch.points = secondary.branch.points
   x$max.flow.centrality = as.numeric(ais)
   x
 }
@@ -351,20 +350,32 @@ flow_centrality.neuronlist <- function(x,
 }
 
 
-
-
-
-hemibrain_save_split <- function(x, file = paste0(getwd(),"neurons_split.csv")){
+#' Get the positions of key points in a 'split' neuron
+#'
+#' @description Get the positions of key points, i.e. primary and secondary branchpoints and
+#' a neuron's root, in a 'split' neuron.
+#'
+#' @inheritParams flow_centrality
+#'
+#' @return a \code{data.frame}
+#' @seealso \code{\link{flow_centrality}}
+#' @export
+hemibrain_split_points <- function(x){
   splits = data.frame()
-  for(n in x){
-
-    m = data.frame(bodyid = n$bodyid,
-
-
-    )
-
+  for(i in 1:length(x)){
+    bi = names(x)[i]
+    n = x[[1]]
+    m = data.frame(root = nullToNA(nat::rootpoints(n)),
+                   primary.branch.point = nullToNA(n$primary.branch.point),
+                   axon.start = nullToNA(n$axon.start),
+                   dendrite.start = nullToNA(n$dendrite.start))
+    xyz = nat::xyzmatrix(n$d[unlist(c(m)),])
+    m = reshape2::melt(t(m))[,c(1,3)]
+    pos = do.call(cbind, list(bodyid = bi, m, xyz))
+    splits = rbind(splits,pos)
   }
-
+  colnames(splits) = c("bodyid", "point", "position", "X", "Y", "Z")
+  splits
 }
 
 
