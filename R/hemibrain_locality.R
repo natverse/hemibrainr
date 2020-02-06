@@ -1,5 +1,5 @@
 ##########################################################################################
-################################ overlap_locality Score ##################################
+################################ Overlap Locality Score ##################################
 ##########################################################################################
 
 #' Get useful metrics for each neuron's axon and dendrite
@@ -45,7 +45,7 @@ compartment_metrics <- function(x, resample = 1000, delta = 1000, locality = TRU
   # Segregation
   si = x$AD.segregation.index
   if(locality){
-    locality = overlap_locality(x, resample = resample, delta = delta)
+    locality = tryCatch(overlap_locality(x, resample = resample, delta = delta), error = function(e) NA)
   }else{
     locality = NA
   }
@@ -58,9 +58,9 @@ compartment_metrics <- function(x, resample = 1000, delta = 1000, locality = TRU
 
   # Assemble
   met = data.frame(
-                   total.pre = nullToNA(total.pre),
-                   total.post = nullToNA(total.post),
-                   axon.pre = nullToNA(axon.pre),
+             total.pre = nullToNA(total.pre),
+             total.post = nullToNA(total.post),
+             axon.pre = nullToNA(axon.pre),
              dend.pre = nullToNA(dend.pre),
              axon.post = nullToNA(axon.post),
              dend.post = nullToNA(dend.post),

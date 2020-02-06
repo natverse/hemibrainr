@@ -108,7 +108,7 @@ flow_centrality <-function(x,
                            primary.dendrite = 0.9,
                            bending.flow = FALSE,
                            split = c("distance","postsynapses","presynapses"),
-                           ...) UseMethod("flow_centrality")
+                           ...){ UseMethod("flow_centrality") }
 
 # hidden
 flow_centrality.neuron <- function(x,
@@ -346,6 +346,6 @@ flow_centrality.neuronlist <- function(x,
                                        bending.flow = FALSE,
                                        split = c("postsynapses","presynapses","distance"),
                                        ...){
-  neurons = nat::nlapply(x, flow_centrality, mode = mode, polypre = polypre, soma = soma, primary.dendrite = primary.dendrite, OmitFailures = T, split = split, ...)
+  neurons = nat::nlapply(x, flow_centrality.neuron, mode = mode, polypre = polypre, soma = soma, primary.dendrite = primary.dendrite, OmitFailures = T, split = split, ...)
   neurons
 }
