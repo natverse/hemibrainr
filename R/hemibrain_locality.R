@@ -4,7 +4,7 @@
 
 #' Get useful metrics for each neuron's axon and dendrite
 #'
-#' @description Calculates/retreives useful metrics for the axon and dendrites of a neuron, and its
+#' @description Calculates/retrieves useful metrics for the axon and dendrites of a neuron, and its
 #' split.
 #'
 #' @inheritParams hemibrain_overlap_locality

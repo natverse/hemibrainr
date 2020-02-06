@@ -31,7 +31,7 @@ overlap locality score will be returned in addition to other metrics.}
 a named vector of overlap_locality scores
 }
 \description{
-Calculates/retreives useful metrics for the axon and dendrites of a neuron, and its
+Calculates/retrieves useful metrics for the axon and dendrites of a neuron, and its
 split.
 }
 \seealso{

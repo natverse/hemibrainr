@@ -55,7 +55,7 @@ The compartment closest to this branchpoint is most usually the dendrite
 the neuron or neuron list object inputted, with centripetal flow
   centrality information added to neuron$d and a segregation index score.
   The neuron$d$Label now gives the compartment, where axon is Label = 2,
-  dendrite Label = 3, primay dendrite Label = 9 and
+  dendrite Label = 3, primary dendrite Label = 9 and
   primary neurite Label = 7.
   Soma is Label = 1.
 }
