@@ -31,7 +31,7 @@ To help you get to grips with `neuprintr`, we have made a tutorial in classic pr
 ```{r install, eval = FALSE}
 # install
 if (!require("remotes")) install.packages("remotes")
-remotes::install_github("flyconnectome/hemibrainer")
+remotes::install_github("flyconnectome/hemibrainr")
 
 # use 
 library(hemibrainr)

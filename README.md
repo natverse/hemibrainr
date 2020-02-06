@@ -37,7 +37,7 @@ Installation
 ``` r
 # install
 if (!require("remotes")) install.packages("remotes")
-remotes::install_github("flyconnectome/hemibrainer")
+remotes::install_github("flyconnectome/hemibrainr")
 
 # use 
 library(hemibrainr)
