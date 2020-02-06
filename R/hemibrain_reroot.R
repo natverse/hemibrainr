@@ -102,8 +102,8 @@ hemibrain_reroot.neuronlist <- function(x, meshes, ...){
 #' adding synapses to soma and primary neurite locations, that should not exist
 #' based on an examination of the greyscale EM data. This function removes 'out-of-mesh'
 #' synapses, you might want to use all ROIs or the hemibrain mesh to remove these 'bad'
-#' synapses. In addition, synapses are removed if they are too near the soma / alogn the
-#' primay neurite.
+#' synapses. In addition, synapses are removed if they are too near the soma / along the
+#' primary neurite.
 #' @param x a \code{nat::neuronlist} or \code{nat::neuron} object
 #' @param meshes a list/a single object of class \code{mesh3d} or \code{hxsurf}.
 #' @param soma logical, if TRUE it is assumed that the neuron being given has the soma

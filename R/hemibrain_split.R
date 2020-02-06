@@ -13,7 +13,7 @@
 #' @param x a \code{nat::neuronlist} or \code{nat::neuron} object. It is assumed
 #' that this neuron has been read in by \code{neuprintr::neuprint_read_neurons} or
 #' possibly \code{catmaid::read.neurons.catmaid}.
-#' @param mode type of flow centrality to calculate. There are three flavors:
+#' @param mode type of flow centrality to calculate. There are three flavours:
 #'   (1) centrifugal, which counts paths from proximal inputs to distal outputs;
 #'   (2) centripetal, which counts paths from distal inputs to proximal outputs;
 #'   and (3) the sum of both.
@@ -59,7 +59,7 @@
 #' @return the neuron or neuron list object inputted, with centripetal flow
 #'   centrality information added to neuron$d and a segregation index score.
 #'   The neuron$d$Label now gives the compartment, where axon is Label = 2,
-#'   dendrite Label = 3, primay dendrite Label = 9 and
+#'   dendrite Label = 3, primary dendrite Label = 9 and
 #'   primary neurite Label = 7.
 #'   Soma is Label = 1.
 #'

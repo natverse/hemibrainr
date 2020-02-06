@@ -41,8 +41,8 @@ separately and explicitly detected. Some false synapse assignment has happened,
 adding synapses to soma and primary neurite locations, that should not exist
 based on an examination of the greyscale EM data. This function removes 'out-of-mesh'
 synapses, you might want to use all ROIs or the hemibrain mesh to remove these 'bad'
-synapses. In addition, synapses are removed if they are too near the soma / alogn the
-primay neurite.
+synapses. In addition, synapses are removed if they are too near the soma / along the
+primary neurite.
 }
 \examples{
 \donttest{

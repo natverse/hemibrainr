@@ -37,7 +37,7 @@ Installation
 ``` r
 # install
 if (!require("remotes")) install.packages("remotes")
-remotes::install_github("flyconnectome/hemibrainer")
+remotes::install_github("flyconnectome/hemibrainr")
 
 # use 
 library(hemibrainr)
@@ -76,7 +76,6 @@ and then edit the file that pops up, adding a section like
 neuprint_server="https://neuprint.janelia.org"
 # nb this token is a dummy
 neuprint_token="asBatEsiOIJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImIsImxldmVsIjoicmVhZHdyaXRlIiwiaW1hZ2UtdXJsIjoiaHR0cHM7Ly9saDQuZ29vZ2xldXNlcmNvbnRlbnQuY29tLy1QeFVrTFZtbHdmcy9BQUFBQUFBQUFBDD9BQUFBQUFBQUFBQS9BQ0hpM3JleFZMeEI4Nl9FT1asb0dyMnV0QjJBcFJSZlI6MTczMjc1MjU2HH0.jhh1nMDBPl5A1HYKcszXM518NZeAhZG9jKy3hzVOWEU"
-neuprint_dataset = "hemibrain:v1.0.1"
 ```
 
 Make sure you have a blank line at the end of your `.Renviron` file. For

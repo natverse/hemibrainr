@@ -9,7 +9,7 @@ primary_neurite(x, neuron = TRUE, invert = FALSE, ...)
 \arguments{
 \item{x}{a \code{nat::neuronlist} or \code{nat::neuron} object}
 
-\item{neuron}{logical, whether to return a neuron/neuronlist objet (TRUE) or
+\item{neuron}{logical, whether to return a neuron/neuronlist object (TRUE) or
 the IDs for nodes in the primary neurite}
 
 \item{invert}{logical, whether to return the primary neurite (TRUE) or the rest
@@ -22,7 +22,7 @@ of the neuron with its primary neurite removed (FALSE).
 the neuron or neuron list object inputted, with centripetal flow
   centrality information added to neuron$d and a segregation index score.
   The neuron$d$Label now gives the compartment, where axon is Label = 2,
-  dendrite Label = 3, primay dendrite Label = 9 and primary neurite Label = 7.
+  dendrite Label = 3, primary dendrite Label = 9 and primary neurite Label = 7.
   Soma is Label = 1.
 }
 \description{

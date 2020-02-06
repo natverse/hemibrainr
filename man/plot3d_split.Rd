@@ -42,7 +42,7 @@ nlscan_split(
 
 \item{splitnode}{if TRUE, a magenta sphere is placed at the location of the axon-dendrite split. Possible a putative action potential initiation site?}
 
-\item{WithConnectors}{whether ot plot the anatomical location of pre (red) and post (cyan) synapses.}
+\item{WithConnectors}{whether to plot the anatomical location of pre (red) and post (cyan) synapses.}
 
 \item{WithNodes}{whether to plot branch points}
 

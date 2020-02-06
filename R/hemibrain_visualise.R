@@ -7,7 +7,7 @@
 #' @param someneuronlist a neuronlist or neuron object that has been modified by flow.centrality
 #' @param col colours of sections. Defaults to orange or axons, green for primary dendrite, blue for dendrites and pink for nodes with no flow.
 #' @param splitnode if TRUE, a magenta sphere is placed at the location of the axon-dendrite split. Possible a putative action potential initiation site?
-#' @param WithConnectors whether ot plot the anatomical location of pre (red) and post (cyan) synapses.
+#' @param WithConnectors whether to plot the anatomical location of pre (red) and post (cyan) synapses.
 #' @param soma whether to plot a soma, and what the radius should be
 #' @param WithNodes whether to plot branch points
 #' @param lwd Line width (default 1)
