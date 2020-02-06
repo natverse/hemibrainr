@@ -10,7 +10,9 @@
 #'   objects read using \code{\link{neuprint_read_neurons}}. The example code
 #'   below gives the recommended arguments when using hemibrain data.
 #'
-#' @param x a \code{nat::neuronlist} or \code{nat::neuron} object
+#' @param x a \code{nat::neuronlist} or \code{nat::neuron} object. It is assumed
+#' that this neuron has been read in by \code{neuprintr::neuprint_read_neurons} or
+#' possibly \code{catmaid::read.neurons.catmaid}.
 #' @param mode type of flow centrality to calculate. There are three flavors:
 #'   (1) centrifugal, which counts paths from proximal inputs to distal outputs;
 #'   (2) centripetal, which counts paths from distal inputs to proximal outputs;
@@ -79,6 +81,9 @@
 #' # Get neurons
 #' neurons = neuprint_read_neurons(tough)
 #'
+#' # Get all the roi meshes
+#' hemibrain.rois = hemibrain_roi_meshes()
+#'
 #' # Now make sure the neurons have a soma marked
 #' ## Some hemibrain neurons do not, as the soma was chopped off
 #' neurons.checked = hemibrain_skeleton_check(neurons, meshes = hemibrain.rois)
@@ -103,7 +108,7 @@ flow_centrality <-function(x,
                            primary.dendrite = 0.9,
                            bending.flow = FALSE,
                            split = c("distance","postsynapses","presynapses"),
-                           ...) UseMethod("flow_centrality")
+                           ...){ UseMethod("flow_centrality") }
 
 # hidden
 flow_centrality.neuron <- function(x,
@@ -125,11 +130,11 @@ flow_centrality.neuron <- function(x,
   nodes[, c("post","pre","up.syns.in","up.syns.out","flow.cent")] = 0
   nodes[,"Label"] = 3
   nodes = nodes[unlist(c(root, lapply(segs, function(x) x[-1]))),]
-  syns.in = x$connectors[x$connectors$prepost == 1, ][, "treenode_id"]
+  syns.in = x$connectors[x$connectors$prepost == 1, ][, "connector_id"]
   if (polypre) {
-    syns.out = x$connectors[x$connectors$prepost == 0,][, "treenode_id"]
+    syns.out = x$connectors[x$connectors$prepost == 0,][, "connector_id"]
   }else {
-    syns.out = unique(x$connectors[x$connectors$prepost ==0, ][, "treenode_id"])
+    syns.out = unique(x$connectors[x$connectors$prepost ==0, ][, "connector_id"])
   }
   point.no.in = rownames(nodes)[match(syns.in, nodes[, "PointNo"])]
   nodes.in = rep(1, length(point.no.in))
@@ -341,6 +346,6 @@ flow_centrality.neuronlist <- function(x,
                                        bending.flow = FALSE,
                                        split = c("postsynapses","presynapses","distance"),
                                        ...){
-  neurons = nat::nlapply(x, flow_centrality, mode = mode, polypre = polypre, soma = soma, primary.dendrite = primary.dendrite, OmitFailures = T, split = split, ...)
+  neurons = nat::nlapply(x, flow_centrality.neuron, mode = mode, polypre = polypre, soma = soma, primary.dendrite = primary.dendrite, OmitFailures = T, split = split, ...)
   neurons
 }

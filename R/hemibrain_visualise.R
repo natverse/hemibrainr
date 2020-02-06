@@ -28,13 +28,12 @@
 #' @importFrom stats sd
 plot3d_split = function(someneuronlist,
                         col = c("#1BB6AF", "#EF7C12", "#C70E7B", "#8FDA04", "#4D4D4D", "#FC6882"),
-                        splitnode = FALSE, WithConnectors = TRUE, WithNodes = F, soma = 100, highflow = F, lwd = 1, radius = 1, ...){
+                        splitnode = FALSE, WithConnectors = TRUE, WithNodes = F, soma = 500, highflow = FALSE, lwd = 1, radius = 100, ...){
   someneuronlist = nat::as.neuronlist(someneuronlist)
   for (n in 1:length(someneuronlist)){
     neuron = someneuronlist[[n]]
     if(is.null(neuron$d$flow.cent)){
-      warning("No flow centrality calculated, dropping neuron")
-      break
+      stop("No flow centrality calculated, dropping neuron")
     }
     dendrites.v = subset(rownames(neuron$d), neuron$d$Label == 3)
     axon.v = subset(rownames(neuron$d), neuron$d$Label == 2)
@@ -51,10 +50,10 @@ plot3d_split = function(someneuronlist,
     rgl::plot3d(p.n, col = col[3], WithNodes = WithNodes, soma = soma, lwd = lwd,...)
     rgl::plot3d(p.d, col = col[4], WithNodes = WithNodes, soma = FALSE, lwd = lwd,...)
     #rgl::plot3d(nulls, col = col[5], WithNodes = WithNodes, soma = FALSE, lwd = lwd)
-    #rgl::plot3d(neuron, col = col[3], WithNodes = WithNodes, soma = soma)
+    rgl::plot3d(neuron, col = col[3], WithNodes = WithNodes, soma = soma)
     if (WithConnectors){
-      rgl::spheres3d(subset(nat::xyzmatrix(neuron$d),neuron$d$post>0), col = 'cyan', radius = radius,...)
-      rgl::spheres3d(subset(nat::xyzmatrix(neuron$d),neuron$d$pre>0), col = 'red', radius = radius,...)
+      rgl::spheres3d(nat::xyzmatrix(subset(neuron$connectors,prepost==1)), col = "#132157", radius = radius/2, ...)
+      rgl::spheres3d(nat::xyzmatrix(subset(neuron$connectors,prepost==0)), col = "#EE4244", radius = radius, ...)
     }
     if (highflow == T){
       highest = max(neuron$d[,"flow.cent"])
@@ -73,7 +72,7 @@ plot3d_split = function(someneuronlist,
 #' @export
 #' @rdname plot3d_split
 nlscan_split <- function (someneuronlist, col = c("#1BB6AF", "#EF7C12", "#C70E7B", "#8FDA04", "#4D4D4D", "#FC6882"),
-                          WithConnectors = T, WithNodes = F, soma = 100, highflow = F, Verbose = T, Wait = T,
+                          WithConnectors = TRUE, WithNodes = FALSE, soma = 500, highflow = FALSE, Verbose = TRUE, Wait = TRUE,
                        sleep = 0.1, extrafun = NULL, selected_file = NULL, selected_col = "black",
                        yaml = TRUE, ...)
 {
@@ -118,7 +117,7 @@ nlscan_split <- function (someneuronlist, col = c("#1BB6AF", "#EF7C12", "#C70E7B
     n <- neurons[i]
     cat("Current neuron:", n, "(", i, "/", length(neurons),
         ")\n")
-    pl <- plot3d_split(someneuronlist[i], col = col, WithConnectors = WithConnectors, WithNodes = WithNodes, soma = soma, highflow = highflow)
+    pl <- plot3d_split(someneuronlist[i], col = col, WithConnectors = WithConnectors, WithNodes = WithNodes, soma = soma, highflow = highflow, ...)
     message("segregation index: ", someneuronlist[[i]]$segregation.index)
     more_rgl_ids <- list()
     if (!is.null(extrafun))

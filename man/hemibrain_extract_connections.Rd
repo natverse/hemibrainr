@@ -2,12 +2,17 @@
 % Please edit documentation in R/hemibrain_synapses.R
 \name{hemibrain_extract_synapses}
 \alias{hemibrain_extract_synapses}
+\alias{hemibrain_extract_connections}
 \title{Extract synapse location and labels from a neuron/neuronlist}
 \usage{
 hemibrain_extract_synapses(x, prepost = c("BOTH", "PRE", "POST"), ...)
+
+hemibrain_extract_connections(x, prepost = c("BOTH", "PRE", "POST"), ...)
 }
 \arguments{
-\item{x}{a \code{nat::neuronlist} or \code{nat::neuron} object}
+\item{x}{a \code{nat::neuronlist} or \code{nat::neuron} object. It is assumed
+that this neuron has been read in by \code{neuprintr::neuprint_read_neurons} or
+possibly \code{catmaid::read.neurons.catmaid}.}
 
 \item{prepost}{whether to get presynapses, postsynapses or both}
 
@@ -17,8 +22,10 @@ hemibrain_extract_synapses(x, prepost = c("BOTH", "PRE", "POST"), ...)
 a \code{data.frame}
 }
 \description{
-Extract a single data frame describing synapse types, partners,locations and
-position on a neuron's axon/dendrite.
+Extract a single data frame describing synapse/connection types, partners,locations and
+position on a neuron's axon/dendrite. You can either get all synapses returned or all unitary connections
+to a neuron's partners returned. Broken down by axon/dendrite (\code{Label}),
+and pre/postsynapses or pre/postsynaptic partners.
 }
 \examples{
 \donttest{

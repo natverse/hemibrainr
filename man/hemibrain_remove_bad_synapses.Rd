@@ -7,6 +7,7 @@
 hemibrain_remove_bad_synapses(
   x,
   meshes,
+  soma = TRUE,
   min.nodes.from.soma = 100,
   min.nodes.from.pnt = 5,
   ...
@@ -16,6 +17,9 @@ hemibrain_remove_bad_synapses(
 \item{x}{a \code{nat::neuronlist} or \code{nat::neuron} object}
 
 \item{meshes}{a list/a single object of class \code{mesh3d} or \code{hxsurf}.}
+
+\item{soma}{logical, if TRUE it is assumed that the neuron being given has the soma
+as its route and an intact primary neurite tract. Synapses will then be pruned from both.}
 
 \item{min.nodes.from.soma}{the minimum number of nodes (geodesic distance) a
 synapse can be from the soma. Synapses closes than this will be removed. For
