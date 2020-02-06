@@ -1,6 +1,8 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 <!-- badges: start -->
-<img src="man/figures/logo.svg" align="right" height="139" />
+<img src="man/figures/logo.svg" align="right" height="139" /> [![Travis
+build
+status](https://travis-ci.org/flyconnectome/hemibrainr.svg?branch=master)](https://travis-ci.org/flyconnectome/hemibrainr)
 <!-- badges: end -->
 
 hemibrainr
@@ -35,7 +37,7 @@ Installation
 ``` r
 # install
 if (!require("remotes")) install.packages("remotes")
-remotes::install_github("flyconnectome/hemibrainr")
+remotes::install_github("flyconnectome/hemibrainer")
 
 # use 
 library(hemibrainr)
@@ -158,4 +160,4 @@ citation(package = "hemibrainr")
 **Bates AS, Jefferis GSXE** (2020). *hemibrainr: Code for working with
 data from Janelia FlyEM’s hemibrain project.* **R package** version
 0.1.0.
-<a href="https://github.com/natverse/neuprintr" class="uri">https://github.com/natverse/neuprintr</a>
+<a href="https://github.com/flyconnectome/hemibrainr" class="uri">https://github.com/flyconnectome/hemibrainr</a>
