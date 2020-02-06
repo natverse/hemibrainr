@@ -30,7 +30,8 @@ Imports:
     yaml,
     dplyr,
     magrittr,
-    nabor
+    nabor,
+    reshape2
 Remotes: 
     natverse/neuprintr
 Language: en-GB
