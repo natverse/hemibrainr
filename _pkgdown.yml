@@ -1,5 +1,9 @@
 destination: docs
 reference:
+  - title: Package Help
+    desc: Provides an overview of the package
+    contents:
+    - "`hemibrainr-package`"
 - title: All functions
   desc: ~
   contents:
