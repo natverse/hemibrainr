@@ -223,8 +223,6 @@ flow_centrality.neuron <- function(x,
     p.n = unlist(x$SegList[which.max(sapply(x$SegList, function(x) sum(nodes[x,"flow.cent"]==0)))])
   }
   nodes[p.n, "Label"] = 7
-  primary.branch.point = p.n[length(p.n)]
-  primary.branch.point.downstream = suppressWarnings(unique(unlist(igraph::shortest_paths(n, primary.branch.point, to = leaves, mode = "in")$vpath)))
   if (!is.null(primary.dendrite)) {
     highs = subset(rownames(nodes), nodes[, "flow.cent"] >=primary.dendrite * max(nodes[, "flow.cent"]))
     nodes[as.character(highs), "Label"] = 4
@@ -232,11 +230,15 @@ flow_centrality.neuron <- function(x,
     primary.dendrite = 0.9
     highs = subset(rownames(nodes), nodes[, "flow.cent"] >=primary.dendrite * max(nodes[, "flow.cent"]))
   }
+  p.n = p.n[1:ifelse(sum(p.n%in%highs)>1,min(which(p.n%in%highs)),length(p.n))]
+  primary.branch.points = p.n[p.n%in%nat::branchpoints(nodes)]
+  primary.branch.point = primary.branch.points[length(primary.branch.points)]
+  primary.branch.point.downstream = suppressWarnings(unique(unlist(igraph::shortest_paths(n, primary.branch.points, to = leaves, mode = "in")$vpath)))
   downstream.unclassed = downstream[!downstream %in% c(p.n,highs, root, leaves, primary.branch.point)]
   remove = rownames(nodes)[!rownames(nodes) %in% intersect(downstream.unclassed,primary.branch.point.downstream)]
   downstream.g = igraph::delete_vertices(n, v = as.character(remove))
   main1 = igraph::components(downstream.g)
-  main1 = names(main1$membership[main1$membership %in% 1])
+  main1 = names(main1$membership[main1$membership %in% which.max(table(main1$membership))])
   nodes.downstream = nodes[as.character(main1), ]
   downstream.tract.parent = unique(nodes.downstream$Parent[!nodes.downstream$Parent %in% nodes.downstream$PointNo])
   downstream.tract.parent = rownames(nodes)[match(downstream.tract.parent,nodes$PointNo)]
@@ -251,7 +253,7 @@ flow_centrality.neuron <- function(x,
   remove = rownames(nodes)[!rownames(nodes) %in% intersect(upstream.unclassed,primary.branch.point.downstream)]
   upstream.g = igraph::delete_vertices(n, v = as.character(remove))
   main2 = igraph::components(upstream.g)
-  main2 = names(main2$membership[main2$membership %in% 1])
+  main2 = names(main2$membership[main2$membership %in% which.max(table(main2$membership))])
   nodes.upstream = nodes[as.character(main2), ]
   upstream.tract.parent = unique(nodes.upstream$Parent[!nodes.upstream$Parent %in%nodes.upstream$PointNo])
   upstream.tract.parent = ifelse(upstream.tract.parent==-1,root,upstream.tract.parent)
