@@ -249,12 +249,12 @@ hemibrain_skeleton_check <- function(x, # as read by neuprint_read_neurons
   x.nosoma = x[!x[,"soma"]]
   x.soma = setdiff(x,x.nosoma)
   message("Re-rooting ", length(x.nosoma), " neurons without a soma")
-  x.estsoma = hemibrain_reroot.neuronlist(x = x.nosoma, meshes = meshes, OmitFailures = OmitFailures, ...)
+  x.estsoma = hemibrain_reroot(x = x.nosoma, meshes = meshes, OmitFailures = OmitFailures, ...)
   x.new = c(x.soma, x.estsoma)[names(x)]
 
   # Remove erroneous synapses, out of mesh and on pnt/soma
-  message("Removing synapses at somas and along primary neurite")
-  x.goodsyn = hemibrain_remove_bad_synapses.neuronlist(x.new,
+  message("Removing synapses at somas and along primary neurite for ", length(x.new), " neurons")
+  x.goodsyn = hemibrain_remove_bad_synapses(x.new,
                                             meshes,
                                             soma = TRUE,
                                             min.nodes.from.soma = min.nodes.from.soma,
