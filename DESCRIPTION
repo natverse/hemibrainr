@@ -35,5 +35,5 @@ Remotes:
     natverse/neuprintr
 Language: en-GB
 RoxygenNote: 7.0.2
-URL: https://github.com/flyconnectome/hemibrainr
+URL: https://github.com/flyconnectome/hemibrainr, https://flyconnectome.github.io/hemibrainr
 BugReports: https://github.com/flyconnectome/hemibrainr/issues
