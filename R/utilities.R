@@ -4,8 +4,11 @@
 
 # hidden
 nullToNA <- function(x) {
-  x = sapply(x, function(y) ifelse(is.null(y),NA,y))
-  x[sapply(x, is.null)] <- NA
+  if(is.list){
+    x[sapply(x, is.null)] <- NA
+  }else{
+    x = sapply(x, function(y) ifelse(is.null(y),NA,y))
+  }
   x
 }
 
