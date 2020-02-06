@@ -130,11 +130,11 @@ flow_centrality.neuron <- function(x,
   nodes[, c("post","pre","up.syns.in","up.syns.out","flow.cent")] = 0
   nodes[,"Label"] = 3
   nodes = nodes[unlist(c(root, lapply(segs, function(x) x[-1]))),]
-  syns.in = x$connectors[x$connectors$prepost == 1, ][, "treenode_id"]
+  syns.in = x$connectors[x$connectors$prepost == 1, ][, "connector_id"]
   if (polypre) {
-    syns.out = x$connectors[x$connectors$prepost == 0,][, "treenode_id"]
+    syns.out = x$connectors[x$connectors$prepost == 0,][, "connector_id"]
   }else {
-    syns.out = unique(x$connectors[x$connectors$prepost ==0, ][, "treenode_id"])
+    syns.out = unique(x$connectors[x$connectors$prepost ==0, ][, "connector_id"])
   }
   point.no.in = rownames(nodes)[match(syns.in, nodes[, "PointNo"])]
   nodes.in = rep(1, length(point.no.in))
