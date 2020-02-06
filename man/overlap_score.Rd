@@ -25,9 +25,9 @@ and δ is the expected distance in um that is considered 'close'. It is recommen
 \examples{
 \dontrun{
 # Calculate how much some neurons overlap with one another
-## Example requires the package nat.flybrains
-Cell07PNs_overlap = overlap(output.neurons = nat.flybrains::Cell07PNs,
-input.neurons = nat.flybrains::Cell07PNs)
+## Example requires the package nat
+Cell07PNs_overlap = overlap(output.neurons = nat::Cell07PNs,
+input.neurons = nat::Cell07PNs)
 
 ## Plot the results
 heatmap(Cell07PNs_overlap)
