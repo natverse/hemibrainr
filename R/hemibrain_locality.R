@@ -147,9 +147,9 @@ overlap_locality <- function(x, resample = 1000, delta = 1000){
 #' @examples
 #' \dontrun{
 #' # Calculate how much some neurons overlap with one another
-#' ## Example requires the package nat.flybrains
-#' Cell07PNs_overlap = overlap(output.neurons = nat.flybrains::Cell07PNs,
-#' input.neurons = nat.flybrains::Cell07PNs)
+#' ## Example requires the package nat
+#' Cell07PNs_overlap = overlap(output.neurons = nat::Cell07PNs,
+#' input.neurons = nat::Cell07PNs)
 #'
 #' ## Plot the results
 #' heatmap(Cell07PNs_overlap)
