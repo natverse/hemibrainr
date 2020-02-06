@@ -22,15 +22,15 @@ Suggests:
 VignetteBuilder: knitr
 Depends:
     R (>= 3.1),
-    neuprintr,
-    nabor
+    neuprintr
 Imports:
     igraph,
     nat,
     rgl,
     yaml,
     dplyr,
-    magrittr
+    magrittr,
+    nabor
 Remotes: 
     natverse/neuprintr
 Language: en-GB
