@@ -137,8 +137,8 @@ overlap_locality <- function(x, resample = 1000, delta = 1000){
 #'
 #' @description Generates an 'overlap matrix' of overlap scores between neurons in the \code{output.neurons} and \code{input.neurons} pools.
 #' For every point in a given neuron in \code{output.neurons}, a distance score is calculated to every point in a neuron in \code{input.neurons}.
-#' The sum of this score is added to the final output matrix. The score is calculated as \code{e(-d^2/2δ^2)}, where d is the euclidean distance between the two points,
-#' and δ is the expected distance in um that is considered 'close'. It is recommended that the user resamples neurons before use, using \code{\link{resample}}.
+#' The sum of this score is added to the final output matrix. The score is calculated as \code{e(-d^2/(2*delta^2))}, where d is the euclidean distance between the two points,
+#' and delta is the expected distance in um that is considered 'close'. It is recommended that the user resamples neurons before use, using \code{\link{resample}}.
 #'
 #' @param output.neurons first set of neurons
 #' @param input.neurons second set of neurons
