@@ -29,7 +29,7 @@ hemibrain_compartment_metrics <- function(x, resample = 1000, delta = 1000, loca
 compartment_metrics <- function(x, resample = 1000, delta = 1000, locality = TRUE){
 
   # Axon-dendrite split?
-  if(!sum(x$d$Label%in%c(2,3))){
+  if(!(sum(x$d$Label==2)&sum(x$d$Label==3))){
     warning("Axon / dendrite missing")
   }
 
@@ -96,8 +96,8 @@ hemibrain_overlap_locality <- function(x, resample = 1000, delta = 1000, ...){
 overlap_locality <- function(x, resample = 1000, delta = 1000){
 
   # Axon-dendrite split?
-  if(!sum(x$d$Label%in%c(2,3))){
-    stop("Axon and dendrite missing")
+  if(!(sum(x$d$Label==2)&sum(x$d$Label==3))){
+    stop("Axon / dendrite missing")
   }
 
   # Extract compartment cable
