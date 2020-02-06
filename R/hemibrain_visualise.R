@@ -118,7 +118,7 @@ nlscan_split <- function (someneuronlist, col = c("#1BB6AF", "#EF7C12", "#C70E7B
     cat("Current neuron:", n, "(", i, "/", length(neurons),
         ")\n")
     pl <- plot3d_split(someneuronlist[i], col = col, WithConnectors = WithConnectors, WithNodes = WithNodes, soma = soma, highflow = highflow, ...)
-    message("segregation index: ", someneuronlist[[i]]$segregation.index)
+    message("segregation index: ", someneuronlist[[i]]$AD.segregation.index)
     more_rgl_ids <- list()
     if (!is.null(extrafun))
       more_rgl_ids <- extrafun(n, selected = selected)
