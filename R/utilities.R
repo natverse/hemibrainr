@@ -4,9 +4,9 @@
 
 # hidden
 nullToNA <- function(x) {
-  x = ifelse(is.null(x),NA,x)
+  x = sapply(x, function(y) ifelse(is.null(y),NA,y))
   x[sapply(x, is.null)] <- NA
-  return(x)
+  x
 }
 
 # hidden
