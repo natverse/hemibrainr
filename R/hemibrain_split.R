@@ -130,11 +130,11 @@ flow_centrality.neuron <- function(x,
   nodes[, c("post","pre","up.syns.in","up.syns.out","flow.cent")] = 0
   nodes[,"Label"] = 3
   nodes = nodes[unlist(c(root, lapply(segs, function(x) x[-1]))),]
-  syns.in = x$connectors[x$connectors$prepost == 1, ][, "connector_id"]
+  syns.in = x$connectors[x$connectors$prepost == 1, ][, "treenode_id"]
   if (polypre) {
-    syns.out = x$connectors[x$connectors$prepost == 0,][, "connector_id"]
+    syns.out = x$connectors[x$connectors$prepost == 0,][, "treenode_id"]
   }else {
-    syns.out = unique(x$connectors[x$connectors$prepost ==0, ][, "connector_id"])
+    syns.out = x$connectors[x$connectors$prepost ==0 & !duplicated(x$connectors$connector_id), ][, "treenode_id"]
   }
   point.no.in = rownames(nodes)[match(syns.in, nodes[, "PointNo"])]
   nodes.in = rep(1, length(point.no.in))
@@ -349,3 +349,22 @@ flow_centrality.neuronlist <- function(x,
   neurons = nat::nlapply(x, flow_centrality.neuron, mode = mode, polypre = polypre, soma = soma, primary.dendrite = primary.dendrite, OmitFailures = T, split = split, ...)
   neurons
 }
+
+
+
+
+
+hemibrain_save_split <- function(x, file = paste0(getwd(),"neurons_split.csv")){
+  splits = data.frame()
+  for(n in x){
+
+    m = data.frame(bodyid = n$bodyid,
+
+
+    )
+
+  }
+
+}
+
+
