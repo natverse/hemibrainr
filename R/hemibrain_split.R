@@ -13,7 +13,7 @@
 #' @param x a \code{nat::neuronlist} or \code{nat::neuron} object. It is assumed
 #' that this neuron has been read in by \code{neuprintr::neuprint_read_neurons} or
 #' possibly \code{catmaid::read.neurons.catmaid}.
-#' @param mode type of flow centrality to calculate. There are three flavors:
+#' @param mode type of flow centrality to calculate. There are three flavours:
 #'   (1) centrifugal, which counts paths from proximal inputs to distal outputs;
 #'   (2) centripetal, which counts paths from distal inputs to proximal outputs;
 #'   and (3) the sum of both.
