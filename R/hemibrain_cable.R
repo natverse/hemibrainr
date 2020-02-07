@@ -56,6 +56,8 @@ primary_neurite.neuron <- function(x, neuron = TRUE, invert = FALSE){
   }
   pnt
 }
+primary_neurite.neuprintneuron <- primary_neurite.neuron
+primary_neurite.catmaidneuron <- primary_neurite.neuron
 
 # hidden
 primary_neurite.neuronlist <- function(x, neuron = TRUE, invert = FALSE, ...){

@@ -181,13 +181,12 @@ hemibrain_remove_bad_synapses.neuron <- function(x, meshes = NULL, soma = TRUE,
 
 # hidden
 hemibrain_remove_bad_synapses.neuronlist <- function(x, meshes, soma = TRUE, OmitFailures = FALSE, ...){
-  neurons = nat::nlapply(x,
+  nat::nlapply(x,
                         hemibrain_remove_bad_synapses.neuron,
                         meshes = meshes,
                         soma = soma,
                         OmitFailures = OmitFailures,
                         ...)
-  neurons
 }
 
 
@@ -248,18 +247,22 @@ hemibrain_skeleton_check <- function(x, # as read by neuprint_read_neurons
   # Re-root somas where necessary
   x.nosoma = x[!x[,"soma"]]
   x.soma = setdiff(x,x.nosoma)
-  message("Re-rooting ", length(x.nosoma), " neurons without a soma")
-  x.estsoma = hemibrain_reroot(x = x.nosoma, meshes = meshes, OmitFailures = OmitFailures, ...)
-  x.new = c(x.soma, x.estsoma)[names(x)]
+  if(length(x.nosoma)){
+    message("Re-rooting ", length(x.nosoma), " neurons without a soma")
+    x.estsoma = hemibrain_reroot.neuronlist(x = nat::as.neuronlist(x.nosoma), meshes = meshes, OmitFailures = OmitFailures, ...)
+    x.new = c(x.soma, x.estsoma)[names(x)]
+  }else{
+    x.new = x
+  }
 
   # Remove erroneous synapses, out of mesh and on pnt/soma
   message("Removing synapses at somas and along primary neurite for ", length(x.new), " neurons")
-  x.goodsyn = hemibrain_remove_bad_synapses(x.new,
+  x.goodsyn = hemibrain_remove_bad_synapses.neuronlist(nat::as.neuronlist(x.new),
                                             meshes,
                                             soma = TRUE,
                                             min.nodes.from.soma = min.nodes.from.soma,
                                             min.nodes.from.pnt = min.nodes.from.pnt,
                                             OmitFailures = OmitFailures,
                                             ...)
-  x.goodsyn
+  nat::as.neuronlist(x.goodsyn)
 }
