@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Re-root a neuron/neurons — hemibrain_reroot • hemibrainr</title>
+<title>The hemibrain mesh — hemibrain.surf • hemibrainr</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -42,10 +42,11 @@
 
 
 
-<meta property="og:title" content="Re-root a neuron/neurons — hemibrain_reroot" />
-<meta property="og:description" content="Re-root neurons by predicting their soma location. This works
-by finding the longest path outside of a given neuropil mesh/meshes, as in insect
-neurons the soma should be located in a cortex outside of the neuropil proper." />
+<meta property="og:title" content="The hemibrain mesh — hemibrain.surf" />
+<meta property="og:description" content="A 3D mesh of the hemibrain volume as a
+hxsurf object. Created by
+Philipp Schlegel from the individual ROIs in
+FlyEM's hemibrain project." />
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
 
@@ -115,73 +116,41 @@ neurons the soma should be located in a cortex outside of the neuropil proper." 
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Re-root a neuron/neurons</h1>
-    <small class="dont-index">Source: <a href='https://github.com/flyconnectome/hemibrainr/blob/master/R/hemibrain_reroot.R'><code>R/hemibrain_reroot.R</code></a></small>
-    <div class="hidden name"><code>hemibrain_reroot.Rd</code></div>
+    <h1>The hemibrain mesh</h1>
+    <small class="dont-index">Source: <a href='https://github.com/flyconnectome/hemibrainr/blob/master/R/hemibrain_data.R'><code>R/hemibrain_data.R</code></a></small>
+    <div class="hidden name"><code>hemibrain.surf.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Re-root neurons by predicting their soma location. This works
-by finding the longest path outside of a given neuropil mesh/meshes, as in insect
-neurons the soma should be located in a cortex outside of the neuropil proper.</p>
+    <p>A 3D mesh of the hemibrain volume as a
+<code><a href='https://rdrr.io/pkg/nat/man/read.hxsurf.html'>hxsurf</a></code> object. Created by
+Philipp Schlegel from the individual ROIs in
+FlyEM's hemibrain project.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>hemibrain_reroot</span>(<span class='no'>x</span>, <span class='kw'>meshes</span> <span class='kw'>=</span> <span class='no'>hemibrain.surf</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='no'>hemibrain.surf</span></pre>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
-    <table class="ref-arguments">
-    <colgroup><col class="name" /><col class="desc" /></colgroup>
-    <tr>
-      <th>x</th>
-      <td><p>a <code><a href='https://rdrr.io/pkg/nat/man/neuronlist.html'>nat::neuronlist</a></code> or <code><a href='https://rdrr.io/pkg/nat/man/neuron.html'>nat::neuron</a></code> object</p></td>
-    </tr>
-    <tr>
-      <th>meshes</th>
-      <td><p>a list/a single object of class <code>mesh3d</code> or <code>hxsurf</code>.</p></td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td><p>methods sent to <code><a href='https://rdrr.io/pkg/nat/man/nlapply.html'>nat::nlapply</a></code></p></td>
-    </tr>
-    </table>
 
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+    <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
 
-    <p>a <code><a href='https://rdrr.io/pkg/nat/man/neuronlist.html'>nat::neuronlist</a></code> or <code><a href='https://rdrr.io/pkg/nat/man/neuron.html'>nat::neuron</a></code> object</p>
+    <p>An object of class <code>hxsurf</code> (inherits from <code>list</code>) of length 4.</p>
+    <h2 class="hasAnchor" id="source"><a class="anchor" href="#source"></a>Source</h2>
+
+    <p><a href='https://neuprint.janelia.org/'>https://neuprint.janelia.org/</a></p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='flow_centrality.html'>flow_centrality</a></code></p></div>
+    <div class='dont-index'><p><code><a href='hemibrain_roi_meshes.html'>hemibrain_roi_meshes</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
-<span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
-<span class='co'># Choose some known troble makers</span>
-<span class='no'>bad.soma</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"5813015982"</span>,<span class='st'>"885788485"</span>,<span class='st'>"5813013913"</span>)
-
-<span class='co'># Read in these neurons</span>
-<span class='no'>neurons.bs</span> <span class='kw'>=</span> <span class='kw pkg'>neuprintr</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/neuprintr/man/neuprint_read_neurons.html'>neuprint_read_neurons</a></span>(<span class='no'>bad.soma</span>)
-
-
-<span class='co'># Re-root</span>
-<span class='no'>neurons</span> <span class='kw'>=</span> <span class='fu'>hemibrain_reroot</span>(<span class='no'>neurons</span>, <span class='kw'>meshes</span> <span class='kw'>=</span> <span class='no'>hemibrain.surf</span>)
-
-<span class='co'># Let's check that this worked</span>
-<span class='kw pkg'>nat</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/nat/man/nopen3d.html'>nopen3d</a></span>()
-<span class='kw'>for</span>(<span class='no'>n</span> <span class='kw'>in</span> <span class='no'>neurons</span>){
-     <span class='fu'>clear3d</span>();
-     <span class='fu'><a href='https://rdrr.io/r/base/message.html'>message</a></span>(<span class='no'>n</span>$<span class='no'>bodyid</span>)
-     <span class='fu'>plot3d</span>(<span class='no'>n</span>,<span class='kw'>col</span><span class='kw'>=</span><span class='st'>"brown"</span>,<span class='kw'>lwd</span><span class='kw'>=</span><span class='fl'>2</span>)
-     <span class='fu'>points3d</span>(<span class='kw pkg'>nat</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/nat/man/xyzmatrix.html'>xyzmatrix</a></span>(<span class='no'>n</span>$<span class='no'>connectors</span>),<span class='kw'>col</span><span class='kw'>=</span><span class='st'>"black"</span>)
-     <span class='fu'>spheres3d</span>(<span class='kw pkg'>nat</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/nat/man/xyzmatrix.html'>xyzmatrix</a></span>(<span class='no'>n</span>)[<span class='kw pkg'>nat</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/nat/man/rootpoints.html'>rootpoints</a></span>(<span class='no'>n</span>),],<span class='kw'>radius</span><span class='kw'>=</span><span class='fl'>500</span>, <span class='kw'>alpha</span><span class='kw'>=</span><span class='fl'>0.5</span>)
-     <span class='no'>p</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/readline.html'>readline</a></span>(<span class='st'>"Done? "</span>)
-}
-}<span class='co'># }</span></div></pre>
+<span class='kw pkg'>rgl</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/rgl/man/mesh3d.html'>wire3d</a></span>(<span class='no'>hemibrain</span>)</div><div class='output co'>#&gt; <span class='error'>Error in rgl::wire3d(hemibrain): object 'hemibrain' not found</span></div><div class='input'><span class='kw pkg'>rgl</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/rgl/man/mesh3d.html'>shade3d</a></span>(<span class='no'>hemibrain</span>, <span class='kw'>alpha</span><span class='kw'>=</span><span class='fl'>.3</span>)</div><div class='output co'>#&gt; <span class='error'>Error in rgl::shade3d(hemibrain, alpha = 0.3): object 'hemibrain' not found</span></div><div class='input'><span class='kw pkg'>rgl</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/rgl/man/mesh3d.html'>shade3d</a></span>(<span class='no'>hemibrain</span>, <span class='kw'>alpha</span><span class='kw'>=</span><span class='fl'>.3</span>, <span class='kw'>col</span><span class='kw'>=</span><span class='st'>'grey'</span>)</div><div class='output co'>#&gt; <span class='error'>Error in rgl::shade3d(hemibrain, alpha = 0.3, col = "grey"): object 'hemibrain' not found</span></div><div class='input'># }
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
-      <li><a href="#value">Value</a></li>
+      <li><a href="#format">Format</a></li>
+      <li><a href="#source">Source</a></li>
       <li><a href="#see-also">See also</a></li>
       <li><a href="#examples">Examples</a></li>
     </ul>

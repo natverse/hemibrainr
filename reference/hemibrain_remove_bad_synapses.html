@@ -136,7 +136,7 @@ primary neurite.</p>
 
     <pre class="usage"><span class='fu'>hemibrain_remove_bad_synapses</span>(
   <span class='no'>x</span>,
-  <span class='no'>meshes</span>,
+  <span class='kw'>meshes</span> <span class='kw'>=</span> <span class='no'>hemibrain.surf</span>,
   <span class='kw'>soma</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>min.nodes.from.soma</span> <span class='kw'>=</span> <span class='fl'>100</span>,
   <span class='kw'>min.nodes.from.pnt</span> <span class='kw'>=</span> <span class='fl'>5</span>,
@@ -193,11 +193,9 @@ Synapses closes than this will be removed.</p></td>
 <span class='fu'>plot3d</span>(<span class='no'>neuron</span>)
 <span class='fu'>points3d</span>(<span class='kw pkg'>nat</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/nat/man/xyzmatrix.html'>xyzmatrix</a></span>(<span class='no'>neuron</span><span class='kw'>[[</span><span class='fl'>1</span>]]$<span class='no'>connectors</span>))
 
-<span class='co'># Get all the roi meshes</span>
-<span class='no'>hemibrain.rois</span> <span class='kw'>=</span> <span class='fu'><a href='hemibrain_roi_meshes.html'>hemibrain_roi_meshes</a></span>()
 
 <span class='co'># Re-root</span>
-<span class='no'>neuron.fixed</span> <span class='kw'>=</span> <span class='fu'>hemibrain_remove_bad_synapses</span>(<span class='no'>neuron</span>, <span class='kw'>meshes</span> <span class='kw'>=</span> <span class='no'>hemibrain.rois</span>)
+<span class='no'>neuron.fixed</span> <span class='kw'>=</span> <span class='fu'>hemibrain_remove_bad_synapses</span>(<span class='no'>neuron</span>, <span class='kw'>meshes</span> <span class='kw'>=</span> <span class='no'>hemibrain.surf</span>)
 
 <span class='co'># Let's check that this worked</span>
 <span class='fu'>plot3d</span>(<span class='no'>neuron.fixed</span>)
