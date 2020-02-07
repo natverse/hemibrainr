@@ -6,7 +6,7 @@
 \usage{
 hemibrain_skeleton_check(
   x,
-  meshes,
+  meshes = hemibrain.surf,
   min.nodes.from.soma = 100,
   min.nodes.from.pnt = 5,
   OmitFailures = FALSE,

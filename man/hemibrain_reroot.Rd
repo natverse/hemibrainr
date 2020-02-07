@@ -4,7 +4,7 @@
 \alias{hemibrain_reroot}
 \title{Re-root a neuron/neurons}
 \usage{
-hemibrain_reroot(x, meshes, ...)
+hemibrain_reroot(x, meshes = hemibrain.surf, ...)
 }
 \arguments{
 \item{x}{a \code{nat::neuronlist} or \code{nat::neuron} object}
@@ -30,11 +30,9 @@ bad.soma = c("5813015982","885788485","5813013913")
 # Read in these neurons
 neurons.bs = neuprintr::neuprint_read_neurons(bad.soma)
 
-# Get all the roi meshes
-hemibrain.rois = hemibrain_roi_meshes()
 
 # Re-root
-neurons = hemibrain_reroot(neurons, meshes = hemibrain.rois)
+neurons = hemibrain_reroot(neurons, meshes = hemibrain.surf)
 
 # Let's check that this worked
 nat::nopen3d()

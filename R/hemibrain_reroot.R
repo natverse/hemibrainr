@@ -22,11 +22,9 @@
 #' # Read in these neurons
 #' neurons.bs = neuprintr::neuprint_read_neurons(bad.soma)
 #'
-#' # Get all the roi meshes
-#' hemibrain.rois = hemibrain_roi_meshes()
 #'
 #' # Re-root
-#' neurons = hemibrain_reroot(neurons, meshes = hemibrain.rois)
+#' neurons = hemibrain_reroot(neurons, meshes = hemibrain.surf)
 #'
 #' # Let's check that this worked
 #' nat::nopen3d()
@@ -41,15 +39,20 @@
 #' }}
 #' @export
 #' @seealso \code{\link{flow_centrality}}
-hemibrain_reroot <-function(x, meshes, ...) UseMethod("hemibrain_reroot")
+hemibrain_reroot <-function(x, meshes = hemibrain.surf, ...) UseMethod("hemibrain_reroot")
 
 # hidden
-hemibrain_reroot.neuron <- function(x, meshes){
+hemibrain_reroot.neuron <- function(x, meshes = hemibrain.surf){
   # Find out of volume points
   x$d$roi = NA
-  for(roi in names(meshes)){
-    inside = nat::pointsinside(nat::xyzmatrix(x$d), surf = meshes[[roi]])
-    x$d$roi[inside] = roi
+  if(!is.hxsruf(meshes)){
+    for(roi in names(meshes)){
+      inside = nat::pointsinside(nat::xyzmatrix(x$d), surf = meshes[[roi]])
+      x$d$roi[inside] = roi
+    }
+  }else{
+    inside = nat::pointsinside(nat::xyzmatrix(x$d), surf = meshes)
+    x$d$roi[inside] = deparse(substitute(meshes))
   }
   # Find longest path outside
   outside = rownames(x$d)[is.na(x$d$roi)]
@@ -127,11 +130,9 @@ hemibrain_reroot.neuronlist <- function(x, meshes, ...){
 #' plot3d(neuron)
 #' points3d(nat::xyzmatrix(neuron[[1]]$connectors))
 #'
-#' # Get all the roi meshes
-#' hemibrain.rois = hemibrain_roi_meshes()
 #'
 #' # Re-root
-#' neuron.fixed = hemibrain_remove_bad_synapses(neuron, meshes = hemibrain.rois)
+#' neuron.fixed = hemibrain_remove_bad_synapses(neuron, meshes = hemibrain.surf)
 #'
 #' # Let's check that this worked
 #' plot3d(neuron.fixed)
@@ -141,7 +142,7 @@ hemibrain_reroot.neuronlist <- function(x, meshes, ...){
 #' @export
 #' @seealso \code{\link{hemibrain_reroot}}
 hemibrain_remove_bad_synapses <- function(x,
-                                          meshes,
+                                          meshes = hemibrain.surf,
                                           soma = TRUE,
                                           min.nodes.from.soma = 100,
                                           min.nodes.from.pnt = 5,
@@ -153,14 +154,18 @@ hemibrain_remove_bad_synapses.neuron <- function(x, meshes = NULL, soma = TRUE,
                                                  min.nodes.from.pnt = 5){
   if(!is.null(meshes)){
     x$inside = NA
-    for(roi in names(meshes)){
-      inside = nat::pointsinside(nat::xyzmatrix(x$connectors), surf = meshes[[roi]])
-      x$connectors$inside[inside] = roi
+    if(is.hxsurf(meshes)){
+      inside = nat::pointsinside(nat::xyzmatrix(x$connectors), surf = meshes)
+      x$connectors$inside[inside] = deparse(substitute(meshes))
+    }else{
+      for(roi in names(meshes)){
+        inside = nat::pointsinside(nat::xyzmatrix(x$connectors), surf = meshes[[roi]])
+        x$connectors$inside[inside] = roi
+      }
     }
     if(sum(is.na(x$connectors$inside))>0){
       x$connectors = x$connectors[!is.na(x$connectors$inside),]
     }
-    x
   }
   if(soma){
     pnt = primary_neurite(x, neuron = FALSE)
@@ -180,7 +185,7 @@ hemibrain_remove_bad_synapses.neuron <- function(x, meshes = NULL, soma = TRUE,
 }
 
 # hidden
-hemibrain_remove_bad_synapses.neuronlist <- function(x, meshes, soma = TRUE, OmitFailures = FALSE, ...){
+hemibrain_remove_bad_synapses.neuronlist <- function(x, meshes = NULL, soma = TRUE, OmitFailures = FALSE, ...){
   nat::nlapply(x,
                         hemibrain_remove_bad_synapses.neuron,
                         meshes = meshes,
@@ -220,6 +225,8 @@ hemibrain_remove_bad_synapses.neuronlist <- function(x, meshes, soma = TRUE, Omi
 #'
 #' # Get all the roi meshes
 #' hemibrain.rois = hemibrain_roi_meshes()
+#' ## Usng this as the argument for 'meshes' will also
+#' ## Give you the ROI for each point and synapse in a neurons skeleton!!
 #'
 #' # Re-root
 #' neuron.checked = hemibrain_skeleton_check(neurons, meshes = hemibrain.rois)
@@ -238,7 +245,7 @@ hemibrain_remove_bad_synapses.neuronlist <- function(x, meshes, soma = TRUE, Omi
 #' @export
 #' @seealso \code{\link{hemibrain_reroot}}
 hemibrain_skeleton_check <- function(x, # as read by neuprint_read_neurons
-                                     meshes,
+                                     meshes = hemibrain.surf,
                                      min.nodes.from.soma = 100,
                                      min.nodes.from.pnt = 5,
                                      OmitFailures = FALSE,
@@ -258,7 +265,7 @@ hemibrain_skeleton_check <- function(x, # as read by neuprint_read_neurons
   # Remove erroneous synapses, out of mesh and on pnt/soma
   message("Removing synapses at somas and along primary neurite for ", length(x.new), " neurons")
   x.goodsyn = hemibrain_remove_bad_synapses.neuronlist(nat::as.neuronlist(x.new),
-                                            meshes,
+                                            meshes = meshes,
                                             soma = TRUE,
                                             min.nodes.from.soma = min.nodes.from.soma,
                                             min.nodes.from.pnt = min.nodes.from.pnt,

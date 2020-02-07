@@ -81,12 +81,9 @@
 #' # Get neurons
 #' neurons = neuprint_read_neurons(tough)
 #'
-#' # Get all the roi meshes
-#' hemibrain.rois = hemibrain_roi_meshes()
-#'
 #' # Now make sure the neurons have a soma marked
 #' ## Some hemibrain neurons do not, as the soma was chopped off
-#' neurons.checked = hemibrain_skeleton_check(neurons, meshes = hemibrain.rois)
+#' neurons.checked = hemibrain_skeleton_check(neurons, meshes = hemibrain.surf)
 #'
 #' # Split neuron
 #' ## These are the recommended parameters for hemibrain neurons

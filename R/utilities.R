@@ -27,3 +27,8 @@ break_into_subtrees <- function(x){
   }
   nlist
 }
+
+# hidden
+is.hxsurf <- function(x){
+  "hxsurf"%in%class(x)
+}
