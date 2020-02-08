@@ -105,7 +105,7 @@ flow_centrality <-function(x,
                            primary.dendrite = 0.9,
                            bending.flow = FALSE,
                            split = c("distance","postsynapses","presynapses"),
-                           ...){ UseMethod("flow_centrality") }
+                           ...) UseMethod("flow_centrality")
 
 # hidden
 flow_centrality.neuron <- function(x,
@@ -114,7 +114,7 @@ flow_centrality.neuron <- function(x,
                                    soma = TRUE,
                                    primary.dendrite = 0.9,
                                    bending.flow = FALSE,
-                                   split = c("postsynapses","presynapses", "distance")){
+                                   split = c("distance", "postsynapses","presynapses")){
   split = match.arg(split)
   mode = match.arg(mode)
   x$d$Label = 0
@@ -215,7 +215,7 @@ flow_centrality.neuron <- function(x,
   }
   igraph::V(n)$name = igraph::V(n)
   if(soma){
-    p.n = primary_neurite(x, neuron = FALSE)
+    p.n = primary_neurite.neuron(x, neuron = FALSE)
   }else{
     p.n = unlist(x$SegList[which.max(sapply(x$SegList, function(x) sum(nodes[x,"flow.cent"]==0)))])
   }
@@ -338,7 +338,7 @@ flow_centrality.neuron <- function(x,
 # hidden
 flow_centrality.neuronlist <- function(x,
                                        mode = c("sum","centrifugal","centripetal"),
-                                       polypre = T,
+                                       polypre = TRUE,
                                        soma = TRUE,
                                        primary.dendrite = 0.9,
                                        bending.flow = FALSE,
