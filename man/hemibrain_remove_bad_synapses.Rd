@@ -6,7 +6,7 @@
 \usage{
 hemibrain_remove_bad_synapses(
   x,
-  meshes = hemibrain.surf,
+  meshes = hemibrainr::hemibrain.surf,
   soma = TRUE,
   min.nodes.from.soma = 100,
   min.nodes.from.pnt = 5,
@@ -54,7 +54,7 @@ points3d(nat::xyzmatrix(neuron[[1]]$connectors))
 
 
 # Re-root
-neuron.fixed = hemibrain_remove_bad_synapses(neuron, meshes = hemibrain.surf)
+neuron.fixed = hemibrain_remove_bad_synapses(neuron)
 
 # Let's check that this worked
 plot3d(neuron.fixed)

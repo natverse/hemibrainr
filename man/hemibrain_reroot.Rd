@@ -4,7 +4,7 @@
 \alias{hemibrain_reroot}
 \title{Re-root a neuron/neurons}
 \usage{
-hemibrain_reroot(x, meshes = hemibrain.surf, ...)
+hemibrain_reroot(x, meshes = hemibrainr::hemibrain.surf, ...)
 }
 \arguments{
 \item{x}{a \code{nat::neuronlist} or \code{nat::neuron} object}
