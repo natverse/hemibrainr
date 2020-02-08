@@ -61,7 +61,7 @@ primary_neurite.catmaidneuron <- primary_neurite.neuron
 
 # hidden
 primary_neurite.neuronlist <- function(x, neuron = TRUE, invert = FALSE, ...){
-  nat::nlapply(x, primary_neurite.neuron, ...)
+  nat::nlapply(x, primary_neurite.neuron, neuron = neuron, invert = invert,  ...)
 }
 
 
