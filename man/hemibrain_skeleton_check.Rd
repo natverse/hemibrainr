@@ -58,6 +58,8 @@ neurons = neuprintr::neuprint_read_neurons(ids)
 
 # Get all the roi meshes
 hemibrain.rois = hemibrain_roi_meshes()
+## Usng this as the argument for 'meshes' will also
+## Give you the ROI for each point and synapse in a neurons skeleton!!
 
 # Re-root
 neuron.checked = hemibrain_skeleton_check(neurons, meshes = hemibrain.rois)
