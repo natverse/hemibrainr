@@ -168,9 +168,10 @@ hemibrain_remove_bad_synapses.neuron <- function(x, meshes = NULL, soma = TRUE,
     }
   }
   if(soma){
-    pnt = primary_neurite(x, neuron = FALSE)
+    pnt = primary_neurite.neuron(x, neuron = FALSE)
     x$connectors = x$connectors[!x$connectors$treenode_id%in%pnt,]
     syns = unique(x$connectors$treenode_id)
+    syns = (1:nrow(x$d))[match(syns,x$d$PointNo)]
     # not within radius of soma
     dists = igraph::distances(nat::as.ngraph(x), v = nat::rootpoints(x), to = syns, mode = "all")
     names(dists) = syns
@@ -273,5 +274,6 @@ hemibrain_skeleton_check <- function(x, # as read by neuprint_read_neurons
                                             min.nodes.from.pnt = min.nodes.from.pnt,
                                             OmitFailures = OmitFailures,
                                             ...)
+  message(length(x.goodsyn), " neurons checked")
   nat::as.neuronlist(x.goodsyn)
 }
