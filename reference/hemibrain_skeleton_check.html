@@ -195,6 +195,8 @@ message the moment there is an error.</p></td>
 
 <span class='co'># Get all the roi meshes</span>
 <span class='no'>hemibrain.rois</span> <span class='kw'>=</span> <span class='fu'><a href='hemibrain_roi_meshes.html'>hemibrain_roi_meshes</a></span>()
+<span class='co'>## Usng this as the argument for 'meshes' will also</span>
+<span class='co'>## Give you the ROI for each point and synapse in a neurons skeleton!!</span>
 
 <span class='co'># Re-root</span>
 <span class='no'>neuron.checked</span> <span class='kw'>=</span> <span class='fu'>hemibrain_skeleton_check</span>(<span class='no'>neurons</span>, <span class='kw'>meshes</span> <span class='kw'>=</span> <span class='no'>hemibrain.rois</span>)
