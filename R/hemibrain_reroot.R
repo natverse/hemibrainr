@@ -45,7 +45,7 @@ hemibrain_reroot <-function(x, meshes = hemibrain.surf, ...) UseMethod("hemibrai
 hemibrain_reroot.neuron <- function(x, meshes = hemibrain.surf){
   # Find out of volume points
   x$d$roi = NA
-  if(!is.hxsruf(meshes)){
+  if(!is.hxsurf(meshes)){
     for(roi in names(meshes)){
       inside = nat::pointsinside(nat::xyzmatrix(x$d), surf = meshes[[roi]])
       x$d$roi[inside] = roi
@@ -257,7 +257,9 @@ hemibrain_skeleton_check <- function(x, # as read by neuprint_read_neurons
   if(length(x.nosoma)){
     message("Re-rooting ", length(x.nosoma), " neurons without a soma")
     x.estsoma = hemibrain_reroot.neuronlist(x = nat::as.neuronlist(x.nosoma), meshes = meshes, OmitFailures = OmitFailures, ...)
-    x.new = c(x.soma, x.estsoma)[names(x)]
+    nams = intersect(names(x),c(names(x.soma),names(x.estsoma)))
+    message(length(x.estsoma), " neurons re-rooted")
+    x.new = c(x.soma, x.estsoma)[nams]
   }else{
     x.new = x
   }
