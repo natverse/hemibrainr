@@ -180,7 +180,6 @@ message the moment there is an error.</p></td>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
-<span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
 <span class='co'># Choose some known troble makers</span>
 <span class='no'>ids</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"5813056323"</span>, <span class='st'>"579912201"</span>, <span class='st'>"5813015982"</span>, <span class='st'>"973765182"</span>, <span class='st'>"885788485"</span>,
 <span class='st'>"915451074"</span>, <span class='st'>"5813032740"</span>, <span class='st'>"1006854683"</span>, <span class='st'>"5813013913"</span>, <span class='st'>"5813020138"</span>,
@@ -199,8 +198,8 @@ message the moment there is an error.</p></td>
 <span class='co'>## Give you the ROI for each point and synapse in a neurons skeleton!!</span>
 
 <span class='co'># Re-root</span>
-<span class='no'>neuron.checked</span> <span class='kw'>=</span> <span class='fu'>hemibrain_skeleton_check</span>(<span class='no'>neurons</span>, <span class='kw'>meshes</span> <span class='kw'>=</span> <span class='no'>hemibrain.rois</span>)
-
+<span class='no'>neuron.checked</span> <span class='kw'>=</span> <span class='fu'>hemibrain_skeleton_check</span>(<span class='no'>neurons</span>, <span class='kw'>meshes</span> <span class='kw'>=</span> <span class='no'>hemibrain.rois</span>)</div><div class='output co'>#&gt; <span class='message'>Re-rooting 3 neurons without a soma</span></div><div class='output co'>#&gt; <span class='message'>3 neurons re-rooted</span></div><div class='output co'>#&gt; <span class='message'>Removing synapses at somas and along primary neurite for 3 neurons</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Coercing LHS to a list</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Coercing LHS to a list</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Coercing LHS to a list</span></div><div class='output co'>#&gt; <span class='message'>3 neurons checked</span></div><div class='input'>
+<span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
 <span class='co'># Let's check that this worked</span>
 <span class='kw pkg'>nat</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/nat/man/nopen3d.html'>nopen3d</a></span>()
 <span class='kw'>for</span>(<span class='no'>n</span> <span class='kw'>in</span> <span class='no'>neuron.checked</span>){

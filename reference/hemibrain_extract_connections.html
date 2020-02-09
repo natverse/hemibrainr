@@ -176,8 +176,8 @@ possibly <code>catmaid::read.neurons.catmaid</code>.</p></td>
 <span class='co'># Let's check that this worked</span>
 <span class='no'>syns</span> <span class='kw'>=</span> <span class='fu'>hemibrain_extract_synapses</span>(<span class='no'>neuron.flow</span>)
 
-<span class='co'># See result</span>
 <span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
+<span class='co'># See result</span>
 <span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>nat</span>)
 <span class='fu'><a href='plot3d_split.html'>plot3d_split</a></span>(<span class='no'>neuron.flow</span>)
 <span class='fu'>points3d</span>(<span class='fu'><a href='https://rdrr.io/pkg/nat/man/xyzmatrix.html'>xyzmatrix</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/nat/man/subset.html'>subset</a></span>(<span class='no'>syns</span>,<span class='no'>prepost</span><span class='kw'>==</span><span class='fl'>1</span>)), <span class='kw'>col</span> <span class='kw'>=</span> <span class='st'>"cyan"</span>)

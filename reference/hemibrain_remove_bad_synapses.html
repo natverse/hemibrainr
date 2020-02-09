@@ -187,7 +187,6 @@ Synapses closes than this will be removed.</p></td>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
-<span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
 <span class='co'># Read in a problematic neuron</span>
 <span class='no'>neuron</span> <span class='kw'>=</span> <span class='kw pkg'>neuprintr</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/neuprintr/man/neuprint_read_neurons.html'>neuprint_read_neurons</a></span>(<span class='fl'>5813020793</span>)
 <span class='fu'>plot3d</span>(<span class='no'>neuron</span>)
@@ -195,8 +194,8 @@ Synapses closes than this will be removed.</p></td>
 
 
 <span class='co'># Re-root</span>
-<span class='no'>neuron.fixed</span> <span class='kw'>=</span> <span class='fu'>hemibrain_remove_bad_synapses</span>(<span class='no'>neuron</span>)
-
+<span class='no'>neuron.fixed</span> <span class='kw'>=</span> <span class='fu'>hemibrain_remove_bad_synapses</span>(<span class='no'>neuron</span>)</div><div class='output co'>#&gt; <span class='error'>Error in UseMethod("hemibrain_remove_bad_synapses"): no applicable method for 'hemibrain_remove_bad_synapses' applied to an object of class "c('neuronlist', 'list')"</span></div><div class='input'>
+<span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
 <span class='co'># Let's check that this worked</span>
 <span class='fu'>plot3d</span>(<span class='no'>neuron.fixed</span>)
 <span class='fu'>points3d</span>(<span class='kw pkg'>nat</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/nat/man/xyzmatrix.html'>xyzmatrix</a></span>(<span class='no'>neuron.fixed</span><span class='kw'>[[</span><span class='fl'>1</span>]]$<span class='no'>connectors</span>), <span class='kw'>size</span> <span class='kw'>=</span> <span class='fl'>5</span>, <span class='kw'>col</span> <span class='kw'>=</span> <span class='st'>"green"</span>)

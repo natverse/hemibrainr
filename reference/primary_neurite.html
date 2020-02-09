@@ -163,19 +163,16 @@ of the neuron with its primary neurite removed (FALSE).
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
-<span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
 <span class='co'># Get neuron</span>
 <span class='no'>neuron</span> <span class='kw'>=</span> <span class='kw pkg'>neuprintr</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/neuprintr/man/neuprint_read_neurons.html'>neuprint_read_neurons</a></span>(<span class='st'>"451987038"</span>)
 
 <span class='co'># Extract primary neurite</span>
-<span class='no'>pnt</span> <span class='kw'>=</span> <span class='fu'>primary_neurite</span>(<span class='no'>neuron</span>)
-
+<span class='no'>pnt</span> <span class='kw'>=</span> <span class='fu'>primary_neurite</span>(<span class='no'>neuron</span>)</div><div class='output co'>#&gt; <span class='error'>Error in UseMethod("primary_neurite"): no applicable method for 'primary_neurite' applied to an object of class "c('neuronlist', 'list')"</span></div><div class='input'>
+<span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
 <span class='co'># Plot the primary neurite</span>
 <span class='kw pkg'>nat</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/nat/man/nopen3d.html'>nopen3d</a></span>()
 <span class='fu'>plot3d</span>(<span class='no'>pnt</span>, <span class='kw'>lwd</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>col</span> <span class='kw'>=</span> <span class='st'>"#C70E7B"</span>, <span class='kw'>soma</span> <span class='kw'>=</span> <span class='fl'>1000</span>)
 <span class='fu'>plot3d</span>(<span class='no'>neuron</span>, <span class='kw'>lwd</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>col</span> <span class='kw'>=</span> <span class='st'>"grey30"</span>)
-
-
 }<span class='co'># }</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

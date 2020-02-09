@@ -154,7 +154,6 @@ neurons the soma should be located in a cortex outside of the neuropil proper.</
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
-<span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
 <span class='co'># Choose some known troble makers</span>
 <span class='no'>bad.soma</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"5813015982"</span>,<span class='st'>"885788485"</span>,<span class='st'>"5813013913"</span>)
 
@@ -163,8 +162,8 @@ neurons the soma should be located in a cortex outside of the neuropil proper.</
 
 
 <span class='co'># Re-root</span>
-<span class='no'>neurons</span> <span class='kw'>=</span> <span class='fu'>hemibrain_reroot</span>(<span class='no'>neurons</span>, <span class='kw'>meshes</span> <span class='kw'>=</span> <span class='no'>hemibrain.surf</span>)
-
+<span class='no'>neurons</span> <span class='kw'>=</span> <span class='fu'>hemibrain_reroot</span>(<span class='no'>neurons</span>, <span class='kw'>meshes</span> <span class='kw'>=</span> <span class='no'>hemibrain.surf</span>)</div><div class='output co'>#&gt; <span class='error'>Error in hemibrain_reroot(neurons, meshes = hemibrain.surf): object 'neurons' not found</span></div><div class='input'>
+<span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
 <span class='co'># Let's check that this worked</span>
 <span class='kw pkg'>nat</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/nat/man/nopen3d.html'>nopen3d</a></span>()
 <span class='kw'>for</span>(<span class='no'>n</span> <span class='kw'>in</span> <span class='no'>neurons</span>){
