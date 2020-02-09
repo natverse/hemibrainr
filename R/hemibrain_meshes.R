@@ -23,11 +23,12 @@
 #' }}
 #' @export
 #' @seealso \code{\link{hemibrain_skeleton_check}}, \code{\link{hemibrain.surf}}
+#' @importFrom neuprintr neuprint_ROIs neuprint_ROI_mesh
 hemibrain_roi_meshes <- function(){
-  rois = neuprintr::neuprint_ROIs(superLevel = NULL)
+  rois = neuprint_ROIs(superLevel = NULL)
   hemibrain.rois = list()
   for(roi in rois){
-    mesh = tryCatch(neuprintr::neuprint_ROI_mesh(roi), error = function(e) NULL)
+    mesh = tryCatch(neuprint_ROI_mesh(roi), error = function(e) NULL)
     hemibrain.rois[[roi]] = mesh
   }
   hemibrain.rois
