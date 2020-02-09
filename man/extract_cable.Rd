@@ -5,7 +5,6 @@
 \alias{dendritic_points}
 \alias{mixed_points}
 \alias{primary_dendrite_points}
-\alias{axonic_points.neuronlist}
 \alias{axonal_endings}
 \alias{dendritic_endings}
 \alias{axonic_endings}
@@ -24,8 +23,6 @@ dendritic_points(x, ...)
 mixed_points(x, ...)
 
 primary_dendrite_points(x, ...)
-
-\method{axonic_points}{neuronlist}(x, ...)
 
 axonal_endings(x)
 

@@ -54,10 +54,14 @@ primary_neurite.neuron <- function(x, neuron = TRUE, invert = FALSE){
   }
   pnt
 }
+
+#' @export
 primary_neurite.neuprintneuron <- primary_neurite.neuron
+
+#' @export
 primary_neurite.catmaidneuron <- primary_neurite.neuron
 
-# hidden
+#' @export
 primary_neurite.neuronlist <- function(x, neuron = TRUE, invert = FALSE, ...){
   nat::nlapply(x, primary_neurite.neuron, neuron = neuron, invert = invert,  ...)
 }
@@ -84,42 +88,51 @@ mixed_points<-function(x, ...) UseMethod("mixed_points")
 #' @export
 #' @rdname extract_cable
 primary_dendrite_points<-function(x, ...) UseMethod("primary_dendrite_points")
-# hidden
+
+#' @export
 axonic_points.neuron <- function(x){
   points=x$d
   nat::xyzmatrix(points[points$Label%in%c(-2,2),])
 }
-# hidden
+
+#' @export
 dendritic_points.neuron <- function(x){
   points=x$d
   nat::xyzmatrix(points[points$Label%in%c(-3,3),])
 }
-# hidden
+
+#' @export
 mixed_points.neuron <- function(x){ # Mised also means that I do not know
   points=x$d
   nat::xyzmatrix(points[points$Label%in%c(8),])
 }
-# hidden
+
+#' @export
 primary_dendrite_points.neuron <- function(x){ # Mised also means that I do not know
   points=x$d
   nat::xyzmatrix(points[points$Label%in%c(4),])
 }
-# hidden
+
+#' @export
 dendritic_points.neuronlist <- function(x, ...){
   do.call(rbind,nat::nlapply(x,dendritic_points.neuron, ...))
 }
-#' @rdname extract_cable
+
+#' @export
 axonic_points.neuronlist <- function(x, ...){
   do.call(rbind,nat::nlapply(x,axonic_points.neuron, ...))
 }
-# hidden
+
+#' @export
 mixed_points.neuronlist <- function(x, ...){
   do.call(rbind,nat::nlapply(x, mixed_points.neuron, ...))
 }
-# hidden
+
+#' @export
 primary_dendrite_points.neuronlist <- function(x, ...){
   do.call(rbind,nat::nlapply(x, primary_dendrite_points.neuron, ...))
 }
+
 #' @export
 #' @rdname extract_cable
 axonal_endings <- function(x){
@@ -163,7 +176,8 @@ unsure_cable<-function(x, mixed = FALSE, ...) UseMethod("unsure_cable")
 #' @export
 #' @rdname extract_cable
 primary_dendrite_cable<-function(x, ...) UseMethod("primary_dendrite_cable")
-# hidden
+
+#' @export
 axonic_cable.neuron <- function(x, mixed=FALSE, ...){
   points=x$d
   if (mixed==TRUE){
@@ -180,9 +194,11 @@ axonic_cable.neuron <- function(x, mixed=FALSE, ...){
   neuron$d$Label=2
   neuron
 }
-# hidden
+
+#' @export
 axonic_cable.neuprintneuron <- axonic_cable.neuron
-# hidden
+
+#' @export
 dendritic_cable.neuron <- function(x, mixed = FALSE, ...){
   points=x$d
   if (mixed==T){
@@ -199,9 +215,11 @@ dendritic_cable.neuron <- function(x, mixed = FALSE, ...){
   neuron$d$Label=3
   neuron
 }
-# hidden
+
+#' @export
 dendritic_cable.neuprintneuron <- dendritic_cable.neuron
-# hidden
+
+#' @export
 arbour_cable.neuron <- function(x, mixed = FALSE, ...){
   points=x$d
   if (mixed==T){
@@ -219,9 +237,11 @@ arbour_cable.neuron <- function(x, mixed = FALSE, ...){
   neuron
 }
 
-# hidden
+
+#' @export
 arbour_cable.neuprintneuron <- arbour_cable.neuron
-# hidden
+
+#' @export
 unsure_cable.neuron <- function(x, mixed=FALSE, ...){
   points=x$d
   chosen = c(-8,8:100)
@@ -235,9 +255,11 @@ unsure_cable.neuron <- function(x, mixed=FALSE, ...){
   neuron$d$Label=8
   neuron
 }
-# hidden
+
+#' @export
 unsure_cable.neuprintneuron <- unsure_cable.neuron
-# hidden
+
+#' @export
 primary_dendrite_cable.neuron <- function(x, ...){
   points=x$d
   v = subset(rownames(x$d), x$d$Label %in% 4)
@@ -249,30 +271,36 @@ primary_dendrite_cable.neuron <- function(x, ...){
   neuron$d$Label=3
   neuron
 }
-# hidden
+
+#' @export
 primary_dendrite_cable.neuprintneuron <- primary_dendrite_cable.neuron
-# hidden
+
+#' @export
 axonic_cable.neuronlist <- function(x, mixed=FALSE, ...){
   nat::nlapply(x,axonic_cable.neuron,mixed=mixed,OmitFailures = T, ...)
 }
-# hidden
+
+#' @export
 dendritic_cable.neuronlist <- function(x, mixed=FALSE, ...){
   nat::nlapply(x,dendritic_cable.neuron,mixed=mixed,OmitFailures = T, ...)
 }
-# hidden
+
+#' @export
 arbour_cable.neuronlist <- function(x, mixed=FALSE, ...){
   nat::nlapply(x,arbour_cable.neuron,mixed=mixed,OmitFailures = T, ...)
 }
-# hidden
+
+#' @export
 unsure_cable.neuronlist <- function(x, mixed = FALSE, ...){
   nat::nlapply(x,unsure_cable.neuron,OmitFailures = T, ...)
 }
-# hidden
+
+#' @export
 primary_dendrite_cable.neuronlist <- function(x, ...){
   nat::nlapply(x,primary_dendrite_cable.neuron,OmitFailures = T, ...)
 }
 
-# hidden
+#' @export
 prune_vertices.neuprintneuron <- function (x, verticestoprune, invert = FALSE, ...){
   pruned = nat::prune_vertices(x, verticestoprune, invert = invert,
                                ...)
