@@ -32,3 +32,7 @@ break_into_subtrees <- function(x){
 is.hxsurf <- function(x){
   "hxsurf"%in%class(x)
 }
+
+#' @importFrom nat progress_natprogress
+#' @export
+nat::progress_natprogress

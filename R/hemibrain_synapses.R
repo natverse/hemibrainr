@@ -39,8 +39,7 @@
 #' @export
 #' @rdname hemibrain_extract_connections
 #' @seealso \code{\link{flow_centrality}}
-#' @importFrom nat nlapply progress_natprogress is.neuron is.neuronlist
-#' @export progress_natprogress
+#' @importFrom nat nlapply is.neuron is.neuronlist
 hemibrain_extract_synapses <- function(x,
                                        prepost = c("BOTH","PRE","POST"),
                                        ...){
