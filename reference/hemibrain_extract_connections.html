@@ -43,10 +43,11 @@
 
 
 <meta property="og:title" content="Extract synapse location and labels from a neuron/neuronlist — hemibrain_extract_synapses" />
-<meta property="og:description" content="Extract a single data frame describing synapse/connection types, partners,locations and
-position on a neuron's axon/dendrite. You can either get all synapses returned or all unitary connections
-to a neuron's partners returned. Broken down by axon/dendrite (Label),
-and pre/postsynapses or pre/postsynaptic partners." />
+<meta property="og:description" content="Extract a single data frame describing synapse/connection types,
+  partners, locations and position on a neuron's axon/dendrite. You can
+  either get all synapses returned or all unitary connections to a neuron's
+  partners returned. Broken down by axon/dendrite (Label), and
+  pre/postsynapses or pre/postsynaptic partners." />
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
 
@@ -122,10 +123,11 @@ and pre/postsynapses or pre/postsynaptic partners." />
     </div>
 
     <div class="ref-description">
-    <p>Extract a single data frame describing synapse/connection types, partners,locations and
-position on a neuron's axon/dendrite. You can either get all synapses returned or all unitary connections
-to a neuron's partners returned. Broken down by axon/dendrite (<code>Label</code>),
-and pre/postsynapses or pre/postsynaptic partners.</p>
+    <p>Extract a single data frame describing synapse/connection types,
+  partners, locations and position on a neuron's axon/dendrite. You can
+  either get all synapses returned or all unitary connections to a neuron's
+  partners returned. Broken down by axon/dendrite (<code>Label</code>), and
+  pre/postsynapses or pre/postsynaptic partners.</p>
     </div>
 
     <pre class="usage"><span class='fu'>hemibrain_extract_synapses</span>(<span class='no'>x</span>, <span class='kw'>prepost</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"BOTH"</span>, <span class='st'>"PRE"</span>, <span class='st'>"POST"</span>), <span class='no'>...</span>)
@@ -160,12 +162,11 @@ possibly <code>catmaid::read.neurons.catmaid</code>.</p></td>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
-<span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
 <span class='co'># Choose a bodyid</span>
 <span class='no'>id</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"452677169"</span>)
 
 <span class='co'># Read in these neurons</span>
-<span class='no'>neuron</span> <span class='kw'>=</span> <span class='kw pkg'>neuprintr</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/neuprintr/man/neuprint_read_neurons.html'>neuprint_read_neurons</a></span>(<span class='no'>id</span>)
+<span class='no'>neuron</span> <span class='kw'>=</span> <span class='fu'>neuprint_read_neurons</span>(<span class='no'>id</span>)
 
 <span class='co'># Re-root</span>
 <span class='no'>neuron.flow</span> <span class='kw'>=</span> <span class='fu'><a href='flow_centrality.html'>flow_centrality</a></span>(<span class='no'>neuron</span>, <span class='kw'>polypre</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
@@ -176,9 +177,11 @@ possibly <code>catmaid::read.neurons.catmaid</code>.</p></td>
 <span class='no'>syns</span> <span class='kw'>=</span> <span class='fu'>hemibrain_extract_synapses</span>(<span class='no'>neuron.flow</span>)
 
 <span class='co'># See result</span>
+<span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
+<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>nat</span>)
 <span class='fu'><a href='plot3d_split.html'>plot3d_split</a></span>(<span class='no'>neuron.flow</span>)
-<span class='fu'>points3d</span>(<span class='fu'><a href='https://rdrr.io/r/base/subset.html'>subset</a></span>(<span class='no'>syns</span>,<span class='no'>prepost</span><span class='kw'>==</span><span class='fl'>1</span>), <span class='kw'>col</span> <span class='kw'>=</span> <span class='st'>"cyan"</span>)
-<span class='fu'>points3d</span>(<span class='fu'><a href='https://rdrr.io/r/base/subset.html'>subset</a></span>(<span class='no'>syns</span>,<span class='no'>prepost</span><span class='kw'>==</span><span class='fl'>0</span>), <span class='kw'>col</span> <span class='kw'>=</span> <span class='st'>"red"</span>)
+<span class='fu'>points3d</span>(<span class='fu'><a href='https://rdrr.io/pkg/nat/man/xyzmatrix.html'>xyzmatrix</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/nat/man/subset.html'>subset</a></span>(<span class='no'>syns</span>,<span class='no'>prepost</span><span class='kw'>==</span><span class='fl'>1</span>)), <span class='kw'>col</span> <span class='kw'>=</span> <span class='st'>"cyan"</span>)
+<span class='fu'>points3d</span>(<span class='fu'><a href='https://rdrr.io/pkg/nat/man/xyzmatrix.html'>xyzmatrix</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/nat/man/subset.html'>subset</a></span>(<span class='no'>syns</span>,<span class='no'>prepost</span><span class='kw'>==</span><span class='fl'>0</span>)), <span class='kw'>col</span> <span class='kw'>=</span> <span class='st'>"red"</span>)
 
 }<span class='co'># }</span></div></pre>
   </div>

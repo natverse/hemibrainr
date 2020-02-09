@@ -140,7 +140,7 @@
     </tbody><tbody>
       <tr>
         <th colspan="2">
-          <h2 id="section-all-functions" class="hasAnchor"><a href="#section-all-functions" class="anchor"></a>All functions</h2>
+          <h2 id="section-general-skeleton-functions" class="hasAnchor"><a href="#section-general-skeleton-functions" class="anchor"></a>General skeleton functions</h2>
           <p class="section-desc"></p>
         </th>
       </tr>
@@ -165,6 +165,26 @@
       </tr><tr>
         
         <td>
+          <p><code><a href="overlap_score.html">overlap_score()</a></code> </p>
+        </td>
+        <td><p>Generate a connectivity matrix based on euclidean distance between points</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="hemibrain_overlap_locality.html">hemibrain_overlap_locality()</a></code> </p>
+        </td>
+        <td><p>Calculate the overlap score between a neurons axon dendrite</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-neuronal-compartments-axons-dendrites-" class="hasAnchor"><a href="#section-neuronal-compartments-axons-dendrites-" class="anchor"></a>Neuronal compartments (axons, dendrites)</h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      <tr>
+        
+        <td>
           <p><code><a href="flow_centrality.html">flow_centrality()</a></code> </p>
         </td>
         <td><p>Determine a neuron's dendrite and axon by calculating flow centrality</p></td>
@@ -175,6 +195,32 @@
         </td>
         <td><p>Plot neurons split up by flow centrality</p></td>
       </tr><tr>
+        
+        <td>
+          <p><code><a href="extract_cable.html">axonic_points()</a></code> <code><a href="extract_cable.html">dendritic_points()</a></code> <code><a href="extract_cable.html">mixed_points()</a></code> <code><a href="extract_cable.html">primary_dendrite_points()</a></code> <code><a href="extract_cable.html">axonal_endings()</a></code> <code><a href="extract_cable.html">dendritic_endings()</a></code> <code><a href="extract_cable.html">axonic_endings()</a></code> <code><a href="extract_cable.html">primary_dendrite_endings()</a></code> <code><a href="extract_cable.html">axonic_cable()</a></code> <code><a href="extract_cable.html">dendritic_cable()</a></code> <code><a href="extract_cable.html">arbour_cable()</a></code> <code><a href="extract_cable.html">unsure_cable()</a></code> <code><a href="extract_cable.html">primary_dendrite_cable()</a></code> </p>
+        </td>
+        <td><p>Extract axonic/dendritic points/cable from a neuron/neuronlist</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="hemibrain_compartment_metrics.html">hemibrain_compartment_metrics()</a></code> </p>
+        </td>
+        <td><p>Get useful metrics for each neuron's axon and dendrite</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="hemibrain_split_points.html">hemibrain_split_points()</a></code> </p>
+        </td>
+        <td><p>Get the positions of key points in a 'split' neuron</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-synapses-and-meshes" class="hasAnchor"><a href="#section-synapses-and-meshes" class="anchor"></a>Synapses and meshes</h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      <tr>
         
         <td>
           <p><code><a href="hemibrain_extract_connections.html">hemibrain_extract_synapses()</a></code> <code><a href="hemibrain_extract_connections.html">hemibrain_extract_connections()</a></code> </p>
@@ -192,6 +238,12 @@
           <p><code><a href="hemibrain_roi_meshes.html">hemibrain_roi_meshes()</a></code> </p>
         </td>
         <td><p>Get all the region of interest meshes in the hemibrain project</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="hemibrain.surf.html">hemibrain.surf</a></code> </p>
+        </td>
+        <td><p>The hemibrain mesh</p></td>
       </tr>
     </tbody>
     </table>
@@ -201,7 +253,9 @@
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#section-package-help">Package Help</a></li>
-      <li><a href="#section-all-functions">All functions</a></li>
+      <li><a href="#section-general-skeleton-functions">General skeleton functions</a></li>
+      <li><a href="#section-neuronal-compartments-axons-dendrites-">Neuronal compartments (axons, dendrites)</a></li>
+      <li><a href="#section-synapses-and-meshes">Synapses and meshes</a></li>
     </ul>
   </div>
 </div>

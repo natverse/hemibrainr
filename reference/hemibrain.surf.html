@@ -43,10 +43,9 @@
 
 
 <meta property="og:title" content="The hemibrain mesh — hemibrain.surf" />
-<meta property="og:description" content="A 3D mesh of the hemibrain volume as a
-hxsurf object. Created by
-Philipp Schlegel from the individual ROIs in
-FlyEM's hemibrain project." />
+<meta property="og:description" content="A 3D mesh of the hemibrain volume as a hxsurf object.
+Created by Philipp Schlegel from the union of individual ROIs in FlyEM's
+hemibrain project." />
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
 
@@ -122,10 +121,9 @@ FlyEM's hemibrain project." />
     </div>
 
     <div class="ref-description">
-    <p>A 3D mesh of the hemibrain volume as a
-<code><a href='https://rdrr.io/pkg/nat/man/read.hxsurf.html'>hxsurf</a></code> object. Created by
-Philipp Schlegel from the individual ROIs in
-FlyEM's hemibrain project.</p>
+    <p>A 3D mesh of the hemibrain volume as a <code><a href='https://rdrr.io/pkg/nat/man/read.hxsurf.html'>hxsurf</a></code> object.
+Created by Philipp Schlegel from the union of individual ROIs in FlyEM's
+hemibrain project.</p>
     </div>
 
     <pre class="usage"><span class='no'>hemibrain.surf</span></pre>
@@ -137,20 +135,38 @@ FlyEM's hemibrain project.</p>
     <h2 class="hasAnchor" id="source"><a class="anchor" href="#source"></a>Source</h2>
 
     <p><a href='https://neuprint.janelia.org/'>https://neuprint.janelia.org/</a></p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>note that hemibrain coordinate system does not have the
+  anterior-posterior axis aligned with the Z axis.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p><code><a href='hemibrain_roi_meshes.html'>hemibrain_roi_meshes</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
-<span class='kw pkg'>rgl</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/rgl/man/mesh3d.html'>wire3d</a></span>(<span class='no'>hemibrain</span>)</div><div class='output co'>#&gt; <span class='error'>Error in rgl::wire3d(hemibrain): object 'hemibrain' not found</span></div><div class='input'><span class='kw pkg'>rgl</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/rgl/man/mesh3d.html'>shade3d</a></span>(<span class='no'>hemibrain</span>, <span class='kw'>alpha</span><span class='kw'>=</span><span class='fl'>.3</span>)</div><div class='output co'>#&gt; <span class='error'>Error in rgl::shade3d(hemibrain, alpha = 0.3): object 'hemibrain' not found</span></div><div class='input'><span class='kw pkg'>rgl</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/rgl/man/mesh3d.html'>shade3d</a></span>(<span class='no'>hemibrain</span>, <span class='kw'>alpha</span><span class='kw'>=</span><span class='fl'>.3</span>, <span class='kw'>col</span><span class='kw'>=</span><span class='st'>'grey'</span>)</div><div class='output co'>#&gt; <span class='error'>Error in rgl::shade3d(hemibrain, alpha = 0.3, col = "grey"): object 'hemibrain' not found</span></div><div class='input'># }
-</div></pre>
+<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>nat</span>)</div><div class='output co'>#&gt; <span class='message'>Loading required package: rgl</span></div><div class='output co'>#&gt; <span class='message'>Some nat functions depend on a CMTK installation. See ?cmtk and README.md for details.</span></div><div class='output co'>#&gt; <span class='message'></span>
+#&gt; <span class='message'>Attaching package: ‘nat’</span></div><div class='output co'>#&gt; <span class='message'>The following object is masked from ‘package:rgl’:</span>
+#&gt; <span class='message'></span>
+#&gt; <span class='message'>    wire3d</span></div><div class='output co'>#&gt; <span class='message'>The following object is masked from ‘package:hemibrainr’:</span>
+#&gt; <span class='message'></span>
+#&gt; <span class='message'>    overlap_score</span></div><div class='output co'>#&gt; <span class='message'>The following objects are masked from ‘package:base’:</span>
+#&gt; <span class='message'></span>
+#&gt; <span class='message'>    intersect, setdiff, union</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/pkg/nat/man/plot3d.html'>plot3d</a></span>(<span class='no'>hemibrain.surf</span>, <span class='kw'>alpha</span><span class='kw'>=</span><span class='fl'>.3</span>, <span class='kw'>col</span><span class='kw'>=</span><span class='st'>'grey'</span>)
+
+<span class='co'># can also convert to rgl mesh3d object for more control</span>
+<span class='no'>hemibrain</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/nat/man/as.mesh3d.html'>as.mesh3d</a></span>(<span class='no'>hemibrain.surf</span>)
+<span class='kw pkg'>rgl</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/rgl/man/mesh3d.html'>wire3d</a></span>(<span class='no'>hemibrain</span>)
+<span class='kw pkg'>rgl</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/rgl/man/mesh3d.html'>shade3d</a></span>(<span class='no'>hemibrain</span>, <span class='kw'>alpha</span><span class='kw'>=</span><span class='fl'>.3</span>)
+<span class='kw pkg'>rgl</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/rgl/man/mesh3d.html'>shade3d</a></span>(<span class='no'>hemibrain</span>, <span class='kw'>alpha</span><span class='kw'>=</span><span class='fl'>.3</span>, <span class='kw'>col</span><span class='kw'>=</span><span class='st'>'grey'</span>)
+<span class='co'># }</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#format">Format</a></li>
       <li><a href="#source">Source</a></li>
+      <li><a href="#details">Details</a></li>
       <li><a href="#see-also">See also</a></li>
       <li><a href="#examples">Examples</a></li>
     </ul>
