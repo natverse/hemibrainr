@@ -31,19 +31,17 @@ assuming that this neuron has a soma and that the soma is the neuron's root.
 }
 \examples{
 \donttest{
-\dontrun{
 # Get neuron
 neuron = neuprintr::neuprint_read_neurons("451987038")
 
 # Extract primary neurite
 pnt = primary_neurite(neuron)
 
+\dontrun{
 # Plot the primary neurite
 nat::nopen3d()
 plot3d(pnt, lwd = 2, col = "#C70E7B", soma = 1000)
 plot3d(neuron, lwd = 2, col = "grey30")
-
-
 }}
 }
 \seealso{

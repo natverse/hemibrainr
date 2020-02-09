@@ -44,8 +44,8 @@ split = "distance")
 # Let's check that this worked
 syns = hemibrain_extract_synapses(neuron.flow)
 
-# See result
 \dontrun{
+# See result
 library(nat)
 plot3d_split(neuron.flow)
 points3d(xyzmatrix(subset(syns,prepost==1)), col = "cyan")
