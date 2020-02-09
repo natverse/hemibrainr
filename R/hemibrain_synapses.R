@@ -39,14 +39,16 @@
 #' @export
 #' @rdname hemibrain_extract_connections
 #' @seealso \code{\link{flow_centrality}}
+#' @importFrom nat nlapply progress_natprogress is.neuron is.neuronlist
+#' @export progress_natprogress
 hemibrain_extract_synapses <- function(x,
                                        prepost = c("BOTH","PRE","POST"),
                                        ...){
   prepost = match.arg(prepost)
-  if(nat::is.neuronlist(x)){
-    syns = nat::nlapply(x,extract_synapses, ...)
+  if(is.neuronlist(x)){
+    syns = nlapply(x,extract_synapses, ...)
     syns = do.call(rbind,syns)
-  }else if (nat::is.neuron(x)){
+  }else if (is.neuron(x)){
     syns = extract_synapses(x)
   }else{
     stop("x must be a neuron or neuronlist object")
