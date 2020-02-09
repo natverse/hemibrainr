@@ -31,7 +31,7 @@ neurons.bs = neuprintr::neuprint_read_neurons(bad.soma)
 
 
 # Re-root
-neurons = hemibrain_reroot(neurons, meshes = hemibrain.surf)
+neurons = hemibrain_reroot(neurons.bs, meshes = hemibrain.surf)
 
 \dontrun{
 # Let's check that this worked
