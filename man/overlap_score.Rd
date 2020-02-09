@@ -23,7 +23,7 @@ The sum of this score is added to the final output matrix. The score is calculat
 and delta is the expected distance in um that is considered 'close'. It is recommended that the user resamples neurons before use, using \code{\link{resample}}.
 }
 \examples{
-\dontrun{
+\donttest{
 # Calculate how much some neurons overlap with one another
 ## Example requires the package nat
 Cell07PNs_overlap = overlap(output.neurons = nat::Cell07PNs,

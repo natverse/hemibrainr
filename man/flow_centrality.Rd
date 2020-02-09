@@ -83,7 +83,6 @@ From Schneider-Mizell et al. (2016): "We use flow centrality for
 }
 \examples{
 \donttest{
-\dontrun{
 
 # Choose neurons
 ## These neurons are some 'tough' examples from the hemibrain:v1.0.1
@@ -109,6 +108,7 @@ neurons.flow = flow_centrality(neurons.checked, polypre = TRUE,
 mode = "centrifugal",
 split = "distance")
 
+\dontrun{
 # Plot the split to check it
 nat::nopen3d()
 nlscan_split(neurons.flow, WithConnectors = TRUE)

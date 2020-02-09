@@ -46,7 +46,6 @@ primary neurite.
 }
 \examples{
 \donttest{
-\dontrun{
 # Read in a problematic neuron
 neuron = neuprintr::neuprint_read_neurons(5813020793)
 plot3d(neuron)
@@ -56,6 +55,7 @@ points3d(nat::xyzmatrix(neuron[[1]]$connectors))
 # Re-root
 neuron.fixed = hemibrain_remove_bad_synapses(neuron)
 
+\dontrun{
 # Let's check that this worked
 plot3d(neuron.fixed)
 points3d(nat::xyzmatrix(neuron.fixed[[1]]$connectors), size = 5, col = "green")

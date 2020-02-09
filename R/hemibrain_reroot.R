@@ -15,7 +15,6 @@
 #'
 #' @examples
 #' \donttest{
-#' \dontrun{
 #' # Choose some known troble makers
 #' bad.soma = c("5813015982","885788485","5813013913")
 #'
@@ -26,6 +25,7 @@
 #' # Re-root
 #' neurons = hemibrain_reroot(neurons, meshes = hemibrain.surf)
 #'
+#' \dontrun{
 #' # Let's check that this worked
 #' nat::nopen3d()
 #' for(n in neurons){
@@ -125,7 +125,6 @@ hemibrain_reroot.neuronlist <- function(x, meshes, ...){
 #'
 #' @examples
 #' \donttest{
-#' \dontrun{
 #' # Read in a problematic neuron
 #' neuron = neuprintr::neuprint_read_neurons(5813020793)
 #' plot3d(neuron)
@@ -135,6 +134,7 @@ hemibrain_reroot.neuronlist <- function(x, meshes, ...){
 #' # Re-root
 #' neuron.fixed = hemibrain_remove_bad_synapses(neuron)
 #'
+#' \dontrun{
 #' # Let's check that this worked
 #' plot3d(neuron.fixed)
 #' points3d(nat::xyzmatrix(neuron.fixed[[1]]$connectors), size = 5, col = "green")
@@ -219,7 +219,6 @@ hemibrain_remove_bad_synapses.neuronlist <- function(x, meshes = NULL,
 #'
 #' @examples
 #' \donttest{
-#' \dontrun{
 #' # Choose some known troble makers
 #' ids = c("5813056323", "579912201", "5813015982", "973765182", "885788485",
 #' "915451074", "5813032740", "1006854683", "5813013913", "5813020138",
@@ -240,6 +239,7 @@ hemibrain_remove_bad_synapses.neuronlist <- function(x, meshes = NULL,
 #' # Re-root
 #' neuron.checked = hemibrain_skeleton_check(neurons, meshes = hemibrain.rois)
 #'
+#' \dontrun{
 #' # Let's check that this worked
 #' nat::nopen3d()
 #' for(n in neuron.checked){
