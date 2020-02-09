@@ -201,7 +201,6 @@ hemibrain_remove_bad_synapses.neuronlist <- function(x, meshes = NULL,
                         soma = soma,
                         min.nodes.from.soma=min.nodes.from.soma,
                         min.nodes.from.pnt=min.nodes.from.pnt,
-                        OmitFailures = OmitFailures,
                         ...)
 }
 
