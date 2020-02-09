@@ -107,7 +107,7 @@ flow_centrality <-function(x,
                            split = c("distance","postsynapses","presynapses"),
                            ...) UseMethod("flow_centrality")
 
-# hidden
+#' @export
 flow_centrality.neuron <- function(x,
                                    mode = c("sum", "centrifugal", "centripetal"),
                                    polypre = TRUE,
@@ -335,7 +335,7 @@ flow_centrality.neuron <- function(x,
   x
 }
 
-# hidden
+#' @export
 flow_centrality.neuronlist <- function(x,
                                        mode = c("sum","centrifugal","centripetal"),
                                        polypre = TRUE,
