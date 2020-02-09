@@ -4,10 +4,11 @@
 
 #' Extract synapse location and labels from a neuron/neuronlist
 #'
-#' @description Extract a single data frame describing synapse/connection types, partners,locations and
-#' position on a neuron's axon/dendrite. You can either get all synapses returned or all unitary connections
-#' to a neuron's partners returned. Broken down by axon/dendrite (\code{Label}),
-#' and pre/postsynapses or pre/postsynaptic partners.
+#' @description Extract a single data frame describing synapse/connection types,
+#'   partners, locations and position on a neuron's axon/dendrite. You can
+#'   either get all synapses returned or all unitary connections to a neuron's
+#'   partners returned. Broken down by axon/dendrite (\code{Label}), and
+#'   pre/postsynapses or pre/postsynaptic partners.
 #' @inheritParams flow_centrality
 #' @param prepost whether to get presynapses, postsynapses or both
 #'
@@ -15,12 +16,11 @@
 #'
 #' @examples
 #' \donttest{
-#' \dontrun{
 #' # Choose a bodyid
 #' id = c("452677169")
 #'
 #' # Read in these neurons
-#' neuron = neuprintr::neuprint_read_neurons(id)
+#' neuron = neuprint_read_neurons(id)
 #'
 #' # Re-root
 #' neuron.flow = flow_centrality(neuron, polypre = TRUE,
@@ -31,9 +31,11 @@
 #' syns = hemibrain_extract_synapses(neuron.flow)
 #'
 #' # See result
+#' \dontrun{
+#' library(nat)
 #' plot3d_split(neuron.flow)
-#' points3d(subset(syns,prepost==1), col = "cyan")
-#' points3d(subset(syns,prepost==0), col = "red")
+#' points3d(xyzmatrix(subset(syns,prepost==1)), col = "cyan")
+#' points3d(xyzmatrix(subset(syns,prepost==0)), col = "red")
 #'
 #' }}
 #' @export

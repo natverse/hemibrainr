@@ -27,5 +27,5 @@ for(m in 1:length(hemibrain.rois)){
 }}
 }
 \seealso{
-\code{\link{hemibrain_skeleton_check}}
+\code{\link{hemibrain_skeleton_check}}, \code{\link{hemibrain.surf}}
 }

@@ -4,12 +4,13 @@
 
 #' Get useful metrics for each neuron's axon and dendrite
 #'
-#' @description Calculates/retrieves useful metrics for the axon and dendrites of a neuron, and its
-#' split.
+#' @description Calculates/retrieves useful metrics for the axon and dendrites
+#'   of a neuron, and its split.
 #'
 #' @inheritParams hemibrain_overlap_locality
-#' @param locality if TRUE \code{hemibrain_overlap_locality} is called and the
-#' overlap locality score will be returned in addition to other metrics.
+#' @param locality if TRUE \code{\link{hemibrain_overlap_locality}} is called
+#'   and the overlap locality score will be returned in addition to other
+#'   metrics.
 #'
 #' @return a named vector of overlap_locality scores
 #' @seealso \code{\link{hemibrain_overlap_locality}}

@@ -114,7 +114,8 @@ flow_centrality.neuron <- function(x,
                                    soma = TRUE,
                                    primary.dendrite = 0.9,
                                    bending.flow = FALSE,
-                                   split = c("distance", "postsynapses","presynapses")){
+                                   split = c("distance", "postsynapses","presynapses"),
+                                   ...){
   split = match.arg(split)
   mode = match.arg(mode)
   x$d$Label = 0

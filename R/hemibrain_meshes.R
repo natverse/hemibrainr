@@ -22,7 +22,7 @@
 #'
 #' }}
 #' @export
-#' @seealso \code{\link{hemibrain_skeleton_check}}
+#' @seealso \code{\link{hemibrain_skeleton_check}}, \code{\link{hemibrain.surf}}
 hemibrain_roi_meshes <- function(){
   rois = neuprintr::neuprint_ROIs(superLevel = NULL)
   hemibrain.rois = list()
@@ -32,4 +32,3 @@ hemibrain_roi_meshes <- function(){
   }
   hemibrain.rois
 }
-

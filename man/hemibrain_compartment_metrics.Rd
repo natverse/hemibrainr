@@ -22,8 +22,9 @@ neurons are not resampled.}
 
 \item{delta}{the distance at which a synapse might occur}
 
-\item{locality}{if TRUE \code{hemibrain_overlap_locality} is called and the
-overlap locality score will be returned in addition to other metrics.}
+\item{locality}{if TRUE \code{\link{hemibrain_overlap_locality}} is called
+and the overlap locality score will be returned in addition to other
+metrics.}
 
 \item{...}{methods sent to \code{nat::nlapply}}
 }
@@ -31,8 +32,8 @@ overlap locality score will be returned in addition to other metrics.}
 a named vector of overlap_locality scores
 }
 \description{
-Calculates/retrieves useful metrics for the axon and dendrites of a neuron, and its
-split.
+Calculates/retrieves useful metrics for the axon and dendrites
+  of a neuron, and its split.
 }
 \seealso{
 \code{\link{hemibrain_overlap_locality}}
