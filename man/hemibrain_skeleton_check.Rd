@@ -43,7 +43,7 @@ the hemibrain neuprintr project, that have no marked soma, and
 }
 \examples{
 \donttest{
-# Choose some known troble makers
+# Choose some known trouble makers
 ids = c("5813056323", "579912201", "5813015982", "973765182", "885788485",
 "915451074", "5813032740", "1006854683", "5813013913", "5813020138",
 "853726809", "916828438", "5813078494", "420956527", "486116439",
