@@ -194,7 +194,7 @@ Synapses closes than this will be removed.</p></td>
 
 
 <span class='co'># Re-root</span>
-<span class='no'>neuron.fixed</span> <span class='kw'>=</span> <span class='fu'>hemibrain_remove_bad_synapses</span>(<span class='no'>neuron</span>)</div><div class='output co'>#&gt; <span class='error'>Error in UseMethod("hemibrain_remove_bad_synapses"): no applicable method for 'hemibrain_remove_bad_synapses' applied to an object of class "c('neuronlist', 'list')"</span></div><div class='input'>
+<span class='no'>neuron.fixed</span> <span class='kw'>=</span> <span class='fu'>hemibrain_remove_bad_synapses</span>(<span class='no'>neuron</span>)</div><div class='output co'>#&gt; <span class='error'>Error in nat::nlapply(x, hemibrain_remove_bad_synapses.neuron, meshes = meshes,     soma = soma, min.nodes.from.soma = min.nodes.from.soma, min.nodes.from.pnt = min.nodes.from.pnt,     OmitFailures = OmitFailures, ...): object 'OmitFailures' not found</span></div><div class='input'>
 <span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
 <span class='co'># Let's check that this worked</span>
 <span class='fu'>plot3d</span>(<span class='no'>neuron.fixed</span>)
