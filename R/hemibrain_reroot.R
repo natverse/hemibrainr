@@ -42,6 +42,7 @@
 hemibrain_reroot <-function(x, meshes = hemibrainr::hemibrain.surf, ...)
   UseMethod("hemibrain_reroot")
 
+
 #' @export
 hemibrain_reroot.neuron <- function(x, meshes = hemibrainr::hemibrain.surf, ...){
   # Find out of volume points
@@ -87,6 +88,7 @@ hemibrain_reroot.neuron <- function(x, meshes = hemibrainr::hemibrain.surf, ...)
     y
   }
 }
+
 
 #' @export
 hemibrain_reroot.neuronlist <- function(x, meshes, ...){
@@ -153,6 +155,7 @@ hemibrain_remove_bad_synapses <- function(x,
                                           min.nodes.from.pnt = 5,
                                           ...) UseMethod("hemibrain_remove_bad_synapses")
 
+
 #' @export
 hemibrain_remove_bad_synapses.neuron <- function(x, meshes = NULL, soma = TRUE,
                                                  min.nodes.from.soma = 100,
@@ -195,16 +198,14 @@ hemibrain_remove_bad_synapses.neuronlist <- function(x, meshes = NULL,
                                                      soma = TRUE,
                                                      min.nodes.from.soma = 100,
                                                      min.nodes.from.pnt = 5,
-                                                     OmitFailures = FALSE,
                                                      ...){
-  nat::nlapply(
-    x,
-    hemibrain_remove_bad_synapses.neuron,
-    meshes = meshes,
-    soma = soma,
-    OmitFailures = OmitFailures,
-    ...
-  )
+  nat::nlapply(x,
+                        hemibrain_remove_bad_synapses.neuron,
+                        meshes = meshes,
+                        soma = soma,
+                        min.nodes.from.soma=min.nodes.from.soma,
+                        min.nodes.from.pnt=min.nodes.from.pnt,
+                        ...)
 }
 
 

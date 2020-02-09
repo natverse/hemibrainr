@@ -83,16 +83,16 @@ compartment_metrics <- function(x, resample = 1000, delta = 1000, locality = TRU
 
 #' Calculate the overlap score between a neurons axon dendrite
 #'
-#' @description Calculates an overlap score using \code{overlap_score} between a neuron's axon and dendrite,
+#' @description Calculates an overlap score using an overlap score between a neuron's axon and dendrite,
 #' if axon and dendrite have been marked out in the neuron object, e.g. by using \code{flow_centrality}.
 #'
 #' @inheritParams flow_centrality
-#' @inheritParams overlap_score
+#' @param delta the distance at which a synapse might occur
 #' @param resample stepsize to which to resample neurons. If set to \code{NULL},
 #' neurons are not resampled.
 #'
 #' @return a named vector of overlap_locality scores
-#' @seealso \code{\link{overlap_score}}
+#' @seealso \code{\link{hemibrain_compartment_metrics}}
 #' @export
 hemibrain_overlap_locality <- function(x, resample = 1000, delta = 1000, ...){
   x = nat::as.neuronlist(x)
@@ -133,31 +133,7 @@ overlap_locality <- function(x, resample = 1000, delta = 1000){
 
 }
 
-
-#' Generate a connectivity matrix based on euclidean distance between points
-#'
-#' @description Generates an 'overlap matrix' of overlap scores between neurons in the \code{output.neurons} and \code{input.neurons} pools.
-#' For every point in a given neuron in \code{output.neurons}, a distance score is calculated to every point in a neuron in \code{input.neurons}.
-#' The sum of this score is added to the final output matrix. The score is calculated as \code{e(-d^2/(2*delta^2))}, where d is the euclidean distance between the two points,
-#' and delta is the expected distance in um that is considered 'close'. It is recommended that the user resamples neurons before use, using \code{\link{resample}}.
-#'
-#' @param output.neurons first set of neurons
-#' @param input.neurons second set of neurons
-#' @param delta the distance at which a synapse might occur
-#'
-#' @examples
-#' \donttest{
-#' # Calculate how much some neurons overlap with one another
-#' ## Example requires the package nat
-#' Cell07PNs_overlap = overlap(output.neurons = nat::Cell07PNs,
-#' input.neurons = nat::Cell07PNs)
-#'
-#' ## Plot the results
-#' heatmap(Cell07PNs_overlap)
-#' }
-#' @return a matrix of overlap scores
-#' @seealso \code{\link{hemibrain_overlap_locality}}
-#' @export
+# hidden, similar function now in nat
 overlap_score <- function(output.neurons, input.neurons, delta = 100){
   output.neurons = nat::as.neuronlist(output.neurons)
   input.neurons = nat::as.neuronlist(input.neurons)

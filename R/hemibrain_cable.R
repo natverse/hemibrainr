@@ -54,7 +54,11 @@ primary_neurite.neuron <- function(x, neuron = TRUE, invert = FALSE, ...){
   }
   pnt
 }
+
+#' @export
 primary_neurite.neuprintneuron <- primary_neurite.neuron
+
+#' @export
 primary_neurite.catmaidneuron <- primary_neurite.neuron
 
 #' @export
@@ -84,7 +88,6 @@ mixed_points<-function(x, ...) UseMethod("mixed_points")
 #' @export
 #' @rdname extract_cable
 primary_dendrite_points<-function(x, ...) UseMethod("primary_dendrite_points")
-
 
 #' @export
 axonic_points.neuron <- function(x, ...){
@@ -199,7 +202,8 @@ axonic_cable.neuron <- function(x, mixed=FALSE, ...){
   neuron$d$Label=2
   neuron
 }
-# hidden
+
+#' @export
 axonic_cable.neuprintneuron <- axonic_cable.neuron
 
 #' @export
@@ -219,7 +223,8 @@ dendritic_cable.neuron <- function(x, mixed = FALSE, ...){
   neuron$d$Label=3
   neuron
 }
-# hidden
+
+#' @export
 dendritic_cable.neuprintneuron <- dendritic_cable.neuron
 
 #' @export
@@ -240,7 +245,8 @@ arbour_cable.neuron <- function(x, mixed = FALSE, ...){
   neuron
 }
 
-# hidden
+
+#' @export
 arbour_cable.neuprintneuron <- arbour_cable.neuron
 
 #' @export
@@ -257,7 +263,8 @@ unsure_cable.neuron <- function(x, mixed=FALSE, ...){
   neuron$d$Label=8
   neuron
 }
-# hidden
+
+#' @export
 unsure_cable.neuprintneuron <- unsure_cable.neuron
 
 #' @export
@@ -272,7 +279,8 @@ primary_dendrite_cable.neuron <- function(x, ...){
   neuron$d$Label=3
   neuron
 }
-# hidden
+
+#' @export
 primary_dendrite_cable.neuprintneuron <- primary_dendrite_cable.neuron
 
 #' @export

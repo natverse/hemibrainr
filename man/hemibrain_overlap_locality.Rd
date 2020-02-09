@@ -22,9 +22,9 @@ neurons are not resampled.}
 a named vector of overlap_locality scores
 }
 \description{
-Calculates an overlap score using \code{overlap_score} between a neuron's axon and dendrite,
+Calculates an overlap score using an overlap score between a neuron's axon and dendrite,
 if axon and dendrite have been marked out in the neuron object, e.g. by using \code{flow_centrality}.
 }
 \seealso{
-\code{\link{overlap_score}}
+\code{\link{hemibrain_compartment_metrics}}
 }
