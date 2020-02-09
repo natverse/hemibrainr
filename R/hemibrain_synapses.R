@@ -86,10 +86,10 @@ hemibrain_extract_connections <- function(x,
   syns
 }
 
-# hidden
 #' @importFrom magrittr %>%
 #' @export
 magrittr::`%>%`
+# hidden
 extract_synapses <-function(x, unitary = FALSE){
   syn = x$connectors
   if(!nrow(syn)){
@@ -113,8 +113,3 @@ extract_synapses <-function(x, unitary = FALSE){
   }
   syn
 }
-
-
-
-
-

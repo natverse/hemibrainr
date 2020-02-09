@@ -42,8 +42,8 @@
 hemibrain_reroot <-function(x, meshes = hemibrainr::hemibrain.surf, ...)
   UseMethod("hemibrain_reroot")
 
-# hidden
-hemibrain_reroot.neuron <- function(x, meshes = hemibrainr::hemibrain.surf){
+#' @export
+hemibrain_reroot.neuron <- function(x, meshes = hemibrainr::hemibrain.surf, ...){
   # Find out of volume points
   x$d$roi = NA
   if(!is.hxsurf(meshes)){
@@ -88,7 +88,7 @@ hemibrain_reroot.neuron <- function(x, meshes = hemibrainr::hemibrain.surf){
   }
 }
 
-# hidden
+#' @export
 hemibrain_reroot.neuronlist <- function(x, meshes, ...){
   neurons = suppressWarnings(nat::nlapply(x, hemibrain_reroot.neuron, meshes, ...))
   if(sum(!names(x)%in%names(neurons))>0){
@@ -149,10 +149,10 @@ hemibrain_remove_bad_synapses <- function(x,
                                           min.nodes.from.pnt = 5,
                                           ...) UseMethod("hemibrain_remove_bad_synapses")
 
-# hidden
+#' @export
 hemibrain_remove_bad_synapses.neuron <- function(x, meshes = NULL, soma = TRUE,
                                                  min.nodes.from.soma = 100,
-                                                 min.nodes.from.pnt = 5){
+                                                 min.nodes.from.pnt = 5, ...){
   if(!is.null(meshes)){
     x$inside = NA
     if(is.hxsurf(meshes)){
@@ -186,14 +186,21 @@ hemibrain_remove_bad_synapses.neuron <- function(x, meshes = NULL, soma = TRUE,
   x
 }
 
-# hidden
-hemibrain_remove_bad_synapses.neuronlist <- function(x, meshes = NULL, soma = TRUE, OmitFailures = FALSE, ...){
-  nat::nlapply(x,
-                        hemibrain_remove_bad_synapses.neuron,
-                        meshes = meshes,
-                        soma = soma,
-                        OmitFailures = OmitFailures,
-                        ...)
+#' @export
+hemibrain_remove_bad_synapses.neuronlist <- function(x, meshes = NULL,
+                                                     soma = TRUE,
+                                                     min.nodes.from.soma = 100,
+                                                     min.nodes.from.pnt = 5,
+                                                     OmitFailures = FALSE,
+                                                     ...){
+  nat::nlapply(
+    x,
+    hemibrain_remove_bad_synapses.neuron,
+    meshes = meshes,
+    soma = soma,
+    OmitFailures = OmitFailures,
+    ...
+  )
 }
 
 
