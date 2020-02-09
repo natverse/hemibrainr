@@ -146,7 +146,7 @@ overlap_locality <- function(x, resample = 1000, delta = 1000){
 #' @param delta the distance at which a synapse might occur
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Calculate how much some neurons overlap with one another
 #' ## Example requires the package nat
 #' Cell07PNs_overlap = overlap(output.neurons = nat::Cell07PNs,

@@ -23,7 +23,6 @@ neurons the soma should be located in a cortex outside of the neuropil proper.
 }
 \examples{
 \donttest{
-\dontrun{
 # Choose some known troble makers
 bad.soma = c("5813015982","885788485","5813013913")
 
@@ -34,6 +33,7 @@ neurons.bs = neuprintr::neuprint_read_neurons(bad.soma)
 # Re-root
 neurons = hemibrain_reroot(neurons, meshes = hemibrain.surf)
 
+\dontrun{
 # Let's check that this worked
 nat::nopen3d()
 for(n in neurons){
