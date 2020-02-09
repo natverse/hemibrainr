@@ -40,7 +40,7 @@
 primary_neurite <-function(x, neuron = TRUE, invert = FALSE, ...) UseMethod("primary_neurite")
 
 # hidden
-primary_neurite.neuron <- function(x, neuron = TRUE, invert = FALSE){
+primary_neurite.neuron <- function(x, neuron = TRUE, invert = FALSE, ...){
   simp = nat::simplify_neuron(x, n=1)
   pnt = sapply(simp$SegList,function(s) sum(simp$StartPoint%in%s)>0)
   pnt = simp$SegList[[which(pnt&!duplicated(pnt))]]
@@ -90,25 +90,25 @@ mixed_points<-function(x, ...) UseMethod("mixed_points")
 primary_dendrite_points<-function(x, ...) UseMethod("primary_dendrite_points")
 
 #' @export
-axonic_points.neuron <- function(x){
+axonic_points.neuron <- function(x, ...){
   points=x$d
   nat::xyzmatrix(points[points$Label%in%c(-2,2),])
 }
 
 #' @export
-dendritic_points.neuron <- function(x){
+dendritic_points.neuron <- function(x, ...){
   points=x$d
   nat::xyzmatrix(points[points$Label%in%c(-3,3),])
 }
 
 #' @export
-mixed_points.neuron <- function(x){ # Mised also means that I do not know
+mixed_points.neuron <- function(x, ...){ # Mised also means that I do not know
   points=x$d
   nat::xyzmatrix(points[points$Label%in%c(8),])
 }
 
 #' @export
-primary_dendrite_points.neuron <- function(x){ # Mised also means that I do not know
+primary_dendrite_points.neuron <- function(x, ...){ # Mised also means that I do not know
   points=x$d
   nat::xyzmatrix(points[points$Label%in%c(4),])
 }
@@ -300,7 +300,7 @@ primary_dendrite_cable.neuronlist <- function(x, ...){
   nat::nlapply(x,primary_dendrite_cable.neuron,OmitFailures = T, ...)
 }
 
-#' @export
+# hidden
 prune_vertices.neuprintneuron <- function (x, verticestoprune, invert = FALSE, ...){
   pruned = nat::prune_vertices(x, verticestoprune, invert = invert,
                                ...)
