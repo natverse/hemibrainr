@@ -238,8 +238,8 @@ hemibrain_remove_bad_synapses.neuronlist <- function(x, meshes = NULL,
 #'
 #' # Get all the roi meshes
 #' hemibrain.rois = hemibrain_roi_meshes()
-#' ## Usng this as the argument for 'meshes' will also
-#' ## Give you the ROI for each point and synapse in a neurons skeleton!!
+#' ## Using this as the argument for 'meshes' will also
+#' ## give you the ROI for each point and synapse in a neuron's skeleton!!
 #'
 #' # Re-root
 #' neuron.checked = hemibrain_skeleton_check(neurons, meshes = hemibrain.rois)
