@@ -23,7 +23,7 @@ neurons the soma should be located in a cortex outside of the neuropil proper.
 }
 \examples{
 \donttest{
-# Choose some known troble makers
+# Choose some known trouble makers
 bad.soma = c("5813015982","885788485","5813013913")
 
 # Read in these neurons
