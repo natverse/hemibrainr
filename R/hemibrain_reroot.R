@@ -15,7 +15,7 @@
 #'
 #' @examples
 #' \donttest{
-#' # Choose some known troble makers
+#' # Choose some known trouble makers
 #' bad.soma = c("5813015982","885788485","5813013913")
 #'
 #' # Read in these neurons
@@ -258,6 +258,7 @@ hemibrain_remove_bad_synapses.neuronlist <- function(x, meshes = NULL,
 #' }}
 #' @export
 #' @seealso \code{\link{hemibrain_reroot}}
+#' @importFrom nat as.neuronlist
 hemibrain_skeleton_check <- function(x, # as read by neuprint_read_neurons
                                      meshes = hemibrainr::hemibrain.surf,
                                      min.nodes.from.soma = 100,
@@ -267,26 +268,25 @@ hemibrain_skeleton_check <- function(x, # as read by neuprint_read_neurons
 
   # Re-root somas where necessary
   x.nosoma = x[!x[,"soma"]]
-  x.soma = setdiff(x,x.nosoma)
+  # has to be nat setdiff not base one, so must prefix (or import)
+  x.soma = nat::setdiff(x,x.nosoma)
   if(length(x.nosoma)){
     message("Re-rooting ", length(x.nosoma), " neurons without a soma")
-    x.estsoma = hemibrain_reroot.neuronlist(x = nat::as.neuronlist(x.nosoma), meshes = meshes, OmitFailures = OmitFailures, ...)
+    x.estsoma = hemibrain_reroot(x = x.nosoma, meshes = meshes, OmitFailures = OmitFailures, ...)
     nams = intersect(names(x),c(names(x.soma),names(x.estsoma)))
-    message(length(x.estsoma), " neurons re-rooted")
     x.new = c(x.soma, x.estsoma)[nams]
-  }else{
+  } else {
     x.new = x
   }
 
   # Remove erroneous synapses, out of mesh and on pnt/soma
   message("Removing synapses at somas and along primary neurite for ", length(x.new), " neurons")
-  x.goodsyn = hemibrain_remove_bad_synapses.neuronlist(nat::as.neuronlist(x.new),
+  x.goodsyn = hemibrain_remove_bad_synapses(x.new,
                                             meshes = meshes,
                                             soma = TRUE,
                                             min.nodes.from.soma = min.nodes.from.soma,
                                             min.nodes.from.pnt = min.nodes.from.pnt,
                                             OmitFailures = OmitFailures,
                                             ...)
-  message(length(x.goodsyn), " neurons checked")
-  nat::as.neuronlist(x.goodsyn)
+  x.goodsyn
 }
