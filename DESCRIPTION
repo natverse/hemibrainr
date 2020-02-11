@@ -32,6 +32,7 @@ Imports:
     magrittr,
     nabor,
     reshape2
+    bit64
 Remotes: 
     natverse/neuprintr
 Language: en-GB
