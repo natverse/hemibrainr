@@ -1,6 +1,6 @@
-#' Search neuprint for boyuds
+#' Search neuprint for body ids
 #'
-#' @param x A set of bodyids or a query.
+#' @param x A set of bodyids or a query
 #' @param field Which field to query
 #' @inheritParams neuprintr::neuprint_fetch_custom
 #' @param exact whether to insist that the query string *exactly* matches the
@@ -21,14 +21,20 @@ neuprint_ids <- function(x, field='type', exact=FALSE, regex=FALSE, conn=conn, .
   x <- if(is.character(x) && length(x)==1 && !valid_id(x)){
     if(isFALSE(regex))
       x <- if(exact) paste0("^",x,"$") else paste0(".*",x,".*")
-    neuprint::neuprint_search(x, meta = F, field = field, ...)
-  } else if (is.data.frame(x)) {
-    nx=tolower(names(x))
-    if('bodyid' %in% nx) x[[match('bodyid', nx)]] else stop("No bodyid column in `x`!")
-  } else x
+    neuprintr::neuprint_search(x, meta = F, field = field, ...)
+  } else {
+    if (is.data.frame(x)) {
+      nx=tolower(names(x))
+      if('bodyid' %in% nx) x[[match('bodyid', nx)]]
+        else stop("No bodyid column in `x`!")
+    } else {
+      # directly specified
+      x
+    }
+  }
   x <- as.character(x)
-  if(!length(x))
-    stop("No valid ids!")
+  # if(!length(x))
+  #   stop("No valid ids!")
   if(!all(valid_id(x)))
     stop("Some ids are invalid!")
   x

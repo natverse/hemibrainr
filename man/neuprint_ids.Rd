@@ -2,12 +2,12 @@
 % Please edit documentation in R/ids.R
 \name{neuprint_ids}
 \alias{neuprint_ids}
-\title{Search neuprint for boyuds}
+\title{Search neuprint for body ids}
 \usage{
 neuprint_ids(x, field = "type", exact = FALSE, regex = FALSE, conn = conn, ...)
 }
 \arguments{
-\item{x}{A set of bodyids or a query.}
+\item{x}{A set of bodyids or a query}
 
 \item{field}{Which field to query}
 
@@ -27,7 +27,7 @@ used. See \code{\link[neuprintr]{neuprint_login}} for details.}
 character vector of bodyids
 }
 \description{
-Search neuprint for boyuds
+Search neuprint for body ids
 }
 \examples{
 \donttest{
