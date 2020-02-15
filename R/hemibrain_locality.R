@@ -15,7 +15,7 @@
 #' @return a named vector of overlap_locality scores
 #' @seealso \code{\link{hemibrain_overlap_locality}}
 #' @export
-hemibrain_compartment_metrics <- function(x, resample = 1000, delta = 1000, locality = TRUE, ...){
+hemibrain_compartment_metrics <- function(x, resample = 125, delta = 125, locality = TRUE, ...){
   mets = nat::nlapply(x, compartment_metrics, resample = resample, delta = delta, locality = locality, ...)
   mets.df = do.call(rbind, mets)
   if(nrow(mets.df)==length(x)){
@@ -27,7 +27,7 @@ hemibrain_compartment_metrics <- function(x, resample = 1000, delta = 1000, loca
 }
 
 # hidden
-compartment_metrics <- function(x, resample = 1000, delta = 1000, locality = TRUE){
+compartment_metrics <- function(x, resample = 125, delta = 125, locality = TRUE){
 
   # Axon-dendrite split?
   if(!(sum(x$d$Label==2)&sum(x$d$Label==3))){
@@ -94,14 +94,16 @@ compartment_metrics <- function(x, resample = 1000, delta = 1000, locality = TRU
 #' @return a named vector of overlap_locality scores
 #' @seealso \code{\link{hemibrain_compartment_metrics}}
 #' @export
-hemibrain_overlap_locality <- function(x, resample = 1000, delta = 1000, ...){
+hemibrain_overlap_locality <- function(x, resample = 125, delta = 125, ...){
   x = nat::as.neuronlist(x)
   l.scores = nat::nlapply(x, overlap_locality, resample = resample, delta = delta, ...)
   unlist(l.scores)
 }
 
 # hidden
-overlap_locality <- function(x, resample = 1000, delta = 1000){
+overlap_locality <- function(x,
+                             resample = 125,
+                             delta = 125){
 
   # Axon-dendrite split?
   if(!(sum(x$d$Label==2)&sum(x$d$Label==3))){
