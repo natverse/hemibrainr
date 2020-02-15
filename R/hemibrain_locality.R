@@ -36,15 +36,15 @@ compartment_metrics <- function(x, resample = 125, delta = 125, locality = TRUE)
 
   # Synapses
   syns = tryCatch(hemibrain_extract_synapses(x), error = function(e) NULL)
-  axon.pre = sum(syns$prepost==0&syns$Label==2)
-  dend.pre = sum(syns$prepost==0&syns$Label==3)
-  axon.post = sum(syns$prepost==1&syns$Label==2)
-  dend.post = sum(syns$prepost==1&syns$Label==3)
-  total.pre = sum(syns$prepost==0)
-  total.post = sum(syns$prepost==1)
+  axon.pre = tryCatch(sum(syns$prepost==0&syns$Label==2), error = function(e) NA)
+  dend.pre = tryCatch(sum(syns$prepost==0&syns$Label==3), error = function(e) NA)
+  axon.post = tryCatch(sum(syns$prepost==1&syns$Label==2), error = function(e) NA)
+  dend.post = tryCatch(sum(syns$prepost==1&syns$Label==3), error = function(e) NA)
+  total.pre = tryCatch(sum(syns$prepost==0), error = function(e) NA)
+  total.post = tryCatch(sum(syns$prepost==1), error = function(e) NA)
 
   # Segregation
-  si = x$AD.segregation.index
+  si = tryCatch(x$AD.segregation.index, error = function(e) NA)
   if(locality){
     locality = tryCatch(overlap_locality(x, resample = resample, delta = delta), error = function(e) NA)
   }else{
@@ -58,7 +58,7 @@ compartment_metrics <- function(x, resample = 125, delta = 125, locality = TRUE)
   total.length = tryCatch(summary(x)$cable.length, error = function(e) NA)
 
   # Assemble
-  met = data.frame(
+  met = tryCatch(data.frame(
              total.pre = nullToNA(total.pre),
              total.post = nullToNA(total.post),
              axon.pre = nullToNA(axon.pre),
@@ -76,7 +76,8 @@ compartment_metrics <- function(x, resample = 125, delta = 125, locality = TRUE)
              dend.length= nullToNA(dend.length),
              pd.length= nullToNA(pd.length),
              segregation_index = nullToNA(si),
-             overlap_locality = nullToNA(locality))
+             overlap_locality = nullToNA(locality)),
+             error = function(e) NULL)
   met
 }
 
@@ -107,7 +108,7 @@ overlap_locality <- function(x,
 
   # Axon-dendrite split?
   if(!(sum(x$d$Label==2)&sum(x$d$Label==3))){
-    stop("Axon / dendrite missing")
+    warning("Axon / dendrite missing")
   }
 
   # Extract compartment cable
