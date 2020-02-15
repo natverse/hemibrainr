@@ -32,28 +32,33 @@ plot3d_split = function(someneuronlist,
   someneuronlist = nat::as.neuronlist(someneuronlist)
   for (n in 1:length(someneuronlist)){
     neuron = someneuronlist[[n]]
-    if(is.null(neuron$d$flow.cent)){
-      stop("No flow centrality calculated, dropping neuron")
-    }
     dendrites.v = subset(rownames(neuron$d), neuron$d$Label == 3)
     axon.v = subset(rownames(neuron$d), neuron$d$Label == 2)
-    #nulls.v = subset(rownames(neuron$d), neuron$d$Label == 0)
     p.d.v = subset(rownames(neuron$d), neuron$d$Label == 4)
     p.n.v = subset(rownames(neuron$d), neuron$d$Label == 7)
-    dendrites = nat::prune_vertices(neuron, verticestoprune = as.integer(c(axon.v, p.d.v, p.n.v)))
-    axon = nat::prune_vertices(neuron, verticestoprune = as.integer(c(dendrites.v, p.d.v, p.n.v)))
-    #nulls = nat::prune_vertices(neuron, verticestoprune = as.integer(c(axon.v, dendrites.v, p.d.v, p.n.v)))
-    p.d = nat::prune_vertices(neuron, verticestoprune = as.integer(c(axon.v, dendrites.v, p.n.v)))
-    p.n = nat::prune_vertices(neuron, verticestoprune = as.integer(c(axon.v, dendrites.v, p.d.v)))
-    rgl::plot3d(dendrites, col = col[1], WithNodes = WithNodes, lwd = lwd,...)
-    rgl::plot3d(axon, col = col[2], WithNodes = WithNodes, soma = FALSE, lwd = lwd,...)
-    rgl::plot3d(p.n, col = col[3], WithNodes = WithNodes, soma = soma, lwd = lwd,...)
-    rgl::plot3d(p.d, col = col[4], WithNodes = WithNodes, soma = FALSE, lwd = lwd,...)
-    #rgl::plot3d(nulls, col = col[5], WithNodes = WithNodes, soma = FALSE, lwd = lwd)
-    rgl::plot3d(neuron, col = col[3], WithNodes = WithNodes, soma = soma)
+    dendrites = tryCatch( nat::prune_vertices(neuron, verticestoprune = as.integer(c(axon.v, p.d.v, p.n.v))),
+                          error = function(e) NULL)
+    axon = tryCatch( nat::prune_vertices(neuron, verticestoprune = as.integer(c(dendrites.v, p.d.v, p.n.v))),
+                     error = function(e) NULL)
+    p.d = tryCatch( nat::prune_vertices(neuron, verticestoprune = as.integer(c(axon.v, dendrites.v, p.n.v))),
+                    error = function(e) NULL)
+    p.n = tryCatch( nat::prune_vertices(neuron, verticestoprune = as.integer(c(axon.v, dendrites.v, p.d.v))),
+                    error = function(e) NULL)
+    tryCatch(rgl::plot3d(dendrites, col = col[1], WithNodes = WithNodes, lwd = lwd,...),
+             error = function(e) NULL)
+    tryCatch(rgl::plot3d(axon, col = col[2], WithNodes = WithNodes, soma = FALSE, lwd = lwd,...),
+             error = function(e) NULL)
+    tryCatch(rgl::plot3d(p.n, col = col[3], WithNodes = WithNodes, soma = soma, lwd = lwd,...),
+    error = function(e) NULL)
+    tryCatch(rgl::plot3d(p.d, col = col[4], WithNodes = WithNodes, soma = FALSE, lwd = lwd,...),
+    error = function(e) NULL)
+    tryCatch(rgl::plot3d(neuron, col = col[3], WithNodes = WithNodes, soma = soma),
+    error = function(e) NULL)
     if (WithConnectors){
-      rgl::spheres3d(nat::xyzmatrix(subset(neuron$connectors,prepost==1)), col = "#132157", radius = radius/2, ...)
-      rgl::spheres3d(nat::xyzmatrix(subset(neuron$connectors,prepost==0)), col = "#EE4244", radius = radius, ...)
+      tryCatch(rgl::spheres3d(nat::xyzmatrix(subset(neuron$connectors,prepost==1)), col = "#132157", radius = radius/2, ...),
+               error = function(e) NULL)
+      tryCatch(rgl::spheres3d(nat::xyzmatrix(subset(neuron$connectors,prepost==0)), col = "#EE4244", radius = radius, ...),
+               error = function(e) NULL)
     }
     if (highflow == T){
       highest = max(neuron$d[,"flow.cent"])
