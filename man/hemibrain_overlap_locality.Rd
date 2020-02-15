@@ -4,7 +4,7 @@
 \alias{hemibrain_overlap_locality}
 \title{Calculate the overlap score between a neurons axon dendrite}
 \usage{
-hemibrain_overlap_locality(x, resample = 1000, delta = 1000, ...)
+hemibrain_overlap_locality(x, resample = 125, delta = 125, ...)
 }
 \arguments{
 \item{x}{a \code{nat::neuronlist} or \code{nat::neuron} object. It is assumed

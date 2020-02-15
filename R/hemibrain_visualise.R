@@ -44,20 +44,20 @@ plot3d_split = function(someneuronlist,
                     error = function(e) NULL)
     p.n = tryCatch( nat::prune_vertices(neuron, verticestoprune = as.integer(c(axon.v, dendrites.v, p.d.v))),
                     error = function(e) NULL)
-    tryCatch(rgl::plot3d(dendrites, col = col[1], WithNodes = WithNodes, lwd = lwd,...),
+    tryCatch(rgl::plot3d(dendrites, col = col[1], WithNodes = WithNodes, lwd = lwd, add = TRUE, ...),
              error = function(e) NULL)
-    tryCatch(rgl::plot3d(axon, col = col[2], WithNodes = WithNodes, soma = FALSE, lwd = lwd,...),
+    tryCatch(rgl::plot3d(axon, col = col[2], WithNodes = WithNodes, soma = FALSE, lwd = lwd, add = TRUE, ...),
              error = function(e) NULL)
-    tryCatch(rgl::plot3d(p.n, col = col[3], WithNodes = WithNodes, soma = soma, lwd = lwd,...),
+    tryCatch(rgl::plot3d(p.n, col = col[3], WithNodes = WithNodes, soma = soma, lwd = lwd, add = TRUE, ...),
     error = function(e) NULL)
-    tryCatch(rgl::plot3d(p.d, col = col[4], WithNodes = WithNodes, soma = FALSE, lwd = lwd,...),
+    tryCatch(rgl::plot3d(p.d, col = col[4], WithNodes = WithNodes, soma = FALSE, lwd = lwd, add = TRUE,...),
     error = function(e) NULL)
-    tryCatch(rgl::plot3d(neuron, col = col[3], WithNodes = WithNodes, soma = soma),
+    tryCatch(rgl::plot3d(neuron, col = col[3], WithNodes = WithNodes, soma = soma, add = TRUE,),
     error = function(e) NULL)
     if (WithConnectors){
-      tryCatch(rgl::spheres3d(nat::xyzmatrix(subset(neuron$connectors,prepost==1)), col = "#132157", radius = radius/2, ...),
+      tryCatch(rgl::spheres3d(nat::xyzmatrix(subset(neuron$connectors,prepost==1)), col = "#132157", radius = radius/2, add = TRUE, ...),
                error = function(e) NULL)
-      tryCatch(rgl::spheres3d(nat::xyzmatrix(subset(neuron$connectors,prepost==0)), col = "#EE4244", radius = radius, ...),
+      tryCatch(rgl::spheres3d(nat::xyzmatrix(subset(neuron$connectors,prepost==0)), col = "#EE4244", radius = radius,add = TRUE, ...),
                error = function(e) NULL)
     }
     if (highflow == T){
@@ -68,7 +68,7 @@ plot3d_split = function(someneuronlist,
     }
     if(splitnode==T){
       ais = which(apply(neuron$d, 1, function(x) x["flow.cent"] == max(neuron$d[,"flow.cent"])))
-      rgl::spheres3d(nat::xyzmatrix(neuron$d[ais,]),radius=radius,col="magenta",...)
+      rgl::spheres3d(nat::xyzmatrix(neuron$d[ais,]),radius=radius,col="magenta", add = TRUE, ...)
     }
   }
 }

@@ -6,7 +6,7 @@
 \usage{
 flow_centrality(
   x,
-  mode = c("sum", "centrifugal", "centripetal"),
+  mode = c("centrifugal", "centripetal", "sum"),
   polypre = TRUE,
   soma = TRUE,
   primary.dendrite = 0.9,
