@@ -265,7 +265,7 @@ flow_centrality.neuron <- function(x,
   if (grepl("synapses", split)) {
     synapse.choice = gsub("synapses", "", split)
     choice = mean(nodes[as.character(downstream.unclassed),
-                        synapse.choice], na.rm = TRUE) < mean(nodes[as.character(upstream.unclassed),
+                        synapse.choice], na.rm = TRUE) > mean(nodes[as.character(upstream.unclassed),
                                                                     synapse.choice], na.rm = TRUE)
     if (choice) {
       nodes[as.character(downstream.unclassed), "Label"] = 2
@@ -343,9 +343,15 @@ flow_centrality.neuronlist <- function(x,
                                        soma = TRUE,
                                        primary.dendrite = 0.9,
                                        bending.flow = FALSE,
-                                       split = c("postsynapses","presynapses","distance"),
+                                       split = c("distance","postsynapses","presynapses"),
                                        ...){
-  neurons = nat::nlapply(x, flow_centrality.neuron, mode = mode, polypre = polypre, soma = soma, primary.dendrite = primary.dendrite, OmitFailures = T, split = split, ...)
+  split = match.arg(split)
+  mode = match.arg(mode)
+  neurons = nat::nlapply(x, flow_centrality.neuron, mode = mode,
+                         polypre = polypre, soma = soma,
+                         primary.dendrite = primary.dendrite,
+                         split = split,
+                         ...)
   neurons
 }
 
@@ -378,4 +384,60 @@ hemibrain_split_points <- function(x){
   splits
 }
 
+
+#' Get the positions of key points in a 'split' neuron
+#'
+#' @description Get the positions of key points, i.e. primary and secondary branchpoints and
+#' a neuron's root, in a 'split' neuron.
+#'
+#' @inheritParams flow_centrality
+#'
+#' @return a \code{data.frame}
+#' @seealso \code{\link{flow_centrality}}
+#' @export
+hemibrain_use_saved_split.neuron <-function(x, df){
+
+  # Find nearest points on skeleton
+  ## near = nabor::knn(query = nat::xyzmatrix(df), data = nat::xyzmatrix(x), k  = 1)
+  ## df = cbind(df, position = near$nn.idx)
+
+  # Find point indexes
+  root = df[df$point=="root","position"]
+  primary.branch.point = df[df$point=="primary.branch.point","position"]
+  axon.start = df[df$point=="axon.start","position"]
+  dendrite.start = df[df$point=="dendrite.start","position"]
+
+  # Assign root and mark soma
+  y = nat::as.neuron(nat::as.ngraph(x$d), origin = root)
+  y$connectors = x$connectors
+  n = nat::as.ngraph(y$d)
+  y$tags$soma = root
+  y$d$Label = 3 # dendrite by default
+  y$d$Label[root] = 1
+
+  # Assign other cable
+  pnt = suppressWarnings(unique(unlist(igraph::shortest_paths(n, from = root, to = primary.branch.point, mode = "out")$vpath)))
+  pd = suppressWarnings(unique(unlist(igraph::shortest_paths(n, from = dendrite.start, to = axon.start, mode = "all")$vpath)))
+  leaves = nat::endpoints(y)
+  axon = suppressWarnings(unique(unlist(igraph::shortest_paths(n, from = pd, to = leaves, mode = "out")$vpath)))
+
+  # Assign labels
+  y$d$Label[pnt] = 2
+  y$d$Label[pd] = 4
+  y$d$Label[pnt] = 7
+  y$d$Label[root] = 1
+
+  # Calculate segregation score
+
+  # Add in branch points
+  y$AD.segregation.index = segregation.index
+  y$primary.branch.point = primary.branch.point
+  y$axon.start = axon.start
+  y$dendrite.start = dendrite.start
+  y$secondary.branch.points = c(axon.start,dendrite.start)
+
+  # Return split skeleton
+  y
+
+}
 
