@@ -4,15 +4,22 @@
 \alias{class2ids}
 \title{Return body ids for large classes of neurons}
 \usage{
-class2ids(x, ..., unlist = TRUE, unique = TRUE)
+class2ids(x, ..., unlist = TRUE, unique = TRUE, refresh = FALSE)
 }
 \arguments{
 \item{x}{A class of neuron (e.g. ORN, PN, DAN, MBON LHON, TOON, TOLN, HRN
 etc.)}
 
+\item{...}{Additional arguments passed to internal functions}
+
 \item{unlist}{return all the bodyids}
 
-\item{unique}{}
+\item{unique}{Whether to ensure that no duplicate ids are returned when
+\code{unlist=TRUE}.}
+
+\item{refresh}{Whether to refresh cached class information from remote
+sources. When \code{FALSE} (the default) this is automatically refreshed
+every hour.}
 }
 \value{
 When \code{unlist=FALSE} a list with elements named by the elements
@@ -24,7 +31,12 @@ Will use our google sheet annotation spreadsheets or neuPrint queries as
 appropriate
 }
 \examples{
+\donttest{
 class2ids("uPN")
 length(class2ids("ORN", possible = FALSE))
 length(class2ids("ORN", possible = TRUE))
+
+class2ids("DAN")
+class2ids("MBON")
+}
 }

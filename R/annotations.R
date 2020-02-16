@@ -5,9 +5,13 @@
 #'
 #' @param x A class of neuron (e.g. ORN, PN, DAN, MBON LHON, TOON, TOLN, HRN
 #'   etc.)
-#' @param ...
+#' @param ... Additional arguments passed to internal functions
 #' @param unlist return all the bodyids
-#' @param unique
+#' @param unique Whether to ensure that no duplicate ids are returned when
+#'   \code{unlist=TRUE}.
+#' @param refresh Whether to refresh cached class information from remote
+#'   sources. When \code{FALSE} (the default) this is automatically refreshed
+#'   every hour.
 #'
 #' @return When \code{unlist=FALSE} a list with elements named by the elements
 #'   of \code{x} (classes of neurons). When \code{unlist=TRUE}, a vector without
@@ -15,16 +19,27 @@
 #' @export
 #'
 #' @examples
+#' \donttest{
 #' class2ids("uPN")
 #' length(class2ids("ORN", possible = FALSE))
 #' length(class2ids("ORN", possible = TRUE))
-class2ids <- function(x, ..., unlist=TRUE, unique=TRUE) {
+#'
+#' class2ids("DAN")
+#' class2ids("MBON")
+#' }
+class2ids <- function(x, ..., unlist=TRUE, unique=TRUE, refresh=FALSE) {
   res=list()
   aln=c("RN", "ORN", "HRN", "TRN", "PN", "uPN", "mPN", "ALLN", "VPPN")
   aln.toget=intersect(x, aln)
   if(length(aln.toget))
-    res=sapply(aln.toget, alns, simplify = F, ...)
+    res=sapply(aln.toget, alns, simplify = F, refresh=refresh, ...)
   x=setdiff(x, aln)
+
+  mbn=c("DAN","MBON")
+  mbn.toget=intersect(x, mbn)
+  if(length(mbn.toget))
+    res=c(res, sapply(mbn.toget, mbns, simplify = F, ...))
+  x=setdiff(x, mbn)
 
   if(length(x)) {
     stop("Classes:", paste(x, collapse=" "), " not yet implemented")
@@ -40,8 +55,8 @@ class2ids <- function(x, ..., unlist=TRUE, unique=TRUE) {
 aldf <- function(...)
   cached_read_sheet("124eTYqQ8evTGm_z75V8jNVmfBI763_s4h1EAPVMiSvI", ...)
 
-alns <- function(x="RN", possible=TRUE) {
-  aldf=aldf()
+alns <- function(x="RN", possible=TRUE, refresh=FALSE) {
+  aldf=aldf(forget=refresh)
   if(x=='RN') {
     aldf$bodyid[which(aldf$class=="RN")]
   } else if (x=="HRN") {
@@ -80,7 +95,7 @@ alns <- function(x="RN", possible=TRUE) {
     vppns=aldf$class == 'PN' &
       stringr::str_detect(aldf$our_type, "VP", negate = F)
     aldf$bodyid[which(vppns)]
-  }
+  } else stop("I do not recognise: ", x, " as a class of AL neuron!")
 }
 
 #' Find the antennal lobe glomerulus for hemibrain body ids
@@ -125,13 +140,28 @@ glomerulus <- function(bodyids, exclude.multi=FALSE) {
   res
 }
 
-cached_read_sheet <- function(id, forget=FALSE) {
-  if(forget)
-    memoise::forget(cached_read_sheet_memo)
-  cached_read_sheet_memo(id)
+mbdf <- function(sheet=c("MBONs", "DANs"), ...) {
+  sheet=match.arg(sheet)
+  cached_read_sheet("1NvQjqt4sSZR_rqiuDZoIsuaPB1mTV9x-R-tAtfyCd2c", sheet=sheet, ...)
 }
 
-cached_read_sheet_memo <- memoise::memoise(function(id) {
-  googlesheets4::read_sheet(id)
+mbns <- function(x=c("MBON", "DAN"), possible=TRUE, refresh=FALSE) {
+  # FIXME decide what possible means for MBONs/DANs
+  x=match.arg(x)
+  mbdf=mbdf(x, forget=refresh)
+  if(x == "MBON")
+    neuprint_ids(mbdf[mbdf$classification=='safe',])
+  else
+    neuprint_ids(mbdf)
+}
+
+cached_read_sheet <- function(id, forget=FALSE, ...) {
+  if(forget)
+    memoise::forget(cached_read_sheet_memo)
+  cached_read_sheet_memo(id, ...)
+}
+
+cached_read_sheet_memo <- memoise::memoise(function(id, ...) {
+  googlesheets4::read_sheet(id, ...)
 }, ~memoise::timeout(3600))
 
