@@ -13,6 +13,8 @@ addons:
   apt:
     packages:
     - libglu1-mesa-dev
+before_install:
+  - R -e 'install.packages("remotes"); remotes::install_github("natverse/nat",dependencies = TRUE)'
 before_cache: Rscript -e 'remotes::install_cran("pkgdown")'
 deploy:
   provider: script
