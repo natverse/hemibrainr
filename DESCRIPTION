@@ -35,7 +35,7 @@ Imports:
     stringr,
     memoise
 Remotes: 
-    natverse/neuprintr@feature/flexible-ids
+    natverse/neuprintr
 Language: en-GB
 RoxygenNote: 7.0.2
 URL: https://github.com/flyconnectome/hemibrainr, https://flyconnectome.github.io/hemibrainr
