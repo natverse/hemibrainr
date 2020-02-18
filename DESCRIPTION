@@ -31,9 +31,11 @@ Imports:
     dplyr,
     magrittr,
     nabor,
-    reshape2
+    reshape2,
+    stringr,
+    memoise
 Remotes: 
-    natverse/neuprintr
+    natverse/neuprintr@feature/flexible-ids
 Language: en-GB
 RoxygenNote: 7.0.2
 URL: https://github.com/flyconnectome/hemibrainr, https://flyconnectome.github.io/hemibrainr
