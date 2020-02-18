@@ -124,8 +124,8 @@ glomerulus <- function(bodyids, exclude.multi=FALSE) {
 
   rns=intersect(bodyids, class2ids("RN"))
   if(length(rns)) {
-    gloms=sub(".*RN_(.*)","\\1", aldf[match(rns, aldf$bodyid),'our_type'])
-    res[rns]==gloms
+    gloms=sub(".*RN_(.*)","\\1", aldf[['our_type']][match(rns, aldf$bodyid)])
+    res[rns]=gloms
   }
 
   pns=intersect(bodyids, class2ids("PN"))
