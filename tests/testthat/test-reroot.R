@@ -14,7 +14,8 @@ test_that("hemibrain_skeleton_check works", {
   expect_is(neurons[[1]], 'neuron')
 
   # Re-root
-  expect_is(neuron.checked <- hemibrain_skeleton_check(neurons), 'neuronlist')
+  expect_is(neuron.checked <- hemibrain_skeleton_check(neurons, OmitFailures = TRUE),
+            'neuronlist')
   expect_is(neuron.checked[[1]], 'neuprintneuron')
 })
 
