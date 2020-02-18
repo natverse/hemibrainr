@@ -154,7 +154,7 @@ neurons the soma should be located in a cortex outside of the neuropil proper.</
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
-<span class='co'># Choose some known troble makers</span>
+<span class='co'># Choose some known trouble makers</span>
 <span class='no'>bad.soma</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"5813015982"</span>,<span class='st'>"885788485"</span>,<span class='st'>"5813013913"</span>)
 
 <span class='co'># Read in these neurons</span>
@@ -162,7 +162,8 @@ neurons the soma should be located in a cortex outside of the neuropil proper.</
 
 
 <span class='co'># Re-root</span>
-<span class='no'>neurons</span> <span class='kw'>=</span> <span class='fu'>hemibrain_reroot</span>(<span class='no'>neurons.bs</span>, <span class='kw'>meshes</span> <span class='kw'>=</span> <span class='no'>hemibrain.surf</span>)</div><div class='output co'>#&gt; <span class='error'>Error in pointsinside.default(nat::xyzmatrix(x$d), surf = meshes): Please install suggested library Rvcg to use pointsinside</span></div><div class='input'>
+<span class='no'>neurons</span> <span class='kw'>=</span> <span class='fu'>hemibrain_reroot</span>(<span class='no'>neurons.bs</span>, <span class='kw'>meshes</span> <span class='kw'>=</span> <span class='no'>hemibrain.surf</span>)
+
 <span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
 <span class='co'># Let's check that this worked</span>
 <span class='kw pkg'>nat</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/nat/man/nopen3d.html'>nopen3d</a></span>()

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Determine a neuron's dendrite and axon by calculating flow centrality — flow_centrality • hemibrainr</title>
+<title>Split a neuron using stored 'splitpoints' — hemibrain_use_splitpoints • hemibrainr</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -42,12 +42,8 @@
 
 
 
-<meta property="og:title" content="Determine a neuron's dendrite and axon by calculating flow centrality — flow_centrality" />
-<meta property="og:description" content="implementation of the algorithm for calculating flow
-  centralities from Schneider-Mizell et al. (2016).
-  Can be used on nat::neuronlist
-  objects read using neuprint_read_neurons. The example code
-  below gives the recommended arguments when using hemibrain data." />
+<meta property="og:title" content="Split a neuron using stored 'splitpoints' — hemibrain_use_splitpoints" />
+<meta property="og:description" content="Split a neuron using a data.frame of stored split points." />
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
 
@@ -117,29 +113,16 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Determine a neuron's dendrite and axon by calculating flow centrality</h1>
+    <h1>Split a neuron using stored 'splitpoints'</h1>
     <small class="dont-index">Source: <a href='https://github.com/flyconnectome/hemibrainr/blob/master/R/hemibrain_split.R'><code>R/hemibrain_split.R</code></a></small>
-    <div class="hidden name"><code>flow_centrality.Rd</code></div>
+    <div class="hidden name"><code>hemibrain_use_splitpoints.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>implementation of the algorithm for calculating flow
-  centralities from Schneider-Mizell et al. (2016).
-  Can be used on <code><a href='https://rdrr.io/pkg/nat/man/neuronlist.html'>nat::neuronlist</a></code>
-  objects read using <code>neuprint_read_neurons</code>. The example code
-  below gives the recommended arguments when using hemibrain data.</p>
+    <p>Split a neuron using a <code>data.frame</code> of stored split points.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>flow_centrality</span>(
-  <span class='no'>x</span>,
-  <span class='kw'>mode</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"centrifugal"</span>, <span class='st'>"centripetal"</span>, <span class='st'>"sum"</span>),
-  <span class='kw'>polypre</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>soma</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>primary.dendrite</span> <span class='kw'>=</span> <span class='fl'>0.9</span>,
-  <span class='kw'>bending.flow</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>split</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"distance"</span>, <span class='st'>"postsynapses"</span>, <span class='st'>"presynapses"</span>),
-  <span class='no'>...</span>
-)</pre>
+    <pre class="usage"><span class='fu'>hemibrain_use_splitpoints</span>(<span class='no'>x</span>, <span class='no'>df</span>, <span class='kw'>knn</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -151,45 +134,16 @@ that this neuron has been read in by <code><a href='https://rdrr.io/pkg/neuprint
 possibly <code>catmaid::read.neurons.catmaid</code>.</p></td>
     </tr>
     <tr>
-      <th>mode</th>
-      <td><p>type of flow centrality to calculate. There are three flavours:
-(1) centrifugal, which counts paths from proximal inputs to distal outputs;
-(2) centripetal, which counts paths from distal inputs to proximal outputs;
-and (3) the sum of both.</p></td>
+      <th>df</th>
+      <td><p>a <code>data.frame</code> of splitpoints from running <code><a href='flow_centrality.html'>flow_centrality</a></code>,
+as produced by <code><a href='hemibrain_splitpoints.html'>hemibrain_splitpoints</a></code>.</p></td>
     </tr>
     <tr>
-      <th>polypre</th>
-      <td><p>whether to consider the number of presynapses as a multiple of
-the numbers of connections each makes</p></td>
-    </tr>
-    <tr>
-      <th>soma</th>
-      <td><p>logical, whether or not the given neuron has a soma.
-The soma should be its root. If it does, <code><a href='primary_neurite.html'>primary_neurite</a></code>
-will be called to make sure the primary neurite is labelled correctly.</p></td>
-    </tr>
-    <tr>
-      <th>primary.dendrite</th>
-      <td><p>whether to try to assign nodes to a 'primary
-dendrite'. Defaults to considering nodes of 0.9*maximal flow centrality.
-Assigning to NULL will prevent generating this compartment.</p></td>
-    </tr>
-    <tr>
-      <th>bending.flow</th>
-      <td><p>we may need to add the 'bending flow' to all
-the branchpoints if looking at centripetal flow centrality.</p></td>
-    </tr>
-    <tr>
-      <th>split</th>
-      <td><p>the algorithm will assign two main neurite compartments,
-which as per SWC format will be indicates as either axon (Label =2)
-or dendrite (Label = 3) in the returned objects, at neuron$d$Label.
-This assignment can be based which compartment contains the most
-postsynapses ("postsynapses") or presynapses ("presynapses"),
-or the geodesic distance of its first branch point from the primary branch
-point (i.e. the first branch point from the soma) ("distance").
-The compartment closest to this branchpoint is most usually the dendrite
-(Bates &amp; Schlegel 2020).</p></td>
+      <th>knn</th>
+      <td><p>logical, whether or not to find corresponding points
+between <code>df</code> and <code>k</code> using a nearest neighbour search in 3D
+space (TRUE) or just use the given point IDs in <code>df</code> (i.e. if neurons
+have not been resampled or their skeletons otherwise modified).</p></td>
     </tr>
     <tr>
       <th>...</th>
@@ -199,35 +153,11 @@ The compartment closest to this branchpoint is most usually the dendrite
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>the neuron or neuron list object inputted, with centripetal flow
-  centrality information added to neuron$d and a segregation index score.
-  The neuron$d$Label now gives the compartment, where axon is Label = 2,
-  dendrite Label = 3, primary dendrite Label = 9 and
-  primary neurite Label = 7.
-  Soma is Label = 1.</p>
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
-    <p>From Schneider-Mizell et al. (2016): "We use flow centrality for
-  four purposes. First, to split an arbor into axon and dendrite at the
-  maximum centrifugal SFC, which is a preliminary step for computing the
-  segregation index, for expressing all kinds of connectivity edges (e.g.
-  axo-axonic, dendro-dendritic) in the wiring diagram, or for rendering the
-  arbor in 3d with differently colored regions. Second, to quantitatively
-  estimate the cable distance between the axon terminals and dendritic arbor
-  by measuring the amount of cable with the maximum centrifugal SFC value.
-  Third, to measure the cable length of the main dendritic shafts using
-  centripetal SFC, which applies only to insect neurons with at least one
-  output syn- apse in their dendritic arbor. And fourth, to weigh the color
-  of each skeleton node in a 3d view, providing a characteristic signature of
-  the arbor that enables subjective evaluation of its identity."</p>
-    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
-
-    <p>Schneider-Mizell, C. M., Gerhard, S., Longair, M., Kazimiers, T.,
-  Li, F., Zwart, M. F., … Cardona, A. (2015). Quantitative neuroanatomy for
-  connectomics in Drosophila. bioRxiv, 026617. http://doi.org/10.1101/026617</p>
+    <p>a <code>neuronlist</code></p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='primary_neurite.html'>primary_neurite</a></code>, <code><a href='hemibrain_skeleton_check.html'>hemibrain_skeleton_check</a></code></p></div>
+    <div class='dont-index'><p><code><a href='flow_centrality.html'>flow_centrality</a></code></p>
+<p><code><a href='hemibrain_splitpoints.html'>hemibrain_splitpoints</a></code>, <code><a href='flow_centrality.html'>flow_centrality</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
@@ -244,20 +174,24 @@ The compartment closest to this branchpoint is most usually the dendrite
 )
 
 <span class='co'># Get neurons</span>
-<span class='no'>neurons</span> <span class='kw'>=</span> <span class='fu'>neuprint_read_neurons</span>(<span class='no'>tough</span>)
-
+<span class='no'>neurons</span> <span class='kw'>=</span> <span class='fu'>neuprint_read_neurons</span>(<span class='no'>tough</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Dropping given bodyids that could not be read from https://neuprint.janelia.org : 5813056323</span></div><div class='input'>
 <span class='co'># Now make sure the neurons have a soma marked</span>
 <span class='co'>## Some hemibrain neurons do not, as the soma was chopped off</span>
-<span class='no'>neurons.checked</span> <span class='kw'>=</span> <span class='fu'><a href='hemibrain_skeleton_check.html'>hemibrain_skeleton_check</a></span>(<span class='no'>neurons</span>, <span class='kw'>meshes</span> <span class='kw'>=</span> <span class='no'>hemibrain.surf</span>)</div><div class='output co'>#&gt; <span class='message'>Re-rooting 3 neurons without a soma</span></div><div class='output co'>#&gt; <span class='message'>Removing synapses at somas and along primary neurite for 30 neurons</span></div><div class='input'>
+<span class='no'>neurons.checked</span> <span class='kw'>=</span> <span class='fu'><a href='hemibrain_skeleton_check.html'>hemibrain_skeleton_check</a></span>(<span class='no'>neurons</span>, <span class='kw'>meshes</span> <span class='kw'>=</span> <span class='no'>hemibrain.surf</span>)</div><div class='output co'>#&gt; <span class='message'>Re-rooting 3 neurons without a soma</span></div><div class='output co'>#&gt; <span class='message'>Removing synapses at somas and along primary neurite for 29 neurons</span></div><div class='input'>
 <span class='co'># Split neuron</span>
 <span class='co'>## These are the recommended parameters for hemibrain neurons</span>
-<span class='no'>neurons.flow</span> <span class='kw'>=</span> <span class='fu'>flow_centrality</span>(<span class='no'>neurons.checked</span>, <span class='kw'>polypre</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+<span class='no'>neurons.flow</span> <span class='kw'>=</span> <span class='fu'><a href='flow_centrality.html'>flow_centrality</a></span>(<span class='no'>neurons.checked</span>, <span class='kw'>polypre</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
 <span class='kw'>mode</span> <span class='kw'>=</span> <span class='st'>"centrifugal"</span>,
 <span class='kw'>split</span> <span class='kw'>=</span> <span class='st'>"distance"</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: At structural_properties.c:745 :Couldn't reach some vertices</span></div><div class='output co'>#&gt; <span class='warning'>Warning: At structural_properties.c:745 :Couldn't reach some vertices</span></div><div class='input'>
+<span class='co'># Save the results</span>
+<span class='no'>splitpoints</span> <span class='kw'>=</span> <span class='fu'><a href='hemibrain_splitpoints.html'>hemibrain_splitpoints</a></span>(<span class='no'>neurons.flow</span>)
+
+<span class='co'># Re-use the results</span>
+<span class='no'>neurons.flow.2</span> <span class='kw'>=</span> <span class='fu'>hemibrain_use_splitpoints</span>(<span class='no'>neurons</span>, <span class='no'>splitpoints</span>, <span class='kw'>knn</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: ‘&gt;=’ not meaningful for factors</span></div><div class='output co'>#&gt; <span class='error'>Error in Summary.factor(structure(6L, .Label = c("1245", "1246", "273", "283", "284", "370", "371", "382", "384", "392", "396", "400", "402", "517", "1", "1069", "1072", "1165", "1389", "1565", "1568", "1578", "1961", "2310", "2321", "236", "2619", "2623", "2738", "2753", "2755", "2758", "2761", "2860", "2895", "2906", "2945", "3259", "3263", "3272", "347", "3582", "3589", "3593", "368", "3757", "3759", "3766", "3768", "3895", "3925", "4036", "4051", "4056", "4061", "4084", "4087", "4104", "4110", "1011", "1033", "1058", "1059", "1324", "1326", "183", "2334", "2371", "2380", "2392", "2400", "2559", "2571", "3187", "3212", "3214", "3217", "3219", "3220", "3224", "436", "506", "518", "723", "941", "101", "2524", "2566", "278", "279", "297", "1166", "1282", "1298", "1337", "1366", "1514", "1545", "2567", "2579", "2589", "2626", "2630", "2633", "295", "3102", "3119", "3133", "3136", "3137", "3149", "561", "579", "585", "73", "82", "840", "843", "10021", "10025", "11616", "11919", "12141", "12143", "12265", "2982", "3054", "3056", "3059", "3064", "3714", "3729", "4696", "4752", "4765", "4786", "7385", "7396", "7505", "7509", "7567", "7677", "7786", "7906", "7939", "7946", "7967", "8033", "8053", "9490", "9494", "9497", "9500", "9503", "9516", "9531", "9536", "9540", "9543", "9546", "9557", "9560", "9562", "9579", "9585", "9591", "9798", "9807", "9842", "9887", "9893", "9990", "135", "140", "2133", "2144", "2302", "2322", "2324", "2326", "2336", "2339", "2482", "2561", "2716", "2762", "2765", "2781", "2819", "3065", "3080", "3081", "3101", "3107", "3110", "3116", "375", "376", "100", "104", "175", "1821", "1824", "237", "260", "261", "2934", "3445", "3482", "3733", "3883", "3912", "3916", "3918", "3962", "4096", "2", "296", "300", "3648", "3658", "3666", "3838", "3945", "3957", "4215", "4242", "4244", "4246", "4248", "4250", "4254", "4259", "4262", "4264", "4265", "4270", "4272", "632", "695", "740", "741", "746", "1042", "1076", "1082", "1085", "1087", "330", "5309", "5347", "5375", "5379", "5384", "5422", "5482", "5495", "550", "5506", "5510", "553", "5610", "5626", "5629", "5632", "6", "6794", "6801", "6887", "6890", "6899", "6903", "6910", "1053", "1055", "1284", "1289", "1572", "1812", "1815", "1817", "1822", "574", "861", "862", "885", "887", "892", "902", "904", "907", "1205", "1207", "1208", "1247", "1249", "1705", "2231", "2232", "2239", "2241", "2244", "2248", "2252", "2259", "2265", "2271", "2274", "2276", "1257", "1263", "1264", "1383", "1395", "3223", "3235", "3238", "3438", "3442", "3443", "3447", "3449", "3456", "3459", "3466", "3469", "3481", "3489", "3493", "3623", "3626", "3640", "2318", "2412", "3023", "3031", "3411", "3597", "3608", "3609", "3614", "3620", "3629", "3633", "3635", "3638", "3656", "3662", "3702", "3706", "3736", "2142", "2148", "2174", "2176", "2178", "244", "287", "435", "640", "641", "653", "675", "699", "704", "866", "871", "12", "1557", "1584", "1596", "1611", "1616", "234", "369", "3854", "3905", "4153", "4204", "4241", "4273", "4277", "4286", "4288", "4293", "4298", "4299", "1086", "1089", "3478", "3529", "3664", "3668", "3678", "3681", "3703", "4095", "4351", "5112", "5141", "5158", "5161", "5166", "5169", "5173", "5179", "5183", "5186", "5189", "5192", "5194", "932", "2883", "2884", "2918", "2920", "2925", "2933", "2935", "2938", "2948", "587", "734", "735", "742", "87", "922", "1943", "1955", "1956", "2061", "2635", "3333", "3336", "3346", "3348", "3351", "3373", "3419", "3545", "3643", "3655", "3659", "3661", "1945", "1947", "3216", "3329", "3332", "3377", "3412", "3572", "3580", "3583", "3587", "3592", "3612", "3645", "1516", "1519", "1522", "1527", "1644", "1662", "239", "240", "253", "2584", "2588", "2591", "2594", "2595", "2603", "97", "2180", "2184", "2185", "2299", "2306", "2890", "3129", "3357", "3358", "3360", "1553", "1562", "1625", "1696", "1856", "1857", "3091", "3127", "3243", "3405", "3407", "4353", "4357", "4360", "9396", "9397", "9435", "9457", "9461", "9464", "9466", "9470", "9477", "1484", "1491", "1492", "1684", "1685", "1691", "1693", "1708", "1713", "1717", "1725", "1733", "2652", "2656", "2990", "3004", "1180", "1195", "1251", "1259", "2347", "2349", "2378", "2442", "2668", "2671", "3622", "5797", "5810", "5813", "5818", "5822", "985", "986", "1396", "209", "313", "325", "5846", "5850", "5853", "5862", "5864", "5867", "5875", "1459", "1460", "1465", "3573", "4232", "4252", "4258", "4261", "894", "897", "1971", "1981", "1982", "2236", "2269", "2437", "2469", "314", "315", "577", "1221", "1488", "1494", "1508", "1511", "1521", "1523", "1526", "1528", "1530", "1532", "1534", "1567", "247", "4", "488", "5", "538"), class = "factor"), na.rm = FALSE): ‘max’ not meaningful for factors</span></div><div class='input'>
 <span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
 <span class='co'># Plot the split to check it</span>
 <span class='kw pkg'>nat</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/nat/man/nopen3d.html'>nopen3d</a></span>()
-<span class='fu'><a href='plot3d_split.html'>nlscan_split</a></span>(<span class='no'>neurons.flow</span>, <span class='kw'>WithConnectors</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
+<span class='fu'><a href='plot3d_split.html'>nlscan_split</a></span>(<span class='no'>neurons.flow2</span>, <span class='kw'>WithConnectors</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
 
 }<span class='co'># }</span></div></pre>
   </div>
@@ -266,8 +200,6 @@ The compartment closest to this branchpoint is most usually the dendrite
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
       <li><a href="#value">Value</a></li>
-      <li><a href="#details">Details</a></li>
-      <li><a href="#references">References</a></li>
       <li><a href="#see-also">See also</a></li>
       <li><a href="#examples">Examples</a></li>
     </ul>
