@@ -10,10 +10,11 @@ test_that("hemibrain_skeleton_check works", {
   )
 
   # Read in these neurons
-  neurons = neuprintr::neuprint_read_neurons(ids[1:2])
+  expect_is(neurons <- neuprintr::neuprint_read_neurons(ids[1:2]), 'neuronlist')
+  expect_is(neurons[[1]], 'neuron')
 
   # Re-root
-  expect_is(neuron.checked <-  hemibrain_skeleton_check(neurons), 'neuronlist')
+  expect_is(neuron.checked <- hemibrain_skeleton_check(neurons), 'neuronlist')
   expect_is(neuron.checked[[1]], 'neuprintneuron')
 })
 
