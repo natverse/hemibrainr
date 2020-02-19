@@ -31,7 +31,9 @@ Imports:
     dplyr,
     magrittr,
     nabor,
-    reshape2
+    reshape2,
+    stringr,
+    memoise
 Remotes: 
     natverse/neuprintr
 Language: en-GB
