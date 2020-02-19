@@ -161,7 +161,7 @@ cached_read_sheet <- function(id, forget=FALSE, ...) {
   cached_read_sheet_memo(id, ...)
 }
 
-cached_read_sheet_memo <- memoise::memoise(function(id, ...) {
-  googlesheets4::read_sheet(id, ...)
+cached_read_sheet_memo <- memoise::memoise(function(id, sheet=NULL) {
+  googlesheets4::read_sheet(id, sheet=sheet)
 }, ~memoise::timeout(3600))
 
