@@ -166,16 +166,13 @@ possibly <code>catmaid::read.neurons.catmaid</code>.</p></td>
 <span class='no'>id</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"452677169"</span>)
 
 <span class='co'># Read in these neurons</span>
-<span class='no'>neuron</span> <span class='kw'>=</span> <span class='fu'>neuprint_read_neurons</span>(<span class='no'>id</span>)
-
+<span class='no'>neuron</span> <span class='kw'>=</span> <span class='fu'>neuprint_read_neurons</span>(<span class='no'>id</span>)</div><div class='output co'>#&gt; <span class='error'>Error in neuprint_read_neurons(id): Error: none of the given bodyids have skeletons that could be fetched</span></div><div class='input'>
 <span class='co'># Re-root</span>
 <span class='no'>neuron.flow</span> <span class='kw'>=</span> <span class='fu'><a href='flow_centrality.html'>flow_centrality</a></span>(<span class='no'>neuron</span>, <span class='kw'>polypre</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
 <span class='kw'>mode</span> <span class='kw'>=</span> <span class='st'>"centrifugal"</span>,
-<span class='kw'>split</span> <span class='kw'>=</span> <span class='st'>"distance"</span>)
-
+<span class='kw'>split</span> <span class='kw'>=</span> <span class='st'>"distance"</span>)</div><div class='output co'>#&gt; <span class='error'>Error in UseMethod("flow_centrality"): no applicable method for 'flow_centrality' applied to an object of class "function"</span></div><div class='input'>
 <span class='co'># Let's check that this worked</span>
-<span class='no'>syns</span> <span class='kw'>=</span> <span class='fu'>hemibrain_extract_synapses</span>(<span class='no'>neuron.flow</span>)
-
+<span class='no'>syns</span> <span class='kw'>=</span> <span class='fu'>hemibrain_extract_synapses</span>(<span class='no'>neuron.flow</span>)</div><div class='output co'>#&gt; <span class='error'>Error in is.neuronlist(x): object 'neuron.flow' not found</span></div><div class='input'>
 <span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
 <span class='co'># See result</span>
 <span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>nat</span>)
