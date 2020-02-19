@@ -231,7 +231,7 @@ flow_centrality.neuron <- function(x,
   p.n = p.n[1:ifelse(sum(p.n%in%highs)>1,min(which(p.n%in%highs)),length(p.n))]
   primary.branch.points = p.n[p.n%in%nat::branchpoints(nodes)]
   primary.branch.point = primary.branch.points[length(primary.branch.points)]
-  primary.branch.point.downstream = suppressWarnings(unique(unlist(igraph::shortest_paths(n, primary.branch.points, to = leaves, mode = "in")$vpath)))
+  primary.branch.point.downstream = suppressWarnings(unique(unlist(igraph::shortest_paths(n, as.numeric(primary.branch.points), to = as.numeric(leaves), mode = "in")$vpath)))
   downstream.unclassed = downstream[!downstream %in% c(p.n,highs, root, leaves, primary.branch.point)]
   remove = rownames(nodes)[!rownames(nodes) %in% intersect(downstream.unclassed,primary.branch.point.downstream)]
   downstream.g = igraph::delete_vertices(n, v = as.character(remove))
@@ -244,7 +244,7 @@ flow_centrality.neuron <- function(x,
     bps.all = intersect(nat::branchpoints(nodes),main1)
     bps.downstream = bps.all[bps.all %in% downstream.unclassed]
     runstoprimarybranchpoint = unlist(lapply(bps.downstream,
-                                             function(x) length(unlist(suppressWarnings(igraph::shortest_paths(n,to = downstream.tract.parent, from = x)$vpath)))))
+                                             function(x) length(unlist(suppressWarnings(igraph::shortest_paths(n,to = as.numeric(downstream.tract.parent), from = x)$vpath)))))
     downstream.tract.parent = bps.downstream[which.min(runstoprimarybranchpoint)]
   }
   upstream.unclassed = upstream[!upstream %in% c(p.n, highs, root, leaves, primary.branch.point)]
@@ -259,7 +259,7 @@ flow_centrality.neuron <- function(x,
   if (sum(upstream.tract.parent %in% c(p.n,highs,primary.branch.point)) > 0) {
     bps.all = intersect(nat::branchpoints(nodes),main2)
     bps.upstream = bps.all[bps.all %in% upstream.unclassed]
-    runstoprimarybranchpoint = unlist(lapply(bps.upstream,function(x) length(unlist(suppressWarnings(igraph::shortest_paths(n,to = upstream.tract.parent, from = x)$vpath)))))
+    runstoprimarybranchpoint = unlist(lapply(bps.upstream,function(x) length(unlist(suppressWarnings(igraph::shortest_paths(n,to = as.numeric(upstream.tract.parent), from = x)$vpath)))))
     upstream.tract.parent = bps.upstream[which.min(runstoprimarybranchpoint)]
   }
   if (grepl("synapses", split)) {
@@ -283,8 +283,8 @@ flow_centrality.neuron <- function(x,
     }
   }
   if (split == "distance") {
-    dist.upstream.to.primary.branchpoint = length(unlist(igraph::shortest_paths(n,to = primary.branch.point, from = upstream.tract.parent)$vpath))
-    dist.downstream.to.primary.branchpoint = length(unlist(igraph::shortest_paths(n,to = primary.branch.point, from = downstream.tract.parent)$vpath))
+    dist.upstream.to.primary.branchpoint = length(unlist(igraph::shortest_paths(n,to = as.numeric(primary.branch.point), from = as.numeric(upstream.tract.parent))$vpath))
+    dist.downstream.to.primary.branchpoint = length(unlist(igraph::shortest_paths(n,to = as.numeric(primary.branch.point), from = as.numeric(downstream.tract.parent))$vpath))
     if (dist.upstream.to.primary.branchpoint < dist.downstream.to.primary.branchpoint) {
       nodes[as.character(downstream.unclassed), "Label"] = 2
       axon.nodes = downstream.unclassed
@@ -484,12 +484,12 @@ hemibrain_use_splitpoints.neuron <-function(x, df, knn = FALSE, ...){
   }
 
   # Find point indexes
-  root = df[df$point=="root","position"]
-  primary.branch.point = df[df$point=="primary.branch.point","position"]
-  axon.start = df[grepl("axon.start",df$point),"position"]
-  dendrite.start = df[grepl("dendrite.start",df$point),"position"]
-  axon.primary = df[grepl("axon.primary",df$point),"position"]
-  dendrite.primary = df[grepl("dendrite.primary",df$point),"position"]
+  root = as.numeric(df[df$point=="root","position"])
+  primary.branch.point = as.numeric(df[df$point=="primary.branch.point","position"])
+  axon.start = as.numeric(df[grepl("axon.start",df$point),"position"])
+  dendrite.start = as.numeric(df[grepl("dendrite.start",df$point),"position"])
+  axon.primary = as.numeric(df[grepl("axon.primary",df$point),"position"])
+  dendrite.primary = as.numeric(df[grepl("dendrite.primary",df$point),"position"])
 
   # Assign root and mark soma
   y = nat::as.neuron(nat::as.ngraph(x$d), origin = root)
@@ -499,11 +499,11 @@ hemibrain_use_splitpoints.neuron <-function(x, df, knn = FALSE, ...){
   y$d$Label = 3 # dendrite by default
 
   # Assign other cable
-  pnt = suppressWarnings(unique(unlist(igraph::shortest_paths(n, from = root, to = primary.branch.point, mode = "out")$vpath)))
-  pd = suppressWarnings(unique(unlist(igraph::shortest_paths(n, from = dendrite.primary, to = axon.primary, mode = "all")$vpath)))
-  leaves = nat::endpoints(y)
+  pnt = suppressWarnings(unique(unlist(igraph::shortest_paths(n, from = as.numeric(root), to = as.numeric(primary.branch.point), mode = "out")$vpath)))
+  pd = suppressWarnings(unique(unlist(igraph::shortest_paths(n, from = as.numeric(dendrite.primary), to = as.numeric(axon.primary), mode = "all")$vpath)))
+  leaves = as.numeric(nat::endpoints(y))
   axon = suppressWarnings(
-    unique(unlist(sapply(axon.start,function(s) unlist(igraph::shortest_paths(n, from=s, to = leaves, mode = c("out"))$vpath))))
+    unique(unlist(sapply(as.numeric(axon.start),function(s) unlist(igraph::shortest_paths(n, from=s, to = leaves, mode = c("out"))$vpath))))
   )
   # dendrite = suppressWarnings(
   #   unique(unlist(sapply(dendrite.start,function(s) unlist(igraph::shortest_paths(n, from=s, to = leaves, mode = c("out"))$vpath))))
