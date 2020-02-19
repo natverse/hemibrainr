@@ -86,7 +86,7 @@
 #'
 #' # Split neuron
 #' ## These are the recommended parameters for hemibrain neurons
-#' neurons.flow = flow_centrality(neurons.checked, polypre = TRUE,
+#' neurons.flow = flow_centrality(neurons.checked, polypre = FALSE,
 #' mode = "centrifugal",
 #' split = "distance")
 #'
@@ -100,7 +100,7 @@
 #' @seealso \code{\link{primary_neurite}}, \code{\link{hemibrain_skeleton_check}}
 flow_centrality <-function(x,
                            mode = c("centrifugal", "centripetal", "sum"),
-                           polypre = TRUE,
+                           polypre = FALSE,
                            soma = TRUE,
                            primary.dendrite = 0.9,
                            bending.flow = FALSE,
@@ -110,7 +110,7 @@ flow_centrality <-function(x,
 #' @export
 flow_centrality.neuron <- function(x,
                                    mode = c("centrifugal", "centripetal", "sum"),
-                                   polypre = TRUE,
+                                   polypre = FALSE,
                                    soma = TRUE,
                                    primary.dendrite = 0.9,
                                    bending.flow = FALSE,
@@ -202,7 +202,7 @@ flow_centrality.neuron <- function(x,
   ais = which(apply(nodes, 1, function(x) x["flow.cent"] == max(nodes[, "flow.cent"])))
   if (length(ais) > 0) {
     runstosoma = unlist(lapply(ais, function(x) length(unlist(igraph::shortest_paths(n,x, to = root)$vpath))))
-    ais = ais[match(min(runstosoma), runstosoma)]
+    ais = as.numeric(ais[match(min(runstosoma), runstosoma)])
   }
   downstream = suppressWarnings(unique(unlist(igraph::shortest_paths(n, ais, to = leaves, mode = "in")$vpath)))
   upstream = rownames(nodes)[!rownames(nodes) %in% downstream]
@@ -357,7 +357,7 @@ flow_centrality.neuron <- function(x,
 #' @export
 flow_centrality.neuronlist <- function(x,
                                        mode = c("centrifugal", "centripetal", "sum"),
-                                       polypre = TRUE,
+                                       polypre = FALSE,
                                        soma = TRUE,
                                        primary.dendrite = 0.9,
                                        bending.flow = FALSE,
@@ -448,7 +448,7 @@ hemibrain_splitpoints <- function(x){
 #'
 #' # Split neuron
 #' ## These are the recommended parameters for hemibrain neurons
-#' neurons.flow = flow_centrality(neurons.checked, polypre = TRUE,
+#' neurons.flow = flow_centrality(neurons.checked, polypre = FALSE,
 #' mode = "centrifugal",
 #' split = "distance")
 #'
