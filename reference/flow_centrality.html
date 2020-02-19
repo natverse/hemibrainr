@@ -133,7 +133,7 @@
     <pre class="usage"><span class='fu'>flow_centrality</span>(
   <span class='no'>x</span>,
   <span class='kw'>mode</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"centrifugal"</span>, <span class='st'>"centripetal"</span>, <span class='st'>"sum"</span>),
-  <span class='kw'>polypre</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>polypre</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>soma</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>primary.dendrite</span> <span class='kw'>=</span> <span class='fl'>0.9</span>,
   <span class='kw'>bending.flow</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
@@ -251,7 +251,7 @@ The compartment closest to this branchpoint is most usually the dendrite
 <span class='no'>neurons.checked</span> <span class='kw'>=</span> <span class='fu'><a href='hemibrain_skeleton_check.html'>hemibrain_skeleton_check</a></span>(<span class='no'>neurons</span>, <span class='kw'>meshes</span> <span class='kw'>=</span> <span class='no'>hemibrain.surf</span>)</div><div class='output co'>#&gt; <span class='message'>Re-rooting 3 neurons without a soma</span></div><div class='output co'>#&gt; <span class='message'>Removing synapses at somas and along primary neurite for 30 neurons</span></div><div class='input'>
 <span class='co'># Split neuron</span>
 <span class='co'>## These are the recommended parameters for hemibrain neurons</span>
-<span class='no'>neurons.flow</span> <span class='kw'>=</span> <span class='fu'>flow_centrality</span>(<span class='no'>neurons.checked</span>, <span class='kw'>polypre</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+<span class='no'>neurons.flow</span> <span class='kw'>=</span> <span class='fu'>flow_centrality</span>(<span class='no'>neurons.checked</span>, <span class='kw'>polypre</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
 <span class='kw'>mode</span> <span class='kw'>=</span> <span class='st'>"centrifugal"</span>,
 <span class='kw'>split</span> <span class='kw'>=</span> <span class='st'>"distance"</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: At structural_properties.c:745 :Couldn't reach some vertices</span></div><div class='output co'>#&gt; <span class='warning'>Warning: At structural_properties.c:745 :Couldn't reach some vertices</span></div><div class='input'>
 <span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
