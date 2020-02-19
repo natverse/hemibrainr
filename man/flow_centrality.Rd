@@ -7,7 +7,7 @@
 flow_centrality(
   x,
   mode = c("centrifugal", "centripetal", "sum"),
-  polypre = TRUE,
+  polypre = FALSE,
   soma = TRUE,
   primary.dendrite = 0.9,
   bending.flow = FALSE,
@@ -104,7 +104,7 @@ neurons.checked = hemibrain_skeleton_check(neurons, meshes = hemibrain.surf)
 
 # Split neuron
 ## These are the recommended parameters for hemibrain neurons
-neurons.flow = flow_centrality(neurons.checked, polypre = TRUE,
+neurons.flow = flow_centrality(neurons.checked, polypre = FALSE,
 mode = "centrifugal",
 split = "distance")
 
