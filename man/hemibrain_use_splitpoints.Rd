@@ -64,7 +64,6 @@ neurons.flow.2 = hemibrain_use_splitpoints(neurons, splitpoints, knn = FALSE)
 # Plot the split to check it
 nat::nopen3d()
 nlscan_split(neurons.flow2, WithConnectors = TRUE)
-
 }}
 }
 \seealso{

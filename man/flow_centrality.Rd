@@ -121,5 +121,6 @@ Schneider-Mizell, C. M., Gerhard, S., Longair, M., Kazimiers, T.,
   connectomics in Drosophila. bioRxiv, 026617. http://doi.org/10.1101/026617
 }
 \seealso{
-\code{\link{primary_neurite}}, \code{\link{hemibrain_skeleton_check}}
+\code{\link{primary_neurite}}, \code{\link{hemibrain_skeleton_check}}, \code{\link{hemibrain_flow_centrality}}, \code{\link{hemibrain_use_splitpoints}}
+\code{\link{hemibrain_splitpoints}},
 }
