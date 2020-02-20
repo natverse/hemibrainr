@@ -1,4 +1,4 @@
-## code to prepare `DATASET` dataset goes here
+## code to prepare datasets
 hemibrain_splitpoints_distance <- read.csv("data-raw/hemibrain_all_neurons_splitpoints.csv")
 hemibrain_metrics <- read.csv("data-raw/hemibrain_all_neurons_metrics.csv")
 rownames(hemibrain_metrics) <- hemibrain_metrics$bodyid

@@ -36,12 +36,12 @@ compartment_metrics <- function(x, resample = 125, delta = 125, locality = TRUE)
 
   # Synapses
   syns = tryCatch(hemibrain_extract_synapses(x), error = function(e) NULL)
-  axon.pre = tryCatch(sum(syns$prepost==0&syns$Label==2), error = function(e) NA)
-  dend.pre = tryCatch(sum(syns$prepost==0&syns$Label==3), error = function(e) NA)
-  axon.post = tryCatch(sum(syns$prepost==1&syns$Label==2), error = function(e) NA)
-  dend.post = tryCatch(sum(syns$prepost==1&syns$Label==3), error = function(e) NA)
-  total.pre = tryCatch(sum(syns$prepost==0), error = function(e) NA)
-  total.post = tryCatch(sum(syns$prepost==1), error = function(e) NA)
+  axon.outputs = tryCatch(sum(syns$prepost==0&syns$Label==2), error = function(e) NA)
+  dend.outputs = tryCatch(sum(syns$prepost==0&syns$Label==3), error = function(e) NA)
+  axon.inputs = tryCatch(sum(syns$prepost==1&syns$Label==2), error = function(e) NA)
+  dend.inputs = tryCatch(sum(syns$prepost==1&syns$Label==3), error = function(e) NA)
+  total.outputs = tryCatch(sum(syns$prepost==0), error = function(e) NA)
+  total.inputs = tryCatch(sum(syns$prepost==1), error = function(e) NA)
 
   # Segregation
   si = tryCatch(x$AD.segregation.index, error = function(e) NA)
@@ -59,18 +59,18 @@ compartment_metrics <- function(x, resample = 125, delta = 125, locality = TRUE)
 
   # Assemble
   met = tryCatch(data.frame(
-             total.pre = nullToNA(total.pre),
-             total.post = nullToNA(total.post),
-             axon.pre = nullToNA(axon.pre),
-             dend.pre = nullToNA(dend.pre),
-             axon.post = nullToNA(axon.post),
-             dend.post = nullToNA(dend.post),
-             total.pre.density = nullToNA(total.pre)/nullToNA(total.length),
-             total.post.density = nullToNA(total.post)/nullToNA(total.length),
-             axon.pre.density = nullToNA(axon.pre)/nullToNA(axon.length),
-             dend.pre.density = nullToNA(dend.pre)/nullToNA(dend.length),
-             axon.post.density = nullToNA(axon.post)/nullToNA(axon.length),
-             dend.post.density = nullToNA(dend.post)/nullToNA(dend.length),
+             total.outputs = nullToNA(total.outputs),
+             total.inputs = nullToNA(total.inputs),
+             axon.outputs = nullToNA(axon.outputs),
+             dend.outputs = nullToNA(dend.outputs),
+             axon.inputs = nullToNA(axon.inputs),
+             dend.inputs = nullToNA(dend.inputs),
+             total.outputs.density = nullToNA(total.outputs)/nullToNA(total.length),
+             total.inputs.density = nullToNA(total.inputs)/nullToNA(total.length),
+             axon.outputs.density = nullToNA(axon.outputs)/nullToNA(axon.length),
+             dend.outputs.density = nullToNA(dend.outputs)/nullToNA(dend.length),
+             axon.inputs.density = nullToNA(axon.inputs)/nullToNA(axon.length),
+             dend.inputs.density = nullToNA(dend.inputs)/nullToNA(dend.length),
              total.length = nullToNA(total.length),
              axon.length= nullToNA(axon.length),
              dend.length= nullToNA(dend.length),
