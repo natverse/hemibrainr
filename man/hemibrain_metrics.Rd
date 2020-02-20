@@ -6,7 +6,7 @@
 \title{Neuron metrics for all neurons in the hemibrain dataset}
 \format{An object of class \code{data.frame} with 21628 rows and 29 columns.}
 \source{
-\url{https://www.biorxiv.org/content/10.1101/2020.01.19.911453v1}
+\url{https://elifesciences.org/articles/44590}
 }
 \usage{
 hemibrain_metrics
