@@ -58,10 +58,11 @@
 #' @references Frechter, Shahar, Alexander Shakeel Bates, Sina Tootoonian, Michael-John Dolan, James D. Manton, Arian Rokkum Jamasb, Johannes Kohl, Davi Bock, and Gregory Sxe Jefferis. 2019.
 #' “Functional and Anatomical Specificity in a Higher Olfactory Centre.” eLife 8 (May). https://doi.org/10.7554/eLife.44590.
 #'
-#' @source \url{https://www.biorxiv.org/content/10.1101/2020.01.19.911453v1}
+#' @source \url{https://elifesciences.org/articles/44590}
 #' @seealso \code{\link{hemibrain_flow_centrality}}, \code{\link{hemibrain_splitpoints_distance}}, \code{\link{axonic_cable}}, \code{\link{dendritic_cable}}
 #' @examples
 #' \donttest{
 #' hist(hemibrain_metrics$overlap_locality,breaks = 1000)
 #' }
 "hemibrain_metrics"
+
