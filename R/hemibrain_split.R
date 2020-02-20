@@ -97,7 +97,8 @@
 #'
 #' }}
 #' @export
-#' @seealso \code{\link{primary_neurite}}, \code{\link{hemibrain_skeleton_check}}
+#' @seealso \code{\link{primary_neurite}}, \code{\link{hemibrain_skeleton_check}}, \code{\link{hemibrain_flow_centrality}}, \code{\link{hemibrain_use_splitpoints}}
+#' \code{\link{hemibrain_splitpoints}},
 flow_centrality <-function(x,
                            mode = c("centrifugal", "centripetal", "sum"),
                            polypre = FALSE,
@@ -423,6 +424,8 @@ hemibrain_splitpoints <- function(x){
 #' space (TRUE) or just use the given point IDs in \code{df} (i.e. if neurons
 #' have not been resampled or their skeletons otherwise modified).
 #'
+#' @inherit flow_centrality return
+#'
 #' @return a \code{neuronlist}
 #' @seealso \code{\link{flow_centrality}}
 #' @examples
@@ -462,7 +465,6 @@ hemibrain_splitpoints <- function(x){
 #' # Plot the split to check it
 #' nat::nopen3d()
 #' nlscan_split(neurons.flow2, WithConnectors = TRUE)
-#'
 #' }}
 #' @export
 #' @seealso \code{\link{hemibrain_splitpoints}}, \code{\link{flow_centrality}}
@@ -537,4 +539,87 @@ hemibrain_use_splitpoints.neuronlist <-function(x, df, knn = FALSE, ...){
                          ...)
   neurons
 }
+
+#' Split neurons into axon and dendrites using pre-computed split points
+#'
+#' @description Split a neuron into its putative axon and dendrite,
+#'  using a \code{data.frame} of precomputed split points. We have already pre-computed
+#'  splits for all neurons and stored them in this package as \code{\link{hemibrain_splitpoints_distance}}.
+#'  This is helpful because  \code{\link{flow_centrality}} can take a long time to run on a large
+#'  number of neurons.
+#'
+#' @inheritParams flow_centrality
+#' @param splitpoints a \code{data.frame} of splitpoints from running \code{\link{flow_centrality}},
+#' as produced by \code{\link{hemibrain_splitpoints}}. If set to \code{NULL} precomputed splitpoints
+#' are used, \code{\link{hemibrain_splitpoints_distance}}.
+#' @inheritParams hemibrain_use_splitpoints
+#' @param df a \code{data.frame} of splitpoints from running \code{\link{flow_centrality}},
+#' as produced by \code{\link{hemibrain_splitpoints}}.
+#' @param knn logical, whether or not to find corresponding points
+#' between \code{df} and \code{k} using a nearest neighbour search in 3D
+#' space (TRUE) or just use the given point IDs in \code{df} (i.e. if neurons
+#' have not been resampled or their skeletons otherwise modified).
+#'
+#' @inherit flow_centrality return details references
+#'
+#' @return a \code{neuronlist}
+#' @seealso \code{\link{flow_centrality}}
+#' @examples
+#' \donttest{
+#'
+#' # Choose some neurons
+#' exemplars = c("202916528", "1279775082",  "203253072",
+#' "326530038",  "203253253", "5813079341")
+#'
+#' # Get neurons
+#' neurons = neuprint_read_neurons(exemplars)
+#'
+#' # Now use a pre-saved axon-dendrite split
+#' neurons.flow = hemibrain_flow_centrality(neurons)
+#'
+#' \dontrun{
+#' # Plot the split to check it
+#' nat::nopen3d()
+#' nlscan_split(neurons.flow, WithConnectors = TRUE)
+#' }}
+#' @export
+#' @seealso \code{\link{hemibrain_splitpoints}}, \code{\link{flow_centrality}}, \code{\link{hemibrain_use_splitpoints}}
+hemibrain_flow_centrality <-function(x,
+                                     splitpoints = hemibrain_splitpoints_distance,
+                                     knn = FALSE,
+                                     ...) UseMethod("hemibrain_flow_centrality")
+
+#' @export
+hemibrain_flow_centrality.neuron <- function(x, splitpoints = hemibrain_splitpoints_distance, ...){
+  bi = x$bodyid
+  df = subset(splitpoints, bodyid == bi)
+  y = hemibrain_use_splitpoints(x, df, knn = knn, ...)
+  y
+}
+
+#' @export
+hemibrain_flow_centrality.neuronlist <- function(x, splitpoints = hemibrain_splitpoints_distance, knn = FALSE, ...){
+  cropped = subset(x, cropped)
+  if(length(cropped)){
+    warning(length(cropped), " neurons cropped, split likely to be inaccurate for: ", paste(names(cropped),collapse=", "))
+  }
+  untracted = subset(x, status!="Traced")
+  if(length(untracted)){
+    warning(length(untracted), " neuron do not have 'traced' status, split likely to be inaccurate for: ", paste(names(untracted),collapse=", "))
+  }
+  nosoma = subset(x, !soma)
+  if(length(untracted)){
+    warning(length(nosoma), " neurons have no soma tagged, split could be inaccurate for: ", paste(names(nosoma),collapse=", "))
+  }
+  y = hemibrain_use_splitpoints(x, splitpoints, knn = knn, ...)
+  y
+}
+
+
+
+
+
+
+
+
 
