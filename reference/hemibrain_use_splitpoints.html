@@ -141,7 +141,7 @@ as produced by <code><a href='hemibrain_splitpoints.html'>hemibrain_splitpoints<
     <tr>
       <th>knn</th>
       <td><p>logical, whether or not to find corresponding points
-between <code>df</code> and <code>k</code> using a nearest neighbour search in 3D
+between <code>df</code> and <code>x$d</code> using a nearest neighbour search in 3D
 space (TRUE) or just use the given point IDs in <code>df</code> (i.e. if neurons
 have not been resampled or their skeletons otherwise modified).</p></td>
     </tr>
@@ -194,7 +194,6 @@ have not been resampled or their skeletons otherwise modified).</p></td>
 <span class='co'># Plot the split to check it</span>
 <span class='kw pkg'>nat</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/nat/man/nopen3d.html'>nopen3d</a></span>()
 <span class='fu'><a href='plot3d_split.html'>nlscan_split</a></span>(<span class='no'>neurons.flow2</span>, <span class='kw'>WithConnectors</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
-
 }<span class='co'># }</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

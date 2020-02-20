@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Determine a neuron's dendrite and axon by calculating flow centrality — flow_centrality • hemibrainr</title>
+<title>Split neurons into axon and dendrites using pre-computed split points — hemibrain_flow_centrality • hemibrainr</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -42,12 +42,12 @@
 
 
 
-<meta property="og:title" content="Determine a neuron's dendrite and axon by calculating flow centrality — flow_centrality" />
-<meta property="og:description" content="implementation of the algorithm for calculating flow
-  centralities from Schneider-Mizell et al. (2016).
-  Can be used on nat::neuronlist
-  objects read using neuprint_read_neurons. The example code
-  below gives the recommended arguments when using hemibrain data." />
+<meta property="og:title" content="Split neurons into axon and dendrites using pre-computed split points — hemibrain_flow_centrality" />
+<meta property="og:description" content="Split a neuron into its putative axon and dendrite,
+ using a data.frame of precomputed split points. We have already pre-computed
+ splits for all neurons and stored them in this package as hemibrain_splitpoints_distance.
+ This is helpful because  flow_centrality can take a long time to run on a large
+ number of neurons." />
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
 
@@ -117,27 +117,23 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Determine a neuron's dendrite and axon by calculating flow centrality</h1>
+    <h1>Split neurons into axon and dendrites using pre-computed split points</h1>
     <small class="dont-index">Source: <a href='https://github.com/flyconnectome/hemibrainr/blob/master/R/hemibrain_split.R'><code>R/hemibrain_split.R</code></a></small>
-    <div class="hidden name"><code>flow_centrality.Rd</code></div>
+    <div class="hidden name"><code>hemibrain_flow_centrality.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>implementation of the algorithm for calculating flow
-  centralities from Schneider-Mizell et al. (2016).
-  Can be used on <code><a href='https://rdrr.io/pkg/nat/man/neuronlist.html'>nat::neuronlist</a></code>
-  objects read using <code>neuprint_read_neurons</code>. The example code
-  below gives the recommended arguments when using hemibrain data.</p>
+    <p>Split a neuron into its putative axon and dendrite,
+ using a <code>data.frame</code> of precomputed split points. We have already pre-computed
+ splits for all neurons and stored them in this package as <code><a href='hemibrain_splitpoints_distance.html'>hemibrain_splitpoints_distance</a></code>.
+ This is helpful because  <code><a href='flow_centrality.html'>flow_centrality</a></code> can take a long time to run on a large
+ number of neurons.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>flow_centrality</span>(
+    <pre class="usage"><span class='fu'>hemibrain_flow_centrality</span>(
   <span class='no'>x</span>,
-  <span class='kw'>mode</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"centrifugal"</span>, <span class='st'>"centripetal"</span>, <span class='st'>"sum"</span>),
-  <span class='kw'>polypre</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>soma</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>primary.dendrite</span> <span class='kw'>=</span> <span class='fl'>0.9</span>,
-  <span class='kw'>bending.flow</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>split</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"distance"</span>, <span class='st'>"postsynapses"</span>, <span class='st'>"presynapses"</span>),
+  <span class='kw'>splitpoints</span> <span class='kw'>=</span> <span class='no'>hemibrain_splitpoints_distance</span>,
+  <span class='kw'>knn</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='no'>...</span>
 )</pre>
 
@@ -151,45 +147,17 @@ that this neuron has been read in by <code><a href='https://rdrr.io/pkg/neuprint
 possibly <code>catmaid::read.neurons.catmaid</code>.</p></td>
     </tr>
     <tr>
-      <th>mode</th>
-      <td><p>type of flow centrality to calculate. There are three flavours:
-(1) centrifugal, which counts paths from proximal inputs to distal outputs;
-(2) centripetal, which counts paths from distal inputs to proximal outputs;
-and (3) the sum of both.</p></td>
+      <th>splitpoints</th>
+      <td><p>a <code>data.frame</code> of splitpoints from running <code><a href='flow_centrality.html'>flow_centrality</a></code>,
+as produced by <code><a href='hemibrain_splitpoints.html'>hemibrain_splitpoints</a></code>. If set to <code>NULL</code> precomputed splitpoints
+are used, <code><a href='hemibrain_splitpoints_distance.html'>hemibrain_splitpoints_distance</a></code>.</p></td>
     </tr>
     <tr>
-      <th>polypre</th>
-      <td><p>whether to consider the number of presynapses as a multiple of
-the numbers of connections each makes</p></td>
-    </tr>
-    <tr>
-      <th>soma</th>
-      <td><p>logical, whether or not the given neuron has a soma.
-The soma should be its root. If it does, <code><a href='primary_neurite.html'>primary_neurite</a></code>
-will be called to make sure the primary neurite is labelled correctly.</p></td>
-    </tr>
-    <tr>
-      <th>primary.dendrite</th>
-      <td><p>whether to try to assign nodes to a 'primary
-dendrite'. Defaults to considering nodes of 0.9*maximal flow centrality.
-Assigning to NULL will prevent generating this compartment.</p></td>
-    </tr>
-    <tr>
-      <th>bending.flow</th>
-      <td><p>we may need to add the 'bending flow' to all
-the branchpoints if looking at centripetal flow centrality.</p></td>
-    </tr>
-    <tr>
-      <th>split</th>
-      <td><p>the algorithm will assign two main neurite compartments,
-which as per SWC format will be indicates as either axon (Label =2)
-or dendrite (Label = 3) in the returned objects, at neuron$d$Label.
-This assignment can be based which compartment contains the most
-postsynapses ("postsynapses") or presynapses ("presynapses"),
-or the geodesic distance of its first branch point from the primary branch
-point (i.e. the first branch point from the soma) ("distance").
-The compartment closest to this branchpoint is most usually the dendrite
-(Bates &amp; Schlegel 2020).</p></td>
+      <th>knn</th>
+      <td><p>logical, whether or not to find corresponding points
+between <code>splitpoints</code> and <code>x$d</code> using a nearest neighbour search in 3D
+space (TRUE) or just use the given point IDs in <code>splitpoints</code> (i.e. if neurons
+have not been resampled or their skeletons otherwise modified).</p></td>
     </tr>
     <tr>
       <th>...</th>
@@ -199,12 +167,7 @@ The compartment closest to this branchpoint is most usually the dendrite
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>the neuron or neuron list object inputted, with centripetal flow
-  centrality information added to neuron$d and a segregation index score.
-  The neuron$d$Label now gives the compartment, where axon is Label = 2,
-  dendrite Label = 3, primary dendrite Label = 9 and
-  primary neurite Label = 7.
-  Soma is Label = 1.</p>
+    <p>a <code>neuronlist</code></p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>From Schneider-Mizell et al. (2016): "We use flow centrality for
@@ -227,39 +190,26 @@ The compartment closest to this branchpoint is most usually the dendrite
   connectomics in Drosophila. bioRxiv, 026617. http://doi.org/10.1101/026617</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='primary_neurite.html'>primary_neurite</a></code>, <code><a href='hemibrain_skeleton_check.html'>hemibrain_skeleton_check</a></code>, <code><a href='hemibrain_flow_centrality.html'>hemibrain_flow_centrality</a></code>, <code><a href='hemibrain_use_splitpoints.html'>hemibrain_use_splitpoints</a></code>
-<code><a href='hemibrain_splitpoints.html'>hemibrain_splitpoints</a></code>,</p></div>
+    <div class='dont-index'><p><code><a href='flow_centrality.html'>flow_centrality</a></code></p>
+<p><code><a href='hemibrain_splitpoints.html'>hemibrain_splitpoints</a></code>, <code><a href='flow_centrality.html'>flow_centrality</a></code>, <code><a href='hemibrain_use_splitpoints.html'>hemibrain_use_splitpoints</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
 
-<span class='co'># Choose neurons</span>
-<span class='co'>## These neurons are some 'tough' examples from the hemibrain:v1.0.1</span>
-<span class='co'>### They will split differently depending on the parameters you use.</span>
-<span class='no'>tough</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"5813056323"</span>, <span class='st'>"579912201"</span>, <span class='st'>"5813015982"</span>, <span class='st'>"973765182"</span>, <span class='st'>"885788485"</span>,
-<span class='st'>"915451074"</span>, <span class='st'>"5813032740"</span>, <span class='st'>"1006854683"</span>, <span class='st'>"5813013913"</span>, <span class='st'>"5813020138"</span>,
-<span class='st'>"853726809"</span>, <span class='st'>"916828438"</span>, <span class='st'>"5813078494"</span>, <span class='st'>"420956527"</span>, <span class='st'>"486116439"</span>,
-<span class='st'>"573329873"</span>, <span class='st'>"5813010494"</span>, <span class='st'>"5813040095"</span>, <span class='st'>"514396940"</span>, <span class='st'>"665747387"</span>,
-<span class='st'>"793702856"</span>, <span class='st'>"451644891"</span>, <span class='st'>"482002701"</span>, <span class='st'>"391631218"</span>, <span class='st'>"390948259"</span>,
-<span class='st'>"390948580"</span>, <span class='st'>"452677169"</span>, <span class='st'>"511262901"</span>, <span class='st'>"422311625"</span>, <span class='st'>"451987038"</span>
-)
+<span class='co'># Choose some neurons</span>
+<span class='no'>exemplars</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"202916528"</span>, <span class='st'>"1279775082"</span>,  <span class='st'>"203253072"</span>,
+<span class='st'>"326530038"</span>,  <span class='st'>"203253253"</span>, <span class='st'>"5813079341"</span>)
 
 <span class='co'># Get neurons</span>
-<span class='no'>neurons</span> <span class='kw'>=</span> <span class='fu'>neuprint_read_neurons</span>(<span class='no'>tough</span>)
+<span class='no'>neurons</span> <span class='kw'>=</span> <span class='fu'>neuprint_read_neurons</span>(<span class='no'>exemplars</span>)
 
-<span class='co'># Now make sure the neurons have a soma marked</span>
-<span class='co'>## Some hemibrain neurons do not, as the soma was chopped off</span>
-<span class='no'>neurons.checked</span> <span class='kw'>=</span> <span class='fu'><a href='hemibrain_skeleton_check.html'>hemibrain_skeleton_check</a></span>(<span class='no'>neurons</span>, <span class='kw'>meshes</span> <span class='kw'>=</span> <span class='no'>hemibrain.surf</span>)</div><div class='output co'>#&gt; <span class='message'>Re-rooting 3 neurons without a soma</span></div><div class='output co'>#&gt; <span class='message'>Removing synapses at somas and along primary neurite for 30 neurons</span></div><div class='input'>
-<span class='co'># Split neuron</span>
-<span class='co'>## These are the recommended parameters for hemibrain neurons</span>
-<span class='no'>neurons.flow</span> <span class='kw'>=</span> <span class='fu'>flow_centrality</span>(<span class='no'>neurons.checked</span>, <span class='kw'>polypre</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-<span class='kw'>mode</span> <span class='kw'>=</span> <span class='st'>"centrifugal"</span>,
-<span class='kw'>split</span> <span class='kw'>=</span> <span class='st'>"distance"</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: At structural_properties.c:745 :Couldn't reach some vertices</span></div><div class='output co'>#&gt; <span class='warning'>Warning: At structural_properties.c:745 :Couldn't reach some vertices</span></div><div class='input'>
+<span class='co'># Now use a pre-saved axon-dendrite split</span>
+<span class='no'>neurons.flow</span> <span class='kw'>=</span> <span class='fu'>hemibrain_flow_centrality</span>(<span class='no'>neurons</span>)
+
 <span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
 <span class='co'># Plot the split to check it</span>
 <span class='kw pkg'>nat</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/nat/man/nopen3d.html'>nopen3d</a></span>()
 <span class='fu'><a href='plot3d_split.html'>nlscan_split</a></span>(<span class='no'>neurons.flow</span>, <span class='kw'>WithConnectors</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
-
 }<span class='co'># }</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
