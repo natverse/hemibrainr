@@ -15,7 +15,7 @@ possibly \code{catmaid::read.neurons.catmaid}.}
 as produced by \code{\link{hemibrain_splitpoints}}.}
 
 \item{knn}{logical, whether or not to find corresponding points
-between \code{df} and \code{k} using a nearest neighbour search in 3D
+between \code{df} and \code{x$d} using a nearest neighbour search in 3D
 space (TRUE) or just use the given point IDs in \code{df} (i.e. if neurons
 have not been resampled or their skeletons otherwise modified).}
 

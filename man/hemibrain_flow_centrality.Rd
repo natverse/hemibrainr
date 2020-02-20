@@ -21,14 +21,11 @@ as produced by \code{\link{hemibrain_splitpoints}}. If set to \code{NULL} precom
 are used, \code{\link{hemibrain_splitpoints_distance}}.}
 
 \item{knn}{logical, whether or not to find corresponding points
-between \code{df} and \code{k} using a nearest neighbour search in 3D
-space (TRUE) or just use the given point IDs in \code{df} (i.e. if neurons
+between \code{splitpoints} and \code{x$d} using a nearest neighbour search in 3D
+space (TRUE) or just use the given point IDs in \code{splitpoints} (i.e. if neurons
 have not been resampled or their skeletons otherwise modified).}
 
 \item{...}{methods sent to \code{nat::nlapply}}
-
-\item{df}{a \code{data.frame} of splitpoints from running \code{\link{flow_centrality}},
-as produced by \code{\link{hemibrain_splitpoints}}.}
 }
 \value{
 a \code{neuronlist}
