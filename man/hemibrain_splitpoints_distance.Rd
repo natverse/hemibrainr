@@ -4,7 +4,7 @@
 \name{hemibrain_splitpoints_distance}
 \alias{hemibrain_splitpoints_distance}
 \title{Axon-dendrite split points calculated for the whole dataset}
-\format{An object of class \code{data.frame} with 505094 rows and 7 columns.}
+\format{An object of class \code{data.frame} with 505094 rows and 6 columns.}
 \source{
 \url{https://www.biorxiv.org/content/10.1101/2020.01.19.911453v1}
 }
@@ -13,7 +13,7 @@ hemibrain_splitpoints_distance
 }
 \description{
 Axon-dendrite split points calculated for the whole hemibrain dataset,
-hemibrain:v1.0.1. The fiel used to generate this can be found in this package,
+hemibrain:v1.0.1. The file used to generate this can be found in this package,
 as \code{data-raw/hemibrain_split_all_neurons.R}. Because synapses can be unevently
 distributed in this dataset across brain regions, after compartment detection,
 the dendrite was chosen as the neurite closest to a neuron's primary branch point.
