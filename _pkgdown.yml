@@ -31,3 +31,8 @@ reference:
     desc: ~
     contents:
     - 'grouped_adjacency'
+  - title: Annotations
+    desc: ~
+    contents:
+    - '`class2ids`'
+    - '`glomerulus`'
