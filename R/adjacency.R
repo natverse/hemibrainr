@@ -24,12 +24,13 @@
 #' pnkc=grouped_adjacency(class2ids("PN"), 'KC')
 #' heatmap(pnkc)
 #' }
+#' @importFrom neuprintr neuprint_get_adjacency_matrix neuprint_get_meta
 grouped_adjacency <- function(inputids=NULL, outputids=NULL,
-                              ingroup=c("type", "name", "cellBodyFiber"), 
+                              ingroup=c("type", "name", "cellBodyFiber"),
                               outgroup=c("type", "name", "cellBodyFiber"),
                               threshold=0,
                               scale=c("none", "col", "row"), ...) {
-  
+
   if(is.matrix(inputids)){
     am <- inputids
     inputids=rownames(am)
@@ -54,7 +55,7 @@ grouped_adjacency <- function(inputids=NULL, outputids=NULL,
     stopifnot(all(names(ingroup) %in% inputids))
     inputids=intersect(names(ingroup), inputids)
   }
-  
+
   if(is.null(outputids)) {
     outputids=names(outgroup)
     if(is.null(outputids))
@@ -74,14 +75,14 @@ grouped_adjacency <- function(inputids=NULL, outputids=NULL,
     stopifnot(all(names(outgroup) %in% outputids))
     outputids=intersect(names(outgroup), outputids)
   }
-  
+
   if(is.null(am))
     am <- neuprint_get_adjacency_matrix(inputids = inputids, outputids = outputids, ...)
   else {
     # in case the grouping variable implied a reordering
     am <- am[inputids, outputids, drop=FALSE]
   }
-  
+
   if(!is.null(ingroup)) {
     l=split(as.data.frame(am), ingroup)
     # nb transpose back to original orientation
@@ -92,7 +93,7 @@ grouped_adjacency <- function(inputids=NULL, outputids=NULL,
     # don't transpose so back to inputs as rows
     am=sapply(l, colSums)
   }
-  
+
   scale=match.arg(scale)
   if(scale=="row") {
     am <- t(scale(t(am), center = FALSE, scale=rowSums(am)))

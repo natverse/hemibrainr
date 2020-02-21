@@ -27,3 +27,7 @@ reference:
     - '`hemibrain_remove_bad_synapses`'
     - '`hemibrain_roi_meshes`'
     - 'hemibrain.surf'
+  - title: Connectivity
+    desc: ~
+    contents:
+    - 'grouped_adjacency'
