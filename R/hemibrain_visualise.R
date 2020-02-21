@@ -26,6 +26,7 @@
 #' @export
 #' @seealso \code{\link{flow_centrality}}
 #' @importFrom stats sd
+#' @importFrom nat xyzmatrix
 plot3d_split = function(someneuronlist,
                         col = c("#1BB6AF", "#EF7C12", "#C70E7B", "#8FDA04", "#4D4D4D", "#FC6882"),
                         splitnode = FALSE, WithConnectors = TRUE, WithNodes = F, soma = 500, highflow = FALSE, lwd = 1, radius = 100, ...){
@@ -55,9 +56,12 @@ plot3d_split = function(someneuronlist,
     tryCatch(rgl::plot3d(neuron, col = col[3], WithNodes = WithNodes, soma = soma, add = TRUE,),
     error = function(e) NULL)
     if (WithConnectors){
-      tryCatch(rgl::spheres3d(nat::xyzmatrix(subset(neuron$connectors,prepost==1)), col = "#132157", radius = radius/2, add = TRUE, ...),
+      conns=neuron$connectors
+      tryCatch(rgl::spheres3d(xyzmatrix(conns[conns$prepost==1,,drop=FALSE]),
+                              col = "#132157", radius = radius/2, add = TRUE, ...),
                error = function(e) NULL)
-      tryCatch(rgl::spheres3d(nat::xyzmatrix(subset(neuron$connectors,prepost==0)), col = "#EE4244", radius = radius,add = TRUE, ...),
+      tryCatch(rgl::spheres3d(xyzmatrix(conns[conns$prepost==0,,drop=FALSE]),
+                              col = "#EE4244", radius = radius, add = TRUE, ...),
                error = function(e) NULL)
     }
     if (highflow == T){
