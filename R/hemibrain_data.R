@@ -27,7 +27,7 @@
 #'
 #' Axon-dendrite split points calculated for the whole hemibrain dataset,
 #' hemibrain:v1.0.1. The file used to generate this can be found in this package,
-#' as \code{data-raw/hemibrain_split_all_neurons.R}. Because synapses can be unevently
+#' as \code{data-raw/hemibrain_split_all_neurons.R}. Because synapses can be unevenly
 #' distributed in this dataset across brain regions, after compartment detection,
 #' the dendrite was chosen as the neurite closest to a neuron's primary branch point.
 #'
