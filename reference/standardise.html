@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Calculate the overlap score between a neurons axon dendrite — hemibrain_overlap_locality • hemibrainr</title>
+<title>Use standard names and spellings — standard_transmitters • hemibrainr</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -42,9 +42,8 @@
 
 
 
-<meta property="og:title" content="Calculate the overlap score between a neurons axon dendrite — hemibrain_overlap_locality" />
-<meta property="og:description" content="Calculates an overlap score using an overlap score between a neuron's axon and dendrite,
-if axon and dendrite have been marked out in the neuron object, e.g. by using flow_centrality." />
+<meta property="og:title" content="Use standard names and spellings — standard_transmitters" />
+<meta property="og:description" content="Standardise the names of lineage groups and transmitters." />
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
 
@@ -114,48 +113,35 @@ if axon and dendrite have been marked out in the neuron object, e.g. by using fl
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Calculate the overlap score between a neurons axon dendrite</h1>
-    <small class="dont-index">Source: <a href='https://github.com/flyconnectome/hemibrainr/blob/master/R/hemibrain_locality.R'><code>R/hemibrain_locality.R</code></a></small>
-    <div class="hidden name"><code>hemibrain_overlap_locality.Rd</code></div>
+    <h1>Use standard names and spellings</h1>
+    <small class="dont-index">Source: <a href='https://github.com/flyconnectome/hemibrainr/blob/master/R/hemibrain_standardise.R'><code>R/hemibrain_standardise.R</code></a></small>
+    <div class="hidden name"><code>standardise.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Calculates an overlap score using an overlap score between a neuron's axon and dendrite,
-if axon and dendrite have been marked out in the neuron object, e.g. by using <code>flow_centrality</code>.</p>
+    <p>Standardise the names of lineage groups and transmitters.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>hemibrain_overlap_locality</span>(<span class='no'>x</span>, <span class='kw'>resample</span> <span class='kw'>=</span> <span class='fl'>125</span>, <span class='kw'>delta</span> <span class='kw'>=</span> <span class='fl'>5</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>standard_transmitters</span>(<span class='no'>x</span>)
+
+<span class='fu'>standard_lineages</span>(<span class='no'>x</span>)
+
+<span class='fu'>standard_compartments</span>(<span class='no'>x</span>)
+
+<span class='fu'>standardise</span>(<span class='no'>x</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>x</th>
-      <td><p>a <code><a href='https://rdrr.io/pkg/nat/man/neuronlist.html'>nat::neuronlist</a></code> or <code><a href='https://rdrr.io/pkg/nat/man/neuron.html'>nat::neuron</a></code> object. It is assumed
-that this neuron has been read in by <code><a href='https://rdrr.io/pkg/neuprintr/man/neuprint_read_neurons.html'>neuprintr::neuprint_read_neurons</a></code> or
-possibly <code>catmaid::read.neurons.catmaid</code>.</p></td>
-    </tr>
-    <tr>
-      <th>resample</th>
-      <td><p>stepsize to which to resample neurons. If set to <code>NULL</code>,
-neurons are not resampled.</p></td>
-    </tr>
-    <tr>
-      <th>delta</th>
-      <td><p>the distance at which a synapse might occur</p></td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td><p>methods sent to <code><a href='https://rdrr.io/pkg/nat/man/nlapply.html'>nat::nlapply</a></code></p></td>
+      <td><p>a character vector to be standardised.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>a named vector of overlap_locality scores</p>
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
-    <div class='dont-index'><p><code><a href='hemibrain_compartment_metrics.html'>hemibrain_compartment_metrics</a></code></p></div>
+    <p>a character vector</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
@@ -163,7 +149,6 @@ neurons are not resampled.</p></td>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
       <li><a href="#value">Value</a></li>
-      <li><a href="#see-also">See also</a></li>
     </ul>
 
   </div>
