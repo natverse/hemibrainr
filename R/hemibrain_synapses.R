@@ -104,7 +104,7 @@ extract_synapses <-function(x, unitary = FALSE){
         prepost==0 ~ 1,
         prepost==1  ~ 0
       )) %>% # i.e. switch perspective, presynapses connect to postsynaptic partners
-      group_by(bodyid, partner, prepost, Label) %>%
+      dplyr::group_by(bodyid, partner, prepost, Label) %>%
       dplyr::mutate(weight = n()) %>%
       dplyr::distinct(bodyid, partner, prepost, Label, weight) %>%
       dplyr::select(bodyid, partner, prepost, Label, weight) %>%
