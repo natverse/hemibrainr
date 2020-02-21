@@ -588,7 +588,7 @@ hemibrain_flow_centrality <-function(x,
                                      ...) UseMethod("hemibrain_flow_centrality")
 
 #' @export
-hemibrain_flow_centrality.neuron <- function(x, splitpoints = hemibrain_splitpoints_distance, ...){
+hemibrain_flow_centrality.neuron <- function(x, splitpoints = hemibrain_splitpoints_distance, knn = FALSE, ...){
   bi = x$bodyid
   df = subset(splitpoints, bodyid == bi)
   y = hemibrain_use_splitpoints(x, df, knn = knn, ...)
