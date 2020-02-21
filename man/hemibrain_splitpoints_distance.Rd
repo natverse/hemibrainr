@@ -3,7 +3,7 @@
 \docType{data}
 \name{hemibrain_splitpoints_distance}
 \alias{hemibrain_splitpoints_distance}
-\title{Axon-dendrite split points calculated for the whole dataset}
+\title{Axon-dendrite split points calculated for all hemibrain neurons}
 \format{An object of class \code{data.frame} with 505094 rows and 6 columns.}
 \source{
 \url{https://www.biorxiv.org/content/10.1101/2020.01.19.911453v1}
@@ -13,10 +13,11 @@ hemibrain_splitpoints_distance
 }
 \description{
 Axon-dendrite split points calculated for the whole hemibrain dataset,
-hemibrain:v1.0.1. The file used to generate this can be found in this package,
-as \code{data-raw/hemibrain_split_all_neurons.R}. Because synapses can be unevenly
-distributed in this dataset across brain regions, after compartment detection,
-the dendrite was chosen as the neurite closest to a neuron's primary branch point.
+hemibrain:v1.0.1. The file used to generate this can be found in this
+package, as \code{data-raw/hemibrain_split_all_neurons.R}. Because the
+proportion of recovered synapses is unevenly distributed across brain
+regions, after compartment detection, the dendrite was chosen as the neurite
+closest to a neuron's primary branch point.
 }
 \examples{
 \donttest{
@@ -24,11 +25,14 @@ View(hemibrain_splitpoints_distance)
 }
 }
 \references{
-Bates, A. S., P. Schlegel, R. J. V. Roberts, N. Drummond, I. F. M. Tamimi, R. Turnbull, X. Zhao, et al. 2020.
-“Complete Connectomic Reconstruction of Olfactory Projection Neurons in the Fly Brain.”
-bioRxiv. https://doi.org/10.1101/2020.01.19.911453.
+Bates, A. S., P. Schlegel, R. J. V. Roberts, N. Drummond, I. F.
+  M. Tamimi, R. Turnbull, X. Zhao, et al. 2020. “Complete Connectomic
+  Reconstruction of Olfactory Projection Neurons in the Fly Brain.” bioRxiv.
+  https://doi.org/10.1101/2020.01.19.911453.
 }
 \seealso{
-\code{\link{hemibrain_flow_centrality}}, \code{\link{hemibrain_splitpoints}}, \code{\link{flow_centrality}}, \code{\link{hemibrain_use_splitpoints}}
+\code{\link{hemibrain_flow_centrality}},
+  \code{\link{hemibrain_splitpoints}}, \code{\link{flow_centrality}},
+  \code{\link{hemibrain_use_splitpoints}}
 }
 \keyword{datasets}
