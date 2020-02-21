@@ -17,8 +17,8 @@ standard_transmitters <- function(x){
   x[grepl("^gaba|^GABA|^GAD",x)] = "GABA"
   x[grepl("^glut|^vGlut|^Vglut|^glutamate|^Glutamate",x)] = "glutamate"
   x[grepl("^5-HT|^5HT|^Dope|^dope|^Dopa|^dopa",x)] = "dopamine"
-  x[grepl("^Sero|^sero|^TH-",x)] = "octopamine"
-  x[grepl("^Oct|^oct",x)] = "serotonin"
+  x[grepl("^Sero|^sero|^TH-",x)] = "serotonin"
+  x[grepl("^Oct|^oct",x)] = "octopamine"
   x[grepl("^Unknow|NA|unknow",x)] = "unknown"
   x[is.na(x)] = "unknown"
   x
@@ -30,9 +30,9 @@ standard_lineages <- function(x){
   x[grepl("^ItoLee_l|^itolee_l|^ItoLee_L|^itolee_L",x)] = "ItoLee_Lineage"
   x[grepl("^hartenstein_l|^Hartenstein_l|^Volker_l|^volker_l|
           ^hartenstein_L|^Hartenstein_L|^Volker_L|^volker_L",x)] = "Hartenstein_Lineage"
-  x[grepl("^ItoLee_h|^itolee_h",x)] = "ItoLee_Lineage"
+  x[grepl("^ItoLee_h|^itolee_h",x)] = "ItoLee_Hemilineage"
   x[grepl("^hartenstein_h|^Hartenstein_h|^Volker_h|^volker_h|
-          ^hartenstein_H|^Hartenstein_H|^Volker_h|^volker_H",x)] = "Hartenstein_Lineage"
+          ^hartenstein_H|^Hartenstein_H|^Volker_h|^volker_H",x)] = "Hartenstein_Hemilineage"
   x[is.na(x)] = "unknown"
   x
 }
