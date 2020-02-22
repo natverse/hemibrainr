@@ -46,3 +46,6 @@ pnkc=grouped_adjacency(class2ids("PN"), 'KC')
 heatmap(pnkc)
 }
 }
+\seealso{
+\code{\link{neuprint_get_adjacency_matrix}}
+}

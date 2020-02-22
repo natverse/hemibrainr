@@ -17,6 +17,7 @@
 #'   \code{\link{neuprint_get_adjacency_matrix}}
 #'
 #' @return named numeric matrix
+#' @seealso \code{\link{neuprint_get_adjacency_matrix}}
 #' @export
 #'
 #' @examples
