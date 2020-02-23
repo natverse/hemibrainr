@@ -15,7 +15,7 @@
 #' @return a named vector of overlap_locality scores
 #' @seealso \code{\link{hemibrain_overlap_locality}}
 #' @export
-hemibrain_compartment_metrics <- function(x, resample = 125, delta = 125, locality = TRUE, ...){
+hemibrain_compartment_metrics <- function(x, resample = 125, delta = 5, locality = TRUE, ...){
   mets = nat::nlapply(x, compartment_metrics, resample = resample, delta = delta, locality = locality, ...)
   mets.df = do.call(rbind, mets)
   if(nrow(mets.df)==length(x)){
@@ -27,7 +27,7 @@ hemibrain_compartment_metrics <- function(x, resample = 125, delta = 125, locali
 }
 
 # hidden
-compartment_metrics <- function(x, resample = 125, delta = 125, locality = TRUE){
+compartment_metrics <- function(x, resample = 125, delta = 5, locality = TRUE){
 
   # Axon-dendrite split?
   if(!(sum(x$d$Label==2)&sum(x$d$Label==3))){
@@ -95,7 +95,7 @@ compartment_metrics <- function(x, resample = 125, delta = 125, locality = TRUE)
 #' @return a named vector of overlap_locality scores
 #' @seealso \code{\link{hemibrain_compartment_metrics}}
 #' @export
-hemibrain_overlap_locality <- function(x, resample = 125, delta = 125, ...){
+hemibrain_overlap_locality <- function(x, resample = 125, delta = 5, ...){
   x = nat::as.neuronlist(x)
   l.scores = nat::nlapply(x, overlap_locality, resample = resample, delta = delta, ...)
   unlist(l.scores)
@@ -104,7 +104,7 @@ hemibrain_overlap_locality <- function(x, resample = 125, delta = 125, ...){
 # hidden
 overlap_locality <- function(x,
                              resample = 125,
-                             delta = 125){
+                             delta = 5){
 
   # Axon-dendrite split?
   if(!(sum(x$d$Label==2)&sum(x$d$Label==3))){
@@ -137,7 +137,7 @@ overlap_locality <- function(x,
 }
 
 # hidden, similar function now in nat
-overlap_score <- function(output.neurons, input.neurons, delta = 100){
+overlap_score <- function(output.neurons, input.neurons, delta = 125){
   output.neurons = nat::as.neuronlist(output.neurons)
   input.neurons = nat::as.neuronlist(input.neurons)
   score.matrix = matrix(0,nrow = length(output.neurons), ncol = length(input.neurons))

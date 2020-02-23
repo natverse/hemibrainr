@@ -348,8 +348,9 @@ flow_centrality.neuron <- function(x,
   x$primary.branch.point = as.numeric(primary.branch.point)
   x$axon.start = nullToNA(axon.starts)
   x$dendrite.start = nullToNA(dendrite.starts)
-  x$axon.primary = nullToNA(rownames(subset(nodes[secondary.branch.points,],Label==2)))
-  x$dendrite.primary = nullToNA(rownames(subset(nodes[secondary.branch.points,],Label==3)))
+  nsbp <- nodes[secondary.branch.points,]
+  x$axon.primary = nullToNA(rownames(subset(nsbp, nsbp$Label==2)))
+  x$dendrite.primary = nullToNA(rownames(subset(nsbp, nsbp$Label==3)))
   x$secondary.branch.points = secondary.branch.points
   x$max.flow.centrality = as.numeric(ais)
   x
@@ -583,30 +584,30 @@ hemibrain_use_splitpoints.neuronlist <-function(x, df, knn = FALSE, ...){
 #' @export
 #' @seealso \code{\link{hemibrain_splitpoints}}, \code{\link{flow_centrality}}, \code{\link{hemibrain_use_splitpoints}}
 hemibrain_flow_centrality <-function(x,
-                                     splitpoints = hemibrain_splitpoints_distance,
+                                     splitpoints = hemibrainr::hemibrain_splitpoints_distance,
                                      knn = FALSE,
                                      ...) UseMethod("hemibrain_flow_centrality")
 
 #' @export
-hemibrain_flow_centrality.neuron <- function(x, splitpoints = hemibrain_splitpoints_distance, ...){
+hemibrain_flow_centrality.neuron <- function(x, splitpoints = hemibrainr::hemibrain_splitpoints_distance, knn = FALSE, ...){
   bi = x$bodyid
-  df = subset(splitpoints, bodyid == bi)
+  df = filter(splitpoints, .data$bodyid == bi)
   y = hemibrain_use_splitpoints(x, df, knn = knn, ...)
   y
 }
 
 #' @export
-hemibrain_flow_centrality.neuronlist <- function(x, splitpoints = hemibrain_splitpoints_distance, knn = FALSE, ...){
+hemibrain_flow_centrality.neuronlist <- function(x, splitpoints = hemibrainr::hemibrain_splitpoints_distance, knn = FALSE, ...){
   cropped = subset(x, cropped)
   if(length(cropped)){
     warning(length(cropped), " neurons cropped, split likely to be inaccurate for: ", paste(names(cropped),collapse=", "))
   }
-  untracted = subset(x, status!="Traced")
-  if(length(untracted)){
-    warning(length(untracted), " neuron do not have 'traced' status, split likely to be inaccurate for: ", paste(names(untracted),collapse=", "))
+  untraced = subset(x, x[['status']]!="Traced")
+  if(length(untraced)){
+    warning(length(untraced), " neurons do not have 'traced' status, split likely to be inaccurate for: ", paste(names(untraced),collapse=", "))
   }
-  nosoma = subset(x, !soma)
-  if(length(untracted)){
+  nosoma = subset(x, !x[['soma']])
+  if(length(untraced)){
     warning(length(nosoma), " neurons have no soma tagged, split could be inaccurate for: ", paste(names(nosoma),collapse=", "))
   }
   y = hemibrain_use_splitpoints(x, splitpoints, knn = knn, ...)

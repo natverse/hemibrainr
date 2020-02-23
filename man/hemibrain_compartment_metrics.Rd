@@ -7,7 +7,7 @@
 hemibrain_compartment_metrics(
   x,
   resample = 125,
-  delta = 125,
+  delta = 5,
   locality = TRUE,
   ...
 )
