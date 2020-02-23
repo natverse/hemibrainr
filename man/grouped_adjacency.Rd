@@ -9,7 +9,7 @@ grouped_adjacency(
   outputids = NULL,
   ingroup = c("type", "name", "cellBodyFiber"),
   outgroup = c("type", "name", "cellBodyFiber"),
-  threshold = 0,
+  threshold = c(1, 0),
   scale = c("none", "col", "row"),
   ...
 )
@@ -24,26 +24,55 @@ matrix}
 \item{ingroup, outgroup}{grouping variables used to coalesce related neurons}
 
 \item{threshold}{Remove (groups of) neurons that make fewer connections than
-this.}
+this. If you provide a length two vector the first threshold will be an
+absolute value applied before scaling, while the second will be a
+fractional value applied after scaling.}
 
-\item{scale}{Whether to scale the rows or columns so that they sum to 1}
+\item{scale}{Whether to scale the rows or columns so that they sum to 1.
+Default is \code{'none'}.}
 
 \item{...}{Additional arguments passed to
 \code{\link{neuprint_get_adjacency_matrix}}}
 }
 \value{
-named numeric matrix
+named numeric matrix with rows for input groups and columns for
+  output groups.
 }
 \description{
-Use this to create a summary adjacency matrix in which input and/or output
-neurons are coalesced into a smaller number of rows/columns. This can be used
-as a preprocessing step to present a simple representation of the
-connectivity between a larger number of cells in a heatmap.
+Create a summary adjacency matrix in which input and/or output neurons are
+coalesced into a smaller number of rows/columns. This can be used as a
+preprocessing step to present a simple representation of the connectivity
+between a larger number of cells in a heatmap.
+}
+\details{
+The default value of threshold is \code{c(1, 0)}. When
+  \code{scale=F} this will not apply a treshold. When \code{scale=T} this
+  will apply a threshold of 1 to the raw counts before scaling to ensure that
+  only valid output will be returned.
 }
 \examples{
 \donttest{
 pnkc=grouped_adjacency(class2ids("PN"), 'KC')
 heatmap(pnkc)
+
+# alternatively, if you want to play around with different arguments,
+# you can get the raw adjacency matrix and then group that in different
+# ways
+pnkc.raw=neuprint_get_adjacency_matrix(inputids = class2ids("PN"),
+  outputids = 'KC')
+pnkc.bytype=grouped_adjacency(pnkc.raw, ingroup = "type", outgroup = "type")
+heatmap(pnkc.bytype)
+
+# slightly finer groups
+heatmap(grouped_adjacency(pnkc.raw, ingroup = "type", outgroup = "name"))
+# add a threshold to remove neurons that make very few connections
+heatmap(grouped_adjacency(pnkc.raw, ingroup = "type", outgroup = "name",
+  threshold=50))
+
+# Trying scaling to see relative input onto different groups
+# of Kenyon cell target neurons. col=>
+heatmap(grouped_adjacency(pnkc.raw, ingroup = "type", outgroup = "name",
+  scale='col', threshold = c(1,0.01)))
 }
 }
 \seealso{
