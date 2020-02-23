@@ -21,7 +21,10 @@ closest to a neuron's primary branch point.
 }
 \examples{
 \donttest{
+head(hemibrain_splitpoints_distance)
+\dontrun{
 View(hemibrain_splitpoints_distance)
+}
 }
 }
 \references{

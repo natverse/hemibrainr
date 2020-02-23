@@ -12,6 +12,7 @@
 #' @examples
 #' \donttest{
 #' library(nat)
+#' \dontrun{
 #' plot3d(hemibrain.surf, alpha=.3, col='grey')
 #'
 #' # can also convert to rgl mesh3d object for more control
@@ -19,6 +20,7 @@
 #' rgl::wire3d(hemibrain)
 #' rgl::shade3d(hemibrain, alpha=.3)
 #' rgl::shade3d(hemibrain, alpha=.3, col='grey')
+#' }
 #' }
 "hemibrain.surf"
 
@@ -43,7 +45,10 @@
 #'   \code{\link{hemibrain_use_splitpoints}}
 #' @examples
 #' \donttest{
+#' head(hemibrain_splitpoints_distance)
+#' \dontrun{
 #' View(hemibrain_splitpoints_distance)
+#' }
 #' }
 "hemibrain_splitpoints_distance"
 
@@ -66,6 +71,7 @@
 #' @seealso \code{\link{hemibrain_flow_centrality}}, \code{\link{hemibrain_splitpoints_distance}}, \code{\link{axonic_cable}}, \code{\link{dendritic_cable}}
 #' @examples
 #' \donttest{
+#' head(hemibrain_metrics)
 #' hist(hemibrain_metrics$overlap_locality,breaks = 1000)
 #' }
 "hemibrain_metrics"

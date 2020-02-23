@@ -23,6 +23,7 @@ note that hemibrain coordinate system does not have the
 \examples{
 \donttest{
 library(nat)
+\dontrun{
 plot3d(hemibrain.surf, alpha=.3, col='grey')
 
 # can also convert to rgl mesh3d object for more control
@@ -30,6 +31,7 @@ hemibrain <- as.mesh3d(hemibrain.surf)
 rgl::wire3d(hemibrain)
 rgl::shade3d(hemibrain, alpha=.3)
 rgl::shade3d(hemibrain, alpha=.3, col='grey')
+}
 }
 }
 \seealso{

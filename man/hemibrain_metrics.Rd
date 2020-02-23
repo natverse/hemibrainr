@@ -23,6 +23,7 @@ a neuron's axon and dendrite.
 }
 \examples{
 \donttest{
+head(hemibrain_metrics)
 hist(hemibrain_metrics$overlap_locality,breaks = 1000)
 }
 }
