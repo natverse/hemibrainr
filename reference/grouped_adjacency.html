@@ -190,21 +190,32 @@ Default is <code>'none'</code>.</p></td>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
-<span class='no'>pnkc</span><span class='kw'>=</span><span class='fu'>grouped_adjacency</span>(<span class='fu'><a href='class2ids.html'>class2ids</a></span>(<span class='st'>"PN"</span>), <span class='st'>'KC'</span>)</div><div class='output co'>#&gt; <span class='error'>Error in loadNamespace(name): there is no package called ‘googlesheets4’</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/stats/heatmap.html'>heatmap</a></span>(<span class='no'>pnkc</span>)</div><div class='output co'>#&gt; <span class='error'>Error in heatmap(pnkc): object 'pnkc' not found</span></div><div class='input'>
+<span class='co'># Default: search by type and group by type</span>
+<span class='co'># NB first search is by regex</span>
+<span class='co'># do not group input neurons but leave one row for each neuron</span>
+<span class='no'>da2pnkc</span><span class='kw'>=</span><span class='fu'>grouped_adjacency</span>(<span class='st'>"/.*DA2.*PN.*"</span>, <span class='st'>'KC'</span>, <span class='kw'>ingroup</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
+<span class='fu'><a href='https://rdrr.io/r/stats/heatmap.html'>heatmap</a></span>(<span class='no'>da2pnkc</span>)</div><div class='img'><img src='grouped_adjacency-1.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'># alternatively, if you want to play around with different arguments,</span>
 <span class='co'># you can get the raw adjacency matrix and then group that in different</span>
 <span class='co'># ways</span>
+<span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
 <span class='no'>pnkc.raw</span><span class='kw'>=</span><span class='fu'>neuprint_get_adjacency_matrix</span>(<span class='kw'>inputids</span> <span class='kw'>=</span> <span class='fu'><a href='class2ids.html'>class2ids</a></span>(<span class='st'>"PN"</span>),
-  <span class='kw'>outputids</span> <span class='kw'>=</span> <span class='st'>'KC'</span>)</div><div class='output co'>#&gt; <span class='error'>Error in loadNamespace(name): there is no package called ‘googlesheets4’</span></div><div class='input'><span class='no'>pnkc.bytype</span><span class='kw'>=</span><span class='fu'>grouped_adjacency</span>(<span class='no'>pnkc.raw</span>, <span class='kw'>ingroup</span> <span class='kw'>=</span> <span class='st'>"type"</span>, <span class='kw'>outgroup</span> <span class='kw'>=</span> <span class='st'>"type"</span>)</div><div class='output co'>#&gt; <span class='error'>Error in grouped_adjacency(pnkc.raw, ingroup = "type", outgroup = "type"): object 'pnkc.raw' not found</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/stats/heatmap.html'>heatmap</a></span>(<span class='no'>pnkc.bytype</span>)</div><div class='output co'>#&gt; <span class='error'>Error in heatmap(pnkc.bytype): object 'pnkc.bytype' not found</span></div><div class='input'>
+  <span class='kw'>outputids</span> <span class='kw'>=</span> <span class='st'>'KC'</span>)
+<span class='no'>pnkc.bytype</span><span class='kw'>=</span><span class='fu'>grouped_adjacency</span>(<span class='no'>pnkc.raw</span>, <span class='kw'>ingroup</span> <span class='kw'>=</span> <span class='st'>"type"</span>, <span class='kw'>outgroup</span> <span class='kw'>=</span> <span class='st'>"type"</span>)
+<span class='fu'><a href='https://rdrr.io/r/stats/heatmap.html'>heatmap</a></span>(<span class='no'>pnkc.bytype</span>)
+
 <span class='co'># slightly finer groups</span>
-<span class='fu'><a href='https://rdrr.io/r/stats/heatmap.html'>heatmap</a></span>(<span class='fu'>grouped_adjacency</span>(<span class='no'>pnkc.raw</span>, <span class='kw'>ingroup</span> <span class='kw'>=</span> <span class='st'>"type"</span>, <span class='kw'>outgroup</span> <span class='kw'>=</span> <span class='st'>"name"</span>))</div><div class='output co'>#&gt; <span class='error'>Error in grouped_adjacency(pnkc.raw, ingroup = "type", outgroup = "name"): object 'pnkc.raw' not found</span></div><div class='input'><span class='co'># add a threshold to remove neurons that make very few connections</span>
+<span class='fu'><a href='https://rdrr.io/r/stats/heatmap.html'>heatmap</a></span>(<span class='fu'>grouped_adjacency</span>(<span class='no'>pnkc.raw</span>, <span class='kw'>ingroup</span> <span class='kw'>=</span> <span class='st'>"type"</span>, <span class='kw'>outgroup</span> <span class='kw'>=</span> <span class='st'>"name"</span>))
+<span class='co'># add a threshold to remove neurons that make very few connections</span>
 <span class='fu'><a href='https://rdrr.io/r/stats/heatmap.html'>heatmap</a></span>(<span class='fu'>grouped_adjacency</span>(<span class='no'>pnkc.raw</span>, <span class='kw'>ingroup</span> <span class='kw'>=</span> <span class='st'>"type"</span>, <span class='kw'>outgroup</span> <span class='kw'>=</span> <span class='st'>"name"</span>,
-  <span class='kw'>threshold</span><span class='kw'>=</span><span class='fl'>50</span>))</div><div class='output co'>#&gt; <span class='error'>Error in grouped_adjacency(pnkc.raw, ingroup = "type", outgroup = "name",     threshold = 50): object 'pnkc.raw' not found</span></div><div class='input'>
+  <span class='kw'>threshold</span><span class='kw'>=</span><span class='fl'>50</span>))
+
 <span class='co'># Trying scaling to see relative input onto different groups</span>
 <span class='co'># of Kenyon cell target neurons. col=&gt;</span>
 <span class='fu'><a href='https://rdrr.io/r/stats/heatmap.html'>heatmap</a></span>(<span class='fu'>grouped_adjacency</span>(<span class='no'>pnkc.raw</span>, <span class='kw'>ingroup</span> <span class='kw'>=</span> <span class='st'>"type"</span>, <span class='kw'>outgroup</span> <span class='kw'>=</span> <span class='st'>"name"</span>,
-  <span class='kw'>scale</span><span class='kw'>=</span><span class='st'>'col'</span>, <span class='kw'>threshold</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>0.01</span>)))</div><div class='output co'>#&gt; <span class='error'>Error in grouped_adjacency(pnkc.raw, ingroup = "type", outgroup = "name",     scale = "col", threshold = c(1, 0.01)): object 'pnkc.raw' not found</span></div><div class='input'># }
-</div></pre>
+  <span class='kw'>scale</span><span class='kw'>=</span><span class='st'>'col'</span>, <span class='kw'>threshold</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>0.01</span>)))
+}
+<span class='co'># }</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
