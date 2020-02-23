@@ -10,16 +10,20 @@ reference:
     - '`hemibrain_reroot`'
     - '`primary_neurite`'
     - '`hemibrain_skeleton_check`'
-    - 'overlap_score'
-    - 'hemibrain_overlap_locality'
+    - '`hemibrain_overlap_locality`'
+    - '`prune_vertices.neuprintneuron`'
   - title: Neuronal compartments (axons, dendrites)
     desc: ~
     contents:
     - '`flow_centrality`'
     - '`plot3d_split`'
-    - 'axonic_points'
-    - 'hemibrain_compartment_metrics'
-    - 'hemibrain_split_points'
+    - '`axonic_points`'
+    - '`hemibrain_flow_centrality`'
+    - '`hemibrain_splitpoints`'
+    - '`hemibrain_use_splitpoints`'
+    - '`hemibrain_compartment_metrics`'
+    - '`hemibrain_metrics`'
+    - '`hemibrain_splitpoints_distance`'
   - title: Synapses and meshes
     desc: ~
     contents:
@@ -36,3 +40,4 @@ reference:
     contents:
     - '`class2ids`'
     - '`glomerulus`'
+    - '`standard_transmitters`'
