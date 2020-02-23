@@ -18,7 +18,8 @@ Suggests:
     testthat (>= 2.1.0),
     knitr,
     rmarkdown,
-    covr
+    covr,
+    googlesheets4
 VignetteBuilder: knitr
 Depends:
     R (>= 3.1),
