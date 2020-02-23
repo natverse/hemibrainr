@@ -150,13 +150,15 @@ hemibrain project.</p>
 #&gt; <span class='message'></span>
 #&gt; <span class='message'>    wire3d</span></div><div class='output co'>#&gt; <span class='message'>The following objects are masked from ‘package:base’:</span>
 #&gt; <span class='message'></span>
-#&gt; <span class='message'>    intersect, setdiff, union</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/pkg/nat/man/plot3d.html'>plot3d</a></span>(<span class='no'>hemibrain.surf</span>, <span class='kw'>alpha</span><span class='kw'>=</span><span class='fl'>.3</span>, <span class='kw'>col</span><span class='kw'>=</span><span class='st'>'grey'</span>)
+#&gt; <span class='message'>    intersect, setdiff, union</span></div><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
+<span class='fu'><a href='https://rdrr.io/pkg/nat/man/plot3d.html'>plot3d</a></span>(<span class='no'>hemibrain.surf</span>, <span class='kw'>alpha</span><span class='kw'>=</span><span class='fl'>.3</span>, <span class='kw'>col</span><span class='kw'>=</span><span class='st'>'grey'</span>)
 
 <span class='co'># can also convert to rgl mesh3d object for more control</span>
 <span class='no'>hemibrain</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/nat/man/as.mesh3d.html'>as.mesh3d</a></span>(<span class='no'>hemibrain.surf</span>)
 <span class='kw pkg'>rgl</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/rgl/man/mesh3d.html'>wire3d</a></span>(<span class='no'>hemibrain</span>)
 <span class='kw pkg'>rgl</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/rgl/man/mesh3d.html'>shade3d</a></span>(<span class='no'>hemibrain</span>, <span class='kw'>alpha</span><span class='kw'>=</span><span class='fl'>.3</span>)
 <span class='kw pkg'>rgl</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/rgl/man/mesh3d.html'>shade3d</a></span>(<span class='no'>hemibrain</span>, <span class='kw'>alpha</span><span class='kw'>=</span><span class='fl'>.3</span>, <span class='kw'>col</span><span class='kw'>=</span><span class='st'>'grey'</span>)
+}
 <span class='co'># }</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
