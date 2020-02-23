@@ -6,7 +6,7 @@
 \usage{
 hemibrain_flow_centrality(
   x,
-  splitpoints = hemibrain_splitpoints_distance,
+  splitpoints = hemibrainr::hemibrain_splitpoints_distance,
   knn = FALSE,
   ...
 )

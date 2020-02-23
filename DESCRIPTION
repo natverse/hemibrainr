@@ -33,7 +33,8 @@ Imports:
     nabor,
     reshape2,
     stringr,
-    memoise
+    memoise,
+    rlang
 Remotes: 
     natverse/neuprintr
 Language: en-GB

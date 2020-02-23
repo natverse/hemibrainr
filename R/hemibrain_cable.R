@@ -319,7 +319,7 @@ prune_vertices.neuprintneuron <- function (x, verticestoprune, invert = FALSE, .
                                ...)
   pruned$connectors = x$connectors[x$connectors$treenode_id %in%
                                      pruned$d$PointNo, ]
-  relevant.points = subset(x$d, PointNo %in% pruned$d$PointNo)
+  relevant.points = subset(x$d, x$d$PointNo %in% pruned$d$PointNo)
   y = pruned
   y$d = relevant.points[match(pruned$d$PointNo, relevant.points$PointNo),
                         ]
