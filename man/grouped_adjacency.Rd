@@ -46,7 +46,7 @@ between a larger number of cells in a heatmap.
 }
 \details{
 The default value of threshold is \code{c(1, 0)}. When
-  \code{scale=F} this will not apply a treshold. When \code{scale=T} this
+  \code{scale=F} this will not apply a threshold. When \code{scale=T} this
   will apply a threshold of 1 to the raw counts before scaling to ensure that
   only valid output will be returned.
 }
