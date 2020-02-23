@@ -19,7 +19,9 @@
 #' @export
 #'
 #' @examples
-#' \donttest{
+#' # NB these examples will not be run by default as they currently depend on
+#' # access to some private google sheets
+#' \dontrun{
 #' class2ids("uPN")
 #' length(class2ids("ORN", possible = FALSE))
 #' length(class2ids("ORN", possible = TRUE))

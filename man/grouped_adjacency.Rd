@@ -52,12 +52,16 @@ The default value of threshold is \code{c(1, 0)}. When
 }
 \examples{
 \donttest{
-pnkc=grouped_adjacency(class2ids("PN"), 'KC')
-heatmap(pnkc)
+# Default: search by type and group by type
+# NB first search is by regex
+# do not group input neurons but leave one row for each neuron
+da2pnkc=grouped_adjacency("/.*DA2.*PN.*", 'KC', ingroup = NULL)
+heatmap(da2pnkc)
 
 # alternatively, if you want to play around with different arguments,
 # you can get the raw adjacency matrix and then group that in different
 # ways
+\dontrun{
 pnkc.raw=neuprint_get_adjacency_matrix(inputids = class2ids("PN"),
   outputids = 'KC')
 pnkc.bytype=grouped_adjacency(pnkc.raw, ingroup = "type", outgroup = "type")
@@ -73,6 +77,7 @@ heatmap(grouped_adjacency(pnkc.raw, ingroup = "type", outgroup = "name",
 # of Kenyon cell target neurons. col=>
 heatmap(grouped_adjacency(pnkc.raw, ingroup = "type", outgroup = "name",
   scale='col', threshold = c(1,0.01)))
+}
 }
 }
 \seealso{
