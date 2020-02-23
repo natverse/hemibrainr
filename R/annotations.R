@@ -111,7 +111,7 @@ alns <- function(x="RN", possible=TRUE, refresh=FALSE) {
 #' @export
 #'
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' table(glomerulus(class2ids('PN')), useNA='ifany')
 #' table(glomerulus(class2ids('PN'), exclude.multi = TRUE), useNA='ifany')
 #' }

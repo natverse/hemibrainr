@@ -20,7 +20,7 @@ A character vector of glomeruli named with the \code{bodyids}
 Find the antennal lobe glomerulus for hemibrain body ids
 }
 \examples{
-\donttest{
+\dontrun{
 table(glomerulus(class2ids('PN')), useNA='ifany')
 table(glomerulus(class2ids('PN'), exclude.multi = TRUE), useNA='ifany')
 }
