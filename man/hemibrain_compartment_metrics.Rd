@@ -6,8 +6,8 @@
 \usage{
 hemibrain_compartment_metrics(
   x,
-  resample = 125,
-  delta = 5,
+  resample = 10,
+  delta = 62.5,
   locality = TRUE,
   ...
 )
