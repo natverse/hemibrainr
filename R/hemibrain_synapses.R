@@ -90,6 +90,8 @@ hemibrain_extract_connections <- function(x,
 #' @export
 magrittr::`%>%`
 # hidden
+#' @importFrom dplyr filter mutate group_by distinct select n case_when
+#' @importFrom rlang .data
 extract_synapses <-function(x, unitary = FALSE){
   syn = x$connectors
   if(!nrow(syn)){
@@ -99,15 +101,15 @@ extract_synapses <-function(x, unitary = FALSE){
   syn$Label = nullToNA(x$d$Label[match(syn$treenode_id,x$d$PointNo)])
   if(unitary){
     syn %>%
-      dplyr::filter(Label %in% c(2,3)) %>%
-      dplyr::mutate(prepost = dplyr::case_when(
-        prepost==0 ~ 1,
-        prepost==1  ~ 0
+      filter(.data$Label %in% c(2,3)) %>%
+      mutate(prepost = case_when(
+        .data$prepost==0 ~ 1,
+        .data$prepost==1  ~ 0
       )) %>% # i.e. switch perspective, presynapses connect to postsynaptic partners
-      group_by(bodyid, partner, prepost, Label) %>%
-      dplyr::mutate(weight = n()) %>%
-      dplyr::distinct(bodyid, partner, prepost, Label, weight) %>%
-      dplyr::select(bodyid, partner, prepost, Label, weight) %>%
+      group_by(.data$bodyid, .data$partner, .data$prepost, .data$Label) %>%
+      mutate(weight = n()) %>%
+      distinct(.data$bodyid, .data$partner, .data$prepost, .data$Label, .data$weight) %>%
+      select(.data$bodyid, .data$partner, .data$prepost, .data$Label, .data$weight) %>%
       as.data.frame() ->
       syn
   }

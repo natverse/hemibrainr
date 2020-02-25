@@ -19,7 +19,9 @@
 #' @export
 #'
 #' @examples
-#' \donttest{
+#' # NB these examples will not be run by default as they currently depend on
+#' # access to some private google sheets
+#' \dontrun{
 #' class2ids("uPN")
 #' length(class2ids("ORN", possible = FALSE))
 #' length(class2ids("ORN", possible = TRUE))
@@ -109,7 +111,7 @@ alns <- function(x="RN", possible=TRUE, refresh=FALSE) {
 #' @export
 #'
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' table(glomerulus(class2ids('PN')), useNA='ifany')
 #' table(glomerulus(class2ids('PN'), exclude.multi = TRUE), useNA='ifany')
 #' }
@@ -156,6 +158,9 @@ mbns <- function(x=c("MBON", "DAN"), possible=TRUE, refresh=FALSE) {
 }
 
 cached_read_sheet <- function(id, forget=FALSE, ...) {
+  if(!requireNamespace('googlesheets4', quietly = TRUE))
+    stop("Please install the suggested package googlesheets4!\n",
+         '  install.packages("googlesheets4")')
   if(forget)
     memoise::forget(cached_read_sheet_memo)
   cached_read_sheet_memo(id, ...)
