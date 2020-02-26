@@ -1,3 +1,33 @@
+name2cbf <- function(x) stringr::str_match(x, '([AP][DV][ML][0-9]+)')[,2]
+
+#' Return consistent cell body fiber annotation for neurons
+#'
+#' @details New style cell body fiber names have the
+#'
+#' @param x A vector of bodyids, a query or a data.frame compatible with
+#'   \code{\link{neuprint_ids}}
+#' @param ... Additional arguments passed to \code{\link{neuprint_get_meta}}
+#'
+#' @return a vector of \bold{new style} cell body fiber names.
+#' @export
+#' @seealso \code{\link{neuprint_get_meta}}, \code{\link{neuprint_ids}}
+#' @examples
+#' \donttest{
+#' # these are all one lineage but some missing tract info
+#' table(hemibrain_cbf("adPN"), useNA = 'ifany')
+#' # Do these come from two different hemilineages?
+#' table(hemibrain_cbf("lPN"))
+#' }
+hemibrain_cbf <- function(x, ...) {
+  if(!is.data.frame(x)) {
+    x <- neuprint_get_meta(x, ...)
+  }
+  # cbf from name should be preferred if it exists
+  cbf.name=name2cbf(x$name)
+  cbf.cbf=name2cbf(x$cellBodyFiber)
+  ifelse(is.na(cbf.name), cbf.cbf, cbf.name)
+}
+
 #' Return body ids for large classes of neurons
 #'
 #' Will use our google sheet annotation spreadsheets or neuPrint queries as
