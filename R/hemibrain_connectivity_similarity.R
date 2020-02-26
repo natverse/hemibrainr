@@ -63,16 +63,19 @@ hemibrain_connectivity_similarity_distance <-function(m,c1 = 0.5, c2 = 0.18,norm
 
 #' @export
 #' @rdname hemibrain_connectivity_similarity
-hemibrain_connectivity_similarity_matrix <-function(m,c1 = 0.5, c2 = 0.18,normalise = FALSE, diag = FALSE, upper = FALSE){
-  if(!is.matrix(m)){
+hemibrain_connectivity_similarity_matrix <-function(m, c1 = 0.5, c2 = 0.18, normalise = FALSE){
+  if(!is.matrix(m)&!is.data.frame(m)){
     stop("m is not a matrix")
   }
-  M = matrix(0,ncol(m),ncol(m))
-  rownames(M) = colnames(M) = colnames(m)
-  for(e in colnames(m)){
-    for(i in colnames(m)){
-      M[e,i] = hemibrain_connectivity_similarity.numeric(x = m[,e], y= m[,i],c1=c1,c2=c2,normalise = normalise)
+  M <- foreach::foreach(e = colnames(m), .combine = cbind) %dopar% {
+    S <- foreach::foreach(i = colnames(m), .combine = rbind) %do% {
+      hcs <- hemibrain_connectivity_similarity.numeric(x = m[,e], y= m[,i],c1=c1,c2=c2,normalise = normalise)
     }
   }
+  rownames(M) = colnames(M) = colnames(m)
   M
 }
+
+# hidden
+`%dopar%` <- foreach::`%dopar%`
+`%do%` <- foreach::`%do%`

@@ -27,9 +27,7 @@ hemibrain_connectivity_similarity_matrix(
   m,
   c1 = 0.5,
   c2 = 0.18,
-  normalise = FALSE,
-  diag = FALSE,
-  upper = FALSE
+  normalise = FALSE
 )
 }
 \arguments{

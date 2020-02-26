@@ -35,7 +35,8 @@ Imports:
     reshape2,
     stringr,
     memoise,
-    rlang
+    rlang,
+    foreach
 Remotes: 
     natverse/neuprintr
 Language: en-GB
