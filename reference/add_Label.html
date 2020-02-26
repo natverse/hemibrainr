@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Calculate a connectivity similarity score between two connectivity profiles — hemibrain_connectivity_similarity • hemibrainr</title>
+<title>Manually add a Label annotation to a neuron — add_Label • hemibrainr</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -42,8 +42,8 @@
 
 
 
-<meta property="og:title" content="Calculate a connectivity similarity score between two connectivity profiles — hemibrain_connectivity_similarity" />
-<meta property="og:description" content="Calculate a similarity score between connectivity matrices that penalises small differences between low and does not heavily penalise large differences between high weights. Algorithm from Jarrell et al. 2012." />
+<meta property="og:title" content="Manually add a Label annotation to a neuron — add_Label" />
+<meta property="og:description" content="Assign all points on a skeleton with a certain Label." />
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
 
@@ -113,86 +113,50 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Calculate a connectivity similarity score between two connectivity profiles</h1>
-    <small class="dont-index">Source: <a href='https://github.com/flyconnectome/hemibrainr/blob/master/R/hemibrain_connectivity_similarity.R'><code>R/hemibrain_connectivity_similarity.R</code></a></small>
-    <div class="hidden name"><code>hemibrain_connectivity_similarity.Rd</code></div>
+    <h1>Manually add a Label annotation to a neuron</h1>
+    <small class="dont-index">Source: <a href='https://github.com/flyconnectome/hemibrainr/blob/master/R/hemibrain_split.R'><code>R/hemibrain_split.R</code></a></small>
+    <div class="hidden name"><code>add_Label.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Calculate a similarity score between connectivity matrices that penalises small differences between low and does not heavily penalise large differences between high weights. Algorithm from Jarrell et al. 2012.</p>
+    <p>Assign all points on a skeleton with a certain Label.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>hemibrain_connectivity_similarity</span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='kw'>c1</span> <span class='kw'>=</span> <span class='fl'>0.5</span>, <span class='kw'>c2</span> <span class='kw'>=</span> <span class='fl'>0.18</span>, <span class='kw'>normalise</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
-
-<span class='co'># S3 method for numeric</span>
-<span class='fu'>hemibrain_connectivity_similarity</span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='kw'>c1</span> <span class='kw'>=</span> <span class='fl'>0.5</span>, <span class='kw'>c2</span> <span class='kw'>=</span> <span class='fl'>0.18</span>, <span class='kw'>normalise</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
-
-<span class='co'># S3 method for matrix</span>
-<span class='fu'>hemibrain_connectivity_similarity</span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='kw'>c1</span> <span class='kw'>=</span> <span class='fl'>0.5</span>, <span class='kw'>c2</span> <span class='kw'>=</span> <span class='fl'>0.18</span>, <span class='kw'>normalise</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
-
-<span class='fu'>hemibrain_connectivity_similarity_distance</span>(
-  <span class='no'>m</span>,
-  <span class='kw'>c1</span> <span class='kw'>=</span> <span class='fl'>0.5</span>,
-  <span class='kw'>c2</span> <span class='kw'>=</span> <span class='fl'>0.18</span>,
-  <span class='kw'>normalise</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>diag</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>upper</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
-)
-
-<span class='fu'>hemibrain_connectivity_similarity_matrix</span>(
-  <span class='no'>m</span>,
-  <span class='kw'>c1</span> <span class='kw'>=</span> <span class='fl'>0.5</span>,
-  <span class='kw'>c2</span> <span class='kw'>=</span> <span class='fl'>0.18</span>,
-  <span class='kw'>normalise</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
-)</pre>
+    <pre class="usage"><span class='fu'>add_Label</span>(<span class='no'>x</span>, <span class='kw'>Label</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='no'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>x</th>
-      <td><p>a vector/matrix of connectivities, where each entry in the vector or each column in the matrix is a different target/input neuron/cell type</p></td>
+      <td><p>a <code><a href='https://rdrr.io/pkg/nat/man/neuronlist.html'>nat::neuronlist</a></code> or <code><a href='https://rdrr.io/pkg/nat/man/neuron.html'>nat::neuron</a></code> object. It is assumed
+that this neuron has been read in by <code><a href='https://rdrr.io/pkg/neuprintr/man/neuprint_read_neurons.html'>neuprintr::neuprint_read_neurons</a></code> or
+possibly <code>catmaid::read.neurons.catmaid</code>.</p></td>
     </tr>
     <tr>
-      <th>y</th>
-      <td><p>a different vector/matrix of connectivities</p></td>
+      <th>Label</th>
+      <td><p>the Label to be added. See <code><a href='flow_centrality.html'>flow_centrality</a></code>.</p></td>
     </tr>
     <tr>
-      <th>c1</th>
-      <td><p>determines how negatively we want to punish a case such as the one above. Default C1 is chosen so that 1 and 5 are weakly dissimilar.</p></td>
-    </tr>
-    <tr>
-      <th>c2</th>
-      <td><p>determines the point where the similarity of the two numbers switches from negative to positive. Default C2 is chosen so that 10 and 100 synapses are weakly similar.</p></td>
-    </tr>
-    <tr>
-      <th>normalise</th>
-      <td><p>perform a min-max normalisation on the similarity scores as in Schlegel et al. 2015</p></td>
-    </tr>
-    <tr>
-      <th>m</th>
-      <td><p>an n x m adjacency matrix</p></td>
-    </tr>
-    <tr>
-      <th>diag</th>
-      <td><p>for connectivity_similarity_distance. Logical value indicating whether the diagonal of the distance matrix should be printed by print.dist.</p></td>
-    </tr>
-    <tr>
-      <th>upper</th>
-      <td><p>for connectivity_similarity_distance. Logical value indicating whether the upper triangle of the distance matrix should be printed by print.dist.</p></td>
+      <th>...</th>
+      <td><p>methods sent to <code><a href='https://rdrr.io/pkg/nat/man/nlapply.html'>nat::nlapply</a></code></p></td>
     </tr>
     </table>
 
-    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>Jarrell TA, Wang Y, Bloniarz AE, Brittin CA, Xu M, Thomson JN, Albertson DG, Hall DH, Emmons SW (2012) "The connectome of a decision-making neural network." Science (80- ) 337: 437–444.</p>
+    <p>a <code>neuron</code> or <code>neuronlist</code></p>
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p><code><a href='flow_centrality.html'>flow_centrality</a></code>, <code><a href='hemibrain_use_splitpoints.html'>hemibrain_use_splitpoints</a></code></p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      <li><a href="#references">References</a></li>
+      <li><a href="#value">Value</a></li>
+      <li><a href="#see-also">See also</a></li>
     </ul>
 
   </div>
