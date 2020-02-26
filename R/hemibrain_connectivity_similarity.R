@@ -9,7 +9,7 @@
 #' @param normalise perform a min-max normalisation on the similarity scores as in Schlegel et al. 2015
 #' @param diag for connectivity_similarity_distance. Logical value indicating whether the diagonal of the distance matrix should be printed by print.dist.
 #' @param upper for connectivity_similarity_distance. Logical value indicating whether the upper triangle of the distance matrix should be printed by print.dist.
-#' @references Jarrell TA, Wang Y, Bloniarz AE, Brittin CA, Xu M, Thomson JN, Albertson DG, Hall DH, Emmons SW (2012) The connectome of a decision-making neural network. Science (80- ) 337: 437–444.
+#' @references Jarrell TA, Wang Y, Bloniarz AE, Brittin CA, Xu M, Thomson JN, Albertson DG, Hall DH, Emmons SW (2012) "The connectome of a decision-making neural network." Science (80- ) 337: 437–444.
 #' @name hemibrain_connectivity_similarity
 #' @export
 #' @rdname hemibrain_connectivity_similarity

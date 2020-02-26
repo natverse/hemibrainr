@@ -53,5 +53,5 @@ hemibrain_connectivity_similarity_matrix(
 Calculate a similarity score between connectivity matrices that penalises small differences between low and does not heavily penalise large differences between high weights. Algorithm from Jarrell et al. 2012.
 }
 \references{
-Jarrell TA, Wang Y, Bloniarz AE, Brittin CA, Xu M, Thomson JN, Albertson DG, Hall DH, Emmons SW (2012) The connectome of a decision-making neural network. Science (80- ) 337: 437–444.
+Jarrell TA, Wang Y, Bloniarz AE, Brittin CA, Xu M, Thomson JN, Albertson DG, Hall DH, Emmons SW (2012) "The connectome of a decision-making neural network." Science (80- ) 337: 437–444.
 }
