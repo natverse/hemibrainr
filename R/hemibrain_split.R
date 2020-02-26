@@ -621,6 +621,30 @@ hemibrain_flow_centrality.neuronlist <- function(x, splitpoints = hemibrainr::he
 
 
 
+#' Manually add a Label annotation to a neuron
+#'
+#' @description Assign all points on a skeleton with a certain Label.
+#'
+#' @inheritParams flow_centrality
+#' @param Label the Label to be added. See \code{\link{flow_centrality}}.
+#'
+#' @return a \code{neuron} or \code{neuronlist}
+#' @seealso \code{\link{flow_centrality}}, \code{\link{hemibrain_use_splitpoints}}
+#' @export
+add_Label <-function(x, Label = 2, ...) UseMethod("add_Label")
+#' @export
+add_Label.neuron <- function(x, Label = 2, ...){
+  x$d$Label = 2
+  if(!is.null(x$connectors)){
+    x$connectors$Label = 2
+  }
+  x
+}
+#' @export
+add_Label.neuronlist <- function(x, Label = 2, ...){
+  nat::nlapply(x, add_Label.neuron, Label = Label, ...)
+}
+
 
 
 
