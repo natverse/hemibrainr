@@ -6,7 +6,7 @@
 \usage{
 hemibrain_flow_centrality(
   x,
-  splitpoints = hemibrainr::hemibrain_splitpoints_distance,
+  splitpoints = hemibrainr::hemibrain_splitpoints_polypre_centrifugal_distance,
   knn = FALSE,
   ...
 )
@@ -17,8 +17,11 @@ that this neuron has been read in by \code{neuprintr::neuprint_read_neurons} or
 possibly \code{catmaid::read.neurons.catmaid}.}
 
 \item{splitpoints}{a \code{data.frame} of splitpoints from running \code{\link{flow_centrality}},
-as produced by \code{\link{hemibrain_splitpoints}}. If set to \code{NULL} precomputed splitpoints
-are used, \code{\link{hemibrain_splitpoints_distance}}.}
+as produced by \code{\link{hemibrain_splitpoints}}. If a custom set of splitpoints is not given, precomputed splitpoints
+are used, \code{\link{hemibrain_precomputed_splitpoints}}. This defaults to \code{hemibrain_splitpoints_polypre_centrifugal_distance},
+however to see the available precomputations (which have used \code{\link{flow_centrality}}, in this case `polypre = TRUE`, `mode = "centrifgual"`
+and `split = "distance"`) with different parameters)
+please see \code{\link{hemibrain_precomputed_splitpoints}}.}
 
 \item{knn}{logical, whether or not to find corresponding points
 between \code{splitpoints} and \code{x$d} using a nearest neighbour search in 3D
@@ -33,7 +36,7 @@ a \code{neuronlist}
 \description{
 Split a neuron into its putative axon and dendrite,
  using a \code{data.frame} of precomputed split points. We have already pre-computed
- splits for all neurons and stored them in this package as \code{\link{hemibrain_splitpoints_distance}}.
+ splits for all neurons and stored them in this package as \code{\link{hemibrain_precomputed_splitpoints}}.
  This is helpful because  \code{\link{flow_centrality}} can take a long time to run on a large
  number of neurons.
 }
@@ -79,5 +82,5 @@ Schneider-Mizell, C. M., Gerhard, S., Longair, M., Kazimiers, T.,
 \seealso{
 \code{\link{flow_centrality}}
 
-\code{\link{hemibrain_splitpoints}}, \code{\link{flow_centrality}}, \code{\link{hemibrain_use_splitpoints}}
+\code{\link{hemibrain_splitpoints}}, \code{\link{flow_centrality}}, \code{\link{hemibrain_use_splitpoints}}, \code{\link{hemibrain_precomputed_splitpoints}}
 }

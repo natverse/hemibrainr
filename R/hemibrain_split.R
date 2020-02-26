@@ -265,22 +265,24 @@ flow_centrality.neuron <- function(x,
   }
   if (grepl("synapses", split)) {
     synapse.choice = gsub("synapses", "", split)
-    choice = mean(nodes[as.character(downstream.unclassed),
-                        synapse.choice], na.rm = TRUE) > mean(nodes[as.character(upstream.unclassed),
-                                                                    synapse.choice], na.rm = TRUE)
-    if (choice) {
+    sdown = sum(nodes[as.character(downstream.unclassed),
+                      synapse.choice], na.rm = TRUE)
+    sup = sum(nodes[as.character(upstream.unclassed),
+                    synapse.choice], na.rm = TRUE)
+    choice = sdown > sup
+    if (sdown == sup) {
+      split == "distance"
+      warning("synapse numbers are the same, splitting based on branch point distances to primary branchpoint")
+    }
+    else if ( (choice & synapse.choice=="pre") | (!choice & synapse.choice=="post") ) {
       nodes[as.character(downstream.unclassed), "Label"] = 2
       axon.nodes = downstream.unclassed
       dendrite.nodes = upstream.unclassed
     }
-    else if (!choice) {
+    else {
       nodes[as.character(upstream.unclassed), "Label"] = 2
       axon.nodes = upstream.unclassed
       dendrite.nodes = downstream.unclassed
-    }
-    else {
-      split == "distance"
-      warning("synapse numbers are the same, splitting based on branch point distances to primary branchpoint")
     }
   }
   if (split == "distance") {
@@ -468,7 +470,7 @@ hemibrain_splitpoints <- function(x){
 #' nlscan_split(neurons.flow2, WithConnectors = TRUE)
 #' }}
 #' @export
-#' @seealso \code{\link{hemibrain_splitpoints}}, \code{\link{flow_centrality}}
+#' @seealso \code{\link{hemibrain_splitpoints}}, \code{\link{flow_centrality}}, \code{\link{hemibrain_precomputed_splitpoints}}
 hemibrain_use_splitpoints <-function(x,
                                      df,
                                      knn = FALSE,
@@ -545,14 +547,17 @@ hemibrain_use_splitpoints.neuronlist <-function(x, df, knn = FALSE, ...){
 #'
 #' @description Split a neuron into its putative axon and dendrite,
 #'  using a \code{data.frame} of precomputed split points. We have already pre-computed
-#'  splits for all neurons and stored them in this package as \code{\link{hemibrain_splitpoints_distance}}.
+#'  splits for all neurons and stored them in this package as \code{\link{hemibrain_precomputed_splitpoints}}.
 #'  This is helpful because  \code{\link{flow_centrality}} can take a long time to run on a large
 #'  number of neurons.
 #'
 #' @inheritParams flow_centrality
 #' @param splitpoints a \code{data.frame} of splitpoints from running \code{\link{flow_centrality}},
-#' as produced by \code{\link{hemibrain_splitpoints}}. If set to \code{NULL} precomputed splitpoints
-#' are used, \code{\link{hemibrain_splitpoints_distance}}.
+#' as produced by \code{\link{hemibrain_splitpoints}}. If a custom set of splitpoints is not given, precomputed splitpoints
+#' are used, \code{\link{hemibrain_precomputed_splitpoints}}. This defaults to \code{hemibrain_splitpoints_polypre_centrifugal_distance},
+#' however to see the available precomputations (which have used \code{\link{flow_centrality}}, in this case `polypre = TRUE`, `mode = "centrifgual"`
+#' and `split = "distance"`) with different parameters)
+#' please see \code{\link{hemibrain_precomputed_splitpoints}}.
 #' @inheritParams hemibrain_use_splitpoints
 #' @param knn logical, whether or not to find corresponding points
 #' between \code{splitpoints} and \code{x$d} using a nearest neighbour search in 3D
@@ -582,14 +587,14 @@ hemibrain_use_splitpoints.neuronlist <-function(x, df, knn = FALSE, ...){
 #' nlscan_split(neurons.flow, WithConnectors = TRUE)
 #' }}
 #' @export
-#' @seealso \code{\link{hemibrain_splitpoints}}, \code{\link{flow_centrality}}, \code{\link{hemibrain_use_splitpoints}}
+#' @seealso \code{\link{hemibrain_splitpoints}}, \code{\link{flow_centrality}}, \code{\link{hemibrain_use_splitpoints}}, \code{\link{hemibrain_precomputed_splitpoints}}
 hemibrain_flow_centrality <-function(x,
-                                     splitpoints = hemibrainr::hemibrain_splitpoints_distance,
+                                     splitpoints = hemibrainr::hemibrain_splitpoints_polypre_centrifugal_distance,
                                      knn = FALSE,
                                      ...) UseMethod("hemibrain_flow_centrality")
 
 #' @export
-hemibrain_flow_centrality.neuron <- function(x, splitpoints = hemibrainr::hemibrain_splitpoints_distance, knn = FALSE, ...){
+hemibrain_flow_centrality.neuron <- function(x, splitpoints = hemibrainr::hemibrain_splitpoints_polypre_centrifugal_distance, knn = FALSE, ...){
   bi = x$bodyid
   df = filter(splitpoints, .data$bodyid == bi)
   y = hemibrain_use_splitpoints(x, df, knn = knn, ...)
@@ -597,7 +602,7 @@ hemibrain_flow_centrality.neuron <- function(x, splitpoints = hemibrainr::hemibr
 }
 
 #' @export
-hemibrain_flow_centrality.neuronlist <- function(x, splitpoints = hemibrainr::hemibrain_splitpoints_distance, knn = FALSE, ...){
+hemibrain_flow_centrality.neuronlist <- function(x, splitpoints = hemibrainr::hemibrain_splitpoints_polypre_centrifugal_distance, knn = FALSE, ...){
   cropped = subset(x, cropped)
   if(length(cropped)){
     warning(length(cropped), " neurons cropped, split likely to be inaccurate for: ", paste(names(cropped),collapse=", "))

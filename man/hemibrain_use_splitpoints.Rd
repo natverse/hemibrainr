@@ -69,5 +69,5 @@ nlscan_split(neurons.flow2, WithConnectors = TRUE)
 \seealso{
 \code{\link{flow_centrality}}
 
-\code{\link{hemibrain_splitpoints}}, \code{\link{flow_centrality}}
+\code{\link{hemibrain_splitpoints}}, \code{\link{flow_centrality}}, \code{\link{hemibrain_precomputed_splitpoints}}
 }
