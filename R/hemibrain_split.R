@@ -217,7 +217,7 @@ flow_centrality.neuron <- function(x,
   }
   igraph::V(n)$name = igraph::V(n)
   if(soma){
-    p.n = primary_neurite.neuron(x, neuron = FALSE)
+    p.n = primary_neurite(x, neuron = FALSE)
   }else{
     p.n = unlist(x$SegList[which.max(sapply(x$SegList, function(x) sum(nodes[x,"flow.cent"]==0)))])
   }
@@ -529,6 +529,9 @@ hemibrain_use_splitpoints.neuron <-function(x, df, knn = FALSE, ...){
   y$dendrite.start = dendrite.start
   y$secondary.branch.points = c(axon.start,dendrite.start)
 
+  # Assign bodyid
+  y$bodyid = y$d$bodyid = x$bodyid
+
   # Return split skeleton
   y
 
@@ -634,9 +637,9 @@ hemibrain_flow_centrality.neuronlist <- function(x, splitpoints = hemibrainr::he
 add_Label <-function(x, Label = 2, ...) UseMethod("add_Label")
 #' @export
 add_Label.neuron <- function(x, Label = 2, ...){
-  x$d$Label = 2
+  x$d$Label = Label
   if(!is.null(x$connectors)){
-    x$connectors$Label = 2
+    x$connectors$Label = Label
   }
   x
 }
