@@ -633,7 +633,7 @@ hemibrain_flow_centrality.neuronlist <- function(x, splitpoints = hemibrainr::he
 #' @param Label the Label to be added. See \code{\link{flow_centrality}}.
 #'
 #' @return a \code{neuron} or \code{neuronlist}
-#' @seealso \code{\link{flow_centrality}}, \code{\link{hemibrain_use_splitpoints}}
+#' @seealso \code{\link{flow_centrality}}, \code{\link{add_field}}
 #' @export
 add_Label <-function(x, Label = 2, ...) UseMethod("add_Label")
 #' @export
@@ -649,7 +649,6 @@ add_Label.neuronlist <- function(x, Label = 2, ...){
   nat::nlapply(x, add_Label.neuron, Label = Label, ...)
 }
 
-
 #' Add a field to neuron objects (inc. in a neuronlist)
 #'
 #' @description At an item to the the list object that comprises a neuron
@@ -657,12 +656,12 @@ add_Label.neuronlist <- function(x, Label = 2, ...){
 #' @inheritParams flow_centrality
 #' @param entry item to add.
 #' @param entries a vector/list of entries, tha same length as \code{x}.
-#' Each neuron in x will have the entry in entries as the same index, added to it
+#' Each neuron in \code{x} will have the entry in entries as the same index, added to it
 #' as \code{field}.
 #' @param field name of new field, or field to overwrite.
 #'
 #' @return a \code{neuron} or \code{neuronlist}
-#' @seealso
+#' @seealso \code{\link{add_Label}}
 add_field <-function(x, entry, field = "bodyid", ...) UseMethod("add_field")
 #' @export
 add_field.neuron <- function(x, entry, field = "bodyid", ...){
@@ -674,6 +673,7 @@ add_field.neuronlist <- function(x, entry, field = "bodyid", ...){
   nat::nlapply(x, add_Label.neuron, entry, field = "bodyid", ...)
 }
 #' @export
+#' @rdname add_field
 add_field_seq <- function(x, entries, field = "bodyid", ...){
   x = nat::as.neuronlist(x)
   if(length(entries)!=length(x)){

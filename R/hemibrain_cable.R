@@ -285,27 +285,27 @@ primary_dendrite_cable.neuprintneuron <- primary_dendrite_cable.neuron
 
 #' @export
 axonic_cable.neuronlist <- function(x, mixed=FALSE, ...){
-  nat::nlapply(x,axonic_cable.neuron,mixed=mixed,OmitFailures = T, ...)
+  nat::nlapply(x,axonic_cable.neuron,mixed=mixed, ...)
 }
 
 #' @export
 dendritic_cable.neuronlist <- function(x, mixed=FALSE, ...){
-  nat::nlapply(x,dendritic_cable.neuron,mixed=mixed,OmitFailures = T, ...)
+  nat::nlapply(x,dendritic_cable.neuron,mixed=mixed, ...)
 }
 
 #' @export
 arbour_cable.neuronlist <- function(x, mixed=FALSE, ...){
-  nat::nlapply(x,arbour_cable.neuron,mixed=mixed,OmitFailures = T, ...)
+  nat::nlapply(x,arbour_cable.neuron,mixed=mixed, ...)
 }
 
 #' @export
 unsure_cable.neuronlist <- function(x, mixed = FALSE, ...){
-  nat::nlapply(x,unsure_cable.neuron,OmitFailures = T, ...)
+  nat::nlapply(x,unsure_cable.neuron, ...)
 }
 
 #' @export
 primary_dendrite_cable.neuronlist <- function(x, ...){
-  nat::nlapply(x,primary_dendrite_cable.neuron,OmitFailures = T, ...)
+  nat::nlapply(x,primary_dendrite_cable.neuron, ...)
 }
 
 #' Prune vertices from a neuprint neuron (taking care of synapse etc information)

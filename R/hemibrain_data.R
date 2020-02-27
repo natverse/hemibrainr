@@ -57,7 +57,8 @@
 "hemibrain_splitpoints_polypre_centrifugal_distance"
 #' @rdname hemibrain_precomputed_splitpoints
 "hemibrain_splitpoints_pre_centrifugal_distance"
-
+#' @rdname hemibrain_precomputed_splitpoints
+"hemibrain_splitpoints_pre_centrifugal_presynapses"
 
 #' Neuron metrics for all neurons in the hemibrain dataset
 #'
