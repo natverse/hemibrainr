@@ -18,6 +18,9 @@ a vector of \bold{new style} cell body fiber names.
 \description{
 Return consistent cell body fiber annotation for neurons
 }
+\details{
+New style cell body fiber names have the
+}
 \examples{
 \donttest{
 # these are all one lineage but some missing tract info
@@ -25,4 +28,7 @@ table(hemibrain_cbf("adPN"), useNA = 'ifany')
 # Do these come from two different hemilineages?
 table(hemibrain_cbf("lPN"))
 }
+}
+\seealso{
+\code{\link{neuprint_get_meta}}, \code{\link{neuprint_ids}}
 }
