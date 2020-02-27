@@ -601,6 +601,7 @@ hemibrain_flow_centrality.neuron <- function(x, splitpoints = hemibrainr::hemibr
   bi = x$bodyid
   df = filter(splitpoints, .data$bodyid == bi)
   y = hemibrain_use_splitpoints(x, df, knn = knn, ...)
+  y$bodyid = bi
   y
 }
 
@@ -646,6 +647,48 @@ add_Label.neuron <- function(x, Label = 2, ...){
 #' @export
 add_Label.neuronlist <- function(x, Label = 2, ...){
   nat::nlapply(x, add_Label.neuron, Label = Label, ...)
+}
+
+
+#' Add a field to neuron objects (inc. in a neuronlist)
+#'
+#' @description At an item to the the list object that comprises a neuron
+#'
+#' @inheritParams flow_centrality
+#' @param entry item to add.
+#' @param entries a vector/list of entries, tha same length as \code{x}.
+#' Each neuron in x will have the entry in entries as the same index, added to it
+#' as \code{field}.
+#' @param field name of new field, or field to overwrite.
+#'
+#' @return a \code{neuron} or \code{neuronlist}
+#' @seealso
+add_field <-function(x, entry, field = "bodyid", ...) UseMethod("add_field")
+#' @export
+add_field.neuron <- function(x, entry, field = "bodyid", ...){
+  x[[field]] = entry
+  x
+}
+#' @export
+add_field.neuronlist <- function(x, entry, field = "bodyid", ...){
+  nat::nlapply(x, add_Label.neuron, entry, field = "bodyid", ...)
+}
+#' @export
+add_field_seq <- function(x, entries, field = "bodyid", ...){
+  x = nat::as.neuronlist(x)
+  if(length(entries)!=length(x)){
+    stop("The length of the entries to add must be the same as the length of the neuronlist, x")
+  }
+  nl = nat::neuronlist()
+  for(i in 1:length(x)){
+    y = x[[1]]
+    entry = entries[i]
+    y = add_field(y, entry = entry, field = field, ...)
+    nl = c(nl, nat::as.neuronlist(y))
+  }
+  names(nl) = names(x)
+  nl[,] = x[,]
+  nl
 }
 
 
