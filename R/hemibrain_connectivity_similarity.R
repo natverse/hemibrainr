@@ -76,6 +76,10 @@ hemibrain_connectivity_similarity_matrix <-function(m, c1 = 0.5, c2 = 0.18, norm
   M
 }
 
-# hidden
-`%dopar%` <- foreach::`%dopar%`
-`%do%` <- foreach::`%do%`
+#' @importFrom foreach %dopar%
+#' @export
+foreach::`%dopar%`
+
+#' @importFrom foreach %do%
+#' @export
+foreach::`%do%`
