@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Axon-dendrite split points calculated for all hemibrain neurons — hemibrain_precomputed_splitpoints • hemibrainr</title>
+<title>Add a field to neuron objects (inc. in a neuronlist) — add_field • hemibrainr</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -42,14 +42,8 @@
 
 
 
-<meta property="og:title" content="Axon-dendrite split points calculated for all hemibrain neurons — hemibrain_precomputed_splitpoints" />
-<meta property="og:description" content="Axon-dendrite split points calculated for the whole hemibrain dataset,
-hemibrain:v1.0.1, using a variety of parameters. The file used to generate this can be found in this
-package, as data-raw/hemibrain_split_all_neurons.R. The arguments given
-to flow_centrality are in the name of the data frame.
-Note that, because the proportion of recovered synapses is unevenly distributed across brain
-regions, after compartment detection, sometimes the dendrite was chosen as the neurite
-closest to a neuron's primary branch point (data frames with 'distance' in their name), see reference." />
+<meta property="og:title" content="Add a field to neuron objects (inc. in a neuronlist) — add_field" />
+<meta property="og:description" content="At an item to the the list object that comprises a neuron" />
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
 
@@ -119,68 +113,62 @@ closest to a neuron's primary branch point (data frames with 'distance' in their
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Axon-dendrite split points calculated for all hemibrain neurons</h1>
-    <small class="dont-index">Source: <a href='https://github.com/flyconnectome/hemibrainr/blob/master/R/hemibrain_data.R'><code>R/hemibrain_data.R</code></a></small>
-    <div class="hidden name"><code>hemibrain_precomputed_splitpoints.Rd</code></div>
+    <h1>Add a field to neuron objects (inc. in a neuronlist)</h1>
+    <small class="dont-index">Source: <a href='https://github.com/flyconnectome/hemibrainr/blob/master/R/hemibrain_split.R'><code>R/hemibrain_split.R</code></a></small>
+    <div class="hidden name"><code>add_field.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Axon-dendrite split points calculated for the whole hemibrain dataset,
-hemibrain:v1.0.1, using a variety of parameters. The file used to generate this can be found in this
-package, as <code>data-raw/hemibrain_split_all_neurons.R</code>. The arguments given
-to <code><a href='flow_centrality.html'>flow_centrality</a></code> are in the name of the data frame.
-Note that, because the proportion of recovered synapses is unevenly distributed across brain
-regions, after compartment detection, sometimes the dendrite was chosen as the neurite
-closest to a neuron's primary branch point (data frames with 'distance' in their name), see reference.</p>
+    <p>At an item to the the list object that comprises a neuron</p>
     </div>
 
-    <pre class="usage"><span class='no'>hemibrain_splitpoints_polypre_centrifugal_distance</span>
+    <pre class="usage"><span class='fu'>add_field</span>(<span class='no'>x</span>, <span class='no'>entry</span>, <span class='kw'>field</span> <span class='kw'>=</span> <span class='st'>"bodyid"</span>, <span class='no'>...</span>)
 
-<span class='no'>hemibrain_splitpoints_pre_centrifugal_distance</span>
+<span class='fu'>add_field_seq</span>(<span class='no'>x</span>, <span class='no'>entries</span>, <span class='kw'>field</span> <span class='kw'>=</span> <span class='st'>"bodyid"</span>, <span class='no'>...</span>)</pre>
 
-<span class='no'>hemibrain_splitpoints_pre_centrifugal_presynapses</span></pre>
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>x</th>
+      <td><p>a <code><a href='https://rdrr.io/pkg/nat/man/neuronlist.html'>nat::neuronlist</a></code> or <code><a href='https://rdrr.io/pkg/nat/man/neuron.html'>nat::neuron</a></code> object. It is assumed
+that this neuron has been read in by <code><a href='https://rdrr.io/pkg/neuprintr/man/neuprint_read_neurons.html'>neuprintr::neuprint_read_neurons</a></code> or
+possibly <code>catmaid::read.neurons.catmaid</code>.</p></td>
+    </tr>
+    <tr>
+      <th>entry</th>
+      <td><p>item to add.</p></td>
+    </tr>
+    <tr>
+      <th>field</th>
+      <td><p>name of new field, or field to overwrite.</p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p>methods sent to <code><a href='https://rdrr.io/pkg/nat/man/nlapply.html'>nat::nlapply</a></code></p></td>
+    </tr>
+    <tr>
+      <th>entries</th>
+      <td><p>a vector/list of entries, tha same length as <code>x</code>.
+Each neuron in <code>x</code> will have the entry in entries as the same index, added to it
+as <code>field</code>.</p></td>
+    </tr>
+    </table>
 
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
-
-    <p>An object of class <code>data.frame</code> with 505529 rows and 6 columns.</p>
-    <h2 class="hasAnchor" id="source"><a class="anchor" href="#source"></a>Source</h2>
-
-    <p><a href='https://www.biorxiv.org/content/10.1101/2020.01.19.911453v1'>https://www.biorxiv.org/content/10.1101/2020.01.19.911453v1</a></p>
-    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
-
-    <p>Bates, A. S., P. Schlegel, R. J. V. Roberts, N. Drummond, I. F.
-  M. Tamimi, R. Turnbull, X. Zhao, et al. 2020. “Complete Connectomic
-  Reconstruction of Olfactory Projection Neurons in the Fly Brain.” bioRxiv.
-  https://doi.org/10.1101/2020.01.19.911453.</p>
+    <p>a <code>neuron</code> or <code>neuronlist</code></p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='hemibrain_flow_centrality.html'>hemibrain_flow_centrality</a></code>,
-  <code><a href='hemibrain_splitpoints.html'>hemibrain_splitpoints</a></code>,
-  <code><a href='flow_centrality.html'>flow_centrality</a></code>,
-  <code><a href='hemibrain_use_splitpoints.html'>hemibrain_use_splitpoints</a></code></p></div>
+    <div class='dont-index'><p><code><a href='add_Label.html'>add_Label</a></code></p></div>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='no'>hemibrain_splitpoints_polypre_centrifugal_distance</span>)</div><div class='output co'>#&gt;      bodyid position                 point       X       Y       Z
-#&gt; 1 202916528        2                  root 20075.3 12279.3 12198.2
-#&gt; 2 202916528      326  primary.branch.point 23704.7 20727.3 17166.7
-#&gt; 3 202916528      545      axon.primary.545 31914.0 24874.0 12060.0
-#&gt; 4 202916528     2008 dendrite.primary.2008 23402.0 20554.0 17564.0
-#&gt; 5 202916528      499           axon.start1 31066.0 25818.0 14524.0
-#&gt; 6 202916528     1240           axon.start2 31162.0 25802.0 14588.0</div><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
-<span class='fu'><a href='https://rdrr.io/r/utils/View.html'>View</a></span>(<span class='no'>hemibrain_splitpoints_polypre_centrifugal_distance</span>)
-}
-<span class='co'># }</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-      <li><a href="#format">Format</a></li>
-      <li><a href="#source">Source</a></li>
-      <li><a href="#references">References</a></li>
+      <li><a href="#arguments">Arguments</a></li>
+      <li><a href="#value">Value</a></li>
       <li><a href="#see-also">See also</a></li>
-      <li><a href="#examples">Examples</a></li>
     </ul>
 
   </div>
