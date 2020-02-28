@@ -2,7 +2,10 @@ name2cbf <- function(x) stringr::str_match(x, '([AP][DV][ML][0-9]+)')[,2]
 
 #' Return consistent cell body fiber annotation for neurons
 #'
-#' @details New style cell body fiber names have the
+#' @details New style cell body fiber names are of the form \code{ADL01} and
+#'   match the regular expression \code{'([AP][DV][ML][0-9]+)'}. As of hemibrain
+#'   v1.0.1 these seem to be variably located in the cellBodyFiber and instance
+#'   fields and in some cases are missing from both.
 #'
 #' @param x A vector of bodyids, a query or a data.frame compatible with
 #'   \code{\link{neuprint_ids}}

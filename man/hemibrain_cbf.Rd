@@ -19,7 +19,8 @@ a vector of \bold{new style} cell body fiber names.
 Return consistent cell body fiber annotation for neurons
 }
 \details{
-New style cell body fiber names have the
+New style cell body fiber names are of the form \code{ADL01} and
+match the regular expression \code{'([AP][DV][ML][0-9]+)'}.
 }
 \examples{
 \donttest{
