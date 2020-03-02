@@ -681,7 +681,7 @@ add_field_seq <- function(x, entries, field = "bodyid", ...){
   }
   nl = nat::neuronlist()
   for(i in 1:length(x)){
-    y = x[[1]]
+    y = x[[i]]
     entry = entries[i]
     y = add_field(y, entry = entry, field = field, ...)
     nl = c(nl, nat::as.neuronlist(y))
