@@ -23,7 +23,7 @@ hemibrain_connectivity_similarity.numeric <- function(x,y, c1 = 0.5, c2 = 0.18, 
   if(normalise){
     max.score = max(sapply(seq_along(x), function(i) max(x[i],y[i]) - c1*max(x[i],y[i])*exp(-c2*max(x[i],y[i]))))
     min.score = max(sapply(seq_along(x), function(i) - c1*max(x[i],y[i])))
-    score = score/max.score(score-min.score)/(max.score - min.score)
+    score = (score-min.score)/(max.score - min.score)
     if(is.infinite(score)){
       score = 0
     }
