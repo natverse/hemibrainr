@@ -7,10 +7,9 @@
 flow_centrality(
   x,
   mode = c("centrifugal", "centripetal", "sum"),
-  polypre = FALSE,
+  polypre = TRUE,
   soma = TRUE,
   primary.dendrite = 0.9,
-  bending.flow = FALSE,
   split = c("distance", "postsynapses", "presynapses"),
   ...
 )
@@ -36,9 +35,6 @@ will be called to make sure the primary neurite is labelled correctly.}
 dendrite'. Defaults to considering nodes of 0.9*maximal flow centrality.
 Assigning to NULL will prevent generating this compartment.}
 
-\item{bending.flow}{we may need to add the 'bending flow' to all
-the branchpoints if looking at centripetal flow centrality.}
-
 \item{split}{the algorithm will assign two main neurite compartments,
 which as per SWC format will be indicates as either axon (Label =2)
 or dendrite (Label = 3) in the returned objects, at neuron$d$Label.
@@ -61,7 +57,7 @@ the neuron or neuron list object inputted, with centripetal flow
 }
 \description{
 implementation of the algorithm for calculating flow
-  centralities from Schneider-Mizell et al. (2016).
+  centralities from Schneider-Mizell et al. (2016) (slightly modified).
   Can be used on \code{nat::neuronlist}
   objects read using \code{\link{neuprint_read_neurons}}. The example code
   below gives the recommended arguments when using hemibrain data.
@@ -104,7 +100,8 @@ neurons.checked = hemibrain_skeleton_check(neurons, meshes = hemibrain.surf)
 
 # Split neuron
 ## These are the recommended parameters for hemibrain neurons
-neurons.flow = flow_centrality(neurons.checked, polypre = FALSE,
+neurons.flow = flow_centrality(neurons.checked,
+polypre = TRUE,
 mode = "centrifugal",
 split = "distance")
 
