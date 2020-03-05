@@ -44,7 +44,7 @@
 
 <meta property="og:title" content="Determine a neuron's dendrite and axon by calculating flow centrality — flow_centrality" />
 <meta property="og:description" content="implementation of the algorithm for calculating flow
-  centralities from Schneider-Mizell et al. (2016).
+  centralities from Schneider-Mizell et al. (2016) (slightly modified).
   Can be used on nat::neuronlist
   objects read using neuprint_read_neurons. The example code
   below gives the recommended arguments when using hemibrain data." />
@@ -124,7 +124,7 @@
 
     <div class="ref-description">
     <p>implementation of the algorithm for calculating flow
-  centralities from Schneider-Mizell et al. (2016).
+  centralities from Schneider-Mizell et al. (2016) (slightly modified).
   Can be used on <code><a href='https://rdrr.io/pkg/nat/man/neuronlist.html'>nat::neuronlist</a></code>
   objects read using <code>neuprint_read_neurons</code>. The example code
   below gives the recommended arguments when using hemibrain data.</p>
@@ -133,10 +133,9 @@
     <pre class="usage"><span class='fu'>flow_centrality</span>(
   <span class='no'>x</span>,
   <span class='kw'>mode</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"centrifugal"</span>, <span class='st'>"centripetal"</span>, <span class='st'>"sum"</span>),
-  <span class='kw'>polypre</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>polypre</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>soma</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>primary.dendrite</span> <span class='kw'>=</span> <span class='fl'>0.9</span>,
-  <span class='kw'>bending.flow</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>split</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"distance"</span>, <span class='st'>"postsynapses"</span>, <span class='st'>"presynapses"</span>),
   <span class='no'>...</span>
 )</pre>
@@ -173,11 +172,6 @@ will be called to make sure the primary neurite is labelled correctly.</p></td>
       <td><p>whether to try to assign nodes to a 'primary
 dendrite'. Defaults to considering nodes of 0.9*maximal flow centrality.
 Assigning to NULL will prevent generating this compartment.</p></td>
-    </tr>
-    <tr>
-      <th>bending.flow</th>
-      <td><p>we may need to add the 'bending flow' to all
-the branchpoints if looking at centripetal flow centrality.</p></td>
     </tr>
     <tr>
       <th>split</th>
@@ -252,9 +246,11 @@ The compartment closest to this branchpoint is most usually the dendrite
 <span class='no'>neurons.checked</span> <span class='kw'>=</span> <span class='fu'><a href='hemibrain_skeleton_check.html'>hemibrain_skeleton_check</a></span>(<span class='no'>neurons</span>, <span class='kw'>meshes</span> <span class='kw'>=</span> <span class='no'>hemibrain.surf</span>)</div><div class='output co'>#&gt; <span class='message'>Re-rooting 3 neurons without a soma</span></div><div class='output co'>#&gt; <span class='message'>Removing synapses at somas and along primary neurite for 30 neurons</span></div><div class='input'>
 <span class='co'># Split neuron</span>
 <span class='co'>## These are the recommended parameters for hemibrain neurons</span>
-<span class='no'>neurons.flow</span> <span class='kw'>=</span> <span class='fu'>flow_centrality</span>(<span class='no'>neurons.checked</span>, <span class='kw'>polypre</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+<span class='no'>neurons.flow</span> <span class='kw'>=</span> <span class='fu'>flow_centrality</span>(<span class='no'>neurons.checked</span>,
+<span class='kw'>polypre</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
 <span class='kw'>mode</span> <span class='kw'>=</span> <span class='st'>"centrifugal"</span>,
-<span class='kw'>split</span> <span class='kw'>=</span> <span class='st'>"distance"</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: At structural_properties.c:745 :Couldn't reach some vertices</span></div><div class='output co'>#&gt; <span class='warning'>Warning: At structural_properties.c:745 :Couldn't reach some vertices</span></div><div class='input'>
+<span class='kw'>split</span> <span class='kw'>=</span> <span class='st'>"distance"</span>)
+
 <span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
 <span class='co'># Plot the split to check it</span>
 <span class='kw pkg'>nat</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/nat/man/nopen3d.html'>nopen3d</a></span>()

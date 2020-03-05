@@ -44,7 +44,12 @@
 
 <meta property="og:title" content="Retrieve the primary neurite (cell body fibre) for a neuron — primary_neurite" />
 <meta property="og:description" content="Extract the cell body fibre for an insect neuron,
-assuming that this neuron has a soma and that the soma is the neuron's root." />
+assuming that this neuron has a soma and that the soma is the neuron's root.
+Based on the nat::simplify_neuron neuron function.
+Alternatively, extract the primary branch point by a different method that
+counts the numbers of leaf nodes downstream of each branch from a branch point.
+The primary branchpoint is chosen as the branchpoint where
+(number of leaf nodes on branch one)*(number on branch two) is the greatest." />
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
 
@@ -121,10 +126,35 @@ assuming that this neuron has a soma and that the soma is the neuron's root." />
 
     <div class="ref-description">
     <p>Extract the cell body fibre for an insect neuron,
-assuming that this neuron has a soma and that the soma is the neuron's root.</p>
+assuming that this neuron has a soma and that the soma is the neuron's root.
+Based on the <code><a href='https://rdrr.io/pkg/nat/man/simplify_neuron.html'>nat::simplify_neuron</a></code> neuron function.
+Alternatively, extract the primary branch point by a different method that
+counts the numbers of leaf nodes downstream of each branch from a branch point.
+The primary branchpoint is chosen as the branchpoint where
+(number of leaf nodes on branch one)*(number on branch two) is the greatest.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>primary_neurite</span>(<span class='no'>x</span>, <span class='kw'>neuron</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>invert</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>primary_neurite</span>(<span class='no'>x</span>, <span class='kw'>neuron</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>invert</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)
+
+<span class='co'># S3 method for neuron</span>
+<span class='fu'>primary_neurite</span>(<span class='no'>x</span>, <span class='kw'>neuron</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>invert</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)
+
+<span class='co'># S3 method for neuprintneuron</span>
+<span class='fu'>primary_neurite</span>(<span class='no'>x</span>, <span class='kw'>neuron</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>invert</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)
+
+<span class='co'># S3 method for catmaidneuron</span>
+<span class='fu'>primary_neurite</span>(<span class='no'>x</span>, <span class='kw'>neuron</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>invert</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)
+
+<span class='co'># S3 method for neuronlist</span>
+<span class='fu'>primary_neurite</span>(<span class='no'>x</span>, <span class='kw'>neuron</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>invert</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)
+
+<span class='fu'>primary_branchpoint</span>(<span class='no'>x</span>, <span class='kw'>primary_neurite</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)
+
+<span class='co'># S3 method for neuron</span>
+<span class='fu'>primary_branchpoint</span>(<span class='no'>x</span>, <span class='kw'>primary_neurite</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)
+
+<span class='co'># S3 method for neuronlist</span>
+<span class='fu'>primary_branchpoint</span>(<span class='no'>x</span>, <span class='kw'>primary_neurite</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -135,28 +165,29 @@ assuming that this neuron has a soma and that the soma is the neuron's root.</p>
     </tr>
     <tr>
       <th>neuron</th>
-      <td><p>logical, whether to return a neuron/neuronlist object (TRUE) or
+      <td><p>logical, whether to return a neuron/neuronlist object (<code>TRUE</code>) or
 the IDs for nodes in the primary neurite</p></td>
     </tr>
     <tr>
       <th>invert</th>
-      <td><p>logical, whether to return the primary neurite (TRUE) or the rest
-of the neuron with its primary neurite removed (FALSE).
+      <td><p>logical, whether to return the primary neurite (<code>TRUE</code>) or the rest
+of the neuron with its primary neurite removed (<code>FALSE</code>).
 (note: not x$d$PointNo, but rownames(x$d)).</p></td>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>methods sent to <code><a href='https://rdrr.io/pkg/nat/man/nlapply.html'>nat::nlapply</a></code></p></td>
+      <td><p>methods sent to <code><a href='https://rdrr.io/pkg/nat/man/nlapply.html'>nat::nlapply</a></code>.</p></td>
+    </tr>
+    <tr>
+      <th>primary_neurite</th>
+      <td><p>logical, if <code>TRUE</code> only branchpoints in the cable
+extracted by <code>primary_neurite</code> can be chosen.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>the neuron or neuron list object inputted, with centripetal flow
-  centrality information added to neuron$d and a segregation index score.
-  The neuron$d$Label now gives the compartment, where axon is Label = 2,
-  dendrite Label = 3, primary dendrite Label = 9 and primary neurite Label = 7.
-  Soma is Label = 1.</p>
+    <p>a <code>neuron</code> or <code>neuronlist</code> when using <code>primary neurite</code>.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p><code><a href='flow_centrality.html'>flow_centrality</a></code></p></div>
