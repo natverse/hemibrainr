@@ -110,7 +110,7 @@ hemibrain_reroot.neuronlist <- function(x, meshes, ...){
 #' synapses, you might want to use all ROIs or the hemibrain mesh to remove these 'bad'
 #' synapses. In addition, synapses are removed if they are too near the soma / along the
 #' primary neurite.
-#' @param x a \code{nat::neuronlist} or \code{nat::neuron} object
+#' @inheritParams flow_centrality
 #' @param meshes a list/a single object of class \code{mesh3d} or \code{hxsurf}.
 #' @param soma logical, if TRUE it is assumed that the neuron being given has the soma
 #' as its route and an intact primary neurite tract. Synapses will then be pruned from both.
@@ -153,13 +153,16 @@ hemibrain_remove_bad_synapses <- function(x,
                                           soma = TRUE,
                                           min.nodes.from.soma = 100,
                                           min.nodes.from.pnt = 5,
+                                          primary.branchpoint = 0.25,
                                           ...) UseMethod("hemibrain_remove_bad_synapses")
 
 
 #' @export
 hemibrain_remove_bad_synapses.neuron <- function(x, meshes = NULL, soma = TRUE,
                                                  min.nodes.from.soma = 100,
-                                                 min.nodes.from.pnt = 5, ...){
+                                                 min.nodes.from.pnt = 5,
+                                                 primary.branchpoint = 0.25,
+                                                 ...){
   if(!is.null(meshes)){
     x$inside = NA
     if(is.hxsurf(meshes)){
@@ -176,7 +179,8 @@ hemibrain_remove_bad_synapses.neuron <- function(x, meshes = NULL, soma = TRUE,
     }
   }
   if(soma){
-    pnt = primary_neurite.neuron(x, neuron = FALSE)
+    primary.branch.point = primary_branchpoint(x, primary_neurite = TRUE, first = primary.branchpoint)
+    pnt = suppressWarnings(unique(unlist(igraph::shortest_paths(n, as.numeric(root), to = as.numeric(primary.branch.point), mode = "all")$vpath)))
     x$connectors = x$connectors[!x$connectors$treenode_id%in%pnt,]
     syns = unique(x$connectors$treenode_id)
     syns = (1:nrow(x$d))[match(syns,x$d$PointNo)]
@@ -198,6 +202,7 @@ hemibrain_remove_bad_synapses.neuronlist <- function(x, meshes = NULL,
                                                      soma = TRUE,
                                                      min.nodes.from.soma = 125,
                                                      min.nodes.from.pnt = 5,
+                                                     primary.branchpoint = 0.25,
                                                      ...){
   nat::nlapply(x,
                         hemibrain_remove_bad_synapses.neuron,
@@ -205,6 +210,7 @@ hemibrain_remove_bad_synapses.neuronlist <- function(x, meshes = NULL,
                         soma = soma,
                         min.nodes.from.soma=min.nodes.from.soma,
                         min.nodes.from.pnt=min.nodes.from.pnt,
+                        primary.branchpoint = primary.branchpoint,
                         ...)
 }
 
