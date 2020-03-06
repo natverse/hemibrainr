@@ -10,6 +10,7 @@ flow_centrality(
   polypre = TRUE,
   soma = TRUE,
   primary.dendrite = 0.9,
+  primary.branchpoint = 0.25,
   split = c("distance", "postsynapses", "presynapses"),
   ...
 )
@@ -34,6 +35,10 @@ will be called to make sure the primary neurite is labelled correctly.}
 \item{primary.dendrite}{whether to try to assign nodes to a 'primary
 dendrite'. Defaults to considering nodes of 0.9*maximal flow centrality.
 Assigning to NULL will prevent generating this compartment.}
+
+\item{primary.branchpoint}{the proportion of the maximum branchpoint score needed
+for a point to be assigned as the primary branchpoint. Used only when \code{soma = TRUE}.
+See the \code{first} argument in \code{\link{primary_neurite}} for details.}
 
 \item{split}{the algorithm will assign two main neurite compartments,
 which as per SWC format will be indicates as either axon (Label =2)

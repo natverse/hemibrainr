@@ -10,11 +10,14 @@ hemibrain_remove_bad_synapses(
   soma = TRUE,
   min.nodes.from.soma = 100,
   min.nodes.from.pnt = 5,
+  primary.branchpoint = 0.25,
   ...
 )
 }
 \arguments{
-\item{x}{a \code{nat::neuronlist} or \code{nat::neuron} object}
+\item{x}{a \code{nat::neuronlist} or \code{nat::neuron} object. It is assumed
+that this neuron has been read in by \code{neuprintr::neuprint_read_neurons} or
+possibly \code{catmaid::read.neurons.catmaid}.}
 
 \item{meshes}{a list/a single object of class \code{mesh3d} or \code{hxsurf}.}
 
@@ -29,6 +32,10 @@ your neurons before using.}
 \item{min.nodes.from.pnt}{the minimum number of nodes (geodesic distance) a
 synapse can be from a point along the primary neurite.
 Synapses closes than this will be removed.}
+
+\item{primary.branchpoint}{the proportion of the maximum branchpoint score needed
+for a point to be assigned as the primary branchpoint. Used only when \code{soma = TRUE}.
+See the \code{first} argument in \code{\link{primary_neurite}} for details.}
 
 \item{...}{methods sent to \code{nat::nlapply}}
 }

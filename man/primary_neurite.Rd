@@ -21,11 +21,11 @@ primary_neurite(x, neuron = TRUE, invert = FALSE, ...)
 
 \method{primary_neurite}{neuronlist}(x, neuron = TRUE, invert = FALSE, ...)
 
-primary_branchpoint(x, primary_neurite = FALSE, ...)
+primary_branchpoint(x, primary_neurite = FALSE, first = FALSE, ...)
 
-\method{primary_branchpoint}{neuron}(x, primary_neurite = FALSE, ...)
+\method{primary_branchpoint}{neuron}(x, primary_neurite = FALSE, first = FALSE, ...)
 
-\method{primary_branchpoint}{neuronlist}(x, primary_neurite = FALSE, ...)
+\method{primary_branchpoint}{neuronlist}(x, primary_neurite = FALSE, first = FALSE, ...)
 }
 \arguments{
 \item{x}{a \code{nat::neuronlist} or \code{nat::neuron} object}
@@ -41,6 +41,14 @@ of the neuron with its primary neurite removed (\code{FALSE}).
 
 \item{primary_neurite}{logical, if \code{TRUE} only branchpoints in the cable
 extracted by \code{primary_neurite} can be chosen.}
+
+\item{first}{if a number between 0-1, then the first branchpoint from the root that meets the requirement of
+\code{max(score)*first}, fill be chosen as the primary branchpoint.
+The score of each branchpoint is calculated
+as \code{(number of leaf nodes/synapses on branch one)*(number on branch two)}.
+This is important to use if, for example, dealing with neurons that
+have small dendrites distributed off of the main body of the neuron, such as Kenyon cells.A value of
+\code{0.25} often works well.}
 }
 \value{
 a \code{neuron} or \code{neuronlist} when using \code{primary neurite}.
@@ -52,7 +60,8 @@ Based on the \code{nat::simplify_neuron} neuron function.
 Alternatively, extract the primary branch point by a different method that
 counts the numbers of leaf nodes downstream of each branch from a branch point.
 The primary branchpoint is chosen as the branchpoint where
-(number of leaf nodes on branch one)*(number on branch two) is the greatest.
+(number of leaf nodes/synapses on branch one)*(number on branch two) is the greatest.
+Synapses are used when available, leaf nodes if not.
 }
 \examples{
 \donttest{
