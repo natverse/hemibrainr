@@ -10,7 +10,8 @@
 #' Alternatively, extract the primary branch point by a different method that
 #' counts the numbers of leaf nodes downstream of each branch from a branch point.
 #' The primary branchpoint is chosen as the branchpoint where
-#' (number of leaf nodes on branch one)*(number on branch two) is the greatest.
+#' (number of leaf nodes/synapses on branch one)*(number on branch two) is the greatest.
+#' Synapses are used when available, leaf nodes if not.
 #'
 #' @param x a \code{nat::neuronlist} or \code{nat::neuron} object
 #' @param neuron logical, whether to return a neuron/neuronlist object (\code{TRUE}) or
@@ -20,6 +21,13 @@
 #' (note: not x$d$PointNo, but rownames(x$d)).
 #' @param primary_neurite logical, if \code{TRUE} only branchpoints in the cable
 #' extracted by \code{primary_neurite} can be chosen.
+#' @param first if a number between 0-1, then the first branchpoint from the root that meets the requirement of
+#' \code{max(score)*first}, fill be chosen as the primary branchpoint.
+#' The score of each branchpoint is calculated
+#' as \code{(number of leaf nodes/synapses on branch one)*(number on branch two)}.
+#' This is important to use if, for example, dealing with neurons that
+#' have small dendrites distributed off of the main body of the neuron, such as Kenyon cells.A value of
+#' \code{0.25} often works well.
 #' @param ... methods sent to \code{nat::nlapply}.
 #'
 #' @return a \code{neuron} or \code{neuronlist} when using \code{primary neurite}.
@@ -76,11 +84,11 @@ primary_neurite.neuronlist <- function(x, neuron = TRUE, invert = FALSE, ...){
 
 #' @rdname primary_neurite
 #' @export
-primary_branchpoint <-function(x, primary_neurite = FALSE, ...) UseMethod("primary_branchpoint")
+primary_branchpoint <-function(x, primary_neurite = FALSE, first = FALSE, ...) UseMethod("primary_branchpoint")
 
 #' @rdname primary_neurite
 #' @export
-primary_branchpoint.neuron <- function(x, primary_neurite = FALSE, ...){
+primary_branchpoint.neuron <- function(x, primary_neurite = FALSE, first = FALSE, ...){
   n = nat::as.ngraph(x)
   order = nrow(x$d)
   igraph::V(n)$name = igraph::V(n)
@@ -103,17 +111,27 @@ primary_branchpoint.neuron <- function(x, primary_neurite = FALSE, ...){
       d.leaves = sum(leaves%in%downstream)
       downstream.leaf.nodes = c(downstream.leaf.nodes, d.leaves)
     }
-    downstream.leaf.nodes[downstream.leaf.nodes==1] = 0
+    downstream.leaf.nodes[downstream.leaf.nodes<=2] = 0 # remove small branches
     score = maxN(downstream.leaf.nodes,N=1)*maxN(downstream.leaf.nodes,N=2)
     scores = c(scores, score)
   }
-  bps[which.max(scores)]
+  if(first){
+    if(first>1|first<=0){
+      stop("The 'First' argument must be a number greater than 0 and less than 1")
+    }
+    dists  = igraph::distances(n, v = rootpoints(x), to = bps, mode = c("all"))
+    bps = bps[order(dists,decreasing = FALSE)]
+    scores = scores[order(dists,decreasing = FALSE)]
+    bps[scores>(max(scores)*first)][1]
+  }else{
+    bps[which.max(scores)]
+  }
 }
 
 #' @rdname primary_neurite
 #' @export
-primary_branchpoint.neuronlist <- function(x, primary_neurite = FALSE, ...){
-  nat::nlapply(x, primary_branchpoint.neuron, primary_neurite = primary_neurite, ...)
+primary_branchpoint.neuronlist <- function(x, primary_neurite = FALSE, first = FALSE, ...){
+  nat::nlapply(x, primary_branchpoint.neuron, primary_neurite = primary_neurite, first = first, ...)
 }
 
 #' Extract axonic/dendritic points/cable from a neuron/neuronlist
