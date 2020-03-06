@@ -119,7 +119,7 @@ primary_branchpoint.neuron <- function(x, primary_neurite = FALSE, first = FALSE
     if(first>1|first<=0){
       stop("The 'First' argument must be a number greater than 0 and less than 1")
     }
-    dists  = igraph::distances(n, v = rootpoints(x), to = bps, mode = c("all"))
+    dists  = igraph::distances(n, v = nat::rootpoints(x), to = bps, mode = c("all"))
     bps = bps[order(dists,decreasing = FALSE)]
     scores = scores[order(dists,decreasing = FALSE)]
     bps[scores>(max(scores)*first)][1]
