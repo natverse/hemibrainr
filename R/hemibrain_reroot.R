@@ -180,7 +180,7 @@ hemibrain_remove_bad_synapses.neuron <- function(x, meshes = NULL, soma = TRUE,
   }
   if(soma){
     primary.branch.point = primary_branchpoint(x, primary_neurite = TRUE, first = primary.branchpoint)
-    pnt = suppressWarnings(unique(unlist(igraph::shortest_paths(n, as.numeric(root), to = as.numeric(primary.branch.point), mode = "all")$vpath)))
+    pnt = suppressWarnings(unique(unlist(igraph::shortest_paths(nat::as.ngraph(x), nat::rootpoints(x), to = primary.branch.point, mode = "all")$vpath)))
     x$connectors = x$connectors[!x$connectors$treenode_id%in%pnt,]
     syns = unique(x$connectors$treenode_id)
     syns = (1:nrow(x$d))[match(syns,x$d$PointNo)]
