@@ -49,7 +49,8 @@ Based on the nat::simplify_neuron neuron function.
 Alternatively, extract the primary branch point by a different method that
 counts the numbers of leaf nodes downstream of each branch from a branch point.
 The primary branchpoint is chosen as the branchpoint where
-(number of leaf nodes on branch one)*(number on branch two) is the greatest." />
+(number of leaf nodes/synapses on branch one)*(number on branch two) is the greatest.
+Synapses are used when available, leaf nodes if not." />
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
 
@@ -131,7 +132,8 @@ Based on the <code><a href='https://rdrr.io/pkg/nat/man/simplify_neuron.html'>na
 Alternatively, extract the primary branch point by a different method that
 counts the numbers of leaf nodes downstream of each branch from a branch point.
 The primary branchpoint is chosen as the branchpoint where
-(number of leaf nodes on branch one)*(number on branch two) is the greatest.</p>
+(number of leaf nodes/synapses on branch one)*(number on branch two) is the greatest.
+Synapses are used when available, leaf nodes if not.</p>
     </div>
 
     <pre class="usage"><span class='fu'>primary_neurite</span>(<span class='no'>x</span>, <span class='kw'>neuron</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>invert</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)
@@ -148,13 +150,13 @@ The primary branchpoint is chosen as the branchpoint where
 <span class='co'># S3 method for neuronlist</span>
 <span class='fu'>primary_neurite</span>(<span class='no'>x</span>, <span class='kw'>neuron</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>invert</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)
 
-<span class='fu'>primary_branchpoint</span>(<span class='no'>x</span>, <span class='kw'>primary_neurite</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)
+<span class='fu'>primary_branchpoint</span>(<span class='no'>x</span>, <span class='kw'>primary_neurite</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>first</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)
 
 <span class='co'># S3 method for neuron</span>
-<span class='fu'>primary_branchpoint</span>(<span class='no'>x</span>, <span class='kw'>primary_neurite</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)
+<span class='fu'>primary_branchpoint</span>(<span class='no'>x</span>, <span class='kw'>primary_neurite</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>first</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)
 
 <span class='co'># S3 method for neuronlist</span>
-<span class='fu'>primary_branchpoint</span>(<span class='no'>x</span>, <span class='kw'>primary_neurite</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)</pre>
+<span class='fu'>primary_branchpoint</span>(<span class='no'>x</span>, <span class='kw'>primary_neurite</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>first</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -182,6 +184,16 @@ of the neuron with its primary neurite removed (<code>FALSE</code>).
       <th>primary_neurite</th>
       <td><p>logical, if <code>TRUE</code> only branchpoints in the cable
 extracted by <code>primary_neurite</code> can be chosen.</p></td>
+    </tr>
+    <tr>
+      <th>first</th>
+      <td><p>if a number between 0-1, then the first branchpoint from the root that meets the requirement of
+<code>max(score)*first</code>, fill be chosen as the primary branchpoint.
+The score of each branchpoint is calculated
+as <code>(number of leaf nodes/synapses on branch one)*(number on branch two)</code>.
+This is important to use if, for example, dealing with neurons that
+have small dendrites distributed off of the main body of the neuron, such as Kenyon cells.A value of
+<code>0.25</code> often works well.</p></td>
     </tr>
     </table>
 

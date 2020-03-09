@@ -140,6 +140,7 @@ primary neurite.</p>
   <span class='kw'>soma</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>min.nodes.from.soma</span> <span class='kw'>=</span> <span class='fl'>100</span>,
   <span class='kw'>min.nodes.from.pnt</span> <span class='kw'>=</span> <span class='fl'>5</span>,
+  <span class='kw'>primary.branchpoint</span> <span class='kw'>=</span> <span class='fl'>0.25</span>,
   <span class='no'>...</span>
 )</pre>
 
@@ -148,7 +149,9 @@ primary neurite.</p>
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>x</th>
-      <td><p>a <code><a href='https://rdrr.io/pkg/nat/man/neuronlist.html'>nat::neuronlist</a></code> or <code><a href='https://rdrr.io/pkg/nat/man/neuron.html'>nat::neuron</a></code> object</p></td>
+      <td><p>a <code><a href='https://rdrr.io/pkg/nat/man/neuronlist.html'>nat::neuronlist</a></code> or <code><a href='https://rdrr.io/pkg/nat/man/neuron.html'>nat::neuron</a></code> object. It is assumed
+that this neuron has been read in by <code><a href='https://rdrr.io/pkg/neuprintr/man/neuprint_read_neurons.html'>neuprintr::neuprint_read_neurons</a></code> or
+possibly <code>catmaid::read.neurons.catmaid</code>.</p></td>
     </tr>
     <tr>
       <th>meshes</th>
@@ -171,6 +174,12 @@ your neurons before using.</p></td>
       <td><p>the minimum number of nodes (geodesic distance) a
 synapse can be from a point along the primary neurite.
 Synapses closes than this will be removed.</p></td>
+    </tr>
+    <tr>
+      <th>primary.branchpoint</th>
+      <td><p>the proportion of the maximum branchpoint score needed
+for a point to be assigned as the primary branchpoint. Used only when <code>soma = TRUE</code>.
+See the <code>first</code> argument in <code><a href='primary_neurite.html'>primary_neurite</a></code> for details.</p></td>
     </tr>
     <tr>
       <th>...</th>

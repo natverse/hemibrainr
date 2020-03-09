@@ -136,6 +136,7 @@
   <span class='kw'>polypre</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>soma</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>primary.dendrite</span> <span class='kw'>=</span> <span class='fl'>0.9</span>,
+  <span class='kw'>primary.branchpoint</span> <span class='kw'>=</span> <span class='fl'>0.25</span>,
   <span class='kw'>split</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"distance"</span>, <span class='st'>"postsynapses"</span>, <span class='st'>"presynapses"</span>),
   <span class='no'>...</span>
 )</pre>
@@ -172,6 +173,12 @@ will be called to make sure the primary neurite is labelled correctly.</p></td>
       <td><p>whether to try to assign nodes to a 'primary
 dendrite'. Defaults to considering nodes of 0.9*maximal flow centrality.
 Assigning to NULL will prevent generating this compartment.</p></td>
+    </tr>
+    <tr>
+      <th>primary.branchpoint</th>
+      <td><p>the proportion of the maximum branchpoint score needed
+for a point to be assigned as the primary branchpoint. Used only when <code>soma = TRUE</code>.
+See the <code>first</code> argument in <code><a href='primary_neurite.html'>primary_neurite</a></code> for details.</p></td>
     </tr>
     <tr>
       <th>split</th>
