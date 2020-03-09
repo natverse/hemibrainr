@@ -6,7 +6,7 @@
 \usage{
 hemibrain_flow_centrality(
   x,
-  splitpoints = hemibrainr::hemibrain_splitpoints_polypre_centrifugal_distance,
+  splitpoints = hemibrainr::hemibrain_splitpoints_polypre_centrifugal_presynapses,
   knn = FALSE,
   ...
 )
@@ -18,7 +18,7 @@ possibly \code{catmaid::read.neurons.catmaid}.}
 
 \item{splitpoints}{a \code{data.frame} of splitpoints from running \code{\link{flow_centrality}},
 as produced by \code{\link{hemibrain_splitpoints}}. If a custom set of splitpoints is not given, precomputed splitpoints
-are used, \code{\link{hemibrain_precomputed_splitpoints}}. This defaults to \code{hemibrain_splitpoints_polypre_centrifugal_distance},
+are used, \code{\link{hemibrain_precomputed_splitpoints}}. This defaults to \code{hemibrain_splitpoints_polypre_centrifugal_presynapses},
 however to see the available precomputations (which have used \code{\link{flow_centrality}}, in this case `polypre = TRUE`, `mode = "centrifugal"`
 and `split = "distance"`) with different parameters)
 please see \code{\link{hemibrain_precomputed_splitpoints}}.}
