@@ -207,7 +207,8 @@ have not been resampled or their skeletons otherwise modified).</p></td>
 <span class='no'>neurons</span> <span class='kw'>=</span> <span class='fu'>neuprint_read_neurons</span>(<span class='no'>exemplars</span>)
 
 <span class='co'># Now use a pre-saved axon-dendrite split</span>
-<span class='no'>neurons.flow</span> <span class='kw'>=</span> <span class='fu'>hemibrain_flow_centrality</span>(<span class='no'>neurons</span>)</div><div class='output co'>#&gt; <span class='error'>Error in if (is.numeric(v) &amp;&amp; any(v &lt; 0)) {    res &lt;- as.vector(V(graph))[v]} else {    res &lt;- as.numeric(v)}: missing value where TRUE/FALSE needed</span></div><div class='input'>
+<span class='no'>neurons.flow</span> <span class='kw'>=</span> <span class='fu'>hemibrain_flow_centrality</span>(<span class='no'>neurons</span>)
+
 <span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
 <span class='co'># Plot the split to check it</span>
 <span class='kw pkg'>nat</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/nat/man/nopen3d.html'>nopen3d</a></span>()
