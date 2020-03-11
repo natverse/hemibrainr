@@ -194,6 +194,7 @@ hemibrain_remove_bad_synapses.neuron <- function(x, meshes = NULL, soma = TRUE,
     names(dists) = syns
     x$connectors = x$connectors[x$connectors$treenode_id %in% names(dists)[dists==0],]
   }
+  x = hemibrain_neuron_class(x)
   x
 }
 
