@@ -14,7 +14,9 @@ hemibrain_skeleton_check(
 )
 }
 \arguments{
-\item{x}{a \code{nat::neuronlist} or \code{nat::neuron} object}
+\item{x}{a \code{nat::neuronlist} or \code{nat::neuron} object. It is assumed
+that this neuron has been read in by \code{neuprintr::neuprint_read_neurons} or
+possibly \code{catmaid::read.neurons.catmaid}.}
 
 \item{meshes}{a list/a single object of class \code{mesh3d} or \code{hxsurf}.}
 

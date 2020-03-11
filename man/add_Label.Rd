@@ -22,5 +22,5 @@ a \code{neuron} or \code{neuronlist}
 Assign all points on a skeleton with a certain Label.
 }
 \seealso{
-\code{\link{flow_centrality}}, \code{\link{hemibrain_use_splitpoints}}
+\code{\link{flow_centrality}}, \code{\link{add_field}}
 }

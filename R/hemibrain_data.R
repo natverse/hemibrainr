@@ -2,7 +2,7 @@
 #'
 #' A 3D mesh of the hemibrain volume as a \code{\link[nat]{hxsurf}} object.
 #' Created by Philipp Schlegel from the union of individual ROIs in FlyEM's
-#' hemibrain project.
+#' hemibrain project. Mesh available both in raw voxels and in microns.
 #'
 #' @details note that hemibrain coordinate system does not have the
 #'   anterior-posterior axis aligned with the Z axis.
@@ -22,8 +22,11 @@
 #' rgl::shade3d(hemibrain, alpha=.3, col='grey')
 #' }
 #' }
+#' @name hemibrain.surf
+#' @rdname hemibrain.surf
 "hemibrain.surf"
-
+#' @rdname hemibrain.surf
+"hemibrain_microns.surf"
 
 #' Axon-dendrite split points calculated for all hemibrain neurons
 #'
@@ -57,7 +60,8 @@
 "hemibrain_splitpoints_polypre_centrifugal_distance"
 #' @rdname hemibrain_precomputed_splitpoints
 "hemibrain_splitpoints_pre_centrifugal_distance"
-
+#' @rdname hemibrain_precomputed_splitpoints
+"hemibrain_splitpoints_polypre_centrifugal_presynapses"
 
 #' Neuron metrics for all neurons in the hemibrain dataset
 #'

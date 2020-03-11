@@ -6,20 +6,31 @@
 #'
 #' @description Extract the cell body fibre for an insect neuron,
 #' assuming that this neuron has a soma and that the soma is the neuron's root.
+#' Based on the \code{nat::simplify_neuron} neuron function.
+#' Alternatively, extract the primary branch point by a different method that
+#' counts the numbers of leaf nodes downstream of each branch from a branch point.
+#' The primary branchpoint is chosen as the branchpoint where
+#' (number of leaf nodes/synapses on branch one)*(number on branch two) is the greatest.
+#' Synapses are used when available, leaf nodes if not.
 #'
 #' @param x a \code{nat::neuronlist} or \code{nat::neuron} object
-#' @param neuron logical, whether to return a neuron/neuronlist object (TRUE) or
+#' @param neuron logical, whether to return a neuron/neuronlist object (\code{TRUE}) or
 #' the IDs for nodes in the primary neurite
-#' @param invert logical, whether to return the primary neurite (TRUE) or the rest
-#' of the neuron with its primary neurite removed (FALSE).
+#' @param invert logical, whether to return the primary neurite (\code{TRUE}) or the rest
+#' of the neuron with its primary neurite removed (\code{FALSE}).
 #' (note: not x$d$PointNo, but rownames(x$d)).
-#' @param ... methods sent to \code{nat::nlapply}
+#' @param primary_neurite logical, if \code{TRUE} only branchpoints in the cable
+#' extracted by \code{primary_neurite} can be chosen.
+#' @param first if a number between 0-1, then the first branchpoint from the root that meets the requirement of
+#' \code{max(score)*first}, fill be chosen as the primary branchpoint.
+#' The score of each branchpoint is calculated
+#' as \code{(number of leaf nodes/synapses on branch one)*(number on branch two)}.
+#' This is important to use if, for example, dealing with neurons that
+#' have small dendrites distributed off of the main body of the neuron, such as Kenyon cells.A value of
+#' \code{0.25} often works well.
+#' @param ... methods sent to \code{nat::nlapply}.
 #'
-#' @return the neuron or neuron list object inputted, with centripetal flow
-#'   centrality information added to neuron$d and a segregation index score.
-#'   The neuron$d$Label now gives the compartment, where axon is Label = 2,
-#'   dendrite Label = 3, primary dendrite Label = 9 and primary neurite Label = 7.
-#'   Soma is Label = 1.
+#' @return a \code{neuron} or \code{neuronlist} when using \code{primary neurite}.
 #'
 #' @examples
 #' \donttest{
@@ -35,10 +46,12 @@
 #' plot3d(pnt, lwd = 2, col = "#C70E7B", soma = 1000)
 #' plot3d(neuron, lwd = 2, col = "grey30")
 #' }}
+#' @rdname primary_neurite
 #' @export
 #' @seealso \code{\link{flow_centrality}}
 primary_neurite <-function(x, neuron = TRUE, invert = FALSE, ...) UseMethod("primary_neurite")
 
+#' @rdname primary_neurite
 #' @export
 primary_neurite.neuron <- function(x, neuron = TRUE, invert = FALSE, ...){
   simp = nat::simplify_neuron(x, n=1)
@@ -55,17 +68,71 @@ primary_neurite.neuron <- function(x, neuron = TRUE, invert = FALSE, ...){
   pnt
 }
 
+#' @rdname primary_neurite
 #' @export
 primary_neurite.neuprintneuron <- primary_neurite.neuron
 
+#' @rdname primary_neurite
 #' @export
 primary_neurite.catmaidneuron <- primary_neurite.neuron
 
+#' @rdname primary_neurite
 #' @export
 primary_neurite.neuronlist <- function(x, neuron = TRUE, invert = FALSE, ...){
   nat::nlapply(x, primary_neurite.neuron, neuron = neuron, invert = invert,  ...)
 }
 
+#' @rdname primary_neurite
+#' @export
+primary_branchpoint <-function(x, primary_neurite = FALSE, first = FALSE, ...) UseMethod("primary_branchpoint")
+
+#' @rdname primary_neurite
+#' @export
+primary_branchpoint.neuron <- function(x, primary_neurite = FALSE, first = FALSE, ...){
+  n = nat::as.ngraph(x)
+  order = nrow(x$d)
+  igraph::V(n)$name = igraph::V(n)
+  if(!is.null(x$connectors)){
+    leaves = unique(x$connectors$treenode_id)
+  }else{
+    leaves = nat::endpoints(x)
+  }
+  bps = nat::branchpoints(x)
+  if(primary_neurite){
+    pn = primary_neurite(x, neuron = FALSE)
+    bps = bps[bps %in% pn]
+  }
+  scores = c()
+  for(bp in bps){
+    down = unlist(igraph::ego(n, 1, nodes = bp, mode = "out", mindist = 0))[-1]
+    downstream.leaf.nodes = c()
+    for(d in down){
+      downstream = unlist(igraph::ego(n, order = order, nodes = d, mode = c("out"), mindist = 0))
+      d.leaves = sum(leaves%in%downstream)
+      downstream.leaf.nodes = c(downstream.leaf.nodes, d.leaves)
+    }
+    downstream.leaf.nodes[downstream.leaf.nodes<=2] = 0 # remove small branches
+    score = maxN(downstream.leaf.nodes,N=1)*maxN(downstream.leaf.nodes,N=2)
+    scores = c(scores, score)
+  }
+  if(first){
+    if(first>1|first<=0){
+      stop("The 'First' argument must be a number greater than 0 and less than 1")
+    }
+    dists  = igraph::distances(n, v = nat::rootpoints(x), to = bps, mode = c("all"))
+    bps = bps[order(dists,decreasing = FALSE)]
+    scores = scores[order(dists,decreasing = FALSE)]
+    bps[scores>(max(scores)*first)][1]
+  }else{
+    bps[which.max(scores)]
+  }
+}
+
+#' @rdname primary_neurite
+#' @export
+primary_branchpoint.neuronlist <- function(x, primary_neurite = FALSE, first = FALSE, ...){
+  nat::nlapply(x, primary_branchpoint.neuron, primary_neurite = primary_neurite, first = first, ...)
+}
 
 #' Extract axonic/dendritic points/cable from a neuron/neuronlist
 #'
@@ -285,27 +352,27 @@ primary_dendrite_cable.neuprintneuron <- primary_dendrite_cable.neuron
 
 #' @export
 axonic_cable.neuronlist <- function(x, mixed=FALSE, ...){
-  nat::nlapply(x,axonic_cable.neuron,mixed=mixed,OmitFailures = T, ...)
+  nat::nlapply(x,axonic_cable.neuron,mixed=mixed, ...)
 }
 
 #' @export
 dendritic_cable.neuronlist <- function(x, mixed=FALSE, ...){
-  nat::nlapply(x,dendritic_cable.neuron,mixed=mixed,OmitFailures = T, ...)
+  nat::nlapply(x,dendritic_cable.neuron,mixed=mixed, ...)
 }
 
 #' @export
 arbour_cable.neuronlist <- function(x, mixed=FALSE, ...){
-  nat::nlapply(x,arbour_cable.neuron,mixed=mixed,OmitFailures = T, ...)
+  nat::nlapply(x,arbour_cable.neuron,mixed=mixed, ...)
 }
 
 #' @export
 unsure_cable.neuronlist <- function(x, mixed = FALSE, ...){
-  nat::nlapply(x,unsure_cable.neuron,OmitFailures = T, ...)
+  nat::nlapply(x,unsure_cable.neuron, ...)
 }
 
 #' @export
 primary_dendrite_cable.neuronlist <- function(x, ...){
-  nat::nlapply(x,primary_dendrite_cable.neuron,OmitFailures = T, ...)
+  nat::nlapply(x,primary_dendrite_cable.neuron, ...)
 }
 
 #' Prune vertices from a neuprint neuron (taking care of synapse etc information)

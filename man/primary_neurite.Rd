@@ -2,32 +2,66 @@
 % Please edit documentation in R/hemibrain_cable.R
 \name{primary_neurite}
 \alias{primary_neurite}
+\alias{primary_neurite.neuron}
+\alias{primary_neurite.neuprintneuron}
+\alias{primary_neurite.catmaidneuron}
+\alias{primary_neurite.neuronlist}
+\alias{primary_branchpoint}
+\alias{primary_branchpoint.neuron}
+\alias{primary_branchpoint.neuronlist}
 \title{Retrieve the primary neurite (cell body fibre) for a neuron}
 \usage{
 primary_neurite(x, neuron = TRUE, invert = FALSE, ...)
+
+\method{primary_neurite}{neuron}(x, neuron = TRUE, invert = FALSE, ...)
+
+\method{primary_neurite}{neuprintneuron}(x, neuron = TRUE, invert = FALSE, ...)
+
+\method{primary_neurite}{catmaidneuron}(x, neuron = TRUE, invert = FALSE, ...)
+
+\method{primary_neurite}{neuronlist}(x, neuron = TRUE, invert = FALSE, ...)
+
+primary_branchpoint(x, primary_neurite = FALSE, first = FALSE, ...)
+
+\method{primary_branchpoint}{neuron}(x, primary_neurite = FALSE, first = FALSE, ...)
+
+\method{primary_branchpoint}{neuronlist}(x, primary_neurite = FALSE, first = FALSE, ...)
 }
 \arguments{
 \item{x}{a \code{nat::neuronlist} or \code{nat::neuron} object}
 
-\item{neuron}{logical, whether to return a neuron/neuronlist object (TRUE) or
+\item{neuron}{logical, whether to return a neuron/neuronlist object (\code{TRUE}) or
 the IDs for nodes in the primary neurite}
 
-\item{invert}{logical, whether to return the primary neurite (TRUE) or the rest
-of the neuron with its primary neurite removed (FALSE).
+\item{invert}{logical, whether to return the primary neurite (\code{TRUE}) or the rest
+of the neuron with its primary neurite removed (\code{FALSE}).
 (note: not x$d$PointNo, but rownames(x$d)).}
 
-\item{...}{methods sent to \code{nat::nlapply}}
+\item{...}{methods sent to \code{nat::nlapply}.}
+
+\item{primary_neurite}{logical, if \code{TRUE} only branchpoints in the cable
+extracted by \code{primary_neurite} can be chosen.}
+
+\item{first}{if a number between 0-1, then the first branchpoint from the root that meets the requirement of
+\code{max(score)*first}, fill be chosen as the primary branchpoint.
+The score of each branchpoint is calculated
+as \code{(number of leaf nodes/synapses on branch one)*(number on branch two)}.
+This is important to use if, for example, dealing with neurons that
+have small dendrites distributed off of the main body of the neuron, such as Kenyon cells.A value of
+\code{0.25} often works well.}
 }
 \value{
-the neuron or neuron list object inputted, with centripetal flow
-  centrality information added to neuron$d and a segregation index score.
-  The neuron$d$Label now gives the compartment, where axon is Label = 2,
-  dendrite Label = 3, primary dendrite Label = 9 and primary neurite Label = 7.
-  Soma is Label = 1.
+a \code{neuron} or \code{neuronlist} when using \code{primary neurite}.
 }
 \description{
 Extract the cell body fibre for an insect neuron,
 assuming that this neuron has a soma and that the soma is the neuron's root.
+Based on the \code{nat::simplify_neuron} neuron function.
+Alternatively, extract the primary branch point by a different method that
+counts the numbers of leaf nodes downstream of each branch from a branch point.
+The primary branchpoint is chosen as the branchpoint where
+(number of leaf nodes/synapses on branch one)*(number on branch two) is the greatest.
+Synapses are used when available, leaf nodes if not.
 }
 \examples{
 \donttest{
