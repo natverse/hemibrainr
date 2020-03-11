@@ -4,23 +4,31 @@
 \alias{hemibrain_cbf}
 \title{Return consistent cell body fiber annotation for neurons}
 \usage{
-hemibrain_cbf(x, ...)
+hemibrain_cbf(x, ..., meta = FALSE)
 }
 \arguments{
 \item{x}{A vector of bodyids, a query or a data.frame compatible with
 \code{\link{neuprint_ids}}}
 
 \item{...}{Additional arguments passed to \code{\link{neuprint_get_meta}}}
+
+\item{meta}{Whether to return just the name of the cell body fibers (when
+\code{meta=FALSE}, the default) or a data frame with additional metadata,
+as returned by \code{\link{neuprint_get_meta}}.}
 }
 \value{
-a vector of \bold{new style} cell body fiber names.
+a vector of \bold{new style} cell body fiber names or a data.frame
+  (as returned by \code{\link{neuprint_get_meta}} with an extra column
+  \code{cbf} containing the preferred cell body fiber names).
 }
 \description{
 Return consistent cell body fiber annotation for neurons
 }
 \details{
 New style cell body fiber names are of the form \code{ADL01} and
-match the regular expression \code{'([AP][DV][ML][0-9]+)'}.
+  match the regular expression \code{'([AP][DV][ML][0-9]+)'}. As of hemibrain
+  v1.0.1 these seem to be variably located in the cellBodyFiber and instance
+  fields and in some cases are missing from both.
 }
 \examples{
 \donttest{
