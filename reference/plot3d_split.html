@@ -128,10 +128,10 @@
   <span class='kw'>splitnode</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>WithConnectors</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>WithNodes</span> <span class='kw'>=</span> <span class='no'>F</span>,
-  <span class='kw'>soma</span> <span class='kw'>=</span> <span class='fl'>500</span>,
+  <span class='kw'>soma</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>highflow</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>lwd</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>radius</span> <span class='kw'>=</span> <span class='fl'>100</span>,
+  <span class='kw'>radius</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='no'>...</span>
 )
 
@@ -140,7 +140,8 @@
   <span class='kw'>col</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"#1BB6AF"</span>, <span class='st'>"#EF7C12"</span>, <span class='st'>"#C70E7B"</span>, <span class='st'>"#8FDA04"</span>, <span class='st'>"#4D4D4D"</span>, <span class='st'>"#FC6882"</span>),
   <span class='kw'>WithConnectors</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>WithNodes</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>soma</span> <span class='kw'>=</span> <span class='fl'>500</span>,
+  <span class='kw'>soma</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>radius</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>highflow</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>Verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>Wait</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
@@ -177,7 +178,7 @@
     </tr>
     <tr>
       <th>soma</th>
-      <td><p>whether to plot a soma, and what the radius should be</p></td>
+      <td><p>whether to plot a soma, and what the radius should be. If <code>NULL</code>, an appropriate value is guessed.</p></td>
     </tr>
     <tr>
       <th>highflow</th>
@@ -189,7 +190,7 @@
     </tr>
     <tr>
       <th>radius</th>
-      <td><p>For connectors and axon-dendrite split node (default 1)</p></td>
+      <td><p>For connectors and axon-dendrite split node (default 1). If <code>NULL</code>, an appropriate value is guessed.</p></td>
     </tr>
     <tr>
       <th>...</th>
