@@ -27,6 +27,7 @@ Depends:
 Imports:
     igraph,
     nat,
+    nat.templatebrains,
     rgl,
     yaml,
     dplyr,
