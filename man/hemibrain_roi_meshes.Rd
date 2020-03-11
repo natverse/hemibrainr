@@ -4,7 +4,10 @@
 \alias{hemibrain_roi_meshes}
 \title{Get all the region of interest meshes in the hemibrain project}
 \usage{
-hemibrain_roi_meshes()
+hemibrain_roi_meshes(microns = FALSE)
+}
+\arguments{
+\item{microns}{convert dimensions from raw voxels into microns (template brain: \code{JRCFIB2018F}, else \code{JRCFIB2018Fraw}).}
 }
 \value{
 a list of \code{rgl::mesh3d} objects

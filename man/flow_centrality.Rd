@@ -11,7 +11,7 @@ flow_centrality(
   soma = TRUE,
   primary.dendrite = 0.9,
   primary.branchpoint = 0.25,
-  split = c("distance", "postsynapses", "presynapses"),
+  split = c("distance", "synapses"),
   ...
 )
 }
