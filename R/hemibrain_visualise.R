@@ -8,10 +8,10 @@
 #' @param col colours of sections. Defaults to orange or axons, green for primary dendrite, blue for dendrites and pink for nodes with no flow.
 #' @param splitnode if TRUE, a magenta sphere is placed at the location of the axon-dendrite split. Possible a putative action potential initiation site?
 #' @param WithConnectors whether to plot the anatomical location of pre (red) and post (cyan) synapses.
-#' @param soma whether to plot a soma, and what the radius should be
+#' @param soma whether to plot a soma, and what the radius should be. If \code{NULL}, an appropriate value is guessed.
 #' @param WithNodes whether to plot branch points
 #' @param lwd Line width (default 1)
-#' @param radius For connectors and axon-dendrite split node (default 1)
+#' @param radius For connectors and axon-dendrite split node (default 1). If \code{NULL}, an appropriate value is guessed.
 #' @param highflow whether to plot the nodes of highest (with in one standard deviation less than maximum) flow centrality (pink points)
 #' @param Verbose logical indicating that info about each selected neuron should be printed (default TRUE)
 #' @param Wait logical indicating that there should be a pause between each displayed neuron
@@ -29,8 +29,33 @@
 #' @importFrom nat xyzmatrix
 plot3d_split = function(someneuronlist,
                         col = c("#1BB6AF", "#EF7C12", "#C70E7B", "#8FDA04", "#4D4D4D", "#FC6882"),
-                        splitnode = FALSE, WithConnectors = TRUE, WithNodes = F, soma = 500, highflow = FALSE, lwd = 1, radius = 100, ...){
+                        splitnode = FALSE,
+                        WithConnectors = TRUE,
+                        WithNodes = F,
+                        soma = NULL,
+                        highflow = FALSE,
+                        lwd = 1,
+                        radius = NULL,
+                        ...){
   someneuronlist = nat::as.neuronlist(someneuronlist)
+  temps = nat.templatebrains::all_templatebrains()
+  temps.microns = c(temps[temps$W<2000,"name"],"JRCFIB2018F")
+  reg = nat.templatebrains::regtemplate(someneuronlist)
+  if(is.null(soma)){
+    if(is.null(reg)|!reg%in%temps.microns){
+      soma = 500
+    }else{
+      soma = 4
+    }
+  }
+  if(is.null(radius)){
+    if(is.null(reg)|!reg%in%temps.microns){
+      radius = 100
+    }else{
+      radius = 8
+    }
+  }
+
   for (n in 1:length(someneuronlist)){
     neuron = someneuronlist[[n]]
     dendrites.v = subset(rownames(neuron$d), neuron$d$Label == 3)
@@ -81,7 +106,7 @@ plot3d_split = function(someneuronlist,
 #' @export
 #' @rdname plot3d_split
 nlscan_split <- function (someneuronlist, col = c("#1BB6AF", "#EF7C12", "#C70E7B", "#8FDA04", "#4D4D4D", "#FC6882"),
-                          WithConnectors = TRUE, WithNodes = FALSE, soma = 500, highflow = FALSE, Verbose = TRUE, Wait = TRUE,
+                          WithConnectors = TRUE, WithNodes = FALSE, soma = NULL, radius = NULL, highflow = FALSE, Verbose = TRUE, Wait = TRUE,
                        sleep = 0.1, extrafun = NULL, selected_file = NULL, selected_col = "black",
                        yaml = TRUE, ...)
 {
@@ -126,7 +151,7 @@ nlscan_split <- function (someneuronlist, col = c("#1BB6AF", "#EF7C12", "#C70E7B
     n <- neurons[i]
     cat("Current neuron:", n, "(", i, "/", length(neurons),
         ")\n")
-    pl <- plot3d_split(someneuronlist[i], col = col, WithConnectors = WithConnectors, WithNodes = WithNodes, soma = soma, highflow = highflow, ...)
+    pl <- plot3d_split(someneuronlist[i], col = col, WithConnectors = WithConnectors, WithNodes = WithNodes, soma = soma, highflow = highflow, radius = radius, ...)
     message("segregation index: ", someneuronlist[[i]]$AD.segregation.index)
     more_rgl_ids <- list()
     if (!is.null(extrafun))

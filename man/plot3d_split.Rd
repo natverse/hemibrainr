@@ -11,10 +11,10 @@ plot3d_split(
   splitnode = FALSE,
   WithConnectors = TRUE,
   WithNodes = F,
-  soma = 500,
+  soma = NULL,
   highflow = FALSE,
   lwd = 1,
-  radius = 100,
+  radius = NULL,
   ...
 )
 
@@ -23,7 +23,8 @@ nlscan_split(
   col = c("#1BB6AF", "#EF7C12", "#C70E7B", "#8FDA04", "#4D4D4D", "#FC6882"),
   WithConnectors = TRUE,
   WithNodes = FALSE,
-  soma = 500,
+  soma = NULL,
+  radius = NULL,
   highflow = FALSE,
   Verbose = TRUE,
   Wait = TRUE,
@@ -46,13 +47,13 @@ nlscan_split(
 
 \item{WithNodes}{whether to plot branch points}
 
-\item{soma}{whether to plot a soma, and what the radius should be}
+\item{soma}{whether to plot a soma, and what the radius should be. If \code{NULL}, an appropriate value is guessed.}
 
 \item{highflow}{whether to plot the nodes of highest (with in one standard deviation less than maximum) flow centrality (pink points)}
 
 \item{lwd}{Line width (default 1)}
 
-\item{radius}{For connectors and axon-dendrite split node (default 1)}
+\item{radius}{For connectors and axon-dendrite split node (default 1). If \code{NULL}, an appropriate value is guessed.}
 
 \item{...}{additional arguments passed to methods.}
 
