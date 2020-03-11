@@ -6,6 +6,7 @@
 #'
 #' @description Get all the ROI meshes as named \code{rgl::mesh3d} objects.
 #'
+#' @inheritParams hemibrain_read_neurons
 #' @return a list of \code{rgl::mesh3d} objects
 #'
 #' @examples
@@ -24,11 +25,17 @@
 #' @export
 #' @seealso \code{\link{hemibrain_skeleton_check}}, \code{\link{hemibrain.surf}}
 #' @importFrom neuprintr neuprint_ROIs neuprint_ROI_mesh
-hemibrain_roi_meshes <- function(){
+hemibrain_roi_meshes <- function(microns = FALSE){
   rois = neuprint_ROIs(superLevel = NULL)
   hemibrain.rois = list()
   for(roi in rois){
     mesh = tryCatch(neuprint_ROI_mesh(roi), error = function(e) NULL)
+    if(microns){
+      mesh*(8/1000)
+      nat.templatebrains::regtemplate(mesh) = "JRCFIB2018F"
+    }else{
+      nat.templatebrains::regtemplate(mesh) = "JRCFIB2018Fraw"
+    }
     hemibrain.rois[[roi]] = mesh
   }
   hemibrain.rois
