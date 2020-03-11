@@ -11,7 +11,7 @@ hemibrain_read_neurons(x, microns = TRUE, ...)
 
 \item{microns}{convert dimensions from raw voxels into microns (template brain: \code{JRCFIB2018F}, else \code{JRCFIB2018Fraw}).}
 
-\item{...}{methods passed to \code{\link{neuprintr::neuprint_read_neurons}}, \code{\link{hemibrain_remove_bad_synapses}}
+\item{...}{methods passed to \code{neuprintr::neuprint_read_neurons}, \code{\link{hemibrain_remove_bad_synapses}}
 and \code{\link{hemibrain_flow_centrality}}}
 }
 \value{
