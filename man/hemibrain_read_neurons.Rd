@@ -11,7 +11,8 @@ hemibrain_read_neurons(x, microns = TRUE, ...)
 
 \item{microns}{convert dimensions from raw voxels into microns (template brain: \code{JRCFIB2018F}, else \code{JRCFIB2018Fraw}).}
 
-\item{...}{methods passed to \code{neuprintr::neuprint_read_neurons} and \code{\link{hemibrain_flow_centrality}}}
+\item{...}{methods passed to \code{\link{neuprintr::neuprint_read_neurons}}, \code{\link{hemibrain_remove_bad_synapses}}
+and \code{\link{hemibrain_flow_centrality}}}
 }
 \value{
 the neuron or neuron list object inputted, with centripetal flow
@@ -51,5 +52,5 @@ nlscan_split(neurons, WithConnectors = TRUE)
 }
 \seealso{
 \code{\link{hemibrain_splitpoints}}, \code{\link{hemibrain_flow_centrality}},
-\code{\link{hemibrain_precomputed_splitpoints}}, \code{\link{hemibrain_metrics}}
+\code{\link{hemibrain_precomputed_splitpoints}}, \code{\link{hemibrain_metrics}},\code{\link{hemibrain_remove_bad_synapses}}
 }
