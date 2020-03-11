@@ -402,6 +402,7 @@ flow_centrality.neuron <- function(x,
   x$secondary.branch.points = secondary.branch.points
   x$max.flow.centrality = as.numeric(ais)
   x$split = TRUE
+  x = hemibrain_neuron_class(x)
   x
 }
 
@@ -599,6 +600,7 @@ hemibrain_use_splitpoints.neuron <-function(x, df, knn = FALSE, ...){
     }
   }
   # Return split skeleton
+  y = hemibrain_neuron_class(y)
   y
 }
 
@@ -788,7 +790,7 @@ add_field_seq <- function(x, entries, field = "bodyid", ...){
 #                "390948580", "452677169", "511262901", "422311625", "451987038",
 #                 "612738462","487925037"
 # )
-# neurons = neuprint_read_neurons(friends[22:length(friends)])
+# neurons = neuprint_read_neurons(friends[23:length(friends)])
 # hemibrain.rois = hemibrain_roi_meshes()
 # neurons.checked = hemibrain_skeleton_check(neurons, meshes = hemibrain.rois)
 # neurons.flow = flow_centrality(neurons.checked, polypre = TRUE,
