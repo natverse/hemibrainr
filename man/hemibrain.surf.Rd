@@ -3,6 +3,7 @@
 \docType{data}
 \name{hemibrain.surf}
 \alias{hemibrain.surf}
+\alias{hemibrain_microns.surf}
 \title{The hemibrain mesh}
 \format{An object of class \code{hxsurf} (inherits from \code{list}) of length 4.}
 \source{
@@ -10,11 +11,13 @@
 }
 \usage{
 hemibrain.surf
+
+hemibrain_microns.surf
 }
 \description{
 A 3D mesh of the hemibrain volume as a \code{\link[nat]{hxsurf}} object.
 Created by Philipp Schlegel from the union of individual ROIs in FlyEM's
-hemibrain project.
+hemibrain project. Mesh available both in raw voxels and in microns.
 }
 \details{
 note that hemibrain coordinate system does not have the
