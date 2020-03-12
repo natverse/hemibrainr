@@ -625,7 +625,7 @@ hemibrain_use_splitpoints.neuronlist <-function(x, df, knn = FALSE, ...){
 #' @inheritParams flow_centrality
 #' @param splitpoints a \code{data.frame} of splitpoints from running \code{\link{flow_centrality}},
 #' as produced by \code{\link{hemibrain_splitpoints}}. If a custom set of splitpoints is not given, precomputed splitpoints
-#' are used, \code{\link{hemibrain_precomputed_splitpoints}}. This defaults to \code{hemibrain_splitpoints_polypre_centrifugal_presynapses},
+#' are used, \code{\link{hemibrain_precomputed_splitpoints}}. This defaults to \code{hemibrain_splitpoints},
 #' however to see the available precomputations (which have used \code{\link{flow_centrality}}, in this case `polypre = TRUE`, `mode = "centrifugal"`
 #' and `split = "distance"`) with different parameters)
 #' please see \code{\link{hemibrain_precomputed_splitpoints}}.
@@ -660,12 +660,12 @@ hemibrain_use_splitpoints.neuronlist <-function(x, df, knn = FALSE, ...){
 #' @export
 #' @seealso \code{\link{hemibrain_splitpoints}}, \code{\link{flow_centrality}}, \code{\link{hemibrain_use_splitpoints}}, \code{\link{hemibrain_precomputed_splitpoints}}
 hemibrain_flow_centrality <-function(x,
-                                     splitpoints = hemibrainr::hemibrain_splitpoints_polypre_centrifugal_presynapses,
+                                     splitpoints = hemibrainr::hemibrain_splitpoints,
                                      knn = FALSE,
                                      ...) UseMethod("hemibrain_flow_centrality")
 
 #' @export
-hemibrain_flow_centrality.neuron <- function(x, splitpoints = hemibrainr::hemibrain_splitpoints_polypre_centrifugal_presynapses, knn = FALSE, ...){
+hemibrain_flow_centrality.neuron <- function(x, splitpoints = hemibrainr::hemibrain_splitpoints, knn = FALSE, ...){
   bi = x$bodyid
   if(is.null(x$bodyid)|is.na(x$bodyid)){
     stop("No bodyid given at x$bodyid")
@@ -681,7 +681,7 @@ hemibrain_flow_centrality.neuron <- function(x, splitpoints = hemibrainr::hemibr
 }
 
 #' @export
-hemibrain_flow_centrality.neuronlist <- function(x, splitpoints = hemibrainr::hemibrain_splitpoints_polypre_centrifugal_presynapses, knn = FALSE, ...){
+hemibrain_flow_centrality.neuronlist <- function(x, splitpoints = hemibrainr::hemibrain_splitpoints, knn = FALSE, ...){
   cropped = subset(x, cropped)
   if(length(cropped)){
     warning(length(cropped), " neurons cropped, split likely to be inaccurate for: ", paste(names(cropped),collapse=", "))

@@ -1,3 +1,8 @@
+################################################################################
+################################ Read neurons ##################################
+################################################################################
+
+
 #' Read neurons from the hemibrain connectome project
 #'
 #' @description Read neurons from the hemibrain connectome project. This function

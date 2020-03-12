@@ -3,15 +3,18 @@
 \docType{data}
 \name{hemibrain_precomputed_splitpoints}
 \alias{hemibrain_precomputed_splitpoints}
+\alias{hemibrain_splitpoints}
 \alias{hemibrain_splitpoints_polypre_centrifugal_distance}
 \alias{hemibrain_splitpoints_pre_centrifugal_distance}
 \alias{hemibrain_splitpoints_polypre_centrifugal_presynapses}
 \title{Axon-dendrite split points calculated for all hemibrain neurons}
-\format{An object of class \code{data.frame} with 505529 rows and 6 columns.}
+\format{An object of class \code{function} of length 1.}
 \source{
 \url{https://www.biorxiv.org/content/10.1101/2020.01.19.911453v1}
 }
 \usage{
+hemibrain_splitpoints
+
 hemibrain_splitpoints_polypre_centrifugal_distance
 
 hemibrain_splitpoints_pre_centrifugal_distance

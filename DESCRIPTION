@@ -37,7 +37,8 @@ Imports:
     stringr,
     memoise,
     rlang,
-    foreach
+    foreach,
+    grDevices
 Remotes: 
     natverse/neuprintr
 Language: en-GB

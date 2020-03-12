@@ -28,6 +28,34 @@
 #' @rdname hemibrain.surf
 "hemibrain_microns.surf"
 
+#' Meshes for antennal love glomeruli
+#'
+#' 3D meshes of 51 olfactory + 7 thermosensory antennal lobe glomeruli for the the hemibrain volume.
+#' They are represented as a \code{\link[nat]{hxsurf}} object, in which 58 'regions' are defined,
+#' one for each glomerulus. Meshes available both in raw voxels and in microns.
+#'
+#' @details note that hemibrain coordinate system does not have the
+#'   anterior-posterior axis aligned with the Z axis.
+#'
+#' @source \url{https://neuprint.janelia.org/}
+#' @seealso \code{\link{hemibrain_roi_meshes}}
+#' @examples
+#' \donttest{
+#' library(nat)
+#' \dontrun{
+#' plot3d(hemibrain_al.surf, alpha=.3)
+#'
+#' # can also plot single glomeruli
+#' plot3d(subset(hemibrain_al.surf,"DM1"))
+#'
+#' }
+#' }
+#' @name hemibrain_al.surf
+#' @rdname hemibrain_al.surf
+"hemibrain_al.surf"
+#' @rdname hemibrain_al.surf
+"hemibrain_al_microns.surf"
+
 #' Axon-dendrite split points calculated for all hemibrain neurons
 #'
 #' Axon-dendrite split points calculated for the whole hemibrain dataset,
@@ -57,6 +85,8 @@
 #' }
 #' @name hemibrain_precomputed_splitpoints
 #' @rdname hemibrain_precomputed_splitpoints
+"hemibrain_splitpoints"
+#' @rdname hemibrain_precomputed_splitpoints
 "hemibrain_splitpoints_polypre_centrifugal_distance"
 #' @rdname hemibrain_precomputed_splitpoints
 "hemibrain_splitpoints_pre_centrifugal_distance"
@@ -84,5 +114,11 @@
 #' head(hemibrain_metrics)
 #' hist(hemibrain_metrics$overlap_locality,breaks = 1000)
 #' }
+#' @name hemibrain_metrics
+#' @rdname hemibrain_metrics
 "hemibrain_metrics"
+#' @rdname hemibrain_metrics
+"hemibrain_metrics_polypre_centrifugal_distance"
+#' @rdname hemibrain_metrics
+"hemibrain_all_neurons_metrics_polypre_centrifugal_synapses"
 
