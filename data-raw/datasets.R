@@ -17,7 +17,7 @@ usethis::use_data(hemibrain_metrics, overwrite = TRUE)
 ### Mesh
 hemibrain.surf = readobj::read.obj("data-raw/hemibrain_raw.obj", convert.rgl = TRUE)
 hemibrain.surf = nat::as.hxsurf(hemibrain.surf[[1]])
-hemibrain_microns.surf = hemibrain.surf*(8/100)
+hemibrain_microns.surf = hemibrain.surf*(8/1000)
 nat.templatebrains::regtemplate(hemibrain_microns.surf) = "JRCFIB2018F"
 nat.templatebrains::regtemplate(hemibrain.surf) = "JRCFIB2018Fraw"
 usethis::use_data(hemibrain_microns.surf, overwrite = TRUE)

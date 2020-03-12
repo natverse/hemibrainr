@@ -8,7 +8,9 @@
 #'
 #' @param x a vector of bodyids that can be read from \url{'https://neuprint.janelia.org/'}.
 #' @param microns convert dimensions from raw voxels into microns (template brain: \code{JRCFIB2018F}, else \code{JRCFIB2018Fraw}).
-#' @param ... methods passed to \code{neuprintr::neuprint_read_neurons} and \code{\link{hemibrain_flow_centrality}}
+#' @param ... methods passed to \code{neuprintr::neuprint_read_neurons}, \code{\link{hemibrain_remove_bad_synapses}}
+#'  and \code{\link{hemibrain_flow_centrality}}
+#'
 #'
 #' @inherit flow_centrality return
 #'
@@ -34,15 +36,16 @@
 #' }}
 #' @export
 #' @seealso \code{\link{hemibrain_splitpoints}}, \code{\link{hemibrain_flow_centrality}},
-#' \code{\link{hemibrain_precomputed_splitpoints}}, \code{\link{hemibrain_metrics}}
+#' \code{\link{hemibrain_precomputed_splitpoints}}, \code{\link{hemibrain_metrics}},\code{\link{hemibrain_remove_bad_synapses}}
 hemibrain_read_neurons<-function(x, microns = TRUE, ...){
   neurons = neuprintr::neuprint_read_neurons(x, ...)
   neurons.flow = hemibrain_flow_centrality(neurons, ...)
-  hemibrain_metrics = hemibrain_metrics[,!colnames(hemibrain_metrics%in%colnames(neurons.flow[,]))]
+  neurons.flow = hemibrain_remove_bad_synapses(neurons.flow, ...)
+  hemibrain_metrics = hemibrain_metrics[,!colnames(hemibrain_metrics)%in%colnames(neurons.flow[,])]
   df = cbind(neurons.flow[,], hemibrain_metrics[names(neurons.flow),])
   rownames(df) = names(neurons.flow)
   if(microns){
-    neurons.flow*(8/1000)
+    neurons.flow = scale_neurons(neurons.flow, scaling = (8/1000))
     nat.templatebrains::regtemplate(neurons.flow) = "JRCFIB2018F"
   }else{
     nat.templatebrains::regtemplate(neurons.flow) = "JRCFIB2018Fraw"
@@ -50,3 +53,15 @@ hemibrain_read_neurons<-function(x, microns = TRUE, ...){
   neurons.flow[,] = df
   neurons.flow
 }
+
+# hidden
+scale_neurons <-function(x, scaling = (8/1000), ...) UseMethod("scale_neurons")
+scale_neurons.neuron <- function(x, scaling, ...){
+  nat::xyzmatrix(x$d) = nat::xyzmatrix(x$d)*scaling
+  nat::xyzmatrix(x$connectors) = nat::xyzmatrix(x$connectors)*scaling
+  x
+}
+scale_neurons.neuronlist = function(x, scaling = (8/1000), ...){
+  nat::nlapply(x,scale.neuron, scaling = scaling, ...)
+}
+

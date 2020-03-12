@@ -29,11 +29,43 @@ metrics.}
 \item{...}{methods sent to \code{nat::nlapply}}
 }
 \value{
-a named vector of overlap_locality scores
+a \code{data.frame} of metrics broken down by putative axon and dendrute, and their overlap_locality scores
 }
 \description{
 Calculates/retrieves useful metrics for the axon and dendrites
   of a neuron, and its split.
+}
+\examples{
+\donttest{
+
+# Choose neurons
+## In this case some antennal lobe local neurons
+al.local.neurons = c("1702323386", "2068966051", "2069311379", "1702305987", "5812996027",
+"1702336197", "1793744512", "1976565858", "2007578510", "2101339904",
+"5813003258", "2069647778", "1947192569", "1883788812", "1916485259",
+"1887177026", "2101348562", "2132375072", "2256863785", "5813002313",
+"5813054716", "5813018847", "5813055448", "1763037543", "2101391269",
+"1794037618", "5813018729", "2013333009")
+
+# Get neurons
+neurons = neuprint_read_neurons(al.local.neurons)
+
+# Convert to microns
+neurons = hemibrainr:::scale_neurons(neurons)
+
+# Split
+neurons = hemibrain_flow_centrality(neurons)
+
+# Calculate overlap and other metrics
+hcm = hemibrain_compartment_metrics(neurons,
+resample = NULL,
+just.leaves = TRUE, # just look how much the leaves of skeletons overlap, quicker (default)
+delta = 5)
+
+# Plot
+hist(hcm$overlap_locality, breaks = 100)
+
+}
 }
 \seealso{
 \code{\link{hemibrain_overlap_locality}}
