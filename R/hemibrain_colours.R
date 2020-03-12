@@ -2,10 +2,13 @@
 ################################ Colours #######################################
 ################################################################################
 
-#' Some nice colours used by Schlegel and Bates et al. 2020 (in prep.)
+#' Some nice colours used by Schlegel and Bates et al. 2020 (in prep.) and
+#' Li et al. 2020 (in prep)
 #'
 #' @description A colour blind friendly palette from Li et al. 2020 (in prep).
 #' Also, nicer brighter colours inspired by the LaCroix colour palette.
+#'
+#' @param n the number of colours to generate
 #'
 #' @source \url{https://github.com/johannesbjork/LaCroixColoR}
 #'

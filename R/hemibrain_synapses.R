@@ -20,7 +20,7 @@
 #' id = c("452677169")
 #'
 #' # Read in these neurons
-#' neuron = neuprint_read_neurons(id)
+#' neuron = neuprintr::neuprint_read_neurons(id)
 #'
 #' # Re-root
 #' neuron.flow = flow_centrality(neuron, polypre = TRUE,
@@ -47,10 +47,10 @@ hemibrain_extract_synapses <- function(x,
                                        ...){
   prepost = match.arg(prepost)
   if(is.neuronlist(x)){
-    syns = nlapply(x,extract_synapses, ...)
+    syns = nlapply(x,extract_synapses, unitary = FALSE, ...)
     syns = do.call(rbind,syns)
   }else if (is.neuron(x)){
-    syns = extract_synapses(x)
+    syns = extract_synapses(x, unitary = FALSE)
   }else{
     stop("x must be a neuron or neuronlist object")
   }
@@ -68,6 +68,7 @@ hemibrain_extract_synapses <- function(x,
 hemibrain_extract_connections <- function(x,
                                        prepost = c("BOTH","PRE","POST"),
                                        ...){
+  x = add_field_seq(x,x[,"bodyid"],field="bodyid")
   prepost = match.arg(prepost)
   if(nat::is.neuronlist(x)){
     syns = nat::nlapply(x,extract_synapses, unitary = TRUE, ...)
@@ -86,6 +87,34 @@ hemibrain_extract_connections <- function(x,
   syns
 }
 
+# #' @export
+# #' @rdname hemibrain_extract_connections
+hemibrain_extract_edgelist <- function(x, ...){
+  x = add_field_seq(x,x[,"bodyid"],field="bodyid")
+  if(nat::is.neuronlist(x)){
+    syns = nat::nlapply(x, extract_synapses, unitary = FALSE)
+    syns = do.call(rbind,syns)
+  }else if (nat::is.neuron(x)){
+    syns = extract_synapses(x, unitary = FALSE)
+  }else{
+    stop("x must be a neuron or neuronlist object")
+  }
+  conn.lookup = syns[syns$prepost==1,]
+  syns %>%
+    dplyr::filter(prepost==0) %>%
+    dplyr::mutate(partner.Label =
+                    conn.lookup[conn.lookup$connector_id==connector_id
+                                & conn.lookup$bodyid==partner,"Label"][1]) %>%
+    dplyr::group_by(.data$bodyid, .data$partner, .data$Label) %>%
+    dplyr::mutate(weight = dplyr::n()) %>%
+    dplyr::distinct(.data$bodyid, .data$partner,.data$Label, .data$weight) %>%
+    dplyr::select(.data$bodyid, .data$partner, .data$Label, .data$weight) %>%
+    as.data.frame() ->
+    elist
+  rownames(elist) = 1:nrow(elist)
+  elist
+}
+
 #' @importFrom magrittr %>%
 #' @export
 magrittr::`%>%`
@@ -101,17 +130,19 @@ extract_synapses <-function(x, unitary = FALSE){
   syn$Label = nullToNA(x$d$Label[match(syn$treenode_id,x$d$PointNo)])
   if(unitary){
     syn %>%
-      filter(.data$Label %in% c(2,3)) %>%
-      mutate(prepost = case_when(
+      dplyr::mutate(prepost = dplyr::case_when(
         .data$prepost==0 ~ 1,
         .data$prepost==1  ~ 0
       )) %>% # i.e. switch perspective, presynapses connect to postsynaptic partners
-      group_by(.data$bodyid, .data$partner, .data$prepost, .data$Label) %>%
-      mutate(weight = n()) %>%
-      distinct(.data$bodyid, .data$partner, .data$prepost, .data$Label, .data$weight) %>%
-      select(.data$bodyid, .data$partner, .data$prepost, .data$Label, .data$weight) %>%
+      dplyr::group_by(.data$bodyid, .data$partner, .data$prepost, .data$Label) %>%
+      dplyr::mutate(weight = dplyr::n()) %>%
+      dplyr::distinct(.data$bodyid, .data$partner, .data$prepost, .data$Label, .data$weight) %>%
+      dplyr::select(.data$bodyid, .data$partner, .data$prepost, .data$Label, .data$weight) %>%
       as.data.frame() ->
       syn
   }
   syn
 }
+
+
+

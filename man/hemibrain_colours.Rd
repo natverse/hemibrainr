@@ -6,7 +6,8 @@
 \alias{hemibrain_colour_ramp}
 \alias{hemibrain_bright_colours}
 \alias{hemibrain_bright_colour_ramp}
-\title{Some nice colours used by Schlegel and Bates et al. 2020 (in prep.)}
+\title{Some nice colours used by Schlegel and Bates et al. 2020 (in prep.) and
+Li et al. 2020 (in prep)}
 \format{An object of class \code{character} of length 6.}
 \source{
 \url{https://github.com/johannesbjork/LaCroixColoR}
@@ -19,6 +20,9 @@ hemibrain_colour_ramp(n)
 hemibrain_bright_colours
 
 hemibrain_bright_colour_ramp(n)
+}
+\arguments{
+\item{n}{the number of colours to generate}
 }
 \value{
 a named vector of colours

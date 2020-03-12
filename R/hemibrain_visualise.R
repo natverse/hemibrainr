@@ -42,20 +42,23 @@ plot3d_split = function(someneuronlist,
   temps.microns = c(temps[temps$W<2000,"name"],"JRCFIB2018F")
   reg = nat.templatebrains::regtemplate(someneuronlist)
   if(is.null(soma)){
-    if(is.null(reg)|!reg%in%temps.microns){
+    if(is.null(reg)){
+      soma = 500
+    }else if(!reg%in%temps.microns){
       soma = 500
     }else{
       soma = 4
     }
   }
   if(is.null(radius)){
-    if(is.null(reg)|!reg%in%temps.microns){
+    if(is.null(reg)){
+      radius = 100
+    }else if(!reg%in%temps.microns){
       radius = 100
     }else{
-      radius = 8
+      radius = 1
     }
   }
-
   for (n in 1:length(someneuronlist)){
     neuron = someneuronlist[[n]]
     dendrites.v = subset(rownames(neuron$d), neuron$d$Label == 3)

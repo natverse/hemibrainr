@@ -56,6 +56,7 @@ hemibrain_read_neurons<-function(x, microns = TRUE, ...){
     nat.templatebrains::regtemplate(neurons.flow) = "JRCFIB2018Fraw"
   }
   neurons.flow[,] = df
+  neurons.flow = add_field_seq(neurons.flow,neurons.flow[,"bodyid"],field="bodyid")
   neurons.flow
 }
 
@@ -68,5 +69,98 @@ scale_neurons.neuron <- function(x, scaling, ...){
 }
 scale_neurons.neuronlist = function(x, scaling = (8/1000), ...){
   nat::nlapply(x,scale.neuron, scaling = scaling, ...)
+}
+
+
+#' Remove erroneous branchlets to beautify neuron skeletons
+#'
+#' @description Remove synapse-less branches from axons and dendrites, and clean up
+#' the primary neurite and primary dendrite (linker) of a neuron. Givne neurons must have been split
+#' by either \code{\link{flow_centrality}} or \code{\link{hemibrain_flow_centrality}}.
+#' \code{\link{hemibrain_flow_centrality}} to re-root and split neurons into putative
+#' axons and dendrites. Optionally, it may also convert neurons from their raw voxel
+#' space (as they are stored in NeuPrint) to microns.
+#'
+#' @param x a \code{nat::neuronlist} or \code{nat::neuron} object
+#' @param ... methods passed to \code{nat::nlapply}.
+#'
+#'
+#' @inherit flow_centrality return
+#'
+#' @examples
+#' \donttest{
+#' # Choose neurons
+#' ## In this case some antennal lobe local neurons
+#' al.local.neurons = c("1702323386", "2068966051", "2069311379", "1702305987", "5812996027",
+#' "1702336197", "1793744512", "1976565858", "2007578510", "2101339904",
+#' "5813003258", "2069647778", "1947192569", "1883788812", "1916485259",
+#' "1887177026", "2101348562", "2132375072", "2256863785", "5813002313",
+#' "5813054716", "5813018847", "5813055448", "1763037543", "2101391269",
+#' "1794037618", "5813018729", "2013333009")
+#'
+#' # Get neurons
+#' neurons = neuprintr::neuprint_read_neurons(al.local.neurons)
+#'
+#' # Split  neurons
+#' neurons = hemibrain_flow_centrality(neurons)
+#'
+#' # Clean neurons
+#' neurons.cleaned = hemibrain_clean_skeleton(neurons)
+#'
+#' \dontrun{
+#' # Plot the split to check it
+#' nat::nopen3d()
+#' nlscan_split(neurons.cleaned, WithConnectors = TRUE)
+#' }}
+#' @export
+#' @seealso \code{\link{hemibrain_splitpoints}}, \code{\link{hemibrain_flow_centrality}},
+#' \code{\link{hemibrain_precomputed_splitpoints}}, \code{\link{hemibrain_metrics}},\code{\link{hemibrain_remove_bad_synapses}}
+hemibrain_clean_skeleton.neuron <- function(x){
+  a = axonic_cable(x)
+  a.clean = prune_synapseless_branches(a, neuron = FALSE)
+  d = axonic_cable(x)
+  d.clean = prune_synapseless_branches(d, neuron = FALSE)
+  remove = c(a, d)
+  if(length(remove)>0){
+    y = nat::prune_vertices(x, verticestoprune = remove, invert = FALSE)
+    y$connectors = x$connectors[x$connectors$treenode_id %in% y$d$PointNo, ]
+    relevant.points = subset(x$d, PointNo %in% y$d$PointNo)
+    y$d = relevant.points[match(y$d$PointNo, relevant.points$PointNo), ]
+  }else{
+    y = x
+  }
+  y = hemibrain_neuron_class(y)
+  y
+}
+
+
+# hidden
+prune_synapseless_branches <- function(x, neuron = TRUE){
+  s = x$SubTrees
+  prune = c()
+  if(is.null(x$connectors$treenode_id)){
+    stop("No connectors in neuron,")
+  }
+  for(t in 1:x$nTrees){
+    ss = unlist(s[[t]])
+    with.syns = sum(ss%in%x$connectors$treenode_id)>0
+    if(!with.syns){
+      prune = c(prune, ss)
+    }
+  }
+  if(neuron){
+    if(length(prune)>0){
+      y = nat::prune_vertices(x, verticestoprune = prune, invert = FALSE)
+      y$connectors = x$connectors[x$connectors$treenode_id %in% y$d$PointNo, ]
+      relevant.points = subset(x$d, PointNo %in% y$d$PointNo)
+      y$d = relevant.points[match(y$d$PointNo, relevant.points$PointNo), ]
+    }else{
+      y=x
+    }
+    y = hemibrain_neuron_class(y)
+    y
+  }else{
+    prune
+  }
 }
 

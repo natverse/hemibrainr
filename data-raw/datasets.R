@@ -17,10 +17,10 @@ usethis::use_data(hemibrain_metrics_polypre_centrifugal_distance, overwrite = TR
 usethis::use_data(hemibrain_all_neurons_metrics_polypre_centrifugal_synapses, overwrite = TRUE)
 
 ### Consensus
-hemibrain_splitpoints <- hemibrain_splitpoints_polypre_centrifugal_distance
+hemibrain_all_splitpoints <- hemibrain_splitpoints_polypre_centrifugal_distance
 hemibrain_metrics <- hemibrain_metrics_polypre_centrifugal_distance
 usethis::use_data(hemibrain_metrics, overwrite = TRUE)
-usethis::use_data(hemibrain_splitpoints, overwrite = TRUE)
+usethis::use_data(hemibrain_all_splitpoints, overwrite = TRUE)
 
 ### Surface mesh
 hemibrain.surf = readobj::read.obj("data-raw/hemibrain_raw.obj", convert.rgl = TRUE)

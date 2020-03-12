@@ -73,7 +73,6 @@
 #'
 #' @source \url{https://www.biorxiv.org/content/10.1101/2020.01.19.911453v1}
 #' @seealso \code{\link{hemibrain_flow_centrality}},
-#'   \code{\link{hemibrain_splitpoints}},
 #'   \code{\link{flow_centrality}},
 #'   \code{\link{hemibrain_use_splitpoints}}
 #' @examples
@@ -85,13 +84,13 @@
 #' }
 #' @name hemibrain_precomputed_splitpoints
 #' @rdname hemibrain_precomputed_splitpoints
-"hemibrain_splitpoints"
+"hemibrain_all_splitpoints"
 #' @rdname hemibrain_precomputed_splitpoints
 "hemibrain_splitpoints_polypre_centrifugal_distance"
 #' @rdname hemibrain_precomputed_splitpoints
 "hemibrain_splitpoints_pre_centrifugal_distance"
 #' @rdname hemibrain_precomputed_splitpoints
-"hemibrain_splitpoints_polypre_centrifugal_presynapses"
+"hemibrain_splitpoints_polypre_centrifugal_synapses"
 
 #' Neuron metrics for all neurons in the hemibrain dataset
 #'

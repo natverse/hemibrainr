@@ -34,7 +34,7 @@ Extract a single data frame describing synapse/connection types,
 id = c("452677169")
 
 # Read in these neurons
-neuron = neuprint_read_neurons(id)
+neuron = neuprintr::neuprint_read_neurons(id)
 
 # Re-root
 neuron.flow = flow_centrality(neuron, polypre = TRUE,

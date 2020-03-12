@@ -6,7 +6,7 @@
 \usage{
 hemibrain_flow_centrality(
   x,
-  splitpoints = hemibrainr::hemibrain_splitpoints,
+  splitpoints = hemibrainr::hemibrain_all_splitpoints,
   knn = FALSE,
   ...
 )
@@ -63,7 +63,7 @@ exemplars = c("202916528", "1279775082",  "203253072",
 "326530038",  "203253253", "5813079341")
 
 # Get neurons
-neurons = neuprint_read_neurons(exemplars)
+neurons = neuprintr::neuprint_read_neurons(exemplars)
 
 # Now use a pre-saved axon-dendrite split
 neurons.flow = hemibrain_flow_centrality(neurons)

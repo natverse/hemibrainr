@@ -61,32 +61,6 @@ lengthnorm <- function(x){
 }
 
 # hidden
-prune_synapseless_branches <- function(x){
-  s = x$SubTrees
-  prune = c()
-  if(is.null(x$connectors$treenode_id)){
-    stop("No connectors in neuron,")
-  }
-  for(t in 1:x$nTrees){
-    ss = unlist(s[[t]])
-    with.syns = sum(ss%in%x$connectors$treenode_id)>0
-    if(!with.syns){
-      prune = c(prune, ss)
-    }
-  }
-  if(length(prune)>0){
-    y = nat::prune_vertices(x, verticestoprune = prune, invert = FALSE)
-    y$connectors = x$connectors[x$connectors$treenode_id %in% y$d$PointNo, ]
-    relevant.points = subset(x$d, PointNo %in% y$d$PointNo)
-    y$d = relevant.points[match(y$d$PointNo, relevant.points$PointNo), ]
-  }else{
-    y=x
-  }
-  y = hemibrain_neuron_class(y)
-  y
-}
-
-# hidden
 hemibrain_neuron_class <- function (x){
   class(x) = unique(c(class(x),"neuprintneuron","catmaidneuron","neuron","list"))
   x
