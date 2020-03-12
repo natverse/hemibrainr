@@ -64,7 +64,7 @@ the neuron or neuron list object inputted, with centripetal flow
 implementation of the algorithm for calculating flow
   centralities from Schneider-Mizell et al. (2016) (slightly modified).
   Can be used on \code{nat::neuronlist}
-  objects read using \code{\link{neuprint_read_neurons}}. The example code
+  objects read using \code{\link{neuprintr::neuprint_read_neurons}}. The example code
   below gives the recommended arguments when using hemibrain data.
 }
 \details{
@@ -97,7 +97,7 @@ tough = c("5813056323", "579912201", "5813015982", "973765182", "885788485",
 )
 
 # Get neurons
-neurons = neuprint_read_neurons(tough)
+neurons = neuprintr::neuprint_read_neurons(tough)
 
 # Now make sure the neurons have a soma marked
 ## Some hemibrain neurons do not, as the soma was chopped off

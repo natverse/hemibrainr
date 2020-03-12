@@ -42,7 +42,7 @@ tough = c("5813056323", "579912201", "5813015982", "973765182", "885788485",
 )
 
 # Get neurons
-neurons = neuprint_read_neurons(tough)
+neurons = neuprintr::neuprint_read_neurons(tough)
 
 # Now make sure the neurons have a soma marked
 ## Some hemibrain neurons do not, as the soma was chopped off
