@@ -136,12 +136,16 @@ have been removed by <code><a href='hemibrain_skeleton_check.html'>hemibrain_ske
 a neuron's axon and dendrite.</p>
     </div>
 
-    <pre class="usage"><span class='no'>hemibrain_metrics</span></pre>
+    <pre class="usage"><span class='no'>hemibrain_metrics</span>
+
+<span class='no'>hemibrain_metrics_polypre_centrifugal_distance</span>
+
+<span class='no'>hemibrain_all_neurons_metrics_polypre_centrifugal_synapses</span></pre>
 
 
     <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
 
-    <p>An object of class <code>data.frame</code> with 21628 rows and 29 columns.</p>
+    <p>An object of class <code>data.frame</code> with 20783 rows and 29 columns.</p>
     <h2 class="hasAnchor" id="source"><a class="anchor" href="#source"></a>Source</h2>
 
     <p><a href='https://elifesciences.org/articles/44590'>https://elifesciences.org/articles/44590</a></p>
@@ -170,40 +174,40 @@ a neuron's axon and dendrite.</p>
 #&gt; 203253253  1735663327 402 2675   FALSE TRUE          &lt;NA&gt;          3135
 #&gt; 5813079341  157723613  37  260   FALSE TRUE         PDM01           268
 #&gt;            total.inputs axon.outputs dend.outputs axon.inputs dend.inputs
-#&gt; 202916528           420          710           86          30         390
-#&gt; 1279775082          136          117           17          12         121
-#&gt; 203253072           348          306          121          25         318
-#&gt; 326530038          3015         1423         1513         416        2599
-#&gt; 203253253          2660         2597          538         965        1695
-#&gt; 5813079341          257          200           68          29         226
+#&gt; 202916528           420          787            9          35         385
+#&gt; 1279775082          136          136           10          13         121
+#&gt; 203253072           348          353           74          28         314
+#&gt; 326530038          3015         2237          699        1298        1717
+#&gt; 203253253          2660         2823          312        1134        1526
+#&gt; 5813079341          257          257           11          30         225
 #&gt;            total.outputs.density total.inputs.density axon.outputs.density
-#&gt; 202916528            0.005724756          0.003020600          0.022640710
-#&gt; 1279775082           0.001754849          0.001634654          0.010095014
-#&gt; 203253072            0.003917270          0.003192529          0.017303394
-#&gt; 326530038            0.004011882          0.004114226          0.016049285
-#&gt; 203253253            0.004604958          0.003907237          0.011048732
-#&gt; 5813079341           0.002496836          0.002394354          0.008586436
+#&gt; 202916528              0.7155945            0.3775750            2.9510795
+#&gt; 1279775082             0.2193561            0.2043317            0.9543945
+#&gt; 203253072              0.4896587            0.3990661            2.3042986
+#&gt; 326530038              0.5014853            0.5142783            0.9298260
+#&gt; 203253253              0.5756197            0.4884046            1.3892529
+#&gt; 5813079341             0.3121045            0.2992942            1.2850070
 #&gt;            dend.outputs.density axon.inputs.density dend.inputs.density
-#&gt; 202916528           0.001150726         0.000956650         0.005218408
-#&gt; 1279775082          0.000624396         0.001035386         0.004444231
-#&gt; 203253072           0.002330792         0.001413676         0.006125553
-#&gt; 326530038           0.002540106         0.004691850         0.004363342
-#&gt; 203253253           0.001372704         0.004105517         0.004324783
-#&gt; 5813079341          0.001430567         0.001245033         0.004754532
+#&gt; 202916528            0.01505310          0.13124242           0.6439382
+#&gt; 1279775082           0.04643868          0.09122888           0.5619081
+#&gt; 203253072            0.18552763          0.18277723           0.7872389
+#&gt; 326530038            0.22277958          0.53952356           0.5472282
+#&gt; 203253253            0.09950828          0.55806332           0.4866976
+#&gt; 5813079341           0.02892691          0.15000082           0.5916867
 #&gt;            total.length axon.length dend.length pd.length segregation_index
-#&gt; 202916528     139045.22    31359.44    74735.43  12458.00         0.5686275
-#&gt; 1279775082     83198.04    11589.88    27226.31  22129.14         0.4303250
-#&gt; 203253072     109004.49    17684.39    51913.68  21208.92         0.3637845
-#&gt; 326530038     732823.10    88664.38   595644.32  22747.00         0.0904093
-#&gt; 203253253     680788.01   235049.60   391927.18  17711.43         0.1329865
-#&gt; 5813079341    107335.85    23292.55    47533.60  11558.39         0.3000259
+#&gt; 202916528     1112.3618    266.6821    597.8835  115.2070        0.76061097
+#&gt; 1279775082     665.5844    142.4987    215.3377  131.9537        0.59005623
+#&gt; 203253072      872.0359    153.1920    398.8624  185.3908        0.45279400
+#&gt; 326530038     5862.5848   2405.8263   3137.6304  181.9760        0.08413708
+#&gt; 203253253     5446.3040   2032.0275   3135.4174  141.6915        0.19753908
+#&gt; 5813079341     858.6868    199.9989    380.2688  117.9344        0.61201577
 #&gt;            overlap_locality
-#&gt; 202916528       0.027789128
-#&gt; 1279775082      0.009281492
-#&gt; 203253072       0.023707733
-#&gt; 326530038       0.021999648
-#&gt; 203253253       0.080818266
-#&gt; 5813079341      0.026156869</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/hist.html'>hist</a></span>(<span class='no'>hemibrain_metrics</span>$<span class='no'>overlap_locality</span>,<span class='kw'>breaks</span> <span class='kw'>=</span> <span class='fl'>1000</span>)</div><div class='img'><img src='hemibrain_metrics-1.png' alt='' width='700' height='433' /></div><div class='input'># }
+#&gt; 202916528      7.170000e-25
+#&gt; 1279775082               NA
+#&gt; 203253072      1.360000e-98
+#&gt; 326530038      1.546988e-01
+#&gt; 203253253      3.068307e-01
+#&gt; 5813079341     9.210000e-11</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/hist.html'>hist</a></span>(<span class='no'>hemibrain_metrics</span>$<span class='no'>overlap_locality</span>,<span class='kw'>breaks</span> <span class='kw'>=</span> <span class='fl'>1000</span>)</div><div class='img'><img src='hemibrain_metrics-1.png' alt='' width='700' height='433' /></div><div class='input'># }
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

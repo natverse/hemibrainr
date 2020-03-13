@@ -132,7 +132,7 @@
 
     <pre class="usage"><span class='fu'>hemibrain_flow_centrality</span>(
   <span class='no'>x</span>,
-  <span class='kw'>splitpoints</span> <span class='kw'>=</span> <span class='kw pkg'>hemibrainr</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/hemibrainr/man/hemibrain_precomputed_splitpoints.html'>hemibrain_splitpoints_polypre_centrifugal_presynapses</a></span>,
+  <span class='kw'>splitpoints</span> <span class='kw'>=</span> <span class='kw pkg'>hemibrainr</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/hemibrainr/man/hemibrain_precomputed_splitpoints.html'>hemibrain_all_splitpoints</a></span>,
   <span class='kw'>knn</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='no'>...</span>
 )</pre>
@@ -150,7 +150,7 @@ possibly <code>catmaid::read.neurons.catmaid</code>.</p></td>
       <th>splitpoints</th>
       <td><p>a <code>data.frame</code> of splitpoints from running <code><a href='flow_centrality.html'>flow_centrality</a></code>,
 as produced by <code><a href='hemibrain_splitpoints.html'>hemibrain_splitpoints</a></code>. If a custom set of splitpoints is not given, precomputed splitpoints
-are used, <code><a href='hemibrain_precomputed_splitpoints.html'>hemibrain_precomputed_splitpoints</a></code>. This defaults to <code>hemibrain_splitpoints_polypre_centrifugal_presynapses</code>,
+are used, <code><a href='hemibrain_precomputed_splitpoints.html'>hemibrain_precomputed_splitpoints</a></code>. This defaults to <code>hemibrain_splitpoints</code>,
 however to see the available precomputations (which have used <code><a href='flow_centrality.html'>flow_centrality</a></code>, in this case `polypre = TRUE`, `mode = "centrifugal"`
 and `split = "distance"`) with different parameters)
 please see <code><a href='hemibrain_precomputed_splitpoints.html'>hemibrain_precomputed_splitpoints</a></code>.</p></td>
@@ -204,7 +204,7 @@ have not been resampled or their skeletons otherwise modified).</p></td>
 <span class='st'>"326530038"</span>,  <span class='st'>"203253253"</span>, <span class='st'>"5813079341"</span>)
 
 <span class='co'># Get neurons</span>
-<span class='no'>neurons</span> <span class='kw'>=</span> <span class='fu'>neuprint_read_neurons</span>(<span class='no'>exemplars</span>)
+<span class='no'>neurons</span> <span class='kw'>=</span> <span class='kw pkg'>neuprintr</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/neuprintr/man/neuprint_read_neurons.html'>neuprint_read_neurons</a></span>(<span class='no'>exemplars</span>)
 
 <span class='co'># Now use a pre-saved axon-dendrite split</span>
 <span class='no'>neurons.flow</span> <span class='kw'>=</span> <span class='fu'>hemibrain_flow_centrality</span>(<span class='no'>neurons</span>)

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Extract synapse location and labels from a neuron/neuronlist — hemibrain_extract_synapses • hemibrainr</title>
+<title>Extract synapse location and labels, and edgelists from a neuron/neuronlist — hemibrain_extract_synapses • hemibrainr</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -42,12 +42,13 @@
 
 
 
-<meta property="og:title" content="Extract synapse location and labels from a neuron/neuronlist — hemibrain_extract_synapses" />
+<meta property="og:title" content="Extract synapse location and labels, and edgelists from a neuron/neuronlist — hemibrain_extract_synapses" />
 <meta property="og:description" content="Extract a single data frame describing synapse/connection types,
   partners, locations and position on a neuron's axon/dendrite. You can
   either get all synapses returned or all unitary connections to a neuron's
   partners returned. Broken down by axon/dendrite (Label), and
-  pre/postsynapses or pre/postsynaptic partners." />
+  pre/postsynapses or pre/postsynaptic partners. Note that hemibrain_extract_compartment_edgelist will
+  only return connections between neurons given in the argument x." />
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
 
@@ -117,7 +118,7 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Extract synapse location and labels from a neuron/neuronlist</h1>
+    <h1>Extract synapse location and labels, and edgelists from a neuron/neuronlist</h1>
     <small class="dont-index">Source: <a href='https://github.com/flyconnectome/hemibrainr/blob/master/R/hemibrain_synapses.R'><code>R/hemibrain_synapses.R</code></a></small>
     <div class="hidden name"><code>hemibrain_extract_connections.Rd</code></div>
     </div>
@@ -127,12 +128,15 @@
   partners, locations and position on a neuron's axon/dendrite. You can
   either get all synapses returned or all unitary connections to a neuron's
   partners returned. Broken down by axon/dendrite (<code>Label</code>), and
-  pre/postsynapses or pre/postsynaptic partners.</p>
+  pre/postsynapses or pre/postsynaptic partners. Note that <code>hemibrain_extract_compartment_edgelist</code> will
+  only return connections between neurons given in the argument <code>x</code>.</p>
     </div>
 
     <pre class="usage"><span class='fu'>hemibrain_extract_synapses</span>(<span class='no'>x</span>, <span class='kw'>prepost</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"BOTH"</span>, <span class='st'>"PRE"</span>, <span class='st'>"POST"</span>), <span class='no'>...</span>)
 
-<span class='fu'>hemibrain_extract_connections</span>(<span class='no'>x</span>, <span class='kw'>prepost</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"BOTH"</span>, <span class='st'>"PRE"</span>, <span class='st'>"POST"</span>), <span class='no'>...</span>)</pre>
+<span class='fu'>hemibrain_extract_connections</span>(<span class='no'>x</span>, <span class='kw'>prepost</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"BOTH"</span>, <span class='st'>"PRE"</span>, <span class='st'>"POST"</span>), <span class='no'>...</span>)
+
+<span class='fu'>hemibrain_extract_compartment_edgelist</span>(<span class='no'>x</span>, <span class='no'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -166,7 +170,7 @@ possibly <code>catmaid::read.neurons.catmaid</code>.</p></td>
 <span class='no'>id</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"452677169"</span>)
 
 <span class='co'># Read in these neurons</span>
-<span class='no'>neuron</span> <span class='kw'>=</span> <span class='fu'>neuprint_read_neurons</span>(<span class='no'>id</span>)
+<span class='no'>neuron</span> <span class='kw'>=</span> <span class='kw pkg'>neuprintr</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/neuprintr/man/neuprint_read_neurons.html'>neuprint_read_neurons</a></span>(<span class='no'>id</span>)
 
 <span class='co'># Re-root</span>
 <span class='no'>neuron.flow</span> <span class='kw'>=</span> <span class='fu'><a href='flow_centrality.html'>flow_centrality</a></span>(<span class='no'>neuron</span>, <span class='kw'>polypre</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,

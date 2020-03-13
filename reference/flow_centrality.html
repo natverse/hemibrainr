@@ -46,7 +46,7 @@
 <meta property="og:description" content="implementation of the algorithm for calculating flow
   centralities from Schneider-Mizell et al. (2016) (slightly modified).
   Can be used on nat::neuronlist
-  objects read using neuprint_read_neurons. The example code
+  objects read using neuprintr::neuprint_read_neurons. The example code
   below gives the recommended arguments when using hemibrain data." />
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
@@ -126,7 +126,7 @@
     <p>implementation of the algorithm for calculating flow
   centralities from Schneider-Mizell et al. (2016) (slightly modified).
   Can be used on <code><a href='https://rdrr.io/pkg/nat/man/neuronlist.html'>nat::neuronlist</a></code>
-  objects read using <code>neuprint_read_neurons</code>. The example code
+  objects read using <code><a href='https://rdrr.io/pkg/neuprintr/man/neuprint_read_neurons.html'>neuprintr::neuprint_read_neurons</a></code>. The example code
   below gives the recommended arguments when using hemibrain data.</p>
     </div>
 
@@ -246,7 +246,7 @@ The compartment closest to this branchpoint is most usually the dendrite
 )
 
 <span class='co'># Get neurons</span>
-<span class='no'>neurons</span> <span class='kw'>=</span> <span class='fu'>neuprint_read_neurons</span>(<span class='no'>tough</span>)
+<span class='no'>neurons</span> <span class='kw'>=</span> <span class='kw pkg'>neuprintr</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/neuprintr/man/neuprint_read_neurons.html'>neuprint_read_neurons</a></span>(<span class='no'>tough</span>)
 
 <span class='co'># Now make sure the neurons have a soma marked</span>
 <span class='co'>## Some hemibrain neurons do not, as the soma was chopped off</span>

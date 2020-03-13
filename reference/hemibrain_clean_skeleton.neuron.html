@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Get useful metrics for each neuron's axon and dendrite — hemibrain_compartment_metrics • hemibrainr</title>
+<title>Remove erroneous branchlets to beautify neuron skeletons — hemibrain_clean_skeleton.neuron • hemibrainr</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -42,9 +42,13 @@
 
 
 
-<meta property="og:title" content="Get useful metrics for each neuron's axon and dendrite — hemibrain_compartment_metrics" />
-<meta property="og:description" content="Calculates/retrieves useful metrics for the axon and dendrites
-  of a neuron, and its split." />
+<meta property="og:title" content="Remove erroneous branchlets to beautify neuron skeletons — hemibrain_clean_skeleton.neuron" />
+<meta property="og:description" content="Remove synapse-less branches from axons and dendrites, and clean up
+the primary neurite and primary dendrite (linker) of a neuron. Givne neurons must have been split
+by either flow_centrality or hemibrain_flow_centrality.
+hemibrain_flow_centrality to re-root and split neurons into putative
+axons and dendrites. Optionally, it may also convert neurons from their raw voxel
+space (as they are stored in NeuPrint) to microns." />
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
 
@@ -114,64 +118,50 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Get useful metrics for each neuron's axon and dendrite</h1>
-    <small class="dont-index">Source: <a href='https://github.com/flyconnectome/hemibrainr/blob/master/R/hemibrain_locality.R'><code>R/hemibrain_locality.R</code></a></small>
-    <div class="hidden name"><code>hemibrain_compartment_metrics.Rd</code></div>
+    <h1>Remove erroneous branchlets to beautify neuron skeletons</h1>
+    <small class="dont-index">Source: <a href='https://github.com/flyconnectome/hemibrainr/blob/master/R/hemibrain_read_neurons.R'><code>R/hemibrain_read_neurons.R</code></a></small>
+    <div class="hidden name"><code>hemibrain_clean_skeleton.neuron.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Calculates/retrieves useful metrics for the axon and dendrites
-  of a neuron, and its split.</p>
+    <p>Remove synapse-less branches from axons and dendrites, and clean up
+the primary neurite and primary dendrite (linker) of a neuron. Givne neurons must have been split
+by either <code><a href='flow_centrality.html'>flow_centrality</a></code> or <code><a href='hemibrain_flow_centrality.html'>hemibrain_flow_centrality</a></code>.
+<code><a href='hemibrain_flow_centrality.html'>hemibrain_flow_centrality</a></code> to re-root and split neurons into putative
+axons and dendrites. Optionally, it may also convert neurons from their raw voxel
+space (as they are stored in NeuPrint) to microns.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>hemibrain_compartment_metrics</span>(
-  <span class='no'>x</span>,
-  <span class='kw'>resample</span> <span class='kw'>=</span> <span class='fl'>10</span>,
-  <span class='kw'>delta</span> <span class='kw'>=</span> <span class='fl'>62.5</span>,
-  <span class='kw'>locality</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='no'>...</span>
-)</pre>
+    <pre class="usage"><span class='fu'>hemibrain_clean_skeleton.neuron</span>(<span class='no'>x</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>x</th>
-      <td><p>a <code><a href='https://rdrr.io/pkg/nat/man/neuronlist.html'>nat::neuronlist</a></code> or <code><a href='https://rdrr.io/pkg/nat/man/neuron.html'>nat::neuron</a></code> object. It is assumed
-that this neuron has been read in by <code><a href='https://rdrr.io/pkg/neuprintr/man/neuprint_read_neurons.html'>neuprintr::neuprint_read_neurons</a></code> or
-possibly <code>catmaid::read.neurons.catmaid</code>.</p></td>
-    </tr>
-    <tr>
-      <th>resample</th>
-      <td><p>stepsize to which to resample neurons. If set to <code>NULL</code>,
-neurons are not resampled.</p></td>
-    </tr>
-    <tr>
-      <th>delta</th>
-      <td><p>the distance at which a synapse might occur</p></td>
-    </tr>
-    <tr>
-      <th>locality</th>
-      <td><p>if TRUE <code><a href='hemibrain_overlap_locality.html'>hemibrain_overlap_locality</a></code> is called
-and the overlap locality score will be returned in addition to other
-metrics.</p></td>
+      <td><p>a <code><a href='https://rdrr.io/pkg/nat/man/neuronlist.html'>nat::neuronlist</a></code> or <code><a href='https://rdrr.io/pkg/nat/man/neuron.html'>nat::neuron</a></code> object</p></td>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>methods sent to <code><a href='https://rdrr.io/pkg/nat/man/nlapply.html'>nat::nlapply</a></code></p></td>
+      <td><p>methods passed to <code><a href='https://rdrr.io/pkg/nat/man/nlapply.html'>nat::nlapply</a></code>.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>a <code>data.frame</code> of metrics broken down by putative axon and dendrute, and their overlap_locality scores</p>
+    <p>the neuron or neuron list object inputted, with centripetal flow
+  centrality information added to neuron$d and a segregation index score.
+  The neuron$d$Label now gives the compartment, where axon is Label = 2,
+  dendrite Label = 3, primary dendrite Label = 9 and
+  primary neurite Label = 7.
+  Soma is Label = 1.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='hemibrain_overlap_locality.html'>hemibrain_overlap_locality</a></code></p></div>
+    <div class='dont-index'><p><code><a href='hemibrain_splitpoints.html'>hemibrain_splitpoints</a></code>, <code><a href='hemibrain_flow_centrality.html'>hemibrain_flow_centrality</a></code>,
+<code><a href='hemibrain_precomputed_splitpoints.html'>hemibrain_precomputed_splitpoints</a></code>, <code><a href='hemibrain_metrics.html'>hemibrain_metrics</a></code>,<code><a href='hemibrain_remove_bad_synapses.html'>hemibrain_remove_bad_synapses</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
-
 <span class='co'># Choose neurons</span>
 <span class='co'>## In this case some antennal lobe local neurons</span>
 <span class='no'>al.local.neurons</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"1702323386"</span>, <span class='st'>"2068966051"</span>, <span class='st'>"2069311379"</span>, <span class='st'>"1702305987"</span>, <span class='st'>"5812996027"</span>,
@@ -182,21 +172,17 @@ metrics.</p></td>
 <span class='st'>"1794037618"</span>, <span class='st'>"5813018729"</span>, <span class='st'>"2013333009"</span>)
 
 <span class='co'># Get neurons</span>
-<span class='no'>neurons</span> <span class='kw'>=</span> <span class='fu'>neuprint_read_neurons</span>(<span class='no'>al.local.neurons</span>)
+<span class='no'>neurons</span> <span class='kw'>=</span> <span class='kw pkg'>neuprintr</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/neuprintr/man/neuprint_read_neurons.html'>neuprint_read_neurons</a></span>(<span class='no'>al.local.neurons</span>)
 
-<span class='co'># Convert to microns</span>
-<span class='no'>neurons</span> <span class='kw'>=</span> <span class='kw pkg'>hemibrainr</span><span class='kw ns'>:::</span><span class='fu'>scale_neurons</span>(<span class='no'>neurons</span>)</div><div class='output co'>#&gt; <span class='error'>Error in UseMethod("scale_neurons"): no applicable method for 'scale_neurons' applied to an object of class "c('neuronlist', 'list')"</span></div><div class='input'>
-<span class='co'># Split</span>
+<span class='co'># Split  neurons</span>
 <span class='no'>neurons</span> <span class='kw'>=</span> <span class='fu'><a href='hemibrain_flow_centrality.html'>hemibrain_flow_centrality</a></span>(<span class='no'>neurons</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: 4 neurons cropped, split likely to be inaccurate for: 2068966051, 2069311379, 1947192569, 2101391269</span></div><div class='output co'>#&gt; <span class='warning'>Warning: 4 neurons are not represented in the given splitpoints: </span></div><div class='output co'>#&gt; <span class='warning'>Warning: bodyid 2068966051 not in splitpoints, returning neuron unmodified</span></div><div class='output co'>#&gt; <span class='warning'>Warning: bodyid 2069311379 not in splitpoints, returning neuron unmodified</span></div><div class='output co'>#&gt; <span class='warning'>Warning: bodyid 1947192569 not in splitpoints, returning neuron unmodified</span></div><div class='output co'>#&gt; <span class='warning'>Warning: bodyid 2101391269 not in splitpoints, returning neuron unmodified</span></div><div class='input'>
-<span class='co'># Calculate overlap and other metrics</span>
-<span class='no'>hcm</span> <span class='kw'>=</span> <span class='fu'>hemibrain_compartment_metrics</span>(<span class='no'>neurons</span>,
-<span class='kw'>resample</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-<span class='kw'>just.leaves</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='co'># just look how much the leaves of skeletons overlap, quicker (default)</span>
-<span class='kw'>delta</span> <span class='kw'>=</span> <span class='fl'>5</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Axon / dendrite missing</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Axon / dendrite missing</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Axon / dendrite missing</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Axon / dendrite missing</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Axon / dendrite missing</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Axon / dendrite missing</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Axon / dendrite missing</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Axon / dendrite missing</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Axon / dendrite missing</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Axon / dendrite missing</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Axon / dendrite missing</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Axon / dendrite missing</span></div><div class='input'>
-<span class='co'># Plot</span>
-<span class='fu'><a href='https://rdrr.io/r/graphics/hist.html'>hist</a></span>(<span class='no'>hcm</span>$<span class='no'>overlap_locality</span>, <span class='kw'>breaks</span> <span class='kw'>=</span> <span class='fl'>100</span>)</div><div class='img'><img src='hemibrain_compartment_metrics-1.png' alt='' width='700' height='433' /></div><div class='input'>
-# }
-</div></pre>
+<span class='co'># Clean neurons</span>
+<span class='no'>neurons.cleaned</span> <span class='kw'>=</span> <span class='fu'>hemibrain_clean_skeleton</span>(<span class='no'>neurons</span>)</div><div class='output co'>#&gt; <span class='error'>Error in hemibrain_clean_skeleton(neurons): could not find function "hemibrain_clean_skeleton"</span></div><div class='input'>
+<span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
+<span class='co'># Plot the split to check it</span>
+<span class='kw pkg'>nat</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/nat/man/nopen3d.html'>nopen3d</a></span>()
+<span class='fu'><a href='plot3d_split.html'>nlscan_split</a></span>(<span class='no'>neurons.cleaned</span>, <span class='kw'>WithConnectors</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
+}<span class='co'># }</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
