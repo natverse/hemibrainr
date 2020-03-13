@@ -64,7 +64,7 @@ the neuron or neuron list object inputted, with centripetal flow
 implementation of the algorithm for calculating flow
   centralities from Schneider-Mizell et al. (2016) (slightly modified).
   Can be used on \code{nat::neuronlist}
-  objects read using \code{\link{neuprintr::neuprint_read_neurons}}. The example code
+  objects read using \code{neuprintr::neuprint_read_neurons}. The example code
   below gives the recommended arguments when using hemibrain data.
 }
 \details{

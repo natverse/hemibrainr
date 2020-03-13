@@ -2,13 +2,14 @@
 ################################ Synapses ##################################
 ############################################################################
 
-#' Extract synapse location and labels from a neuron/neuronlist
+#' Extract synapse location and labels, and edgelists from a neuron/neuronlist
 #'
 #' @description Extract a single data frame describing synapse/connection types,
 #'   partners, locations and position on a neuron's axon/dendrite. You can
 #'   either get all synapses returned or all unitary connections to a neuron's
 #'   partners returned. Broken down by axon/dendrite (\code{Label}), and
-#'   pre/postsynapses or pre/postsynaptic partners.
+#'   pre/postsynapses or pre/postsynaptic partners. Note that \code{hemibrain_extract_compartment_edgelist} will
+#'   only return connections between neurons given in the argument \code{x}.
 #' @inheritParams flow_centrality
 #' @param prepost whether to get presynapses, postsynapses or both
 #'
@@ -87,34 +88,6 @@ hemibrain_extract_connections <- function(x,
   syns
 }
 
-# #' @export
-# #' @rdname hemibrain_extract_connections
-hemibrain_extract_edgelist <- function(x, ...){
-  x = add_field_seq(x,x[,"bodyid"],field="bodyid")
-  if(nat::is.neuronlist(x)){
-    syns = nat::nlapply(x, extract_synapses, unitary = FALSE)
-    syns = do.call(rbind,syns)
-  }else if (nat::is.neuron(x)){
-    syns = extract_synapses(x, unitary = FALSE)
-  }else{
-    stop("x must be a neuron or neuronlist object")
-  }
-  conn.lookup = syns[syns$prepost==1,]
-  syns %>%
-    dplyr::filter(prepost==0) %>%
-    dplyr::mutate(partner.Label =
-                    conn.lookup[conn.lookup$connector_id==connector_id
-                                & conn.lookup$bodyid==partner,"Label"][1]) %>%
-    dplyr::group_by(.data$bodyid, .data$partner, .data$Label) %>%
-    dplyr::mutate(weight = dplyr::n()) %>%
-    dplyr::distinct(.data$bodyid, .data$partner,.data$Label, .data$weight) %>%
-    dplyr::select(.data$bodyid, .data$partner, .data$Label, .data$weight) %>%
-    as.data.frame() ->
-    elist
-  rownames(elist) = 1:nrow(elist)
-  elist
-}
-
 #' @importFrom magrittr %>%
 #' @export
 magrittr::`%>%`
@@ -128,7 +101,7 @@ extract_synapses <-function(x, unitary = FALSE){
   }
   syn$bodyid = nullToNA(x$bodyid)
   syn$Label = nullToNA(x$d$Label[match(syn$treenode_id,x$d$PointNo)])
-  if(unitary){
+  if(unitary){ # connections, rather than synapses
     syn %>%
       dplyr::mutate(prepost = dplyr::case_when(
         .data$prepost==0 ~ 1,
@@ -144,5 +117,38 @@ extract_synapses <-function(x, unitary = FALSE){
   syn
 }
 
-
+#' @export
+#' @rdname hemibrain_extract_connections
+hemibrain_extract_compartment_edgelist <- function(x, ...){
+  x = add_field_seq(x,x[,"bodyid"],field="bodyid")
+  if(nat::is.neuronlist(x)){
+    syns = nat::nlapply(x, extract_synapses, unitary = FALSE, ...)
+    syns = do.call(rbind,syns)
+  }else if (nat::is.neuron(x)){
+    syns = extract_synapses(x, unitary = FALSE)
+  }else{
+    stop("x must be a neuron or neuronlist object")
+  }
+  syns %>%
+    dplyr::filter(prepost==1) %>%
+    dplyr::distinct(.data$bodyid, .data$partner, .data$connector_id, .data$Label) %>%
+    as.data.frame() ->
+    conn.lookup
+  lookup = conn.lookup$Label
+  names(lookup) = conn.lookup$connector_id
+  syns %>%
+    dplyr::filter(prepost==0) %>%
+    dplyr::mutate(partner.Label = lookup[as.character(connector_id)]) %>%
+    dplyr::group_by(.data$bodyid, .data$partner, .data$Label) %>%
+    dplyr::mutate(weight = dplyr::n()) %>%
+    dplyr::distinct(.data$bodyid, .data$partner,.data$Label, .data$partner.Label, .data$weight) %>%
+    dplyr::select(.data$bodyid, .data$partner, .data$Label, .data$partner.Label, .data$weight) %>%
+    dplyr::filter(!is.na(partner.Label)) %>%
+    as.data.frame() ->
+    elist
+  rownames(elist) = 1:nrow(elist)
+  elist$Label = standard_compartments(elist$Label)
+  elist$partner.Label = standard_compartments(elist$partner.Label)
+  elist
+}
 

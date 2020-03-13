@@ -7,7 +7,7 @@
 #' @description implementation of the algorithm for calculating flow
 #'   centralities from Schneider-Mizell et al. (2016) (slightly modified).
 #'   Can be used on \code{nat::neuronlist}
-#'   objects read using \code{\link{neuprintr::neuprint_read_neurons}}. The example code
+#'   objects read using \code{neuprintr::neuprint_read_neurons}. The example code
 #'   below gives the recommended arguments when using hemibrain data.
 #'
 #' @param x a \code{nat::neuronlist} or \code{nat::neuron} object. It is assumed
@@ -839,6 +839,8 @@ add_field_seq <- function(x, entries, field = "bodyid", ...){
 #                                mode = "centrifugal",
 #                                split = "synapses",
 #                                primary.branchpoint = 0.25)
-# neurons.flow2 = hemibrain_flow_centrality(neurons.checked)
+# syns = nat::nlapply(neurons.flow, extract_synapses, unitary = FALSE)
+# syns = do.call(rbind,syns)
+# syns = subset(syns, partner %in% al.local.neurons)
 # nlscan_split(neurons.flow, WithConnectors = TRUE)
 

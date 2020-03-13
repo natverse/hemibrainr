@@ -3,11 +3,14 @@
 \name{hemibrain_extract_synapses}
 \alias{hemibrain_extract_synapses}
 \alias{hemibrain_extract_connections}
-\title{Extract synapse location and labels from a neuron/neuronlist}
+\alias{hemibrain_extract_compartment_edgelist}
+\title{Extract synapse location and labels, and edgelists from a neuron/neuronlist}
 \usage{
 hemibrain_extract_synapses(x, prepost = c("BOTH", "PRE", "POST"), ...)
 
 hemibrain_extract_connections(x, prepost = c("BOTH", "PRE", "POST"), ...)
+
+hemibrain_extract_compartment_edgelist(x, ...)
 }
 \arguments{
 \item{x}{a \code{nat::neuronlist} or \code{nat::neuron} object. It is assumed
@@ -26,7 +29,8 @@ Extract a single data frame describing synapse/connection types,
   partners, locations and position on a neuron's axon/dendrite. You can
   either get all synapses returned or all unitary connections to a neuron's
   partners returned. Broken down by axon/dendrite (\code{Label}), and
-  pre/postsynapses or pre/postsynaptic partners.
+  pre/postsynapses or pre/postsynaptic partners. Note that \code{hemibrain_extract_compartment_edgelist} will
+  only return connections between neurons given in the argument \code{x}.
 }
 \examples{
 \donttest{
