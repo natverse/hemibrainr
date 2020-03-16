@@ -47,6 +47,7 @@ hemibrain_extract_synapses <- function(x,
                                        prepost = c("BOTH","PRE","POST"),
                                        ...){
   prepost = match.arg(prepost)
+  x = add_field_seq(x,x[,"bodyid"],field="bodyid")
   if(is.neuronlist(x)){
     syns = nlapply(x,extract_synapses, unitary = FALSE, ...)
     syns = do.call(rbind,syns)
