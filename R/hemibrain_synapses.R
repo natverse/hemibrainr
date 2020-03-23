@@ -17,19 +17,27 @@
 #'
 #' @examples
 #' \donttest{
-#' # Choose a bodyid
-#' id = c("452677169")
+#' # Choose a bodyids
+#' al.local.neurons = c("1702323386", "2068966051", "2069311379", "1702305987", "5812996027",
+#'  "1702336197", "1793744512", "1976565858", "2007578510", "2101339904",
+#'  "5813003258", "2069647778", "1947192569", "1883788812", "1916485259",
+#' "1887177026", "2101348562", "2132375072", "2256863785", "5813002313",
+#'  "5813054716", "5813018847", "5813055448", "1763037543", "2101391269",
+#'  "1794037618", "5813018729", "2013333009")
 #'
 #' # Read in these neurons
-#' neuron = neuprintr::neuprint_read_neurons(id)
+#' neurons = neuprintr::neuprint_read_neurons(al.local.neurons)
 #'
 #' # Re-root
-#' neuron.flow = flow_centrality(neuron, polypre = TRUE,
+#' neurons.flow = flow_centrality(neurons, polypre = TRUE,
 #' mode = "centrifugal",
 #' split = "distance")
 #'
 #' # Let's check that this worked
-#' syns = hemibrain_extract_synapses(neuron.flow)
+#' syns = hemibrain_extract_synapses(neurons.flow)
+#'
+#' # Get the edgelist by compartment
+#' elist = hemibrain_extract_compartment_edgelist(neurons.flow)
 #'
 #' \dontrun{
 #' # See result
@@ -37,7 +45,6 @@
 #' plot3d_split(neuron.flow)
 #' points3d(xyzmatrix(subset(syns,prepost==1)), col = "cyan")
 #' points3d(xyzmatrix(subset(syns,prepost==0)), col = "red")
-#'
 #' }}
 #' @export
 #' @rdname hemibrain_extract_connections
@@ -123,20 +130,21 @@ extract_synapses <-function(x, unitary = FALSE){
 hemibrain_extract_compartment_edgelist <- function(x, ...){
   x = add_field_seq(x,x[,"bodyid"],field="bodyid")
   if(nat::is.neuronlist(x)){
-    syns = nat::nlapply(x, extract_synapses, unitary = FALSE, ...)
-    syns = do.call(rbind,syns)
-  }else if (nat::is.neuron(x)){
-    syns = extract_synapses(x, unitary = FALSE)
+    syns.list = nat::nlapply(x, extract_synapses, unitary = FALSE, ...)
   }else{
-    stop("x must be a neuron or neuronlist object")
+    stop("x must be a neuronlist object")
   }
-  syns %>%
-    dplyr::filter(prepost==1) %>%
-    dplyr::distinct(.data$bodyid, .data$partner, .data$connector_id, .data$Label) %>%
-    as.data.frame() ->
-    conn.lookup
-  lookup = conn.lookup$Label
-  names(lookup) = conn.lookup$connector_id
+  names(syns.list) = NULL
+  lookup = nat::nlapply(syns.list, extract_lookup, ...)
+  lookup = unlist(lookup)
+  elists = nat::nlapply(syns.list, extract_elist, lookup = lookup, ...)
+  elist = do.call(rbind, elists)
+  rownames(elist) = 1:nrow(elist)
+  elist
+}
+
+# Hidden
+extract_elist <- function(syns, lookup){
   syns %>%
     dplyr::filter(prepost==0) %>%
     dplyr::mutate(partner.Label = lookup[as.character(connector_id)]) %>%
@@ -153,3 +161,14 @@ hemibrain_extract_compartment_edgelist <- function(x, ...){
   elist
 }
 
+# hidden
+extract_lookup <- function(syns){
+  syns %>%
+    dplyr::filter(prepost==1) %>%
+    dplyr::distinct(.data$bodyid, .data$partner, .data$connector_id, .data$Label) %>%
+    as.data.frame() ->
+    conn.lookup
+  lookup = conn.lookup$Label
+  names(lookup) = conn.lookup$connector_id
+  lookup
+}
