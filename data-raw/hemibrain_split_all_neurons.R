@@ -3,7 +3,7 @@
 
 # Parameters
 polypre = TRUE
-split = "synapses"
+split = "distance"
 mode = "centrifugal"
 identifier = paste(ifelse(polypre,"polypre","pre"),mode,split,sep="_")
 message("Splitting with paramaters: ", identifier)
@@ -22,30 +22,8 @@ numCores <- detectCores()
 doMC::registerDoMC(numCores/2)
 message("Using ", numCores/2, " cores")
 
-# Get the neuronlist
-message("Searching neuprint ...")
-all.neurons.meta = neuprint_search("Traced",field="status")
-all.neurons.meta = subset(all.neurons.meta, statusLabel!="Leaves")
-all.bodyids = all.neurons.meta$bodyid
-message("Neuron bodyids: ", length(all.bodyids))
-
-# Read all neurons
-all.neurons = neuprint_read_neurons(all.bodyids,.parallel = TRUE)
-save(all.neurons, file = "/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/hemibrain_all_neurons.rda")
-#load("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/hemibrain_all_neurons.rda")
-message("Neurons read: ", length(all.neurons))
-
-# Load meshes
-hemibrain.rois = hemibrain_roi_meshes()
-message("meshes loaded: ", length(hemibrain.rois))
-
-# Preprocess neurons
-all.neurons.checked = hemibrain_skeleton_check(all.neurons, meshes = hemibrain.rois, OmitFailures = TRUE, .parallel = TRUE)
-message("Checked ", length(all.neurons.checked), " neurons")
-
-# Save
-save(all.neurons.checked, file = "/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/hemibrain_all_neurons_flow_checked_3.rda")
-#load("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/hemibrain_all_neurons_flow_checked.rda")
+# Load pre-processed neurons
+load("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/hemibrain_all_neurons_flow_checked.rda")
 message("Checked ", length(all.neurons.checked), " neurons")
 
 # Split skeletons
@@ -71,7 +49,7 @@ write.csv(all.neurons.flow.conns, file = paste0("/net/flystore3/jdata/jdata5/JPe
 message("Saved connections: ", nrow(all.neurons.flow.conns))
 
 # Get edgelist
-all.neurons.flow.elist = hemibrain_extract_compartment_edgelist(all.neurons.flow)
+all.neurons.flow.elist = hemibrain_extract_compartment_edgelist(all.neurons.flow, .parallel = TRUE, OmitFailures = TRUE)
 write.csv(all.neurons.flow.elist, file = paste0("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/hemibrain_all_neurons_edgelist_",identifier,".csv"))
 message("Saved connections: ", nrow(all.neurons.flow.elist))
 
