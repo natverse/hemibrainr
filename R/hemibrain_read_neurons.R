@@ -68,7 +68,7 @@ scale_neurons.neuron <- function(x, scaling, ...){
   x
 }
 scale_neurons.neuronlist = function(x, scaling = (8/1000), ...){
-  nat::nlapply(x,scale.neuron, scaling = scaling, ...)
+  nat::nlapply(x,scale_neurons.neuron, scaling = scaling, ...)
 }
 
 
