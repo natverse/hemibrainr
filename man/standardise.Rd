@@ -11,12 +11,14 @@ standard_transmitters(x)
 
 standard_lineages(x)
 
-standard_compartments(x)
+standard_compartments(x, invert = FALSE)
 
 standardise(x)
 }
 \arguments{
 \item{x}{a character vector to be standardised.}
+
+\item{invert}{return compartment numbers rather than names.}
 }
 \value{
 a character vector

@@ -29,9 +29,8 @@ nlscan_split(
   Verbose = TRUE,
   Wait = TRUE,
   sleep = 0.1,
-  extrafun = NULL,
   selected_file = NULL,
-  selected_col = "black",
+  selected_col = "#fadadd",
   yaml = TRUE,
   ...
 )
@@ -62,8 +61,6 @@ nlscan_split(
 \item{Wait}{logical indicating that there should be a pause between each displayed neuron}
 
 \item{sleep}{time to pause between each displayed neuron when Wait=TRUE}
-
-\item{extrafun}{an optional function called when each neuron is plotted, with two arguments: the current neuron name and the current selected neurons}
 
 \item{selected_file}{an optional path to a yaml file that already contains a selection}
 
