@@ -53,7 +53,7 @@ manually_assign_labels.neuron <- function(x, brain = NULL, ...){
       crop = hemibrain_choice("Is this neuron cropped so badly it is mising a big chunk of axon/dendrite? yes/no ")
       x$tags$cropped = crop
       if(crop){
-        crop2 = must_be("Can you still split the neuron into axon and/or dendrite? yes/no ")
+        crop2 = hemibrain_choice("Can you still split the neuron into axon and/or dendrite? yes/no ")
         x$tags$cropped = ifelse(crop2,"MB",FALSE)
       }
       crop = !hemibrain_choice("Happy with this answer? yes/no ")
@@ -130,6 +130,7 @@ hemibrain_prune_online.neuron <- function (x, brain = NULL, Label = NULL, ...) {
     continue = must_be("Finished with this selection? yes/no ", answers = c("y","yes","n","no"))
     rgl::pop3d(id = unlist(ids))
   }
+  frag = carryover_tags(x = x, y = frag)
   frag
 }
 
@@ -186,7 +187,7 @@ hemibrain_correctsoma <- function(x, ...) {
   is.there.a.soma = hemibrain_choice(prompt = "Is there even a soma for this neuron? yes/no ")
   if(is.there.a.soma){
     if(is.null( x$tags$soma)){
-      x$tags$soma = "automatic"
+    x$tags$soma = "automatic"
     }
   }else{
     x$tags$soma = "missing"
@@ -207,10 +208,11 @@ hemibrain_correctsoma <- function(x, ...) {
         reset3d(...)
         plot3d_split(corrected, ...)
       }
+      x$tags$soma = "manual"
       progress = must_be(prompt = "Good enough? yes/no  ", answers = c("y","yes","n","no"))
   }
   x = add_Label(x = x, PointNo = selected.point, Label = 1, erase = TRUE)
-  corrected$tags$soma = "manual"
+  corrected = carryover_tags(x = x, y = corrected)
   corrected
 }
 
@@ -295,29 +297,46 @@ internal_assignments <- function(x){
   p.n = subset(rownames(x$d), x$d$Label == 7)
   nulls = subset(rownames(x$d), !x$d$Label %in% c(2,3))
   ## Get possible cable change points
-  s.d = change_points(x = x, v = dendrites)
-  s.a = change_points(x = x, v = axon)
-  s.n = change_points(x = x, v = nulls)
+  if(length(dendrites)){
+    s.d = change_points(x = x, v = dendrites)
+  }else{
+    s.d = ""
+  }
+  if(length(s.a)){
+    s.a = change_points(x = x, v = axon)
+  }else{
+    s.a = ""
+  }
+  if(length(s.n)){
+    s.n = change_points(x = x, v = nulls)
+  }else{
+    s.n = ""
+  }
   ## Get cable start points
-  d.starts = sapply(unique(c(s.n,s.a)),function(s) igraph::neighbors(n, v=s, mode = c("out")))
-  d.starts = as.character(unique(unlist(d.starts)))
-  a.starts = sapply(unique(c(s.n,s.d)),function(s) igraph::neighbors(n, v=s, mode = c("out")))
-  a.starts = as.character(unique(unlist(a.starts)))
-  axon.starts = intersect(axon, a.starts)
-  dendrites.starts = intersect(dendrites, d.starts)
+  d.starts = tryCatch(sapply(unique(c(s.n,s.a)),function(s) igraph::neighbors(n, v=s, mode = c("out"))), error = function(e) NA)
+  d.starts = tryCatch(as.character(unique(unlist(d.starts))), error = function(e) NA)
+  a.starts = tryCatch(sapply(unique(c(s.n,s.d)),function(s) igraph::neighbors(n, v=s, mode = c("out"))), error = function(e) NA)
+  a.starts = tryCatch(as.character(unique(unlist(a.starts))), error = function(e) NA)
+  axon.starts = tryCatch(intersect(axon, a.starts), error = function(e) NA)
+  dendrites.starts = tryCatch(intersect(dendrites, d.starts), error = function(e) NA)
   ## Assign primaries
-  possible = c(p.d[1],p.d[length(p.d)])
-  starts = lapply(possible,function(s) igraph::neighbors(n, v=s, mode = c("all")))
-  starts.p = sapply(starts, function(start) sum(start%in%axon))
-  dendrite.primary = possible[which.min(starts.p)] ## not necessarily strictly correct ...
-  axon.primary = possible[which.max(starts.p)] ## not necessarily strictly correct ...
+  if(length(p.d)){
+    possible = c(p.d[1],p.d[length(p.d)])
+  }else{
+    possible = ""
+  }
+  starts = tryCatch(lapply(possible,function(s) igraph::neighbors(n, v=s, mode = c("all"))), error = function(e) NA)
+  starts.p = tryCatch(sapply(starts, function(start) sum(start%in%axon)), error = function(e) NA)
+  dendrite.primary = tryCatch(possible[which.min(starts.p)], error = function(e) NA) ## not necessarily strictly correct ...
+  axon.primary = tryCatch(possible[which.max(starts.p)], error = function(e) NA) ## not necessarily strictly correct ...
   ## Get primary branch point
-  primary.branch.point = p.n[length(p.n)]
+  primary.branch.point = tryCatch(p.n[length(p.n)], error = function(e) NA)
   ## Assign
   x$primary.branch.point = nullToNA(primary.branch.point)
   x$axon.start = nullToNA(axon.starts)
   x$dendrite.start = nullToNA(dendrites.starts)
   x$axon.primary = nullToNA(axon.primary)
   x$dendrite.primary = nullToNA(dendrite.primary)
+  x$linker = nullToNA(c(p.d[1],p.d[length(p.d)]))
   x
 }

@@ -461,7 +461,8 @@ hemibrain_splitpoints <- function(x){
               axon.primary = nullToNA(n$axon.primary),
               dendrite.primary = nullToNA(n$dendrite.primary),
               axon.start = nullToNA(n$axon.start),
-              dendrite.start = nullToNA(n$dendrite.start))
+              dendrite.start = nullToNA(n$dendrite.start),
+              linker = nullToNA(n$linker))
     points.m = reshape2::melt(points)
     points.m$point = rownames(points.m)
     rownames(points.m) = NULL

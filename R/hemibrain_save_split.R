@@ -67,7 +67,7 @@ setup_splitcheck_sheet <-function(){
 hemibrain_adjust_saved_split <- function(bodyids = NULL,
                           db = NULL,
                           check_thresh = 1,
-                          batch_size = 5,
+                          batch_size = 10,
                           brain = NULL,
                           update_regularly = TRUE,
                           motivate = TRUE,
@@ -109,7 +109,7 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
       if(is.null(db)){
         if(motivate){plot_inspirobot()}
         message("Reading and manipulating neurons from neuPrint ...")
-        someneuronlist = hemibrain_read_neurons(x = as.character(batch), microns = FALSE)
+        someneuronlist = hemibrain_read_neurons(x = as.character(batch), microns = FALSE, ...)
       }else{
         message("Reading locally saved neurons ...")
         someneuronlist = db[as.character(batch)]
@@ -150,8 +150,8 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
         mes.sp$split = "manual"
         mes.sp$checked = TRUE
         mes.sp$user = initials
-        mes.sp$cut = unlist(sapply(mes[as.character(mes.sp$bodyid)], function(x) x$tags$cropped))
-        mes.sp$soma = unlist(sapply(mes[as.character(mes.sp$bodyid)], function(x) x$tags$soma))
+        mes.sp$cut = nullToNA(unlist(sapply(mes[as.character(mes.sp$bodyid)], function(x) x$tags$cropped)))
+        mes.sp$soma = nullToNA(unlist(sapply(mes[as.character(mes.sp$bodyid)], function(x) x$tags$soma)))
         mes.sp$time = Sys.time()
         mes.sp$note = ""
         if(nrow(mes.sp)){
@@ -166,7 +166,7 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
       }
       ### Update our checks on Google Sheet
       message("Updating task completion ...")
-      rows = match(names(someneuronlist), undone$bodyid)
+      rows = match(names(someneuronlist), as.character(undone$bodyid))
       splits = as.character(gs$split[rows])
       cuts = as.character(gs$cut[rows])
       somas = as.character(gs$soma[rows])
@@ -190,8 +190,7 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
                           ss = selected_file,
                           range = range,
                           data = update[,intersect(colnames(gs),colnames(update))],
-                          sheet = "roots",
-                          col_names = FALSE)
+                          sheet = "roots")
       message("Task updated! ")
       say_encouragement(greet = initials)
     }
@@ -240,12 +239,12 @@ splitcheck_phaseI <- function(someneuronlist,
   reset3d(brain=brain)
   while(TRUE) {
     if (i > length(neurons) || i < 1){
-      rgl::clear3d()
+      reset3d(brain=brain)
       if(length(selected)){
-        rgl::plot3d(someneuronlist[selected], col = hemibrain_bright_colour_ramp(length(selected)))
+        rgl::plot3d(someneuronlist[selected], col = hemibrain_bright_colour_ramp(length(selected)), ...)
       }
       end = hemibrain_choice("Done selecting neurons to edit (shown)? yes/no ")
-      rgl::clear3d()
+      reset3d(brain=brain)
       if(end){
         break
       }else{
@@ -264,7 +263,7 @@ splitcheck_phaseI <- function(someneuronlist,
     }else{
       rgl::bg3d(color = "white")
     }
-    pl <- plot3d_split(someneuronlist[i])
+    pl <- plot3d_split(someneuronlist[i], ...)
     more_rgl_ids <- list()
     chc <- must_be(prompt = "Return to continue, b to go back, s to select, t to stop (with selection), c to cancel (no selection) and e to make a note: ",
                    answers = c("","b","s","t","c","e"))
@@ -282,11 +281,14 @@ splitcheck_phaseI <- function(someneuronlist,
       }
       else selected <- union(selected, n)
     }
-    if (chc == "b")
+    if (chc == "b"){
       i <- i - 1
-    if (chc == "e")
+
+    }else if (chc == "e"){
       notes[i] <- readline(prompt = "Add your note here: ")
-    else i <- i + 1
+    }else{
+      i <- i + 1
+    }
     sapply(pl, rgl::rgl.pop, type = "shape")
     sapply(more_rgl_ids, rgl::rgl.pop, type = "shape")
     reset3d(brain=brain)
@@ -345,7 +347,7 @@ splitcheck_phaseIII <- function(mes, ...){
       message("Select (s) which neurons to save")
       mes.sp = hemibrain_splitpoints(x = mes)
       mes2 = hemibrain_use_splitpoints(x = mes, df = mes.sp)
-      new.select = nlscan_split(mes2)
+      new.select = nlscan_split(mes2, ...)
       message("Manually edited neurons: ", length(mes2), " neurons")
       if(!length(new.select)){
         new.select = "none"

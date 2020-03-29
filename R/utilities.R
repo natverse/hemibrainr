@@ -120,6 +120,12 @@ is.issue <- function(x){
   }else{TRUE}
 }
 
+# hidden
+carryover_tags <- function(x, y){
+  y$tags = x$tags
+  y
+}
+
 
 
 
