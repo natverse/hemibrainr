@@ -60,3 +60,10 @@ nat.templatebrains::regtemplate(hemibrain_al_microns.surf) = "JRCFIB2018F"
 nat.templatebrains::regtemplate(hemibrain_al.surf) = "JRCFIB2018Fraw"
 usethis::use_data(hemibrain_al_microns.surf, overwrite = TRUE)
 usethis::use_data(hemibrain_al.surf, overwrite = TRUE)
+
+# Just save the ORN and HRN bodyids
+rn.ids = class2ids("RN", possible = TRUE)
+write.csv(data.frame(bodyid = rn.ids), file = "data-raw/hemibrain_data/annotations/bodyids_RNs.csv")
+usethis::use_data(rn.ids, overwrite = TRUE)
+
+

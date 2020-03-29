@@ -190,7 +190,8 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
                           ss = selected_file,
                           range = range,
                           data = update[,intersect(colnames(gs),colnames(update))],
-                          sheet = "roots")
+                          sheet = "roots",
+                          col_names = FALSE)
       message("Task updated! ")
       say_encouragement(greet = initials)
     }

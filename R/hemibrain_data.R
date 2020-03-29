@@ -1,3 +1,20 @@
+#' Bodyids for neuron classes
+#'
+#' Bodyids for neuron classes. Hard saved equivalent for \code{\link{class2ids}}.
+#' However, you should use \code{\link{class2ids}} for the most up-to-date information.
+#'
+#' @details neuPrint bodyids for neurons that the FlyConnectome groups at the University of Cambridge, dept. Zoology,
+#' have determined to fall into different classes.
+#'
+#' @seealso \code{\link{class2ids}}
+#' @examples
+#' \donttest{
+#' head(rn.ids)
+#' }
+#' @name classed.ids
+#' @rdname classed.ids
+"rn.ids"
+
 #' The hemibrain mesh
 #'
 #' A 3D mesh of the hemibrain volume as a \code{\link[nat]{hxsurf}} object.
