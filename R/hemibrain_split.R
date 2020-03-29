@@ -7,7 +7,7 @@
 #' @description implementation of the algorithm for calculating flow
 #'   centralities from Schneider-Mizell et al. (2016) (slightly modified).
 #'   Can be used on \code{nat::neuronlist}
-#'   objects read using \code{\link{neuprint_read_neurons}}. The example code
+#'   objects read using \code{neuprintr::neuprint_read_neurons}. The example code
 #'   below gives the recommended arguments when using hemibrain data.
 #'
 #' @param x a \code{nat::neuronlist} or \code{nat::neuron} object. It is assumed
@@ -79,7 +79,7 @@
 #' )
 #'
 #' # Get neurons
-#' neurons = neuprint_read_neurons(tough)
+#' neurons = neuprintr::neuprint_read_neurons(tough)
 #'
 #' # Now make sure the neurons have a soma marked
 #' ## Some hemibrain neurons do not, as the soma was chopped off
@@ -317,7 +317,7 @@ flow_centrality.neuron <- function(x,
       warning("synapse numbers are the same,
               splitting based on branch point distances to primary branchpoint")
     }
-    else if ( (choice & synapse.choice=="pre") | (!choice & synapse.choice=="post") ) {
+    else if (choice) {
       nodes[as.character(downstream.unclassed), "Label"] = 2
       axon.nodes = downstream.unclassed
       dendrite.nodes = upstream.unclassed
@@ -361,6 +361,17 @@ flow_centrality.neuron <- function(x,
   p.d = as.numeric(unique(unlist(igraph::shortest_paths(n, primary.branch.point, to = highs, mode = "all"))))
   nodes[p.d, "Label"] = 4
   nodes[p.n, "Label"] = 7
+  if(length(p.d)==nrow(nodes)){
+    nodes[p.d, "Label"] = 3
+    p.d = NULL
+  }
+  if(soma){
+    if(is.null(p.d)|length(dendrite.nodes)==nrow(nodes)|length(axon.nodes)==nrow(nodes)){
+      p.n = primary_neurite(x, neuron = FALSE)
+      primary.branch.point = p.n[length(p.n)]
+      nodes[p.n, "Label"] = 7
+    }
+  }
   dendrites = subset(nodes, nodes$Label == 3)
   dendrites.post = sum(subset(dendrites$post, dendrites$post >0))
   dendrites.pre = sum(subset(dendrites$pre, dendrites$pre >0))
@@ -387,10 +398,10 @@ flow_centrality.neuron <- function(x,
     segregation.index = 0
   }
   secondary.branch.points = as.numeric(c(downstream.tract.parent, upstream.tract.parent))
-  starts = sapply(c(p.n,highs),function(s) igraph::neighbors(n, v=s, mode = c("in")))
+  starts = sapply(unique(c(p.n,p.d)),function(s) igraph::neighbors(n, v=s, mode = c("in")))
   starts = unique(unlist(starts))
-  axon.starts = as.numeric(axon.nodes[axon.nodes%in%starts])
-  dendrite.starts = as.numeric(dendrite.nodes[dendrite.nodes%in%starts])
+  axon.starts = as.numeric(rownames(axon[rownames(axon)%in%starts,]))
+  dendrite.starts = as.numeric(rownames(dendrites[rownames(dendrites)%in%starts,]))
   x$d = nodes
   x$AD.segregation.index = segregation.index
   x$primary.branch.point = as.numeric(primary.branch.point)
@@ -450,7 +461,8 @@ hemibrain_splitpoints <- function(x){
               axon.primary = nullToNA(n$axon.primary),
               dendrite.primary = nullToNA(n$dendrite.primary),
               axon.start = nullToNA(n$axon.start),
-              dendrite.start = nullToNA(n$dendrite.start))
+              dendrite.start = nullToNA(n$dendrite.start),
+              linker = nullToNA(n$linker))
     points.m = reshape2::melt(points)
     points.m$point = rownames(points.m)
     rownames(points.m) = NULL
@@ -494,7 +506,7 @@ hemibrain_splitpoints <- function(x){
 #' )
 #'
 #' # Get neurons
-#' neurons = neuprint_read_neurons(tough)
+#' neurons = neuprintr::neuprint_read_neurons(tough)
 #'
 #' # Now make sure the neurons have a soma marked
 #' ## Some hemibrain neurons do not, as the soma was chopped off
@@ -529,6 +541,7 @@ hemibrain_use_splitpoints.neuron <-function(x, df, knn = FALSE, ...){
 
   # Get splitpoints
   df = df[df$bodyid == x$bodyid,]
+  df[df==""] = NA
 
   if(!nrow(df)){
     warning("bodyid ", x$bodyid," not in splitpoints, returning neuron unmodified")
@@ -542,49 +555,73 @@ hemibrain_use_splitpoints.neuron <-function(x, df, knn = FALSE, ...){
     }
 
     # Find point indexes
-    root = as.numeric(df[df$point=="root","position"])
-    primary.branch.point = as.numeric(df[df$point=="primary.branch.point","position"])
+    root = as.numeric(df[grepl("root",df$point),"position"])
+    primary.branch.point = as.numeric(df[grepl("primary.branch.point",df$point),"position"])
     axon.start = as.numeric(df[grepl("axon.start",df$point),"position"])
     dendrite.start = as.numeric(df[grepl("dendrite.start",df$point),"position"])
     axon.primary = as.numeric(df[grepl("axon.primary",df$point),"position"])
     dendrite.primary = as.numeric(df[grepl("dendrite.primary",df$point),"position"])
 
-    # Work around errors
+    # Work around errorsSyst
     if(is.na(dendrite.primary)){
       dendrite.primary = dendrite.start[1]
     }
     if(is.na(axon.primary)){
       axon.primary = axon.start[1]
     }
-    if(is.na(root)|is.na(primary.branch.point)|is.na(dendrite.primary)|is.na(axon.primary)){
-      warning("bodyid ", x$bodyid," does not have a root/primary branch point marked, returning unmodified")
-      y = x
-      y$split = FALSE
-    }else{
+
       # Assign root and mark soma
       y = nat::as.neuron(nat::as.ngraph(x$d), origin = root)
       y$connectors = x$connectors
       n = nat::as.ngraph(y$d)
       y$tags$soma = root
-      y$d$Label = 3 # dendrite by default
+      y$d$Label = 0
+      y$connectors$Label = 0
 
       # Assign other cable
-      pnt = suppressWarnings(unique(unlist(igraph::shortest_paths(n, from = as.numeric(root), to = as.numeric(primary.branch.point), mode = "out")$vpath)))
-      pd = suppressWarnings(unique(unlist(igraph::shortest_paths(n, from = as.numeric(dendrite.primary), to = as.numeric(axon.primary), mode = "all")$vpath)))
+      if(!is.na(root)&!is.na(primary.branch.point)){
+        pnt = suppressWarnings(unique(unlist(igraph::shortest_paths(n, from = as.numeric(root), to = as.numeric(primary.branch.point), mode = "out")$vpath)))
+      }else{
+        pnt = NULL
+      }
+      if(!is.na(axon.primary)&!is.na(dendrite.primary)){
+        pd = suppressWarnings(unique(unlist(igraph::shortest_paths(n, from = as.numeric(dendrite.primary), to = as.numeric(axon.primary), mode = "all")$vpath)))
+      }else{
+        pd = NULL
+      }
       leaves = as.numeric(nat::endpoints(y))
-      axon = suppressWarnings(
-        unique(unlist(sapply(as.numeric(axon.start),function(s) unlist(igraph::shortest_paths(n, from=s, to = leaves, mode = c("out"))$vpath))))
-      )
-      # dendrite = suppressWarnings(
-      #   unique(unlist(sapply(dendrite.start,function(s) unlist(igraph::shortest_paths(n, from=s, to = leaves, mode = c("out"))$vpath))))
-      # )
+      if(!is.na(axon.primary)){
+        axon = suppressWarnings(
+          unique(unlist(sapply(as.numeric(axon.start),function(s) unlist(igraph::shortest_paths(n, from=s, to = leaves, mode = c("out"))$vpath))))
+        )
+      }else{
+        axon = NULL
+      }
+      if(!is.na(dendrite.primary)){
+        dendrite = suppressWarnings(
+          unique(unlist(sapply(dendrite.start,function(s) unlist(igraph::shortest_paths(n, from=s, to = leaves, mode = c("out"))$vpath))))
+        )
+      }else{
+        dendrite = NULL
+      }
 
       # Assign labels
-      y$d[axon,]$Label = 2
+      if(!is.null(axon)){
+        y = add_Label(x = y, PointNo = axon, Label = 2, erase = TRUE)
+      }
+      if(!is.null(dendrite)){
+        y = add_Label(x = y, PointNo = dendrite, Label = 3, erase = TRUE)
+      }
+      if(!is.null(pd)){
+        y = add_Label(x = y, PointNo = pd, Label = 4, erase = TRUE)
+      }
+      if(!is.null(pnt)){
+        y = add_Label(x = y, PointNo = pnt, Label = 7, erase = TRUE)
+      }
+      if(!is.null(root)){
+        y = add_Label(x = y, PointNo = root, Label = 1, erase = TRUE)
+      }
       #y$d[dendrite,]$Label = 3
-      y$d[pd,]$Label = 4
-      y$d[pnt,]$Label = 7
-      y$d[root,]$Label = 1
 
       # Calculate segregation score
 
@@ -597,7 +634,6 @@ hemibrain_use_splitpoints.neuron <-function(x, df, knn = FALSE, ...){
       # Assign bodyid
       y$bodyid = y$d$bodyid = x$bodyid
       y$split = TRUE
-    }
   }
   # Return split skeleton
   y = hemibrain_neuron_class(y)
@@ -625,7 +661,7 @@ hemibrain_use_splitpoints.neuronlist <-function(x, df, knn = FALSE, ...){
 #' @inheritParams flow_centrality
 #' @param splitpoints a \code{data.frame} of splitpoints from running \code{\link{flow_centrality}},
 #' as produced by \code{\link{hemibrain_splitpoints}}. If a custom set of splitpoints is not given, precomputed splitpoints
-#' are used, \code{\link{hemibrain_precomputed_splitpoints}}. This defaults to \code{hemibrain_splitpoints_polypre_centrifugal_presynapses},
+#' are used, \code{\link{hemibrain_precomputed_splitpoints}}. This defaults to \code{hemibrain_splitpoints},
 #' however to see the available precomputations (which have used \code{\link{flow_centrality}}, in this case `polypre = TRUE`, `mode = "centrifugal"`
 #' and `split = "distance"`) with different parameters)
 #' please see \code{\link{hemibrain_precomputed_splitpoints}}.
@@ -647,7 +683,7 @@ hemibrain_use_splitpoints.neuronlist <-function(x, df, knn = FALSE, ...){
 #' "326530038",  "203253253", "5813079341")
 #'
 #' # Get neurons
-#' neurons = neuprint_read_neurons(exemplars)
+#' neurons = neuprintr::neuprint_read_neurons(exemplars)
 #'
 #' # Now use a pre-saved axon-dendrite split
 #' neurons.flow = hemibrain_flow_centrality(neurons)
@@ -660,12 +696,12 @@ hemibrain_use_splitpoints.neuronlist <-function(x, df, knn = FALSE, ...){
 #' @export
 #' @seealso \code{\link{hemibrain_splitpoints}}, \code{\link{flow_centrality}}, \code{\link{hemibrain_use_splitpoints}}, \code{\link{hemibrain_precomputed_splitpoints}}
 hemibrain_flow_centrality <-function(x,
-                                     splitpoints = hemibrainr::hemibrain_splitpoints_polypre_centrifugal_presynapses,
+                                     splitpoints = hemibrainr::hemibrain_all_splitpoints,
                                      knn = FALSE,
                                      ...) UseMethod("hemibrain_flow_centrality")
 
 #' @export
-hemibrain_flow_centrality.neuron <- function(x, splitpoints = hemibrainr::hemibrain_splitpoints_polypre_centrifugal_presynapses, knn = FALSE, ...){
+hemibrain_flow_centrality.neuron <- function(x, splitpoints = hemibrainr::hemibrain_all_splitpoints, knn = FALSE, ...){
   bi = x$bodyid
   if(is.null(x$bodyid)|is.na(x$bodyid)){
     stop("No bodyid given at x$bodyid")
@@ -681,7 +717,7 @@ hemibrain_flow_centrality.neuron <- function(x, splitpoints = hemibrainr::hemibr
 }
 
 #' @export
-hemibrain_flow_centrality.neuronlist <- function(x, splitpoints = hemibrainr::hemibrain_splitpoints_polypre_centrifugal_presynapses, knn = FALSE, ...){
+hemibrain_flow_centrality.neuronlist <- function(x, splitpoints = hemibrainr::hemibrain_all_splitpoints, knn = FALSE, ...){
   cropped = subset(x, cropped)
   if(length(cropped)){
     warning(length(cropped), " neurons cropped, split likely to be inaccurate for: ", paste(names(cropped),collapse=", "))
@@ -708,22 +744,40 @@ hemibrain_flow_centrality.neuronlist <- function(x, splitpoints = hemibrainr::he
 #'
 #' @inheritParams flow_centrality
 #' @param Label the Label to be added. See \code{\link{flow_centrality}}.
+#' @param PointNo the points in the neuron for which the \code{Label}
+#' will be added.If \code{NULL} all points are used.
+#' @param erase if \code{TRUE}, all instance of \code{Label} not
+#' in \code{PointNo} are set to \code{0}.
 #'
 #' @return a \code{neuron} or \code{neuronlist}
 #' @seealso \code{\link{flow_centrality}}, \code{\link{add_field}}
 #' @export
-add_Label <-function(x, Label = 2, ...) UseMethod("add_Label")
+add_Label <-function(x, PointNo = NULL, Label = 2, erase = FALSE, ...) UseMethod("add_Label")
 #' @export
-add_Label.neuron <- function(x, Label = 2, ...){
-  x$d$Label = Label
-  if(!is.null(x$connectors)){
-    x$connectors$Label = Label
+add_Label.neuron <- function(x, PointNo = NULL, Label = 2, erase = FALSE, ...){
+  if(!is.null(PointNo)){
+    if(erase){
+      erasure = x$d$PointNo[x$d$Label==Label]
+      x$d$Label[match(erasure, x$d$PointNo)] = 0
+    }
+    x$d$Label[x$d$PointNo%in%PointNo] = Label
+    if(!is.null(x$connectors)){
+      if(erase){
+        x$connectors$Label[x$connectors$treenode_id%in%erasure] = 0
+      }
+      x$connectors$Label[x$connectors$treenode_id%in%PointNo] = Label
+    }
+  }else{
+    x$d$Label = Label
+    if(!is.null(x$connectors)){
+      x$connectors$Label = Label
+    }
   }
   x
 }
 #' @export
-add_Label.neuronlist <- function(x, Label = 2, ...){
-  nat::nlapply(x, add_Label.neuron, Label = Label, ...)
+add_Label.neuronlist <- function(x, PointNo = NULL, Label = 2, erase = FALSE, ...){
+  nat::nlapply(x, add_Label.neuron, PointNo = PointNo, Label = Label, erase = erase, ...)
 }
 
 #' Add a field to neuron objects (inc. in a neuronlist)
@@ -800,19 +854,22 @@ add_field_seq <- function(x, entries, field = "bodyid", ...){
 # nlscan_split(neurons.flow, WithConnectors = TRUE)
 # # 20, 65
 #
-# sparse = c("1702323386", "2068966051", "2069311379", "1702305987", "5812996027",
-#            "1702336197", "1793744512", "1976565858", "2007578510", "2101339904",
-#            "5813003258", "2069647778", "1947192569", "1883788812", "1916485259",
-#            "1887177026", "2101348562", "2132375072", "2256863785", "5813002313",
-#            "5813054716", "5813018847", "5813055448", "1763037543", "2101391269",
-#            "1794037618", "5813018729", "2013333009")
-# neurons = neuprint_read_neurons(sparse)
+
+# al.local.neurons = c("1702323386", "2068966051", "2069311379", "1702305987", "5812996027",
+#  "1702336197", "1793744512", "1976565858", "2007578510", "2101339904",
+#  "5813003258", "2069647778", "1947192569", "1883788812", "1916485259",
+#  "1887177026", "2101348562", "2132375072", "2256863785", "5813002313",
+#  "5813054716", "5813018847", "5813055448", "1763037543", "2101391269",
+#  "1794037618", "5813018729", "2013333009")
+# neurons = neuprint_read_neurons(al.local.neurons)
 # hemibrain.rois = hemibrain_roi_meshes()
-# neurons.checked = hemibrain_skeleton_check(neurons3, meshes = hemibrain.rois)
+# neurons.checked = hemibrain_skeleton_check(neurons, meshes = hemibrain.rois)
 # neurons.flow = flow_centrality(neurons.checked, polypre = TRUE,
 #                                mode = "centrifugal",
-#                                split = "presynapses",
+#                                split = "synapses",
 #                                primary.branchpoint = 0.25)
-# neurons.flow2 = hemibrain_flow_centrality(neurons.checked)
+# syns = nat::nlapply(neurons.flow, extract_synapses, unitary = FALSE)
+# syns = do.call(rbind,syns)
+# syns = subset(syns, partner %in% al.local.neurons)
 # nlscan_split(neurons.flow, WithConnectors = TRUE)
 

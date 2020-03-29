@@ -61,33 +61,73 @@ lengthnorm <- function(x){
 }
 
 # hidden
-prune_synapseless_branches <- function(x){
-  s = x$SubTrees
-  prune = c()
-  if(is.null(x$connectors$treenode_id)){
-    stop("No connectors in neuron,")
-  }
-  for(t in 1:x$nTrees){
-    ss = unlist(s[[t]])
-    with.syns = sum(ss%in%x$connectors$treenode_id)>0
-    if(!with.syns){
-      prune = c(prune, ss)
-    }
-  }
-  if(length(prune)>0){
-    y = nat::prune_vertices(x, verticestoprune = prune, invert = FALSE)
-    y$connectors = x$connectors[x$connectors$treenode_id %in% y$d$PointNo, ]
-    relevant.points = subset(x$d, PointNo %in% y$d$PointNo)
-    y$d = relevant.points[match(y$d$PointNo, relevant.points$PointNo), ]
-  }else{
-    y=x
-  }
-  y = hemibrain_neuron_class(y)
-  y
-}
-
-# hidden
 hemibrain_neuron_class <- function (x){
   class(x) = unique(c(class(x),"neuprintneuron","catmaidneuron","neuron","list"))
   x
 }
+
+# hidden
+which.consecutive <- function(Vec,
+                              only.jumps = FALSE,
+                              run = c("all","min","max","minmax")){
+  run = match.arg(run)
+  if(is.logical(Vec)){
+    Vec = which(Vec)
+  }else if(!is.integer(Vec)){
+    Vec = as.integer(Vec)
+  }
+  if(only.jumps){
+    if(length(which.consecutive(Vec)) == length(Vec)){
+      return(NULL)
+    }
+  }
+  Breaks <- c(0, which(diff(Vec) != 1), length(Vec))
+  if(run!="all"){
+    cons <- lapply(seq(length(Breaks) - 1),
+                  function(i) c(Vec[(Breaks[i] + 1):Breaks[i+1]]))
+    if(run=="minmax"){
+      unlist(lapply(cons, function(c) c(min(c),max(c))))
+    }else if (run=="min"){
+      unlist(lapply(cons, function(c) min(c)))
+    }else if (run=="max"){
+      unlist(lapply(cons, function(c) max(c)))
+    }
+  }else{
+    unlist(lapply(seq(length(Breaks) - 1),
+                  function(i) Vec[(Breaks[i] + 1):Breaks[i+1]]))
+  }
+}
+
+# hidden
+change_points <- function(x, v, only.jumps = FALSE, run = "min"){
+  eps = nat::endpoints(x)
+  segs = x$SegList
+  segs.d = segs[unlist(lapply(segs, function(seg) sum(seg %in% v) >0))]
+  s.d = unique(unlist(lapply(segs.d, function(seg) seg[which.consecutive(seg %in% v, only.jumps = only.jumps, run = run)])))
+  s.d = setdiff(s.d, eps)
+}
+
+# hidden
+is.issue <- function(x){
+  if(length(x)){
+    if(!is.na(x)){
+      if(!is.nan(x)){
+        if(x!=""){
+          FALSE
+        }else{TRUE}
+      }else{TRUE}
+    }else{TRUE}
+  }else{TRUE}
+}
+
+# hidden
+carryover_tags <- function(x, y){
+  y$tags = x$tags
+  y
+}
+
+
+
+
+
+

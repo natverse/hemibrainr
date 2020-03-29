@@ -1,3 +1,20 @@
+#' Bodyids for neuron classes
+#'
+#' Bodyids for neuron classes. Hard saved equivalent for \code{\link{class2ids}}.
+#' However, you should use \code{\link{class2ids}} for the most up-to-date information.
+#'
+#' @details neuPrint bodyids for neurons that the FlyConnectome groups at the University of Cambridge, dept. Zoology,
+#' have determined to fall into different classes.
+#'
+#' @seealso \code{\link{class2ids}}
+#' @examples
+#' \donttest{
+#' head(rn.ids)
+#' }
+#' @name classed.ids
+#' @rdname classed.ids
+"rn.ids"
+
 #' The hemibrain mesh
 #'
 #' A 3D mesh of the hemibrain volume as a \code{\link[nat]{hxsurf}} object.
@@ -28,6 +45,34 @@
 #' @rdname hemibrain.surf
 "hemibrain_microns.surf"
 
+#' Meshes for antennal love glomeruli
+#'
+#' 3D meshes of 51 olfactory + 7 thermosensory antennal lobe glomeruli for the the hemibrain volume.
+#' They are represented as a \code{\link[nat]{hxsurf}} object, in which 58 'regions' are defined,
+#' one for each glomerulus. Meshes available both in raw voxels and in microns.
+#'
+#' @details note that hemibrain coordinate system does not have the
+#'   anterior-posterior axis aligned with the Z axis.
+#'
+#' @source \url{https://neuprint.janelia.org/}
+#' @seealso \code{\link{hemibrain_roi_meshes}}
+#' @examples
+#' \donttest{
+#' library(nat)
+#' \dontrun{
+#' plot3d(hemibrain_al.surf, alpha=.3)
+#'
+#' # can also plot single glomeruli
+#' plot3d(subset(hemibrain_al.surf,"DM1"))
+#'
+#' }
+#' }
+#' @name hemibrain_al.surf
+#' @rdname hemibrain_al.surf
+"hemibrain_al.surf"
+#' @rdname hemibrain_al.surf
+"hemibrain_al_microns.surf"
+
 #' Axon-dendrite split points calculated for all hemibrain neurons
 #'
 #' Axon-dendrite split points calculated for the whole hemibrain dataset,
@@ -45,7 +90,6 @@
 #'
 #' @source \url{https://www.biorxiv.org/content/10.1101/2020.01.19.911453v1}
 #' @seealso \code{\link{hemibrain_flow_centrality}},
-#'   \code{\link{hemibrain_splitpoints}},
 #'   \code{\link{flow_centrality}},
 #'   \code{\link{hemibrain_use_splitpoints}}
 #' @examples
@@ -57,11 +101,13 @@
 #' }
 #' @name hemibrain_precomputed_splitpoints
 #' @rdname hemibrain_precomputed_splitpoints
+"hemibrain_all_splitpoints"
+#' @rdname hemibrain_precomputed_splitpoints
 "hemibrain_splitpoints_polypre_centrifugal_distance"
 #' @rdname hemibrain_precomputed_splitpoints
 "hemibrain_splitpoints_pre_centrifugal_distance"
 #' @rdname hemibrain_precomputed_splitpoints
-"hemibrain_splitpoints_polypre_centrifugal_presynapses"
+"hemibrain_splitpoints_polypre_centrifugal_synapses"
 
 #' Neuron metrics for all neurons in the hemibrain dataset
 #'
@@ -84,5 +130,11 @@
 #' head(hemibrain_metrics)
 #' hist(hemibrain_metrics$overlap_locality,breaks = 1000)
 #' }
+#' @name hemibrain_metrics
+#' @rdname hemibrain_metrics
 "hemibrain_metrics"
+#' @rdname hemibrain_metrics
+"hemibrain_metrics_polypre_centrifugal_distance"
+#' @rdname hemibrain_metrics
+"hemibrain_all_neurons_metrics_polypre_centrifugal_synapses"
 

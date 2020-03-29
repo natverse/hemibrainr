@@ -197,6 +197,7 @@ mbns <- function(x=c("MBON", "DAN"), possible=TRUE, refresh=FALSE) {
     neuprint_ids(mbdf)
 }
 
+# hidden
 cached_read_sheet <- function(id, forget=FALSE, ...) {
   if(!requireNamespace('googlesheets4', quietly = TRUE))
     stop("Please install the suggested package googlesheets4!\n",
@@ -206,6 +207,7 @@ cached_read_sheet <- function(id, forget=FALSE, ...) {
   cached_read_sheet_memo(id, ...)
 }
 
+# hidden
 cached_read_sheet_memo <- memoise::memoise(function(id, sheet=NULL) {
   googlesheets4::read_sheet(id, sheet=sheet)
 }, ~memoise::timeout(3600))

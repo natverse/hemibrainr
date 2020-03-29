@@ -16,7 +16,6 @@
 #' @param Verbose logical indicating that info about each selected neuron should be printed (default TRUE)
 #' @param Wait logical indicating that there should be a pause between each displayed neuron
 #' @param sleep time to pause between each displayed neuron when Wait=TRUE
-#' @param extrafun an optional function called when each neuron is plotted, with two arguments: the current neuron name and the current selected neurons
 #' @param selected_file an optional path to a yaml file that already contains a selection
 #' @param selected_col the color in which selected neurons (such as those specified in selected_file) should be plotted
 #' @param yaml a logical indicating that selections should be saved to disk in (human-readable) yaml rather than (machine-readable) rda format
@@ -42,44 +41,51 @@ plot3d_split = function(someneuronlist,
   temps.microns = c(temps[temps$W<2000,"name"],"JRCFIB2018F")
   reg = nat.templatebrains::regtemplate(someneuronlist)
   if(is.null(soma)){
-    if(is.null(reg)|!reg%in%temps.microns){
+    if(is.null(reg)){
+      soma = 500
+    }else if(!reg%in%temps.microns){
       soma = 500
     }else{
       soma = 4
     }
   }
   if(is.null(radius)){
-    if(is.null(reg)|!reg%in%temps.microns){
+    if(is.null(reg)){
+      radius = 100
+    }else if(!reg%in%temps.microns){
       radius = 100
     }else{
-      radius = 8
+      radius = 1
     }
   }
-
   for (n in 1:length(someneuronlist)){
     neuron = someneuronlist[[n]]
     dendrites.v = subset(rownames(neuron$d), neuron$d$Label == 3)
     axon.v = subset(rownames(neuron$d), neuron$d$Label == 2)
     p.d.v = subset(rownames(neuron$d), neuron$d$Label == 4)
     p.n.v = subset(rownames(neuron$d), neuron$d$Label == 7)
-    dendrites = tryCatch( nat::prune_vertices(neuron, verticestoprune = as.integer(c(axon.v, p.d.v, p.n.v))),
+    null.v = subset(rownames(neuron$d), neuron$d$Label == 0 | is.na(neuron$d$Label))
+    dendrites = tryCatch( nat::prune_vertices(neuron, verticestoprune = as.integer(c(axon.v, p.d.v, p.n.v, null.v))),
                           error = function(e) NULL)
-    axon = tryCatch( nat::prune_vertices(neuron, verticestoprune = as.integer(c(dendrites.v, p.d.v, p.n.v))),
+    axon = tryCatch( nat::prune_vertices(neuron, verticestoprune = as.integer(c(dendrites.v, p.d.v, p.n.v, null.v))),
                      error = function(e) NULL)
-    p.d = tryCatch( nat::prune_vertices(neuron, verticestoprune = as.integer(c(axon.v, dendrites.v, p.n.v))),
+    p.d = tryCatch( nat::prune_vertices(neuron, verticestoprune = as.integer(c(axon.v, dendrites.v, p.n.v, null.v))),
                     error = function(e) NULL)
-    p.n = tryCatch( nat::prune_vertices(neuron, verticestoprune = as.integer(c(axon.v, dendrites.v, p.d.v))),
+    p.n = tryCatch( nat::prune_vertices(neuron, verticestoprune = as.integer(c(axon.v, dendrites.v, p.d.v, null.v))),
                     error = function(e) NULL)
     tryCatch(rgl::plot3d(dendrites, col = col[1], WithNodes = WithNodes, lwd = lwd, add = TRUE, ...),
              error = function(e) NULL)
     tryCatch(rgl::plot3d(axon, col = col[2], WithNodes = WithNodes, soma = FALSE, lwd = lwd, add = TRUE, ...),
              error = function(e) NULL)
-    tryCatch(rgl::plot3d(p.n, col = col[3], WithNodes = WithNodes, soma = soma, lwd = lwd, add = TRUE, ...),
+    tryCatch(rgl::plot3d(p.n, col = col[3], WithNodes = WithNodes, soma = FALSE, lwd = lwd, add = TRUE, ...),
     error = function(e) NULL)
     tryCatch(rgl::plot3d(p.d, col = col[4], WithNodes = WithNodes, soma = FALSE, lwd = lwd, add = TRUE,...),
     error = function(e) NULL)
-    tryCatch(rgl::plot3d(neuron, col = col[3], WithNodes = WithNodes, soma = soma, add = TRUE,),
+    tryCatch(rgl::plot3d(neuron, col = "grey30", WithNodes = WithNodes, soma = FALSE, add = TRUE,),
     error = function(e) NULL)
+    if(soma){
+      rgl::spheres3d(nat::xyzmatrix(neuron)[neuron$StartPoint,], radius = soma, col = col[3])
+    }
     if (WithConnectors){
       conns=neuron$connectors
       tryCatch(rgl::spheres3d(xyzmatrix(conns[conns$prepost==1,,drop=FALSE]),
@@ -105,16 +111,26 @@ plot3d_split = function(someneuronlist,
 
 #' @export
 #' @rdname plot3d_split
-nlscan_split <- function (someneuronlist, col = c("#1BB6AF", "#EF7C12", "#C70E7B", "#8FDA04", "#4D4D4D", "#FC6882"),
-                          WithConnectors = TRUE, WithNodes = FALSE, soma = NULL, radius = NULL, highflow = FALSE, Verbose = TRUE, Wait = TRUE,
-                       sleep = 0.1, extrafun = NULL, selected_file = NULL, selected_col = "black",
-                       yaml = TRUE, ...)
+nlscan_split <- function (someneuronlist,
+                          col = c("#1BB6AF", "#EF7C12", "#C70E7B", "#8FDA04", "#4D4D4D", "#FC6882"),
+                          WithConnectors = TRUE,
+                          WithNodes = FALSE,
+                          soma = NULL,
+                          radius = NULL,
+                          highflow = FALSE,
+                          Verbose = TRUE,
+                          Wait = TRUE,
+                          sleep = 0.1,
+                          selected_file = NULL,
+                          selected_col = "#fadadd",
+                          yaml = TRUE, ...)
 {
   if(!requireNamespace('yaml', quietly = TRUE))
     stop("Suggested package yaml is required to use this function!")
   if (nat::is.neuronlist(someneuronlist)) {
     db = someneuronlist
-    neurons = as.data.frame(db)$name
+    neurons = names(someneuronlist)
+    nams = as.data.frame(someneuronlist)$name
   }
   frames <- length(neurons)
   selected <- character()
@@ -146,21 +162,36 @@ nlscan_split <- function (someneuronlist, col = c("#1BB6AF", "#EF7C12", "#C70E7B
   }
   chc <- NULL
   while (TRUE) {
-    if (i > length(neurons) || i < 1)
-      break
+    if (i > length(neurons) || i < 1){
+      rgl::clear3d()
+      if(length(selected)){
+        rgl::plot3d(someneuronlist[selected], ..., col = hemibrain_bright_colour_ramp(length(selected)))
+      }
+      end = hemibrain_choice("Done selecting/scanning neurons? yes/no ")
+      rgl::clear3d()
+      if(end){
+        break
+      }else{
+       i <- 1
+      }
+    }
     n <- neurons[i]
-    cat("Current neuron:", n, "(", i, "/", length(neurons),
-        ")\n")
+    cat("Current neuron:", n, " ", nams[i]," (", i, "/", length(neurons),")",ifelse(n %in% selected,"SELECTED","NOT SELECTED"), "\n")
+    si = someneuronlist[[i]]$AD.segregation.index
+    if(is.null(si)){
+      si <- someneuronlist[i,"segregation.index"]
+    }
+    cat("segregation index: ", si)
+    if(n %in% selected){
+      rgl::bg3d(color = selected_col)
+    }else{
+      rgl::bg3d(color = "white")
+    }
     pl <- plot3d_split(someneuronlist[i], col = col, WithConnectors = WithConnectors, WithNodes = WithNodes, soma = soma, highflow = highflow, radius = radius, ...)
-    message("segregation index: ", someneuronlist[[i]]$AD.segregation.index)
-    more_rgl_ids <- list()
-    if (!is.null(extrafun))
-      more_rgl_ids <- extrafun(n, selected = selected)
     if (Wait) {
       chc <- readline("Return to continue, b to go back, s to select, d [save to disk], t to stop, c to cancel (without returning a selection): ")
       if (chc == "c" || chc == "t") {
         sapply(pl, rgl::rgl.pop, type = "shape")
-        sapply(more_rgl_ids, rgl::rgl.pop, type = "shape")
         break
       }
       if (chc == "s") {
@@ -180,8 +211,6 @@ nlscan_split <- function (someneuronlist, col = c("#1BB6AF", "#EF7C12", "#C70E7B
       Sys.sleep(sleep)
       i <- i + 1
     }
-    sapply(pl, rgl::rgl.pop, type = "shape")
-    sapply(more_rgl_ids, rgl::rgl.pop, type = "shape")
     rgl::clear3d()
   }
   if (is.null(chc) || chc == "c")

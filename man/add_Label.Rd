@@ -4,14 +4,20 @@
 \alias{add_Label}
 \title{Manually add a Label annotation to a neuron}
 \usage{
-add_Label(x, Label = 2, ...)
+add_Label(x, PointNo = NULL, Label = 2, erase = FALSE, ...)
 }
 \arguments{
 \item{x}{a \code{nat::neuronlist} or \code{nat::neuron} object. It is assumed
 that this neuron has been read in by \code{neuprintr::neuprint_read_neurons} or
 possibly \code{catmaid::read.neurons.catmaid}.}
 
+\item{PointNo}{the points in the neuron for which the \code{Label}
+will be added.If \code{NULL} all points are used.}
+
 \item{Label}{the Label to be added. See \code{\link{flow_centrality}}.}
+
+\item{erase}{if \code{TRUE}, all instance of \code{Label} not
+in \code{PointNo} are set to \code{0}.}
 
 \item{...}{methods sent to \code{nat::nlapply}}
 }

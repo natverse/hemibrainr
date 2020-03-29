@@ -3,11 +3,14 @@
 \name{hemibrain_extract_synapses}
 \alias{hemibrain_extract_synapses}
 \alias{hemibrain_extract_connections}
-\title{Extract synapse location and labels from a neuron/neuronlist}
+\alias{hemibrain_extract_compartment_edgelist}
+\title{Extract synapse location and labels, and edgelists from a neuron/neuronlist}
 \usage{
 hemibrain_extract_synapses(x, prepost = c("BOTH", "PRE", "POST"), ...)
 
 hemibrain_extract_connections(x, prepost = c("BOTH", "PRE", "POST"), ...)
+
+hemibrain_extract_compartment_edgelist(x, ...)
 }
 \arguments{
 \item{x}{a \code{nat::neuronlist} or \code{nat::neuron} object. It is assumed
@@ -26,23 +29,32 @@ Extract a single data frame describing synapse/connection types,
   partners, locations and position on a neuron's axon/dendrite. You can
   either get all synapses returned or all unitary connections to a neuron's
   partners returned. Broken down by axon/dendrite (\code{Label}), and
-  pre/postsynapses or pre/postsynaptic partners.
+  pre/postsynapses or pre/postsynaptic partners. Note that \code{hemibrain_extract_compartment_edgelist} will
+  only return connections between neurons given in the argument \code{x}.
 }
 \examples{
 \donttest{
-# Choose a bodyid
-id = c("452677169")
+# Choose a bodyids
+al.local.neurons = c("1702323386", "2068966051", "2069311379", "1702305987", "5812996027",
+ "1702336197", "1793744512", "1976565858", "2007578510", "2101339904",
+ "5813003258", "2069647778", "1947192569", "1883788812", "1916485259",
+"1887177026", "2101348562", "2132375072", "2256863785", "5813002313",
+ "5813054716", "5813018847", "5813055448", "1763037543", "2101391269",
+ "1794037618", "5813018729", "2013333009")
 
 # Read in these neurons
-neuron = neuprint_read_neurons(id)
+neurons = neuprintr::neuprint_read_neurons(al.local.neurons)
 
 # Re-root
-neuron.flow = flow_centrality(neuron, polypre = TRUE,
+neurons.flow = flow_centrality(neurons, polypre = TRUE,
 mode = "centrifugal",
 split = "distance")
 
 # Let's check that this worked
-syns = hemibrain_extract_synapses(neuron.flow)
+syns = hemibrain_extract_synapses(neurons.flow)
+
+# Get the edgelist by compartment
+elist = hemibrain_extract_compartment_edgelist(neurons.flow)
 
 \dontrun{
 # See result
@@ -50,7 +62,6 @@ library(nat)
 plot3d_split(neuron.flow)
 points3d(xyzmatrix(subset(syns,prepost==1)), col = "cyan")
 points3d(xyzmatrix(subset(syns,prepost==0)), col = "red")
-
 }}
 }
 \seealso{
