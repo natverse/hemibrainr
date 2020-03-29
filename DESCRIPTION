@@ -38,7 +38,11 @@ Imports:
     memoise,
     rlang,
     foreach,
-    grDevices
+    grDevices,
+    httr,
+    jpeg,
+    png,
+    googledrive
 Remotes: 
     natverse/neuprintr
 Language: en-GB
