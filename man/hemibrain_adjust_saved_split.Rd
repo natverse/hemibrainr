@@ -8,7 +8,7 @@ hemibrain_adjust_saved_split(
   bodyids = NULL,
   db = NULL,
   check_thresh = 1,
-  batch_size = 5,
+  batch_size = 10,
   brain = NULL,
   update_regularly = TRUE,
   motivate = TRUE,
