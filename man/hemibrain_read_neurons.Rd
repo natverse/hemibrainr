@@ -4,10 +4,13 @@
 \alias{hemibrain_read_neurons}
 \title{Read neurons from the hemibrain connectome project}
 \usage{
-hemibrain_read_neurons(x, microns = TRUE, ...)
+hemibrain_read_neurons(x = NULL, savedir = FALSE, microns = TRUE, ...)
 }
 \arguments{
 \item{x}{a vector of bodyids that can be read from \url{'https://neuprint.janelia.org/'}.}
+
+\item{savedir}{directory in which \code{nat::neuronlistfh} object as been saved using \code{hemibrain_download_neurons}. This acts as a database,
+from which hemibrain neurons can be read.}
 
 \item{microns}{convert dimensions from raw voxels into microns (template brain: \code{JRCFIB2018F}, else \code{JRCFIB2018Fraw}).}
 
@@ -27,7 +30,7 @@ Read neurons from the hemibrain connectome project. This function
 uses the package \code{neuprintr} to read neurons. It then uses
 \code{\link{hemibrain_flow_centrality}} to re-root and split neurons into putative
 axons and dendrites. Optionally, it may also convert neurons from their raw voxel
-space (as they are stored in NeuPrint) to microns.
+space (as they are stored in neuPrint) to microns.
 }
 \examples{
 \donttest{
