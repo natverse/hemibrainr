@@ -3,7 +3,7 @@
 
 # Parameters
 polypre = TRUE
-split = "distance"
+split = "synapses"
 mode = "centrifugal"
 identifier = paste(ifelse(polypre,"polypre","pre"),mode,split,sep="_")
 message("Splitting with paramaters: ", identifier)
@@ -32,6 +32,12 @@ message("Flow centrality calculated for ", length(all.neurons.flow), " neurons")
 
 # Save
 save(all.neurons.flow, file = paste0("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/hemibrain_all_neurons_flow_",identifier,".rda"))
+
+# Save as neuronlistfh
+savedirfh = paste0("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/hemibrain_all_neurons_flow_",identifier,"/")
+dir.create = dir.create(paste0(savedirfh,"data/"),recursive = TRUE)
+all.neurons.flow.fh = as.neuronlistfh(all.neurons.flow, dbdir= paste0(savedirfh,"data/"))
+write.neuronlistfh(all.neurons.flow.fh, file=paste0(savedirfh,"hemibrain_all_neurons_flow_",identifier,".rds"))
 
 # Save key points
 all.neurons.points = hemibrain_splitpoints(all.neurons.flow)
