@@ -46,6 +46,14 @@ reading the Google Sheet introduces a prohibitive time delay.}
 
 \item{clean}{whether or not to set synapse-less branches to \code{Label = 0}.}
 
+\item{Wait}{logical indicating that there should be a pause between each displayed neuron}
+
+\item{sleep}{time to pause between each displayed neuron when Wait=TRUE}
+
+\item{selected_file}{an optional path to a yaml file that already contains a selection}
+
+\item{selected_col}{the color in which selected neurons (such as those specified in selected_file) should be plotted}
+
 \item{...}{additional arguments passed to plotting functions, such as \code{plot3d_split} and \code{nlscan_split}}
 }
 \value{
@@ -59,7 +67,6 @@ Currently, this function is built to review our most promising set of split poin
 As the google sheet gets updated, new manual splits will be re-saved into this package, as \code{hemibrain_manual_splitpoints} and implemented as default for those neurons
 when using \code{\link{hemibrain_flow_centrality}} and \code{\link{hemibrain_read_neurons}}.For this function to work, you may have to add
 the \href{https://docs.google.com/spreadsheets/d/1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E/edit?usp=sharing}{Google Sheet database} to your Google Drive.
-.
 }
 \examples{
 \donttest{

@@ -35,7 +35,8 @@ setup_splitcheck_sheet <-function(){
 #' As the google sheet gets updated, new manual splits will be re-saved into this package, as \code{hemibrain_manual_splitpoints} and implemented as default for those neurons
 #' when using \code{\link{hemibrain_flow_centrality}} and \code{\link{hemibrain_read_neurons}}.For this function to work, you may have to add
 #' the \href{https://docs.google.com/spreadsheets/d/1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E/edit?usp=sharing}{Google Sheet database} to your Google Drive.
-#' .
+#'
+#' @inheritParams nlscan_split
 #' @param brain which brain to plot while splitting neuron. If \code{NULL} no brain is plotted. Otherwise
 #' it is recommended to use \code{hemibrain.surf} (which is in raw voxel space).
 #' @param bodyids bodyids which specify individual neurons, as used in the relevant neuPrint project

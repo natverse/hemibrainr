@@ -9,7 +9,7 @@ hemibrain_download_neurons(savedir = TRUE, overwrite = FALSE)
 \arguments{
 \item{savedir}{where to save the \code{.rds} and meta data files for the \code{nat::neuronlistfh} object}
 
-\item{whether}{or not to overwrite the existing saved files, within \code{savedir}.}
+\item{overwrite}{whether or not to overwrite the existing saved files, within \code{savedir}.}
 }
 \description{
 Download all the automatically split neurons from the hemibrain project, from Google Drive. The

@@ -210,7 +210,7 @@ prune_synapseless_branches <- function(x, neuron = TRUE){
 #' Contact us if you do not, but would like, permission.
 #'
 #' @param savedir where to save the \code{.rds} and meta data files for the \code{nat::neuronlistfh} object
-#' @param whether or not to overwrite the existing saved files, within \code{savedir}.
+#' @param overwrite whether or not to overwrite the existing saved files, within \code{savedir}.
 #'
 #' @examples
 #' \donttest{
