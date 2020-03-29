@@ -540,6 +540,7 @@ hemibrain_use_splitpoints.neuron <-function(x, df, knn = FALSE, ...){
 
   # Get splitpoints
   df = df[df$bodyid == x$bodyid,]
+  df[df==""] = NA
 
   if(!nrow(df)){
     warning("bodyid ", x$bodyid," not in splitpoints, returning neuron unmodified")
@@ -553,26 +554,28 @@ hemibrain_use_splitpoints.neuron <-function(x, df, knn = FALSE, ...){
     }
 
     # Find point indexes
-    root = as.numeric(df[df$point=="root","position"])
-    primary.branch.point = as.numeric(df[df$point=="primary.branch.point","position"])
+    root = as.numeric(df[grepl("root",df$point),"position"])
+    primary.branch.point = as.numeric(df[grepl("primary.branch.point",df$point),"position"])
     axon.start = as.numeric(df[grepl("axon.start",df$point),"position"])
     dendrite.start = as.numeric(df[grepl("dendrite.start",df$point),"position"])
     axon.primary = as.numeric(df[grepl("axon.primary",df$point),"position"])
     dendrite.primary = as.numeric(df[grepl("dendrite.primary",df$point),"position"])
 
-    # Work around errors
+    # Work around errorsSyst
     if(is.na(dendrite.primary)){
       dendrite.primary = dendrite.start[1]
     }
     if(is.na(axon.primary)){
       axon.primary = axon.start[1]
     }
+
       # Assign root and mark soma
       y = nat::as.neuron(nat::as.ngraph(x$d), origin = root)
       y$connectors = x$connectors
       n = nat::as.ngraph(y$d)
       y$tags$soma = root
-      y$d$Label = 3 # dendrite by default
+      y$d$Label = 0
+      y$connectors$Label = 0
 
       # Assign other cable
       if(!is.na(root)&!is.na(primary.branch.point)){
@@ -593,22 +596,29 @@ hemibrain_use_splitpoints.neuron <-function(x, df, knn = FALSE, ...){
       }else{
         axon = NULL
       }
-      # dendrite = suppressWarnings(
-      #   unique(unlist(sapply(dendrite.start,function(s) unlist(igraph::shortest_paths(n, from=s, to = leaves, mode = c("out"))$vpath))))
-      # )
+      if(!is.na(dendrite.primary)){
+        dendrite = suppressWarnings(
+          unique(unlist(sapply(dendrite.start,function(s) unlist(igraph::shortest_paths(n, from=s, to = leaves, mode = c("out"))$vpath))))
+        )
+      }else{
+        dendrite = NULL
+      }
 
       # Assign labels
       if(!is.null(axon)){
-        y$d[axon,]$Label = 2
+        y = add_Label(x = y, PointNo = axon, Label = 2, erase = TRUE)
+      }
+      if(!is.null(dendrite)){
+        y = add_Label(x = y, PointNo = dendrite, Label = 3, erase = TRUE)
       }
       if(!is.null(pd)){
-        y$d[pd,]$Label = 4
+        y = add_Label(x = y, PointNo = pd, Label = 4, erase = TRUE)
       }
       if(!is.null(pnt)){
-        y$d[pnt,]$Label = 7
+        y = add_Label(x = y, PointNo = pnt, Label = 7, erase = TRUE)
       }
       if(!is.null(root)){
-        y$d[root,]$Label = 1
+        y = add_Label(x = y, PointNo = root, Label = 1, erase = TRUE)
       }
       #y$d[dendrite,]$Label = 3
 
@@ -733,22 +743,40 @@ hemibrain_flow_centrality.neuronlist <- function(x, splitpoints = hemibrainr::he
 #'
 #' @inheritParams flow_centrality
 #' @param Label the Label to be added. See \code{\link{flow_centrality}}.
+#' @param PointNo the points in the neuron for which the \code{Label}
+#' will be added.If \code{NULL} all points are used.
+#' @param erase if \code{TRUE}, all instance of \code{Label} not
+#' in \code{PointNo} are set to \code{0}.
 #'
 #' @return a \code{neuron} or \code{neuronlist}
 #' @seealso \code{\link{flow_centrality}}, \code{\link{add_field}}
 #' @export
-add_Label <-function(x, Label = 2, ...) UseMethod("add_Label")
+add_Label <-function(x, PointNo = NULL, Label = 2, erase = FALSE, ...) UseMethod("add_Label")
 #' @export
-add_Label.neuron <- function(x, Label = 2, ...){
-  x$d$Label = Label
-  if(!is.null(x$connectors)){
-    x$connectors$Label = Label
+add_Label.neuron <- function(x, PointNo = NULL, Label = 2, erase = FALSE, ...){
+  if(!is.null(PointNo)){
+    if(erase){
+      erasure = x$d$PointNo[x$d$Label==Label]
+      x$d$Label[match(erasure, x$d$PointNo)] = 0
+    }
+    x$d$Label[x$d$PointNo%in%PointNo] = Label
+    if(!is.null(x$connectors)){
+      if(erase){
+        x$connectors$Label[x$connectors$treenode_id%in%erasure] = 0
+      }
+      x$connectors$Label[x$connectors$treenode_id%in%PointNo] = Label
+    }
+  }else{
+    x$d$Label = Label
+    if(!is.null(x$connectors)){
+      x$connectors$Label = Label
+    }
   }
   x
 }
 #' @export
-add_Label.neuronlist <- function(x, Label = 2, ...){
-  nat::nlapply(x, add_Label.neuron, Label = Label, ...)
+add_Label.neuronlist <- function(x, PointNo = NULL, Label = 2, erase = FALSE, ...){
+  nat::nlapply(x, add_Label.neuron, PointNo = PointNo, Label = Label, erase = erase, ...)
 }
 
 #' Add a field to neuron objects (inc. in a neuronlist)

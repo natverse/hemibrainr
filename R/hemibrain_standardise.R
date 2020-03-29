@@ -7,6 +7,7 @@
 #' @description Standardise the names of lineage groups and transmitters.
 #'
 #' @param x a character vector to be standardised.
+#' @param invert return compartment numbers rather than names.
 #'
 #' @return a character vector
 #' @export
@@ -39,12 +40,20 @@ standard_lineages <- function(x){
 
 #' @export
 #' @rdname standardise
-standard_compartments <- function(x){
-  x[x==3] = "dendrite"
-  x[x==2] = "axon"
-  x[x==1] = "soma"
-  x[x==4] = "primary.dendrite"
-  x[x==7] = "primary.neurite"
+standard_compartments <- function(x, invert = FALSE){
+  if(invert){
+    x[x=="dendrite"] = 3
+    x[x=="axon"] = 2
+    x[x=="soma"] = 1
+    x[x=="primary.dendrite"] = 4
+    x[x=="primary.neurite"] = 7
+  }else{
+    x[x==3] = "dendrite"
+    x[x==2] = "axon"
+    x[x==1] = "soma"
+    x[x==4] = "primary.dendrite"
+    x[x==7] = "primary.neurite"
+  }
   x
 }
 
