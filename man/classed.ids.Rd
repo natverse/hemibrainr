@@ -12,6 +12,7 @@
 \alias{vppn.ids}
 \alias{dan.ids}
 \alias{mbon.ids}
+\alias{alln.ids}
 \title{Bodyids for neuron classes}
 \format{An object of class \code{character} of length 2545.}
 \usage{
@@ -32,6 +33,8 @@ vppn.ids
 dan.ids
 
 mbon.ids
+
+alln.ids
 }
 \description{
 Bodyids for neuron classes. Hard saved equivalent for \code{\link{class2ids}}.

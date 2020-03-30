@@ -30,6 +30,8 @@
 "dan.ids"
 #' @rdname classed.ids
 "mbon.ids"
+#' @rdname classed.ids
+"alln.ids"
 
 #' The hemibrain mesh
 #'

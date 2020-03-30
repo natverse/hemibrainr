@@ -20,8 +20,9 @@ Contact us if you do not, but would like, permission.
 }
 \examples{
 \donttest{
+\dontrun{
 # Parallelise
-numCores <- detectCores()
+numCores <- parallel::detectCores()
 doMC::registerDoMC(numCores/2)
 message("Using ", numCores/2, " cores")
 
@@ -30,7 +31,7 @@ hemibrain_download_neurons(.parallel = TRUE, overwrite = FALSE)
 
 # Get specific neurons
 neurons = hemibrain_read_neurons("1702323386", savedir = TRUE)
-}
+}}
 }
 \seealso{
 \code{\link{hemibrain_splitpoints}}, \code{\link{hemibrain_flow_centrality}},

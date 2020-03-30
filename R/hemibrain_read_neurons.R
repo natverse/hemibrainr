@@ -214,8 +214,9 @@ prune_synapseless_branches <- function(x, neuron = TRUE){
 #'
 #' @examples
 #' \donttest{
+#' \dontrun{
 #' # Parallelise
-#' numCores <- detectCores()
+#' numCores <- parallel::detectCores()
 #' doMC::registerDoMC(numCores/2)
 #' message("Using ", numCores/2, " cores")
 #'
@@ -224,7 +225,7 @@ prune_synapseless_branches <- function(x, neuron = TRUE){
 #'
 #' # Get specific neurons
 #' neurons = hemibrain_read_neurons("1702323386", savedir = TRUE)
-#'}
+#'}}
 #' @export
 #' @seealso \code{\link{hemibrain_splitpoints}}, \code{\link{hemibrain_flow_centrality}},
 #' \code{\link{hemibrain_precomputed_splitpoints}}, \code{\link{hemibrain_metrics}},\code{\link{hemibrain_remove_bad_synapses}}
@@ -294,7 +295,7 @@ hemibrain_read_neurons_local <- function(savedir = TRUE,
   if(length(list.files(path = savedir, pattern = ".rds"))){
     neurons.flow = nat::read.neuronlistfh(savedir,neuron.split,"/",neuron.split,".rds")
   }else{
-    stop("neuronlistfh file not found at: ", savedir)
+    stop("neuronlistfh (.rds) file not found at: ", savedir)
   }
   neurons.flow
 }
