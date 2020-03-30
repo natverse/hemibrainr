@@ -280,7 +280,7 @@ googledrive_simpledownload <- function(id, file, overwrite = FALSE){
 }
 
 # hidden
-hemibrain_read_neurons_local <- function(savedir,
+hemibrain_read_neurons_local <- function(savedir = TRUE,
                                          neuron.split = "hemibrain_all_neurons_flow_polypre_centrifugal_synapses"){
   savedir = good_savedir(savedir = savedir,
                       neuron.split = neuron.split)
@@ -301,11 +301,11 @@ good_savedir <- function(savedir = TRUE,
   }
   if(is.issue(savedir)){
     options(hemibrain_data = paste0(getwd(),"/data-raw/hemibrain_data/"))
-    stop("The following option has been set: options(hemibrain_data = paste0(getwd(),'/data-raw/hemibrain_data/')) ")
+    warning("The following option has been set: options(hemibrain_data = paste0(getwd(),'/data-raw/hemibrain_data/')) ")
   }
   if(!dir.exists(savedir)){
     dir.create(savedir, recursive = TRUE)
-    message("Made new hemibrain save directory. Neurons destined to be saved in ", savedir)
+    warning("Made new hemibrain save directory. Neurons destined to be saved in ", savedir)
   }
   suppressWarnings(dir.create(paste0(savedir,"/",neuron.split,"/data/"), recursive = TRUE))
   savedir

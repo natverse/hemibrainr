@@ -157,6 +157,7 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
   }
   if(prioritise){
     message("Prioritising 1st-3rd order olfactory neurons")
+    undone.ids = sample(undone.ids, length(undone.ids), replace = FALSE)
     ranks = gs[match(undone.ids,gs$bodyid),"priority"][[1]]
     undone.ids = undone.ids[order(ranks,decreasing = TRUE)]
     message("Priorities: ")
