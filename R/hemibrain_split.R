@@ -541,6 +541,7 @@ hemibrain_use_splitpoints.neuron <-function(x, df, knn = FALSE, ...){
 
   # Get splitpoints
   df = df[df$bodyid == x$bodyid,]
+  df = df[,c("bodyid", "position", "point", "X", "Y", "Z")]
   df[df==""] = NA
 
   if(!nrow(df)){
@@ -561,8 +562,9 @@ hemibrain_use_splitpoints.neuron <-function(x, df, knn = FALSE, ...){
     dendrite.start = as.numeric(df[grepl("dendrite.start",df$point),"position"])
     axon.primary = as.numeric(df[grepl("axon.primary",df$point),"position"])
     dendrite.primary = as.numeric(df[grepl("dendrite.primary",df$point),"position"])
+    linkers = as.numeric(df[grepl("linker",df$point),"position"])
 
-    # Work around errorsSyst
+    # Work around errors
     if(is.na(dendrite.primary)){
       dendrite.primary = dendrite.start[1]
     }
@@ -584,7 +586,9 @@ hemibrain_use_splitpoints.neuron <-function(x, df, knn = FALSE, ...){
       }else{
         pnt = NULL
       }
-      if(!is.na(axon.primary)&!is.na(dendrite.primary)){
+      if(!is.na(linkers)){
+        pd = suppressWarnings(unique(unlist(igraph::shortest_paths(n, from = as.numeric(linkers[1]), to = as.numeric(linkers[length(linkers)]), mode = "all")$vpath)))
+      }else if(!is.na(axon.primary)&!is.na(dendrite.primary)){
         pd = suppressWarnings(unique(unlist(igraph::shortest_paths(n, from = as.numeric(dendrite.primary), to = as.numeric(axon.primary), mode = "all")$vpath)))
       }else{
         pd = NULL

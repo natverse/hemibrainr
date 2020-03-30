@@ -300,17 +300,17 @@ internal_assignments <- function(x){
   if(length(dendrites)){
     s.d = change_points(x = x, v = dendrites)
   }else{
-    s.d = ""
+    s.d = NULL
   }
   if(length(s.a)){
     s.a = change_points(x = x, v = axon)
   }else{
-    s.a = ""
+    s.a = NULL
   }
   if(length(s.n)){
     s.n = change_points(x = x, v = nulls)
   }else{
-    s.n = ""
+    s.n = NULL
   }
   ## Get cable start points
   d.starts = tryCatch(sapply(unique(c(s.n,s.a)),function(s) igraph::neighbors(n, v=s, mode = c("out"))), error = function(e) NA)
@@ -325,18 +325,30 @@ internal_assignments <- function(x){
   }else{
     possible = ""
   }
-  starts = tryCatch(lapply(possible,function(s) igraph::neighbors(n, v=s, mode = c("all"))), error = function(e) NA)
-  starts.p = tryCatch(sapply(starts, function(start) sum(start%in%axon)), error = function(e) NA)
-  dendrite.primary = tryCatch(possible[which.min(starts.p)], error = function(e) NA) ## not necessarily strictly correct ...
-  axon.primary = tryCatch(possible[which.max(starts.p)], error = function(e) NA) ## not necessarily strictly correct ...
+  pd.dists = tryCatch(igraph::distances(n, v = p.d, to = as.numeric(p.d), mode = c("all")),
+                     error = function(e) NA)
+  linkers = tryCatch(rownames(which(pd.dists == max(pd.dists), arr.ind = TRUE)),error = function(e) NA)
+  ### Primary (furthest from root) cable starts
+  d.dists = tryCatch(igraph::distances(n, v = root, to = as.numeric(dendrites.starts), mode = c("all")),
+                  error = function(e) NA)
+  dendrite.primary = tryCatch(dendrites.starts[which.max(d.dists)], error = function(e) NA)
+  a.dists = tryCatch(igraph::distances(n, v = root, to = as.numeric(axon.starts), mode = c("all")),
+                     error = function(e) NA)
+  axon.primary = tryCatch(dendrites.starts[which.max(a.dists)], error = function(e) NA)
   ## Get primary branch point
-  primary.branch.point = tryCatch(p.n[length(p.n)], error = function(e) NA)
+  dists = tryCatch(igraph::distances(n, v = root, to = as.numeric(p.n), mode = c("all")),
+                   error = function(e) NA)
+  primary.branch.point = tryCatch(p.n[which.max(dists)], error = function(e) NA)
   ## Assign
   x$primary.branch.point = nullToNA(primary.branch.point)
   x$axon.start = nullToNA(axon.starts)
   x$dendrite.start = nullToNA(dendrites.starts)
   x$axon.primary = nullToNA(axon.primary)
   x$dendrite.primary = nullToNA(dendrite.primary)
-  x$linker = nullToNA(c(p.d[1],p.d[length(p.d)]))
+  x$linker = nullToNA(linkers)
   x
 }
+
+
+
+

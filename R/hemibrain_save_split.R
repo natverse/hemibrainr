@@ -271,7 +271,7 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
         somas[which.mes] = unlist(sapply(mes, function(x) x$tags$soma))
       }
       somas[somas=="automatic"] = TRUE
-      which.cuts = which(cuts)
+      which.cuts = which(cuts%in%c(TRUE,"MB","TRUE"))
       truncated[which.cuts] = TRUE
       update = data.frame(
         soma = somas,

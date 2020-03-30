@@ -20,8 +20,13 @@ Contact us if you do not, but would like, permission.
 }
 \examples{
 \donttest{
+# Parallelise
+numCores <- detectCores()
+doMC::registerDoMC(numCores/2)
+message("Using ", numCores/2, " cores")
+
 # Download neurons
-hemibrain_download_neurons()
+hemibrain_download_neurons(.parallel = TRUE, overwrite = FALSE)
 
 # Get specific neurons
 neurons = hemibrain_read_neurons("1702323386", savedir = TRUE)

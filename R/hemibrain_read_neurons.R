@@ -214,8 +214,13 @@ prune_synapseless_branches <- function(x, neuron = TRUE){
 #'
 #' @examples
 #' \donttest{
+#' # Parallelise
+#' numCores <- detectCores()
+#' doMC::registerDoMC(numCores/2)
+#' message("Using ", numCores/2, " cores")
+#'
 #' # Download neurons
-#' hemibrain_download_neurons()
+#' hemibrain_download_neurons(.parallel = TRUE, overwrite = FALSE)
 #'
 #' # Get specific neurons
 #' neurons = hemibrain_read_neurons("1702323386", savedir = TRUE)
@@ -236,7 +241,7 @@ hemibrain_download_neurons <- function(savedir = TRUE,
   message("Finding data ...")
   datals = tryCatch(googledrive::drive_ls(googledrive::as_id("https://drive.google.com/drive/folders/1AHgTOzoYfyhsd6XimVuKq1jgLeyVBpWd")),
                     error = function(e) NULL)
-  if(is.issue(datals)){
+  if(is.issue(datals$id[1])){
     utils::browseURL("https://drive.google.com/drive/folders/14UPg7CvHDtvzNjvNgAULYnxZ018Xgf5H?usp=sharing",
                      browser = getOption("browser"),
                      encodeIfNeeded = FALSE)
@@ -252,7 +257,8 @@ hemibrain_download_neurons <- function(savedir = TRUE,
   ### Download actual data
   message("Downloading data, ", nrow(datals)," files ...")
   metafh = paste0(savedir,"hemibrain_all_neurons_flow_polypre_centrifugal_synapses/data/")
-  download = googledrive_downloadmany(datals, dir = metafh, overwrite = overwrite)
+  download = googledrive_downloadmany(ls = datals, dir = metafh, overwrite = overwrite, OmitFailures = TRUE, ...)
+  message(length(unlist(download)),"/",nrow(datals)," data files successfully downloaded. Re-run to try remainder.")
   message("Download complete, files can be found here: ", savedir)
 }
 
@@ -262,8 +268,8 @@ googledrive_downloadmany <- function(ls, dir, overwrite = FALSE, ...){
   nat::nlapply(1:nrow(ls),
                function(i) googledrive_simpledownload(id=ls$id[i],
                                                       file = paste0(dir,ls$name[i]),
-                                                      overwrite = overwrite,
-                                                      ...))
+                                                      overwrite = overwrite),
+               ...)
 }
 
 # hidden
@@ -277,6 +283,7 @@ googledrive_simpledownload <- function(id, file, overwrite = FALSE){
     download.file(sprintf("https://drive.google.com/uc?authuser=0&id=%s&export=download",id),
                   destfile = file, quiet = TRUE)
   }
+  file
 }
 
 # hidden
