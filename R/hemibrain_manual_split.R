@@ -251,7 +251,7 @@ hemibrain_edit_cable <- function(){
                      soma (1), axon (2), dendrite (3), linker (4), primary neurite (7),
                      invert the neuron (8) or cycle through branches (9)
                      or do nothing further (0) ",
-          answers  = c(0:4,7:8)))
+          answers  = c(0:4,7:9)))
 }
 
 # hidden
