@@ -33,28 +33,31 @@ say_hello <- function(greet = "user"){
 #' @importFrom jpeg readJPEG
 #' @importFrom httr GET status_code content
 plot_inspirobot <- function(cycle = NULL){
-  req = httr::GET(url = "https://inspirobot.me/api?generate=true")
-  rgl::clear3d()
-  if(isTRUE(httr::status_code(req) %in% c(400L, 500L))) {
-    parsed=neuprintr::neuprint_parse_json(req)
-    warning("inspirobot error: ", parsed$error, call. = F)
-  }else{
-    temp = paste0(tempfile(),".png")
-    image = httr::content(req, as = "text", encoding = "UTF-8")
-    suppressWarnings(suppressMessages(download.file(url = image,destfile = temp, quiet = TRUE)))
-    img = jpeg::readJPEG(temp)
-    if(length(img)){
-      png::writePNG(image = img, target = temp)
-      rgl::bg3d(texture = temp, col = "white")
-      rm = file.remove(temp)
+  inspiroplot <- function(cycle=cycle){
+    req = httr::GET(url = "https://inspirobot.me/api?generate=true")
+    rgl::clear3d()
+    if(isTRUE(httr::status_code(req) %in% c(400L, 500L))) {
+      parsed=neuprintr::neuprint_parse_json(req)
+      warning("inspirobot error: ", parsed$error, call. = F)
+    }else{
+      temp = paste0(tempfile(),".jpg")
+      image = httr::content(req, as = "text", encoding = "UTF-8")
+      suppressWarnings(suppressMessages(download.file(url = image,destfile = temp, quiet = TRUE)))
+      img = jpeg::readJPEG(temp)
+      if(length(img)){
+        png::writePNG(image = img, target = temp)
+        rgl::bg3d(texture = temp, col = "white")
+        rm = file.remove(temp)
+      }
+    }
+    if(!is.null(cycle)){
+      while(TRUE){
+        Sys.sleep(cycle)
+        plot_inspirobot()
+      }
     }
   }
-  if(!is.null(cycle)){
-    while(TRUE){
-      Sys.sleep(cycle)
-      plot_inspirobot()
-    }
-  }
+  tryCatch(inspiroplot(cycle=cycle),error = function(e) NULL)
 }
 
 # hidden
