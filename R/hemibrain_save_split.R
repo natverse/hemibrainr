@@ -375,8 +375,10 @@ splitcheck_phaseI <- function(someneuronlist,
                    answers = c("","b","s","t","c","e","u"))
     if (chc == "c") {
       if (is.null(chc) || chc == "c")
-        chc = must_be(prompt = sprintf("Selection is:  . Continue (c) or go back and make selection (b)? ",paste(ifelse(length(selected),selected,"none"),collapse=", ")), answers = c("c","b"))
-      break
+        chc = must_be(prompt = sprintf("Selection is: %s . Continue (c) or go back and make selection (b)? ",paste(ifelse(length(selected),selected,"none"),collapse=", ")), answers = c("c","b"))
+      if (is.null(chc) || chc == "c"){
+        break
+      }
     }
     if (chc == "s") {
       if (n %in% selected) {

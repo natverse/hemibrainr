@@ -71,7 +71,6 @@ manually_assign_labels.neuron <- function(x, brain = NULL, ...){
         ### Soma
         message("Please check the soma of your neuron")
         x = hemibrain_correctsoma(x, ...)
-        x$tags$manually_edited = TRUE
       }else if(happy == 8){
         ### Invert?
         if(sum(c(2,3)%in%unique(x$d$Label))>0){
@@ -85,6 +84,9 @@ manually_assign_labels.neuron <- function(x, brain = NULL, ...){
           x$tags$manually_edited = i
           happy = !hemibrain_engage(Label = NULL, prompt = "Do you want to edit further? yes/no ")
         }
+      }else if(happy == 9){
+        x = cycle_branches(x=x,brain=brain)
+        x$tags$manually_edited = TRUE
       }else{
         x = hemibrain_select_cable(x=x, Label = happy)
         x$tags$manually_edited = TRUE
@@ -117,7 +119,7 @@ hemibrain_prune_online.neuron <- function (x, brain = NULL, Label = NULL, ...) {
     selected = hemibrain_select_points(x$d, clear_plot_on_exit = TRUE, Label = Label)
     reset3d(brain=brain)
     if(nrow(selected)){
-      message("Selected cable in cerise")
+      message("Selected cable in red")
       v = match(data.frame(t(selected)), data.frame(t(nat::xyzmatrix(x))))
       x = add_Label(x = x, PointNo = v, Label = Label, erase = TRUE)
       frag = nat::prune_vertices(x, verticestoprune = v, invert = TRUE, ...)
@@ -150,7 +152,7 @@ hemibrain_select_points <- function(points, clear_plot_on_exit = FALSE, Label = 
   points <- nat::xyzmatrix(points)
   ids = rgl::points3d(selected.points, col = hemibrain_bright_colours["cerise"])
   ids = c(ids, rgl::points3d(points, col = "grey30"))
-  progress = must_be(prompt = "Unselected points in grey, selected in cerise. Add (a) or remove (r) points, or continue (c)?  ",
+  progress = must_be(prompt = "Unselected points in grey, selected in red Add (a) or remove (r) points, or continue (c)?  ",
                      answers = c("a","r","c"))
   while (progress != "c") {
     if (progress == "a") {
@@ -209,6 +211,7 @@ hemibrain_correctsoma <- function(x, ...) {
         plot3d_split(corrected, ...)
       }
       x$tags$soma = "manual"
+      x$tags$manually_edited = TRUE
       progress = must_be(prompt = "Good enough? yes/no  ", answers = c("y","yes","n","no"))
   }
   x = add_Label(x = x, PointNo = selected.point, Label = 1, erase = TRUE)
@@ -245,9 +248,9 @@ hemibrain_engage <- function(Label = NULL, prompt = "Does this neuron require ed
 # hidden
 hemibrain_edit_cable <- function(){
   as.numeric(must_be(prompt = "What cable do you wish to edit?:
-                     soma (1), axon (2), dendrite (3),
-                     linker (4), primary neurite (7),
-                     invert the neuron (8) or do nothing further (0) ",
+                     soma (1), axon (2), dendrite (3), linker (4), primary neurite (7),
+                     invert the neuron (8) or cycle through branches (9)
+                     or do nothing further (0) ",
           answers  = c(0:4,7:8)))
 }
 
@@ -349,6 +352,50 @@ internal_assignments <- function(x){
   x
 }
 
+
+# hidden
+cycle_branches <- function(x, brain = NULL){
+  nulls = subset(rownames(x$d), !x$d$Label %in% c(2,3))
+  message("Removing primary neurite and linker cable to find sub-branches ...")
+  y = nat::prune_vertices(x, verticestoprune = as.numeric(nulls),invert = FALSE)
+  sbt = break_into_subtrees(y)
+  i <- 1
+  message("Cycling through sub-branches (in red). Bear in mind that some branches can be very small.")
+  while(length(sbt)) {
+    reset3d(brain=brain)
+    plot3d_split(x, soma = FALSE)
+    if (i > length(sbt) || i < 1){
+      end = hemibrain_choice("Done selecting neurons to edit (shown)? yes/no ")
+      if(end){
+        break
+      }else{
+        i <- 1
+      }
+    }
+    cat("Current branch:", i, " "," (", i, "/", length(neurons),")","\n")
+    pl <- plot3d(sbt[i], col = hemibrain_bright_colours["cerise"], lwd = 5)
+    chc <- must_be(prompt = "
+          What cable is this?:
+          uncertain/erroneous (0), axon (2), dendrite (3),
+          linker (4), primary neurite (7).
+          Back (b), next (enter), end (c) ",
+          answers = c(0,2:4,7,""))
+    if (chc == "c") {
+    if (is.null(chc) || chc == "")
+      break
+    }
+    if (chc %in%  c(0,2:4,7) ){
+      x = add_Label(x = x, PointNo = sbt[i][[1]]$orig.PointNo, Label = as.numeric(chc), erase = FALSE)
+    }
+    if (chc == "b"){
+      i <- i - 1
+    }else{
+      i <- i + 1
+    }
+    rgl::pop3d(id = pl)
+  }
+  x
+}
 
 
 
