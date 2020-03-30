@@ -28,7 +28,19 @@ say_hello <- function(greet = "user"){
   message(sprintf(sample(greetings,1),greet))
 }
 
-# hidden
+#' Plot motivations from InspiroBot
+#'
+#' @description To help you keep going. \href{https://inspirobot.me/}{InspiroBot}
+#' is "an artificial intelligence dedicated to generating unlimited amounts of unique
+#' inspirational quotes for endless enrichment of pointless human existence".
+#'
+#' @param cycle if a value, a new image will appear every \code{cycle} seconds.
+#' @examples
+#' plot_inspirobot()
+#' @references https://inspirobot.me/
+#' @return plots a 2D, AI generated motivational to an \code{rgl} window.
+#' @seealso \code{\link{hemibrain_adjust_saved_split}}
+#' @export
 #' @importFrom png writePNG
 #' @importFrom jpeg readJPEG
 #' @importFrom httr GET status_code content
