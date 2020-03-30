@@ -141,9 +141,11 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
           input = navy, output = red
           ###Colours###")
   ### Choose the phases we want to use
-  if(phase %in% c("II","III")){
+  if(phases %in% c("II","III")){
     undone = subset(gs, split == "manual")
-    undone.ids = setdiff(unique(undone$bodyid), manual$bodyid)
+    if(phases == "II"){
+      undone.ids = setdiff(unique(undone$bodyid), manual$bodyid)
+    }
     if(!length(undone.ids)){
       stop("There are no neurons marked for manual splitting (in Phase I) that have not had a manual split saved.")
     }
@@ -235,8 +237,8 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
       ### Save manual split to Google Sheet
       if(motivate){plot_inspirobot()}
       if(length(mes)){
-        mes.i = match(mes.sp$bodyid, names(someneuronlist))
         mes.sp = hemibrain_splitpoints(x = mes)
+        mes.i = match(mes.sp$bodyid, names(someneuronlist))
         mes.sp$split = "manual"
         mes.sp$checked = TRUE
         mes.sp$user = initials
@@ -267,6 +269,9 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
         cuts[which.mes] = unlist(sapply(mes, function(x) x$tags$cropped))
         somas[which.mes] = unlist(sapply(mes, function(x) x$tags$soma))
       }
+      somas[somas=="automatic"] = TRUE
+      which.cuts = which(cuts)
+      truncated[which.cuts] = TRUE
       update = data.frame(
         soma = somas,
         cut = cuts,
@@ -382,9 +387,9 @@ splitcheck_phaseI <- function(someneuronlist,
     if (chc == "b"){
       i <- i - 1
     }else if (chc == "e"){
-      notes[i] <- readline(prompt = "Add your note here: ")
+      notes[i] <- readline(prompt = "Add your note here: yes/no ")
     }else if (chc == "t"){
-      truncated[i] <- readline(prompt = "Add your note here: ")
+      truncated[i] <- readline(prompt = "Is this neuron (even slightly) truncated?: yes/no ")
     }else if (chc == "u"){
       splittable[i] <- hemibrain_choice(prompt = "Can this neuron be split? yes/no ")
     }else if (chc == "r"){
@@ -396,7 +401,7 @@ splitcheck_phaseI <- function(someneuronlist,
   }
   list(selected = selected,
        notes = notes,
-       tuncated = truncated,
+       truncated = truncated,
        splittable = splittable,
        somas = somas
   )

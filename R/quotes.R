@@ -108,5 +108,10 @@ say_encouragement <- function(greet = "user"){
     "Everytime you incorrectly split a neuron, %s, a fairy dies. Painfully."
   )
   message(sprintf(sample(encouragements,1),greet))
+  if(sample(1:100,1)==42){
+    utils::browseURL("https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+                     browser = getOption("browser"),
+                     encodeIfNeeded = FALSE)
+  }
 }
 

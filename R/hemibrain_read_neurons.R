@@ -232,7 +232,7 @@ hemibrain_download_neurons <- function(savedir = TRUE,
   message(sprintf("If this takes to much time, you can also download the relevant Google Drive folder manually. To do so, open this link: %s and then download the folder to this location on your computer: ",
           "https://drive.google.com/open?id=1px6o2R_heFLRCtTF4Q2SvJNR9CWFhud0. Remember to unzip all files.",
           savedir))
-  # Download file hash meta data
+  ### Download file hash meta data
   message("Finding data ...")
   datals = tryCatch(googledrive::drive_ls(googledrive::as_id("https://drive.google.com/drive/folders/1AHgTOzoYfyhsd6XimVuKq1jgLeyVBpWd")),
                     error = function(e) NULL)
@@ -244,12 +244,12 @@ hemibrain_download_neurons <- function(savedir = TRUE,
             Please follow this link: https://drive.google.com/drive/folders/14UPg7CvHDtvzNjvNgAULYnxZ018Xgf5H?usp=sharing,
             and add this folder to your Google Drive. If you do not have permission, you can contact us for access.")
   }
-  # Download neuronlist as a .rds file
+  ### Download neuronlist as a .rds file
   message("Downloading metadata ...")
   nlfh = paste0(savedir,"hemibrain_all_neurons_flow_polypre_centrifugal_synapses/hemibrain_all_neurons_flow_polypre_centrifugal_synapses.rds")
   download.file(sprintf("https://drive.google.com/uc?authuser=0&id=%s&export=download","19mpATVptH9n42yhmZybEYl9k9PndN4_G"),
                 destfile = nlfh)
-  # Download actual data
+  ### Download actual data
   message("Downloading data, ", nrow(datals)," files ...")
   metafh = paste0(savedir,"hemibrain_all_neurons_flow_polypre_centrifugal_synapses/data/")
   download = googledrive_downloadmany(datals, dir = metafh, overwrite = overwrite)
