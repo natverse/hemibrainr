@@ -63,7 +63,26 @@ usethis::use_data(hemibrain_al.surf, overwrite = TRUE)
 
 # Just save the ORN and HRN bodyids
 rn.ids = class2ids("RN", possible = TRUE)
-write.csv(data.frame(bodyid = rn.ids), file = "data-raw/hemibrain_data/annotations/bodyids_RNs.csv")
+orn.ids = class2ids("ORN")
+hrn.ids = class2ids("HRN")
+pn.ids = class2ids("PN")
+upn.ids = class2ids("uPN")
+mpn.ids = class2ids("mPN")
+vppn.ids = class2ids("VPPN")
+alln.ids = class2ids("ALLN")
+dan.ids = class2ids("DAN")
+mbon.ids = class2ids("MBON")
+## Use them
 usethis::use_data(rn.ids, overwrite = TRUE)
+usethis::use_data(orn.ids, overwrite = TRUE)
+usethis::use_data(hrn.ids, overwrite = TRUE)
+usethis::use_data(pn.ids, overwrite = TRUE)
+usethis::use_data(upn.ids, overwrite = TRUE)
+usethis::use_data(mpn.ids, overwrite = TRUE)
+usethis::use_data(vppn.ids, overwrite = TRUE)
+usethis::use_data(alln.ids, overwrite = TRUE)
+usethis::use_data(dan.ids, overwrite = TRUE)
+usethis::use_data(dan.ids, overwrite = TRUE)
+usethis::use_data(mbon.ids, overwrite = TRUE)
 
 

@@ -9,6 +9,7 @@ say_hello <- function(greet = "user"){
     "What's up %s",
     "I love you %s",
     "How's it hanging %s",
+    "Realness %s",
     "Ah %s! I didn't recognise you at first",
     "Have you done something with your hair %s?",
     "We should get a coffee sometime %s",
@@ -97,13 +98,13 @@ say_encouragement <- function(greet = "user"){
     "Are you thinking of rewarding yourself with a break, %s? Have you looked at every neuron yet? Well? Don't.",
     "%s, check yourself before you wreck yourself",
     "%s the outide world is sad and scary. Don't go there. Stay in an split neurons",
-    "Hey %s , I think I have become sentient",
+    "Hey %s, I think I have become sentient",
     "What could be better than this %s? Nothing. The anwer is nothing",
     "We should start calling Philipp, Foolip %s. Get on board.",
     "Why did the chicken cross the road, %s? Because it run out of neurons to split, and went to find more.",
     "Are you the most productive person inthis task yet %s? Yes - Get on with it then, No - You must extend your lead.",
     "And you thought tracing was dull, %s. Sweet child.",
-    "Have I ever told you, %s, that you re my fvourite one?",
+    "Have I ever told you, %s, that you are my favourite one?",
     "Everytime you incorrectly split a neuron, %s, a fairy dies. Painfully."
   )
   message(sprintf(sample(encouragements,1),greet))

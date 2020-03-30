@@ -300,10 +300,12 @@ good_savedir <- function(savedir = TRUE,
     savedir = options()$hemibrain_data
   }
   if(is.issue(savedir)){
-    if(!dir.exists(savedir)){
-      stop("Please provide a path to which to save hemibrain data. This is best done by setting the option 'hemibrain_data'.
-         For example, by default this package tries to use: options(hemibrain_data = paste0(getwd(),'/hemibrain_data/')) ")
-    }
+    options(hemibrain_data = paste0(getwd(),"/data-raw/hemibrain_data/"))
+    stop("The following option has been set: options(hemibrain_data = paste0(getwd(),'/data-raw/hemibrain_data/')) ")
+  }
+  if(!dir.exists(savedir)){
+    dir.create(savedir, recursive = TRUE)
+    message("Made new hemibrain save directory. Neurons destined to be saved in ", savedir)
   }
   suppressWarnings(dir.create(paste0(savedir,"/",neuron.split,"/data/"), recursive = TRUE))
   savedir
