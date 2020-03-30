@@ -14,6 +14,22 @@
 #' @name classed.ids
 #' @rdname classed.ids
 "rn.ids"
+#' @rdname classed.ids
+"orn.ids"
+#' @rdname classed.ids
+"hrn.ids"
+#' @rdname classed.ids
+"pn.ids"
+#' @rdname classed.ids
+"upn.ids"
+#' @rdname classed.ids
+"mpn.ids"
+#' @rdname classed.ids
+"vppn.ids"
+#' @rdname classed.ids
+"dan.ids"
+#' @rdname classed.ids
+"mbon.ids"
 
 #' The hemibrain mesh
 #'
