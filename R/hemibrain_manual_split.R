@@ -305,12 +305,12 @@ internal_assignments <- function(x){
   }else{
     s.d = NULL
   }
-  if(length(s.a)){
+  if(length(axon)){
     s.a = change_points(x = x, v = axon)
   }else{
     s.a = NULL
   }
-  if(length(s.n)){
+  if(length(nulls)){
     s.n = change_points(x = x, v = nulls)
   }else{
     s.n = NULL

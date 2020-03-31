@@ -29,7 +29,8 @@ message("Checked ", length(all.neurons.checked), " neurons")
 # Split skeletons
 all.neurons.flow = flow_centrality(all.neurons.checked, mode = mode, polypre = polypre, split = split, .parallel = TRUE, OmitFailures = TRUE)
 message("Flow centrality calculated for ", length(all.neurons.flow), " neurons")
-all.neurons.flow[as.character(rn.ids)] = add_Label(all.neurons.flow[as.character(rn.ids)], Label = 2)
+rn.flow = hemibrainr::add_Label(all.neurons.flow[as.character(rn.ids)], Label = 2)
+all.neurons.flow[as.character(rn.ids)] = rn.flow
 
 # Save
 save(all.neurons.flow, file = paste0("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/hemibrain_all_neurons_flow_",identifier,".rda"))
