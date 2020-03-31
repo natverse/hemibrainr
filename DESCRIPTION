@@ -44,7 +44,8 @@ Imports:
     png,
     googledrive
 Remotes: 
-    natverse/neuprintr
+    natverse/neuprintr,
+    tidyverse/googlesheets4
 Language: en-GB
 RoxygenNote: 7.0.2
 URL: https://github.com/flyconnectome/hemibrainr, https://flyconnectome.github.io/hemibrainr
