@@ -4,19 +4,26 @@
 \alias{hemibrain_download_neurons}
 \title{Download all automatically split neurons from the hemibrain project}
 \usage{
-hemibrain_download_neurons(savedir = TRUE, overwrite = FALSE)
+hemibrain_download_neurons(savedir = TRUE, overwrite = FALSE, ...)
 }
 \arguments{
-\item{savedir}{where to save the \code{.rds} and meta data files for the \code{nat::neuronlistfh} object}
+\item{savedir}{where to save the \code{.rds} and meta data files for the
+\code{nat::neuronlistfh} object}
 
-\item{overwrite}{whether or not to overwrite the existing saved files, within \code{savedir}.}
+\item{overwrite}{whether or not to overwrite the existing saved files, within
+\code{savedir}.}
+
+\item{...}{Additional arguments passed to \code{\link{nlapply}} when iterating
+over neurons to download.}
 }
 \description{
-Download all the automatically split neurons from the hemibrain project, from Google Drive. The
-neuronlist is saved as a \code{nat::neuronlistfh} object so certain neurons may be read from it without loading
-the entire, large neuronlist into memory. In order to do this, you need to add the following folder to your
-Google Drive: https://drive.google.com/drive/folders/14UPg7CvHDtvzNjvNgAULYnxZ018Xgf5H?usp=sharing.
-Contact us if you do not have, but would like, permission.
+Download all the automatically split neurons from the hemibrain
+ project, from Google Drive. The neuronlist is saved as a
+ \code{nat::neuronlistfh} object so certain neurons may be read from it
+ without loading the entire, large neuronlist into memory. In order to do
+ this, you need to add the following folder to your Google Drive:
+ https://drive.google.com/drive/folders/14UPg7CvHDtvzNjvNgAULYnxZ018Xgf5H?usp=sharing.
+  Contact us if you do not have, but would like, permission.
 }
 \examples{
 \donttest{
@@ -34,6 +41,8 @@ neurons = hemibrain_read_neurons("1702323386", savedir = TRUE)
 }}
 }
 \seealso{
-\code{\link{hemibrain_splitpoints}}, \code{\link{hemibrain_flow_centrality}},
-\code{\link{hemibrain_precomputed_splitpoints}}, \code{\link{hemibrain_metrics}},\code{\link{hemibrain_remove_bad_synapses}}
+\code{\link{hemibrain_splitpoints}},
+ \code{\link{hemibrain_flow_centrality}},
+ \code{\link{hemibrain_precomputed_splitpoints}},
+ \code{\link{hemibrain_metrics}},\code{\link{hemibrain_remove_bad_synapses}}
 }

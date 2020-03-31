@@ -201,16 +201,22 @@ prune_synapseless_branches <- function(x, neuron = TRUE){
 }
 
 
-#' Download all automatically split neurons from the hemibrain project
+#'Download all automatically split neurons from the hemibrain project
 #'
-#' @description Download all the automatically split neurons from the hemibrain project, from Google Drive. The
-#' neuronlist is saved as a \code{nat::neuronlistfh} object so certain neurons may be read from it without loading
-#' the entire, large neuronlist into memory. In order to do this, you need to add the following folder to your
-#' Google Drive: https://drive.google.com/drive/folders/14UPg7CvHDtvzNjvNgAULYnxZ018Xgf5H?usp=sharing.
-#' Contact us if you do not have, but would like, permission.
+#'@description Download all the automatically split neurons from the hemibrain
+#'  project, from Google Drive. The neuronlist is saved as a
+#'  \code{nat::neuronlistfh} object so certain neurons may be read from it
+#'  without loading the entire, large neuronlist into memory. In order to do
+#'  this, you need to add the following folder to your Google Drive:
+#'  https://drive.google.com/drive/folders/14UPg7CvHDtvzNjvNgAULYnxZ018Xgf5H?usp=sharing.
+#'   Contact us if you do not have, but would like, permission.
 #'
-#' @param savedir where to save the \code{.rds} and meta data files for the \code{nat::neuronlistfh} object
-#' @param overwrite whether or not to overwrite the existing saved files, within \code{savedir}.
+#'@param savedir where to save the \code{.rds} and meta data files for the
+#'  \code{nat::neuronlistfh} object
+#'@param overwrite whether or not to overwrite the existing saved files, within
+#'  \code{savedir}.
+#'@param ... Additional arguments passed to \code{\link{nlapply}} when iterating
+#'  over neurons to download.
 #'
 #' @examples
 #' \donttest{
@@ -226,13 +232,16 @@ prune_synapseless_branches <- function(x, neuron = TRUE){
 #' # Get specific neurons
 #' neurons = hemibrain_read_neurons("1702323386", savedir = TRUE)
 #'}}
-#' @export
-#' @seealso \code{\link{hemibrain_splitpoints}}, \code{\link{hemibrain_flow_centrality}},
-#' \code{\link{hemibrain_precomputed_splitpoints}}, \code{\link{hemibrain_metrics}},\code{\link{hemibrain_remove_bad_synapses}}
-#' @importFrom utils download.file
-#' @importFrom googledrive drive_ls as_id
+#'@export
+#'@seealso \code{\link{hemibrain_splitpoints}},
+#'  \code{\link{hemibrain_flow_centrality}},
+#'  \code{\link{hemibrain_precomputed_splitpoints}},
+#'  \code{\link{hemibrain_metrics}},\code{\link{hemibrain_remove_bad_synapses}}
+#'@importFrom utils download.file
+#'@importFrom googledrive drive_ls as_id
 hemibrain_download_neurons <- function(savedir = TRUE,
-                                       overwrite = FALSE
+                                       overwrite = FALSE,
+                                       ...
                                        ){
   savedir = good_savedir(savedir=savedir)
   message(sprintf("If this takes to much time, you can also download the relevant Google Drive folder manually. To do so, open this link: %s and then download the folder to this location on your computer: ",
