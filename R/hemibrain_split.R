@@ -541,6 +541,7 @@ hemibrain_use_splitpoints.neuron <-function(x, df, knn = FALSE, ...){
 
   # Get splitpoints
   df = df[df$bodyid == x$bodyid,]
+  df = df[,c("bodyid", "position", "point", "X", "Y", "Z")]
   df[df==""] = NA
 
   if(!nrow(df)){
@@ -561,8 +562,9 @@ hemibrain_use_splitpoints.neuron <-function(x, df, knn = FALSE, ...){
     dendrite.start = as.numeric(df[grepl("dendrite.start",df$point),"position"])
     axon.primary = as.numeric(df[grepl("axon.primary",df$point),"position"])
     dendrite.primary = as.numeric(df[grepl("dendrite.primary",df$point),"position"])
+    linkers = as.numeric(df[grepl("linker",df$point),"position"])
 
-    # Work around errorsSyst
+    # Work around errors
     if(is.na(dendrite.primary)){
       dendrite.primary = dendrite.start[1]
     }
@@ -579,25 +581,27 @@ hemibrain_use_splitpoints.neuron <-function(x, df, knn = FALSE, ...){
       y$connectors$Label = 0
 
       # Assign other cable
-      if(!is.na(root)&!is.na(primary.branch.point)){
+      if(!is.issue(root)&!is.issue(primary.branch.point)){
         pnt = suppressWarnings(unique(unlist(igraph::shortest_paths(n, from = as.numeric(root), to = as.numeric(primary.branch.point), mode = "out")$vpath)))
       }else{
         pnt = NULL
       }
-      if(!is.na(axon.primary)&!is.na(dendrite.primary)){
+      if(!is.issue(linkers)){
+        pd = suppressWarnings(unique(unlist(igraph::shortest_paths(n, from = as.numeric(linkers[1]), to = as.numeric(linkers[length(linkers)]), mode = "all")$vpath)))
+      }else if(!is.issue(axon.primary)&!is.issue(dendrite.primary)){
         pd = suppressWarnings(unique(unlist(igraph::shortest_paths(n, from = as.numeric(dendrite.primary), to = as.numeric(axon.primary), mode = "all")$vpath)))
       }else{
         pd = NULL
       }
       leaves = as.numeric(nat::endpoints(y))
-      if(!is.na(axon.primary)){
+      if(!is.issue(axon.primary)){
         axon = suppressWarnings(
           unique(unlist(sapply(as.numeric(axon.start),function(s) unlist(igraph::shortest_paths(n, from=s, to = leaves, mode = c("out"))$vpath))))
         )
       }else{
         axon = NULL
       }
-      if(!is.na(dendrite.primary)){
+      if(!is.issue(dendrite.primary)){
         dendrite = suppressWarnings(
           unique(unlist(sapply(dendrite.start,function(s) unlist(igraph::shortest_paths(n, from=s, to = leaves, mode = c("out"))$vpath))))
         )
@@ -872,4 +876,7 @@ add_field_seq <- function(x, entries, field = "bodyid", ...){
 # syns = do.call(rbind,syns)
 # syns = subset(syns, partner %in% al.local.neurons)
 # nlscan_split(neurons.flow, WithConnectors = TRUE)
+
+
+# "5901222683"
 

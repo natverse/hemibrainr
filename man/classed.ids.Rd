@@ -4,10 +4,37 @@
 \name{classed.ids}
 \alias{classed.ids}
 \alias{rn.ids}
+\alias{orn.ids}
+\alias{hrn.ids}
+\alias{pn.ids}
+\alias{upn.ids}
+\alias{mpn.ids}
+\alias{vppn.ids}
+\alias{dan.ids}
+\alias{mbon.ids}
+\alias{alln.ids}
 \title{Bodyids for neuron classes}
 \format{An object of class \code{character} of length 2545.}
 \usage{
 rn.ids
+
+orn.ids
+
+hrn.ids
+
+pn.ids
+
+upn.ids
+
+mpn.ids
+
+vppn.ids
+
+dan.ids
+
+mbon.ids
+
+alln.ids
 }
 \description{
 Bodyids for neuron classes. Hard saved equivalent for \code{\link{class2ids}}.

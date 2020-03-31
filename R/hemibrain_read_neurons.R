@@ -214,12 +214,18 @@ prune_synapseless_branches <- function(x, neuron = TRUE){
 #'
 #' @examples
 #' \donttest{
+#' \dontrun{
+#' # Parallelise
+#' numCores <- parallel::detectCores()
+#' doMC::registerDoMC(numCores/2)
+#' message("Using ", numCores/2, " cores")
+#'
 #' # Download neurons
-#' hemibrain_download_neurons()
+#' hemibrain_download_neurons(.parallel = TRUE, overwrite = FALSE)
 #'
 #' # Get specific neurons
 #' neurons = hemibrain_read_neurons("1702323386", savedir = TRUE)
-#'}
+#'}}
 #' @export
 #' @seealso \code{\link{hemibrain_splitpoints}}, \code{\link{hemibrain_flow_centrality}},
 #' \code{\link{hemibrain_precomputed_splitpoints}}, \code{\link{hemibrain_metrics}},\code{\link{hemibrain_remove_bad_synapses}}
@@ -232,11 +238,11 @@ hemibrain_download_neurons <- function(savedir = TRUE,
   message(sprintf("If this takes to much time, you can also download the relevant Google Drive folder manually. To do so, open this link: %s and then download the folder to this location on your computer: ",
           "https://drive.google.com/open?id=1px6o2R_heFLRCtTF4Q2SvJNR9CWFhud0. Remember to unzip all files.",
           savedir))
-  # Download file hash meta data
+  ### Download file hash meta data
   message("Finding data ...")
   datals = tryCatch(googledrive::drive_ls(googledrive::as_id("https://drive.google.com/drive/folders/1AHgTOzoYfyhsd6XimVuKq1jgLeyVBpWd")),
                     error = function(e) NULL)
-  if(is.issue(datals)){
+  if(is.issue(datals$id[1])){
     utils::browseURL("https://drive.google.com/drive/folders/14UPg7CvHDtvzNjvNgAULYnxZ018Xgf5H?usp=sharing",
                      browser = getOption("browser"),
                      encodeIfNeeded = FALSE)
@@ -244,15 +250,16 @@ hemibrain_download_neurons <- function(savedir = TRUE,
             Please follow this link: https://drive.google.com/drive/folders/14UPg7CvHDtvzNjvNgAULYnxZ018Xgf5H?usp=sharing,
             and add this folder to your Google Drive. If you do not have permission, you can contact us for access.")
   }
-  # Download neuronlist as a .rds file
+  ### Download neuronlist as a .rds file
   message("Downloading metadata ...")
   nlfh = paste0(savedir,"hemibrain_all_neurons_flow_polypre_centrifugal_synapses/hemibrain_all_neurons_flow_polypre_centrifugal_synapses.rds")
   download.file(sprintf("https://drive.google.com/uc?authuser=0&id=%s&export=download","19mpATVptH9n42yhmZybEYl9k9PndN4_G"),
                 destfile = nlfh)
-  # Download actual data
+  ### Download actual data
   message("Downloading data, ", nrow(datals)," files ...")
   metafh = paste0(savedir,"hemibrain_all_neurons_flow_polypre_centrifugal_synapses/data/")
-  download = googledrive_downloadmany(datals, dir = metafh, overwrite = overwrite)
+  download = googledrive_downloadmany(ls = datals, dir = metafh, overwrite = overwrite, OmitFailures = TRUE, ...)
+  message(length(unlist(download)),"/",nrow(datals)," data files successfully downloaded. Re-run to try remainder.")
   message("Download complete, files can be found here: ", savedir)
 }
 
@@ -262,8 +269,8 @@ googledrive_downloadmany <- function(ls, dir, overwrite = FALSE, ...){
   nat::nlapply(1:nrow(ls),
                function(i) googledrive_simpledownload(id=ls$id[i],
                                                       file = paste0(dir,ls$name[i]),
-                                                      overwrite = overwrite,
-                                                      ...))
+                                                      overwrite = overwrite),
+               ...)
 }
 
 # hidden
@@ -277,17 +284,18 @@ googledrive_simpledownload <- function(id, file, overwrite = FALSE){
     download.file(sprintf("https://drive.google.com/uc?authuser=0&id=%s&export=download",id),
                   destfile = file, quiet = TRUE)
   }
+  file
 }
 
 # hidden
-hemibrain_read_neurons_local <- function(savedir,
+hemibrain_read_neurons_local <- function(savedir = TRUE,
                                          neuron.split = "hemibrain_all_neurons_flow_polypre_centrifugal_synapses"){
   savedir = good_savedir(savedir = savedir,
                       neuron.split = neuron.split)
   if(length(list.files(path = savedir, pattern = ".rds"))){
     neurons.flow = nat::read.neuronlistfh(savedir,neuron.split,"/",neuron.split,".rds")
   }else{
-    stop("neuronlistfh file not found at: ", savedir)
+    stop("neuronlistfh (.rds) file not found at: ", savedir)
   }
   neurons.flow
 }
@@ -300,10 +308,12 @@ good_savedir <- function(savedir = TRUE,
     savedir = options()$hemibrain_data
   }
   if(is.issue(savedir)){
-    if(!dir.exists(savedir)){
-      stop("Please provide a path to which to save hemibrain data. This is best done by setting the option 'hemibrain_data'.
-         For example, by default this package tries to use: options(hemibrain_data = paste0(getwd(),'/hemibrain_data/')) ")
-    }
+    options(hemibrain_data = paste0(getwd(),"/data-raw/hemibrain_data/"))
+    warning("The following option has been set: options(hemibrain_data = paste0(getwd(),'/data-raw/hemibrain_data/')) ")
+  }
+  if(!dir.exists(savedir)){
+    dir.create(savedir, recursive = TRUE)
+    warning("Made new hemibrain save directory. Neurons destined to be saved in ", savedir)
   }
   suppressWarnings(dir.create(paste0(savedir,"/",neuron.split,"/data/"), recursive = TRUE))
   savedir

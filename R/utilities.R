@@ -18,14 +18,23 @@ nullToNA <- function(x) {
 # hidden
 break_into_subtrees <- function(x){
   nlist = nat::neuronlist()
-  for(i in 1:x$nTrees){
-    segs = x$SubTrees[[i]]
-    d = x$d[unique(unlist(segs)),]
-    rownames(d) = 1:nrow(d)
-    n = nat::as.neuron(d)
-    nlist  = c(nlist, nat::as.neuronlist(n))
+  if(x$nTrees>1){
+    for(i in 1:x$nTrees){
+      segs = x$SubTrees[[i]]
+      seg.points = unique(unlist(segs))
+      d = x$d[seg.points,]
+      if(nrow(d)>1){
+        rownames(d) = 1:nrow(d)
+        n = nat::as.neuron(d)
+        n$orig.PointNo = x$d$PointNo[match(seg.points, x$d$PointNo)]
+        nlist  = c(nlist, nat::as.neuronlist(n))
+      }
+    }
+    nlist
+  }else{
+    nat::as.neuronlist(x)
   }
-  nlist
+
 }
 
 # hidden

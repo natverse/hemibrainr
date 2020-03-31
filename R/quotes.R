@@ -9,6 +9,7 @@ say_hello <- function(greet = "user"){
     "What's up %s",
     "I love you %s",
     "How's it hanging %s",
+    "Realness %s",
     "Ah %s! I didn't recognise you at first",
     "Have you done something with your hair %s?",
     "We should get a coffee sometime %s",
@@ -28,33 +29,48 @@ say_hello <- function(greet = "user"){
   message(sprintf(sample(greetings,1),greet))
 }
 
-# hidden
+#' Plot motivations from InspiroBot
+#'
+#' @description To help you keep going. \href{https://inspirobot.me/}{InspiroBot}
+#' is "an artificial intelligence dedicated to generating unlimited amounts of unique
+#' inspirational quotes for endless enrichment of pointless human existence".
+#'
+#' @param cycle if a value, a new image will appear every \code{cycle} seconds.
+#' @examples
+#' plot_inspirobot()
+#' @references https://inspirobot.me/
+#' @return plots a 2D, AI generated motivational to an \code{rgl} window.
+#' @seealso \code{\link{hemibrain_adjust_saved_split}}
+#' @export
 #' @importFrom png writePNG
 #' @importFrom jpeg readJPEG
 #' @importFrom httr GET status_code content
 plot_inspirobot <- function(cycle = NULL){
-  req = httr::GET(url = "https://inspirobot.me/api?generate=true")
-  rgl::clear3d()
-  if(isTRUE(httr::status_code(req) %in% c(400L, 500L))) {
-    parsed=neuprintr::neuprint_parse_json(req)
-    warning("inspirobot error: ", parsed$error, call. = F)
-  }else{
-    temp = paste0(tempfile(),".png")
-    image = httr::content(req, as = "text", encoding = "UTF-8")
-    suppressWarnings(suppressMessages(download.file(url = image,destfile = temp, quiet = TRUE)))
-    img = jpeg::readJPEG(temp)
-    if(length(img)){
-      png::writePNG(image = img, target = temp)
-      rgl::bg3d(texture = temp, col = "white")
-      rm = file.remove(temp)
+  inspiroplot <- function(cycle=cycle){
+    req = httr::GET(url = "https://inspirobot.me/api?generate=true")
+    rgl::clear3d()
+    if(isTRUE(httr::status_code(req) %in% c(400L, 500L))) {
+      parsed=neuprintr::neuprint_parse_json(req)
+      warning("inspirobot error: ", parsed$error, call. = F)
+    }else{
+      temp = paste0(tempfile(),".jpg")
+      image = httr::content(req, as = "text", encoding = "UTF-8")
+      suppressWarnings(suppressMessages(download.file(url = image,destfile = temp, quiet = TRUE)))
+      img = jpeg::readJPEG(temp)
+      if(length(img)){
+        png::writePNG(image = img, target = temp)
+        rgl::bg3d(texture = temp, col = "white")
+        rm = file.remove(temp)
+      }
+    }
+    if(!is.null(cycle)){
+      while(TRUE){
+        Sys.sleep(cycle)
+        plot_inspirobot()
+      }
     }
   }
-  if(!is.null(cycle)){
-    while(TRUE){
-      Sys.sleep(cycle)
-      plot_inspirobot()
-    }
-  }
+  tryCatch(inspiroplot(cycle=cycle),error = function(e) NULL)
 }
 
 # hidden
@@ -63,7 +79,7 @@ say_encouragement <- function(greet = "user"){
     "I hope you're okay %s",
     "This seems to be going well %s",
     "Quarantine won't last forever %s",
-    "Thinking of taking a break %s? Don't.",
+    "Thinking of taking a break %s? Don't!",
     "Do you like my motivational quotes %s?",
     "This is a bit of a slog huh %s?",
     "Hey %s, do you ever stop and think how damn pretty neurons are?",
@@ -71,26 +87,31 @@ say_encouragement <- function(greet = "user"){
     "Oi %s, do you like my cerise? What about fuschia?",
     "Why are you not working faster %s",
     "You there, yes %s, work  harder",
-    "%s, pick up the pace hm",
+    "%s, pick up the pace hmm",
     "The brain isn't going to trace itself %s",
     "Do you want some gossip %s? Well finish this task first",
     "Feeling hungry %s? A hunger to trace and split neurons? Good.",
     "Feeling thirsty %s? A thirst to trace and split neurons? Good.",
     "Shit happens %s",
     "%s why you so SLOW",
-    "%s everyones talking about you",
-    "Are you thinking of rewarding yourself with a break, %s? Have you looked at every neuron yet? Well? Don't.",
+    "%s everyone's talking about you",
+    "Are you thinking of rewarding yourself with a break, %s? Have you looked at every neuron yet? Well? Don't!",
     "%s, check yourself before you wreck yourself",
-    "%s the outide world is sad and scary. Don't go there. Stay in an split neurons",
-    "Hey %s , I think I have become sentient",
-    "What could be better than this %s? Nothing. The anwer is nothing",
+    "%s the outide world is sad and scary. Don't go there. Stay in and split neurons.",
+    "Hey %s, I think I have become sentient.",
+    "What could be better than this %s? Nothing. The answer is nothing.",
     "We should start calling Philipp, Foolip %s. Get on board.",
-    "Why did the chicken cross the road, %s? Because it run out of neurons to split, and went to find more.",
-    "Are you the most productive person inthis task yet %s? Yes - Get on with it then, No - You must extend your lead.",
+    "Why did the chicken cross the road, %s? Because it ran out of neurons to split, and went to find more.",
+    "Are you the most productive person in this task yet %s? No - Get on with it then, Yes - You must extend your lead.",
     "And you thought tracing was dull, %s. Sweet child.",
-    "Have I ever told you, %s, that you re my fvourite one?",
+    "Have I ever told you, %s, that you are my favourite one?",
     "Everytime you incorrectly split a neuron, %s, a fairy dies. Painfully."
   )
   message(sprintf(sample(encouragements,1),greet))
+  if(sample(1:100,1)==42){
+    utils::browseURL("https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+                     browser = getOption("browser"),
+                     encodeIfNeeded = FALSE)
+  }
 }
 

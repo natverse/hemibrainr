@@ -6,15 +6,15 @@
 \usage{
 hemibrain_adjust_saved_split(
   bodyids = NULL,
+  phases = c("complete", "I", "II", "III"),
   db = NULL,
   check_thresh = 1,
   batch_size = 10,
-  brain = NULL,
+  brain = hemibrain.surf,
   update_regularly = TRUE,
   motivate = TRUE,
   clean = TRUE,
-  Wait = TRUE,
-  sleep = 0.1,
+  prioritise = TRUE,
   selected_file = "1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E",
   selected_col = "#fadadd",
   ...
@@ -22,6 +22,11 @@ hemibrain_adjust_saved_split(
 }
 \arguments{
 \item{bodyids}{bodyids which specify individual neurons, as used in the relevant neuPrint project}
+
+\item{phases}{which Phases of the split check process you want to engage with. Phase I involves choosing which neurons need to be manually split,
+making notes on them and makring if they are truncated by by the volume or not Phase II involves manually splitting those neurons that have been flagges as
+as in need to splitting. And Phase III involves reveiwing the manual splits that have been made, and re-splitting neurons if needs be. The default, complete,
+is to go through all three phases with sequential batches of neurons, of \code{batch_size}.}
 
 \item{db}{a \code{neuronlist} object to act as a database of neuron skeletons. If you want to provide all
 hemibrain neurons that could possibly be split, then you can use \code{\link{hemibrain_download_neurons}} to download
@@ -46,9 +51,7 @@ reading the Google Sheet introduces a prohibitive time delay.}
 
 \item{clean}{whether or not to set synapse-less branches to \code{Label = 0}.}
 
-\item{Wait}{logical indicating that there should be a pause between each displayed neuron}
-
-\item{sleep}{time to pause between each displayed neuron when Wait=TRUE}
+\item{prioritise}{whether or not to look at higher priority neurons first. Initial, this means oflactory system neurons.}
 
 \item{selected_file}{an optional path to a yaml file that already contains a selection}
 
@@ -57,7 +60,7 @@ reading the Google Sheet introduces a prohibitive time delay.}
 \item{...}{additional arguments passed to plotting functions, such as \code{plot3d_split} and \code{nlscan_split}}
 }
 \value{
-The neuron/neuronlist object with axon/dendrite info assigned in SWC format to neuron$d
+Updates a Google Sheet which records whether neurons have been checked in one tab ("roots") and records actual manually made splits in a second tab ("manual").
 }
 \description{
 A 3D interactive pipeline for reviewing our \code{\link{hemibrain_precomputed_splitpoints}}. Each user can
