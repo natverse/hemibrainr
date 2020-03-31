@@ -757,8 +757,10 @@ hemibrain_flow_centrality.neuronlist <- function(x, splitpoints = hemibrainr::he
 #' @seealso \code{\link{flow_centrality}}, \code{\link{add_field}}
 #' @export
 add_Label <-function(x, PointNo = NULL, Label = 2, erase = FALSE, ...) UseMethod("add_Label")
+
 #' @export
 add_Label.neuron <- function(x, PointNo = NULL, Label = 2, erase = FALSE, ...){
+  Label = as.numeric(Label[1])
   if(!is.null(PointNo)){
     if(erase){
       erasure = x$d$PointNo[x$d$Label==Label]
@@ -779,9 +781,15 @@ add_Label.neuron <- function(x, PointNo = NULL, Label = 2, erase = FALSE, ...){
   }
   x
 }
+
 #' @export
 add_Label.neuronlist <- function(x, PointNo = NULL, Label = 2, erase = FALSE, ...){
-  nat::nlapply(x, add_Label.neuron, PointNo = PointNo, Label = Label, erase = erase, ...)
+  nat::nlapply(x,
+               add_Label.neuron,
+               PointNo = PointNo,
+               Label = Label,
+               erase = erase,
+               ...)
 }
 
 #' Add a field to neuron objects (inc. in a neuronlist)

@@ -466,6 +466,7 @@ splitcheck_phaseIII <- function(mes = NULL,
       message("Select (s) which neurons to save")
       mes.sp = hemibrain_splitpoints(x = mes)
       mes2 = hemibrain_use_splitpoints(x = mes, df = mes.sp)
+      message("Note: You must select a neuron (s) in order to save it.")
       new.select = nlscan_split(mes2)
       message("Manually edited neurons: ", length(mes2), " neurons")
       if(!length(new.select)){
