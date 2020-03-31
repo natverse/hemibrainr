@@ -354,6 +354,7 @@ internal_assignments <- function(x){
 
 
 # hidden
+#' @importFrom rgl plot3d
 cycle_branches <- function(x, brain = NULL){
   nulls = subset(rownames(x$d), !x$d$Label %in% c(2,3))
   message("Removing primary neurite and linker cable to find sub-branches ...")
