@@ -42,7 +42,8 @@ Imports:
     httr,
     jpeg,
     png,
-    googledrive
+    googledrive,
+    jsonlite
 Remotes: 
     natverse/neuprintr,
     tidyverse/googlesheets4
