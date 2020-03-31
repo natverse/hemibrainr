@@ -99,7 +99,8 @@ setup_splitcheck_sheet <-function(ss = "1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgU
 #' @examples
 #' \donttest{
 #' \dontrun{
-#' # Plot the split to check it, correcting any errors, and saving your changes
+#' # Plot splits to check them, correcting any errors, and saving your changes
+#' nat::nopen3d()
 #' hemibrain_adjust_saved_split()
 #' }}
 #' @export
@@ -261,6 +262,11 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
       }
       ### Update our checks on Google Sheet
       message("Updating task completion ...")
+      if(phases == "I" & update_regularly){
+        message("Checking status of task by reading Google Sheet ...")
+        if(motivate){plot_inspirobot()}
+        gs = googlesheets4::read_sheet(ss = selected_file, sheet = "roots")
+      }
       rows = match(names(someneuronlist), as.character(undone$bodyid))
       splits = as.character(gs$split[rows])
       cuts = as.character(gs$cut[rows])
@@ -454,17 +460,30 @@ splitcheck_phaseII <- function(selected,
 splitcheck_phaseIII <- function(mes = NULL,
                                 selected = NULL,
                                 manual = NULL,
+                                phases = c("complete", "I", "II", "III"),
                                 ...){
+  phases = match.arg(phases)
   if(is.null(mes)){
-    mes = hemibrain_use_splitpoints(selected, df = manual)
+    selected = intersect(selected, manual$bodyid)
+    if(!is.issue(selected)){
+      if(motivate){plot_inspirobot()}
+      message("Reading ",length(selected)," neurons to check manual split")
+      sel = hemibrain_read_neurons(as.character(selected), microns = FALSE, ...)
+      mes = hemibrain_use_splitpoints(sel, df = manual)
+    }
   }
   if(length(mes)){
-    save = hemibrain_choice(prompt = "Are you satisfied with your edits (y)? Or do you want to review them (n)? ")
+    if(phases!="III"){
+      save = hemibrain_choice(prompt = "Are you satisfied with your edits (y)? Or do you want to review them (n)? ")
+      mes.sp = hemibrain_splitpoints(x = mes)
+    }else{
+      save = FALSE
+      mes.sp = subset(manual, bodyid %in% names(mes))
+    }
     new.select = names(mes)
     while(!save){
       reset3d(brain=brain)
       message("Select (s) which neurons to save")
-      mes.sp = hemibrain_splitpoints(x = mes)
       mes2 = hemibrain_use_splitpoints(x = mes, df = mes.sp)
       message("Note: You must select a neuron (s) in order to save it.")
       new.select = nlscan_split(mes2)
