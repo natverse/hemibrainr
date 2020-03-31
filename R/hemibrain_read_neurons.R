@@ -207,7 +207,7 @@ prune_synapseless_branches <- function(x, neuron = TRUE){
 #' neuronlist is saved as a \code{nat::neuronlistfh} object so certain neurons may be read from it without loading
 #' the entire, large neuronlist into memory. In order to do this, you need to add the following folder to your
 #' Google Drive: https://drive.google.com/drive/folders/14UPg7CvHDtvzNjvNgAULYnxZ018Xgf5H?usp=sharing.
-#' Contact us if you do not, but would like, permission.
+#' Contact us if you do not have, but would like, permission.
 #'
 #' @param savedir where to save the \code{.rds} and meta data files for the \code{nat::neuronlistfh} object
 #' @param overwrite whether or not to overwrite the existing saved files, within \code{savedir}.
