@@ -2,13 +2,21 @@ name2cbf <- function(x) stringr::str_match(x, '([AP][DV][ML][0-9]+)')[,2]
 
 #' Return consistent cell body fiber annotation for neurons
 #'
-#' @details New style cell body fiber names have the
+#' @details New style cell body fiber names are of the form \code{ADL01} and
+#'   match the regular expression \code{'([AP][DV][ML][0-9]+)'}. As of hemibrain
+#'   v1.0.1 these seem to be variably located in the cellBodyFiber and instance
+#'   fields and in some cases are missing from both.
 #'
 #' @param x A vector of bodyids, a query or a data.frame compatible with
 #'   \code{\link{neuprint_ids}}
+#' @param meta Whether to return just the name of the cell body fibers (when
+#'   \code{meta=FALSE}, the default) or a data frame with additional metadata,
+#'   as returned by \code{\link{neuprint_get_meta}}.
 #' @param ... Additional arguments passed to \code{\link{neuprint_get_meta}}
 #'
-#' @return a vector of \bold{new style} cell body fiber names.
+#' @return a vector of \bold{new style} cell body fiber names or a data.frame
+#'   (as returned by \code{\link{neuprint_get_meta}} with an extra column
+#'   \code{cbf} containing the preferred cell body fiber names).
 #' @export
 #' @seealso \code{\link{neuprint_get_meta}}, \code{\link{neuprint_ids}}
 #' @examples
@@ -18,14 +26,16 @@ name2cbf <- function(x) stringr::str_match(x, '([AP][DV][ML][0-9]+)')[,2]
 #' # Do these come from two different hemilineages?
 #' table(hemibrain_cbf("lPN"))
 #' }
-hemibrain_cbf <- function(x, ...) {
+hemibrain_cbf <- function(x, ..., meta=FALSE) {
   if(!is.data.frame(x)) {
     x <- neuprint_get_meta(x, ...)
   }
   # cbf from name should be preferred if it exists
   cbf.name=name2cbf(x$name)
   cbf.cbf=name2cbf(x$cellBodyFiber)
-  ifelse(is.na(cbf.name), cbf.cbf, cbf.name)
+  x$cbf=ifelse(is.na(cbf.name), cbf.cbf, cbf.name)
+
+  if(isTRUE(meta)) x else x$cbf
 }
 
 #' Return body ids for large classes of neurons

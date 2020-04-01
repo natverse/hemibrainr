@@ -54,7 +54,7 @@ hemibrain_read_neurons<-function(x = NULL,
   if(isTRUE(savedir)){
     savedir = options()$hemibrain_data
     if(length(list.files(path = savedir, pattern = ".rds"))){
-      neurons.flow = hemibrain_read_neurons_local(savedir = savedir)
+      neurons.flow.fh = hemibrain_read_neurons_local(savedir = savedir)
       neurons.flow = neurons.flow.fh[as.character(x)]
     }
   }else{
@@ -63,8 +63,8 @@ hemibrain_read_neurons<-function(x = NULL,
     neurons.flow = hemibrain_remove_bad_synapses(neurons.flow, ...)
   }
   neurons.flow = hemibrain_clean_skeleton(neurons.flow, rval = "neuron", ...)
-  hemibrain_metrics = hemibrain_metrics[,!colnames(hemibrain_metrics)%in%colnames(neurons.flow[,])]
-  df = cbind(neurons.flow[,], hemibrain_metrics[names(neurons.flow),])
+  hemibrain_metrics = hemibrainr::hemibrain_metrics[,!colnames(hemibrainr::hemibrain_metrics)%in%colnames(neurons.flow[,])]
+  df = cbind(neurons.flow[,], hemibrainr::hemibrain_metrics[names(neurons.flow),])
   rownames(df) = names(neurons.flow)
   if(microns){
     neurons.flow = scale_neurons(neurons.flow, scaling = (8/1000))
@@ -91,7 +91,7 @@ scale_neurons.neuronlist = function(x, scaling = (8/1000), ...){
 #' Remove erroneous branchlets to beautify neuron skeletons
 #'
 #' @description Remove synapse-less branches from axons and dendrites, and clean up
-#' the primary neurite and primary dendrite (linker) of a neuron. Givne neurons must have been split
+#' the primary neurite and primary dendrite (linker) of a neuron. Given neurons must have been split
 #' by either \code{\link{flow_centrality}} or \code{\link{hemibrain_flow_centrality}}.
 #' \code{\link{hemibrain_flow_centrality}} to re-root and split neurons into putative
 #' axons and dendrites. Optionally, it may also convert neurons from their raw voxel
@@ -99,7 +99,7 @@ scale_neurons.neuronlist = function(x, scaling = (8/1000), ...){
 #'
 #' @param x a \code{nat::neuronlist} or \code{nat::neuron} object
 #' @param rval whether to return a pruned neuron, a neuron with the synapse-less branches
-#' set to \code{Label = 0} or the \code{PointNo} for those brnahces.
+#' set to \code{Label = 0} or the \code{PointNo} for those branches.
 #' @param ... methods passed to \code{nat::nlapply}.
 #'
 #' @inherit flow_centrality return
@@ -201,16 +201,22 @@ prune_synapseless_branches <- function(x, neuron = TRUE){
 }
 
 
-#' Download all automatically split neurons from the hemibrain project
+#'Download all automatically split neurons from the hemibrain project
 #'
-#' @description Download all the automatically split neurons from the hemibrain project, from Google Drive. The
-#' neuronlist is saved as a \code{nat::neuronlistfh} object so certain neurons may be read from it without loading
-#' the entire, large neuronlist into memory. In order to do this, you need to add the following folder to your
-#' Google Drive: https://drive.google.com/drive/folders/14UPg7CvHDtvzNjvNgAULYnxZ018Xgf5H?usp=sharing.
-#' Contact us if you do not, but would like, permission.
+#'@description Download all the automatically split neurons from the hemibrain
+#'  project, from Google Drive. The neuronlist is saved as a
+#'  \code{nat::neuronlistfh} object so certain neurons may be read from it
+#'  without loading the entire, large neuronlist into memory. In order to do
+#'  this, you need to add the following folder to your Google Drive:
+#'  \url{https://drive.google.com/drive/folders/14UPg7CvHDtvzNjvNgAULYnxZ018Xgf5H?usp=sharing}.
+#'   Contact us if you do not have, but would like, permission.
 #'
-#' @param savedir where to save the \code{.rds} and meta data files for the \code{nat::neuronlistfh} object
-#' @param overwrite whether or not to overwrite the existing saved files, within \code{savedir}.
+#'@param savedir where to save the \code{.rds} and meta data files for the
+#'  \code{nat::neuronlistfh} object
+#'@param overwrite whether or not to overwrite the existing saved files, within
+#'  \code{savedir}.
+#'@param ... Additional arguments passed to \code{\link{nlapply}} when iterating
+#'  over neurons to download.
 #'
 #' @examples
 #' \donttest{
@@ -226,13 +232,16 @@ prune_synapseless_branches <- function(x, neuron = TRUE){
 #' # Get specific neurons
 #' neurons = hemibrain_read_neurons("1702323386", savedir = TRUE)
 #'}}
-#' @export
-#' @seealso \code{\link{hemibrain_splitpoints}}, \code{\link{hemibrain_flow_centrality}},
-#' \code{\link{hemibrain_precomputed_splitpoints}}, \code{\link{hemibrain_metrics}},\code{\link{hemibrain_remove_bad_synapses}}
-#' @importFrom utils download.file
-#' @importFrom googledrive drive_ls as_id
+#'@export
+#'@seealso \code{\link{hemibrain_splitpoints}},
+#'  \code{\link{hemibrain_flow_centrality}},
+#'  \code{\link{hemibrain_precomputed_splitpoints}},
+#'  \code{\link{hemibrain_metrics}},\code{\link{hemibrain_remove_bad_synapses}}
+#'@importFrom utils download.file
+#'@importFrom googledrive drive_ls as_id
 hemibrain_download_neurons <- function(savedir = TRUE,
-                                       overwrite = FALSE
+                                       overwrite = FALSE,
+                                       ...
                                        ){
   savedir = good_savedir(savedir=savedir)
   message(sprintf("If this takes to much time, you can also download the relevant Google Drive folder manually. To do so, open this link: %s and then download the folder to this location on your computer: ",

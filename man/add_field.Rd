@@ -20,7 +20,7 @@ possibly \code{catmaid::read.neurons.catmaid}.}
 
 \item{...}{methods sent to \code{nat::nlapply}}
 
-\item{entries}{a vector/list of entries, tha same length as \code{x}.
+\item{entries}{a vector/list of entries, the same length as \code{x}.
 Each neuron in \code{x} will have the entry in entries as the same index, added to it
 as \code{field}.}
 }

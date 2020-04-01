@@ -33,7 +33,7 @@ Extract a single data frame describing synapse/connection types,
   only return connections between neurons given in the argument \code{x}.
 }
 \examples{
-\donttest{
+\dontrun{
 # Choose a bodyids
 al.local.neurons = c("1702323386", "2068966051", "2069311379", "1702305987", "5812996027",
  "1702336197", "1793744512", "1976565858", "2007578510", "2101339904",

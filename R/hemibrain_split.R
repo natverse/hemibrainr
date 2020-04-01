@@ -77,6 +77,8 @@
 #' "793702856", "451644891", "482002701", "391631218", "390948259",
 #' "390948580", "452677169", "511262901", "422311625", "451987038"
 #' )
+#' # for documentation purposes only run first 5 examples
+#' tough=tough[1:5]
 #'
 #' # Get neurons
 #' neurons = neuprintr::neuprint_read_neurons(tough)
@@ -504,6 +506,8 @@ hemibrain_splitpoints <- function(x){
 #' "793702856", "451644891", "482002701", "391631218", "390948259",
 #' "390948580", "452677169", "511262901", "422311625", "451987038"
 #' )
+#' # for documentation purposes only run first 5 examples
+#' tough=tough[1:5]
 #'
 #' # Get neurons
 #' neurons = neuprintr::neuprint_read_neurons(tough)
@@ -798,7 +802,7 @@ add_Label.neuronlist <- function(x, PointNo = NULL, Label = 2, erase = FALSE, ..
 #'
 #' @inheritParams flow_centrality
 #' @param entry item to add.
-#' @param entries a vector/list of entries, tha same length as \code{x}.
+#' @param entries a vector/list of entries, the same length as \code{x}.
 #' Each neuron in \code{x} will have the entry in entries as the same index, added to it
 #' as \code{field}.
 #' @param field name of new field, or field to overwrite.

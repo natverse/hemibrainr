@@ -29,7 +29,7 @@ metrics.}
 \item{...}{methods sent to \code{nat::nlapply}}
 }
 \value{
-a \code{data.frame} of metrics broken down by putative axon and dendrute, and their overlap_locality scores
+a \code{data.frame} of metrics broken down by putative axon and dendrite, and their overlap_locality scores
 }
 \description{
 Calculates/retrieves useful metrics for the axon and dendrites

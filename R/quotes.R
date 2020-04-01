@@ -50,7 +50,8 @@ plot_inspirobot <- function(cycle = NULL){
     req = httr::GET(url = "https://inspirobot.me/api?generate=true")
     rgl::clear3d()
     if(isTRUE(httr::status_code(req) %in% c(400L, 500L))) {
-      parsed=neuprintr::neuprint_parse_json(req)
+      text <- httr::content(req, as = "text", encoding = "UTF-8")
+      parsed=jsonlite::fromJSON(text, simplifyVector = FALSE)
       warning("inspirobot error: ", parsed$error, call. = F)
     }else{
       temp = paste0(tempfile(),".jpg")

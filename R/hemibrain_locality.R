@@ -42,7 +42,7 @@
 #' hist(hcm$overlap_locality, breaks = 100)
 #'
 #'}
-#' @return a \code{data.frame} of metrics broken down by putative axon and dendrute, and their overlap_locality scores
+#' @return a \code{data.frame} of metrics broken down by putative axon and dendrite, and their overlap_locality scores
 #' @seealso \code{\link{hemibrain_overlap_locality}}
 #' @export
 hemibrain_compartment_metrics <- function(x, resample = 10, delta = 62.5, locality = TRUE, ...){
