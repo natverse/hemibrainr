@@ -506,6 +506,8 @@ hemibrain_splitpoints <- function(x){
 #' "793702856", "451644891", "482002701", "391631218", "390948259",
 #' "390948580", "452677169", "511262901", "422311625", "451987038"
 #' )
+#' # for documentation purposes only run first 5 examples
+#' tough=tough[1:5]
 #'
 #' # Get neurons
 #' neurons = neuprintr::neuprint_read_neurons(tough)
