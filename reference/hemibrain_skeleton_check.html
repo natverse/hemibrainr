@@ -194,6 +194,9 @@ message the moment there is an error.</p></td>
 <span class='st'>"390948580"</span>, <span class='st'>"452677169"</span>, <span class='st'>"511262901"</span>, <span class='st'>"422311625"</span>, <span class='st'>"451987038"</span>
 )
 
+<span class='co'># just use a subset for documentation purposes</span>
+<span class='no'>ids</span><span class='kw'>=</span><span class='no'>ids</span>[<span class='fl'>1</span>:<span class='fl'>5</span>]
+
 <span class='co'># Read in these neurons</span>
 <span class='no'>neurons</span> <span class='kw'>=</span> <span class='kw pkg'>neuprintr</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/neuprintr/man/neuprint_read_neurons.html'>neuprint_read_neurons</a></span>(<span class='no'>ids</span>)
 
@@ -203,7 +206,7 @@ message the moment there is an error.</p></td>
 <span class='co'>## give you the ROI for each point and synapse in a neuron's skeleton!!</span>
 
 <span class='co'># Re-root</span>
-<span class='no'>neuron.checked</span> <span class='kw'>=</span> <span class='fu'>hemibrain_skeleton_check</span>(<span class='no'>neurons</span>, <span class='kw'>meshes</span> <span class='kw'>=</span> <span class='no'>hemibrain.rois</span>)</div><div class='output co'>#&gt; <span class='message'>Re-rooting 3 neurons without a soma</span></div><div class='output co'>#&gt; <span class='message'>Removing synapses at somas and along primary neurite for 30 neurons</span></div><div class='input'>
+<span class='no'>neuron.checked</span> <span class='kw'>=</span> <span class='fu'>hemibrain_skeleton_check</span>(<span class='no'>neurons</span>, <span class='kw'>meshes</span> <span class='kw'>=</span> <span class='no'>hemibrain.rois</span>)</div><div class='output co'>#&gt; <span class='message'>Re-rooting 2 neurons without a soma</span></div><div class='output co'>#&gt; <span class='message'>Removing synapses at somas and along primary neurite for 5 neurons</span></div><div class='input'>
 <span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
 <span class='co'># Let's check that this worked</span>
 <span class='kw pkg'>nat</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/nat/man/nopen3d.html'>nopen3d</a></span>()

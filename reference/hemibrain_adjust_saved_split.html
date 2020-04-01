@@ -143,7 +143,7 @@ the <a href='https://docs.google.com/spreadsheets/d/1YjkVjokXL4p4Q6BR-rGGGKWecXU
   <span class='kw'>db</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>check_thresh</span> <span class='kw'>=</span> <span class='fl'>1</span>,
   <span class='kw'>batch_size</span> <span class='kw'>=</span> <span class='fl'>10</span>,
-  <span class='kw'>brain</span> <span class='kw'>=</span> <span class='no'>hemibrain.surf</span>,
+  <span class='kw'>brain</span> <span class='kw'>=</span> <span class='kw pkg'>hemibrainr</span><span class='kw ns'>::</span><span class='no'><a href='hemibrain.surf.html'>hemibrain.surf</a></span>,
   <span class='kw'>update_regularly</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>motivate</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>clean</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
@@ -163,8 +163,8 @@ the <a href='https://docs.google.com/spreadsheets/d/1YjkVjokXL4p4Q6BR-rGGGKWecXU
     <tr>
       <th>phases</th>
       <td><p>which Phases of the split check process you want to engage with. Phase I involves choosing which neurons need to be manually split,
-making notes on them and makring if they are truncated by by the volume or not Phase II involves manually splitting those neurons that have been flagges as
-as in need to splitting. And Phase III involves reveiwing the manual splits that have been made, and re-splitting neurons if needs be. The default, complete,
+making notes on them and marking if they are truncated by by the volume or not Phase II involves manually splitting those neurons that have been flagged as
+as in need to splitting. And Phase III involves reviewing the manual splits that have been made, and re-splitting neurons if needs be. The default, complete,
 is to go through all three phases with sequential batches of neurons, of <code>batch_size</code>.</p></td>
     </tr>
     <tr>
@@ -181,8 +181,8 @@ If a skeleton has already been checked by this many users or more, it will not b
     </tr>
     <tr>
       <th>batch_size</th>
-      <td><p>when reviewing splits for hemibrain neurons, we examine neurons in batchs of this size. We then go through two phases,
-choosing neurons that are incorrect in some way (wrongly split, cropped) and then editing them manually, before savign them to a Google Sheet.
+      <td><p>when reviewing splits for hemibrain neurons, we examine neurons in batches of this size. We then go through two phases,
+choosing neurons that are incorrect in some way (wrongly split, cropped) and then editing them manually, before saving them to a Google Sheet.
 You may not have access to this Google Sheet, in which case you will not be able to contribute manual splits for neurons to this package. Contact us
 if you would like access.</p></td>
     </tr>
@@ -193,7 +193,7 @@ it is recommended to use <code>hemibrain.surf</code> (which is in raw voxel spac
     </tr>
     <tr>
       <th>update_regularly</th>
-      <td><p>whether or not to read from the Google Sheet database regulalry, to avoid duplicating manual splits. Should be set to <code>TRUE</code> unless
+      <td><p>whether or not to read from the Google Sheet database regularly, to avoid duplicating manual splits. Should be set to <code>TRUE</code> unless
 reading the Google Sheet introduces a prohibitive time delay.</p></td>
     </tr>
     <tr>
@@ -206,7 +206,7 @@ reading the Google Sheet introduces a prohibitive time delay.</p></td>
     </tr>
     <tr>
       <th>prioritise</th>
-      <td><p>whether or not to look at higher priority neurons first. Initial, this means oflactory system neurons.</p></td>
+      <td><p>whether or not to look at higher priority neurons first. Initial, this means olfactory system neurons.</p></td>
     </tr>
     <tr>
       <th>selected_file</th>
