@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>hemibrainr: Code for working with data from Janelia FlyEM's hemibrain project — hemibrainr-package • hemibrainr</title>
+<title>Bodyids for neuron classes — classed.ids • hemibrainr</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,9 +46,9 @@
 
 
 
-<meta property="og:title" content="hemibrainr: Code for working with data from Janelia FlyEM's hemibrain project — hemibrainr-package" />
-<meta property="og:description" content="Useful functions for pre-processing and analysing data from Janelia FlyEM's hemibrain project &amp;lt;https://www.janelia.org/project-team/flyem/hemibrain&amp;gt;. 
-             Data can be accessed from a neuPrint instance &amp;lt;https://neuprint.janelia.org/&amp;gt; using the R package neuprintr." />
+<meta property="og:title" content="Bodyids for neuron classes — classed.ids" />
+<meta property="og:description" content="Bodyids for neuron classes. Hard saved equivalent for class2ids.
+However, you should use class2ids for the most up-to-date information." />
 <meta property="og:image" content="/logo.svg" />
 
 
@@ -117,28 +117,53 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>hemibrainr: Code for working with data from Janelia FlyEM's hemibrain project</h1>
-    <small class="dont-index">Source: <a href='https://github.com/flyconnectome/hemibrainr/blob/master/R/hemibrainr-package.R'><code>R/hemibrainr-package.R</code></a></small>
-    <div class="hidden name"><code>hemibrainr-package.Rd</code></div>
+    <h1>Bodyids for neuron classes</h1>
+    <small class="dont-index">Source: <a href='https://github.com/flyconnectome/hemibrainr/blob/master/R/hemibrain_data.R'><code>R/hemibrain_data.R</code></a></small>
+    <div class="hidden name"><code>classed.ids.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Useful functions for pre-processing and analysing data from Janelia FlyEM's hemibrain project &lt;https://www.janelia.org/project-team/flyem/hemibrain&gt;. 
-             Data can be accessed from a neuPrint instance &lt;https://neuprint.janelia.org/&gt; using the R package neuprintr.</p>
+    <p>Bodyids for neuron classes. Hard saved equivalent for <code><a href='class2ids.html'>class2ids</a></code>.
+However, you should use <code><a href='class2ids.html'>class2ids</a></code> for the most up-to-date information.</p>
     </div>
 
+    <pre class="usage"><span class='no'>rn.ids</span>
+
+<span class='no'>orn.ids</span>
+
+<span class='no'>hrn.ids</span>
+
+<span class='no'>pn.ids</span>
+
+<span class='no'>upn.ids</span>
+
+<span class='no'>mpn.ids</span>
+
+<span class='no'>vppn.ids</span>
+
+<span class='no'>dan.ids</span>
+
+<span class='no'>mbon.ids</span>
+
+<span class='no'>alln.ids</span></pre>
 
 
+    <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
+
+    <p>An object of class <code>character</code> of length 2545.</p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>neuPrint bodyids for neurons that the FlyConnectome groups at the University of Cambridge, dept. Zoology,
+have determined to fall into different classes.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p>Useful links:</p><ul>
-<li><p><a href='https://github.com/flyconnectome/hemibrainr'>https://github.com/flyconnectome/hemibrainr</a></p></li>
-<li><p><a href='https://flyconnectome.github.io/hemibrainr'>https://flyconnectome.github.io/hemibrainr</a></p></li>
-<li><p>Report bugs at <a href='https://github.com/flyconnectome/hemibrainr/issues'>https://github.com/flyconnectome/hemibrainr/issues</a></p></li>
-</ul>
+    <div class='dont-index'><p><code><a href='class2ids.html'>class2ids</a></code></p></div>
 
-</div>
-
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='no'>rn.ids</span>)</div><div class='output co'>#&gt; [1] "1888183031" "1888183512" "1888528200" "1918885778" "1918889952"
+#&gt; [6] "1978908720"</div><div class='input'># }
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

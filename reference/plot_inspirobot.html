@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>hemibrainr: Code for working with data from Janelia FlyEM's hemibrain project — hemibrainr-package • hemibrainr</title>
+<title>Plot motivations from InspiroBot — plot_inspirobot • hemibrainr</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,9 +46,10 @@
 
 
 
-<meta property="og:title" content="hemibrainr: Code for working with data from Janelia FlyEM's hemibrain project — hemibrainr-package" />
-<meta property="og:description" content="Useful functions for pre-processing and analysing data from Janelia FlyEM's hemibrain project &amp;lt;https://www.janelia.org/project-team/flyem/hemibrain&amp;gt;. 
-             Data can be accessed from a neuPrint instance &amp;lt;https://neuprint.janelia.org/&amp;gt; using the R package neuprintr." />
+<meta property="og:title" content="Plot motivations from InspiroBot — plot_inspirobot" />
+<meta property="og:description" content="To help you keep going. InspiroBot
+is &quot;an artificial intelligence dedicated to generating unlimited amounts of unique
+inspirational quotes for endless enrichment of pointless human existence&quot;." />
 <meta property="og:image" content="/logo.svg" />
 
 
@@ -117,28 +118,40 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>hemibrainr: Code for working with data from Janelia FlyEM's hemibrain project</h1>
-    <small class="dont-index">Source: <a href='https://github.com/flyconnectome/hemibrainr/blob/master/R/hemibrainr-package.R'><code>R/hemibrainr-package.R</code></a></small>
-    <div class="hidden name"><code>hemibrainr-package.Rd</code></div>
+    <h1>Plot motivations from InspiroBot</h1>
+    <small class="dont-index">Source: <a href='https://github.com/flyconnectome/hemibrainr/blob/master/R/quotes.R'><code>R/quotes.R</code></a></small>
+    <div class="hidden name"><code>plot_inspirobot.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Useful functions for pre-processing and analysing data from Janelia FlyEM's hemibrain project &lt;https://www.janelia.org/project-team/flyem/hemibrain&gt;. 
-             Data can be accessed from a neuPrint instance &lt;https://neuprint.janelia.org/&gt; using the R package neuprintr.</p>
+    <p>To help you keep going. <a href='https://inspirobot.me/'>InspiroBot</a>
+is "an artificial intelligence dedicated to generating unlimited amounts of unique
+inspirational quotes for endless enrichment of pointless human existence".</p>
     </div>
 
+    <pre class="usage"><span class='fu'>plot_inspirobot</span>(<span class='kw'>cycle</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
 
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>cycle</th>
+      <td><p>if a value, a new image will appear every <code>cycle</code> seconds.</p></td>
+    </tr>
+    </table>
 
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>plots a 2D, AI generated motivational to an <code>rgl</code> window.</p>
+    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
+
+    <p>https://inspirobot.me/</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p>Useful links:</p><ul>
-<li><p><a href='https://github.com/flyconnectome/hemibrainr'>https://github.com/flyconnectome/hemibrainr</a></p></li>
-<li><p><a href='https://flyconnectome.github.io/hemibrainr'>https://flyconnectome.github.io/hemibrainr</a></p></li>
-<li><p>Report bugs at <a href='https://github.com/flyconnectome/hemibrainr/issues'>https://github.com/flyconnectome/hemibrainr/issues</a></p></li>
-</ul>
+    <div class='dont-index'><p><code><a href='hemibrain_adjust_saved_split.html'>hemibrain_adjust_saved_split</a></code></p></div>
 
-</div>
-
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='fu'>plot_inspirobot</span>()</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>hemibrainr: Code for working with data from Janelia FlyEM's hemibrain project — hemibrainr-package • hemibrainr</title>
+<title>Download all automatically split neurons from the hemibrain project — hemibrain_download_neurons • hemibrainr</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,9 +46,14 @@
 
 
 
-<meta property="og:title" content="hemibrainr: Code for working with data from Janelia FlyEM's hemibrain project — hemibrainr-package" />
-<meta property="og:description" content="Useful functions for pre-processing and analysing data from Janelia FlyEM's hemibrain project &amp;lt;https://www.janelia.org/project-team/flyem/hemibrain&amp;gt;. 
-             Data can be accessed from a neuPrint instance &amp;lt;https://neuprint.janelia.org/&amp;gt; using the R package neuprintr." />
+<meta property="og:title" content="Download all automatically split neurons from the hemibrain project — hemibrain_download_neurons" />
+<meta property="og:description" content="Download all the automatically split neurons from the hemibrain
+ project, from Google Drive. The neuronlist is saved as a
+ nat::neuronlistfh object so certain neurons may be read from it
+ without loading the entire, large neuronlist into memory. In order to do
+ this, you need to add the following folder to your Google Drive:
+ https://drive.google.com/drive/folders/14UPg7CvHDtvzNjvNgAULYnxZ018Xgf5H?usp=sharing.
+  Contact us if you do not have, but would like, permission." />
 <meta property="og:image" content="/logo.svg" />
 
 
@@ -117,28 +122,64 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>hemibrainr: Code for working with data from Janelia FlyEM's hemibrain project</h1>
-    <small class="dont-index">Source: <a href='https://github.com/flyconnectome/hemibrainr/blob/master/R/hemibrainr-package.R'><code>R/hemibrainr-package.R</code></a></small>
-    <div class="hidden name"><code>hemibrainr-package.Rd</code></div>
+    <h1>Download all automatically split neurons from the hemibrain project</h1>
+    <small class="dont-index">Source: <a href='https://github.com/flyconnectome/hemibrainr/blob/master/R/hemibrain_read_neurons.R'><code>R/hemibrain_read_neurons.R</code></a></small>
+    <div class="hidden name"><code>hemibrain_download_neurons.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Useful functions for pre-processing and analysing data from Janelia FlyEM's hemibrain project &lt;https://www.janelia.org/project-team/flyem/hemibrain&gt;. 
-             Data can be accessed from a neuPrint instance &lt;https://neuprint.janelia.org/&gt; using the R package neuprintr.</p>
+    <p>Download all the automatically split neurons from the hemibrain
+ project, from Google Drive. The neuronlist is saved as a
+ <code><a href='https://rdrr.io/pkg/nat/man/neuronlistfh.html'>nat::neuronlistfh</a></code> object so certain neurons may be read from it
+ without loading the entire, large neuronlist into memory. In order to do
+ this, you need to add the following folder to your Google Drive:
+ https://drive.google.com/drive/folders/14UPg7CvHDtvzNjvNgAULYnxZ018Xgf5H?usp=sharing.
+  Contact us if you do not have, but would like, permission.</p>
     </div>
 
+    <pre class="usage"><span class='fu'>hemibrain_download_neurons</span>(<span class='kw'>savedir</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>overwrite</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)</pre>
 
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>savedir</th>
+      <td><p>where to save the <code>.rds</code> and meta data files for the
+<code><a href='https://rdrr.io/pkg/nat/man/neuronlistfh.html'>nat::neuronlistfh</a></code> object</p></td>
+    </tr>
+    <tr>
+      <th>overwrite</th>
+      <td><p>whether or not to overwrite the existing saved files, within
+<code>savedir</code>.</p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p>Additional arguments passed to <code>nlapply</code> when iterating
+over neurons to download.</p></td>
+    </tr>
+    </table>
 
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p>Useful links:</p><ul>
-<li><p><a href='https://github.com/flyconnectome/hemibrainr'>https://github.com/flyconnectome/hemibrainr</a></p></li>
-<li><p><a href='https://flyconnectome.github.io/hemibrainr'>https://flyconnectome.github.io/hemibrainr</a></p></li>
-<li><p>Report bugs at <a href='https://github.com/flyconnectome/hemibrainr/issues'>https://github.com/flyconnectome/hemibrainr/issues</a></p></li>
-</ul>
+    <div class='dont-index'><p><code><a href='hemibrain_splitpoints.html'>hemibrain_splitpoints</a></code>,
+ <code><a href='hemibrain_flow_centrality.html'>hemibrain_flow_centrality</a></code>,
+ <code><a href='hemibrain_precomputed_splitpoints.html'>hemibrain_precomputed_splitpoints</a></code>,
+ <code><a href='hemibrain_metrics.html'>hemibrain_metrics</a></code>,<code><a href='hemibrain_remove_bad_synapses.html'>hemibrain_remove_bad_synapses</a></code></p></div>
 
-</div>
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
+<span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
+<span class='co'># Parallelise</span>
+<span class='no'>numCores</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>parallel</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/r/parallel/detectCores.html'>detectCores</a></span>()
+<span class='kw pkg'>doMC</span><span class='kw ns'>::</span><span class='fu'>registerDoMC</span>(<span class='no'>numCores</span>/<span class='fl'>2</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/message.html'>message</a></span>(<span class='st'>"Using "</span>, <span class='no'>numCores</span>/<span class='fl'>2</span>, <span class='st'>" cores"</span>)
 
+<span class='co'># Download neurons</span>
+<span class='fu'>hemibrain_download_neurons</span>(<span class='kw'>.parallel</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>overwrite</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
+
+<span class='co'># Get specific neurons</span>
+<span class='no'>neurons</span> <span class='kw'>=</span> <span class='fu'><a href='hemibrain_read_neurons.html'>hemibrain_read_neurons</a></span>(<span class='st'>"1702323386"</span>, <span class='kw'>savedir</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
+}<span class='co'># }</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

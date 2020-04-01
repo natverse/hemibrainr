@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Read neurons from the hemibrain connectome project — hemibrain_read_neurons • hemibrainr</title>
+<title>Remove erroneous branchlets to beautify neuron skeletons — hemibrain_clean_skeleton • hemibrainr</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,12 +46,13 @@
 
 
 
-<meta property="og:title" content="Read neurons from the hemibrain connectome project — hemibrain_read_neurons" />
-<meta property="og:description" content="Read neurons from the hemibrain connectome project. This function
-uses the package neuprintr to read neurons. It then uses
+<meta property="og:title" content="Remove erroneous branchlets to beautify neuron skeletons — hemibrain_clean_skeleton" />
+<meta property="og:description" content="Remove synapse-less branches from axons and dendrites, and clean up
+the primary neurite and primary dendrite (linker) of a neuron. Givne neurons must have been split
+by either flow_centrality or hemibrain_flow_centrality.
 hemibrain_flow_centrality to re-root and split neurons into putative
 axons and dendrites. Optionally, it may also convert neurons from their raw voxel
-space (as they are stored in neuPrint) to microns." />
+space (as they are stored in NeuPrint) to microns." />
 <meta property="og:image" content="/logo.svg" />
 
 
@@ -120,41 +121,37 @@ space (as they are stored in neuPrint) to microns." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Read neurons from the hemibrain connectome project</h1>
+    <h1>Remove erroneous branchlets to beautify neuron skeletons</h1>
     <small class="dont-index">Source: <a href='https://github.com/flyconnectome/hemibrainr/blob/master/R/hemibrain_read_neurons.R'><code>R/hemibrain_read_neurons.R</code></a></small>
-    <div class="hidden name"><code>hemibrain_read_neurons.Rd</code></div>
+    <div class="hidden name"><code>hemibrain_clean_skeleton.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Read neurons from the hemibrain connectome project. This function
-uses the package <code>neuprintr</code> to read neurons. It then uses
+    <p>Remove synapse-less branches from axons and dendrites, and clean up
+the primary neurite and primary dendrite (linker) of a neuron. Givne neurons must have been split
+by either <code><a href='flow_centrality.html'>flow_centrality</a></code> or <code><a href='hemibrain_flow_centrality.html'>hemibrain_flow_centrality</a></code>.
 <code><a href='hemibrain_flow_centrality.html'>hemibrain_flow_centrality</a></code> to re-root and split neurons into putative
 axons and dendrites. Optionally, it may also convert neurons from their raw voxel
-space (as they are stored in neuPrint) to microns.</p>
+space (as they are stored in NeuPrint) to microns.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>hemibrain_read_neurons</span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>savedir</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>microns</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>hemibrain_clean_skeleton</span>(<span class='no'>x</span>, <span class='kw'>rval</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"pruned"</span>, <span class='st'>"neuron"</span>, <span class='st'>"points"</span>), <span class='no'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>x</th>
-      <td><p>a vector of bodyids that can be read from <a href=''https://neuprint.janelia.org/''>'https://neuprint.janelia.org/'</a>.</p></td>
+      <td><p>a <code><a href='https://rdrr.io/pkg/nat/man/neuronlist.html'>nat::neuronlist</a></code> or <code><a href='https://rdrr.io/pkg/nat/man/neuron.html'>nat::neuron</a></code> object</p></td>
     </tr>
     <tr>
-      <th>savedir</th>
-      <td><p>directory in which <code><a href='https://rdrr.io/pkg/nat/man/neuronlistfh.html'>nat::neuronlistfh</a></code> object as been saved using <code>hemibrain_download_neurons</code>. This acts as a database,
-from which hemibrain neurons can be read.</p></td>
-    </tr>
-    <tr>
-      <th>microns</th>
-      <td><p>convert dimensions from raw voxels into microns (template brain: <code>JRCFIB2018F</code>, else <code>JRCFIB2018Fraw</code>).</p></td>
+      <th>rval</th>
+      <td><p>whether to return a pruned neuron, a neuron with the synapse-less branches
+set to <code>Label = 0</code> or the <code>PointNo</code> for those brnahces.</p></td>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>methods passed to <code><a href='https://rdrr.io/pkg/neuprintr/man/neuprint_read_neurons.html'>neuprintr::neuprint_read_neurons</a></code>, <code><a href='hemibrain_remove_bad_synapses.html'>hemibrain_remove_bad_synapses</a></code>
-and <code><a href='hemibrain_flow_centrality.html'>hemibrain_flow_centrality</a></code></p></td>
+      <td><p>methods passed to <code><a href='https://rdrr.io/pkg/nat/man/nlapply.html'>nat::nlapply</a></code>.</p></td>
     </tr>
     </table>
 
@@ -173,7 +170,6 @@ and <code><a href='hemibrain_flow_centrality.html'>hemibrain_flow_centrality</a>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
-
 <span class='co'># Choose neurons</span>
 <span class='co'>## In this case some antennal lobe local neurons</span>
 <span class='no'>al.local.neurons</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"1702323386"</span>, <span class='st'>"2068966051"</span>, <span class='st'>"2069311379"</span>, <span class='st'>"1702305987"</span>, <span class='st'>"5812996027"</span>,
@@ -184,11 +180,16 @@ and <code><a href='hemibrain_flow_centrality.html'>hemibrain_flow_centrality</a>
 <span class='st'>"1794037618"</span>, <span class='st'>"5813018729"</span>, <span class='st'>"2013333009"</span>)
 
 <span class='co'># Get neurons</span>
-<span class='no'>neurons</span> <span class='kw'>=</span> <span class='fu'>hemibrain_read_neurons</span>(<span class='no'>al.local.neurons</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: 4 neurons cropped, split likely to be inaccurate for: 2068966051, 2069311379, 1947192569, 2101391269</span></div><div class='output co'>#&gt; <span class='warning'>Warning: 4 neurons are not represented in the given splitpoints: </span></div><div class='output co'>#&gt; <span class='error'>Error in matrix(if (is.null(value)) logical() else value, nrow = nr, dimnames = list(rn,     cn)): length of 'dimnames' [2] not equal to array extent</span></div><div class='input'>
+<span class='no'>neurons</span> <span class='kw'>=</span> <span class='kw pkg'>neuprintr</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/neuprintr/man/neuprint_read_neurons.html'>neuprint_read_neurons</a></span>(<span class='no'>al.local.neurons</span>)
+
+<span class='co'># Split  neurons</span>
+<span class='no'>neurons</span> <span class='kw'>=</span> <span class='fu'><a href='hemibrain_flow_centrality.html'>hemibrain_flow_centrality</a></span>(<span class='no'>neurons</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: 4 neurons cropped, split likely to be inaccurate for: 2068966051, 2069311379, 1947192569, 2101391269</span></div><div class='output co'>#&gt; <span class='warning'>Warning: 4 neurons are not represented in the given splitpoints: </span></div><div class='output co'>#&gt; <span class='error'>Error in matrix(if (is.null(value)) logical() else value, nrow = nr, dimnames = list(rn,     cn)): length of 'dimnames' [2] not equal to array extent</span></div><div class='input'>
+<span class='co'># Clean neurons</span>
+<span class='no'>neurons.cleaned</span> <span class='kw'>=</span> <span class='fu'>hemibrain_clean_skeleton</span>(<span class='no'>neurons</span>)</div><div class='output co'>#&gt; <span class='error'>Error in as.neuron.ngraph(as.ngraph(dg), ...): Invalid neuron! Must contain at least one segment with 2 points</span></div><div class='input'>
 <span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
 <span class='co'># Plot the split to check it</span>
 <span class='kw pkg'>nat</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/nat/man/nopen3d.html'>nopen3d</a></span>()
-<span class='fu'><a href='plot3d_split.html'>nlscan_split</a></span>(<span class='no'>neurons</span>, <span class='kw'>WithConnectors</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
+<span class='fu'><a href='plot3d_split.html'>nlscan_split</a></span>(<span class='no'>neurons.cleaned</span>, <span class='kw'>WithConnectors</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
 }<span class='co'># }</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
