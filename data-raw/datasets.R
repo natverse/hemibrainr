@@ -17,14 +17,8 @@ usethis::use_data(hemibrain_metrics_polypre_centrifugal_distance, overwrite = TR
 usethis::use_data(hemibrain_metrics_polypre_centrifugal_synapses, overwrite = TRUE)
 
 ### Reach consensus
-head(hemibrain_all_neurons_metrics_polypre_centrifugal_synapses)
-
-
-
 # low = subset(hemibrain_all_neurons_metrics_polypre_centrifugal_synapses, segregation_index < 0.01)$bodyid
 # l = hemibrain_read_neurons(low[1:1000], microns = FALSE, OmitFailures = TRUE)
-
-
 
 ### Consensus
 hemibrain_all_splitpoints <- hemibrain_splitpoints_polypre_centrifugal_synapses
