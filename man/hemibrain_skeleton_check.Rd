@@ -54,6 +54,9 @@ ids = c("5813056323", "579912201", "5813015982", "973765182", "885788485",
 "390948580", "452677169", "511262901", "422311625", "451987038"
 )
 
+# just use a subset for documentation purposes
+ids=ids[1:5]
+
 # Read in these neurons
 neurons = neuprintr::neuprint_read_neurons(ids)
 
