@@ -74,7 +74,8 @@ the \href{https://docs.google.com/spreadsheets/d/1YjkVjokXL4p4Q6BR-rGGGKWecXU370
 \examples{
 \donttest{
 \dontrun{
-# Plot the split to check it, correcting any errors, and saving your changes
+# Plot splits to check them, correcting any errors, and saving your changes
+nat::nopen3d()
 hemibrain_adjust_saved_split()
 }}
 }

@@ -372,7 +372,7 @@ cycle_branches <- function(x, brain = NULL){
         i <- 1
       }
     }
-    cat("Current branch:", i, " "," (", i, "/", length(neurons),")","\n")
+    cat("Current branch:", i, " "," (", i, "/", length(sbt),")","\n")
     pl <- plot3d(sbt[i], col = hemibrain_bright_colours["cerise"], lwd = 5)
     chc <- must_be(prompt = "
           What cable is this?:
