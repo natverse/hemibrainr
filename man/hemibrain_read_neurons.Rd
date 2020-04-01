@@ -15,7 +15,7 @@ hemibrain_read_neurons(
 \arguments{
 \item{x}{a vector of bodyids that can be read from \url{'https://neuprint.janelia.org/'}.}
 
-\item{savedir}{directory in which \code{nat::neuronlistfh} object as been saved using \code{hemibrain_download_neurons}. This acts as a database,
+\item{savedir}{directory in which \code{nat::neuronlistfh} object as been saved using \code{\link{hemibrain_download_neurons}}. This acts as a database,
 from which hemibrain neurons can be read. If \code{TRUE} your default save directory is used, which is stored as: \code{options()$hemibrain_data}}
 
 \item{microns}{convert dimensions from raw voxels into microns (template brain: \code{JRCFIB2018F}, else \code{JRCFIB2018Fraw}).}
@@ -42,6 +42,7 @@ space (as they are stored in neuPrint) to microns.
 }
 \examples{
 \donttest{
+\dontrun{
 
 # Choose neurons
 ## In this case some antennal lobe local neurons
@@ -55,7 +56,7 @@ al.local.neurons = c("1702323386", "2068966051", "2069311379", "1702305987", "58
 # Get neurons
 neurons = hemibrain_read_neurons(al.local.neurons)
 
-\dontrun{
+
 # Plot the split to check it
 nat::nopen3d()
 nlscan_split(neurons, WithConnectors = TRUE)
