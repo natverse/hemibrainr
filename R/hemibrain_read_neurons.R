@@ -63,8 +63,8 @@ hemibrain_read_neurons<-function(x = NULL,
     neurons.flow = hemibrain_remove_bad_synapses(neurons.flow, ...)
   }
   neurons.flow = hemibrain_clean_skeleton(neurons.flow, rval = "neuron", ...)
-  hemibrain_metrics = hemibrain_metrics[,!colnames(hemibrain_metrics)%in%colnames(neurons.flow[,])]
-  df = cbind(neurons.flow[,], hemibrain_metrics[names(neurons.flow),])
+  hemibrain_metrics = hemibrainr::hemibrain_metrics[,!colnames(hemibrainr::hemibrain_metrics)%in%colnames(neurons.flow[,])]
+  df = cbind(neurons.flow[,], hemibrainr::hemibrain_metrics[names(neurons.flow),])
   rownames(df) = names(neurons.flow)
   if(microns){
     neurons.flow = scale_neurons(neurons.flow, scaling = (8/1000))

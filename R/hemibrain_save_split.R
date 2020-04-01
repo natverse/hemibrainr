@@ -6,14 +6,14 @@
 ## Set up Google Drive file as database
 setup_splitcheck_sheet <-function(ss = "1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E"){
   ### Set up
-  roots = subset(hemibrain_all_splitpoints, point == "root")
+  roots = subset(hemibrainr::hemibrain_all_splitpoints, point == "root")
   lhn.gs = as.data.frame(googlesheets4::read_sheet(ss = "1dH4d3-9aWLvoA8U3bz94JWMXOtW1krzLPnFc7tkgZnM"))
   rownames(lhn.gs) = lhn.gs$bodyId
   i = intersect(roots$bodyid,lhn.gs$bodyId)
   ### Underlying data.frame for database
-  roots$soma = hemibrain_metrics[as.character(roots$bodyid),"soma"]
+  roots$soma = hemibrainr::hemibrain_metrics[as.character(roots$bodyid),"soma"]
   roots[as.character(i),]$soma = unlist(nullToNA(lhn.gs[as.character(i),]$hasSoma))
-  roots$cut = hemibrain_metrics[as.character(roots$bodyid),"cropped"]
+  roots$cut = hemibrainr::hemibrain_metrics[as.character(roots$bodyid),"cropped"]
   roots[as.character(i),]$cut = unlist(nullToNA(lhn.gs[as.character(i),]$cropped2))
   roots$truncated = roots$cut
   roots$split = "automatic_synapses"
@@ -50,8 +50,8 @@ setup_splitcheck_sheet <-function(ss = "1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgU
   ### Get ready to record cable edits
   roots$edited.cable = 0
   ### Record original values
-  roots$orig.soma = hemibrain_metrics[as.character(roots$bodyid),"soma"]
-  roots$orig.cut = hemibrain_metrics[as.character(roots$bodyid),"cropped"]
+  roots$orig.soma = hemibrainr::hemibrain_metrics[as.character(roots$bodyid),"soma"]
+  roots$orig.cut = hemibrainr::hemibrain_metrics[as.character(roots$bodyid),"cropped"]
   ### Write to Google Sheet
   googlesheets4::write_sheet(roots[,],
                              ss = ss,
@@ -110,7 +110,7 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
                           db = NULL,
                           check_thresh = 1,
                           batch_size = 10,
-                          brain = hemibrain.surf,
+                          brain = hemibrainr::hemibrain.surf,
                           update_regularly = TRUE,
                           motivate = TRUE,
                           clean = TRUE,
