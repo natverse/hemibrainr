@@ -22,7 +22,7 @@ Download all the automatically split neurons from the hemibrain
  \code{nat::neuronlistfh} object so certain neurons may be read from it
  without loading the entire, large neuronlist into memory. In order to do
  this, you need to add the following folder to your Google Drive:
- https://drive.google.com/drive/folders/14UPg7CvHDtvzNjvNgAULYnxZ018Xgf5H?usp=sharing.
+ \url{https://drive.google.com/drive/folders/14UPg7CvHDtvzNjvNgAULYnxZ018Xgf5H?usp=sharing}.
   Contact us if you do not have, but would like, permission.
 }
 \examples{

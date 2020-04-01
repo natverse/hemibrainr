@@ -24,8 +24,8 @@ hemibrain_adjust_saved_split(
 \item{bodyids}{bodyids which specify individual neurons, as used in the relevant neuPrint project}
 
 \item{phases}{which Phases of the split check process you want to engage with. Phase I involves choosing which neurons need to be manually split,
-making notes on them and makring if they are truncated by by the volume or not Phase II involves manually splitting those neurons that have been flagges as
-as in need to splitting. And Phase III involves reveiwing the manual splits that have been made, and re-splitting neurons if needs be. The default, complete,
+making notes on them and marking if they are truncated by by the volume or not Phase II involves manually splitting those neurons that have been flagged as
+as in need to splitting. And Phase III involves reviewing the manual splits that have been made, and re-splitting neurons if needs be. The default, complete,
 is to go through all three phases with sequential batches of neurons, of \code{batch_size}.}
 
 \item{db}{a \code{neuronlist} object to act as a database of neuron skeletons. If you want to provide all
@@ -36,22 +36,22 @@ using \code{db = hemibrain_read_neurons(savedir=TRUE)}. This can then be given a
 \item{check_thresh}{when checking skeleton splits and correcting them, we do not want to look at skeletons that have already been checked by others many times.
 If a skeleton has already been checked by this many users or more, it will not be given to the user to edit.}
 
-\item{batch_size}{when reviewing splits for hemibrain neurons, we examine neurons in batchs of this size. We then go through two phases,
-choosing neurons that are incorrect in some way (wrongly split, cropped) and then editing them manually, before savign them to a Google Sheet.
+\item{batch_size}{when reviewing splits for hemibrain neurons, we examine neurons in batches of this size. We then go through two phases,
+choosing neurons that are incorrect in some way (wrongly split, cropped) and then editing them manually, before saving them to a Google Sheet.
 You may not have access to this Google Sheet, in which case you will not be able to contribute manual splits for neurons to this package. Contact us
 if you would like access.}
 
 \item{brain}{which brain to plot while splitting neuron. If \code{NULL} no brain is plotted. Otherwise
 it is recommended to use \code{hemibrain.surf} (which is in raw voxel space).}
 
-\item{update_regularly}{whether or not to read from the Google Sheet database regulalry, to avoid duplicating manual splits. Should be set to \code{TRUE} unless
+\item{update_regularly}{whether or not to read from the Google Sheet database regularly, to avoid duplicating manual splits. Should be set to \code{TRUE} unless
 reading the Google Sheet introduces a prohibitive time delay.}
 
 \item{motivate}{whether or not to plot 2D motivationals from \href{(https://inspirobot.me/)}{InspiroBot} to keep to entertained while splitting neurons.}
 
 \item{clean}{whether or not to set synapse-less branches to \code{Label = 0}.}
 
-\item{prioritise}{whether or not to look at higher priority neurons first. Initial, this means oflactory system neurons.}
+\item{prioritise}{whether or not to look at higher priority neurons first. Initial, this means olfactory system neurons.}
 
 \item{selected_file}{an optional path to a yaml file that already contains a selection}
 

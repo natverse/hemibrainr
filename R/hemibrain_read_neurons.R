@@ -91,7 +91,7 @@ scale_neurons.neuronlist = function(x, scaling = (8/1000), ...){
 #' Remove erroneous branchlets to beautify neuron skeletons
 #'
 #' @description Remove synapse-less branches from axons and dendrites, and clean up
-#' the primary neurite and primary dendrite (linker) of a neuron. Givne neurons must have been split
+#' the primary neurite and primary dendrite (linker) of a neuron. Given neurons must have been split
 #' by either \code{\link{flow_centrality}} or \code{\link{hemibrain_flow_centrality}}.
 #' \code{\link{hemibrain_flow_centrality}} to re-root and split neurons into putative
 #' axons and dendrites. Optionally, it may also convert neurons from their raw voxel
@@ -99,7 +99,7 @@ scale_neurons.neuronlist = function(x, scaling = (8/1000), ...){
 #'
 #' @param x a \code{nat::neuronlist} or \code{nat::neuron} object
 #' @param rval whether to return a pruned neuron, a neuron with the synapse-less branches
-#' set to \code{Label = 0} or the \code{PointNo} for those brnahces.
+#' set to \code{Label = 0} or the \code{PointNo} for those branches.
 #' @param ... methods passed to \code{nat::nlapply}.
 #'
 #' @inherit flow_centrality return
@@ -208,7 +208,7 @@ prune_synapseless_branches <- function(x, neuron = TRUE){
 #'  \code{nat::neuronlistfh} object so certain neurons may be read from it
 #'  without loading the entire, large neuronlist into memory. In order to do
 #'  this, you need to add the following folder to your Google Drive:
-#'  https://drive.google.com/drive/folders/14UPg7CvHDtvzNjvNgAULYnxZ018Xgf5H?usp=sharing.
+#'  \url{https://drive.google.com/drive/folders/14UPg7CvHDtvzNjvNgAULYnxZ018Xgf5H?usp=sharing}.
 #'   Contact us if you do not have, but would like, permission.
 #'
 #'@param savedir where to save the \code{.rds} and meta data files for the

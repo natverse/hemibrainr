@@ -10,7 +10,7 @@ hemibrain_clean_skeleton(x, rval = c("pruned", "neuron", "points"), ...)
 \item{x}{a \code{nat::neuronlist} or \code{nat::neuron} object}
 
 \item{rval}{whether to return a pruned neuron, a neuron with the synapse-less branches
-set to \code{Label = 0} or the \code{PointNo} for those brnahces.}
+set to \code{Label = 0} or the \code{PointNo} for those branches.}
 
 \item{...}{methods passed to \code{nat::nlapply}.}
 }
@@ -24,7 +24,7 @@ the neuron or neuron list object inputted, with centripetal flow
 }
 \description{
 Remove synapse-less branches from axons and dendrites, and clean up
-the primary neurite and primary dendrite (linker) of a neuron. Givne neurons must have been split
+the primary neurite and primary dendrite (linker) of a neuron. Given neurons must have been split
 by either \code{\link{flow_centrality}} or \code{\link{hemibrain_flow_centrality}}.
 \code{\link{hemibrain_flow_centrality}} to re-root and split neurons into putative
 axons and dendrites. Optionally, it may also convert neurons from their raw voxel

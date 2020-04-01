@@ -798,7 +798,7 @@ add_Label.neuronlist <- function(x, PointNo = NULL, Label = 2, erase = FALSE, ..
 #'
 #' @inheritParams flow_centrality
 #' @param entry item to add.
-#' @param entries a vector/list of entries, tha same length as \code{x}.
+#' @param entries a vector/list of entries, the same length as \code{x}.
 #' Each neuron in \code{x} will have the entry in entries as the same index, added to it
 #' as \code{field}.
 #' @param field name of new field, or field to overwrite.
