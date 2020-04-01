@@ -4,15 +4,23 @@
 \alias{hemibrain_read_neurons}
 \title{Read neurons from the hemibrain connectome project}
 \usage{
-hemibrain_read_neurons(x = NULL, savedir = FALSE, microns = TRUE, ...)
+hemibrain_read_neurons(
+  x = NULL,
+  savedir = FALSE,
+  microns = TRUE,
+  remove.bad.synapses = TRUE,
+  ...
+)
 }
 \arguments{
 \item{x}{a vector of bodyids that can be read from \url{'https://neuprint.janelia.org/'}.}
 
 \item{savedir}{directory in which \code{nat::neuronlistfh} object as been saved using \code{hemibrain_download_neurons}. This acts as a database,
-from which hemibrain neurons can be read.}
+from which hemibrain neurons can be read. If \code{TRUE} your default save directory is used, which is stored as: \code{options()$hemibrain_data}}
 
 \item{microns}{convert dimensions from raw voxels into microns (template brain: \code{JRCFIB2018F}, else \code{JRCFIB2018Fraw}).}
+
+\item{remove.bad.synapses}{whether or not to run \code{\link{hemibrain_remove_bad_synapses}} on neurons pulled from neuPrint.}
 
 \item{...}{methods passed to \code{neuprintr::neuprint_read_neurons}, \code{\link{hemibrain_remove_bad_synapses}}
 and \code{\link{hemibrain_flow_centrality}}}

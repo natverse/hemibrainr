@@ -12,8 +12,9 @@
 #'
 #' @param x a vector of bodyids that can be read from \url{'https://neuprint.janelia.org/'}.
 #' @param savedir directory in which \code{nat::neuronlistfh} object as been saved using \code{hemibrain_download_neurons}. This acts as a database,
-#' from which hemibrain neurons can be read.
+#' from which hemibrain neurons can be read. If \code{TRUE} your default save directory is used, which is stored as: \code{options()$hemibrain_data}
 #' @param microns convert dimensions from raw voxels into microns (template brain: \code{JRCFIB2018F}, else \code{JRCFIB2018Fraw}).
+#' @param remove.bad.synapses whether or not to run \code{\link{hemibrain_remove_bad_synapses}} on neurons pulled from neuPrint.
 #' @param ... methods passed to \code{neuprintr::neuprint_read_neurons}, \code{\link{hemibrain_remove_bad_synapses}}
 #'  and \code{\link{hemibrain_flow_centrality}}
 #'
@@ -45,6 +46,7 @@
 hemibrain_read_neurons<-function(x = NULL,
                                  savedir = FALSE,
                                  microns = TRUE,
+                                 remove.bad.synapses = TRUE,
                                  ...){
   if(is.null(x)&!savedir){
     stop("You must either supply bodyids to read from neuPrint using x, or
@@ -55,12 +57,22 @@ hemibrain_read_neurons<-function(x = NULL,
     savedir = options()$hemibrain_data
     if(length(list.files(path = savedir, pattern = ".rds"))){
       neurons.flow.fh = hemibrain_read_neurons_local(savedir = savedir)
-      neurons.flow = neurons.flow.fh[as.character(x)]
+      y = intersect(x,names(neurons.flow.fh))
+      z = setdiff(x,names(neurons.flow.fh))
+      if(!length(z)){
+        warning("The following bodyids could not be read from your saved neurolistfh object. If they exist, you
+                may need to read them from neuPrint by changing the savedir argument of this function to FALSE: ",
+                paste(z,collapse=", "))
+      }
+      neurons.flow = neurons.flow.fh[as.character(y)]
     }
   }else{
     neurons = neuprintr::neuprint_read_neurons(x, ...)
     neurons.flow = hemibrain_flow_centrality(neurons, ...)
-    neurons.flow = hemibrain_remove_bad_synapses(neurons.flow, ...)
+    if(remove.bad.synapses){
+      hemibrain.rois = hemibrain_roi_meshes()
+      neurons.flow = hemibrain_remove_bad_synapses(neurons.flow, meshes = hemibrain.rois, ...)
+    }
   }
   neurons.flow = hemibrain_clean_skeleton(neurons.flow, rval = "neuron", ...)
   hemibrain_metrics = hemibrainr::hemibrain_metrics[,!colnames(hemibrainr::hemibrain_metrics)%in%colnames(neurons.flow[,])]
@@ -210,6 +222,8 @@ prune_synapseless_branches <- function(x, neuron = TRUE){
 #'  this, you need to add the following folder to your Google Drive:
 #'  \url{https://drive.google.com/drive/folders/14UPg7CvHDtvzNjvNgAULYnxZ018Xgf5H?usp=sharing}.
 #'   Contact us if you do not have, but would like, permission.
+#'   If this takes to much time, you can also download the relevant Google Drive folder manually. To do so, open this link: %s and then download the folder to this location on your computer: ",
+#'   \url{https://drive.google.com/open?id=1px6o2R_heFLRCtTF4Q2SvJNR9CWFhud0}. Remember to unzip all files.
 #'
 #'@param savedir where to save the \code{.rds} and meta data files for the
 #'  \code{nat::neuronlistfh} object
@@ -268,7 +282,7 @@ hemibrain_download_neurons <- function(savedir = TRUE,
   message("Downloading data, ", nrow(datals)," files ...")
   metafh = paste0(savedir,"hemibrain_all_neurons_flow_polypre_centrifugal_synapses/data/")
   download = googledrive_downloadmany(ls = datals, dir = metafh, overwrite = overwrite, OmitFailures = TRUE, ...)
-  message(length(unlist(download)),"/",nrow(datals)," data files successfully downloaded. Re-run to try remainder.")
+  message(length(unlist(download)),"/",nrow(datals)," data files successfully downloaded. Re-run (overwrite = FALSE) to try remainder.")
   message("Download complete, files can be found here: ", savedir)
 }
 
@@ -301,12 +315,13 @@ hemibrain_read_neurons_local <- function(savedir = TRUE,
                                          neuron.split = "hemibrain_all_neurons_flow_polypre_centrifugal_synapses"){
   savedir = good_savedir(savedir = savedir,
                       neuron.split = neuron.split)
-  if(length(list.files(path = savedir, pattern = ".rds"))){
-    neurons.flow = nat::read.neuronlistfh(savedir,neuron.split,"/",neuron.split,".rds")
+  fhdir = paste0(savedir,neuron.split,"/")
+  if(length(list.files(path = fhdir, pattern = ".rds"))){
+    neurons.flow.fh = nat::read.neuronlistfh(paste0(fhdir,neuron.split,".rds"))
   }else{
     stop("neuronlistfh (.rds) file not found at: ", savedir)
   }
-  neurons.flow
+  neurons.flow.fh
 }
 
 # hidden

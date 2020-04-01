@@ -24,6 +24,8 @@ Download all the automatically split neurons from the hemibrain
  this, you need to add the following folder to your Google Drive:
  \url{https://drive.google.com/drive/folders/14UPg7CvHDtvzNjvNgAULYnxZ018Xgf5H?usp=sharing}.
   Contact us if you do not have, but would like, permission.
+  If this takes to much time, you can also download the relevant Google Drive folder manually. To do so, open this link: %s and then download the folder to this location on your computer: ",
+  \url{https://drive.google.com/open?id=1px6o2R_heFLRCtTF4Q2SvJNR9CWFhud0}. Remember to unzip all files.
 }
 \examples{
 \donttest{

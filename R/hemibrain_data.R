@@ -154,5 +154,5 @@
 #' @rdname hemibrain_metrics
 "hemibrain_metrics_polypre_centrifugal_distance"
 #' @rdname hemibrain_metrics
-"hemibrain_all_neurons_metrics_polypre_centrifugal_synapses"
+"hemibrain_metrics_polypre_centrifugal_synapses"
 

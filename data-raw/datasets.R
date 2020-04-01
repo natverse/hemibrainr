@@ -10,15 +10,25 @@ usethis::use_data(hemibrain_splitpoints_polypre_centrifugal_synapses, overwrite 
 
 ### Metrics
 hemibrain_metrics_polypre_centrifugal_distance <- read.csv("data-raw/hemibrain_all_neurons_metrics_polypre_centrifugal_distance.csv")
-hemibrain_all_neurons_metrics_polypre_centrifugal_synapses <- read.csv("data-raw/hemibrain_all_neurons_metrics_polypre_centrifugal_synapses.csv")
+hemibrain_metrics_polypre_centrifugal_synapses <- read.csv("data-raw/hemibrain_all_neurons_metrics_polypre_centrifugal_synapses.csv")
 rownames(hemibrain_metrics_polypre_centrifugal_distance) <- hemibrain_metrics_polypre_centrifugal_distance$bodyid
 rownames(hemibrain_all_neurons_metrics_polypre_centrifugal_synapses) <- hemibrain_all_neurons_metrics_polypre_centrifugal_synapses$bodyid
 usethis::use_data(hemibrain_metrics_polypre_centrifugal_distance, overwrite = TRUE)
-usethis::use_data(hemibrain_all_neurons_metrics_polypre_centrifugal_synapses, overwrite = TRUE)
+usethis::use_data(hemibrain_metrics_polypre_centrifugal_synapses, overwrite = TRUE)
+
+### Reach consensus
+head(hemibrain_all_neurons_metrics_polypre_centrifugal_synapses)
+
+
+
+# low = subset(hemibrain_all_neurons_metrics_polypre_centrifugal_synapses, segregation_index < 0.01)$bodyid
+# l = hemibrain_read_neurons(low[1:1000], microns = FALSE, OmitFailures = TRUE)
+
+
 
 ### Consensus
-hemibrain_all_splitpoints <- hemibrain_splitpoints_polypre_centrifugal_distance
-hemibrain_metrics <- hemibrain_metrics_polypre_centrifugal_distance
+hemibrain_all_splitpoints <- hemibrain_splitpoints_polypre_centrifugal_synapses
+hemibrain_metrics <- hemibrain_metrics_polypre_centrifugal_synapses
 usethis::use_data(hemibrain_metrics, overwrite = TRUE)
 usethis::use_data(hemibrain_all_splitpoints, overwrite = TRUE)
 

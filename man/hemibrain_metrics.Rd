@@ -4,7 +4,7 @@
 \name{hemibrain_metrics}
 \alias{hemibrain_metrics}
 \alias{hemibrain_metrics_polypre_centrifugal_distance}
-\alias{hemibrain_all_neurons_metrics_polypre_centrifugal_synapses}
+\alias{hemibrain_metrics_polypre_centrifugal_synapses}
 \title{Neuron metrics for all neurons in the hemibrain dataset}
 \format{An object of class \code{data.frame} with 20783 rows and 29 columns.}
 \source{
@@ -15,7 +15,7 @@ hemibrain_metrics
 
 hemibrain_metrics_polypre_centrifugal_distance
 
-hemibrain_all_neurons_metrics_polypre_centrifugal_synapses
+hemibrain_metrics_polypre_centrifugal_synapses
 }
 \description{
 This \code{data.frame} give metrics for neurons, such as cable lengths and pre/post synapse numbers and densities,
