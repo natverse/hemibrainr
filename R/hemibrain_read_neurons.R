@@ -11,7 +11,7 @@
 #' space (as they are stored in neuPrint) to microns.
 #'
 #' @param x a vector of bodyids that can be read from \url{'https://neuprint.janelia.org/'}.
-#' @param savedir directory in which \code{nat::neuronlistfh} object as been saved using \code{hemibrain_download_neurons}. This acts as a database,
+#' @param savedir directory in which \code{nat::neuronlistfh} object as been saved using \code{\link{hemibrain_download_neurons}}. This acts as a database,
 #' from which hemibrain neurons can be read. If \code{TRUE} your default save directory is used, which is stored as: \code{options()$hemibrain_data}
 #' @param microns convert dimensions from raw voxels into microns (template brain: \code{JRCFIB2018F}, else \code{JRCFIB2018Fraw}).
 #' @param remove.bad.synapses whether or not to run \code{\link{hemibrain_remove_bad_synapses}} on neurons pulled from neuPrint.
@@ -22,6 +22,7 @@
 #'
 #' @examples
 #' \donttest{
+#' \dontrun{
 #'
 #' # Choose neurons
 #' ## In this case some antennal lobe local neurons
@@ -35,7 +36,7 @@
 #' # Get neurons
 #' neurons = hemibrain_read_neurons(al.local.neurons)
 #'
-#' \dontrun{
+#'
 #' # Plot the split to check it
 #' nat::nopen3d()
 #' nlscan_split(neurons, WithConnectors = TRUE)
