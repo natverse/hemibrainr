@@ -54,7 +54,7 @@ hemibrain_read_neurons<-function(x = NULL,
   if(isTRUE(savedir)){
     savedir = options()$hemibrain_data
     if(length(list.files(path = savedir, pattern = ".rds"))){
-      neurons.flow = hemibrain_read_neurons_local(savedir = savedir)
+      neurons.flow.fh = hemibrain_read_neurons_local(savedir = savedir)
       neurons.flow = neurons.flow.fh[as.character(x)]
     }
   }else{
