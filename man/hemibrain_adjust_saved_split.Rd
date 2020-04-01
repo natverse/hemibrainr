@@ -10,7 +10,7 @@ hemibrain_adjust_saved_split(
   db = NULL,
   check_thresh = 1,
   batch_size = 10,
-  brain = hemibrain.surf,
+  brain = hemibrainr::hemibrain.surf,
   update_regularly = TRUE,
   motivate = TRUE,
   clean = TRUE,
