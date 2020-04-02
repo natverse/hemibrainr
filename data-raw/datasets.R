@@ -12,7 +12,7 @@ usethis::use_data(hemibrain_splitpoints_polypre_centrifugal_synapses, overwrite 
 hemibrain_metrics_polypre_centrifugal_distance <- read.csv("data-raw/hemibrain_all_neurons_metrics_polypre_centrifugal_distance.csv")
 hemibrain_metrics_polypre_centrifugal_synapses <- read.csv("data-raw/hemibrain_all_neurons_metrics_polypre_centrifugal_synapses.csv")
 rownames(hemibrain_metrics_polypre_centrifugal_distance) <- hemibrain_metrics_polypre_centrifugal_distance$bodyid
-rownames(hemibrain_all_neurons_metrics_polypre_centrifugal_synapses) <- hemibrain_all_neurons_metrics_polypre_centrifugal_synapses$bodyid
+rownames(hemibrain_metrics_polypre_centrifugal_synapses) <- hemibrain_all_neurons_metrics_polypre_centrifugal_synapses$bodyid
 usethis::use_data(hemibrain_metrics_polypre_centrifugal_distance, overwrite = TRUE)
 usethis::use_data(hemibrain_metrics_polypre_centrifugal_synapses, overwrite = TRUE)
 
