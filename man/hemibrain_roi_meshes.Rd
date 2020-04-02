@@ -4,10 +4,39 @@
 \alias{hemibrain_roi_meshes}
 \title{Get all the region of interest meshes in the hemibrain project}
 \usage{
-hemibrain_roi_meshes(microns = FALSE)
+hemibrain_roi_meshes(
+  rois = NULL,
+  microns = FALSE,
+  superLevel = NULL,
+  OmitFailures = TRUE,
+  conn = NULL,
+  dataset = NULL,
+  ...
+)
 }
 \arguments{
+\item{rois}{The ROIs to fetch (default \code{NULL} implies all ROIs)}
+
 \item{microns}{convert dimensions from raw voxels into microns (template brain: \code{JRCFIB2018F}, else \code{JRCFIB2018Fraw}).}
+
+\item{superLevel}{whether not to show 'superlevel' ROIs - ROIs composed of other ROIs.
+If set to NULL, both low-level and superlevel ROIs are returned.}
+
+\item{OmitFailures}{Whether to omit neurons for which \code{FUN} gives an
+error. The default value (\code{NA}) will result in nlapply stopping with
+an error message the moment there is an error. For other values, see
+details.}
+
+\item{conn}{optional, a neuprintr connection object, which also specifies the
+neuPrint server. If NULL, the defaults set in your
+\code{\link[=Startup]{.Rprofile}} or \code{\link[=Startup]{.Renviron}} are
+used. See \code{\link[neuprintr]{neuprint_login}} for details.}
+
+\item{dataset}{optional, a dataset you want to query. If \code{NULL}, the
+default specified by your R environ file is used or, failing that the
+current connection, is used. See \code{\link[neuprintr]{neuprint_login}} for details.}
+
+\item{...}{Additional arguments passed to \code{\link{nlapply}}}
 }
 \value{
 a list of \code{rgl::mesh3d} objects
