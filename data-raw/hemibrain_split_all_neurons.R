@@ -30,7 +30,7 @@ message("Checked ", length(all.neurons.checked), " neurons")
 all.neurons.flow = flow_centrality(all.neurons.checked, mode = mode, polypre = polypre, split = split, .parallel = TRUE, OmitFailures = TRUE)
 message("Flow centrality calculated for ", length(all.neurons.flow), " neurons")
 rn.flow = hemibrainr::add_Label(all.neurons.flow[intersect(as.character(rn.ids),names(all.neurons.flow))], Label = 2)
-all.neurons.flow[as.character(rn.ids)] = rn.flow
+all.neurons.flow[names(rn.flow)] = rn.flow
 
 # Save
 save(all.neurons.flow, file = paste0("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/hemibrain_all_neurons_flow_",identifier,".rda"))
@@ -39,7 +39,7 @@ save(all.neurons.flow, file = paste0("/net/flystore3/jdata/jdata5/JPeople/Alex/F
 savedirfh = paste0("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/hemibrain_all_neurons_flow_",identifier,"/")
 dir.create = dir.create(paste0(savedirfh,"data/"),recursive = TRUE)
 all.neurons.flow.fh = as.neuronlistfh(all.neurons.flow, dbdir= paste0(savedirfh,"data/"))
-write.neuronlistfh(all.neurons.flow.fh, file=paste0(savedirfh,"hemibrain_all_neurons_flow_",identifier,".rds"))
+write.neuronlistfh(all.neurons.flow.fh, file=paste0(savedirfh,"hemibrain_all_neurons_flow_",identifier,".rds"), overwrite=TRUE)
 
 # Save key points
 all.neurons.points = hemibrain_splitpoints(all.neurons.flow)

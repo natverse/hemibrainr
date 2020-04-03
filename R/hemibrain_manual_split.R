@@ -11,6 +11,8 @@
 #' @param x a neuron/neuronlist object
 #' @param brain which brain to plot while splitting neuron.
 #' @param Label the type of cable to be assigned/edited. Use \code{standardise_labels} to see how numbers convert to cable types.
+#' @param lock a vector of number representing cable types to lock (so that they cannot be edited interactively be a user).
+#' If \code{NULL} (default) no cable type is treated as locked. Locked cable will appear in green.
 #' @param ... additional arguments passed to plotting functions, namely \code{plot3d_split}
 #' @return The neuron/neuronlist object with axon/dendrite info assigned in SWC format to neuron$d
 #' @examples
@@ -42,6 +44,7 @@ manually_assign_labels.neuron <- function(x, brain = NULL, ...){
   x$tags$manually_edited = FALSE
   x$tags$cropped = FALSE
   x$tags$soma = "automatic"
+  x.safe = x
   happy = hemibrain_engage(Label = NULL)
   if(happy){
     happy = hemibrain_engage(prompt = "Are you sure this neuron has no problems? yes/no", Label = NULL)
@@ -61,8 +64,13 @@ manually_assign_labels.neuron <- function(x, brain = NULL, ...){
     happy = hemibrain_engage(Label = NULL, prompt = "Do you want to edit further? yes/no ")
   }
   ### Manually edit
+  locks = c()
   while(!happy%in%c("y","yes",TRUE)){
-    reset3d(brain=brain);plot3d_split(x)
+    reset3d(brain=brain)
+    plot3d_split(x)
+    if(!is.issue(locks)){
+      message("locks: ", paste(locks,collapse = ", "))
+    }
     happy = hemibrain_edit_cable()
     if(happy==0){
       break
@@ -87,8 +95,17 @@ manually_assign_labels.neuron <- function(x, brain = NULL, ...){
       }else if(happy == 9){
         x = cycle_branches(x=x,brain=brain)
         x$tags$manually_edited = TRUE
+      }else if(happy==10){
+        x = x.safe
+        message("Neuron has been reverted to its original state")
+      }else if (grepl("L",happy)){
+        if(happy %in% locks){
+          locks = setdiff(locks,happy)
+        }else{
+          locks = unique(c(locks,happy))
+        }
       }else{
-        x = hemibrain_select_cable(x=x, Label = happy)
+        x = hemibrain_select_cable(x=x, Label = happy, lock = locks)
         x$tags$manually_edited = TRUE
       }
     }
@@ -107,16 +124,19 @@ manually_assign_labels.neuronlist<-function(x, brain = NULL, ...){
 
 #' @export
 #' @rdname manually_assign_labels
-hemibrain_prune_online <-function(x, ...) UseMethod("hemibrain_prune_online")
+hemibrain_prune_online <-function(x, brain = NULL, Label = NULL, lock = NULL, ...) UseMethod("hemibrain_prune_online")
 
 #' @export
 #' @rdname manually_assign_labels
-hemibrain_prune_online.neuron <- function (x, brain = NULL, Label = NULL, ...) {
+hemibrain_prune_online.neuron <- function (x, brain = NULL, Label = NULL, lock = NULL, ...) {
+  if(lockdown(Label = Label, lock = lock)){
+    return(NULL)
+  }
   continue = "no"
   ids = integer()
   while (!continue %in% c("y", "yes")) {
     pids = plot3d_split(x, ...)
-    selected = hemibrain_select_points(x$d, clear_plot_on_exit = TRUE, Label = Label)
+    selected = hemibrain_select_points(x$d, clear_plot_on_exit = TRUE, Label = Label, lock = lock)
     reset3d(brain=brain)
     if(nrow(selected)){
       message("Selected cable in red")
@@ -138,23 +158,37 @@ hemibrain_prune_online.neuron <- function (x, brain = NULL, Label = NULL, ...) {
 
 #' @export
 #' @rdname manually_assign_labels
-hemibrain_prune_online.neuronlist <- function (x, Label = NULL, ...){
-  nat::nlapply(x, hemibrain_prune_online.neuron, Label = Label, ...)
+hemibrain_prune_online.neuronlist <- function (x, brain = NULL, Label = NULL, lock = NULL, ...){
+  nat::nlapply(x, hemibrain_prune_online.neuron, brain = brain, Label = Label, lock = lock, ...)
 }
 
 # Hidden
-hemibrain_select_points <- function(points, clear_plot_on_exit = FALSE, Label = NULL, ...) {
+hemibrain_select_points <- function(x, clear_plot_on_exit = FALSE, Label = NULL, lock = NULL, ...) {
+  if(nat::is.neuron(x)){
+    x = x$d
+  }
   if(is.null(Label)){
     selected.points <- data.frame()
   }else{
-    selected.points <- nat::xyzmatrix(points[points$Label==Label,])
+    selected.points <- nat::xyzmatrix(x[x$Label==Label,])
   }
-  points <- nat::xyzmatrix(points)
+  if(lockdown(Label=Label, lock = lock)){
+    return(selected.points)
+  }
+  if(!is.null(lock)){
+    points.locked <- nat::xyzmatrix(x[x$Label%in%lock,])
+    x <- x[!x$Label%in%lock,]
+  }else{
+    points.locked <- NULL
+  }
+  points <- nat::xyzmatrix(x)
   ids = rgl::points3d(selected.points, col = hemibrain_bright_colours["cerise"])
+  ids = c(ids, rgl::points3d(points.locked, col = hemibrain_bright_colours["green"]))
   ids = c(ids, rgl::points3d(points, col = "grey30"))
-  progress = must_be(prompt = "Unselected points in grey, selected in red Add (a) or remove (r) points, or continue (c)?  ",
-                     answers = c("a","r","c"))
+  progress = "progressive"
   while (progress != "c") {
+    progress = must_be(prompt = "Add (a) or remove (r) points, or continue (c)?  ",
+                       answers = c("a","r","c"))
     if (progress == "a") {
       keeps = rgl::select3d()
       keep.points <- keeps(points)
@@ -171,9 +205,8 @@ hemibrain_select_points <- function(points, clear_plot_on_exit = FALSE, Label = 
     if (length(selected.points) > 0) {
       ids = rgl::points3d(selected.points, col = hemibrain_bright_colours["cerise"], ...)
     }
+    ids = union(ids, rgl::points3d(points.locked, col = hemibrain_bright_colours["green"], ... ))
     ids = union(ids, rgl::points3d(points, col = "grey30", ... ))
-    progress = must_be(prompt = "Add (a) or remove (r) points, or continue (c)?  ",
-                        answers = c("a","r","c"))
   }
   if (clear_plot_on_exit)
     rgl::pop3d(id = ids)
@@ -236,7 +269,7 @@ reset3d <- function(brain = NULL){
 }
 
 # hidden
-hemibrain_engage <- function(Label = NULL, prompt = "Does this neuron require editing, or is cropped? yes/no ", ...){
+hemibrain_engage <- function(Label = NULL, prompt = "Does this neuron require editing and/or is cropped? yes/no ", ...){
   if(is.null(Label)){
     !hemibrain_choice(prompt = prompt)
   }else{
@@ -247,11 +280,16 @@ hemibrain_engage <- function(Label = NULL, prompt = "Does this neuron require ed
 
 # hidden
 hemibrain_edit_cable <- function(){
-  as.numeric(must_be(prompt = "What cable do you wish to edit?:
-                     soma (1), axon (2), dendrite (3), linker (4), primary neurite (7),
-                     invert the neuron (8) or cycle through branches (9)
-                     or do nothing further (0) ",
-          answers  = c(0:4,7:9)))
+  options = c(0:4,7:10)
+  cables = c(0:7)
+  locks = c(paste0("L",cables),paste0("l",cables))
+  choice = must_be(prompt = "What cable do you wish to edit?:
+  soma (1), axon (2), dendrite (3), linker (4), primary neurite (7),
+  invert the neuron (8) or cycle through branches (9)
+  revert all edits (10) do nothing further (0).
+  L+number to lock cable, ",
+          answers  = c(options,locks))
+  choice = gsub("l","L",choice)
 }
 
 # hidden
@@ -265,11 +303,14 @@ hemibrain_choice <- function(prompt){
 }
 
 # hidden
-hemibrain_select_cable <- function(x, Label, ...){
-  if(hemibrain_engage(Label = Label)){
+hemibrain_select_cable <- function(x, Label, lock, ...){
+  locks = gsub("L","",lock)
+  if(lockdown(Label = Label, lock = locks)){
+    return(x)
+  }else if(hemibrain_engage(Label = Label)){
     comp = standard_compartments(Label)
     message(paste0("Please select: ",comp))
-    frag = hemibrain_prune_online(x, Label = Label, ...)
+    frag = hemibrain_prune_online(x, Label = Label, lock = locks, ...)
     if(is.null(frag)){
       pnos = "DELETE"
     }else{
@@ -352,12 +393,11 @@ internal_assignments <- function(x){
   x
 }
 
-
 # hidden
 #' @importFrom rgl plot3d
 cycle_branches <- function(x, brain = NULL){
   nulls = subset(rownames(x$d), !x$d$Label %in% c(2,3))
-  message("Removing primary neurite and linker cable to find sub-branches ...")
+  message("Removing assigned primary neurite and linker cable to find sub-branches ...")
   y = nat::prune_vertices(x, verticestoprune = as.numeric(nulls),invert = FALSE)
   sbt = break_into_subtrees(y)
   i <- 1
@@ -396,6 +436,22 @@ cycle_branches <- function(x, brain = NULL){
     rgl::pop3d(id = pl)
   }
   x
+}
+
+#hidden
+lockdown <- function(Label = NULL, lock = NULL){
+  if(!is.issue(lock)&!is.issue(Label)){
+    lock = setdiff(lock,Label)
+    if(length(lock)==0){
+      message("Label and lock cannot be the same value")
+      TRUE
+    }else{
+      message("Cable type locked: ", paste(standard_compartments(lock),collapse=", "))
+      FALSE
+    }
+  }else{
+    FALSE
+  }
 }
 
 

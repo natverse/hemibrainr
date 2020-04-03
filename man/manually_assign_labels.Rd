@@ -16,11 +16,11 @@ manually_assign_labels(x, brain = NULL, ...)
 
 \method{manually_assign_labels}{neuronlist}(x, brain = NULL, ...)
 
-hemibrain_prune_online(x, ...)
+hemibrain_prune_online(x, brain = NULL, Label = NULL, lock = NULL, ...)
 
-\method{hemibrain_prune_online}{neuron}(x, brain = NULL, Label = NULL, ...)
+\method{hemibrain_prune_online}{neuron}(x, brain = NULL, Label = NULL, lock = NULL, ...)
 
-\method{hemibrain_prune_online}{neuronlist}(x, Label = NULL, ...)
+\method{hemibrain_prune_online}{neuronlist}(x, brain = NULL, Label = NULL, lock = NULL, ...)
 
 hemibrain_correctsoma(x, ...)
 }
@@ -32,6 +32,9 @@ hemibrain_correctsoma(x, ...)
 \item{...}{additional arguments passed to plotting functions, namely \code{plot3d_split}}
 
 \item{Label}{the type of cable to be assigned/edited. Use \code{standardise_labels} to see how numbers convert to cable types.}
+
+\item{lock}{a vector of number representing cable types to lock (so that they cannot be edited interactively be a user).
+If \code{NULL} (default) no cable type is treated as locked. Locked cable will appear in green.}
 }
 \value{
 The neuron/neuronlist object with axon/dendrite info assigned in SWC format to neuron$d

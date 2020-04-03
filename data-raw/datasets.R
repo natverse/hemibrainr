@@ -12,7 +12,7 @@ usethis::use_data(hemibrain_splitpoints_polypre_centrifugal_synapses, overwrite 
 hemibrain_metrics_polypre_centrifugal_distance <- read.csv("data-raw/hemibrain_all_neurons_metrics_polypre_centrifugal_distance.csv")
 hemibrain_metrics_polypre_centrifugal_synapses <- read.csv("data-raw/hemibrain_all_neurons_metrics_polypre_centrifugal_synapses.csv")
 rownames(hemibrain_metrics_polypre_centrifugal_distance) <- hemibrain_metrics_polypre_centrifugal_distance$bodyid
-rownames(hemibrain_metrics_polypre_centrifugal_synapses) <- hemibrain_all_neurons_metrics_polypre_centrifugal_synapses$bodyid
+rownames(hemibrain_metrics_polypre_centrifugal_synapses) <- hemibrain_metrics_polypre_centrifugal_synapses$bodyid
 usethis::use_data(hemibrain_metrics_polypre_centrifugal_distance, overwrite = TRUE)
 usethis::use_data(hemibrain_metrics_polypre_centrifugal_synapses, overwrite = TRUE)
 
@@ -66,6 +66,8 @@ usethis::use_data(hemibrain_al_microns.surf, overwrite = TRUE)
 usethis::use_data(hemibrain_al.surf, overwrite = TRUE)
 
 # Just save the ORN and HRN bodyids
+ton.ids = read.csv("data-raw/annotations/bodyids_thirdorder.csv")
+ton.ids = purify(ton.ids$x)
 rn.ids = class2ids("RN", possible = TRUE)
 orn.ids = class2ids("ORN")
 hrn.ids = class2ids("HRN")
@@ -77,6 +79,7 @@ alln.ids = class2ids("ALLN")
 dan.ids = class2ids("DAN")
 mbon.ids = class2ids("MBON")
 ## Use them
+usethis::use_data(ton.ids, overwrite = TRUE)
 usethis::use_data(rn.ids, overwrite = TRUE)
 usethis::use_data(orn.ids, overwrite = TRUE)
 usethis::use_data(hrn.ids, overwrite = TRUE)

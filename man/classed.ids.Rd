@@ -13,6 +13,7 @@
 \alias{dan.ids}
 \alias{mbon.ids}
 \alias{alln.ids}
+\alias{ton.ids}
 \title{Bodyids for neuron classes}
 \format{An object of class \code{character} of length 2545.}
 \usage{
@@ -35,6 +36,8 @@ dan.ids
 mbon.ids
 
 alln.ids
+
+ton.ids
 }
 \description{
 Bodyids for neuron classes. Hard saved equivalent for \code{\link{class2ids}}.
@@ -48,6 +51,7 @@ have determined to fall into different classes.
 \donttest{
 head(rn.ids)
 }
+
 }
 \seealso{
 \code{\link{class2ids}}

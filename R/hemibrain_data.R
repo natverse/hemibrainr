@@ -11,6 +11,7 @@
 #' \donttest{
 #' head(rn.ids)
 #' }
+#'
 #' @name classed.ids
 #' @rdname classed.ids
 "rn.ids"
@@ -32,6 +33,9 @@
 "mbon.ids"
 #' @rdname classed.ids
 "alln.ids"
+#' @name classed.ids
+#' @rdname classed.ids
+"ton.ids"
 
 #' The hemibrain mesh
 #'

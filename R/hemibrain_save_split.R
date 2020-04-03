@@ -11,6 +11,8 @@ setup_splitcheck_sheet <-function(ss = "1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgU
   rownames(lhn.gs) = lhn.gs$bodyId
   i = intersect(roots$bodyid,lhn.gs$bodyId)
   ### Underlying data.frame for database
+  roots$type = hemibrainr::hemibrain_metrics[as.character(roots$bodyid),"type"]
+  roots$type[is.na(roots$type)] = paste0("unknown_",roots$bodyid[is.na(roots$type)] )
   roots$soma = hemibrainr::hemibrain_metrics[as.character(roots$bodyid),"soma"]
   roots[as.character(i),]$soma = unlist(nullToNA(lhn.gs[as.character(i),]$hasSoma))
   roots$cut = hemibrainr::hemibrain_metrics[as.character(roots$bodyid),"cropped"]
@@ -53,13 +55,60 @@ setup_splitcheck_sheet <-function(ss = "1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgU
   roots$orig.soma = hemibrainr::hemibrain_metrics[as.character(roots$bodyid),"soma"]
   roots$orig.cut = hemibrainr::hemibrain_metrics[as.character(roots$bodyid),"cropped"]
   ### Write to Google Sheet
-  googlesheets4::write_sheet(roots[,],
+  googlesheets4::write_sheet(roots[0,],
                              ss = ss,
                              sheet = "roots")
+  batches = split(1:nrow(roots), ceiling(seq_along(1:nrow(roots))/1000))
+  for(i in batches){
+    gsheet_manipulation(FUN = googlesheets4::sheets_append,
+                        data = roots[min(i):max(i),],
+                        ss = selected_file,
+                        sheet = "roots")
+  }
   googlesheets4::write_sheet(manual[0,],
                              ss = ss,
                              sheet = "manual")
+  ### Some assignments for tracers in the FlyConnectome group
+  hemibrain_task_update(bodyids = c(upn.ids,mpn.ids,orn.ids), column = "user", update = "ND")
+  hemibrain_task_update(bodyids = dan.ids, column = "user", update = "GD")
+  hemibrain_task_update(bodyids = c(vppn.ids,hrn.ids), column = "user", update = "ECM")
+  hemibrain_task_update(bodyids = alln.ids, column = "user", update = "MWP")
+  hemibrain_task_update(bodyids = dan.ids, column = "user", update = "AJ")
 }
+
+#' @examples
+#' \donttest{
+#' \dontrun{
+#' # Assign mPN review to Nik Drummond
+#' hemibrain_task_update(bodyids = mpn.ids, column = "user", update = "ND")
+#' }}
+#' @export
+#' @rdname hemibrain_adjust_saved_split
+hemibrain_task_update <- function(bodyids,
+                                  update,
+                                 selected_file = "1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E",
+                                 column = c("soma","cut", "truncated", "split", "splittable", "checked", "user",
+                                              "time", "note", "priority", "edited.cable")
+                                 ){
+  column = match.arg(column)
+  message("Updating task field: ", column)
+  gs = googlesheets4::read_sheet(ss = selected_file, sheet = "roots")
+  rows = match(bodyids, gs$bodyid)
+  rows = rows[!is.na(rows)]
+  letter = LETTERS[match(column,colnames(gs))]
+  range = paste0(letter,min(rows)+1,":",letter,max(rows)+1)
+  if(length(update)!=length(rows)){
+    update = rep(update, length(rows))
+  }
+  gsheet_manipulation(FUN = googlesheets4::sheets_edit,
+                        ss = selected_file,
+                        range = range,
+                        data = data.frame(update),
+                        sheet = "roots",
+                        col_names = FALSE)
+  message("Task updated! ")
+}
+
 
 #' Manually review split neurons and save your results to a Google Sheet for everyone to use
 #'
@@ -85,15 +134,23 @@ setup_splitcheck_sheet <-function(ss = "1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgU
 #' using \code{db = hemibrain_read_neurons(savedir=TRUE)}. This can then be given as the argument to \code{db}.
 #' @param check_thresh when checking skeleton splits and correcting them, we do not want to look at skeletons that have already been checked by others many times.
 #' If a skeleton has already been checked by this many users or more, it will not be given to the user to edit.
-#' @param batch_size when reviewing splits for hemibrain neurons, we examine neurons in batches of this size. We then go through two phases,
+#' @param batch_size when reviewing splits for hemibrain neurons, we examine neurons (or putative cell types, see parameter \code{by.type}) in batches of this size. We then go through two phases,
 #' choosing neurons that are incorrect in some way (wrongly split, cropped) and then editing them manually, before saving them to a Google Sheet.
 #' You may not have access to this Google Sheet, in which case you will not be able to contribute manual splits for neurons to this package. Contact us
 #' if you would like access.
+#' @param by.type logical. If \code{TRUE} then putative cell types (as assigned as the type field in neuPrint) of neurons are presented. The number of cell types pulled
+#' are of size \code{batch_size}.
+#' @param assignments logical. If TRUE then the user is invited to examine only neurons that they are flagged for them. These are entries into the 'roots' tab of the Google Sheet,
+#' where the user column is the same as the initials the user enters.
 #' @param update_regularly whether or not to read from the Google Sheet database regularly, to avoid duplicating manual splits. Should be set to \code{TRUE} unless
 #' reading the Google Sheet introduces a prohibitive time delay.
 #' @param motivate whether or not to plot 2D motivationals from \href{(https://inspirobot.me/)}{InspiroBot} to keep to entertained while splitting neurons.
 #' @param prioritise whether or not to look at higher priority neurons first. Initial, this means olfactory system neurons.
 #' @param clean whether or not to set synapse-less branches to \code{Label = 0}.
+#' @param update a vector of \code{length(bodyids)} or \code{1}, which will replace cells in the column specified by \code{column} for given bodyids (\code{bodyids}).
+#' E.g. If I wanted to changed the given bodyids on the task sheet to checked = TRUE, I would use \code{update = TRUE}.
+#' @param column the column in the split-check task's Google Sheet (specified by \code{selected_file}) to be updated with the value of the argument \code{update}.
+#' E.g. If I wanted to changed the given bodyids on the task sheet to checked = TRUE, I would use \code{column = "check"}.
 #' @param ... additional arguments passed to plotting functions, such as \code{plot3d_split} and \code{nlscan_split}
 #' @return Updates a Google Sheet which records whether neurons have been checked in one tab ("roots") and records actual manually made splits in a second tab ("manual").
 #' @examples
@@ -106,18 +163,20 @@ setup_splitcheck_sheet <-function(ss = "1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgU
 #' @export
 #' @rdname hemibrain_adjust_saved_split
 hemibrain_adjust_saved_split <- function(bodyids = NULL,
-                          phases = c("complete", "I", "II", "III"),
-                          db = NULL,
-                          check_thresh = 1,
-                          batch_size = 10,
-                          brain = hemibrainr::hemibrain.surf,
-                          update_regularly = TRUE,
-                          motivate = TRUE,
-                          clean = TRUE,
-                          prioritise = TRUE,
-                          selected_file = "1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E",
-                          selected_col = "#fadadd",
-                          ...){
+                                         phases = c("complete", "I", "II", "III"),
+                                         db = NULL,
+                                         check_thresh = 1,
+                                         batch_size = 10,
+                                         by.type = TRUE,
+                                         assignments = TRUE,
+                                         brain = hemibrainr::hemibrain.surf,
+                                         update_regularly = TRUE,
+                                         motivate = TRUE,
+                                         clean = TRUE,
+                                         prioritise = TRUE,
+                                         selected_file = "1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E",
+                                         selected_col = "#fadadd",
+                                         ...){
   ### Get google sheet, assess what is to be done
   phases = match.arg(phases)
   if(motivate){plot_inspirobot()}
@@ -141,37 +200,43 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
           linker = green, primary neurite = purple,
           input = navy, output = red
           ###Colours###")
-  ### Choose the phases we want to use
-  if(phases %in% c("II","III")){
-    undone = subset(gs, split == "manual")
-    if(phases == "II"){
-      undone.ids = setdiff(unique(undone$bodyid), manual$bodyid)
-    }
-    if(!length(undone.ids)){
-      stop("There are no neurons marked for manual splitting (in Phase I) that have not had a manual split saved.")
-    }
-  }
   ### Get chosen bodyIDs
-  if(!is.null(bodyids)){
-    message("Reading chosen neurons from the hemibrain project ...")
-    undone.ids = intersect(bodyids, undone.ids)
-  }
+  undone.ids <- check_undoneids(undone.ids = undone.ids,
+                                bodyids = bodyids,
+                                gs = gs,
+                                phases = phases,
+                                assignments = assignments,
+                                initials = initials,
+                                manual = manual)
+  ### Prioritise
   if(prioritise){
-    message("Prioritising 1st-3rd order olfactory neurons")
+    message("Prioritising 1st-3rd order olfactory ",ifelse(by.type,"neurons","putative cell types"))
     undone.ids = sample(undone.ids, length(undone.ids), replace = FALSE)
     ranks = gs[match(undone.ids,gs$bodyid),"priority"][[1]]
     undone.ids = undone.ids[order(ranks,decreasing = TRUE)]
     message("Priorities: ")
     print(table(ranks))
   }else{
-    message("Choosing un-checked neurons at random")
+    message("Choosing un-checked ",ifelse(by.type,"neurons","putative cell types")," at random")
     undone.ids = sample(undone.ids, length(undone.ids), replace = FALSE)
   }
-  batches = split(undone.ids, ceiling(seq_along(undone.ids)/batch_size))
+  ### Make batches
+  if(by.type){
+    pcts = purify(gs[match(undone.ids, gs$bodyid),"type"])
+    pcts = pcts[order(pcts)]
+    batches = split(pcts, ceiling(seq_along(pcts)/batch_size))
+  }else{
+    batches = split(undone.ids, ceiling(seq_along(undone.ids)/batch_size))
+  }
   if(!length(batches)){
     stop("None of the given bodyIDs have been checked by less than ",check_thresh," user(s)")
   }else{
     for(batch in batches){
+      ### Get bodyids
+      if(by.type){
+        batch = purify(gs$bodyid[match(batch, gs$type)])
+        message("Neurons in batch: ", length(batch))
+      }
       ### What priority are we at
       ranks = gs[match(batch,gs$bodyid),"priority"][[1]]
       message("Highest priority neuron under consideration: ", max(ranks, na.rm=TRUE))
@@ -222,14 +287,17 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
                                     selected = selected,
                                     brain = brain,
                                     manual = manual,
-                                    update_regularly = update_regularly)
+                                    update_regularly = update_regularly,
+                                    selected_file = selected_file)
         }
         if(phases %in% c("complete", "III")){
           ### Review the changes
           message("Phase III : review ", length(mes), " neurons")
           mes <- splitcheck_phaseIII(mes = mes,
                                      selected = selected,
-                                     manual = manual)
+                                     manual = manual,
+                                     motivate = motivate,
+                                     brain = brain)
         }
         ### Continue?
         satisfied = hemibrain_choice(prompt = "Continue to saving changes (y), or would you like to run the edit process
@@ -241,6 +309,7 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
       if(length(mes)){
         mes.sp = hemibrain_splitpoints(x = mes)
         mes.i = match(mes.sp$bodyid, names(someneuronlist))
+        mes.sp$type = gs$type[match(mes.sp$bodyid,gs$bodyid)]
         mes.sp$split = "manual"
         mes.sp$checked = TRUE
         mes.sp$user = initials
@@ -267,7 +336,7 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
         if(motivate){plot_inspirobot()}
         gs = googlesheets4::read_sheet(ss = selected_file, sheet = "roots")
       }
-      rows = match(names(someneuronlist), as.character(undone$bodyid))
+      rows = match(names(someneuronlist), gs$bodyid)
       splits = as.character(gs$split[rows])
       cuts = as.character(gs$cut[rows])
       if(length(mes)){
@@ -289,7 +358,7 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
         user = rep(initials, length(rows)),
         time = Sys.time(),
         note = notes)
-      range = paste0("G",min(rows)+1,":O",max(rows)+1)
+      range = paste0("H",min(rows)+1,":P",max(rows)+1)
       update[is.na(update)] = ""
       gsheet_manipulation(FUN = googlesheets4::sheets_edit,
                           ss = selected_file,
@@ -317,7 +386,7 @@ gsheet_manipulation <- function(FUN, ...){
   success = FALSE
   while(!success){
     g = tryCatch(FUN(...),
-                  error = function(e) NULL)
+                 error = function(e) NULL)
     if(!is.null(g)){
       success = TRUE
     }else{
@@ -335,7 +404,7 @@ splitcheck_phaseI <- function(someneuronlist,
                               somas,
                               brain = NULL,
                               selected_col = "#fadadd"
-                              ){
+){
   if(nat::is.neuronlist(someneuronlist)) {
     neurons = names(someneuronlist)
     nams = as.data.frame(someneuronlist)$name
@@ -374,10 +443,9 @@ splitcheck_phaseI <- function(someneuronlist,
     }
     plot3d_split(someneuronlist[i])
     chc <- must_be(prompt = "
-          Return to continue,
-          b to go back, s to select (needs edit / seriously cropped),
+          Return to continue, b to go back, s to select (needs edit / seriously cropped),
           t to mark as truncated, u to mark as unsplittable, r to mark as missing soma,
-          c to cancel (with selection) and e to make a note ",
+          c to cancel (with selection), e to make a note ",
                    answers = c("","b","s","t","c","e","u"))
     if (chc == "c") {
       if (is.null(chc) || chc == "c")
@@ -393,16 +461,24 @@ splitcheck_phaseI <- function(someneuronlist,
       }
       else selected <- union(selected, n)
     }
+    if (chc == "e"){
+      notes[i] <- readline(prompt = "Add your note here: yes/no ")
+      message("Note is: ", notes[i])
+    }
+    if (chc == "t"){
+      truncated[i] <- readline(prompt = "Is this neuron (even slightly) truncated?: yes/no ")
+      message("Truncation status is: ", truncated[i])
+    }
+    if (chc == "u"){
+      splittable[i] <- hemibrain_choice(prompt = "Can this neuron be split? yes/no ")
+      message("Splittable status is: ", splittable[i])
+    }
+    if (chc == "r"){
+      somas[i] <- hemibrain_choice(prompt = "Is this neuron missing its soma/obvious tract to soma? yes/no ")
+      message("Soma status is: ", splittable[i])
+    }
     if (chc == "b"){
       i <- i - 1
-    }else if (chc == "e"){
-      notes[i] <- readline(prompt = "Add your note here: yes/no ")
-    }else if (chc == "t"){
-      truncated[i] <- readline(prompt = "Is this neuron (even slightly) truncated?: yes/no ")
-    }else if (chc == "u"){
-      splittable[i] <- hemibrain_choice(prompt = "Can this neuron be split? yes/no ")
-    }else if (chc == "r"){
-      somas[i] <- hemibrain_choice(prompt = "Is this neuron missing its soma/obvious tract to soma? yes/no ")
     }else{
       i <- i + 1
     }
@@ -420,6 +496,7 @@ splitcheck_phaseI <- function(someneuronlist,
 splitcheck_phaseII <- function(selected,
                                someneuronlist,
                                manual,
+                               selected_file,
                                update_regularly = TRUE,
                                brain = NULL,
                                ...){
@@ -461,6 +538,8 @@ splitcheck_phaseIII <- function(mes = NULL,
                                 selected = NULL,
                                 manual = NULL,
                                 phases = c("complete", "I", "II", "III"),
+                                motivate = TRUE,
+                                brain = NULL,
                                 ...){
   phases = match.arg(phases)
   if(is.null(mes)){
@@ -497,4 +576,34 @@ splitcheck_phaseIII <- function(mes = NULL,
     mes = mes[names(mes)%in%new.select]
   }
   mes
+}
+
+# hidden
+check_undoneids <- function(undone.ids, bodyids, gs, phases, assignments, initials, manual){
+  if(!is.null(bodyids)){
+    undone.ids = intersect(bodyids, undone.ids)
+  }
+  if(assignments){
+    gs.a = gs[gs$user==initials,]
+    undone.ids.a = intersect(undone.ids,gs.a$bodyid)
+    if(!length(undone.ids.a)){
+      warning("There are no unchecked neurons to select assigned to ", initials)
+    }else{
+      message("Choosing only those neuron assigned to ", initials)
+      undone.ids = undone.ids.a
+    }
+  }
+  if(phases %in% c("II","III")){
+    undone = subset(gs, split == "manual")
+    if(phases == "II"){
+      undone.ids = setdiff(unique(undone$bodyid), manual$bodyid)
+    }
+    if(!length(undone.ids)){
+      stop("There are no neurons marked for manual splitting (in Phase I) that have not had a manual split saved.")
+    }
+  }
+  if(!length(undone.ids)){
+    stop("There are no unchecked neurons to select for Phase:", phases)
+  }
+  as.character(undone.ids)
 }

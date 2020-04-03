@@ -118,6 +118,7 @@ change_points <- function(x, v, only.jumps = FALSE, run = "min"){
 
 # hidden
 is.issue <- function(x){
+  x = x[1]
   if(length(x)){
     if(!is.na(x)){
       if(!is.nan(x)){
@@ -133,6 +134,11 @@ is.issue <- function(x){
 carryover_tags <- function(x, y){
   y$tags = x$tags
   y
+}
+
+# hidden
+purify <- function(x){
+  as.character(unique(unname(unlist(c(x)))))
 }
 
 
