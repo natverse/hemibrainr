@@ -35,8 +35,7 @@ hemibrain_roi_meshes <- function(rois=NULL, microns = FALSE, superLevel=NULL, Om
 
   fakelist=as.list(structure(rois, .Names=rois))
   hemibrain.rois <- nlapply(fakelist, function(roi) {
-    mesh = tryCatch(neuprint_ROI_mesh(roi), error = function(e) NULL)
-    if(is.null(mesh)) next
+    mesh = neuprint_ROI_mesh(roi)
     if(microns){
       mesh*(8/1000)
       nat.templatebrains::regtemplate(mesh) = "JRCFIB2018F"
