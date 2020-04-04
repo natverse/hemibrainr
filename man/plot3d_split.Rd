@@ -15,11 +15,13 @@ plot3d_split(
   highflow = FALSE,
   lwd = 1,
   radius = NULL,
+  already_selected = NULL,
   ...
 )
 
 nlscan_split(
   someneuronlist,
+  already_selected = NULL,
   col = c("#1BB6AF", "#EF7C12", "#C70E7B", "#8FDA04", "#4D4D4D", "#FC6882"),
   WithConnectors = TRUE,
   WithNodes = FALSE,
@@ -36,7 +38,7 @@ nlscan_split(
 )
 }
 \arguments{
-\item{someneuronlist}{a neuronlist or neuron object that has been modified by flow.centrality}
+\item{someneuronlist}{a neuronlist or neuron object that has been modified by flow.centrality.}
 
 \item{col}{colours of sections. Defaults to orange or axons, green for primary dendrite, blue for dendrites and pink for nodes with no flow.}
 
@@ -53,6 +55,8 @@ nlscan_split(
 \item{lwd}{Line width (default 1)}
 
 \item{radius}{For connectors and axon-dendrite split node (default 1). If \code{NULL}, an appropriate value is guessed.}
+
+\item{already_selected}{a vector of IDs for neurons that are already considered selected. If \code{NULL} then no neurons are considered selected to start with.}
 
 \item{...}{additional arguments passed to methods.}
 

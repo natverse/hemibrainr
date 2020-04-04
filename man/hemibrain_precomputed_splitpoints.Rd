@@ -8,7 +8,7 @@
 \alias{hemibrain_splitpoints_pre_centrifugal_distance}
 \alias{hemibrain_splitpoints_polypre_centrifugal_synapses}
 \title{Axon-dendrite split points calculated for all hemibrain neurons}
-\format{An object of class \code{data.frame} with 724603 rows and 6 columns.}
+\format{An object of class \code{data.frame} with 745493 rows and 7 columns.}
 \source{
 \url{https://www.biorxiv.org/content/10.1101/2020.01.19.911453v1}
 }
