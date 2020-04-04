@@ -336,6 +336,7 @@ hemibrain_invert <- function(x){
 internal_assignments <- function(x){
   ## Get cable points
   n = nat::as.ngraph(x)
+  root = nat::rootpoints(n)
   dendrites = subset(rownames(x$d), x$d$Label == 3)
   axon = subset(rownames(x$d), x$d$Label == 2)
   p.d = subset(rownames(x$d), x$d$Label == 4)

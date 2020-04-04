@@ -730,7 +730,7 @@ hemibrain_flow_centrality.neuronlist <- function(x, splitpoints = hemibrainr::he
   if(length(cropped)){
     warning(length(cropped), " neurons cropped, split likely to be inaccurate for: ", paste(names(cropped),collapse=", "))
   }
-  untracted = x[x$status!="Traced",]
+  untraced = x[x$status!="Traced",]
   if(length(untraced)){
     warning(length(untraced), " neurons do not have 'traced' status, split likely to be inaccurate for: ", paste(names(untraced),collapse=", "))
   }
