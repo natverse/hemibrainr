@@ -39,6 +39,7 @@ setup_splitcheck_sheet <-function(ss = "1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgU
   ### Prioritise the neurons we care about most
   roots$priority = 0
   roots$priority[roots$bodyid%in%lhn.gs$bodyId] = 3
+  roots$priority[roots$bodyid%in%alln.ids] = 2
   roots$priority[roots$bodyid%in%dan.ids] = 2
   roots$priority[roots$bodyid%in%pn.ids] = 2
   roots$priority[roots$bodyid%in%upn.ids] = 2
@@ -72,14 +73,15 @@ setup_splitcheck_sheet <-function(ss = "1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgU
   hemibrain_task_update(bodyids = c(upn.ids,mpn.ids,orn.ids), column = "user", update = "ND")
   hemibrain_task_update(bodyids = dan.ids, column = "user", update = "GD")
   hemibrain_task_update(bodyids = c(vppn.ids,hrn.ids), column = "user", update = "ECM")
-  hemibrain_task_update(bodyids = alln.ids, column = "user", update = "MWP")
+  hemibrain_task_update(bodyids = alln.ids, column = "user", update = "TS")
+  hemibrain_task_update(bodyids = mbon.ids, column = "user", update = "MWP")
   hemibrain_task_update(bodyids = dan.ids, column = "user", update = "AJ")
 }
 
 #' @examples
 #' \donttest{
 #' \dontrun{
-#' # Assign mPN review to Nik Drummond
+#' # Assign mPN review to Nik Drummond (ND)
 #' hemibrain_task_update(bodyids = mpn.ids, column = "user", update = "ND")
 #' }}
 #' @export
