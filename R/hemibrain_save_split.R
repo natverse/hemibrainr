@@ -70,12 +70,13 @@ setup_splitcheck_sheet <-function(ss = "1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgU
                              ss = ss,
                              sheet = "manual")
   ### Some assignments for tracers in the FlyConnectome group
-  hemibrain_task_update(bodyids = c(upn.ids,mpn.ids,orn.ids), column = "user", update = "ND")
+  hemibrain_task_update(bodyids = c(upn.ids,mpn.ids), column = "user", update = "ND")
   hemibrain_task_update(bodyids = dan.ids, column = "user", update = "GD")
   hemibrain_task_update(bodyids = c(vppn.ids,hrn.ids), column = "user", update = "ECM")
   hemibrain_task_update(bodyids = alln.ids, column = "user", update = "TS")
   hemibrain_task_update(bodyids = mbon.ids, column = "user", update = "MWP")
-  hemibrain_task_update(bodyids = dan.ids, column = "user", update = "AJ")
+  hemibrain_task_update(bodyids = ton.ids, column = "user", update = "AJ")
+  hemibrain_task_update(bodyids = orn.ids, column = "user", update = "MMC")
 }
 
 #' @examples
