@@ -130,7 +130,7 @@ hemibrain_prune_online <-function(x, brain = NULL, Label = NULL, lock = NULL, ..
 #' @export
 #' @rdname manually_assign_labels
 hemibrain_prune_online.neuron <- function (x, brain = NULL, Label = NULL, lock = NULL, ...) {
-  if(lockdown(Label = Label, lock = lock)){
+  if(lockdown(Label = Label, lock = lock, verbose = TRUE)){
     return(NULL)
   }
   continue = "no"
@@ -397,15 +397,11 @@ internal_assignments <- function(x){
 # hidden
 #' @importFrom rgl plot3d
 cycle_branches <- function(x, brain = NULL){
-  nulls = subset(rownames(x$d), !x$d$Label %in% c(2,3))
   message("Removing assigned primary neurite and linker cable to find sub-branches ...")
-  y = nat::prune_vertices(x, verticestoprune = as.numeric(nulls),invert = FALSE)
-  sbt = break_into_subtrees(y)
+  sbt = break_into_subtrees(y, prune = TRUE)
   i <- 1
   message("Cycling through sub-branches (in red). Bear in mind that some branches can be very small.")
   while(length(sbt)) {
-    reset3d(brain=brain)
-    plot3d_split(x, soma = FALSE)
     if (i > length(sbt) || i < 1){
       end = hemibrain_choice("Done selecting branches to edit? yes/no ")
       if(end){
@@ -414,19 +410,21 @@ cycle_branches <- function(x, brain = NULL){
         i <- 1
       }
     }
+    reset3d(brain=brain)
+    plot3d_split(x, soma = FALSE)
     cat("Current branch:", i, " "," (", i, "/", length(sbt),")","\n")
-    pl <- plot3d(sbt[i], col = hemibrain_bright_colours["cerise"], lwd = 5)
-    chc <- must_be(prompt = "
-          What cable is this?:
-          uncertain/erroneous (0), axon (2), dendrite (3),
-          linker (4), primary neurite (7).
-          Back (b), next (enter), end (c) ",
-          answers = c(0,2:4,7,""))
+    plot3d(sbt[i], col = hemibrain_bright_colours["cerise"], lwd = 5)
+    chc <- must_be(prompt = "What cable is this?:
+    uncertain/erroneous (0), axon (2), dendrite (3),
+    linker (4), primary neurite (7).
+    Back (b), next (enter), cancel (c) ",
+          answers = c(0,2:4,7,"","b","c"))
     if (chc == "c") {
-    if (is.null(chc) || chc == "")
-      break
+      if (is.null(chc) || chc == "")
+        break
     }
     if (chc %in%  c(0,2:4,7) ){
+      message("Updating ", standard_compartments(chc))
       x = add_Label(x = x, PointNo = sbt[i][[1]]$orig.PointNo, Label = as.numeric(chc), erase = FALSE)
     }
     if (chc == "b"){
@@ -434,20 +432,19 @@ cycle_branches <- function(x, brain = NULL){
     }else{
       i <- i + 1
     }
-    rgl::pop3d(id = pl)
   }
   x
 }
 
 #hidden
-lockdown <- function(Label = NULL, lock = NULL){
+lockdown <- function(Label = NULL, lock = NULL, verbose = FALSE){
   if(!is.issue(lock)&!is.issue(Label)){
     lock = setdiff(lock,Label)
     if(length(lock)==0){
-      message("Label and lock cannot be the same value")
+      if(verbose){message("Label and lock cannot be the same value")}
       TRUE
     }else{
-      message("Cable type locked: ", paste(standard_compartments(lock),collapse=", "))
+      if(verbose){message("Cable type locked: ", paste(standard_compartments(lock),collapse=", "))}
       FALSE
     }
   }else{
