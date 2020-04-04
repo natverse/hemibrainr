@@ -147,9 +147,21 @@ carryover_tags <- function(x, y){
 
 # hidden
 purify <- function(x){
-  as.character(unique(unname(unlist(c(x)))))
+  as.character(unique(unname(unlist(nullToNA(c(x))))))
 }
 
+# hidden
+remove_duplicates <- function(manual){
+  delete = c()
+  for(bi in unique(manual$bodyid)){
+    m = manual[manual$bodyid==bi,]
+    dupe = which(duplicated(m$bodyid))
+    droot = which(m[dupe,]$point=="root")
+    del = rownames(m)[dupe>=droot]
+    delete = c(delete,del)
+  }
+  manual[setdiff(rownames(manual),delete),]
+}
 
 
 

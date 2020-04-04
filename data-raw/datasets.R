@@ -17,12 +17,23 @@ usethis::use_data(hemibrain_metrics_polypre_centrifugal_distance, overwrite = TR
 usethis::use_data(hemibrain_metrics_polypre_centrifugal_synapses, overwrite = TRUE)
 
 ### Reach consensus
-# low = subset(hemibrain_all_neurons_metrics_polypre_centrifugal_synapses, segregation_index < 0.01)$bodyid
-# l = hemibrain_read_neurons(low[1:1000], microns = FALSE, OmitFailures = TRUE)
+#hemibrain_all_splitpoints <- hemibrain_splitpoints_polypre_centrifugal_synapses ### original definition
+#hemibrain_metrics <- hemibrain_metrics_polypre_centrifugal_synapses ### original definition
+selected_file = "1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E"
+gs = googlesheets4::read_sheet(ss = selected_file, sheet = "roots")
+gs = as.data.frame(gs)
+gs = gs[!duplicated(gs$bodyid),]
+manual = googlesheets4::read_sheet(ss = selected_file, sheet = "manual")
+manual = as.data.frame(manual)
+manual = remove_duplicates(manual)
+hemibrain_all_splitpoints = subset(hemibrainr::hemibrain_all_splitpoints, !bodyid%in%manual$bodyid)
+hemibrain_all_splitpoints = rbind(hemibrain_all_splitpoints,manual)
+hemibrain_metrics[as.character(gs$bodyid),colnames(gs)] = gs
+
+### Further update metrics based on manual splits
+#### To be done on Cluster ####
 
 ### Consensus
-hemibrain_all_splitpoints <- hemibrain_splitpoints_polypre_centrifugal_synapses
-hemibrain_metrics <- hemibrain_metrics_polypre_centrifugal_synapses
 usethis::use_data(hemibrain_metrics, overwrite = TRUE)
 usethis::use_data(hemibrain_all_splitpoints, overwrite = TRUE)
 
