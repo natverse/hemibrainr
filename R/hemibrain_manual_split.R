@@ -398,7 +398,7 @@ internal_assignments <- function(x){
 #' @importFrom rgl plot3d
 cycle_branches <- function(x, brain = NULL){
   message("Removing assigned primary neurite and linker cable to find sub-branches ...")
-  sbt = break_into_subtrees(y, prune = TRUE)
+  sbt = break_into_subtrees(x, prune = TRUE)
   i <- 1
   message("Cycling through sub-branches (in red). Bear in mind that some branches can be very small.")
   while(length(sbt)) {

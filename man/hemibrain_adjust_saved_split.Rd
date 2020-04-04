@@ -97,9 +97,9 @@ the \href{https://docs.google.com/spreadsheets/d/1YjkVjokXL4p4Q6BR-rGGGKWecXU370
 \details{
 the pipeline works in three phases and you choose to take a batch_size of X neurons/types (defaults to 10) through these stages:
 \itemize{
-\item{"Phase I"}{ - choose which neurons are okay and which need modifying /
+\item{Phase I}{ - choose which neurons are okay and which need modifying /
 are truncated / are unsplittable / have a bad soma, etc.}
-\item{Phase II}{- manually edit those neurons that need modifying. Top tip:
+\item{Phase II}{ - manually edit those neurons that need modifying. Top tip:
 You can ‘cycle’ through branches and update them to a certain cable type one
 at a time. This works by removing the primary neurite and linker,
 so it is good to define these first for a neuron, and then cycle

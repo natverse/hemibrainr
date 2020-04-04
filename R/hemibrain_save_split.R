@@ -4,9 +4,9 @@
 
 # hidden
 ## Set up Google Drive file as database
-setup_splitcheck_sheet <-function(ss = "1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E"){
+setup_splitcheck_sheet <-function(selected_file = "1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E"){
   ### Set up
-  roots = subset(hemibrainr::hemibrain_all_splitpoints, point == "root")
+  roots = subset(hemibrainr::hemibrain_all_splitpoints, hemibrainr::hemibrain_all_splitpoints$point == "root")
   lhn.gs = as.data.frame(googlesheets4::read_sheet(ss = "1dH4d3-9aWLvoA8U3bz94JWMXOtW1krzLPnFc7tkgZnM"))
   rownames(lhn.gs) = lhn.gs$bodyId
   i = intersect(roots$bodyid,lhn.gs$bodyId)
@@ -57,7 +57,7 @@ setup_splitcheck_sheet <-function(ss = "1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgU
   roots$orig.cut = hemibrainr::hemibrain_metrics[as.character(roots$bodyid),"cropped"]
   ### Write to Google Sheet
   googlesheets4::write_sheet(roots[0,],
-                             ss = ss,
+                             ss = selected_file,
                              sheet = "roots")
   batches = split(1:nrow(roots), ceiling(seq_along(1:nrow(roots))/1000))
   for(i in batches){
@@ -67,16 +67,16 @@ setup_splitcheck_sheet <-function(ss = "1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgU
                         sheet = "roots")
   }
   googlesheets4::write_sheet(manual[0,],
-                             ss = ss,
+                             ss = selected_file,
                              sheet = "manual")
   ### Some assignments for tracers in the FlyConnectome group
-  hemibrain_task_update(bodyids = c(upn.ids,mpn.ids), column = "user", update = "ND")
-  hemibrain_task_update(bodyids = dan.ids, column = "user", update = "GD")
-  hemibrain_task_update(bodyids = c(vppn.ids,hrn.ids), column = "user", update = "ECM")
-  hemibrain_task_update(bodyids = alln.ids, column = "user", update = "TS")
-  hemibrain_task_update(bodyids = mbon.ids, column = "user", update = "MWP")
-  hemibrain_task_update(bodyids = ton.ids, column = "user", update = "AJ")
-  hemibrain_task_update(bodyids = orn.ids, column = "user", update = "MMC")
+  hemibrain_task_update(bodyids = c(hemibrainr::upn.ids,hemibrainr::mpn.ids), column = "user", update = "ND")
+  hemibrain_task_update(bodyids = hemibrainr::dan.ids, column = "user", update = "GD")
+  hemibrain_task_update(bodyids = c(hemibrainr::vppn.ids,hemibrainr::hrn.ids), column = "user", update = "ECM")
+  hemibrain_task_update(bodyids = hemibrainr::alln.ids, column = "user", update = "TS")
+  hemibrain_task_update(bodyids = hemibrainr::mbon.ids, column = "user", update = "MWP")
+  hemibrain_task_update(bodyids = hemibrainr::ton.ids, column = "user", update = "AJ")
+  hemibrain_task_update(bodyids = hemibrainr::orn.ids, column = "user", update = "MMC")
 }
 
 #' @examples
@@ -157,9 +157,9 @@ hemibrain_task_update <- function(bodyids,
 #' @return Updates a Google Sheet which records whether neurons have been checked in one tab ("roots") and records actual manually made splits in a second tab ("manual").
 #' @details the pipeline works in three phases and you choose to take a batch_size of X neurons/types (defaults to 10) through these stages:
 #' \itemize{
-#' \item{"Phase I"}{ - choose which neurons are okay and which need modifying /
+#' \item{Phase I}{ - choose which neurons are okay and which need modifying /
 #' are truncated / are unsplittable / have a bad soma, etc.}
-#' \item{Phase II}{- manually edit those neurons that need modifying. Top tip:
+#' \item{Phase II}{ - manually edit those neurons that need modifying. Top tip:
 #' You can ‘cycle’ through branches and update them to a certain cable type one
 #' at a time. This works by removing the primary neurite and linker,
 #' so it is good to define these first for a neuron, and then cycle
@@ -198,11 +198,13 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
   say_hello(greet = initials)
   ### Get Google Sheet data
   gs = googlesheets4::read_sheet(ss = selected_file, sheet = "roots")
+  gs = as.data.frame(gs)
   manual = googlesheets4::read_sheet(ss = selected_file, sheet = "manual")
+  manual = as.data.frame(manual)
   ### Process data
-  undone = subset(gs, checked < check_thresh)
+  undone = gs[gs$checked<check_thresh,]
   undone.ids = unique(undone$bodyid)
-  done = subset(gs, checked >= check_thresh)
+  done = gs[gs$checked>=check_thresh,]
   message(length(unique(done$bodyid)), "/",length(unique(gs$bodyid))," have been checked by at least ",check_thresh," user")
   users = gs[gs$checked,"user"]
   print(table(users))
@@ -226,7 +228,7 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
   if(prioritise){
     message("Prioritising 1st-3rd order olfactory ",ifelse(by.type,"neurons","putative cell types"))
     undone.ids = sample(undone.ids, length(undone.ids), replace = FALSE)
-    ranks = gs[match(undone.ids,gs$bodyid),"priority"][[1]]
+    ranks = purify(gs[match(undone.ids,gs$bodyid),"priority"])
     undone.ids = undone.ids[order(ranks,decreasing = TRUE)]
     message("Priorities: ")
     print(table(ranks))
@@ -252,7 +254,7 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
         message("Neurons in batch: ", length(batch))
       }
       ### What priority are we at
-      ranks = gs[match(batch,gs$bodyid),"priority"][[1]]
+      ranks = purify(gs[match(batch,gs$bodyid),"priority"])
       message("Highest priority neuron under consideration: ", max(ranks, na.rm=TRUE))
       ### Read batch
       message("Reading batch of ", batch_size," neurons from the hemibrain project")
@@ -268,10 +270,10 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
         someneuronlist = hemibrain_clean_skeleton(someneuronlist, rval = "neuron")
       }
       ### Get vectors that we will need to update
-      notes = as.character(gs[match(names(someneuronlist), gs$bodyid),"note"][[1]])
-      truncated = as.character(gs[match(names(someneuronlist), gs$bodyid),"truncated"][[1]])
-      somas = as.character(gs[match(names(someneuronlist), gs$bodyid),"soma"][[1]])
-      splittable = as.character(gs[match(names(someneuronlist), gs$bodyid),"splittable"][[1]])
+      notes = purify(gs[match(names(someneuronlist), gs$bodyid),"note"])
+      truncated = purify(gs[match(names(someneuronlist), gs$bodyid),"truncated"])
+      somas = purify(gs[match(names(someneuronlist), gs$bodyid),"soma"])
+      splittable = purify(gs[match(names(someneuronlist), gs$bodyid),"splittable"])
       ### Let's Go. For. It.
       satisfied = FALSE
       while(!satisfied){
@@ -570,7 +572,7 @@ splitcheck_phaseIII <- function(mes = NULL,
       mes.sp = hemibrain_splitpoints(x = mes)
     }else{
       save = FALSE
-      mes.sp = subset(manual, bodyid %in% names(mes))
+      mes.sp = subset(manual, manual$bodyid %in% names(mes))
     }
     new.select = names(mes)
     while(!save){
@@ -607,7 +609,7 @@ check_undoneids <- function(undone.ids, bodyids, gs, phases, assignments, initia
     }
   }
   if(phases %in% c("II","III")){
-    undone = subset(gs, split == "manual")
+    undone = subset(gs, gs$split == "manual")
     if(phases == "II"){
       undone.ids = setdiff(unique(undone$bodyid), manual$bodyid)
     }

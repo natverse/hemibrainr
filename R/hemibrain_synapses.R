@@ -146,13 +146,13 @@ hemibrain_extract_compartment_edgelist <- function(x, ...){
 # Hidden
 extract_elist <- function(syns, lookup){
   syns %>%
-    dplyr::filter(prepost==0) %>%
-    dplyr::mutate(partner.Label = lookup[as.character(connector_id)]) %>%
+    dplyr::filter(.data$prepost==0) %>%
+    dplyr::mutate(partner.Label = lookup[as.character(.data$connector_id)]) %>%
     dplyr::group_by(.data$bodyid, .data$partner, .data$Label) %>%
     dplyr::mutate(weight = dplyr::n()) %>%
     dplyr::distinct(.data$bodyid, .data$partner,.data$Label, .data$partner.Label, .data$weight) %>%
     dplyr::select(.data$bodyid, .data$partner, .data$Label, .data$partner.Label, .data$weight) %>%
-    dplyr::filter(!is.na(partner.Label)) %>%
+    dplyr::filter(!is.na(.data$partner.Label)) %>%
     as.data.frame() ->
     elist
   rownames(elist) = 1:nrow(elist)
@@ -164,7 +164,7 @@ extract_elist <- function(syns, lookup){
 # hidden
 extract_lookup <- function(syns){
   syns %>%
-    dplyr::filter(prepost==1) %>%
+    dplyr::filter(.data$prepost==1) %>%
     dplyr::distinct(.data$bodyid, .data$partner, .data$connector_id, .data$Label) %>%
     as.data.frame() ->
     conn.lookup
