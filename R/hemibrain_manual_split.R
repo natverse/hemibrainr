@@ -59,7 +59,7 @@ manually_assign_labels.neuron <- function(x, brain = NULL, ...){
         crop2 = hemibrain_choice("Can you still split the neuron into axon and/or dendrite? yes/no ")
         x$tags$cropped = ifelse(crop2,"MB",FALSE)
       }
-      message("The cropped status if this neuron will be recorded as: ", x$tags$cropped, "  (options are TRUE/FALSE/MayBe)")
+      message("The cropped status if this neuron will be recorded as: ", x$tags$cropped, "  (options are TRUE/FALSE/slightly(MB))")
       crop = !hemibrain_choice("Happy with this answer? yes/no ")
     }
     happy = hemibrain_engage(Label = NULL, prompt = "Do you want to edit further? yes/no ")
@@ -342,6 +342,11 @@ internal_assignments <- function(x){
   p.n = subset(rownames(x$d), x$d$Label == 7)
   nulls = subset(rownames(x$d), !x$d$Label %in% c(2,3))
   ## Get possible cable change points
+  if(length(nulls)){
+    s.n = change_points(x = x, v = nulls)
+  }else{
+    s.n = NULL
+  }
   if(length(dendrites)){
     s.d = change_points(x = x, v = dendrites)
   }else{
@@ -352,18 +357,13 @@ internal_assignments <- function(x){
   }else{
     s.a = NULL
   }
-  if(length(nulls)){
-    s.n = change_points(x = x, v = nulls)
-  }else{
-    s.n = NULL
-  }
   ## Get cable start points
-  d.starts = tryCatch(sapply(unique(c(s.n,s.a)),function(s) igraph::neighbors(n, v=s, mode = c("out"))), error = function(e) NA)
-  d.starts = tryCatch(as.character(unique(unlist(d.starts))), error = function(e) NA)
-  a.starts = tryCatch(sapply(unique(c(s.n,s.d)),function(s) igraph::neighbors(n, v=s, mode = c("out"))), error = function(e) NA)
-  a.starts = tryCatch(as.character(unique(unlist(a.starts))), error = function(e) NA)
-  axon.starts = tryCatch(intersect(axon, a.starts), error = function(e) NA)
-  dendrites.starts = tryCatch(intersect(dendrites, d.starts), error = function(e) NA)
+  d.starts = tryCatch(sapply(s.d,function(s) igraph::neighbors(n, v=s, mode = c("in"))), error = function(e) NA)
+  d.starts = tryCatch(sapply(d.starts,function(s) !s%in%dendrites), error = function(e) NA)
+  a.starts = tryCatch(sapply(s.a,function(s) igraph::neighbors(n, v=s, mode = c("in"))), error = function(e) NA)
+  a.starts = tryCatch(sapply(a.starts,function(s) !s%in%axon), error = function(e) NA)
+  axon.starts = s.a[a.starts]
+  dendrites.starts = s.d[d.starts]
   ## Assign primaries
   if(length(p.d)){
     possible = c(p.d[1],p.d[length(p.d)])
@@ -385,12 +385,12 @@ internal_assignments <- function(x){
                    error = function(e) NA)
   primary.branch.point = tryCatch(p.n[which.max(dists)], error = function(e) NA)
   ## Assign
-  x$primary.branch.point = nullToNA(primary.branch.point)
-  x$axon.start = nullToNA(axon.starts)
-  x$dendrite.start = nullToNA(dendrites.starts)
-  x$axon.primary = nullToNA(axon.primary)
-  x$dendrite.primary = nullToNA(dendrite.primary)
-  x$linker = nullToNA(linkers)
+  x$primary.branch.point = purify(primary.branch.point)
+  x$axon.start = purify(axon.starts)
+  x$dendrite.start = purify(dendrites.starts)
+  x$axon.primary = purify(axon.primary)
+  x$dendrite.primary = purify(dendrite.primary)
+  x$linker = purify(linkers)
   x
 }
 
