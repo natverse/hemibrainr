@@ -90,7 +90,6 @@ manually_assign_labels.neuron <- function(x, brain = NULL, ...){
             i = hemibrain_choice("Should we invert the dendrite and axon assignment again? yes/no ")
           }
           x$tags$manually_edited = i
-          happy = !hemibrain_engage(Label = NULL, prompt = "Do you want to edit further? yes/no ")
         }
       }else if(happy == 9){
         x = cycle_branches(x=x,brain=brain)

@@ -94,10 +94,13 @@ As the google sheet gets updated, new manual splits will be re-saved into this p
 when using \code{\link{hemibrain_flow_centrality}} and \code{\link{hemibrain_read_neurons}}.For this function to work, you may have to add
 the \href{https://docs.google.com/spreadsheets/d/1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E/edit?usp=sharing}{Google Sheet database} to your Google Drive.
 }
+\details{
+
+}
 \examples{
 \donttest{
 \dontrun{
-# Assign mPN review to Nik Drummond
+# Assign mPN review to Nik Drummond (ND)
 hemibrain_task_update(bodyids = mpn.ids, column = "user", update = "ND")
 }}
 \donttest{
