@@ -97,7 +97,7 @@ the \href{https://docs.google.com/spreadsheets/d/1YjkVjokXL4p4Q6BR-rGGGKWecXU370
 \examples{
 \donttest{
 \dontrun{
-# Assign mPN review to Nik Drummond
+# Assign mPN review to Nik Drummond (ND)
 hemibrain_task_update(bodyids = mpn.ids, column = "user", update = "ND")
 }}
 \donttest{
