@@ -588,7 +588,7 @@ check_undoneids <- function(undone.ids, bodyids, gs, phases, assignments, initia
   if(assignments){
     gs.a = gs[gs$user==initials,]
     undone.ids.a = intersect(undone.ids,gs.a$bodyid)
-    if(!length(undone.ids.a)){
+    if(is.issue(undone.ids.a)){
       warning("There are no unchecked neurons to select assigned to ", initials)
     }else{
       message("Choosing only those neuron assigned to ", initials)

@@ -20,6 +20,20 @@ message("Searching neuprint ...")
 all.neurons.meta = neuprint_search("Traced",field="status")
 all.neurons.meta = subset(all.neurons.meta, statusLabel!="Leaves")
 all.bodyids = all.neurons.meta$bodyid
+all.bodyids = c(all.bodyids,
+                rn.ids,
+                orn.ids,
+                hrn.ids,
+                pn.ids,
+                upn.ids,
+                mpn.ids,
+                vppn.ids,
+                dan.ids,
+                mbon.ids,
+                alln.ids,
+                ton.ids
+                )
+all.bodyids = unique(all.bodyids)
 message("Neuron bodyids: ", length(all.bodyids))
 
 # Read all neurons
