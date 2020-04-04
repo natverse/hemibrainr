@@ -59,6 +59,7 @@ manually_assign_labels.neuron <- function(x, brain = NULL, ...){
         crop2 = hemibrain_choice("Can you still split the neuron into axon and/or dendrite? yes/no ")
         x$tags$cropped = ifelse(crop2,"MB",FALSE)
       }
+      message("The cropped status if this neuron will be recorded as: ", x$tags$cropped, "  (options are TRUE/FALSE/MayBe)")
       crop = !hemibrain_choice("Happy with this answer? yes/no ")
     }
     happy = hemibrain_engage(Label = NULL, prompt = "Do you want to edit further? yes/no ")
@@ -96,6 +97,7 @@ manually_assign_labels.neuron <- function(x, brain = NULL, ...){
         x$tags$manually_edited = TRUE
       }else if(happy==10){
         x = x.safe
+        x$tags$manually_edited = FALSE
         message("Neuron has been reverted to its original state")
       }else if (grepl("L",happy)){
         if(happy %in% locks){
@@ -405,9 +407,9 @@ cycle_branches <- function(x, brain = NULL){
     reset3d(brain=brain)
     plot3d_split(x, soma = FALSE)
     if (i > length(sbt) || i < 1){
-      end = hemibrain_choice("Done selecting neurons to edit (shown)? yes/no ")
+      end = hemibrain_choice("Done selecting branches to edit? yes/no ")
       if(end){
-        break
+        return(x)
       }else{
         i <- 1
       }
