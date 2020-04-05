@@ -2,14 +2,22 @@
 % Please edit documentation in R/hemibrain_read_neurons.R
 \name{hemibrain_read_neurons}
 \alias{hemibrain_read_neurons}
+\alias{hemibrain_neurons}
 \title{Read neurons from the hemibrain connectome project}
 \usage{
 hemibrain_read_neurons(
   x = NULL,
-  savedir = FALSE,
+  savedir = TRUE,
   microns = TRUE,
   remove.bad.synapses = TRUE,
   ...
+)
+
+hemibrain_neurons(
+  savedir = TRUE,
+  local = FALSE,
+  neuron.split = c("hemibrain_all_neurons_flow_polypre_centrifugal_synapses",
+    "hemibrain_all_neurons_flow_polypre_centrifugal_distance")
 )
 }
 \arguments{
@@ -24,6 +32,8 @@ from which hemibrain neurons can be read. If \code{TRUE} your default save direc
 
 \item{...}{methods passed to \code{neuprintr::neuprint_read_neurons}, \code{\link{hemibrain_remove_bad_synapses}}
 and \code{\link{hemibrain_flow_centrality}}}
+
+\item{local}{logical, whether to try to read locally saved neuronts (by detault at: \code{options()$hemibrain_data}) or neurons from Google Drive (\code{options()$Gdrive_hemibrain_data})}
 }
 \value{
 the neuron or neuron list object inputted, with centripetal flow
@@ -55,7 +65,6 @@ al.local.neurons = c("1702323386", "2068966051", "2069311379", "1702305987", "58
 
 # Get neurons
 neurons = hemibrain_read_neurons(al.local.neurons)
-
 
 # Plot the split to check it
 nat::nopen3d()

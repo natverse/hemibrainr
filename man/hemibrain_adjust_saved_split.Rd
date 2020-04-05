@@ -119,5 +119,10 @@ hemibrain_task_update(bodyids = mpn.ids, column = "user", update = "ND")
 # Plot splits to check them, correcting any errors, and saving your changes
 nat::nopen3d()
 hemibrain_adjust_saved_split()
+
+# In order to read neurons more quickly from a local source / Google Drive
+db = hemibrain_neurons()
+nat::nopen3d()
+hemibrain_adjust_saved_split(db=db)
 }}
 }

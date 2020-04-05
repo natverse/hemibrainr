@@ -20,12 +20,17 @@ over neurons to download.}
 Download all the automatically split neurons from the hemibrain
  project, from Google Drive. The neuronlist is saved as a
  \code{nat::neuronlistfh} object so certain neurons may be read from it
- without loading the entire, large neuronlist into memory. In order to do
- this, you need to add the following folder to your Google Drive:
+ without loading the entire, large neuronlist into memory. Note, you do not
+ need to do this if you have your Google Drive mounted on your computer and you
+ have access to the Flyconnectome Repository 2020lhfib. In which case, you should
+ be able to read neurons directly from the drive whiled you have an Internet connection
+ using \code{\link{hemibrain_read_neurons(savedir=TRUE)}}.
+
+ In order to do download all neurons locally, you need to add the following folder to your Google Drive:
  \url{https://drive.google.com/drive/folders/14UPg7CvHDtvzNjvNgAULYnxZ018Xgf5H?usp=sharing}.
-  Contact us if you do not have, but would like, permission.
-  If this takes to much time, you can also download the relevant Google Drive folder manually. To do so, open this link: %s and then download the folder to this location on your computer: ",
-  \url{https://drive.google.com/open?id=1px6o2R_heFLRCtTF4Q2SvJNR9CWFhud0}. Remember to unzip all files.
+ Contact us if you do not have, but would like, permission.
+ If this takes to much time, you can also download the relevant Google Drive folder manually. To do so, open this link: %s and then download the folder to this location on your computer: ",
+ \url{https://drive.google.com/open?id=1px6o2R_heFLRCtTF4Q2SvJNR9CWFhud0}. Remember to unzip all files.
 }
 \examples{
 \donttest{
