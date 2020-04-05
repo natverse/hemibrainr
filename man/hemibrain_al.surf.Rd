@@ -5,7 +5,11 @@
 \alias{hemibrain_al.surf}
 \alias{hemibrain_al_microns.surf}
 \title{Meshes for antennal love glomeruli}
-\format{An object of class \code{hxsurf} of length 4.}
+\format{
+An object of class \code{hxsurf} of length 4.
+
+An object of class \code{hxsurf} of length 4.
+}
 \source{
 \url{https://neuprint.janelia.org/}
 }
