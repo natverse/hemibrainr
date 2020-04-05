@@ -37,12 +37,12 @@ hemibrain_correctsoma(x, ...)
 If \code{NULL} (default) no cable type is treated as locked. Locked cable will appear in green.}
 }
 \value{
-The neuron/neuronlist object with axon/dendrite info assigned in SWC format to neuron$d
+The neuron/neuronlist object with axon/dendrite info assigned in SWC format to \code{neuron$d}
 }
 \description{
-3D interactive functions to edit neurons in an rgl viewer, including re-assigned cable as
-being axon, dendrite, rimary neurite, etc., choosing soma locations and pruning bits of
-cable as a user chooses.
+3D interactive functions to edit neurons in an rgl viewer,
+  including re-assigned cable as being axon, dendrite, primary neurite, etc.,
+  choosing soma locations and pruning bits of cable as a user chooses.
 }
 \examples{
 \donttest{

@@ -73,5 +73,7 @@ plot3d(mb.rois, add=TRUE)
 }
 }
 \seealso{
-\code{\link{hemibrain_skeleton_check}}, \code{\link{hemibrain.surf}}
+\code{\link{hemibrain_skeleton_check}}, \code{\link{hemibrain.surf}},
+\code{neuprintr::\link[neuprintr]{neuprint_ROI_mesh}},
+\code{neuprintr::\link[neuprintr]{neuprint_ROI_hierarchy}}
 }
