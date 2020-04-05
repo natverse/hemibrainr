@@ -15,7 +15,29 @@
 \alias{alln.ids}
 \alias{ton.ids}
 \title{Bodyids for neuron classes}
-\format{An object of class \code{character} of length 2545.}
+\format{
+An object of class \code{character} of length 2545.
+
+An object of class \code{character} of length 2469.
+
+An object of class \code{character} of length 56.
+
+An object of class \code{character} of length 330.
+
+An object of class \code{character} of length 137.
+
+An object of class \code{character} of length 193.
+
+An object of class \code{character} of length 42.
+
+An object of class \code{character} of length 318.
+
+An object of class \code{character} of length 67.
+
+An object of class \code{character} of length 231.
+
+An object of class \code{character} of length 7856.
+}
 \usage{
 rn.ids
 

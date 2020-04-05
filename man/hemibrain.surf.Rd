@@ -5,7 +5,11 @@
 \alias{hemibrain.surf}
 \alias{hemibrain_microns.surf}
 \title{The hemibrain mesh}
-\format{An object of class \code{hxsurf} (inherits from \code{list}) of length 4.}
+\format{
+An object of class \code{hxsurf} (inherits from \code{list}) of length 4.
+
+An object of class \code{hxsurf} (inherits from \code{list}) of length 4.
+}
 \source{
 \url{https://neuprint.janelia.org/}
 }

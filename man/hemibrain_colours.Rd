@@ -8,7 +8,11 @@
 \alias{hemibrain_bright_colour_ramp}
 \title{Some nice colours used by Schlegel and Bates et al. 2020 (in prep.) and
 Li et al. 2020 (in prep)}
-\format{An object of class \code{character} of length 6.}
+\format{
+An object of class \code{character} of length 6.
+
+An object of class \code{character} of length 22.
+}
 \source{
 \url{https://github.com/johannesbjork/LaCroixColoR}
 }
