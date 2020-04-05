@@ -4,9 +4,9 @@
 
 #' Manually assign the dendrite and axon to a neuron
 #'
-#' @description 3D interactive functions to edit neurons in an rgl viewer, including re-assigned cable as
-#' being axon, dendrite, rimary neurite, etc., choosing soma locations and pruning bits of
-#' cable as a user chooses.
+#' @description 3D interactive functions to edit neurons in an rgl viewer,
+#'   including re-assigned cable as being axon, dendrite, primary neurite, etc.,
+#'   choosing soma locations and pruning bits of cable as a user chooses.
 #'
 #' @param x a neuron/neuronlist object
 #' @param brain which brain to plot while splitting neuron.
@@ -14,7 +14,7 @@
 #' @param lock a vector of number representing cable types to lock (so that they cannot be edited interactively be a user).
 #' If \code{NULL} (default) no cable type is treated as locked. Locked cable will appear in green.
 #' @param ... additional arguments passed to plotting functions, namely \code{plot3d_split}
-#' @return The neuron/neuronlist object with axon/dendrite info assigned in SWC format to neuron$d
+#' @return The neuron/neuronlist object with axon/dendrite info assigned in SWC format to \code{neuron$d}
 #' @examples
 #' \donttest{
 #' # Choose some neurons
