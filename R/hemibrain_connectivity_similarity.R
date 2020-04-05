@@ -48,6 +48,7 @@ hemibrain_connectivity_similarity.matrix<- function(x,y, c1 = 0.5, c2 = 0.18, no
 #' @export
 #' @rdname hemibrain_connectivity_similarity
 hemibrain_connectivity_similarity_distance <-function(m,c1 = 0.5, c2 = 0.18,normalise = FALSE, diag = FALSE, upper = FALSE){
+  e <- i <- NULL
   if(!is.matrix(m)){
     stop("m is not a matrix")
   }
@@ -64,6 +65,7 @@ hemibrain_connectivity_similarity_distance <-function(m,c1 = 0.5, c2 = 0.18,norm
 #' @export
 #' @rdname hemibrain_connectivity_similarity
 hemibrain_connectivity_similarity_matrix <-function(m, c1 = 0.5, c2 = 0.18, normalise = FALSE){
+  e <- i <- NULL
   if(!is.matrix(m)&!is.data.frame(m)){
     stop("m is not a matrix")
   }

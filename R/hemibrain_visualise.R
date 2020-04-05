@@ -4,7 +4,8 @@
 
 #' Plot neurons split up by flow centrality
 #'
-#' @param someneuronlist a neuronlist or neuron object that has been modified by flow.centrality
+#' @param someneuronlist a neuronlist or neuron object that has been modified by flow.centrality.
+#' @param already_selected a vector of IDs for neurons that are already considered selected. If \code{NULL} then no neurons are considered selected to start with.
 #' @param col colours of sections. Defaults to orange or axons, green for primary dendrite, blue for dendrites and pink for nodes with no flow.
 #' @param splitnode if TRUE, a magenta sphere is placed at the location of the axon-dendrite split. Possible a putative action potential initiation site?
 #' @param WithConnectors whether to plot the anatomical location of pre (red) and post (cyan) synapses.
@@ -35,6 +36,7 @@ plot3d_split = function(someneuronlist,
                         highflow = FALSE,
                         lwd = 1,
                         radius = NULL,
+                        already_selected = NULL,
                         ...){
   someneuronlist = nat::as.neuronlist(someneuronlist)
   temps = nat.templatebrains::all_templatebrains()
@@ -112,6 +114,7 @@ plot3d_split = function(someneuronlist,
 #' @export
 #' @rdname plot3d_split
 nlscan_split <- function (someneuronlist,
+                          already_selected = NULL,
                           col = c("#1BB6AF", "#EF7C12", "#C70E7B", "#8FDA04", "#4D4D4D", "#FC6882"),
                           WithConnectors = TRUE,
                           WithNodes = FALSE,
@@ -123,8 +126,7 @@ nlscan_split <- function (someneuronlist,
                           sleep = 0.1,
                           selected_file = NULL,
                           selected_col = "#fadadd",
-                          yaml = TRUE, ...)
-{
+                          yaml = TRUE, ...){
   if(!requireNamespace('yaml', quietly = TRUE))
     stop("Suggested package yaml is required to use this function!")
   if (nat::is.neuronlist(someneuronlist)) {
@@ -133,7 +135,11 @@ nlscan_split <- function (someneuronlist,
     nams = as.data.frame(someneuronlist)$name
   }
   frames <- length(neurons)
-  selected <- character()
+  if(!is.issue(already_selected)){
+    selected <- as.character(intersect(already_selected, names(someneuronlist)))
+  }else{
+    selected <- character()
+  }
   i <- 1
   if (!is.null(selected_file) && file.exists(selected_file)) {
     selected <- yaml::yaml.load_file(selected_file)
@@ -164,6 +170,7 @@ nlscan_split <- function (someneuronlist,
   while (TRUE) {
     if (i > length(neurons) || i < 1){
       rgl::clear3d()
+      rgl::bg3d(color = "white")
       if(length(selected)){
         rgl::plot3d(someneuronlist[selected], ..., col = hemibrain_bright_colour_ramp(length(selected)))
       }
@@ -212,8 +219,10 @@ nlscan_split <- function (someneuronlist,
       i <- i + 1
     }
     rgl::clear3d()
+    rgl::bg3d(color = "white")
   }
   if (is.null(chc) || chc == "c")
+    rgl::bg3d(color = "white")
     return(NULL)
   if (!is.null(selected_file))
     savetodisk(selected, selected_file)

@@ -161,7 +161,7 @@ hemibrain_clean_skeleton.neuron <- function(x, rval = c("pruned","neuron","point
     if(length(remove)>0){
       y = nat::prune_vertices(x, verticestoprune = remove, invert = FALSE)
       y$connectors = x$connectors[x$connectors$treenode_id %in% y$d$PointNo, ]
-      relevant.points = subset(x$d, PointNo %in% y$d$PointNo)
+      relevant.points = x$d[x$d$PointNo %in% y$d$PointNo,]
       y$d = relevant.points[match(y$d$PointNo, relevant.points$PointNo), ]
     }else{
       y = x
@@ -201,7 +201,7 @@ prune_synapseless_branches <- function(x, neuron = TRUE){
     if(length(prune)>0){
       y = nat::prune_vertices(x, verticestoprune = prune, invert = FALSE)
       y$connectors = x$connectors[con.pos %in% y$d$PointNo, ]
-      relevant.points = subset(x$d, PointNo %in% y$d$PointNo)
+      relevant.points = subset(x$d, x$d$PointNo %in% y$d$PointNo)
       y$d = relevant.points[match(y$d$PointNo, relevant.points$PointNo), ]
     }else{
       y=x

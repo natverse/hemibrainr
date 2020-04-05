@@ -16,25 +16,34 @@ nullToNA <- function(x) {
 }
 
 # hidden
-break_into_subtrees <- function(x){
+break_into_subtrees <- function(x, prune = FALSE){
+  if(!nat::is.neuron(x)){
+    stop("x must be a neuron object")
+  }else{
+    y = x
+  }
+  if(prune){
+    nulls = subset(rownames(x$d), x$d$Label %in% c(4,7))
+    y = nat::prune_vertices(x, verticestoprune = as.numeric(nulls), invert = FALSE)
+  }
   nlist = nat::neuronlist()
-  if(x$nTrees>1){
-    for(i in 1:x$nTrees){
-      segs = x$SubTrees[[i]]
+  if(y$nTrees>1){
+    for(i in 1:y$nTrees){
+      segs = y$SubTrees[[i]]
       seg.points = unique(unlist(segs))
-      d = x$d[seg.points,]
+      d = y$d[seg.points,]
       if(nrow(d)>1){
         rownames(d) = 1:nrow(d)
         n = nat::as.neuron(d)
-        n$orig.PointNo = x$d$PointNo[match(seg.points, x$d$PointNo)]
+        n$orig.PointNo = d[,"PointNo"]
+        n$orig.indices = match(n$orig.PointNo, x$d$PointNo)
         nlist  = c(nlist, nat::as.neuronlist(n))
       }
     }
     nlist
   }else{
-    nat::as.neuronlist(x)
+    nat::as.neuronlist(y)
   }
-
 }
 
 # hidden
@@ -138,9 +147,21 @@ carryover_tags <- function(x, y){
 
 # hidden
 purify <- function(x){
-  as.character(unique(unname(unlist(c(x)))))
+  as.character(unique(unname(unlist(nullToNA(c(x))))))
 }
 
+# hidden
+remove_duplicates <- function(manual){
+  delete = c()
+  for(bi in unique(manual$bodyid)){
+    m = manual[manual$bodyid==bi,]
+    dupe = which(duplicated(m$bodyid))
+    droot = which(m[dupe,]$point=="root")
+    del = rownames(m)[dupe>=droot]
+    delete = c(delete,del)
+  }
+  manual[setdiff(rownames(manual),delete),]
+}
 
 
 

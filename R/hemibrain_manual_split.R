@@ -59,6 +59,7 @@ manually_assign_labels.neuron <- function(x, brain = NULL, ...){
         crop2 = hemibrain_choice("Can you still split the neuron into axon and/or dendrite? yes/no ")
         x$tags$cropped = ifelse(crop2,"MB",FALSE)
       }
+      message("The cropped status if this neuron will be recorded as: ", x$tags$cropped, "  (options are TRUE/FALSE/slightly(MB))")
       crop = !hemibrain_choice("Happy with this answer? yes/no ")
     }
     happy = hemibrain_engage(Label = NULL, prompt = "Do you want to edit further? yes/no ")
@@ -90,13 +91,13 @@ manually_assign_labels.neuron <- function(x, brain = NULL, ...){
             i = hemibrain_choice("Should we invert the dendrite and axon assignment again? yes/no ")
           }
           x$tags$manually_edited = i
-          happy = !hemibrain_engage(Label = NULL, prompt = "Do you want to edit further? yes/no ")
         }
       }else if(happy == 9){
         x = cycle_branches(x=x,brain=brain)
         x$tags$manually_edited = TRUE
       }else if(happy==10){
         x = x.safe
+        x$tags$manually_edited = FALSE
         message("Neuron has been reverted to its original state")
       }else if (grepl("L",happy)){
         if(happy %in% locks){
@@ -129,7 +130,7 @@ hemibrain_prune_online <-function(x, brain = NULL, Label = NULL, lock = NULL, ..
 #' @export
 #' @rdname manually_assign_labels
 hemibrain_prune_online.neuron <- function (x, brain = NULL, Label = NULL, lock = NULL, ...) {
-  if(lockdown(Label = Label, lock = lock)){
+  if(lockdown(Label = Label, lock = lock, verbose = TRUE)){
     return(NULL)
   }
   continue = "no"
@@ -335,12 +336,18 @@ hemibrain_invert <- function(x){
 internal_assignments <- function(x){
   ## Get cable points
   n = nat::as.ngraph(x)
+  root = nat::rootpoints(n)
   dendrites = subset(rownames(x$d), x$d$Label == 3)
   axon = subset(rownames(x$d), x$d$Label == 2)
   p.d = subset(rownames(x$d), x$d$Label == 4)
   p.n = subset(rownames(x$d), x$d$Label == 7)
   nulls = subset(rownames(x$d), !x$d$Label %in% c(2,3))
   ## Get possible cable change points
+  if(length(nulls)){
+    s.n = change_points(x = x, v = nulls)
+  }else{
+    s.n = NULL
+  }
   if(length(dendrites)){
     s.d = change_points(x = x, v = dendrites)
   }else{
@@ -351,18 +358,13 @@ internal_assignments <- function(x){
   }else{
     s.a = NULL
   }
-  if(length(nulls)){
-    s.n = change_points(x = x, v = nulls)
-  }else{
-    s.n = NULL
-  }
   ## Get cable start points
-  d.starts = tryCatch(sapply(unique(c(s.n,s.a)),function(s) igraph::neighbors(n, v=s, mode = c("out"))), error = function(e) NA)
-  d.starts = tryCatch(as.character(unique(unlist(d.starts))), error = function(e) NA)
-  a.starts = tryCatch(sapply(unique(c(s.n,s.d)),function(s) igraph::neighbors(n, v=s, mode = c("out"))), error = function(e) NA)
-  a.starts = tryCatch(as.character(unique(unlist(a.starts))), error = function(e) NA)
-  axon.starts = tryCatch(intersect(axon, a.starts), error = function(e) NA)
-  dendrites.starts = tryCatch(intersect(dendrites, d.starts), error = function(e) NA)
+  d.starts = tryCatch(sapply(s.d,function(s) igraph::neighbors(n, v=s, mode = c("in"))), error = function(e) NA)
+  d.starts = tryCatch(sapply(d.starts,function(s) !s%in%dendrites), error = function(e) NA)
+  a.starts = tryCatch(sapply(s.a,function(s) igraph::neighbors(n, v=s, mode = c("in"))), error = function(e) NA)
+  a.starts = tryCatch(sapply(a.starts,function(s) !s%in%axon), error = function(e) NA)
+  axon.starts = s.a[a.starts]
+  dendrites.starts = s.d[d.starts]
   ## Assign primaries
   if(length(p.d)){
     possible = c(p.d[1],p.d[length(p.d)])
@@ -384,48 +386,46 @@ internal_assignments <- function(x){
                    error = function(e) NA)
   primary.branch.point = tryCatch(p.n[which.max(dists)], error = function(e) NA)
   ## Assign
-  x$primary.branch.point = nullToNA(primary.branch.point)
-  x$axon.start = nullToNA(axon.starts)
-  x$dendrite.start = nullToNA(dendrites.starts)
-  x$axon.primary = nullToNA(axon.primary)
-  x$dendrite.primary = nullToNA(dendrite.primary)
-  x$linker = nullToNA(linkers)
+  x$primary.branch.point = purify(primary.branch.point)
+  x$axon.start = purify(axon.starts)
+  x$dendrite.start = purify(dendrites.starts)
+  x$axon.primary = purify(axon.primary)
+  x$dendrite.primary = purify(dendrite.primary)
+  x$linker = purify(linkers)
   x
 }
 
 # hidden
 #' @importFrom rgl plot3d
 cycle_branches <- function(x, brain = NULL){
-  nulls = subset(rownames(x$d), !x$d$Label %in% c(2,3))
   message("Removing assigned primary neurite and linker cable to find sub-branches ...")
-  y = nat::prune_vertices(x, verticestoprune = as.numeric(nulls),invert = FALSE)
-  sbt = break_into_subtrees(y)
+  sbt = break_into_subtrees(x, prune = TRUE)
   i <- 1
   message("Cycling through sub-branches (in red). Bear in mind that some branches can be very small.")
   while(length(sbt)) {
-    reset3d(brain=brain)
-    plot3d_split(x, soma = FALSE)
     if (i > length(sbt) || i < 1){
-      end = hemibrain_choice("Done selecting neurons to edit (shown)? yes/no ")
+      end = hemibrain_choice("Done selecting branches to edit? yes/no ")
       if(end){
-        break
+        return(x)
       }else{
         i <- 1
       }
     }
+    reset3d(brain=brain)
+    plot3d_split(x, soma = FALSE)
     cat("Current branch:", i, " "," (", i, "/", length(sbt),")","\n")
-    pl <- plot3d(sbt[i], col = hemibrain_bright_colours["cerise"], lwd = 5)
-    chc <- must_be(prompt = "
-          What cable is this?:
-          uncertain/erroneous (0), axon (2), dendrite (3),
-          linker (4), primary neurite (7).
-          Back (b), next (enter), end (c) ",
-          answers = c(0,2:4,7,""))
+    plot3d(sbt[i], col = hemibrain_bright_colours["cerise"], lwd = 5)
+    chc <- must_be(prompt = "What cable is this?:
+    uncertain/erroneous (0), axon (2), dendrite (3),
+    linker (4), primary neurite (7).
+    Back (b), next (enter), cancel (c) ",
+          answers = c(0,2:4,7,"","b","c"))
     if (chc == "c") {
-    if (is.null(chc) || chc == "")
-      break
+      if (is.null(chc) || chc == "")
+        break
     }
     if (chc %in%  c(0,2:4,7) ){
+      message("Updating ", standard_compartments(chc))
       x = add_Label(x = x, PointNo = sbt[i][[1]]$orig.PointNo, Label = as.numeric(chc), erase = FALSE)
     }
     if (chc == "b"){
@@ -433,20 +433,19 @@ cycle_branches <- function(x, brain = NULL){
     }else{
       i <- i + 1
     }
-    rgl::pop3d(id = pl)
   }
   x
 }
 
 #hidden
-lockdown <- function(Label = NULL, lock = NULL){
+lockdown <- function(Label = NULL, lock = NULL, verbose = FALSE){
   if(!is.issue(lock)&!is.issue(Label)){
     lock = setdiff(lock,Label)
     if(length(lock)==0){
-      message("Label and lock cannot be the same value")
+      if(verbose){message("Label and lock cannot be the same value")}
       TRUE
     }else{
-      message("Cable type locked: ", paste(standard_compartments(lock),collapse=", "))
+      if(verbose){message("Cable type locked: ", paste(standard_compartments(lock),collapse=", "))}
       FALSE
     }
   }else{
