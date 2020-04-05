@@ -2,7 +2,7 @@
 % Please edit documentation in R/hemibrain_meshes.R
 \name{hemibrain_roi_meshes}
 \alias{hemibrain_roi_meshes}
-\title{Get all the region of interest meshes in the hemibrain project}
+\title{Get some or all the region of interest meshes in the hemibrain project}
 \usage{
 hemibrain_roi_meshes(
   rois = NULL,
@@ -19,8 +19,9 @@ hemibrain_roi_meshes(
 
 \item{microns}{convert dimensions from raw voxels into microns (template brain: \code{JRCFIB2018F}, else \code{JRCFIB2018Fraw}).}
 
-\item{superLevel}{whether not to show 'superlevel' ROIs - ROIs composed of other ROIs.
-If set to NULL, both low-level and superlevel ROIs are returned.}
+\item{superLevel}{whether not to show 'superlevel' ROIs - ROIs composed of
+other ROIs. If set to NULL, both low-level and superlevel ROIs are
+returned.}
 
 \item{OmitFailures}{Whether to omit neurons for which \code{FUN} gives an
 error. The default value (\code{NA}) will result in nlapply stopping with
@@ -39,13 +40,16 @@ current connection, is used. See \code{\link[neuprintr]{neuprint_login}} for det
 \item{...}{Additional arguments passed to \code{\link{nlapply}}}
 }
 \value{
-a list of \code{rgl::mesh3d} objects
+a \code{neuronlist} of \code{rgl::mesh3d} objects
 }
 \description{
-Get all the ROI meshes as named \code{rgl::mesh3d} objects.
+This function can retrieve some or all the hemibrain project ROI
+  meshes as \code{rgl::\link{mesh3d}} objects. They are returned in a named
+  \code{\link{neuronlist}} object. This allows further subsets and colours to
+  be applied via the standard \code{nat::\link{plot3d.neuronlist}} semantics.
+  See the examples for further details.
 }
 \examples{
-\donttest{
 \dontrun{
 # Get all the roi meshes
 hemibrain.rois = hemibrain_roi_meshes()
@@ -56,7 +60,17 @@ for(m in 1:length(hemibrain.rois)){
     plot3d(hemibrain.rois[[m]],alpha = 0.5, col = cols[m])
 }
 
-}}
+# Alternatively plot a subset all at once with rainbow colours
+# making use of nat::plot3d.neuronlist
+plot3d(hemibrain.rois, 1:3, add=TRUE)
+
+# If you have neuprintr >= 1.0 you can easily find groups of meshes
+# find just the terminal nodes of the MB ROI hierarchy
+library(nat)
+mbterms=nat::endpoints(neuprint_ROI_hierarchy(root='MB(R)', rval='graph'))
+mb.rois=hemibrain_roi_meshes(mbterms)
+plot3d(mb.rois, add=TRUE)
+}
 }
 \seealso{
 \code{\link{hemibrain_skeleton_check}}, \code{\link{hemibrain.surf}}
