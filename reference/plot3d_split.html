@@ -135,11 +135,13 @@
   <span class='kw'>highflow</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>lwd</span> <span class='kw'>=</span> <span class='fl'>1</span>,
   <span class='kw'>radius</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>already_selected</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='no'>...</span>
 )
 
 <span class='fu'>nlscan_split</span>(
   <span class='no'>someneuronlist</span>,
+  <span class='kw'>already_selected</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>col</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"#1BB6AF"</span>, <span class='st'>"#EF7C12"</span>, <span class='st'>"#C70E7B"</span>, <span class='st'>"#8FDA04"</span>, <span class='st'>"#4D4D4D"</span>, <span class='st'>"#FC6882"</span>),
   <span class='kw'>WithConnectors</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>WithNodes</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
@@ -160,7 +162,7 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>someneuronlist</th>
-      <td><p>a neuronlist or neuron object that has been modified by flow.centrality</p></td>
+      <td><p>a neuronlist or neuron object that has been modified by flow.centrality.</p></td>
     </tr>
     <tr>
       <th>col</th>
@@ -193,6 +195,10 @@
     <tr>
       <th>radius</th>
       <td><p>For connectors and axon-dendrite split node (default 1). If <code>NULL</code>, an appropriate value is guessed.</p></td>
+    </tr>
+    <tr>
+      <th>already_selected</th>
+      <td><p>a vector of IDs for neurons that are already considered selected. If <code>NULL</code> then no neurons are considered selected to start with.</p></td>
     </tr>
     <tr>
       <th>...</th>

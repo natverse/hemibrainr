@@ -143,12 +143,14 @@ a neuron's axon and dendrite.</p>
 
 <span class='no'>hemibrain_metrics_polypre_centrifugal_distance</span>
 
-<span class='no'>hemibrain_all_neurons_metrics_polypre_centrifugal_synapses</span></pre>
+<span class='no'>hemibrain_metrics_polypre_centrifugal_synapses</span></pre>
 
 
     <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
 
-    <p>An object of class <code>data.frame</code> with 20783 rows and 29 columns.</p>
+    <p>An object of class <code>data.frame</code> with 20890 rows and 30 columns.</p>
+<p>An object of class <code>data.frame</code> with 20890 rows and 30 columns.</p>
+<p>An object of class <code>data.frame</code> with 20890 rows and 30 columns.</p>
     <h2 class="hasAnchor" id="source"><a class="anchor" href="#source"></a>Source</h2>
 
     <p><a href='https://elifesciences.org/articles/44590'>https://elifesciences.org/articles/44590</a></p>
@@ -162,55 +164,55 @@ a neuron's axon and dendrite.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='no'>hemibrain_metrics</span>)</div><div class='output co'>#&gt;                bodyid                name       type status    statusLabel
-#&gt; 202916528   202916528         FQ12_b_C4_R     FQ12_b Traced Roughly traced
-#&gt; 1279775082 1279775082     FQ12_a(AB)_C1_R     FQ12_a Traced Roughly traced
-#&gt; 203253072   203253072         FQ12_a_C3_R     FQ12_a Traced Roughly traced
-#&gt; 326530038   326530038 PDM22c_pct(PDM22)_R PDM22c_pct Traced Roughly traced
-#&gt; 203253253   203253253           (PDM09)_L       &lt;NA&gt; Traced Roughly traced
-#&gt; 5813079341 5813079341         FQ12_a_C7_R     FQ12_a Traced Roughly traced
-#&gt;                voxels pre post cropped soma cellBodyFiber total.outputs
-#&gt; 202916528   235510665  95  422   FALSE TRUE         PDM03           796
-#&gt; 1279775082  123003453  24  140   FALSE TRUE         PDM04           146
-#&gt; 203253072   153162662  62  352   FALSE TRUE         PDM03           427
-#&gt; 326530038  1683764851 383 3030   FALSE TRUE          iPB7          2940
-#&gt; 203253253  1735663327 402 2675   FALSE TRUE          &lt;NA&gt;          3135
-#&gt; 5813079341  157723613  37  260   FALSE TRUE         PDM01           268
-#&gt;            total.inputs axon.outputs dend.outputs axon.inputs dend.inputs
-#&gt; 202916528           420          787            9          35         385
-#&gt; 1279775082          136          136           10          13         121
-#&gt; 203253072           348          353           74          28         314
-#&gt; 326530038          3015         2237          699        1298        1717
-#&gt; 203253253          2660         2823          312        1134        1526
-#&gt; 5813079341          257          257           11          30         225
-#&gt;            total.outputs.density total.inputs.density axon.outputs.density
-#&gt; 202916528              0.7155945            0.3775750            2.9510795
-#&gt; 1279775082             0.2193561            0.2043317            0.9543945
-#&gt; 203253072              0.4896587            0.3990661            2.3042986
-#&gt; 326530038              0.5014853            0.5142783            0.9298260
-#&gt; 203253253              0.5756197            0.4884046            1.3892529
-#&gt; 5813079341             0.3121045            0.2992942            1.2850070
-#&gt;            dend.outputs.density axon.inputs.density dend.inputs.density
-#&gt; 202916528            0.01505310          0.13124242           0.6439382
-#&gt; 1279775082           0.04643868          0.09122888           0.5619081
-#&gt; 203253072            0.18552763          0.18277723           0.7872389
-#&gt; 326530038            0.22277958          0.53952356           0.5472282
-#&gt; 203253253            0.09950828          0.55806332           0.4866976
-#&gt; 5813079341           0.02892691          0.15000082           0.5916867
-#&gt;            total.length axon.length dend.length pd.length segregation_index
-#&gt; 202916528     1112.3618    266.6821    597.8835  115.2070        0.76061097
-#&gt; 1279775082     665.5844    142.4987    215.3377  131.9537        0.59005623
-#&gt; 203253072      872.0359    153.1920    398.8624  185.3908        0.45279400
-#&gt; 326530038     5862.5848   2405.8263   3137.6304  181.9760        0.08413708
-#&gt; 203253253     5446.3040   2032.0275   3135.4174  141.6915        0.19753908
-#&gt; 5813079341     858.6868    199.9989    380.2688  117.9344        0.61201577
-#&gt;            overlap_locality
-#&gt; 202916528      7.170000e-25
-#&gt; 1279775082               NA
-#&gt; 203253072      1.360000e-98
-#&gt; 326530038      1.546988e-01
-#&gt; 203253253      3.068307e-01
-#&gt; 5813079341     9.210000e-11</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/hist.html'>hist</a></span>(<span class='no'>hemibrain_metrics</span>$<span class='no'>overlap_locality</span>,<span class='kw'>breaks</span> <span class='kw'>=</span> <span class='fl'>1000</span>)</div><div class='img'><img src='hemibrain_metrics-1.png' alt='' width='700' height='433' /></div><div class='input'># }
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='no'>hemibrain_metrics</span>)</div><div class='output co'>#&gt;                     X     bodyid pre post status    statusLabel cropped
+#&gt; 202916528   202916528  202916528  95  422 Traced Roughly traced   FALSE
+#&gt; 1279775082 1279775082 1279775082  24  140 Traced Roughly traced   FALSE
+#&gt; 203253072   203253072  203253072  62  352 Traced Roughly traced   FALSE
+#&gt; 326530038   326530038  326530038 383 3030 Traced Roughly traced   FALSE
+#&gt; 203253253   203253253  203253253 402 2675 Traced Roughly traced   FALSE
+#&gt; 5813079341 5813079341 5813079341  37  260 Traced Roughly traced   FALSE
+#&gt;                           name       type cellBodyFiber     voxels soma
+#&gt; 202916528          FQ12_b_C4_R     FQ12_b         PDM03  235510665 TRUE
+#&gt; 1279775082     FQ12_a(AB)_C1_R     FQ12_a         PDM04  123003453 TRUE
+#&gt; 203253072          FQ12_a_C3_R     FQ12_a         PDM03  153162662 TRUE
+#&gt; 326530038  PDM22c_pct(PDM22)_R PDM22c_pct          iPB7 1683764851 TRUE
+#&gt; 203253253            (PDM09)_L       &lt;NA&gt;          &lt;NA&gt; 1735663327 TRUE
+#&gt; 5813079341         FQ12_a_C7_R     FQ12_a         PDM01  157723613 TRUE
+#&gt;            total.outputs total.inputs axon.outputs dend.outputs axon.inputs
+#&gt; 202916528              0            0            0            0           0
+#&gt; 1279775082             0            0            0            0           0
+#&gt; 203253072              0            0            0            0           0
+#&gt; 326530038              0            0            0            0           0
+#&gt; 203253253              0            0            0            0           0
+#&gt; 5813079341             0            0            0            0           0
+#&gt;            dend.inputs total.outputs.density total.inputs.density
+#&gt; 202916528            0                     0                    0
+#&gt; 1279775082           0                     0                    0
+#&gt; 203253072            0                     0                    0
+#&gt; 326530038            0                     0                    0
+#&gt; 203253253            0                     0                    0
+#&gt; 5813079341           0                     0                    0
+#&gt;            axon.outputs.density dend.outputs.density axon.inputs.density
+#&gt; 202916528                     0                    0                   0
+#&gt; 1279775082                    0                    0                   0
+#&gt; 203253072                     0                    0                   0
+#&gt; 326530038                     0                    0                   0
+#&gt; 203253253                     0                    0                   0
+#&gt; 5813079341                    0                    0                   0
+#&gt;            dend.inputs.density total.length axon.length dend.length pd.length
+#&gt; 202916528                    0    1112.3618    266.6821    597.8835  115.2070
+#&gt; 1279775082                   0     665.5844    142.4987    215.3377  131.9537
+#&gt; 203253072                    0     872.0359    153.1920    398.8624  185.3908
+#&gt; 326530038                    0    5862.5848   2405.8263   3137.6304  181.9760
+#&gt; 203253253                    0    5446.3040   2032.0275   3135.4174  141.6915
+#&gt; 5813079341                   0     858.6868    199.9989    380.2688  117.9344
+#&gt;            segregation_index overlap_locality
+#&gt; 202916528         0.76090559               NA
+#&gt; 1279775082        0.59005623               NA
+#&gt; 203253072         0.45279399               NA
+#&gt; 326530038         0.08404521               NA
+#&gt; 203253253         0.19753908     3.104936e-01
+#&gt; 5813079341        0.61201577     1.020498e-10</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/hist.html'>hist</a></span>(<span class='no'>hemibrain_metrics</span>$<span class='no'>overlap_locality</span>,<span class='kw'>breaks</span> <span class='kw'>=</span> <span class='fl'>1000</span>)</div><div class='img'><img src='hemibrain_metrics-1.png' alt='' width='700' height='433' /></div><div class='input'># }
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

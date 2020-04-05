@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Get all the region of interest meshes in the hemibrain project — hemibrain_roi_meshes • hemibrainr</title>
+<title>Get some or all the region of interest meshes in the hemibrain project — hemibrain_roi_meshes • hemibrainr</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,8 +46,12 @@
 
 
 
-<meta property="og:title" content="Get all the region of interest meshes in the hemibrain project — hemibrain_roi_meshes" />
-<meta property="og:description" content="Get all the ROI meshes as named rgl::mesh3d objects." />
+<meta property="og:title" content="Get some or all the region of interest meshes in the hemibrain project — hemibrain_roi_meshes" />
+<meta property="og:description" content="This function can retrieve some or all the hemibrain project ROI
+  meshes as rgl::mesh3d objects. They are returned in a named
+  neuronlist object. This allows further subsets and colours to
+  be applied via the standard nat::plot3d.neuronlist semantics.
+  See the examples for further details." />
 <meta property="og:image" content="/logo.svg" />
 
 
@@ -116,46 +120,103 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Get all the region of interest meshes in the hemibrain project</h1>
+    <h1>Get some or all the region of interest meshes in the hemibrain project</h1>
     <small class="dont-index">Source: <a href='https://github.com/flyconnectome/hemibrainr/blob/master/R/hemibrain_meshes.R'><code>R/hemibrain_meshes.R</code></a></small>
     <div class="hidden name"><code>hemibrain_roi_meshes.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Get all the ROI meshes as named <code><a href='https://rdrr.io/pkg/rgl/man/mesh3d.html'>rgl::mesh3d</a></code> objects.</p>
+    <p>This function can retrieve some or all the hemibrain project ROI
+  meshes as <code><a href='https://rdrr.io/pkg/rgl/man/mesh3d.html'>rgl::mesh3d</a></code> objects. They are returned in a named
+  <code>neuronlist</code> object. This allows further subsets and colours to
+  be applied via the standard <code><a href='https://rdrr.io/pkg/nat/man/plot3d.neuronlist.html'>nat::plot3d.neuronlist</a></code> semantics.
+  See the examples for further details.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>hemibrain_roi_meshes</span>(<span class='kw'>microns</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
+    <pre class="usage"><span class='fu'>hemibrain_roi_meshes</span>(
+  <span class='kw'>rois</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>microns</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>superLevel</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>OmitFailures</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>conn</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>dataset</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='no'>...</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
+      <th>rois</th>
+      <td><p>The ROIs to fetch (default <code>NULL</code> implies all ROIs)</p></td>
+    </tr>
+    <tr>
       <th>microns</th>
       <td><p>convert dimensions from raw voxels into microns (template brain: <code>JRCFIB2018F</code>, else <code>JRCFIB2018Fraw</code>).</p></td>
+    </tr>
+    <tr>
+      <th>superLevel</th>
+      <td><p>whether not to show 'superlevel' ROIs - ROIs composed of
+other ROIs. If set to NULL, both low-level and superlevel ROIs are
+returned.</p></td>
+    </tr>
+    <tr>
+      <th>OmitFailures</th>
+      <td><p>Whether to omit neurons for which <code>FUN</code> gives an
+error. The default value (<code>NA</code>) will result in nlapply stopping with
+an error message the moment there is an error. For other values, see
+details.</p></td>
+    </tr>
+    <tr>
+      <th>conn</th>
+      <td><p>optional, a neuprintr connection object, which also specifies the
+neuPrint server. If NULL, the defaults set in your
+<code><a href='https://rdrr.io/r/base/Startup.html'>.Rprofile</a></code> or <code><a href='https://rdrr.io/r/base/Startup.html'>.Renviron</a></code> are
+used. See <code><a href='https://rdrr.io/pkg/neuprintr/man/neuprint_login.html'>neuprint_login</a></code> for details.</p></td>
+    </tr>
+    <tr>
+      <th>dataset</th>
+      <td><p>optional, a dataset you want to query. If <code>NULL</code>, the
+default specified by your R environ file is used or, failing that the
+current connection, is used. See <code><a href='https://rdrr.io/pkg/neuprintr/man/neuprint_login.html'>neuprint_login</a></code> for details.</p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p>Additional arguments passed to <code>nlapply</code></p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>a list of <code><a href='https://rdrr.io/pkg/rgl/man/mesh3d.html'>rgl::mesh3d</a></code> objects</p>
+    <p>a <code>neuronlist</code> of <code><a href='https://rdrr.io/pkg/rgl/man/mesh3d.html'>rgl::mesh3d</a></code> objects</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='hemibrain_skeleton_check.html'>hemibrain_skeleton_check</a></code>, <code><a href='hemibrain.surf.html'>hemibrain.surf</a></code></p></div>
+    <div class='dont-index'><p><code><a href='hemibrain_skeleton_check.html'>hemibrain_skeleton_check</a></code>, <code><a href='hemibrain.surf.html'>hemibrain.surf</a></code>,
+<code>neuprintr::<a href='https://rdrr.io/pkg/neuprintr/man/neuprint_ROI_mesh.html'>neuprint_ROI_mesh</a></code>,
+<code>neuprintr::<a href='https://rdrr.io/pkg/neuprintr/man/neuprint_ROI_hierarchy.html'>neuprint_ROI_hierarchy</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
-<span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
+    <pre class="examples"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
 <span class='co'># Get all the roi meshes</span>
 <span class='no'>hemibrain.rois</span> <span class='kw'>=</span> <span class='fu'>hemibrain_roi_meshes</span>()
 
 <span class='co'># Read in these neurons</span>
 <span class='no'>cols</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/grDevices/palettes.html'>rainbow</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span>(<span class='no'>hemibrain.rois</span>))
 <span class='kw'>for</span>(<span class='no'>m</span> <span class='kw'>in</span> <span class='fl'>1</span>:<span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span>(<span class='no'>hemibrain.rois</span>)){
-    <span class='fu'>plot3d</span>(<span class='no'>hemibrain.rois</span><span class='kw'>[[</span><span class='no'>m</span>]],<span class='kw'>alpha</span> <span class='kw'>=</span> <span class='fl'>0.5</span>, <span class='kw'>col</span> <span class='kw'>=</span> <span class='no'>cols</span>[<span class='no'>m</span>])
+    <span class='fu'><a href='https://rdrr.io/pkg/nat/man/plot3d.html'>plot3d</a></span>(<span class='no'>hemibrain.rois</span><span class='kw'>[[</span><span class='no'>m</span>]],<span class='kw'>alpha</span> <span class='kw'>=</span> <span class='fl'>0.5</span>, <span class='kw'>col</span> <span class='kw'>=</span> <span class='no'>cols</span>[<span class='no'>m</span>])
 }
 
-}<span class='co'># }</span></div></pre>
+<span class='co'># Alternatively plot a subset all at once with rainbow colours</span>
+<span class='co'># making use of nat::plot3d.neuronlist</span>
+<span class='fu'><a href='https://rdrr.io/pkg/nat/man/plot3d.html'>plot3d</a></span>(<span class='no'>hemibrain.rois</span>, <span class='fl'>1</span>:<span class='fl'>3</span>, <span class='kw'>add</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
+
+<span class='co'># If you have neuprintr &gt;= 1.0 you can easily find groups of meshes</span>
+<span class='co'># find just the terminal nodes of the MB ROI hierarchy</span>
+<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>nat</span>)
+<span class='no'>mbterms</span><span class='kw'>=</span><span class='kw pkg'>nat</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/nat/man/rootpoints.html'>endpoints</a></span>(<span class='fu'>neuprint_ROI_hierarchy</span>(<span class='kw'>root</span><span class='kw'>=</span><span class='st'>'MB(R)'</span>, <span class='kw'>rval</span><span class='kw'>=</span><span class='st'>'graph'</span>))
+<span class='no'>mb.rois</span><span class='kw'>=</span><span class='fu'>hemibrain_roi_meshes</span>(<span class='no'>mbterms</span>)
+<span class='fu'><a href='https://rdrr.io/pkg/nat/man/plot3d.html'>plot3d</a></span>(<span class='no'>mb.rois</span>, <span class='kw'>add</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
+}</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

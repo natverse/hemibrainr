@@ -210,8 +210,7 @@ have not been resampled or their skeletons otherwise modified).</p></td>
 <span class='no'>neurons</span> <span class='kw'>=</span> <span class='kw pkg'>neuprintr</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/neuprintr/man/neuprint_read_neurons.html'>neuprint_read_neurons</a></span>(<span class='no'>exemplars</span>)
 
 <span class='co'># Now use a pre-saved axon-dendrite split</span>
-<span class='no'>neurons.flow</span> <span class='kw'>=</span> <span class='fu'>hemibrain_flow_centrality</span>(<span class='no'>neurons</span>)
-
+<span class='no'>neurons.flow</span> <span class='kw'>=</span> <span class='fu'>hemibrain_flow_centrality</span>(<span class='no'>neurons</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: 11 neurons do not have 'traced' status, split likely to be inaccurate for: bodyid, pre, post, status, statusLabel, cropped, name, type, cellBodyFiber, voxels, soma</span></div><div class='output co'>#&gt; <span class='warning'>Warning: 0 neurons have no soma tagged, split could be inaccurate for: </span></div><div class='input'>
 <span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
 <span class='co'># Plot the split to check it</span>
 <span class='kw pkg'>nat</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/nat/man/nopen3d.html'>nopen3d</a></span>()

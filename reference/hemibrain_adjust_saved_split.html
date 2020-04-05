@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Manually review split neurons and save your results to a Google Sheet for everyone to use — hemibrain_adjust_saved_split • hemibrainr</title>
+<title>Manually review split neurons and save your results to a Google Sheet for everyone to use — hemibrain_task_update • hemibrainr</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,7 +46,7 @@
 
 
 
-<meta property="og:title" content="Manually review split neurons and save your results to a Google Sheet for everyone to use — hemibrain_adjust_saved_split" />
+<meta property="og:title" content="Manually review split neurons and save your results to a Google Sheet for everyone to use — hemibrain_task_update" />
 <meta property="og:description" content="A 3D interactive pipeline for reviewing our hemibrain_precomputed_splitpoints. Each user can
 manually edit neurons if needs be, add whether or not they have a soma or are cropped, and make additional notes. The purpose of this
 function if for interested users to work together to curate axon-dendrite splits suggested by the flow_centrality algorithm.
@@ -137,12 +137,22 @@ when using <code><a href='hemibrain_flow_centrality.html'>hemibrain_flow_central
 the <a href='https://docs.google.com/spreadsheets/d/1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E/edit?usp=sharing'>Google Sheet database</a> to your Google Drive.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>hemibrain_adjust_saved_split</span>(
+    <pre class="usage"><span class='fu'>hemibrain_task_update</span>(
+  <span class='no'>bodyids</span>,
+  <span class='no'>update</span>,
+  <span class='kw'>selected_file</span> <span class='kw'>=</span> <span class='st'>"1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E"</span>,
+  <span class='kw'>column</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"soma"</span>, <span class='st'>"cut"</span>, <span class='st'>"truncated"</span>, <span class='st'>"split"</span>, <span class='st'>"splittable"</span>, <span class='st'>"checked"</span>, <span class='st'>"user"</span>,
+    <span class='st'>"time"</span>, <span class='st'>"note"</span>, <span class='st'>"priority"</span>, <span class='st'>"edited.cable"</span>)
+)
+
+<span class='fu'>hemibrain_adjust_saved_split</span>(
   <span class='kw'>bodyids</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>phases</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"complete"</span>, <span class='st'>"I"</span>, <span class='st'>"II"</span>, <span class='st'>"III"</span>),
   <span class='kw'>db</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>check_thresh</span> <span class='kw'>=</span> <span class='fl'>1</span>,
   <span class='kw'>batch_size</span> <span class='kw'>=</span> <span class='fl'>10</span>,
+  <span class='kw'>by.type</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>assignments</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>brain</span> <span class='kw'>=</span> <span class='kw pkg'>hemibrainr</span><span class='kw ns'>::</span><span class='no'><a href='hemibrain.surf.html'>hemibrain.surf</a></span>,
   <span class='kw'>update_regularly</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>motivate</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
@@ -159,6 +169,20 @@ the <a href='https://docs.google.com/spreadsheets/d/1YjkVjokXL4p4Q6BR-rGGGKWecXU
     <tr>
       <th>bodyids</th>
       <td><p>bodyids which specify individual neurons, as used in the relevant neuPrint project</p></td>
+    </tr>
+    <tr>
+      <th>update</th>
+      <td><p>a vector of <code><a href='https://rdrr.io/r/base/length.html'>length(bodyids)</a></code> or <code>1</code>, which will replace cells in the column specified by <code>column</code> for given bodyids (<code>bodyids</code>).
+E.g. If I wanted to changed the given bodyids on the task sheet to checked = TRUE, I would use <code>update = TRUE</code>.</p></td>
+    </tr>
+    <tr>
+      <th>selected_file</th>
+      <td><p>an optional path to a yaml file that already contains a selection</p></td>
+    </tr>
+    <tr>
+      <th>column</th>
+      <td><p>the column in the split-check task's Google Sheet (specified by <code>selected_file</code>) to be updated with the value of the argument <code>update</code>.
+E.g. If I wanted to changed the given bodyids on the task sheet to checked = TRUE, I would use <code>column = "check"</code>.</p></td>
     </tr>
     <tr>
       <th>phases</th>
@@ -181,10 +205,20 @@ If a skeleton has already been checked by this many users or more, it will not b
     </tr>
     <tr>
       <th>batch_size</th>
-      <td><p>when reviewing splits for hemibrain neurons, we examine neurons in batches of this size. We then go through two phases,
+      <td><p>when reviewing splits for hemibrain neurons, we examine neurons (or putative cell types, see parameter <code>by.type</code>) in batches of this size. We then go through two phases,
 choosing neurons that are incorrect in some way (wrongly split, cropped) and then editing them manually, before saving them to a Google Sheet.
 You may not have access to this Google Sheet, in which case you will not be able to contribute manual splits for neurons to this package. Contact us
 if you would like access.</p></td>
+    </tr>
+    <tr>
+      <th>by.type</th>
+      <td><p>logical. If <code>TRUE</code> then putative cell types (as assigned as the type field in neuPrint) of neurons are presented. The number of cell types pulled
+are of size <code>batch_size</code>.</p></td>
+    </tr>
+    <tr>
+      <th>assignments</th>
+      <td><p>logical. If TRUE then the user is invited to examine only neurons that they are flagged for them. These are entries into the 'roots' tab of the Google Sheet,
+where the user column is the same as the initials the user enters.</p></td>
     </tr>
     <tr>
       <th>brain</th>
@@ -209,10 +243,6 @@ reading the Google Sheet introduces a prohibitive time delay.</p></td>
       <td><p>whether or not to look at higher priority neurons first. Initial, this means olfactory system neurons.</p></td>
     </tr>
     <tr>
-      <th>selected_file</th>
-      <td><p>an optional path to a yaml file that already contains a selection</p></td>
-    </tr>
-    <tr>
       <th>selected_col</th>
       <td><p>the color in which selected neurons (such as those specified in selected_file) should be plotted</p></td>
     </tr>
@@ -225,9 +255,26 @@ reading the Google Sheet introduces a prohibitive time delay.</p></td>
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>Updates a Google Sheet which records whether neurons have been checked in one tab ("roots") and records actual manually made splits in a second tab ("manual").</p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>the pipeline works in three phases and you choose to take a batch_size of X neurons/types (defaults to 10) through these stages:</p><ul>
+<li><p>Phase I - choose which neurons are okay and which need modifying /
+are truncated / are unsplittable / have a bad soma, etc.</p></li>
+<li><p>Phase II - manually edit those neurons that need modifying. Top tip:
+You can ‘cycle’ through branches and update them to a certain cable type one
+at a time. This works by removing the primary neurite and linker,
+so it is good to define these first for a neuron, and then cycle
+through branches as a quick way to assign axon/dendrite.</p></li>
+<li><p>Phase III - Review manually modified neurons.</p></li>
+</ul><p>Video tutorial: https://drive.google.com/open?id=1Cw-5bVgY5k-eaZAXQl6jgU1leYY7YbTM</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
+<span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
+<span class='co'># Assign mPN review to Nik Drummond (ND)</span>
+<span class='fu'>hemibrain_task_update</span>(<span class='kw'>bodyids</span> <span class='kw'>=</span> <span class='no'>mpn.ids</span>, <span class='kw'>column</span> <span class='kw'>=</span> <span class='st'>"user"</span>, <span class='kw'>update</span> <span class='kw'>=</span> <span class='st'>"ND"</span>)
+}<span class='co'># }</span>
+<span class='co'># \donttest{</span>
 <span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
 <span class='co'># Plot splits to check them, correcting any errors, and saving your changes</span>
 <span class='kw pkg'>nat</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/nat/man/nopen3d.html'>nopen3d</a></span>()

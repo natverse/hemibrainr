@@ -133,7 +133,13 @@ axons and dendrites. Optionally, it may also convert neurons from their raw voxe
 space (as they are stored in neuPrint) to microns.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>hemibrain_read_neurons</span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>savedir</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>microns</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>hemibrain_read_neurons</span>(
+  <span class='kw'>x</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>savedir</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>microns</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>remove.bad.synapses</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='no'>...</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -144,12 +150,16 @@ space (as they are stored in neuPrint) to microns.</p>
     </tr>
     <tr>
       <th>savedir</th>
-      <td><p>directory in which <code><a href='https://rdrr.io/pkg/nat/man/neuronlistfh.html'>nat::neuronlistfh</a></code> object as been saved using <code>hemibrain_download_neurons</code>. This acts as a database,
-from which hemibrain neurons can be read.</p></td>
+      <td><p>directory in which <code><a href='https://rdrr.io/pkg/nat/man/neuronlistfh.html'>nat::neuronlistfh</a></code> object as been saved using <code><a href='hemibrain_download_neurons.html'>hemibrain_download_neurons</a></code>. This acts as a database,
+from which hemibrain neurons can be read. If <code>TRUE</code> your default save directory is used, which is stored as: <code>options()$hemibrain_data</code></p></td>
     </tr>
     <tr>
       <th>microns</th>
       <td><p>convert dimensions from raw voxels into microns (template brain: <code>JRCFIB2018F</code>, else <code>JRCFIB2018Fraw</code>).</p></td>
+    </tr>
+    <tr>
+      <th>remove.bad.synapses</th>
+      <td><p>whether or not to run <code><a href='hemibrain_remove_bad_synapses.html'>hemibrain_remove_bad_synapses</a></code> on neurons pulled from neuPrint.</p></td>
     </tr>
     <tr>
       <th>...</th>
@@ -173,6 +183,7 @@ and <code><a href='hemibrain_flow_centrality.html'>hemibrain_flow_centrality</a>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
+<span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
 
 <span class='co'># Choose neurons</span>
 <span class='co'>## In this case some antennal lobe local neurons</span>
@@ -184,8 +195,9 @@ and <code><a href='hemibrain_flow_centrality.html'>hemibrain_flow_centrality</a>
 <span class='st'>"1794037618"</span>, <span class='st'>"5813018729"</span>, <span class='st'>"2013333009"</span>)
 
 <span class='co'># Get neurons</span>
-<span class='no'>neurons</span> <span class='kw'>=</span> <span class='fu'>hemibrain_read_neurons</span>(<span class='no'>al.local.neurons</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: 4 neurons cropped, split likely to be inaccurate for: 2068966051, 2069311379, 1947192569, 2101391269</span></div><div class='output co'>#&gt; <span class='warning'>Warning: 4 neurons are not represented in the given splitpoints: </span></div><div class='output co'>#&gt; <span class='error'>Error in matrix(if (is.null(value)) logical() else value, nrow = nr, dimnames = list(rn,     cn)): length of 'dimnames' [2] not equal to array extent</span></div><div class='input'>
-<span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
+<span class='no'>neurons</span> <span class='kw'>=</span> <span class='fu'>hemibrain_read_neurons</span>(<span class='no'>al.local.neurons</span>)
+
+
 <span class='co'># Plot the split to check it</span>
 <span class='kw pkg'>nat</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/nat/man/nopen3d.html'>nopen3d</a></span>()
 <span class='fu'><a href='plot3d_split.html'>nlscan_split</a></span>(<span class='no'>neurons</span>, <span class='kw'>WithConnectors</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
