@@ -24,7 +24,7 @@ Download all the automatically split neurons from the hemibrain
  need to do this if you have your Google Drive mounted on your computer and you
  have access to the Flyconnectome Repository 2020lhfib. In which case, you should
  be able to read neurons directly from the drive whiled you have an Internet connection
- using \code{\link{hemibrain_read_neurons(savedir=TRUE)}}.
+ using \code{hemibrain_read_neurons(savedir=TRUE)}.
 
  In order to do download all neurons locally, you need to add the following folder to your Google Drive:
  \url{https://drive.google.com/drive/folders/14UPg7CvHDtvzNjvNgAULYnxZ018Xgf5H?usp=sharing}.

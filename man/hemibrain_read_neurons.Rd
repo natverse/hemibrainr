@@ -33,7 +33,9 @@ from which hemibrain neurons can be read. If \code{TRUE} your default save direc
 \item{...}{methods passed to \code{neuprintr::neuprint_read_neurons}, \code{\link{hemibrain_remove_bad_synapses}}
 and \code{\link{hemibrain_flow_centrality}}}
 
-\item{local}{logical, whether to try to read locally saved neuronts (by detault at: \code{options()$hemibrain_data}) or neurons from Google Drive (\code{options()$Gdrive_hemibrain_data})}
+\item{local}{logical, whether to try to read locally saved neuronts (by detault at: \code{options()$hemibrain_data}) or neurons from Google Drive (\code{options()$Gdrive_hemibrain_data}).}
+
+\item{neuron.split}{read saved neurons spit in which way? Folder names indicative of arguments passed to \code{\link{flow_centrality}}.}
 }
 \value{
 the neuron or neuron list object inputted, with centripetal flow

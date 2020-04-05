@@ -15,7 +15,8 @@
 #' from which hemibrain neurons can be read. If \code{TRUE} your default save directory is used, which is stored as: \code{options()$hemibrain_data}
 #' @param microns convert dimensions from raw voxels into microns (template brain: \code{JRCFIB2018F}, else \code{JRCFIB2018Fraw}).
 #' @param remove.bad.synapses whether or not to run \code{\link{hemibrain_remove_bad_synapses}} on neurons pulled from neuPrint.
-#' @param local logical, whether to try to read locally saved neuronts (by detault at: \code{options()$hemibrain_data}) or neurons from Google Drive (\code{options()$Gdrive_hemibrain_data})
+#' @param local logical, whether to try to read locally saved neuronts (by detault at: \code{options()$hemibrain_data}) or neurons from Google Drive (\code{options()$Gdrive_hemibrain_data}).
+#' @param neuron.split read saved neurons spit in which way? Folder names indicative of arguments passed to \code{\link{flow_centrality}}.
 #' @param ... methods passed to \code{neuprintr::neuprint_read_neurons}, \code{\link{hemibrain_remove_bad_synapses}}
 #'  and \code{\link{hemibrain_flow_centrality}}
 #'
@@ -226,7 +227,7 @@ prune_synapseless_branches <- function(x, neuron = TRUE){
 #'  need to do this if you have your Google Drive mounted on your computer and you
 #'  have access to the Flyconnectome Repository 2020lhfib. In which case, you should
 #'  be able to read neurons directly from the drive whiled you have an Internet connection
-#'  using \code{\link{hemibrain_read_neurons(savedir=TRUE)}}.
+#'  using \code{hemibrain_read_neurons(savedir=TRUE)}.
 #'
 #'  In order to do download all neurons locally, you need to add the following folder to your Google Drive:
 #'  \url{https://drive.google.com/drive/folders/14UPg7CvHDtvzNjvNgAULYnxZ018Xgf5H?usp=sharing}.
