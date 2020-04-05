@@ -279,6 +279,11 @@ through branches as a quick way to assign axon/dendrite.</p></li>
 <span class='co'># Plot splits to check them, correcting any errors, and saving your changes</span>
 <span class='kw pkg'>nat</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/nat/man/nopen3d.html'>nopen3d</a></span>()
 <span class='fu'>hemibrain_adjust_saved_split</span>()
+
+<span class='co'># In order to read neurons more quickly from a local source / Google Drive</span>
+<span class='no'>db</span> <span class='kw'>=</span> <span class='fu'><a href='hemibrain_read_neurons.html'>hemibrain_neurons</a></span>()
+<span class='kw pkg'>nat</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/nat/man/nopen3d.html'>nopen3d</a></span>()
+<span class='fu'>hemibrain_adjust_saved_split</span>(<span class='kw'>db</span><span class='kw'>=</span><span class='no'>db</span>)
 }<span class='co'># }</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

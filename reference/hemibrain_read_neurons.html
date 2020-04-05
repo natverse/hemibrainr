@@ -135,10 +135,17 @@ space (as they are stored in neuPrint) to microns.</p>
 
     <pre class="usage"><span class='fu'>hemibrain_read_neurons</span>(
   <span class='kw'>x</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>savedir</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>savedir</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>microns</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>remove.bad.synapses</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='no'>...</span>
+)
+
+<span class='fu'>hemibrain_neurons</span>(
+  <span class='kw'>savedir</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>local</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>neuron.split</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"hemibrain_all_neurons_flow_polypre_centrifugal_synapses"</span>,
+    <span class='st'>"hemibrain_all_neurons_flow_polypre_centrifugal_distance"</span>)
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -165,6 +172,14 @@ from which hemibrain neurons can be read. If <code>TRUE</code> your default save
       <th>...</th>
       <td><p>methods passed to <code><a href='https://rdrr.io/pkg/neuprintr/man/neuprint_read_neurons.html'>neuprintr::neuprint_read_neurons</a></code>, <code><a href='hemibrain_remove_bad_synapses.html'>hemibrain_remove_bad_synapses</a></code>
 and <code><a href='hemibrain_flow_centrality.html'>hemibrain_flow_centrality</a></code></p></td>
+    </tr>
+    <tr>
+      <th>local</th>
+      <td><p>logical, whether to try to read locally saved neuronts (by detault at: <code>options()$hemibrain_data</code>) or neurons from Google Drive (<code>options()$Gdrive_hemibrain_data</code>).</p></td>
+    </tr>
+    <tr>
+      <th>neuron.split</th>
+      <td><p>read saved neurons spit in which way? Folder names indicative of arguments passed to <code><a href='flow_centrality.html'>flow_centrality</a></code>.</p></td>
     </tr>
     </table>
 
@@ -196,7 +211,6 @@ and <code><a href='hemibrain_flow_centrality.html'>hemibrain_flow_centrality</a>
 
 <span class='co'># Get neurons</span>
 <span class='no'>neurons</span> <span class='kw'>=</span> <span class='fu'>hemibrain_read_neurons</span>(<span class='no'>al.local.neurons</span>)
-
 
 <span class='co'># Plot the split to check it</span>
 <span class='kw pkg'>nat</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/nat/man/nopen3d.html'>nopen3d</a></span>()
