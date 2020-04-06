@@ -23,6 +23,12 @@ hemibrain = team_drive_get("hemibrain")
 drive_hemibrain = drive_find(type = "folder", team_drive = hemibrain)
 hemibrain_neurons= subset(drive_hemibrain,name=="hemibrain_neurons")
 
+# Save all neuron bodyids
+drive_upload(media = "/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/hemibrain_all_neuron_bodyids.csv",
+             path = hemibrain_neurons,
+             overwrite = TRUE,
+             verbose = TRUE)
+
 # Save raw neurons
 drive_upload(media = "/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/hemibrain_all_neurons.rda",
              path = hemibrain_neurons,
