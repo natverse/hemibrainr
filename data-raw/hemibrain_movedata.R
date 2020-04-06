@@ -52,8 +52,8 @@ split.synapses = paste0("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/ne
 split.connections = paste0("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/hemibrain_all_neurons_connections_",identifier,".csv")
 split.elist = paste0("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/hemibrain_all_neurons_edgelist_",identifier,".csv")
 split.metrics = paste0("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/hemibrain_all_neurons_metrics_",identifier,".csv")
-split.neuron.fh.neuronlist = paste0(split.neuron.fh,"hemibrain_all_neurons_flow_",identifier,".rds")
-split.neuron.fh.data = paste0(split.neuron.fh,"data/")
+split.neuron.fh.neuronlist = list.files(split.neuron.fh,pattern = "rds", full.name = TRUE)
+split.neuron.fh.data = list.files(split.neuron.fh,pattern = "data", full.name = TRUE)
 split.neuron.fh.data.files = list.files(split.neuron.fh.data, full.names = TRUE)
 
 # Save split data
@@ -94,12 +94,12 @@ if(nrow(identifier.folder.data)){
 drive_mkdir(name = "data",
             path = folder,
             overwrite = FALSE)
-identifier.folder = drive_ls(path = folder$name, type = "folder", team_drive = hemibrain)
+identifier.folder = drive_ls(path = folder, type = "folder", team_drive = hemibrain)
 identifier.folder.data = subset(identifier.folder, name == "data")
 error.files = c()
 for(split.neuron.fh.data.file in split.neuron.fh.data.files){
   e = tryCatch(drive_upload(media = split.neuron.fh.data.file,
-                            path = identifier.folder.data,
+                            path = identifier.folder.data[1,],
                             overwrite = FALSE,
                             verbose = TRUE),
                error = function(e) NULL)
