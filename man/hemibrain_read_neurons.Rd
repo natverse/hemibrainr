@@ -8,6 +8,7 @@
 hemibrain_read_neurons(
   x = NULL,
   savedir = TRUE,
+  local = FALSE,
   microns = TRUE,
   remove.bad.synapses = TRUE,
   ...
@@ -16,8 +17,7 @@ hemibrain_read_neurons(
 hemibrain_neurons(
   savedir = TRUE,
   local = FALSE,
-  neuron.split = c("hemibrain_all_neurons_flow_polypre_centrifugal_synapses",
-    "hemibrain_all_neurons_flow_polypre_centrifugal_distance")
+  neuron.split = c("polypre_centrifugal_synapses", "polypre_centrifugal_distance")
 )
 }
 \arguments{
@@ -26,14 +26,14 @@ hemibrain_neurons(
 \item{savedir}{directory in which \code{nat::neuronlistfh} object as been saved using \code{\link{hemibrain_download_neurons}}. This acts as a database,
 from which hemibrain neurons can be read. If \code{TRUE} your default save directory is used, which is stored as: \code{options()$hemibrain_data}}
 
+\item{local}{logical, whether to try to read locally saved neuronts (by detault at: \code{options()$hemibrain_data}) or neurons from Google Drive (\code{options()$Gdrive_hemibrain_data}).}
+
 \item{microns}{convert dimensions from raw voxels into microns (template brain: \code{JRCFIB2018F}, else \code{JRCFIB2018Fraw}).}
 
 \item{remove.bad.synapses}{whether or not to run \code{\link{hemibrain_remove_bad_synapses}} on neurons pulled from neuPrint.}
 
 \item{...}{methods passed to \code{neuprintr::neuprint_read_neurons}, \code{\link{hemibrain_remove_bad_synapses}}
 and \code{\link{hemibrain_flow_centrality}}}
-
-\item{local}{logical, whether to try to read locally saved neuronts (by detault at: \code{options()$hemibrain_data}) or neurons from Google Drive (\code{options()$Gdrive_hemibrain_data}).}
 
 \item{neuron.split}{read saved neurons spit in which way? Folder names indicative of arguments passed to \code{\link{flow_centrality}}.}
 }

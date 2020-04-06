@@ -59,7 +59,7 @@ setup_splitcheck_sheet <-function(selected_file = "1YjkVjokXL4p4Q6BR-rGGGKWecXU3
   googlesheets4::write_sheet(roots[0,],
                              ss = selected_file,
                              sheet = "roots")
-  batches = split(1:nrow(roots), ceiling(seq_along(1:nrow(roots))/1000))
+  batches = split(1:nrow(roots), ceiling(seq_along(1:nrow(roots))/5000))
   for(i in batches){
     gsheet_manipulation(FUN = googlesheets4::sheets_append,
                         data = roots[min(i):max(i),],
@@ -72,7 +72,7 @@ setup_splitcheck_sheet <-function(selected_file = "1YjkVjokXL4p4Q6BR-rGGGKWecXU3
   ### Some assignments for tracers in the FlyConnectome group
   hemibrain_task_update(bodyids = c(hemibrainr::upn.ids,hemibrainr::mpn.ids), column = "user", update = "ND")
   hemibrain_task_update(bodyids = hemibrainr::dan.ids, column = "user", update = "GD")
-  hemibrain_task_update(bodyids = c(hemibrainr::vppn.ids,hemibrainr::hrn.ids), column = "user", update = "ECM")
+  hemibrain_task_update(bodyids = c(hemibrainr::vppn.ids,hemibrainr::hrn.ids), column = "user", update = "RT")
   hemibrain_task_update(bodyids = hemibrainr::alln.ids, column = "user", update = "TS")
   hemibrain_task_update(bodyids = hemibrainr::mbon.ids, column = "user", update = "MWP")
   hemibrain_task_update(bodyids = hemibrainr::ton.ids, column = "user", update = "AJ")
@@ -200,12 +200,17 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
   phases = match.arg(phases)
   if(motivate){plot_inspirobot()}
   initials = readline(prompt = "What are your initials? ")
-  say_hello(greet = initials)
   ### Get Google Sheet data
   gs = googlesheets4::read_sheet(ss = selected_file, sheet = "roots")
   gs = as.data.frame(gs)
   manual = googlesheets4::read_sheet(ss = selected_file, sheet = "manual")
   manual = as.data.frame(manual)
+  user = googledrive::drive_user(verbose=FALSE)
+  user = user$name
+  if(is.null(user)){
+    user = initials
+  }
+  say_hello(greet = user)
   ### Process data
   undone = gs[gs$checked<check_thresh,]
   undone.ids = unique(undone$bodyid)
@@ -266,7 +271,9 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
       if(is.null(db)){
         if(motivate){plot_inspirobot()}
         message("Reading and manipulating neurons from neuPrint ...")
-        someneuronlist = hemibrain_read_neurons(x = as.character(batch), microns = FALSE)
+        someneuronlist = hemibrain_read_neurons(x = as.character(batch),
+                                                savedir = FALSE,
+                                                microns = FALSE)
       }else{
         message("Reading locally saved neurons ...")
         someneuronlist = db[as.character(batch)]
@@ -391,7 +398,7 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
                             col_names = FALSE)
       }
       message("Task updated! ")
-      say_encouragement(greet = initials)
+      say_encouragement(greet = user)
     }
   }
 }

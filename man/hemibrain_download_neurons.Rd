@@ -44,12 +44,9 @@ message("Using ", numCores/2, " cores")
 hemibrain_download_neurons(.parallel = TRUE, overwrite = FALSE)
 
 # Get specific neurons
-neurons = hemibrain_read_neurons("1702323386", savedir = TRUE)
+neurons = hemibrain_read_neurons("1702323386", savedir = TRUE, local = TRUE)
 }}
 }
 \seealso{
-\code{\link{hemibrain_splitpoints}},
- \code{\link{hemibrain_flow_centrality}},
- \code{\link{hemibrain_precomputed_splitpoints}},
- \code{\link{hemibrain_metrics}},\code{\link{hemibrain_remove_bad_synapses}}
+\code{\link{hemibrain_read_neurons}}
 }

@@ -19,9 +19,8 @@ hemibrain_roi_meshes(
 
 \item{microns}{convert dimensions from raw voxels into microns (template brain: \code{JRCFIB2018F}, else \code{JRCFIB2018Fraw}).}
 
-\item{superLevel}{whether not to show 'superlevel' ROIs - ROIs composed of
-other ROIs. If set to NULL, both low-level and superlevel ROIs are
-returned.}
+\item{superLevel}{whether not to show 'superlevel' ROIs - ROIs composed of other ROIs.
+If set to NULL, both low-level and superlevel ROIs are returned.}
 
 \item{OmitFailures}{Whether to omit neurons for which \code{FUN} gives an
 error. The default value (\code{NA}) will result in nlapply stopping with
