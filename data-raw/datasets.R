@@ -1,18 +1,33 @@
 ### Code to prepare datasets ###
+library(googledrive)
+
+### Access Team Drive
+hemibrain = team_drive_get("hemibrain")
+drive_hemibrain = drive_find(type = "folder", team_drive = hemibrain)
+hemibrain_drive_csvs = drive_find(type = "csv", team_drive = hemibrain)
+hemibrain_drive_data = subset(hemibrain_drive_csvs,grepl("splitpoints|metrics",name))
+for(i in 1:nrow(hemibrain_drive_data)){
+  drive_download(file = hemibrain_drive_data[i,],
+                 path = paste0("data-raw/",hemibrain_drive_data[i,'name']),
+                 overwrite = TRUE,
+                 verbose = TRUE)
+}
 
 ### Split points
 hemibrain_splitpoints_polypre_centrifugal_distance <- read.csv("data-raw/hemibrain_all_neurons_splitpoints_polypre_centrifugal_distance.csv")
 hemibrain_splitpoints_pre_centrifugal_distance <- read.csv("data-raw/hemibrain_all_neurons_splitpoints_pre_centrifugal_distance.csv")
 hemibrain_splitpoints_polypre_centrifugal_synapses <- read.csv("data-raw/hemibrain_all_neurons_splitpoints_polypre_centrifugal_synapses.csv")
-usethis::use_data(hemibrain_splitpoints_pre_centrifugal_distance, overwrite = TRUE)
-usethis::use_data(hemibrain_splitpoints_polypre_centrifugal_distance, overwrite = TRUE)
-usethis::use_data(hemibrain_splitpoints_polypre_centrifugal_synapses, overwrite = TRUE)
 
 ### Metrics
 hemibrain_metrics_polypre_centrifugal_distance <- read.csv("data-raw/hemibrain_all_neurons_metrics_polypre_centrifugal_distance.csv")
 hemibrain_metrics_polypre_centrifugal_synapses <- read.csv("data-raw/hemibrain_all_neurons_metrics_polypre_centrifugal_synapses.csv")
 rownames(hemibrain_metrics_polypre_centrifugal_distance) <- hemibrain_metrics_polypre_centrifugal_distance$bodyid
 rownames(hemibrain_metrics_polypre_centrifugal_synapses) <- hemibrain_metrics_polypre_centrifugal_synapses$bodyid
+
+### Use data
+usethis::use_data(hemibrain_splitpoints_pre_centrifugal_distance, overwrite = TRUE)
+usethis::use_data(hemibrain_splitpoints_polypre_centrifugal_distance, overwrite = TRUE)
+usethis::use_data(hemibrain_splitpoints_polypre_centrifugal_synapses, overwrite = TRUE)
 usethis::use_data(hemibrain_metrics_polypre_centrifugal_distance, overwrite = TRUE)
 usethis::use_data(hemibrain_metrics_polypre_centrifugal_synapses, overwrite = TRUE)
 
@@ -89,7 +104,8 @@ vppn.ids = class2ids("VPPN")
 alln.ids = class2ids("ALLN")
 dan.ids = class2ids("DAN")
 mbon.ids = class2ids("MBON")
-## Use them
+
+## Use them bodyids
 usethis::use_data(ton.ids, overwrite = TRUE)
 usethis::use_data(rn.ids, overwrite = TRUE)
 usethis::use_data(orn.ids, overwrite = TRUE)
