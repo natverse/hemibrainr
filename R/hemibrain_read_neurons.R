@@ -352,6 +352,12 @@ good_savedir <- function(savedir = TRUE,
                                           "polypre_centrifugal_distance")
                          ){
   neuron.split = match.arg(neuron.split)
+  if(is.null(options()$hemibrain_data)){
+    options(hemibrain_data = paste0(getwd(),"/data-raw/hemibrain_data/"))
+  }
+  if(is.null(options()$Gdrive_hemibrain_data)){
+    options(Gdrive_hemibrain_data = "/Volumes/GoogleDrive/Shared\ drives/hemibrain/")
+  }
   if(isTRUE(savedir)){
     savedir = options()$hemibrain_data
     if(!is.null(options()$Gdrive_hemibrain_data)){
