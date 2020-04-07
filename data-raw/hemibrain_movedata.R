@@ -48,7 +48,7 @@ if(!identifier %in% drive_hemibrain$name){
               overwrite = FALSE)
 }
 folder = subset(drive_hemibrain,name==identifier)
-identifier.folder = drive_ls(path = folder, type = "folder", team_drive = hemibrain)
+identifier.folder = drive_ls(path = folder[1,], type = "folder", team_drive = hemibrain)
 
 # Split files to save
 split.neurons = paste0("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/hemibrain_all_neurons_flow_",identifier,".rda")
@@ -110,7 +110,22 @@ for(split.neuron.fh.data.file in split.neuron.fh.data.files){
                             verbose = TRUE),
                error = function(e) NULL)
   if(is.null(e)){
-    error.files = c(error.files,e)
+    error.files = c(error.files,split.neuron.fh.data.file)
   }
 }
 message("File not downloaded: ", length(error.files))
+
+# Re-save missing IDs
+identifier.folder.data = subset(identifier.folder, name == "data")
+identifier.folder.data.files = drive_ls(identifier.folder.data, team_drive = hemibrain)
+missing.files = split.neuron.fh.data.files[!gsub(".*/","",split.neuron.fh.data.files) %in% identifier.folder.data.files$name]
+for(m in missing.files){
+  e = tryCatch(drive_upload(media = m,
+                            path = identifier.folder.data[1,],
+                            overwrite = FALSE,
+                            verbose = TRUE),
+               error = function(e) NULL)
+  if(is.null(e)){
+    error.files = c(error.files,split.neuron.fh.data.file)
+  }
+}
