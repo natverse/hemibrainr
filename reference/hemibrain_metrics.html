@@ -164,13 +164,13 @@ a neuron's axon and dendrite.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='no'>hemibrain_metrics</span>)</div><div class='output co'>#&gt;                     X     bodyid pre post status    statusLabel cropped
-#&gt; 202916528   202916528  202916528  95  422 Traced Roughly traced   FALSE
-#&gt; 1279775082 1279775082 1279775082  24  140 Traced Roughly traced   FALSE
-#&gt; 203253072   203253072  203253072  62  352 Traced Roughly traced   FALSE
-#&gt; 326530038   326530038  326530038 383 3030 Traced Roughly traced   FALSE
-#&gt; 203253253   203253253  203253253 402 2675 Traced Roughly traced   FALSE
-#&gt; 5813079341 5813079341 5813079341  37  260 Traced Roughly traced   FALSE
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='no'>hemibrain_metrics</span>)</div><div class='output co'>#&gt;                bodyid pre post status    statusLabel cropped
+#&gt; 202916528   202916528  95  422 Traced Roughly traced   FALSE
+#&gt; 1279775082 1279775082  24  140 Traced Roughly traced   FALSE
+#&gt; 203253072   203253072  62  352 Traced Roughly traced   FALSE
+#&gt; 326530038   326530038 383 3030 Traced Roughly traced   FALSE
+#&gt; 203253253   203253253 402 2675 Traced Roughly traced   FALSE
+#&gt; 5813079341 5813079341  37  260 Traced Roughly traced   FALSE
 #&gt;                           name       type cellBodyFiber     voxels soma
 #&gt; 202916528          FQ12_b_C4_R     FQ12_b         PDM03  235510665 TRUE
 #&gt; 1279775082     FQ12_a(AB)_C1_R     FQ12_a         PDM04  123003453 TRUE
@@ -209,10 +209,10 @@ a neuron's axon and dendrite.</p>
 #&gt;            segregation_index overlap_locality
 #&gt; 202916528         0.76090559               NA
 #&gt; 1279775082        0.59005623               NA
-#&gt; 203253072         0.45279399               NA
+#&gt; 203253072         0.45279400               NA
 #&gt; 326530038         0.08404521               NA
 #&gt; 203253253         0.19753908     3.104936e-01
-#&gt; 5813079341        0.61201577     1.020498e-10</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/hist.html'>hist</a></span>(<span class='no'>hemibrain_metrics</span>$<span class='no'>overlap_locality</span>,<span class='kw'>breaks</span> <span class='kw'>=</span> <span class='fl'>1000</span>)</div><div class='img'><img src='hemibrain_metrics-1.png' alt='' width='700' height='433' /></div><div class='input'># }
+#&gt; 5813079341        0.61201577     1.020000e-10</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/hist.html'>hist</a></span>(<span class='no'>hemibrain_metrics</span>$<span class='no'>overlap_locality</span>,<span class='kw'>breaks</span> <span class='kw'>=</span> <span class='fl'>1000</span>)</div><div class='img'><img src='hemibrain_metrics-1.png' alt='' width='700' height='433' /></div><div class='input'># }
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
