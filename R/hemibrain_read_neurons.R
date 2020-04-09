@@ -15,6 +15,7 @@
 #' from which hemibrain neurons can be read. If \code{TRUE} your default save directory is used, which is stored as: \code{options()$hemibrain_data}
 #' @param microns convert dimensions from raw voxels into microns (template brain: \code{JRCFIB2018F}, else \code{JRCFIB2018Fraw}).
 #' @param remove.bad.synapses whether or not to run \code{\link{hemibrain_remove_bad_synapses}} on neurons pulled from neuPrint.
+#' @param clean whether or not to set synapse-less branches to \code{Label = 0}.
 #' @param local logical, whether to try to read locally saved neuronts (by detault at: \code{options()$hemibrain_data}) or neurons from Google Drive (\code{options()$Gdrive_hemibrain_data}).
 #' @param neuron.split read saved neurons spit in which way? Folder names indicative of arguments passed to \code{\link{flow_centrality}}.
 #' @param ... methods passed to \code{neuprintr::neuprint_read_neurons}, \code{\link{hemibrain_remove_bad_synapses}}
@@ -51,6 +52,7 @@ hemibrain_read_neurons<-function(x = NULL,
                                  local = FALSE,
                                  microns = TRUE,
                                  remove.bad.synapses = TRUE,
+                                 clean = TRUE,
                                  ...){
   if(is.null(x)&!savedir){
     stop("You must either supply bodyids to read from neuPrint using x, or
@@ -80,7 +82,9 @@ hemibrain_read_neurons<-function(x = NULL,
       neurons.flow = hemibrain_remove_bad_synapses(neurons.flow, meshes = hemibrain.rois, ...)
     }
   }
-  neurons.flow = hemibrain_clean_skeleton(neurons.flow, rval = "neuron", ...)
+  if(clean){
+    neurons.flow = hemibrain_clean_skeleton(neurons.flow, rval = "neuron", ...)
+  }
   hemibrain_metrics = hemibrainr::hemibrain_metrics[,!colnames(hemibrainr::hemibrain_metrics)%in%colnames(neurons.flow[,])]
   df = cbind(neurons.flow[,], hemibrainr::hemibrain_metrics[names(neurons.flow),])
   rownames(df) = names(neurons.flow)
@@ -157,10 +161,10 @@ hemibrain_clean_skeleton <-function(x,
 #' @export
 hemibrain_clean_skeleton.neuron <- function(x, rval = c("pruned","neuron","points"), ...){
   rval = match.arg(rval)
-  a = axonic_cable(x)
-  a.clean = prune_synapseless_branches(a, neuron = FALSE)
-  d = dendritic_cable(x)
-  d.clean = prune_synapseless_branches(d, neuron = FALSE)
+  a = tryCatch( axonic_cable(x), error = function(e) NULL )
+  a.clean = tryCatch( prune_synapseless_branches(a, neuron = FALSE), error = function(e) NULL )
+  d = tryCatch( dendritic_cable(x), error = function(e) NULL )
+  d.clean = tryCatch( prune_synapseless_branches(d, neuron = FALSE), error = function(e) NULL )
   remove = c(a.clean, d.clean)
   if(rval=="pruned"){
     if(length(remove)>0){
@@ -419,7 +423,9 @@ hemibrain_settags.neuron <- function(x, i = 1, ...){
   m =  lapply(m, strsplit, split = " ... ")
   names(m) = tags
   for(tag in tags){
-     x$tags[[tag]] = unname(unlist(nullToNA(m[[tag]])))[i]
+    t = unname(unlist(nullToNA(m[[tag]])))[i]
+    t = ifelse(is.na(t),"none",t)
+    x$tags[[tag]] = unname(unlist(nullToNA(m[[tag]])))[i]
    }
  x
 }

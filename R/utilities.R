@@ -169,4 +169,12 @@ suppress <- function(x, ...){
   suppressWarnings(suppressMessages(x, ...), ...)
 }
 
+# hidden
+remove_after <- function(i){
+  for(j in i){
+
+  }
+
+}
+
 

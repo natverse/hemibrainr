@@ -601,6 +601,8 @@ hemibrain_use_splitpoints.neuron <-function(x, df, knn = FALSE, ...){
     }
 
     # Assign  non-synaptic labels
+    pd = setdiff(pd,c(axon.start,dendrite.start))
+    pnt = setdiff(pnt,c(axon.start,dendrite.start))
     if(!is.null(pd)){
       y = add_Label(x = y, PointNo = pd, Label = 4, erase = TRUE)
     }
@@ -623,12 +625,25 @@ hemibrain_use_splitpoints.neuron <-function(x, df, knn = FALSE, ...){
       a.s = a.s[!is.na(a.s)]
       d.s = match(dendrite.start,b$d$PointNo)
       d.s = d.s[!is.na(d.s)]
-      ax = suppressWarnings(
-        unique(c(unlist(sapply(as.numeric(a.s),function(s) unlist(igraph::shortest_paths(bn, from=s, to = leaves, mode = c("out"))$vpath)))))
-      )
-      dend= suppressWarnings(
-        unique(c(unlist(sapply(as.numeric(d.s),function(s) unlist(igraph::shortest_paths(bn, from=s, to = leaves, mode = c("out"))$vpath)))))
-      )
+      ax <- dend <- c()
+      for(as in a.s){
+        path = suppress(unique(c(unlist(unlist(igraph::shortest_paths(bn, from=as, to = leaves, mode = c("out"))$vpath)))))
+        if(length(d.s)){
+          if(sum(d.s%in%path)>0){
+            path = path[1:(which(path%in%d.s)-1)]
+          }
+        }
+        ax = c(ax,path)
+      }
+      for(ds in d.s){
+        path = suppress(unique(c(unlist(unlist(igraph::shortest_paths(bn, from=ds, to = leaves, mode = c("out"))$vpath)))))
+        if(length(a.s)){
+          if(sum(a.s%in%path)>0){
+            path = path[1:(which(path%in%a.s)-1)]
+          }
+        }
+        dend = c(dend,path)
+      }
       ax = b$d$PointNo[ax]
       dend = b$d$PointNo[dend]
       axon = c(axon,ax)
@@ -743,12 +758,12 @@ hemibrain_flow_centrality.neuronlist <- function(x, splitpoints = hemibrainr::he
   if(length(cropped)){
     warning(length(cropped), " neurons cropped, split likely to be inaccurate for: ", paste(names(cropped),collapse=", "))
   }
-  untraced = x[x[,]$status!="Traced",]
+  untraced = subset(x, x[,]$status != "Traced")
   if(length(untraced)){
     warning(length(untraced), " neurons do not have 'traced' status, split likely to be inaccurate for: ", paste(names(untraced),collapse=", "))
   }
   nosoma = subset(x, !x[,]$soma)
-  if(length(untraced)){
+  if(length(nosoma)){
     warning(length(nosoma), " neurons have no soma tagged, split could be inaccurate for: ", paste(names(nosoma),collapse=", "))
   }
   missed = setdiff(x[,"bodyid"], splitpoints$bodyid)

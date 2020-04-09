@@ -18,13 +18,13 @@ setup_splitcheck_sheet <-function(selected_file = "1YjkVjokXL4p4Q6BR-rGGGKWecXU3
   roots$cut = hemibrainr::hemibrain_metrics[as.character(roots$bodyid),"cropped"]
   roots[as.character(i),]$cut = unlist(nullToNA(lhn.gs[as.character(i),]$cropped2))
   roots$truncated = roots$cut
-  roots$manually_edit = FALSE
+  roots$manual_edit = FALSE
   roots$splittable = TRUE
-  roots$skeletonisation = "good"
+  roots$skeletonization = "good"
   roots$checked = FALSE
   roots$user = "flyconnectome"
   roots$time = Sys.time()
-  roots$note = ""
+  roots$note = "none"
   ### Format for manual splitpoints sheet
   manual = roots
   ### Get ids for classes
@@ -71,12 +71,15 @@ setup_splitcheck_sheet <-function(selected_file = "1YjkVjokXL4p4Q6BR-rGGGKWecXU3
                              ss = selected_file,
                              sheet = "manual")
   ### Some assignments for tracers in the FlyConnectome group
+  ton.batches = split(hemibrainr::ton.ids, ceiling(seq_along(1:length(hemibrainr::ton.ids))/2700))
   hemibrain_task_update(bodyids = c(hemibrainr::upn.ids,hemibrainr::mpn.ids), column = "user", update = "ND")
   hemibrain_task_update(bodyids = hemibrainr::dan.ids, column = "user", update = "GD")
   hemibrain_task_update(bodyids = c(hemibrainr::vppn.ids,hemibrainr::hrn.ids), column = "user", update = "RT")
   hemibrain_task_update(bodyids = hemibrainr::alln.ids, column = "user", update = "TS")
   hemibrain_task_update(bodyids = hemibrainr::mbon.ids, column = "user", update = "MWP")
-  hemibrain_task_update(bodyids = hemibrainr::ton.ids, column = "user", update = "AJ")
+  hemibrain_task_update(bodyids = ton.batches[[1]], column = "user", update = "AJ")
+  hemibrain_task_update(bodyids = ton.batches[[2]], column = "user", update = "IT")
+  hemibrain_task_update(bodyids = ton.batches[[3]], column = "user", update = "JH")
   hemibrain_task_update(bodyids = hemibrainr::orn.ids, column = "user", update = "ND")
 }
 
@@ -91,8 +94,8 @@ setup_splitcheck_sheet <-function(selected_file = "1YjkVjokXL4p4Q6BR-rGGGKWecXU3
 hemibrain_task_update <- function(bodyids,
                                   update,
                                  selected_file = "1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E",
-                                 column = c("soma","cut", "truncated", "split", "splittable", "checked", "user",
-                                              "time", "note", "priority", "edited.cable")
+                                 column = c("soma","cut", "truncated", "manual_edit", "splittable", "checked", "user",
+                                              "time", "note", "priority", "edited.cable", "skeletonization")
                                  ){
   column = match.arg(column)
   message("Updating task field: ", column)
@@ -229,7 +232,7 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
           ###Colours###")
   ### Get chosen bodyIDs
   if(phases=="II"){
-    undone = gs[!gs$bodyid %in% unique(manual$bodyid) & gs$manually_edit,]
+    undone = gs[!gs$bodyid %in% unique(manual$bodyid) & gs$manual_edit,]
   }else if(phases=="III"){
     undone = gs[gs$bodyid %in% unique(manual$bodyid),]
   }
@@ -269,7 +272,9 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
         message("Reading and manipulating neurons from neuPrint ...")
         someneuronlist = hemibrain_read_neurons(x = as.character(batch),
                                                 savedir = FALSE,
-                                                microns = FALSE)
+                                                remove.bad.synapses = FALSE,
+                                                microns = FALSE,
+                                                clean = FALSE)
       }else{
         message("Reading locally saved neurons ...")
         someneuronlist = db[as.character(batch)]
@@ -278,7 +283,7 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
         someneuronlist = hemibrain_clean_skeleton(someneuronlist, rval = "neuron")
       }
       ### Get vectors that we will need to update
-      edits = purify(gs[match(names(someneuronlist), gs$bodyid),"manually_edit"])
+      edits = purify(gs[match(names(someneuronlist), gs$bodyid),"manual_edit"])
       notes = purify(gs[match(names(someneuronlist), gs$bodyid),"note"])
       truncated = purify(gs[match(names(someneuronlist), gs$bodyid),"truncated"])
       somas = purify(gs[match(names(someneuronlist), gs$bodyid),"soma"])
@@ -287,7 +292,7 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
       skels = purify(gs[match(names(someneuronlist), gs$bodyid),"skeletonization"])
       somas = purify(gs[match(names(someneuronlist), gs$bodyid),"soma"])
       someneuronlist = hemibrain_settags(someneuronlist,
-                                         manually_edit = edits,
+                                         manual_edit = edits,
                                          note = notes,
                                          truncated = truncated,
                                          splittable = splittable,
@@ -317,7 +322,7 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
                                     update_regularly = update_regularly,
                                     selected_file = selected_file)
         }
-        if(phases %in% c("complete", "III")){
+        if(phases == "III" | length(mes)){
           ### Review the changes
           message("Phase III : review ", length(mes), " neurons")
           mes <- splitcheck_phaseIII(mes = mes,
@@ -425,7 +430,7 @@ splitcheck_phaseI <- function(someneuronlist,
           Please select (s) neurons that need to be manually edited.
           Important: Please also mark neurons that have a bad/no soma (r),
           that are slightly truncated (t), seriously cropped (k), unsplittable (u),
-          or have a bad skeletonisation (z). You can also make custom notes (e).
+          or have a bad skeletonization (z). You can also make custom notes (e).
           ###################################PhaseI####################################")
   someneuronlist = hemibrain_perfectstart(someneuronlist)
   neurons = names(someneuronlist)
@@ -531,7 +536,7 @@ splitcheck_phaseII <- function(selected,
       selected = setdiff(selected, as.character(manual$bodyid))
     }
     me = nat::as.neuronlist(manually_assign_labels(someneuronlist[as.character(selected)]))
-    edited = unlist(sapply(me, function(x) x$tags$manually_edit))
+    edited = unlist(sapply(me, function(x) x$tags$manual_edit))
     mes = me[edited]
     message("Manually edited neurons: ", length(mes), " neurons")
     mes
@@ -652,7 +657,7 @@ check_undoneids <- function(undone.ids,
 # hidden
 hemibrain_perfectstart <-function(x, ...) UseMethod("hemibrain_perfectstart")
 hemibrain_perfectstart.neuron <- function(x, ...){
-  x$tags$manually_edit = FALSE
+  x$tags$manual_edit = FALSE
   x$tags$cut = FALSE
   x$tags$soma = "automatic"
   x$tags$truncated = FALSE

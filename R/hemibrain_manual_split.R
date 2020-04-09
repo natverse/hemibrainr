@@ -43,9 +43,6 @@ manually_assign_labels.neuron <- function(x, brain = NULL, is.cropped = FALSE, .
   bodyid = ifelse(is.null(x$bodyid),x$skid,x$bodyid)
   WithConnectors = TRUE
   reset3d(brain=brain);plot3d_split(x, WithConnectors = WithConnectors)
-  x$tags$manual_edit = FALSE
-  x$tags$cut = FALSE
-  x$tags$soma = "automatic"
   x.safe = x
   happy = hemibrain_engage(Label = NULL)
   if(happy){
