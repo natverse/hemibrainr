@@ -398,6 +398,7 @@ must_be <- function(prompt, answers){
 
 # hidden
 gsheet_manipulation <- function(FUN, ...){
+  sleep = 10
   success = FALSE
   while(!success){
     g = tryCatch(FUN(...),
@@ -405,8 +406,12 @@ gsheet_manipulation <- function(FUN, ...){
     if(!is.null(g)){
       success = TRUE
     }else{
-      Sys.sleep(10)
-      message("Google sheet read failures, re-trying ...")
+      Sys.sleep(sleep)
+      message("Google sheet read failures, re-trying in ", sleep," seconds ...")
+      sleep = sleep + 10
+      if(sleep > 600){
+        slep <- 600
+      }
     }
   }
 }
