@@ -143,7 +143,7 @@ hemibrain_extract_compartment_edgelist <- function(x, ...){
   elist
 }
 
-# Hidden
+# hidden
 extract_elist <- function(syns, lookup){
   syns %>%
     dplyr::filter(.data$prepost==0) %>%
