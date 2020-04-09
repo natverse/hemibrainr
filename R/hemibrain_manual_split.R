@@ -43,7 +43,7 @@ manually_assign_labels.neuron <- function(x, brain = NULL, is.cropped = FALSE, .
   bodyid = ifelse(is.null(x$bodyid),x$skid,x$bodyid)
   WithConnectors = TRUE
   reset3d(brain=brain);plot3d_split(x, WithConnectors = WithConnectors)
-  x$tags$manually_edited = FALSE
+  x$tags$manual_edit = FALSE
   x$tags$cut = FALSE
   x$tags$soma = "automatic"
   x.safe = x
@@ -84,14 +84,14 @@ manually_assign_labels.neuron <- function(x, brain = NULL, is.cropped = FALSE, .
             plot3d_split(x)
             i = hemibrain_choice("Should we invert the dendrite and axon assignment again? yes/no ")
           }
-          x$tags$manually_edited = i
+          x$tags$manual_edit = i
         }
       }else if(happy == 9){
         x = cycle_branches(x=x,brain=brain)
-        x$tags$manually_edited = TRUE
+        x$tags$manual_edit = TRUE
       }else if(happy==10){
         x = x.safe
-        x$tags$manually_edited = FALSE
+        x$tags$manual_edit = FALSE
         message("Neuron has been reverted to its original state")
       }else if(happy == 11){
         WithConnectors = !WithConnectors
@@ -106,7 +106,7 @@ manually_assign_labels.neuron <- function(x, brain = NULL, is.cropped = FALSE, .
         }
       }else{
         x = hemibrain_select_cable(x=x, Label = happy, lock = locks)
-        x$tags$manually_edited = TRUE
+        x$tags$manual_edit = TRUE
       }
     }
   }
@@ -244,7 +244,7 @@ hemibrain_correctsoma <- function(x, ...) {
         plot3d_split(corrected, ...)
       }
       x$tags$soma = "manual"
-      x$tags$manually_edited = TRUE
+      x$tags$manual_edit = TRUE
       progress = must_be(prompt = "Good enough? yes/no  ", answers = c("y","yes","n","no"))
   }
   x = add_Label(x = x, PointNo = selected.point, Label = 1, erase = TRUE)
