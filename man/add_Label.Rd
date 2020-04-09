@@ -4,7 +4,15 @@
 \alias{add_Label}
 \title{Manually add a Label annotation to a neuron}
 \usage{
-add_Label(x, PointNo = NULL, Label = 2, erase = FALSE, ...)
+add_Label(
+  x,
+  PointNo = NULL,
+  Label = 2,
+  erase = FALSE,
+  lock = NULL,
+  internal.assignments = FALSE,
+  ...
+)
 }
 \arguments{
 \item{x}{a \code{nat::neuronlist} or \code{nat::neuron} object. It is assumed
@@ -19,13 +27,20 @@ will be added.If \code{NULL} all points are used.}
 \item{erase}{if \code{TRUE}, all instance of \code{Label} not
 in \code{PointNo} are set to \code{0}.}
 
+\item{lock}{a numeric vector of cable types that will not be updated by \code{add_Label}.}
+
+\item{internal.assignments}{logical. If TRUE, hidden function \code{hemibrainr::internal.assignments} is run, to assign
+a neurons dendrite/axon start points, primary branch point, linker start points, etc. in line with the changes
+produced by this function.}
+
 \item{...}{methods sent to \code{nat::nlapply}}
 }
 \value{
 a \code{neuron} or \code{neuronlist}
 }
 \description{
-Assign all points on a skeleton with a certain Label.
+Manually add a Label annotation, indicative of cable type,
+to a neuron's arbour and synapses.
 }
 \seealso{
 \code{\link{flow_centrality}}, \code{\link{add_field}}

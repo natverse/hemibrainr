@@ -10,11 +10,11 @@
 \alias{hemibrain_correctsoma}
 \title{Manually assign the dendrite and axon to a neuron}
 \usage{
-manually_assign_labels(x, brain = NULL, ...)
+manually_assign_labels(x, brain = NULL, is.cropped = FALSE, ...)
 
-\method{manually_assign_labels}{neuron}(x, brain = NULL, ...)
+\method{manually_assign_labels}{neuron}(x, brain = NULL, is.cropped = FALSE, ...)
 
-\method{manually_assign_labels}{neuronlist}(x, brain = NULL, ...)
+\method{manually_assign_labels}{neuronlist}(x, brain = NULL, is.cropped = FALSE, ...)
 
 hemibrain_prune_online(x, brain = NULL, Label = NULL, lock = NULL, ...)
 
@@ -28,6 +28,8 @@ hemibrain_correctsoma(x, ...)
 \item{x}{a neuron/neuronlist object}
 
 \item{brain}{which brain to plot while splitting neuron.}
+
+\item{is.cropped}{logical. If TRUE, the user is asked whether the neuron being considered is complete or not.}
 
 \item{...}{additional arguments passed to plotting functions, namely \code{plot3d_split}}
 

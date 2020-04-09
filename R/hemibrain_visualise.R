@@ -10,6 +10,7 @@
 #' @param splitnode if TRUE, a magenta sphere is placed at the location of the axon-dendrite split. Possible a putative action potential initiation site?
 #' @param WithConnectors whether to plot the anatomical location of pre (red) and post (cyan) synapses.
 #' @param soma whether to plot a soma, and what the radius should be. If \code{NULL}, an appropriate value is guessed.
+#' @param soma.alpha numeric, alpha transparency value for plotting the soma. Passed to \code{rgl::spheres3d}
 #' @param WithNodes whether to plot branch points
 #' @param lwd Line width (default 1)
 #' @param radius For connectors and axon-dendrite split node (default 1). If \code{NULL}, an appropriate value is guessed.
@@ -33,6 +34,7 @@ plot3d_split = function(someneuronlist,
                         WithConnectors = TRUE,
                         WithNodes = F,
                         soma = NULL,
+                        soma.alpha = 1,
                         highflow = FALSE,
                         lwd = 1,
                         radius = NULL,
@@ -86,7 +88,7 @@ plot3d_split = function(someneuronlist,
     tryCatch(rgl::plot3d(neuron, col = "grey30", WithNodes = WithNodes, soma = FALSE, add = TRUE,),
     error = function(e) NULL)
     if(soma){
-      rgl::spheres3d(nat::xyzmatrix(neuron)[neuron$StartPoint,], radius = soma, col = col[3])
+      rgl::spheres3d(nat::xyzmatrix(neuron)[neuron$StartPoint,], radius = soma, col = col[3], alpha = soma.alpha)
     }
     if (WithConnectors){
       conns=neuron$connectors
@@ -196,7 +198,7 @@ nlscan_split <- function (someneuronlist,
     }
     pl <- plot3d_split(someneuronlist[i], col = col, WithConnectors = WithConnectors, WithNodes = WithNodes, soma = soma, highflow = highflow, radius = radius, ...)
     if (Wait) {
-      chc <- readline("Return to continue, b to go back, s to select, d [save to disk], t to stop, c to cancel (without returning a selection): ")
+      chc <- readline("Return to continue, b to go back, s to (de)select, d [save to disk], t to stop, c to cancel (without returning a selection): ")
       if (chc == "c" || chc == "t") {
         sapply(pl, rgl::rgl.pop, type = "shape")
         break
@@ -221,10 +223,12 @@ nlscan_split <- function (someneuronlist,
     rgl::clear3d()
     rgl::bg3d(color = "white")
   }
-  if (is.null(chc) || chc == "c")
+  if (is.null(chc) || chc == "c"){
     rgl::bg3d(color = "white")
     return(NULL)
-  if (!is.null(selected_file))
+  }
+  if (!is.null(selected_file)){
     savetodisk(selected, selected_file)
+  }
   selected
 }

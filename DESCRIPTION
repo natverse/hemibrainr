@@ -43,7 +43,8 @@ Imports:
     jpeg,
     png,
     googledrive,
-    jsonlite
+    jsonlite,
+    plyr
 Remotes: 
     natverse/neuprintr,
     tidyverse/googlesheets4

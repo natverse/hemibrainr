@@ -12,6 +12,7 @@ plot3d_split(
   WithConnectors = TRUE,
   WithNodes = F,
   soma = NULL,
+  soma.alpha = 1,
   highflow = FALSE,
   lwd = 1,
   radius = NULL,
@@ -49,6 +50,8 @@ nlscan_split(
 \item{WithNodes}{whether to plot branch points}
 
 \item{soma}{whether to plot a soma, and what the radius should be. If \code{NULL}, an appropriate value is guessed.}
+
+\item{soma.alpha}{numeric, alpha transparency value for plotting the soma. Passed to \code{rgl::spheres3d}}
 
 \item{highflow}{whether to plot the nodes of highest (with in one standard deviation less than maximum) flow centrality (pink points)}
 

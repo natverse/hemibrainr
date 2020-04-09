@@ -7,11 +7,11 @@
 \alias{hemibrain_metrics_polypre_centrifugal_synapses}
 \title{Neuron metrics for all neurons in the hemibrain dataset}
 \format{
-An object of class \code{data.frame} with 20890 rows and 30 columns.
+An object of class \code{data.frame} with 22567 rows and 29 columns.
 
-An object of class \code{data.frame} with 20890 rows and 30 columns.
+An object of class \code{data.frame} with 20890 rows and 29 columns.
 
-An object of class \code{data.frame} with 20890 rows and 30 columns.
+An object of class \code{data.frame} with 22567 rows and 29 columns.
 }
 \source{
 \url{https://elifesciences.org/articles/44590}

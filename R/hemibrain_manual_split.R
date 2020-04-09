@@ -10,6 +10,7 @@
 #'
 #' @param x a neuron/neuronlist object
 #' @param brain which brain to plot while splitting neuron.
+#' @param is.cropped logical. If TRUE, the user is asked whether the neuron being considered is complete or not.
 #' @param Label the type of cable to be assigned/edited. Use \code{standardise_labels} to see how numbers convert to cable types.
 #' @param lock a vector of number representing cable types to lock (so that they cannot be edited interactively be a user).
 #' If \code{NULL} (default) no cable type is treated as locked. Locked cable will appear in green.
@@ -34,41 +35,34 @@
 #' }}
 #' @export
 #' @rdname manually_assign_labels
-manually_assign_labels <-function(x, brain = NULL, ...) UseMethod("manually_assign_labels")
+manually_assign_labels <-function(x, brain = NULL, is.cropped = FALSE, ...) UseMethod("manually_assign_labels")
 
 #' @export
 #' @rdname manually_assign_labels
-manually_assign_labels.neuron <- function(x, brain = NULL, ...){
+manually_assign_labels.neuron <- function(x, brain = NULL, is.cropped = FALSE, ...){
   bodyid = ifelse(is.null(x$bodyid),x$skid,x$bodyid)
-  reset3d(brain=brain);plot3d_split(x)
+  WithConnectors = TRUE
+  reset3d(brain=brain);plot3d_split(x, WithConnectors = WithConnectors)
   x$tags$manually_edited = FALSE
-  x$tags$cropped = FALSE
+  x$tags$cut = FALSE
   x$tags$soma = "automatic"
   x.safe = x
   happy = hemibrain_engage(Label = NULL)
   if(happy){
-    happy = hemibrain_engage(prompt = "Are you sure this neuron has no problems? yes/no", Label = NULL)
+    happy = hemibrain_engage(prompt = "Are you sure this neuron has no problems? yes/no ", Label = NULL)
   }
   ### Cropped?
-  if(!happy){
+  if(!happy & is.cropped){
+    cropped = hemibrain_iscropped()
+    x$tags$cut = cropped
     crop = TRUE
-    while(crop){
-      crop = hemibrain_choice("Is this neuron cropped so badly it is mising a big chunk of axon/dendrite? yes/no ")
-      x$tags$cropped = crop
-      if(crop){
-        crop2 = hemibrain_choice("Can you still split the neuron into axon and/or dendrite? yes/no ")
-        x$tags$cropped = ifelse(crop2,"MB",FALSE)
-      }
-      message("The cropped status if this neuron will be recorded as: ", x$tags$cropped, "  (options are TRUE/FALSE/slightly(MB))")
-      crop = !hemibrain_choice("Happy with this answer? yes/no ")
-    }
     happy = hemibrain_engage(Label = NULL, prompt = "Do you want to edit further? yes/no ")
   }
   ### Manually edit
   locks = c()
   while(!happy%in%c("y","yes",TRUE)){
     reset3d(brain=brain)
-    plot3d_split(x)
+    plot3d_split(x, WithConnectors = WithConnectors)
     if(!is.issue(locks)){
       message("locks: ", paste(locks,collapse = ", "))
     }
@@ -99,6 +93,11 @@ manually_assign_labels.neuron <- function(x, brain = NULL, ...){
         x = x.safe
         x$tags$manually_edited = FALSE
         message("Neuron has been reverted to its original state")
+      }else if(happy == 11){
+        WithConnectors = !WithConnectors
+        message("Plot synapses: ", WithConnectors)
+      }else if(happy == 12){
+        x = hemibrain_makenote(x, ...)
       }else if (grepl("L",happy)){
         if(happy %in% locks){
           locks = setdiff(locks,happy)
@@ -119,7 +118,7 @@ manually_assign_labels.neuron <- function(x, brain = NULL, ...){
 
 #' @export
 #' @rdname manually_assign_labels
-manually_assign_labels.neuronlist<-function(x, brain = NULL, ...){
+manually_assign_labels.neuronlist<-function(x, brain = NULL, is.cropped = FALSE, ...){
   nat::nlapply(x, manually_assign_labels.neuron, brain = brain, ...)
 }
 
@@ -270,7 +269,7 @@ reset3d <- function(brain = NULL){
 }
 
 # hidden
-hemibrain_engage <- function(Label = NULL, prompt = "Does this neuron require editing and/or is cropped? yes/no ", ...){
+hemibrain_engage <- function(Label = NULL, prompt = "Does this neuron require editing? yes/no ", ...){
   if(is.null(Label)){
     !hemibrain_choice(prompt = prompt)
   }else{
@@ -281,13 +280,13 @@ hemibrain_engage <- function(Label = NULL, prompt = "Does this neuron require ed
 
 # hidden
 hemibrain_edit_cable <- function(){
-  options = c(0:4,7:10)
+  options = c(0:4,7:12)
   cables = c(0:7)
   locks = c(paste0("L",cables),paste0("l",cables))
   choice = must_be(prompt = "What cable do you wish to edit?:
   soma (1), axon (2), dendrite (3), linker (4), primary neurite (7),
-  invert the neuron (8) or cycle through branches (9)
-  revert all edits (10) do nothing further (0).
+  invert the neuron (8) or cycle through branches (9), revert all edits (10),
+  toggle synapses (11), make a note (12) do nothing further (0).
   L+number to lock cable, ",
           answers  = c(options,locks))
   choice = gsub("l","L",choice)
@@ -338,7 +337,9 @@ internal_assignments <- function(x){
   n = nat::as.ngraph(x)
   root = nat::rootpoints(n)
   dendrites = subset(rownames(x$d), x$d$Label == 3)
+  dendrites = setdiff(dendrites, root)
   axon = subset(rownames(x$d), x$d$Label == 2)
+  axon = setdiff(axon, root)
   p.d = subset(rownames(x$d), x$d$Label == 4)
   p.n = subset(rownames(x$d), x$d$Label == 7)
   nulls = subset(rownames(x$d), !x$d$Label %in% c(2,3))
@@ -363,8 +364,8 @@ internal_assignments <- function(x){
   d.starts = tryCatch(sapply(d.starts,function(s) !s%in%dendrites), error = function(e) NA)
   a.starts = tryCatch(sapply(s.a,function(s) igraph::neighbors(n, v=s, mode = c("in"))), error = function(e) NA)
   a.starts = tryCatch(sapply(a.starts,function(s) !s%in%axon), error = function(e) NA)
-  axon.starts = s.a[a.starts]
-  dendrites.starts = s.d[d.starts]
+  axon.starts = s.a[unlist(a.starts)]
+  dendrites.starts = s.d[unlist(d.starts)]
   ## Assign primaries
   if(length(p.d)){
     possible = c(p.d[1],p.d[length(p.d)])
@@ -373,14 +374,14 @@ internal_assignments <- function(x){
   }
   pd.dists = tryCatch(igraph::distances(n, v = p.d, to = as.numeric(p.d), mode = c("all")),
                      error = function(e) NA)
-  linkers = tryCatch(rownames(which(pd.dists == max(pd.dists), arr.ind = TRUE)),error = function(e) NA)
+  linkers = suppress(tryCatch(rownames(which(pd.dists == max(pd.dists), arr.ind = TRUE)),error = function(e) NA))
   ### Primary (furthest from root) cable starts
   d.dists = tryCatch(igraph::distances(n, v = root, to = as.numeric(dendrites.starts), mode = c("all")),
                   error = function(e) NA)
   dendrite.primary = tryCatch(dendrites.starts[which.max(d.dists)], error = function(e) NA)
   a.dists = tryCatch(igraph::distances(n, v = root, to = as.numeric(axon.starts), mode = c("all")),
                      error = function(e) NA)
-  axon.primary = tryCatch(dendrites.starts[which.max(a.dists)], error = function(e) NA)
+  axon.primary = tryCatch(axon.starts[which.max(a.dists)], error = function(e) NA)
   ## Get primary branch point
   dists = tryCatch(igraph::distances(n, v = root, to = as.numeric(p.n), mode = c("all")),
                    error = function(e) NA)
@@ -453,5 +454,18 @@ lockdown <- function(Label = NULL, lock = NULL, verbose = FALSE){
   }
 }
 
-
+# hidden
+hemibrain_iscropped <- function(){
+  crop = TRUE
+  while(crop){
+    cropped = crop = hemibrain_choice("Is this neuron cropped so badly it is mising a big chunk of axon/dendrite? yes/no ")
+    if(crop){
+      crop2 = hemibrain_choice("Can you still split the neuron into axon and/or dendrite? yes/no ")
+      cropped = ifelse(crop2,"MB",FALSE)
+    }
+    message("The cropped status if this neuron will be recorded as: ", cropped, "  (options are TRUE/FALSE/slightly(MB))")
+    crop = !hemibrain_choice("Happy with this answer? yes/no ")
+  }
+  cropped
+}
 

@@ -7,7 +7,7 @@
 
 # Parameters
 polypre = TRUE
-split = "synapses"
+split = "distance"
 mode = "centrifugal"
 identifier = paste(ifelse(polypre,"polypre","pre"),mode,split,sep="_")
 message("Saving splits with paramaters: ", identifier)
@@ -108,7 +108,7 @@ for(split.neuron.fh.data.file in split.neuron.fh.data.files){
                             path = identifier.folder.data[1,],
                             overwrite = FALSE,
                             verbose = TRUE),
-               error = function(e) NULL)
+               error = function(e) split.neuron.fh.data.file)
   if(is.null(e)){
     error.files = c(error.files,split.neuron.fh.data.file)
   }
@@ -124,7 +124,7 @@ for(m in missing.files){
                             path = identifier.folder.data[1,],
                             overwrite = FALSE,
                             verbose = TRUE),
-               error = function(e) NULL)
+               error = function(e) split.neuron.fh.data.file)
   if(is.null(e)){
     error.files = c(error.files,split.neuron.fh.data.file)
   }

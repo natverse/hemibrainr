@@ -567,6 +567,8 @@ hemibrain_use_splitpoints.neuron <-function(x, df, knn = FALSE, ...){
     axon.primary = as.numeric(df[grepl("axon.primary",df$point),"position"])
     dendrite.primary = as.numeric(df[grepl("dendrite.primary",df$point),"position"])
     linkers = as.numeric(df[grepl("linker",df$point),"position"])
+    axon.start = unique(c(axon.start,axon.primary))
+    dendrite.start = unique(c(dendrite.start,dendrite.primary))
 
     # Work around errors
     if(is.na(dendrite.primary)){
@@ -576,72 +578,83 @@ hemibrain_use_splitpoints.neuron <-function(x, df, knn = FALSE, ...){
       axon.primary = axon.start[1]
     }
 
-      # Assign root and mark soma
-      y = nat::as.neuron(nat::as.ngraph(x$d), origin = root)
-      y$connectors = x$connectors
-      n = nat::as.ngraph(y$d)
-      y$tags$soma = root
-      y$d$Label = 0
-      y$connectors$Label = 0
+    # Assign root and mark soma
+    y = nat::as.neuron(nat::as.ngraph(x$d), origin = root)
+    y$connectors = x$connectors
+    n = nat::as.ngraph(y$d)
+    y$tags$soma = root
+    y$d$Label = 0
+    y$connectors$Label = 0
 
-      # Assign other cable
-      if(!is.issue(root)&!is.issue(primary.branch.point)){
-        pnt = suppressWarnings(unique(unlist(igraph::shortest_paths(n, from = as.numeric(root), to = as.numeric(primary.branch.point), mode = "out")$vpath)))
-      }else{
-        pnt = NULL
-      }
-      if(!is.issue(linkers)){
-        pd = suppressWarnings(unique(unlist(igraph::shortest_paths(n, from = as.numeric(linkers[1]), to = as.numeric(linkers[length(linkers)]), mode = "all")$vpath)))
-      }else if(!is.issue(axon.primary)&!is.issue(dendrite.primary)){
-        pd = suppressWarnings(unique(unlist(igraph::shortest_paths(n, from = as.numeric(dendrite.primary), to = as.numeric(axon.primary), mode = "all")$vpath)))
-      }else{
-        pd = NULL
-      }
-      leaves = as.numeric(nat::endpoints(y))
-      if(!is.issue(axon.primary)){
-        axon = suppressWarnings(
-          unique(unlist(sapply(as.numeric(axon.start),function(s) unlist(igraph::shortest_paths(n, from=s, to = leaves, mode = c("out"))$vpath))))
-        )
-      }else{
-        axon = NULL
-      }
-      if(!is.issue(dendrite.primary)){
-        dendrite = suppressWarnings(
-          unique(unlist(sapply(dendrite.start,function(s) unlist(igraph::shortest_paths(n, from=s, to = leaves, mode = c("out"))$vpath))))
-        )
-      }else{
-        dendrite = NULL
-      }
+    # Find non synaptic cable
+    if(!is.issue(root)&!is.issue(primary.branch.point)){
+      pnt = suppressWarnings(unique(unlist(igraph::shortest_paths(n, from = as.numeric(root), to = as.numeric(primary.branch.point), mode = "out")$vpath)))
+    }else{
+      pnt = NULL
+    }
+    if(!is.issue(linkers)){
+      pd = suppressWarnings(unique(unlist(igraph::shortest_paths(n, from = as.numeric(linkers[1]), to = as.numeric(linkers[length(linkers)]), mode = "all")$vpath)))
+    }else if(!is.issue(axon.primary)&!is.issue(dendrite.primary)){
+      pd = suppressWarnings(unique(unlist(igraph::shortest_paths(n, from = as.numeric(dendrite.primary), to = as.numeric(axon.primary), mode = "all")$vpath)))
+    }else{
+      pd = NULL
+    }
 
-      # Assign labels
-      if(!is.null(axon)){
-        y = add_Label(x = y, PointNo = axon, Label = 2, erase = TRUE)
-      }
-      if(!is.null(dendrite)){
-        y = add_Label(x = y, PointNo = dendrite, Label = 3, erase = TRUE)
-      }
-      if(!is.null(pd)){
-        y = add_Label(x = y, PointNo = pd, Label = 4, erase = TRUE)
-      }
-      if(!is.null(pnt)){
-        y = add_Label(x = y, PointNo = pnt, Label = 7, erase = TRUE)
-      }
-      if(!is.null(root)){
-        y = add_Label(x = y, PointNo = root, Label = 1, erase = TRUE)
-      }
-      #y$d[dendrite,]$Label = 3
+    # Assign  non-synaptic labels
+    if(!is.null(pd)){
+      y = add_Label(x = y, PointNo = pd, Label = 4, erase = TRUE)
+    }
+    if(!is.null(pnt)){
+      y = add_Label(x = y, PointNo = pnt, Label = 7, erase = TRUE)
+    }
+    if(!is.null(root)){
+      y = add_Label(x = y, PointNo = root, Label = 1, erase = TRUE)
+    }
 
-      # Calculate segregation score
+    # Split into arbour cable
+    z = break_into_subtrees(y, prune = TRUE)
 
-      # Add in branch points
-      y$primary.branch.point = primary.branch.point
-      y$axon.start = axon.start
-      y$dendrite.start = dendrite.start
-      y$secondary.branch.points = c(axon.start,dendrite.start)
+    # Work out which bits are axonic/dendritic
+    axon <- dendrite <- c()
+    for(b in z){
+      leaves = as.numeric(nat::endpoints(b))
+      bn = nat::as.ngraph(b)
+      a.s = match(axon.start,b$d$PointNo)
+      a.s = a.s[!is.na(a.s)]
+      d.s = match(dendrite.start,b$d$PointNo)
+      d.s = d.s[!is.na(d.s)]
+      ax = suppressWarnings(
+        unique(c(unlist(sapply(as.numeric(a.s),function(s) unlist(igraph::shortest_paths(bn, from=s, to = leaves, mode = c("out"))$vpath)))))
+      )
+      dend= suppressWarnings(
+        unique(c(unlist(sapply(as.numeric(d.s),function(s) unlist(igraph::shortest_paths(bn, from=s, to = leaves, mode = c("out"))$vpath)))))
+      )
+      ax = b$d$PointNo[ax]
+      dend = b$d$PointNo[dend]
+      axon = c(axon,ax)
+      dendrite = c(dendrite, dend)
+    }
 
-      # Assign bodyid
-      y$bodyid = y$d$bodyid = x$bodyid
-      y$split = TRUE
+    # Assign synaptic cable
+    if(!is.null(axon)){
+      y = add_Label(x = y, PointNo = axon, Label = 2, erase = TRUE, lock = c(1,4,7))
+    }
+    if(!is.null(dendrite)){
+      y = add_Label(x = y, PointNo = dendrite, Label = 3, erase = TRUE, lock = c(1,4,7))
+    }
+
+    # Calculate segregation score
+
+    # Add in branch points
+    y$primary.branch.point = primary.branch.point
+    y$axon.start = axon.start
+    y$dendrite.start = dendrite.start
+    y$secondary.branch.points = c(axon.start,dendrite.start)
+
+    # Assign bodyid
+    y$bodyid = y$d$bodyid = x$bodyid
+    y$split = TRUE
+
   }
   # Return split skeleton
   y = hemibrain_neuron_class(y)
@@ -748,7 +761,8 @@ hemibrain_flow_centrality.neuronlist <- function(x, splitpoints = hemibrainr::he
 
 #' Manually add a Label annotation to a neuron
 #'
-#' @description Assign all points on a skeleton with a certain Label.
+#' @description Manually add a Label annotation, indicative of cable type,
+#' to a neuron's arbour and synapses.
 #'
 #' @inheritParams flow_centrality
 #' @param Label the Label to be added. See \code{\link{flow_centrality}}.
@@ -756,16 +770,24 @@ hemibrain_flow_centrality.neuronlist <- function(x, splitpoints = hemibrainr::he
 #' will be added.If \code{NULL} all points are used.
 #' @param erase if \code{TRUE}, all instance of \code{Label} not
 #' in \code{PointNo} are set to \code{0}.
+#' @param lock a numeric vector of cable types that will not be updated by \code{add_Label}.
+#' @param internal.assignments logical. If TRUE, hidden function \code{hemibrainr::internal.assignments} is run, to assign
+#' a neurons dendrite/axon start points, primary branch point, linker start points, etc. in line with the changes
+#' produced by this function.
 #'
 #' @return a \code{neuron} or \code{neuronlist}
 #' @seealso \code{\link{flow_centrality}}, \code{\link{add_field}}
 #' @export
-add_Label <-function(x, PointNo = NULL, Label = 2, erase = FALSE, ...) UseMethod("add_Label")
+add_Label <-function(x, PointNo = NULL, Label = 2, erase = FALSE, lock = NULL, internal.assignments = FALSE, ...) UseMethod("add_Label")
 
 #' @export
-add_Label.neuron <- function(x, PointNo = NULL, Label = 2, erase = FALSE, ...){
+add_Label.neuron <- function(x, PointNo = NULL, Label = 2, erase = FALSE, lock = NULL, internal.assignments = FALSE, ...){
   Label = as.numeric(Label[1])
   if(!is.null(PointNo)){
+    if(!is.null(lock)){
+      locked = x$d$PointNo[x$d$Label%in%lock]
+      PointNo = setdiff(PointNo, locked)
+    }
     if(erase){
       erasure = x$d$PointNo[x$d$Label==Label]
       x$d$Label[match(erasure, x$d$PointNo)] = 0
@@ -778,21 +800,32 @@ add_Label.neuron <- function(x, PointNo = NULL, Label = 2, erase = FALSE, ...){
       x$connectors$Label[x$connectors$treenode_id%in%PointNo] = Label
     }
   }else{
-    x$d$Label = Label
-    if(!is.null(x$connectors)){
-      x$connectors$Label = Label
+    if(!is.null(lock)){
+      locked = x$d$PointNo[x$d$Label%in%lock]
+      PointNo = setdiff(x$d$PointNo, locked)
+    }else{
+      PointNo = x$d$PointNo
     }
+    x$d$Label[x$d$PointNo%in%PointNo] = Label
+    if(!is.null(x$connectors)){
+      x$connectors$Label[x$connectors$treenode_id%in%PointNo] = Label
+    }
+  }
+  if(internal.assignments){
+    x = internal_assignments(x)
   }
   x
 }
 
 #' @export
-add_Label.neuronlist <- function(x, PointNo = NULL, Label = 2, erase = FALSE, ...){
+add_Label.neuronlist <- function(x, PointNo = NULL, Label = 2, erase = FALSE, lock = NULL, internal.assignments = FALSE, ...){
   nat::nlapply(x,
                add_Label.neuron,
                PointNo = PointNo,
                Label = Label,
                erase = erase,
+               lock = lock,
+               internal.assignments=internal.assignments,
                ...)
 }
 

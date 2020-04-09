@@ -147,7 +147,7 @@ carryover_tags <- function(x, y){
 
 # hidden
 purify <- function(x){
-  as.character(unique(unname(unlist(nullToNA(c(x))))))
+  as.character(unname(unlist(nullToNA(c(x)))))
 }
 
 # hidden
@@ -164,6 +164,9 @@ remove_duplicates <- function(manual){
 }
 
 
-
+# hidden
+suppress <- function(x, ...){
+  suppressWarnings(suppressMessages(x, ...), ...)
+}
 
 

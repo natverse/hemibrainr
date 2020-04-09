@@ -18,8 +18,9 @@ setup_splitcheck_sheet <-function(selected_file = "1YjkVjokXL4p4Q6BR-rGGGKWecXU3
   roots$cut = hemibrainr::hemibrain_metrics[as.character(roots$bodyid),"cropped"]
   roots[as.character(i),]$cut = unlist(nullToNA(lhn.gs[as.character(i),]$cropped2))
   roots$truncated = roots$cut
-  roots$split = "automatic_synapses"
+  roots$manually_edit = FALSE
   roots$splittable = TRUE
+  roots$skeletonisation = "good"
   roots$checked = FALSE
   roots$user = "flyconnectome"
   roots$time = Sys.time()
@@ -76,7 +77,7 @@ setup_splitcheck_sheet <-function(selected_file = "1YjkVjokXL4p4Q6BR-rGGGKWecXU3
   hemibrain_task_update(bodyids = hemibrainr::alln.ids, column = "user", update = "TS")
   hemibrain_task_update(bodyids = hemibrainr::mbon.ids, column = "user", update = "MWP")
   hemibrain_task_update(bodyids = hemibrainr::ton.ids, column = "user", update = "AJ")
-  hemibrain_task_update(bodyids = hemibrainr::orn.ids, column = "user", update = "MMC")
+  hemibrain_task_update(bodyids = hemibrainr::orn.ids, column = "user", update = "ND")
 }
 
 #' @examples
@@ -227,28 +228,23 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
           input = navy, output = red
           ###Colours###")
   ### Get chosen bodyIDs
+  if(phases=="II"){
+    undone = gs[!gs$bodyid %in% unique(manual$bodyid) & gs$manually_edit,]
+  }else if(phases=="III"){
+    undone = gs[gs$bodyid %in% unique(manual$bodyid),]
+  }
   undone.ids <- check_undoneids(undone.ids = undone.ids,
                                 bodyids = bodyids,
                                 gs = gs,
                                 phases = phases,
                                 assignments = assignments,
                                 initials = initials,
-                                manual = manual)
-  ### Prioritise
-  if(prioritise){
-    message("Prioritising 1st-3rd order olfactory ",ifelse(by.type,"neurons","putative cell types"))
-    undone.ids = sample(undone.ids, length(undone.ids), replace = FALSE)
-    ranks = purify(gs[match(undone.ids,gs$bodyid),"priority"])
-    undone.ids = undone.ids[order(ranks,decreasing = TRUE)]
-    message("Priorities: ")
-    print(table(ranks))
-  }else{
-    message("Choosing un-checked ",ifelse(by.type,"neurons","putative cell types")," at random")
-    undone.ids = sample(undone.ids, length(undone.ids), replace = FALSE)
-  }
+                                manual = manual,
+                                prioritise = prioritise,
+                                by.type = by.type)
   ### Make batches
   if(by.type){
-    pcts = purify(gs[match(undone.ids, gs$bodyid),"type"])
+    pcts = unique(purify(gs[match(undone.ids, gs$bodyid),"type"]))
     pcts = pcts[order(pcts)]
     batches = split(pcts, ceiling(seq_along(pcts)/batch_size))
   }else{
@@ -282,28 +278,31 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
         someneuronlist = hemibrain_clean_skeleton(someneuronlist, rval = "neuron")
       }
       ### Get vectors that we will need to update
+      edits = purify(gs[match(names(someneuronlist), gs$bodyid),"manually_edit"])
       notes = purify(gs[match(names(someneuronlist), gs$bodyid),"note"])
       truncated = purify(gs[match(names(someneuronlist), gs$bodyid),"truncated"])
       somas = purify(gs[match(names(someneuronlist), gs$bodyid),"soma"])
       splittable = purify(gs[match(names(someneuronlist), gs$bodyid),"splittable"])
+      cuts = purify(gs[match(names(someneuronlist), gs$bodyid),"cut"])
+      skels = purify(gs[match(names(someneuronlist), gs$bodyid),"skeletonization"])
+      somas = purify(gs[match(names(someneuronlist), gs$bodyid),"soma"])
+      someneuronlist = hemibrain_settags(someneuronlist,
+                                         manually_edit = edits,
+                                         note = notes,
+                                         truncated = truncated,
+                                         splittable = splittable,
+                                         cut = cuts,
+                                         skeletonization = skels,
+                                         soma = somas)
       ### Let's Go. For. It.
       satisfied = FALSE
       while(!satisfied){
         ### Select neurons to edit and make notes on neurons
         if(phases %in% c("complete", "I")){
           message("Phase I : select neurons that need to be edited manually")
-          phaseI <- splitcheck_phaseI(someneuronlist = someneuronlist,
-                                      notes = notes,
-                                      truncated=truncated,
-                                      somas=somas,
+          selected <- splitcheck_phaseI(someneuronlist = someneuronlist,
                                       brain = brain,
-                                      splittable=splittable,
                                       selected_col = selected_col)
-          selected = phaseI["selected"][[1]]
-          notes = phaseI["notes"][[1]]
-          truncated = phaseI["truncated"][[1]]
-          somas = phaseI["somas"][[1]]
-          splittable = phaseI["splittable"][[1]]
           mes <- NULL
         }else{
           selected <- as.character(batch)
@@ -329,7 +328,8 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
         }
         ### Continue?
         satisfied = hemibrain_choice(prompt = "Continue to saving changes (y), or would you like to run the edit process
-        for neurons in this batch again (keeping curent changes) (n)? ")
+for neurons in this batch again (keeping curent changes) (n)?
+                                     ")
         someneuronlist[names(mes)] = mes
       }
       ### Save manual split to Google Sheet
@@ -338,15 +338,13 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
         mes.sp = hemibrain_splitpoints(x = mes)
         mes.i = match(mes.sp$bodyid, names(someneuronlist))
         mes.sp$type = gs$type[match(mes.sp$bodyid,gs$bodyid)]
-        mes.sp$split = "manual"
         mes.sp$checked = TRUE
         mes.sp$user = initials
-        mes.sp$cut = unlist(sapply(mes[as.character(mes.sp$bodyid)], function(x) nullToNA((x$tags$cropped))))
-        mes.sp$truncated = truncated[mes.i]
-        mes.sp$soma = unlist(sapply(mes[as.character(mes.sp$bodyid)], function(x) nullToNA((x$tags$soma))))
-        mes.sp$splittable = splittable[mes.i]
         mes.sp$time = Sys.time()
-        mes.sp$note = notes[mes.i]
+        mes.tags = hemibrain_seetags(mes)
+        mes.sp = merge(mes.sp,
+                       mes.tags[,setdiff(c("bodyid",colnames(mes.tags)),colnames(mes.sp))],
+                       all.x = TRUE, all.y = FALSE)
         if(nrow(mes.sp)){
           message("Saving new manual splits ...")
           success = FALSE
@@ -365,31 +363,17 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
         gs = googlesheets4::read_sheet(ss = selected_file, sheet = "roots")
       }
       rows = match(names(someneuronlist), gs$bodyid)
-      splits = as.character(gs$split[rows])
-      cuts = as.character(gs$cut[rows])
-      if(length(mes)){
-        which.mes = which(names(someneuronlist)%in%selected)
-        splits[which.mes] = "manual"
-        cuts[which.mes] = unlist(sapply(mes, function(x) x$tags$cropped))
-        somas[which.mes] = unlist(sapply(mes, function(x) x$tags$soma))
-      }
-      somas[somas=="automatic"] = TRUE
-      which.cuts = which(cuts%in%c(TRUE,"MB","TRUE"))
-      truncated[which.cuts] = TRUE
-      update = data.frame(
-        soma = somas,
-        cut = cuts,
-        truncated = truncated,
-        split = splits,
-        splittable = splittable,
+      update1 = hemibrain_seetags(someneuronlist)
+      update2 = data.frame(
         checked = gs[rows,]$checked+1,
         user = rep(initials, length(rows)),
-        time = Sys.time(),
-        note = notes)
+        time = Sys.time())
+      update = cbind(update1,update2)
       update[is.na(update)] = ""
+      update = update[,colnames(update)!="bodyid"]
       rownames(update) = rows
       for(r in rows){
-        range = paste0("H",r+1,":P",r+1)
+        range = paste0("H",r+1,":Q",r+1)
         gsheet_manipulation(FUN = googlesheets4::sheets_edit,
                             ss = selected_file,
                             range = range,
@@ -421,7 +405,7 @@ gsheet_manipulation <- function(FUN, ...){
     if(!is.null(g)){
       success = TRUE
     }else{
-      Sys.sleep(5)
+      Sys.sleep(10)
       message("Google sheet read failures, re-trying ...")
     }
   }
@@ -429,17 +413,18 @@ gsheet_manipulation <- function(FUN, ...){
 
 # hidden
 splitcheck_phaseI <- function(someneuronlist,
-                              notes,
-                              truncated,
-                              splittable,
-                              somas,
-                              brain = NULL,
-                              selected_col = "#fadadd"
-){
-  if(nat::is.neuronlist(someneuronlist)) {
-    neurons = names(someneuronlist)
-    nams = as.data.frame(someneuronlist)$name
-  }
+                              brain = hemibrainr::hemibrain.surf,
+                              selected_col = "#fadadd"){
+  message("
+          ###################################PhaseI###################################
+          Please select (s) neurons that need to be manually edited.
+          Important: Please also mark neurons that have a bad/no soma (r),
+          that are slightly truncated (t), seriously cropped (k), unsplittable (u),
+          or have a bad skeletonisation (z). You can also make custom notes (e).
+          ###################################PhaseI####################################")
+  someneuronlist = hemibrain_perfectstart(someneuronlist)
+  neurons = names(someneuronlist)
+  nams = as.data.frame(someneuronlist)$name
   frames <- length(neurons)
   selected <- character()
   i <- 1
@@ -463,7 +448,7 @@ splitcheck_phaseI <- function(someneuronlist,
     n <- neurons[i]
     cat("Current neuron:", n, " ", nams[i]," (", i, "/", length(neurons),")",ifelse(n %in% selected,"SELECTED","NOT SELECTED"), "\n")
     print(someneuronlist[n,], row.names = FALSE, right = TRUE)
-    note = notes[i]
+    note = someneuronlist[[i]]$tags$note
     if(!is.issue(note)){
       message("Note for this neuron: ",note)
     }
@@ -472,12 +457,12 @@ splitcheck_phaseI <- function(someneuronlist,
     }else{
       rgl::bg3d(color = "white")
     }
-    plot3d_split(someneuronlist[i])
+    plot3d_split(someneuronlist[i], soma.alpha = 0.5)
     chc <- must_be(prompt = "
-          Return to continue, b to go back, s to select (needs edit / seriously cropped),
-          t to mark as truncated, u to mark as unsplittable, r to mark as missing soma,
-          c to cancel (with selection), e to make a note ",
-                   answers = c("","b","s","t","c","e","u"))
+Return to continue, b to go back, s to select (needs edit), n to make a note
+(i.e. truncated, cropped, bad soma, unsplittable, bad skeletoniztion, custom),
+c to cancel (with selection) ",
+                   answers = c("","b","s","n","c"))
     if (chc == "c") {
       if (is.null(chc) || chc == "c")
         chc = must_be(prompt = sprintf("Selection is: %s . Continue (c) or go back and make selection (b)? ",paste(ifelse(length(selected),selected,"none"),collapse=", ")), answers = c("c","b"))
@@ -494,29 +479,14 @@ splitcheck_phaseI <- function(someneuronlist,
     }
     if (chc == "b"){
       i <- i - 1
-    }else if (chc == "e"){
-      notes[i] <- readline(prompt = "Add your note here: yes/no ")
-      message("Note is: ", notes[i])
-    }else if (chc == "t"){
-      truncated[i] <- readline(prompt = "Is this neuron (even slightly) truncated?: yes/no ")
-      message("Truncation status is: ", truncated[i])
-    }else if (chc == "u"){
-      splittable[i] <- hemibrain_choice(prompt = "Can this neuron be split? yes/no ")
-      message("Splittable status is: ", splittable[i])
-    }else if (chc == "r"){
-      somas[i] <- hemibrain_choice(prompt = "Is this neuron missing its soma/obvious tract to soma? yes/no ")
-      message("Soma status is: ", splittable[i])
+    }else if (chc == "n"){
+      x = hemibrain_makenote(x=someneuronlist[[i]])
     }else{
       i <- i + 1
     }
     reset3d(brain=brain)
   }
-  list(selected = selected,
-       notes = notes,
-       truncated = truncated,
-       splittable = splittable,
-       somas = somas
-  )
+  selected
 }
 
 # hidden
@@ -525,8 +495,14 @@ splitcheck_phaseII <- function(selected,
                                manual,
                                selected_file,
                                update_regularly = TRUE,
-                               brain = NULL,
+                               brain = hemibrainr::hemibrain.surf,
                                ...){
+  message("
+          #####################PhaseII#####################
+          Please manually edit neurons that are not
+          correctly split. Tip: mark out primary neurite
+          and linker first, then cycle through branches (9)
+          #####################PhaseII#####################")
   if(length(selected)){
     reset3d(brain=brain)
     rgl::bg3d(color = "white")
@@ -549,8 +525,8 @@ splitcheck_phaseII <- function(selected,
                        encodeIfNeeded = FALSE)
       selected = setdiff(selected, as.character(manual$bodyid))
     }
-    me = manually_assign_labels(someneuronlist[as.character(selected)])
-    edited = unlist(sapply(me, function(x) x$tags$manually_edited))
+    me = nat::as.neuronlist(manually_assign_labels(someneuronlist[as.character(selected)]))
+    edited = unlist(sapply(me, function(x) x$tags$manually_edit))
     mes = me[edited]
     message("Manually edited neurons: ", length(mes), " neurons")
     mes
@@ -566,9 +542,14 @@ splitcheck_phaseIII <- function(mes = NULL,
                                 manual = NULL,
                                 phases = c("complete", "I", "II", "III"),
                                 motivate = TRUE,
-                                brain = NULL,
+                                brain = hemibrainr::hemibrain.surf,
                                 ...){
   phases = match.arg(phases)
+  message("
+          ###################PhaseIII###################
+          Please select neurons that are correctly split
+          By default, all neurons are selected.
+          ###################PhaseIII###################")
   if(is.null(mes)&phases=="III"){
     selected = intersect(selected, manual$bodyid)
     if(!is.issue(selected)){
@@ -606,10 +587,25 @@ splitcheck_phaseIII <- function(mes = NULL,
 }
 
 # hidden
-check_undoneids <- function(undone.ids, bodyids, gs, phases, assignments, initials, manual){
+check_undoneids <- function(undone.ids,
+                            bodyids,
+                            gs,
+                            phases,
+                            assignments,
+                            initials,
+                            manual,
+                            prioritise,
+                            by.type){
+  ### Choose particular IDs if selected
   if(!is.null(bodyids)){
     undone.ids = intersect(bodyids, undone.ids)
+    nids = intersect(bodyids, undone.ids)
+    if(length(nids)){
+      message("Some of the given IDs have already been examined by < check_users: ", paste(nids,collapse=", "))
+      message("Examining ", length(undone.ids)," ids")
+    }
   }
+  ### Get assigned IDs
   if(assignments){
     gs.a = gs[gs$user==initials,]
     undone.ids.a = intersect(undone.ids,gs.a$bodyid)
@@ -621,7 +617,7 @@ check_undoneids <- function(undone.ids, bodyids, gs, phases, assignments, initia
     }
   }
   if(phases %in% c("II","III")){
-    undone = subset(gs, gs$split == "manual")
+    undone = subset(gs, gs$mes.tags %in% c("TRUE",TRUE))
     if(phases == "II"){
       undone.ids = setdiff(unique(undone$bodyid), manual$bodyid)
     }
@@ -629,8 +625,93 @@ check_undoneids <- function(undone.ids, bodyids, gs, phases, assignments, initia
       stop("There are no neurons marked for manual splitting (in Phase I) that have not had a manual split saved.")
     }
   }
+  ### Prioritise
+  if(prioritise){
+    message("Prioritising 1st-3rd order olfactory ",ifelse(by.type,"neurons","putative cell types"))
+    undone.ids = sample(undone.ids, length(undone.ids), replace = FALSE)
+    ranks = as.numeric(gs[match(undone.ids,gs$bodyid),"priority"])
+    undone.ids = undone.ids[order(ranks,decreasing = TRUE)]
+    message("Priorities: ")
+    print(table(ranks))
+  }else{
+    message("Choosing un-checked ",ifelse(by.type,"neurons","putative cell types")," at random")
+    undone.ids = sample(undone.ids, length(undone.ids), replace = FALSE)
+  }
+  ### Do we have IDs?
   if(!length(undone.ids)){
     stop("There are no unchecked neurons to select for Phase:", phases)
   }
   as.character(undone.ids)
+}
+
+# hidden
+hemibrain_perfectstart <-function(x, ...) UseMethod("hemibrain_perfectstart")
+hemibrain_perfectstart.neuron <- function(x, ...){
+  x$tags$manually_edit = FALSE
+  x$tags$cut = FALSE
+  x$tags$soma = "automatic"
+  x$tags$truncated = FALSE
+  x$tags$splittable = TRUE
+  x$tags$skeletonization = "good"
+  x$tags$soma = "automatic"
+  x
+}
+hemibrain_perfectstart.neuronlist<-function(x, ...){
+  nat::nlapply(x,hemibrain_perfectstart.neuron, ...)
+}
+
+# hidden
+hemibrain_makenote <- function(x){
+  message("
+########make notes########
+Make notes on this neuron
+########make notes########")
+  while(TRUE){
+    chc <- must_be(prompt = "t to mark as truncated, k to mark as seriously cropped, u to mark as unsplittable,
+r to mark as missing soma, z to mark poor skeletonization, e to make a custom note
+ENTER to continue (with notes made), c to cancel (without notes made).
+                   ",
+                   answers = c("t","c","e","u","r","k","z",""))
+    x.safe = x
+    if (chc == "e"){
+      x$tags$note <- readline(prompt = "Add your note here: yes/no ")
+      message("Note is: ", x$tags$note)
+    }else if (chc == "t"){
+      x$tags$truncated <- readline(prompt = "Is this neuron (even slightly) truncated?: yes/no ")
+      message("Truncation status is: ",  x$tags$truncated)
+    }else if (chc == "u"){
+      x$tags$splittable <- hemibrain_choice(prompt = "Can this neuron be split? yes/no ")
+      message("Splittable status is: ", x$tags$splittable)
+    }else if (chc == "z"){
+      dec<- must_be(prompt = "Is this neuron appropriately skeletonized? good(g)/minor errors(m)/major errors(e) ",
+                          answers = c("good","minor errors", "major errors"))
+      dec = ifelse(dec == "g","good","error")
+      dec = ifelse(dec == "m","minor errors","major errors")
+      x$tags$skeletonization <- dec
+      message("Skeletonization status is: ", x$tags$skeletonization)
+    }else if (chc == "r"){
+      x$tags$soma <- !hemibrain_choice(prompt = "Is this neuron missing its soma/obvious tract to soma? yes/no ")
+      message("Soma status is: ", x$tags$soma)
+    }else if (chc == "k"){
+      x$tags$cut <- hemibrain_iscropped()
+      if(x$tags$cut %in% c(TRUE,"TRUE","MB")){
+        x$tags$truncated <- TRUE
+      }
+      if (x$tags$cut %in% c(TRUE,"TRUE")){
+        x$tags$splittable <- FALSE
+      }
+      message("Cut status is: ", x$tags$cut)
+      message("Truncation status is: ", x$tags$truncated)
+      message("Splittable status is: ", x$tags$splittable)
+    }
+    if(chc == "c"){
+      x = x.safe
+      message("Notes not saved")
+      break
+    }else if (chc == ""){
+      message("Notes saved")
+      break
+    }
+  }
+  x
 }
