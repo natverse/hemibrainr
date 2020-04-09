@@ -152,7 +152,7 @@ extract_elist <- function(syns, lookup){
     dplyr::mutate(weight = dplyr::n()) %>%
     dplyr::distinct(.data$bodyid, .data$partner,.data$Label, .data$partner.Label, .data$weight) %>%
     dplyr::select(.data$bodyid, .data$partner, .data$Label, .data$partner.Label, .data$weight) %>%
-    dplyr::filter(!is.na(.data$partner.Label)) %>%
+    dplyr::filter(!is.na(.data$partner.Label) & .data$weight > 0) %>%
     as.data.frame() ->
     elist
   rownames(elist) = 1:nrow(elist)
