@@ -38,7 +38,7 @@ write.csv(all.bodyids, file = "/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/d
 message("Neuron bodyids: ", length(all.bodyids))
 
 # Read all neurons
-all.neurons = neuprint_read_neurons(all.bodyids,.parallel = TRUE)
+all.neurons = neuprint_read_neurons(all.bodyids,.parallel = TRUE, all_segments = TRUE)
 save(all.neurons, file = "/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/hemibrain_all_neurons.rda")
 message("Neurons read: ", length(all.neurons))
 
