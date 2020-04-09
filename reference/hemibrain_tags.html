@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Manually add a Label annotation to a neuron — add_Label • hemibrainr</title>
+<title>Set and see tags on a neuron object inc. within a neuronlist — hemibrain_settags • hemibrainr</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,9 +46,8 @@
 
 
 
-<meta property="og:title" content="Manually add a Label annotation to a neuron — add_Label" />
-<meta property="og:description" content="Manually add a Label annotation, indicative of cable type,
-to a neuron's arbour and synapses." />
+<meta property="og:title" content="Set and see tags on a neuron object inc. within a neuronlist — hemibrain_settags" />
+<meta property="og:description" content="Set the x$tags field within a neuron object." />
 <meta property="og:image" content="/logo.svg" />
 
 
@@ -117,72 +116,68 @@ to a neuron's arbour and synapses." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Manually add a Label annotation to a neuron</h1>
-    <small class="dont-index">Source: <a href='https://github.com/flyconnectome/hemibrainr/blob/master/R/hemibrain_split.R'><code>R/hemibrain_split.R</code></a></small>
-    <div class="hidden name"><code>add_Label.Rd</code></div>
+    <h1>Set and see tags on a neuron object inc. within a neuronlist</h1>
+    <small class="dont-index">Source: <a href='https://github.com/flyconnectome/hemibrainr/blob/master/R/hemibrain_read_neurons.R'><code>R/hemibrain_read_neurons.R</code></a></small>
+    <div class="hidden name"><code>hemibrain_tags.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Manually add a Label annotation, indicative of cable type,
-to a neuron's arbour and synapses.</p>
+    <p>Set the x$tags field within a neuron object.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>add_Label</span>(
-  <span class='no'>x</span>,
-  <span class='kw'>PointNo</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>Label</span> <span class='kw'>=</span> <span class='fl'>2</span>,
-  <span class='kw'>erase</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>lock</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>internal.assignments</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='no'>...</span>
-)</pre>
+    <pre class="usage"><span class='fu'>hemibrain_settags</span>(<span class='no'>x</span>, <span class='kw'>i</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='no'>...</span>)
+
+<span class='co'># S3 method for neuron</span>
+<span class='fu'>hemibrain_settags</span>(<span class='no'>x</span>, <span class='kw'>i</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='no'>...</span>)
+
+<span class='co'># S3 method for neuronlist</span>
+<span class='fu'>hemibrain_settags</span>(<span class='no'>x</span>, <span class='no'>...</span>)
+
+<span class='fu'>hemibrain_seetags</span>(<span class='no'>x</span>, <span class='no'>...</span>)
+
+<span class='co'># S3 method for neuron</span>
+<span class='fu'>hemibrain_seetags</span>(<span class='no'>x</span>, <span class='no'>...</span>)
+
+<span class='co'># S3 method for neuronlist</span>
+<span class='fu'>hemibrain_seetags</span>(<span class='no'>x</span>, <span class='no'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>x</th>
-      <td><p>a <code><a href='https://rdrr.io/pkg/nat/man/neuronlist.html'>nat::neuronlist</a></code> or <code><a href='https://rdrr.io/pkg/nat/man/neuron.html'>nat::neuron</a></code> object. It is assumed
-that this neuron has been read in by <code><a href='https://rdrr.io/pkg/neuprintr/man/neuprint_read_neurons.html'>neuprintr::neuprint_read_neurons</a></code> or
-possibly <code>catmaid::read.neurons.catmaid</code>.</p></td>
+      <td><p>a <code><a href='https://rdrr.io/pkg/nat/man/neuronlist.html'>nat::neuronlist</a></code> or <code><a href='https://rdrr.io/pkg/nat/man/neuron.html'>nat::neuron</a></code> object</p></td>
     </tr>
     <tr>
-      <th>PointNo</th>
-      <td><p>the points in the neuron for which the <code>Label</code>
-will be added.If <code>NULL</code> all points are used.</p></td>
-    </tr>
-    <tr>
-      <th>Label</th>
-      <td><p>the Label to be added. See <code><a href='flow_centrality.html'>flow_centrality</a></code>.</p></td>
-    </tr>
-    <tr>
-      <th>erase</th>
-      <td><p>if <code>TRUE</code>, all instance of <code>Label</code> not
-in <code>PointNo</code> are set to <code>0</code>.</p></td>
-    </tr>
-    <tr>
-      <th>lock</th>
-      <td><p>a numeric vector of cable types that will not be updated by <code>add_Label</code>.</p></td>
-    </tr>
-    <tr>
-      <th>internal.assignments</th>
-      <td><p>logical. If TRUE, hidden function <code>hemibrainr::internal.assignments</code> is run, to assign
-a neurons dendrite/axon start points, primary branch point, linker start points, etc. in line with the changes
-produced by this function.</p></td>
+      <th>i</th>
+      <td><p>the index of the arguments provides through ..., to be used as the tag, if these arguments
+are a vector of greater than length 1. Principally for use within method <code>hemibrainr:::list</code>.</p></td>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>methods sent to <code><a href='https://rdrr.io/pkg/nat/man/nlapply.html'>nat::nlapply</a></code></p></td>
+      <td><p>named arguments with values, to be added to x$tags. E.e. using soma = TRUE,
+will add <code>x$tags$soma</code>, where <code>x$tags$soma</code> is <code>TRUE</code>. Tags are expected to be of length 1.
+If x is a <code>neuronlist</code> then tags may be supplied of <code><a href='https://rdrr.io/r/base/length.html'>length(x)</a></code>.</p></td>
     </tr>
     </table>
 
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
-    <p>a <code>neuron</code> or <code>neuronlist</code></p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='flow_centrality.html'>flow_centrality</a></code>, <code><a href='add_field.html'>add_field</a></code></p></div>
+    <div class='dont-index'><p><code><a href='hemibrain_read_neurons.html'>hemibrain_read_neurons</a></code></p></div>
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
+<span class='co'># Choose neurons</span>
+<span class='co'>## In this case some antennal lobe local neurons</span>
+<span class='no'>al.local.neurons</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"1702323386"</span>, <span class='st'>"2068966051"</span>)
+
+<span class='co'># Get neurons</span>
+<span class='no'>neurons</span> <span class='kw'>=</span> <span class='fu'><a href='hemibrain_read_neurons.html'>hemibrain_read_neurons</a></span>(<span class='no'>al.local.neurons</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Made new hemibrain save directory. It is currently empty:/home/travis/build/flyconnectome/hemibrainr/data-raw/hemibrain_data/</span></div><div class='output co'>#&gt; <span class='warning'>Warning: neuronlistfh (.rds) file not found at: /home/travis/build/flyconnectome/hemibrainr/data-raw/hemibrain_data/hemibrain_neurons/polypre_centrifugal_synapses/</span></div><div class='output co'>#&gt; <span class='warning'>Warning: 1 neurons cropped, split likely to be inaccurate for: 2068966051</span></div><div class='output co'>#&gt; <span class='warning'>Warning: 11 neurons do not have 'traced' status, split likely to be inaccurate for: bodyid, pre, post, status, statusLabel, cropped, name, type, cellBodyFiber, voxels, soma</span></div><div class='output co'>#&gt; <span class='warning'>Warning: 2 neurons have no soma tagged, split could be inaccurate for: 1702323386, 2068966051</span></div><div class='output co'>#&gt; <span class='error'>Error in as.neuron.ngraph(as.ngraph(dg), ...): Invalid neuron! Must contain at least one segment with 2 points</span></div><div class='input'>
+<span class='co'># Tag</span>
+<span class='no'>neurons</span> <span class='kw'>=</span> <span class='fu'>hemibrain_settags</span>(<span class='no'>neurons</span>, <span class='kw'>antennal.lobe</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; <span class='error'>Error in hemibrain_settags(neurons, antennal.lobe = TRUE): object 'neurons' not found</span></div><div class='input'>
+<span class='co'># See tags</span>
+<span class='fu'>hemibrain_seetags</span>(<span class='no'>x</span>)</div><div class='output co'>#&gt; <span class='error'>Error in hemibrain_seetags(x): object 'x' not found</span></div><div class='input'># }
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

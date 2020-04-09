@@ -83,7 +83,7 @@
 <div id="tutorial" class="section level2">
 <h2 class="hasAnchor">
 <a href="#tutorial" class="anchor"></a>Tutorial</h2>
-<p>To help you get to grips with <code>neuprintr</code>, we have made a tutorial in classic presentation form. This tutorial uses data from the <a href="https://www.janelia.org/project-team/flyem">Janelia Fly EM</a> teamâs <a href="https://www.biorxiv.org/content/10.1101/2020.01.21.911859v1">hemibrain</a> project. You can also see the vignettes in this package for the same examples and more.</p>
+<p>To help you get to grips with <code>neuprintr</code>, we have made a tutorial in classic presentation form. This tutorial uses data from the <a href="https://www.janelia.org/project-team/flyem">Janelia Fly EM</a> team’s <a href="https://www.biorxiv.org/content/10.1101/2020.01.21.911859v1">hemibrain</a> project. You can also see the vignettes in this package for the same examples and more.</p>
 </div>
 <div id="installation" class="section level2">
 <h2 class="hasAnchor">
@@ -99,7 +99,7 @@
 <h2 class="hasAnchor">
 <a href="#authentication" class="anchor"></a>Authentication</h2>
 <p>In order to use <em>neuprintr</em>, which fetches data we want to use with <em>hemibrainr</em>, you will need to be able to login to a neuPrint server and be able to access it underlying Neo4j database.</p>
-<p>You may need an authenticated accounted, or you may be able to register your <code>@gmail</code> address without an authentication process. Navigate to a neuPrint website, e.g.Â <a href="https://neuprint.janelia.org" class="uri">https://neuprint.janelia.org</a>, and hit âloginâ. Sign in using an <code>@gmail</code> account. If you have authentication/the server is public, you will now be able to see your access token by going to âAccountâ:</p>
+<p>You may need an authenticated accounted, or you may be able to register your <code>@gmail</code> address without an authentication process. Navigate to a neuPrint website, e.g. <a href="https://neuprint.janelia.org" class="uri">https://neuprint.janelia.org</a>, and hit ‘login’. Sign in using an <code>@gmail</code> account. If you have authentication/the server is public, you will now be able to see your access token by going to ‘Account’:</p>
 <p><img src="https://raw.githubusercontent.com/natverse/neuprintr/master/inst/images/bearertoken.png" alt="access your bearer token"></p>
 <p>To make life easier, you can then edit your <code>.Renviron</code> file to contain information about the neuPrint server you want to speak with, your token and the dataset hosted by that server, that you want to read. A convenient way to do this is to do</p>
 <div class="sourceCode" id="cb2"><pre class="r"><span class="kw pkg">usethis</span><span class="kw ns">::</span><span class="fu">edit_r_environ</span>()</pre></div>
@@ -116,7 +116,7 @@
 <div id="example" class="section level2">
 <h2 class="hasAnchor">
 <a href="#example" class="anchor"></a>Example</h2>
-<p>Letâs get started with a useful function for splitting a neuron into its axon and dendrite:</p>
+<p>Let’s get started with a useful function for splitting a neuron into its axon and dendrite:</p>
 <div class="sourceCode" id="cb5"><pre class="r"><span class="co"># Choose neurons</span>
 <span class="co">## These neurons are some 'tough' examples from the hemibrain:v1.0.1</span>
 <span class="co">### They will split differently depending on the parameters you use.</span>
@@ -149,7 +149,7 @@
 <h2 class="hasAnchor">
 <a href="#data" class="anchor"></a>Data</h2>
 <ul>
-<li>HemiBrain (hemibrain:v1.0) : from <a href="https://www.biorxiv.org/content/10.1101/2020.01.21.911859v1">âA Connectome of the Adult Drosophila Central Brainâ</a> (Xu, et al.Â 2020)</li>
+<li>HemiBrain (hemibrain:v1.0) : from <a href="https://www.biorxiv.org/content/10.1101/2020.01.21.911859v1">“A Connectome of the Adult Drosophila Central Brain”</a> (Xu, et al. 2020)</li>
 </ul>
 </div>
 <div id="acknowledging-the-tools" class="section level2">
@@ -158,7 +158,7 @@
 <p>neuPrint comprises a set of tools for loading and analyzing connectome data into a Neo4j database. Analyze and explore connectome data stored in Neo4j using the neuPrint ecosystem: <a href="https://github.com/connectome-neuprint/neuPrintHTTP">neuPrintHTTP</a>, <a href="https://github.com/connectome-neuprint/neuPrintExplorer">neuPrintExplorer</a>, <a href="https://github.com/connectome-neuprint/neuprint-python">Python API</a>.</p>
 <p>This package was created by <a href="https://scholar.google.com/citations?user=BOVTiXIAAAAJ&amp;hl=en">Alexander Shakeel Bates</a> and <a href="https://en.wikipedia.org/wiki/Gregory_Jefferis">Gregory Jefferis</a>. You can cite this package as:</p>
 <div class="sourceCode" id="cb6"><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/citation.html">citation</a></span>(<span class="kw">package</span> <span class="kw">=</span> <span class="st">"hemibrainr"</span>)</pre></div>
-<p><strong>Bates AS, Jefferis GSXE</strong> (2020). <em>hemibrainr: Code for working with data from Janelia FlyEMâs hemibrain project.</em> <strong>R package</strong> version 0.1.0. <a href="https://github.com/flyconnectome/hemibrainr" class="uri">https://github.com/flyconnectome/hemibrainr</a></p>
+<p><strong>Bates AS, Jefferis GSXE</strong> (2020). <em>hemibrainr: Code for working with data from Janelia FlyEM’s hemibrain project.</em> <strong>R package</strong> version 0.1.0. <a href="https://github.com/flyconnectome/hemibrainr" class="uri">https://github.com/flyconnectome/hemibrainr</a></p>
 </div>
 </div>
 
@@ -205,7 +205,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.0.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
 </div>
 
       </footer>

@@ -129,13 +129,13 @@
   choosing soma locations and pruning bits of cable as a user chooses.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>manually_assign_labels</span>(<span class='no'>x</span>, <span class='kw'>brain</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)
+    <pre class="usage"><span class='fu'>manually_assign_labels</span>(<span class='no'>x</span>, <span class='kw'>brain</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>is.cropped</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)
 
 <span class='co'># S3 method for neuron</span>
-<span class='fu'>manually_assign_labels</span>(<span class='no'>x</span>, <span class='kw'>brain</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)
+<span class='fu'>manually_assign_labels</span>(<span class='no'>x</span>, <span class='kw'>brain</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>is.cropped</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)
 
 <span class='co'># S3 method for neuronlist</span>
-<span class='fu'>manually_assign_labels</span>(<span class='no'>x</span>, <span class='kw'>brain</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)
+<span class='fu'>manually_assign_labels</span>(<span class='no'>x</span>, <span class='kw'>brain</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>is.cropped</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)
 
 <span class='fu'>hemibrain_prune_online</span>(<span class='no'>x</span>, <span class='kw'>brain</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>Label</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>lock</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)
 
@@ -157,6 +157,10 @@
     <tr>
       <th>brain</th>
       <td><p>which brain to plot while splitting neuron.</p></td>
+    </tr>
+    <tr>
+      <th>is.cropped</th>
+      <td><p>logical. If TRUE, the user is asked whether the neuron being considered is complete or not.</p></td>
     </tr>
     <tr>
       <th>...</th>
@@ -206,7 +210,7 @@ If <code>NULL</code> (default) no cable type is treated as locked. Locked cable 
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.0.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
 </div>
 
       </footer>

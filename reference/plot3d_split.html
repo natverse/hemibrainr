@@ -132,6 +132,7 @@
   <span class='kw'>WithConnectors</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>WithNodes</span> <span class='kw'>=</span> <span class='no'>F</span>,
   <span class='kw'>soma</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>soma.alpha</span> <span class='kw'>=</span> <span class='fl'>1</span>,
   <span class='kw'>highflow</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>lwd</span> <span class='kw'>=</span> <span class='fl'>1</span>,
   <span class='kw'>radius</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
@@ -183,6 +184,10 @@
     <tr>
       <th>soma</th>
       <td><p>whether to plot a soma, and what the radius should be. If <code>NULL</code>, an appropriate value is guessed.</p></td>
+    </tr>
+    <tr>
+      <th>soma.alpha</th>
+      <td><p>numeric, alpha transparency value for plotting the soma. Passed to <code><a href='https://rdrr.io/pkg/rgl/man/spheres.html'>rgl::spheres3d</a></code></p></td>
     </tr>
     <tr>
       <th>highflow</th>
@@ -252,7 +257,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.0.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
 </div>
 
       </footer>

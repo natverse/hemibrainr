@@ -195,10 +195,9 @@ metrics.</p></td>
 <span class='no'>hcm</span> <span class='kw'>=</span> <span class='fu'>hemibrain_compartment_metrics</span>(<span class='no'>neurons</span>,
 <span class='kw'>resample</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
 <span class='kw'>just.leaves</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='co'># just look how much the leaves of skeletons overlap, quicker (default)</span>
-<span class='kw'>delta</span> <span class='kw'>=</span> <span class='fl'>5</span>)
-
+<span class='kw'>delta</span> <span class='kw'>=</span> <span class='fl'>5</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Axon / dendrite missing</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Axon / dendrite missing</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Axon / dendrite missing</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Axon / dendrite missing</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Axon / dendrite missing</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Axon / dendrite missing</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Axon / dendrite missing</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Axon / dendrite missing</span></div><div class='input'>
 <span class='co'># Plot</span>
-<span class='fu'><a href='https://rdrr.io/r/graphics/hist.html'>hist</a></span>(<span class='no'>hcm</span>$<span class='no'>overlap_locality</span>, <span class='kw'>breaks</span> <span class='kw'>=</span> <span class='fl'>100</span>)</div><div class='img'><img src='hemibrain_compartment_metrics-1.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='fu'><a href='https://rdrr.io/r/graphics/hist.html'>hist</a></span>(<span class='no'>hcm</span>$<span class='no'>overlap_locality</span>, <span class='kw'>breaks</span> <span class='kw'>=</span> <span class='fl'>100</span>)</div><div class='output co'>#&gt; <span class='error'>Error in hist.default(hcm$overlap_locality, breaks = 100): 'x' must be numeric</span></div><div class='input'>
 # }
 </div></pre>
   </div>
@@ -216,7 +215,7 @@ metrics.</p></td>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.0.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
 </div>
 
       </footer>
