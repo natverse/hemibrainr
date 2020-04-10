@@ -413,7 +413,7 @@ good_savedir <- function(savedir = TRUE,
 #' @rdname hemibrain_tags
 #' @export
 #' @seealso \code{\link{hemibrain_read_neurons}}
-hemibrain_settags <-function(x, i = 1, ...) UseMethod("hemibrain_perfectstart")
+hemibrain_settags <-function(x, i = 1, ...) UseMethod("hemibrain_settags")
 #' @rdname hemibrain_tags
 #' @export
 hemibrain_settags.neuron <- function(x, i = 1, ...){
@@ -425,7 +425,7 @@ hemibrain_settags.neuron <- function(x, i = 1, ...){
   for(tag in tags){
     t = unname(unlist(nullToNA(m[[tag]])))[i]
     t = ifelse(is.na(t),"none",t)
-    x$tags[[tag]] = unname(unlist(nullToNA(m[[tag]])))[i]
+    x$tags[[tag]] = t
    }
  x
 }

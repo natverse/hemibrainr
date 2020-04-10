@@ -170,11 +170,9 @@ suppress <- function(x, ...){
 }
 
 # hidden
-remove_after <- function(i){
-  for(j in i){
-
-  }
-
+replace_with_none <- function(x, FUN = is.na){
+  x[FUN(x)] = "none"
+  x
 }
 
 

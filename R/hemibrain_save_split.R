@@ -283,14 +283,13 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
         someneuronlist = hemibrain_clean_skeleton(someneuronlist, rval = "neuron")
       }
       ### Get vectors that we will need to update
-      edits = purify(gs[match(names(someneuronlist), gs$bodyid),"manual_edit"])
-      notes = purify(gs[match(names(someneuronlist), gs$bodyid),"note"])
-      truncated = purify(gs[match(names(someneuronlist), gs$bodyid),"truncated"])
-      somas = purify(gs[match(names(someneuronlist), gs$bodyid),"soma"])
-      splittable = purify(gs[match(names(someneuronlist), gs$bodyid),"splittable"])
-      cuts = purify(gs[match(names(someneuronlist), gs$bodyid),"cut"])
-      skels = purify(gs[match(names(someneuronlist), gs$bodyid),"skeletonization"])
-      somas = purify(gs[match(names(someneuronlist), gs$bodyid),"soma"])
+      edits = replace_with_none(purify(gs[match(names(someneuronlist), gs$bodyid),"manual_edit"]))
+      notes = replace_with_none(purify(gs[match(names(someneuronlist), gs$bodyid),"note"]))
+      truncated = replace_with_none(purify(gs[match(names(someneuronlist), gs$bodyid),"truncated"]))
+      splittable = replace_with_none(purify(gs[match(names(someneuronlist), gs$bodyid),"splittable"]))
+      cuts = replace_with_none(purify(gs[match(names(someneuronlist), gs$bodyid),"cut"]))
+      skels = replace_with_none(purify(gs[match(names(someneuronlist), gs$bodyid),"skeletonization"]))
+      somas = replace_with_none(purify(gs[match(names(someneuronlist), gs$bodyid),"soma"]))
       someneuronlist = hemibrain_settags(someneuronlist,
                                          manual_edit = edits,
                                          note = notes,
@@ -305,9 +304,11 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
         ### Select neurons to edit and make notes on neurons
         if(phases %in% c("complete", "I")){
           message("Phase I : select neurons that need to be edited manually")
-          selected <- splitcheck_phaseI(someneuronlist = someneuronlist,
+          phaseI <- splitcheck_phaseI(someneuronlist = someneuronlist,
                                       brain = brain,
                                       selected_col = selected_col)
+          selected = phaseI[["selected"]]
+          someneuronlist = phaseI["someneuronlist"]
           mes <- NULL
         }else{
           selected <- as.character(batch)
@@ -325,15 +326,18 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
         if(phases == "III" | length(mes)){
           ### Review the changes
           message("Phase III : review ", length(mes), " neurons")
+          if(phases =="III"){
+            message("Select neurons you may want to edit again")
+          }
           mes <- splitcheck_phaseIII(mes = mes,
                                      selected = selected,
                                      manual = manual,
                                      motivate = motivate,
                                      brain = brain)
+          phases = "complete"
         }
         ### Continue?
-        satisfied = hemibrain_choice(prompt = "Continue to saving changes (y), or would you like to run the edit process
-for neurons in this batch again (keeping curent changes) (n)?
+        satisfied = !hemibrain_choice(prompt = "Final check: Do you want to run the edit process again? yes/no
                                      ")
         someneuronlist[names(mes)] = mes
       }
@@ -432,7 +436,6 @@ splitcheck_phaseI <- function(someneuronlist,
           that are slightly truncated (t), seriously cropped (k), unsplittable (u),
           or have a bad skeletonization (z). You can also make custom notes (e).
           ###################################PhaseI####################################")
-  someneuronlist = hemibrain_perfectstart(someneuronlist)
   neurons = names(someneuronlist)
   nams = as.data.frame(someneuronlist)$name
   frames <- length(neurons)
@@ -455,6 +458,12 @@ splitcheck_phaseI <- function(someneuronlist,
         i <- 1
       }
     }
+    message("
+########selection########
+Please make notes on neurons
+and select neurons for further
+manual editing
+########selection########")
     n <- neurons[i]
     cat("Current neuron:", n, " ", nams[i]," (", i, "/", length(neurons),")",ifelse(n %in% selected,"SELECTED","NOT SELECTED"), "\n")
     print(someneuronlist[n,], row.names = FALSE, right = TRUE)
@@ -490,13 +499,14 @@ c to cancel (with selection) ",
     if (chc == "b"){
       i <- i - 1
     }else if (chc == "n"){
-      x = hemibrain_makenote(x=someneuronlist[[i]])
+      someneuronlist[[i]] = hemibrain_makenote(x=someneuronlist[[i]])
     }else{
       i <- i + 1
     }
     reset3d(brain=brain)
   }
-  selected
+  list(selected = selected,
+       someneuronlist = someneuronlist)
 }
 
 # hidden
@@ -588,7 +598,7 @@ splitcheck_phaseIII <- function(mes = NULL,
       if(!length(new.select)){
         new.select = "none"
       }
-      message("Manual edits to be saved for: ",paste(new.select, sep =", "))
+      message("Manual edits to be saved for: ",paste(new.select, collapse =", "))
       save = hemibrain_choice(prompt = "Are you satisfied with your edits (y)? Or do you want to review them again (n)? ")
     }
     mes = mes[names(mes)%in%new.select]
@@ -664,6 +674,7 @@ hemibrain_perfectstart.neuron <- function(x, ...){
   x$tags$splittable = TRUE
   x$tags$skeletonization = "good"
   x$tags$soma = "automatic"
+  x$tags$note = "none"
   x
 }
 hemibrain_perfectstart.neuronlist<-function(x, ...){
@@ -694,7 +705,7 @@ ENTER to continue (with notes made), c to cancel (without notes made).
       message("Splittable status is: ", x$tags$splittable)
     }else if (chc == "z"){
       dec<- must_be(prompt = "Is this neuron appropriately skeletonized? good(g)/minor errors(m)/major errors(e) ",
-                          answers = c("good","minor errors", "major errors"))
+                          answers = c("g","m", "e"))
       dec = ifelse(dec == "g","good","error")
       dec = ifelse(dec == "m","minor errors","major errors")
       x$tags$skeletonization <- dec
