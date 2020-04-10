@@ -48,10 +48,10 @@
 #' @seealso \code{\link{hemibrain_splitpoints}}, \code{\link{hemibrain_flow_centrality}},
 #' \code{\link{hemibrain_precomputed_splitpoints}}, \code{\link{hemibrain_metrics}},\code{\link{hemibrain_remove_bad_synapses}}
 hemibrain_read_neurons<-function(x = NULL,
-                                 savedir = TRUE,
+                                 savedir = FALSE,
                                  local = FALSE,
-                                 microns = TRUE,
-                                 remove.bad.synapses = TRUE,
+                                 microns = FALSE,
+                                 remove.bad.synapses = FALSE,
                                  clean = TRUE,
                                  ...){
   if(is.null(x)&!savedir){
@@ -59,7 +59,7 @@ hemibrain_read_neurons<-function(x = NULL,
          specify a location from which to read saved a save neuronlistfh object using savedir. See
          ?hemibrain_download_neurons for details on the latter option.")
   }
-  if(isTRUE(savedir)){
+  if(!isFALSE(savedir)){
       neurons.flow.fh = hemibrain_neurons(savedir = savedir, local = local)
       if(!is.null(neurons.flow.fh)){
         y = intersect(x,names(neurons.flow.fh))
