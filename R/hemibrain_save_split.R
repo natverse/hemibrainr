@@ -170,7 +170,7 @@ hemibrain_task_update <- function(bodyids,
 #' through branches as a quick way to assign axon/dendrite.}
 #' \item{Phase III}{ - Review manually modified neurons.}
 #' }
-#' Video tutorial: https://drive.google.com/open?id=1Cw-5bVgY5k-eaZAXQl6jgU1leYY7YbTM
+#' Video tutorial: https://drive.google.com/open?id=1FB7m1QFKApysO74maHAx-yg2CQWkx49C
 #' @examples
 #' \donttest{
 #' \dontrun{
@@ -313,6 +313,7 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
           selected = phaseI[["selected"]]
           someneuronlist = phaseI[["someneuronlist"]]
           mes <- NULL
+          someneuronlist[selected] <- hemibrain_settags(someneuronlist[selected],manual_edit = rep(TRUE,length(mes)))
         }else{
           selected <- as.character(batch)
         }
@@ -342,11 +343,11 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
         ### Continue?
         satisfied = !hemibrain_choice(prompt = "Final check: Do you want to run the edit process again? yes/no
                                      ")
-        someneuronlist[names(mes)] = mes
       }
       ### Save manual split to Google Sheet
       if(motivate){plot_inspirobot()}
       if(length(mes)){
+        someneuronlist[names(mes)] = mes
         mes.sp = hemibrain_splitpoints(x = mes)
         mes.i = match(mes.sp$bodyid, names(someneuronlist))
         mes.sp$type = gs$type[match(mes.sp$bodyid,gs$bodyid)]
