@@ -139,6 +139,7 @@ space (as they are stored in neuPrint) to microns.</p>
   <span class='kw'>local</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>microns</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>remove.bad.synapses</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>clean</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='no'>...</span>
 )
 
@@ -171,6 +172,10 @@ from which hemibrain neurons can be read. If <code>TRUE</code> your default save
     <tr>
       <th>remove.bad.synapses</th>
       <td><p>whether or not to run <code><a href='hemibrain_remove_bad_synapses.html'>hemibrain_remove_bad_synapses</a></code> on neurons pulled from neuPrint.</p></td>
+    </tr>
+    <tr>
+      <th>clean</th>
+      <td><p>whether or not to set synapse-less branches to <code>Label = 0</code>.</p></td>
     </tr>
     <tr>
       <th>...</th>
