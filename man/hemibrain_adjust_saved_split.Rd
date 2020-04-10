@@ -9,8 +9,8 @@ hemibrain_task_update(
   bodyids,
   update,
   selected_file = "1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E",
-  column = c("soma", "cut", "truncated", "split", "splittable", "checked", "user",
-    "time", "note", "priority", "edited.cable")
+  column = c("soma", "cut", "truncated", "manual_edit", "splittable", "checked",
+    "user", "time", "note", "priority", "edited.cable", "skeletonization")
 )
 
 hemibrain_adjust_saved_split(

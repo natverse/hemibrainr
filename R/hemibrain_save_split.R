@@ -21,7 +21,7 @@ setup_splitcheck_sheet <-function(selected_file = "1YjkVjokXL4p4Q6BR-rGGGKWecXU3
   roots$manual_edit = FALSE
   roots$splittable = TRUE
   roots$skeletonization = "good"
-  roots$checked = FALSE
+  roots$checked = 0
   roots$user = "flyconnectome"
   roots$time = Sys.time()
   roots$note = "none"
@@ -216,11 +216,14 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
   }
   say_hello(greet = user)
   ### Process data
-  undone = gs[gs$checked<check_thresh,]
+  lookedat = unlist(gs$checked)
+  lookedat[lookedat=="FALSE"] = 0
+  lookedat[lookedat=="TRUE"] = 1
+  undone = gs[lookedat<check_thresh,]
   undone.ids = unique(undone$bodyid)
-  done = gs[gs$checked>=check_thresh,]
+  done = gs[lookedat>=check_thresh,]
   message(length(unique(done$bodyid)), "/",length(unique(gs$bodyid))," have been checked by at least ",check_thresh," user")
-  users = gs[gs$checked,"user"]
+  users = unlist(done[,"user"])
   print(table(users))
   message("Manual splits by users: ")
   print(table(manual[!duplicated(manual$bodyid),]$user))
@@ -259,7 +262,7 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
     for(batch in batches){
       ### Get bodyids
       if(by.type){
-        batch = purify(gs$bodyid[match(batch, gs$type)])
+        batch = purify(unlist(gs$bodyid)[match(batch, unlist(gs$type))])
         message("Neurons in batch: ", length(batch))
       }
       ### What priority are we at
@@ -308,7 +311,7 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
                                       brain = brain,
                                       selected_col = selected_col)
           selected = phaseI[["selected"]]
-          someneuronlist = phaseI["someneuronlist"]
+          someneuronlist = phaseI[["someneuronlist"]]
           mes <- NULL
         }else{
           selected <- as.character(batch)
@@ -371,11 +374,15 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
         if(motivate){plot_inspirobot()}
         gs = googlesheets4::read_sheet(ss = selected_file, sheet = "roots")
       }
-      rows = match(names(someneuronlist), gs$bodyid)
+      rows = match(names(someneuronlist), purify(gs$bodyid))
       update1 = hemibrain_seetags(someneuronlist)
+      checked = suppress(as.numeric(purify(gs[rows,]$checked)))
+      users = unlist(gs[rows,]$user)
+      users= paste0(users,"/",initials)
+      checked[is.na(checked)] = 0
       update2 = data.frame(
-        checked = gs[rows,]$checked+1,
-        user = rep(initials, length(rows)),
+        checked = checked + 1,
+        user = users,
         time = Sys.time())
       update = cbind(update1,update2)
       update[is.na(update)] = ""
@@ -391,7 +398,7 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
                             col_names = FALSE)
       }
       message("Task updated! ")
-      say_encouragement(greet = user)
+      say_encouragement(greet = initials)
     }
   }
 }
@@ -698,7 +705,7 @@ ENTER to continue (with notes made), c to cancel (without notes made).
       x$tags$note <- readline(prompt = "Add your note here: yes/no ")
       message("Note is: ", x$tags$note)
     }else if (chc == "t"){
-      x$tags$truncated <- readline(prompt = "Is this neuron (even slightly) truncated?: yes/no ")
+      x$tags$truncated <- hemibrain_choice(prompt = "Is this neuron (even slightly) truncated?: yes/no ")
       message("Truncation status is: ",  x$tags$truncated)
     }else if (chc == "u"){
       x$tags$splittable <- hemibrain_choice(prompt = "Can this neuron be split? yes/no ")
@@ -706,7 +713,7 @@ ENTER to continue (with notes made), c to cancel (without notes made).
     }else if (chc == "z"){
       dec<- must_be(prompt = "Is this neuron appropriately skeletonized? good(g)/minor errors(m)/major errors(e) ",
                           answers = c("g","m", "e"))
-      dec = ifelse(dec == "g","good","error")
+      dec = ifelse(dec == "g","good",dec)
       dec = ifelse(dec == "m","minor errors","major errors")
       x$tags$skeletonization <- dec
       message("Skeletonization status is: ", x$tags$skeletonization)

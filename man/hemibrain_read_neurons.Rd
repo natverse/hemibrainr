@@ -11,6 +11,7 @@ hemibrain_read_neurons(
   local = FALSE,
   microns = TRUE,
   remove.bad.synapses = TRUE,
+  clean = TRUE,
   ...
 )
 
@@ -31,6 +32,8 @@ from which hemibrain neurons can be read. If \code{TRUE} your default save direc
 \item{microns}{convert dimensions from raw voxels into microns (template brain: \code{JRCFIB2018F}, else \code{JRCFIB2018Fraw}).}
 
 \item{remove.bad.synapses}{whether or not to run \code{\link{hemibrain_remove_bad_synapses}} on neurons pulled from neuPrint.}
+
+\item{clean}{whether or not to set synapse-less branches to \code{Label = 0}.}
 
 \item{...}{methods passed to \code{neuprintr::neuprint_read_neurons}, \code{\link{hemibrain_remove_bad_synapses}}
 and \code{\link{hemibrain_flow_centrality}}}

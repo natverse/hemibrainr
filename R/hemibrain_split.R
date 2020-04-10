@@ -627,22 +627,28 @@ hemibrain_use_splitpoints.neuron <-function(x, df, knn = FALSE, ...){
       d.s = d.s[!is.na(d.s)]
       ax <- dend <- c()
       for(as in a.s){
-        path = suppress(unique(c(unlist(unlist(igraph::shortest_paths(bn, from=as, to = leaves, mode = c("out"))$vpath)))))
-        if(length(d.s)){
-          if(sum(d.s%in%path)>0){
-            path = path[1:(which(path%in%d.s)-1)]
+        paths = suppress(igraph::shortest_paths(bn, from=as, to = leaves, mode = c("out"))$vpath)
+        for(path in paths){
+          path = as.numeric(path)
+          if(length(d.s) & length(path)){
+            if(sum(d.s%in%path)>0){
+              path = path[match(as,path):(min(match(d.s,path),na.rm = TRUE)-1)]
+            }
           }
+          ax = c(ax,path)
         }
-        ax = c(ax,path)
       }
       for(ds in d.s){
-        path = suppress(unique(c(unlist(unlist(igraph::shortest_paths(bn, from=ds, to = leaves, mode = c("out"))$vpath)))))
-        if(length(a.s)){
-          if(sum(a.s%in%path)>0){
-            path = path[1:(which(path%in%a.s)-1)]
+        paths = suppress(igraph::shortest_paths(bn, from=ds, to = leaves, mode = c("out"))$vpath)
+        for(path in paths){
+          path = as.numeric(path)
+          if(length(a.s) & length(path)){
+            if(sum(a.s%in%path)>0){
+              path = path[match(ds,path):(min(match(a.s,path),na.rm = TRUE)-1)]
+            }
           }
+          dend = c(dend,path)
         }
-        dend = c(dend,path)
       }
       ax = b$d$PointNo[ax]
       dend = b$d$PointNo[dend]

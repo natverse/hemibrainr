@@ -44,27 +44,27 @@ write.neuronlistfh(all.neurons.flow.fh, file=paste0(savedirfh,"hemibrain_all_neu
 
 # Save key points
 all.neurons.points = hemibrain_splitpoints(all.neurons.flow)
-write.csv(all.neurons.points, file = paste0("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/hemibrain_all_neurons_splitpoints_",identifier,".csv"))
+write.csv(all.neurons.points, file = paste0("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/hemibrain_all_neurons_splitpoints_",identifier,".csv"), row.names=FALSE)
 message("Split points calculated for neurons: ", nrow(all.neurons.points))
 
 # Get Synapses
 all.neurons.flow.syns = hemibrain_extract_synapses(all.neurons.flow)
-write.csv(all.neurons.flow.syns, file = paste0("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/hemibrain_all_neurons_synapses_",identifier,".csv"))
+write.csv(all.neurons.flow.syns, file = paste0("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/hemibrain_all_neurons_synapses_",identifier,".csv"), row.names=FALSE)
 message("Saved synapses: ", nrow(all.neurons.flow.syns))
 
 # Get connections
 all.neurons.flow.conns = hemibrain_extract_connections(all.neurons.flow)
-write.csv(all.neurons.flow.conns, file = paste0("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/hemibrain_all_neurons_connections_",identifier,".csv"))
+write.csv(all.neurons.flow.conns, file = paste0("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/hemibrain_all_neurons_connections_",identifier,".csv"), row.names=FALSE)
 message("Saved connections: ", nrow(all.neurons.flow.conns))
 
 # Get edgelist
 all.neurons.flow.elist = hemibrain_extract_compartment_edgelist(all.neurons.flow, .parallel = TRUE, OmitFailures = TRUE)
-write.csv(all.neurons.flow.elist, file = paste0("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/hemibrain_all_neurons_edgelist_",identifier,".csv"))
+write.csv(all.neurons.flow.elist, file = paste0("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/hemibrain_all_neurons_edgelist_",identifier,".csv"), row.names=FALSE)
 message("Saved connections: ", nrow(all.neurons.flow.elist))
 
 # Calculate and save interesting metrics on this split
 all.neurons.flow = all.neurons.flow*(8/1000) # convert to microns
 mets = hemibrain_compartment_metrics(all.neurons.flow, OmitFailures = TRUE, .parallel = TRUE, delta = 5, resample = NULL)
-write.csv(mets, file = paste0("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/hemibrain_all_neurons_metrics_",identifier,".csv"))
+write.csv(mets, file = paste0("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/hemibrain_all_neurons_metrics_",identifier,".csv"), row.names=FALSE)
 message("Metrics calculated for neurons: ", nrow(mets))
 

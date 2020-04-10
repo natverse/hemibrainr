@@ -2,8 +2,8 @@
 library(googledrive)
 
 ### Access Team Drive
-hemibrain = team_drive_get("hemibrain")
-drive_hemibrain = drive_find(type = "folder", team_drive = hemibrain)
+hemibrain = googledrive::team_drive_get("hemibrain")
+drive_hemibrain = googledrive::drive_find(type = "folder", team_drive = hemibrain)
 hemibrain_drive_csvs = drive_find(type = "csv", team_drive = hemibrain)
 hemibrain_drive_data = subset(hemibrain_drive_csvs,grepl("splitpoints|metrics",name))
 for(i in 1:nrow(hemibrain_drive_data)){
@@ -12,6 +12,15 @@ for(i in 1:nrow(hemibrain_drive_data)){
                  overwrite = TRUE,
                  verbose = TRUE)
 }
+
+### Download the status of the splitsave files
+selected_file = "1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E"
+gs = googlesheets4::read_sheet(ss = selected_file, sheet = "roots")
+gs = as.data.frame(gs)
+manual = googlesheets4::read_sheet(ss = selected_file, sheet = "manual")
+manual = as.data.frame(manual)
+write.csv(gs, file = "data-raw/hemibrain_data/hemibrain_manual/split_pipeline_roots.csv", row.names=FALSE)
+write.csv(manual, file = "data-raw/hemibrain_data/hemibrain_manual/split_pipeline_manualsplits.csv", row.names=FALSE)
 
 ### Split points
 hemibrain_splitpoints_polypre_centrifugal_distance <- read.csv("data-raw/hemibrain_all_neurons_splitpoints_polypre_centrifugal_distance.csv")
