@@ -7,10 +7,10 @@
 \usage{
 hemibrain_read_neurons(
   x = NULL,
-  savedir = TRUE,
+  savedir = FALSE,
   local = FALSE,
-  microns = TRUE,
-  remove.bad.synapses = TRUE,
+  microns = FALSE,
+  remove.bad.synapses = FALSE,
   clean = TRUE,
   ...
 )

@@ -9,7 +9,7 @@
 \format{
 An object of class \code{data.frame} with 22567 rows and 29 columns.
 
-An object of class \code{data.frame} with 20890 rows and 29 columns.
+An object of class \code{data.frame} with 22567 rows and 29 columns.
 
 An object of class \code{data.frame} with 22567 rows and 29 columns.
 }
