@@ -50,7 +50,7 @@ View(hemibrain_splitpoints_polypre_centrifugal_distance)
 Bates, A. S., P. Schlegel, R. J. V. Roberts, N. Drummond, I. F.
   M. Tamimi, R. Turnbull, X. Zhao, et al. 2020. “Complete Connectomic
   Reconstruction of Olfactory Projection Neurons in the Fly Brain.” bioRxiv.
-  https://doi.org/10.1101/2020.01.19.911453.
+  \href{https://doi.org/10.1101/2020.01.19.911453}{doi:10.1101/2020.01.19.911453}.
 }
 \seealso{
 \code{\link{hemibrain_flow_centrality}},

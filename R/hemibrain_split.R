@@ -55,7 +55,8 @@
 #'
 #' @references Schneider-Mizell, C. M., Gerhard, S., Longair, M., Kazimiers, T.,
 #'   Li, F., Zwart, M. F., … Cardona, A. (2015). Quantitative neuroanatomy for
-#'   connectomics in Drosophila. bioRxiv, 026617. http://doi.org/10.1101/026617
+#'   connectomics in Drosophila. bioRxiv, 026617.
+#'   \href{http://doi.org/10.1101/026617}{doi:10.1101/026617}.
 #'
 #' @return the neuron or neuron list object inputted, with centripetal flow
 #'   centrality information added to neuron$d and a segregation index score.

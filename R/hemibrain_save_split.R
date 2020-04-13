@@ -170,7 +170,7 @@ hemibrain_task_update <- function(bodyids,
 #' through branches as a quick way to assign axon/dendrite.}
 #' \item{Phase III}{ - Review manually modified neurons.}
 #' }
-#' Video tutorial: https://drive.google.com/open?id=1FB7m1QFKApysO74maHAx-yg2CQWkx49C
+#' Video tutorial: \url{https://drive.google.com/open?id=1FB7m1QFKApysO74maHAx-yg2CQWkx49C}
 #' @examples
 #' \donttest{
 #' \dontrun{
