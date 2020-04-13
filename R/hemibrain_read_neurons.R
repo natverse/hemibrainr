@@ -85,8 +85,9 @@ hemibrain_read_neurons<-function(x = NULL,
   if(clean){
     neurons.flow = hemibrain_clean_skeleton(neurons.flow, rval = "neuron", ...)
   }
-  hemibrain_metrics = hemibrainr::hemibrain_metrics[,!colnames(hemibrainr::hemibrain_metrics)%in%colnames(neurons.flow[,])]
-  df = cbind(neurons.flow[,], hemibrainr::hemibrain_metrics[names(neurons.flow),])
+  selcols=setdiff(colnames(hemibrainr::hemibrain_metrics), colnames(neurons.flow[,]))
+  hemibrain_metrics_sel = hemibrainr::hemibrain_metrics[names(neurons.flow), selcols]
+  df = cbind(neurons.flow[,], hemibrain_metrics_sel)
   rownames(df) = names(neurons.flow)
   if(microns){
     neurons.flow = scale_neurons(neurons.flow, scaling = (8/1000))
