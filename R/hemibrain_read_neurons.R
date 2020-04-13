@@ -54,7 +54,7 @@ hemibrain_read_neurons<-function(x = NULL,
                                  remove.bad.synapses = FALSE,
                                  clean = TRUE,
                                  ...){
-  if(is.null(x)&!savedir){
+  if(is.null(x) && isFALSE(savedir)){
     stop("You must either supply bodyids to read from neuPrint using x, or
          specify a location from which to read saved a save neuronlistfh object using savedir. See
          ?hemibrain_download_neurons for details on the latter option.")
