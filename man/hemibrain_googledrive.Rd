@@ -28,8 +28,7 @@ hemibrain_connections(
 )
 }
 \arguments{
-\item{savedir}{directory in which \code{nat::neuronlistfh} object as been saved using \code{\link{hemibrain_download_neurons}}. This acts as a database,
-from which hemibrain neurons can be read. If \code{TRUE} your default save directory is used, which is stored as: \code{options()$hemibrain_data}}
+\item{savedir}{directory in which neuron dats has been deposited. If \code{TRUE} your default save directory is used, which is stored as: \code{options()$Gdrive_hemibrain_data}}
 
 \item{local}{logical, whether to try to read locally saved neurons (by default at: \code{options()$hemibrain_data}) or neurons from Google Drive (\code{options()$Gdrive_hemibrain_data}).}
 
