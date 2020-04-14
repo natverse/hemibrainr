@@ -7,8 +7,7 @@
 #' @description Read precomputed data available on the Hemibrain Google Team Drive. This includes all synapses, neuron-neuron connections
 #' and an edgelist for all hemibrain neurons, broken down by axon and dendrite assigments.
 #'
-#' @param savedir directory in which \code{nat::neuronlistfh} object as been saved using \code{\link{hemibrain_download_neurons}}. This acts as a database,
-#' from which hemibrain neurons can be read. If \code{TRUE} your default save directory is used, which is stored as: \code{options()$hemibrain_data}
+#' @param savedir directory in which neuron dats has been deposited. If \code{TRUE} your default save directory is used, which is stored as: \code{options()$Gdrive_hemibrain_data}
 #' @param local logical, whether to try to read locally saved neurons (by default at: \code{options()$hemibrain_data}) or neurons from Google Drive (\code{options()$Gdrive_hemibrain_data}).
 #' @param neuron.split read saved neurons spit in which way? Folder names indicative of arguments passed to \code{\link{flow_centrality}}.
 #' and \code{\link{hemibrain_flow_centrality}}
@@ -34,7 +33,7 @@ hemibrain_neuron_bodyids <- function(savedir = TRUE,
                                         local = FALSE){
   savedir = good_savedir(savedir = savedir,local = local)
   gfile = find_gfile(savedir = savedir, file = "hemibrain_all_neuron_bodyids", folder = "hemibrain_neurons/")
-  gcsv = read.csv(gfile)
+  gcsv = utils::read.csv(gfile)
   as.character(gcsv$x)
 }
 
@@ -47,7 +46,7 @@ hemibrain_elist <- function(savedir = TRUE, local = FALSE,
   savedir = good_savedir(savedir = savedir,local = local)
   folder = paste0("hemibrain_neurons/",neuron.split,"/")
   gfile = find_gfile(savedir = savedir, file = "hemibrain_all_neurons_edgelist", folder = folder)
-  gcsv = read.csv(gfile)
+  gcsv = utils::read.csv(gfile)
   gcsv
 }
 
@@ -60,7 +59,7 @@ hemibrain_synapses <- function(savedir = TRUE, local = FALSE,
   savedir = good_savedir(savedir = savedir,local = local)
   folder = paste0("hemibrain_neurons/",neuron.split,"/")
   gfile = find_gfile(savedir = savedir, file = "hemibrain_all_neurons_synapses", folder = folder)
-  gcsv = read.csv(gfile)
+  gcsv = utils::read.csv(gfile)
   gcsv
 }
 
@@ -73,7 +72,7 @@ hemibrain_connections <- function(savedir = TRUE, local = FALSE,
   savedir = good_savedir(savedir = savedir,local = local)
   folder = paste0("hemibrain_neurons/",neuron.split,"/")
   gfile = find_gfile(savedir = savedir, file = "hemibrain_all_neurons_connections", folder = folder)
-  gcsv = read.csv(gfile)
+  gcsv = utils::read.csv(gfile)
   gcsv
 }
 
