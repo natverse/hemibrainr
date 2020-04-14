@@ -68,3 +68,8 @@ mets = hemibrain_compartment_metrics(all.neurons.flow, OmitFailures = TRUE, .par
 write.csv(mets, file = paste0("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/hemibrain_all_neurons_metrics_",identifier,".csv"), row.names=FALSE)
 message("Metrics calculated for neurons: ", nrow(mets))
 
+# Make a dotprops object
+all.neurons.flow.dps = nat::dotprops(all.neurons.flow, Labels = TRUE, resample = 1, OmitFailures = TRUE, .parallel = TRUE)
+save(all.neurons.flow.dps, file = paste0("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/hemibrain_all_neurons_flow_",identifier,"_dps.rda"))
+
+
