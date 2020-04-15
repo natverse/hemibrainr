@@ -451,7 +451,10 @@ gsheet_manipulation <- function(FUN, ...){
   success = FALSE
   while(!success){
     g = tryCatch(FUN(...),
-                 error = function(e) NULL)
+                 error = function(e){
+                   message(e)
+                   return(NULL)
+                 })
     if(!is.null(g)){
       success = TRUE
     }else{
