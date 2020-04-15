@@ -87,15 +87,17 @@ setup_splitcheck_sheet <-function(selected_file = "1YjkVjokXL4p4Q6BR-rGGGKWecXU3
                              ss = selected_file,
                              sheet = "manual")
   ### Some assignments for tracers in the FlyConnectome group
+  gs = googlesheets4::read_sheet(ss = selected_file, sheet = "roots")
+  gs = as.data.frame(gs)
   ton.batches = split(hemibrainr::ton.ids, ceiling(seq_along(1:length(hemibrainr::ton.ids))/2700))
-  hemibrain_task_update(bodyids = c(hemibrainr::upn.ids,hemibrainr::mpn.ids, hemibrainr::orn.ids), column = "user", update = "ND")
-  hemibrain_task_update(bodyids = hemibrainr::dan.ids, column = "user", update = "GD")
-  hemibrain_task_update(bodyids = c(hemibrainr::vppn.ids,hemibrainr::hrn.ids), column = "user", update = "RT")
-  hemibrain_task_update(bodyids = hemibrainr::alln.ids, column = "user", update = "TS")
-  hemibrain_task_update(bodyids = hemibrainr::mbon.ids, column = "user", update = "MWP")
-  hemibrain_task_update(bodyids = ton.batches[[1]], column = "user", update = "AJ")
-  hemibrain_task_update(bodyids = ton.batches[[2]], column = "user", update = "IT")
-  hemibrain_task_update(bodyids = ton.batches[[3]], column = "user", update = "JH")
+  hemibrain_task_update(bodyids = c(hemibrainr::upn.ids,hemibrainr::mpn.ids, hemibrainr::orn.ids), column = "user", update = "ND", gs = gs)
+  hemibrain_task_update(bodyids = hemibrainr::dan.ids, column = "user", update = "GD", gs = gs)
+  hemibrain_task_update(bodyids = c(hemibrainr::vppn.ids,hemibrainr::hrn.ids), column = "user", update = "RT", gs = gs)
+  hemibrain_task_update(bodyids = hemibrainr::alln.ids, column = "user", update = "TS", gs = gs)
+  hemibrain_task_update(bodyids = hemibrainr::mbon.ids, column = "user", update = "MWP", gs = gs)
+  hemibrain_task_update(bodyids = ton.batches[[1]], column = "user", update = "AJ", gs = gs)
+  hemibrain_task_update(bodyids = ton.batches[[2]], column = "user", update = "IT", gs = gs)
+  hemibrain_task_update(bodyids = ton.batches[[3]], column = "user", update = "JH", gs = gs)
 }
 
 #' @examples
@@ -107,15 +109,18 @@ setup_splitcheck_sheet <-function(selected_file = "1YjkVjokXL4p4Q6BR-rGGGKWecXU3
 #' @export
 #' @rdname hemibrain_adjust_saved_split
 hemibrain_task_update <- function(bodyids,
-                                  update,
+                                 update,
+                                 gs = NULL,
                                  selected_file = "1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E",
                                  column = c("soma","cut", "truncated", "manual_edit", "splittable", "checked", "user",
                                               "time", "note", "priority", "edited.cable", "skeletonization")
                                  ){
   column = match.arg(column)
   message("Updating task field: ", column)
-  gs = googlesheets4::read_sheet(ss = selected_file, sheet = "roots")
-  gs = as.data.frame(gs)
+  if(is.null(gs)){
+    gs = googlesheets4::read_sheet(ss = selected_file, sheet = "roots")
+    gs = as.data.frame(gs)
+  }
   bodyids = bodyids[bodyids%in%unlist(gs$bodyid)]
   rows = match(bodyids, gs$bodyid)
   rows = rows[!is.na(rows)]
