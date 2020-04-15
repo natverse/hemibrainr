@@ -3,7 +3,7 @@
 #' Bodyids for neuron classes. Hard saved equivalent for \code{\link{class2ids}}.
 #' However, you should use \code{\link{class2ids}} for the most up-to-date information.
 #'
-#' @details neuPrint bodyids for neurons that the FlyConnectome groups at the University of Cambridge, dept. Zoology,
+#' @details neuPrint bodyids for neurons that the FlyConnectome groups at the University of Cambridge Department of Zoology,
 #' have determined to fall into different classes.
 #'
 #' @seealso \code{\link{class2ids}}

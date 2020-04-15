@@ -35,7 +35,7 @@ from which hemibrain neurons can be read. If \code{TRUE} your default save direc
 
 \item{clean}{whether or not to set synapse-less branches to \code{Label = 0}.}
 
-\item{...}{methods passed to \code{neuprintr::neuprint_read_neurons}, \code{\link{hemibrain_remove_bad_synapses}}
+\item{...}{arguments passed to \code{neuprintr::neuprint_read_neurons}, \code{\link{hemibrain_remove_bad_synapses}}
 and \code{\link{hemibrain_flow_centrality}}}
 
 \item{neuron.split}{read saved neurons spit in which way? Folder names indicative of arguments passed to \code{\link{flow_centrality}}.}

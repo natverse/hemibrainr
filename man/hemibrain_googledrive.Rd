@@ -5,7 +5,7 @@
 \alias{hemibrain_elist}
 \alias{hemibrain_synapses}
 \alias{hemibrain_connections}
-\title{Read precomputed information from the hemibrain Googledrive}
+\title{Read precomputed information from the hemibrain Google Drive}
 \usage{
 hemibrain_neuron_bodyids(savedir = TRUE, local = FALSE)
 
@@ -28,7 +28,7 @@ hemibrain_connections(
 )
 }
 \arguments{
-\item{savedir}{directory in which neuron dats has been deposited. If \code{TRUE} your default save directory is used, which is stored as: \code{options()$Gdrive_hemibrain_data}}
+\item{savedir}{directory in which neuron data has been deposited. If \code{TRUE} your default save directory is used, which is stored as: \code{options()$Gdrive_hemibrain_data}}
 
 \item{local}{logical, whether to try to read locally saved neurons (by default at: \code{options()$hemibrain_data}) or neurons from Google Drive (\code{options()$Gdrive_hemibrain_data}).}
 
@@ -39,8 +39,8 @@ and \code{\link{hemibrain_flow_centrality}}}
 a \code{data.frame} or character vector
 }
 \description{
-Read precomputed data available on the Hemibrain Google Team Drive. This includes all synapses, neuron-neuron connections
-and an edgelist for all hemibrain neurons, broken down by axon and dendrite assigments.
+Read precomputed data available on the hemibrain Google Team Drive. This includes all synapses, neuron-neuron connections
+and an edgelist for all hemibrain neurons, broken down by axon and dendrite assignments.
 }
 \examples{
 \donttest{

@@ -18,7 +18,7 @@
 #' @param clean whether or not to set synapse-less branches to \code{Label = 0}.
 #' @param local logical, whether to try to read locally saved neurons (by default at: \code{options()$hemibrain_data}) or neurons from Google Drive (\code{options()$Gdrive_hemibrain_data}).
 #' @param neuron.split read saved neurons spit in which way? Folder names indicative of arguments passed to \code{\link{flow_centrality}}.
-#' @param ... methods passed to \code{neuprintr::neuprint_read_neurons}, \code{\link{hemibrain_remove_bad_synapses}}
+#' @param ... arguments passed to \code{neuprintr::neuprint_read_neurons}, \code{\link{hemibrain_remove_bad_synapses}}
 #'  and \code{\link{hemibrain_flow_centrality}}
 #'
 #' @inherit flow_centrality return
@@ -54,7 +54,7 @@ hemibrain_read_neurons<-function(x = NULL,
                                  remove.bad.synapses = FALSE,
                                  clean = TRUE,
                                  ...){
-  if(is.null(x)&!savedir){
+  if(is.null(x) && isFALSE(savedir)){
     stop("You must either supply bodyids to read from neuPrint using x, or
          specify a location from which to read saved a save neuronlistfh object using savedir. See
          ?hemibrain_download_neurons for details on the latter option.")
@@ -85,8 +85,9 @@ hemibrain_read_neurons<-function(x = NULL,
   if(clean){
     neurons.flow = hemibrain_clean_skeleton(neurons.flow, rval = "neuron", ...)
   }
-  hemibrain_metrics = hemibrainr::hemibrain_metrics[,!colnames(hemibrainr::hemibrain_metrics)%in%colnames(neurons.flow[,])]
-  df = cbind(neurons.flow[,], hemibrainr::hemibrain_metrics[names(neurons.flow),])
+  selcols=setdiff(colnames(hemibrainr::hemibrain_metrics), colnames(neurons.flow[,]))
+  hemibrain_metrics_sel = hemibrainr::hemibrain_metrics[names(neurons.flow), selcols]
+  df = cbind(neurons.flow[,], hemibrain_metrics_sel)
   rownames(df) = names(neurons.flow)
   if(microns){
     neurons.flow = scale_neurons(neurons.flow, scaling = (8/1000))
@@ -103,6 +104,9 @@ hemibrain_read_neurons<-function(x = NULL,
 scale_neurons <-function(x, scaling = (8/1000), ...) UseMethod("scale_neurons")
 scale_neurons.neuron <- function(x, scaling, ...){
   nat::xyzmatrix(x$d) = nat::xyzmatrix(x$d)*scaling
+  # special case negative diameter is sometimes used as a signalling value
+  gt0=x$d$W > 0
+  x$d$W[gt0] = x$d$W[gt0]*scaling
   nat::xyzmatrix(x$connectors) = nat::xyzmatrix(x$connectors)*scaling
   x
 }
