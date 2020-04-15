@@ -2,6 +2,22 @@
 ################################ Save Manual Split ##################################
 #####################################################################################
 
+# # Settings
+# bodyids = NULL
+# phases = "I"
+# db = NULL
+# check_thresh = 1
+# batch_size = 10
+# by.type = TRUE
+# assignments = TRUE
+# brain = hemibrainr::hemibrain.surf
+# update_regularly = TRUE
+# motivate = TRUE
+# clean = TRUE
+# prioritise = TRUE
+# selected_file = "1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E"
+# selected_col = "#fadadd"
+
 # hidden
 ## Set up Google Drive file as database
 setup_splitcheck_sheet <-function(selected_file = "1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E"){
@@ -72,7 +88,7 @@ setup_splitcheck_sheet <-function(selected_file = "1YjkVjokXL4p4Q6BR-rGGGKWecXU3
                              sheet = "manual")
   ### Some assignments for tracers in the FlyConnectome group
   ton.batches = split(hemibrainr::ton.ids, ceiling(seq_along(1:length(hemibrainr::ton.ids))/2700))
-  hemibrain_task_update(bodyids = c(hemibrainr::upn.ids,hemibrainr::mpn.ids), column = "user", update = "ND")
+  hemibrain_task_update(bodyids = c(hemibrainr::upn.ids,hemibrainr::mpn.ids, hemibrainr::orn.ids), column = "user", update = "ND")
   hemibrain_task_update(bodyids = hemibrainr::dan.ids, column = "user", update = "GD")
   hemibrain_task_update(bodyids = c(hemibrainr::vppn.ids,hemibrainr::hrn.ids), column = "user", update = "RT")
   hemibrain_task_update(bodyids = hemibrainr::alln.ids, column = "user", update = "TS")
@@ -80,7 +96,6 @@ setup_splitcheck_sheet <-function(selected_file = "1YjkVjokXL4p4Q6BR-rGGGKWecXU3
   hemibrain_task_update(bodyids = ton.batches[[1]], column = "user", update = "AJ")
   hemibrain_task_update(bodyids = ton.batches[[2]], column = "user", update = "IT")
   hemibrain_task_update(bodyids = ton.batches[[3]], column = "user", update = "JH")
-  hemibrain_task_update(bodyids = hemibrainr::orn.ids, column = "user", update = "ND")
 }
 
 #' @examples
@@ -100,19 +115,24 @@ hemibrain_task_update <- function(bodyids,
   column = match.arg(column)
   message("Updating task field: ", column)
   gs = googlesheets4::read_sheet(ss = selected_file, sheet = "roots")
+  gs = as.data.frame(gs)
+  bodyids = bodyids[bodyids%in%unlist(gs$bodyid)]
   rows = match(bodyids, gs$bodyid)
   rows = rows[!is.na(rows)]
   letter = LETTERS[match(column,colnames(gs))]
-  range = paste0(letter,min(rows)+1,":",letter,max(rows)+1)
   if(length(update)!=length(rows)){
-    update = rep(update, length(rows))
+    update = rep(update[1], length(rows))
   }
-  gsheet_manipulation(FUN = googlesheets4::sheets_edit,
+  for(r in 1:length(rows)){
+    row = rows[r]
+    range = paste0(letter,row+1)
+    gsheet_manipulation(FUN = googlesheets4::sheets_edit,
                         ss = selected_file,
                         range = range,
-                        data = data.frame(update),
+                        data = data.frame(update[r]),
                         sheet = "roots",
                         col_names = FALSE)
+  }
   message("Task updated! ")
 }
 
@@ -207,14 +227,11 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
   ### Get Google Sheet data
   gs = googlesheets4::read_sheet(ss = selected_file, sheet = "roots")
   gs = as.data.frame(gs)
+  gs = gs[!is.na(gs$bodyid),]
   manual = googlesheets4::read_sheet(ss = selected_file, sheet = "manual")
   manual = as.data.frame(manual)
-  user = googledrive::drive_user(verbose=FALSE)
-  user = user$name
-  if(is.null(user)){
-    user = initials
-  }
-  say_hello(greet = user)
+  manual = manual[!is.na(manual$bodyid),]
+  say_hello(greet = initials)
   ### Process data
   lookedat = unlist(gs$checked)
   lookedat[lookedat=="FALSE"] = 0
@@ -270,7 +287,16 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
       message("Highest priority neuron under consideration: ", max(ranks, na.rm=TRUE))
       ### Read batch
       message("Reading batch of ", batch_size," neurons from the hemibrain project")
-      if(is.null(db)){
+      readfail = FALSE
+      if(!is.null(db)){
+        message("Reading locally saved neurons ...")
+        someneuronlist = tryCatch( db[as.character(batch)], error = function(e) NULL)
+        if(is.null(someneuronlist)){
+          message("Errors reading from given neuronlist, reading batch from neuPrint instead ...")
+          readfail = TRUE
+        }
+      }
+      if(is.null(db)|readfail){
         if(motivate){plot_inspirobot()}
         message("Reading and manipulating neurons from neuPrint ...")
         someneuronlist = hemibrain_read_neurons(x = as.character(batch),
@@ -278,9 +304,6 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
                                                 remove.bad.synapses = FALSE,
                                                 microns = FALSE,
                                                 clean = FALSE)
-      }else{
-        message("Reading locally saved neurons ...")
-        someneuronlist = db[as.character(batch)]
       }
       if(clean){
         someneuronlist = hemibrain_clean_skeleton(someneuronlist, rval = "neuron")
@@ -313,7 +336,7 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
           selected = phaseI[["selected"]]
           someneuronlist = phaseI[["someneuronlist"]]
           mes <- NULL
-          someneuronlist[selected] <- hemibrain_settags(someneuronlist[selected],manual_edit = rep(TRUE,length(mes)))
+          someneuronlist[names(mes)] <- hemibrain_settags(someneuronlist[names(mes)],manual_edit = rep(TRUE,length(mes)))
         }else{
           selected <- as.character(batch)
         }
@@ -326,6 +349,10 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
                                     manual = manual,
                                     update_regularly = update_regularly,
                                     selected_file = selected_file)
+        }else if(phases == "I"){
+          if(!is.issue(selected)){
+            someneuronlist[selected] = hemibrain_settags(someneuronlist[selected],manual_edit = rep(TRUE,length(selected)))
+          }
         }
         if(phases == "III" | length(mes)){
           ### Review the changes
@@ -370,7 +397,7 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
       }
       ### Update our checks on Google Sheet
       message("Updating task completion ...")
-      if(phases == "I" & update_regularly){
+      if(phases == "I" & update_regularly & sample(1:10,1)==10 ){
         message("Checking status of task by reading Google Sheet ...")
         if(motivate){plot_inspirobot()}
         gs = googlesheets4::read_sheet(ss = selected_file, sheet = "roots")
@@ -379,7 +406,7 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
       update1 = hemibrain_seetags(someneuronlist)
       checked = suppress(as.numeric(purify(gs[rows,]$checked)))
       users = unlist(gs[rows,]$user)
-      users= paste0(users,"/",initials)
+      users= paste(users[users!=initials],initials, sep = "/")
       checked[is.na(checked)] = 0
       update2 = data.frame(
         checked = checked + 1,
@@ -424,7 +451,7 @@ gsheet_manipulation <- function(FUN, ...){
       success = TRUE
     }else{
       Sys.sleep(sleep)
-      message("Google sheet read failures, re-trying in ", sleep," seconds ...")
+      message("Google sheet read/write failure(s), re-trying in ", sleep," seconds ...")
       sleep = sleep + 10
       if(sleep > 600){
         slep <- 600
@@ -486,7 +513,7 @@ manual editing
     }
     plot3d_split(someneuronlist[i], soma.alpha = 0.5)
     chc <- must_be(prompt = "
-Return to continue, b to go back, s to select (needs edit), n to make a note
+Return to continue, b to go back, s to (de)select (needs edit), n to make a note
 (i.e. truncated, cropped, bad soma, unsplittable, bad skeletoniztion, custom),
 c to cancel (with selection) ",
                    answers = c("","b","s","n","c"))
@@ -635,7 +662,8 @@ check_undoneids <- function(undone.ids,
   }
   ### Get assigned IDs
   if(assignments){
-    gs.a = gs[gs$user==initials,]
+    gs.b = gs[!is.na(gs$user),]
+    gs.a = gs.b[gs.b$user==initials,]
     undone.ids.a = intersect(undone.ids,gs.a$bodyid)
     if(is.issue(undone.ids.a)){
       warning("There are no unchecked neurons to select assigned to ", initials)
