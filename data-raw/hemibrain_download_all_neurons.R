@@ -40,11 +40,15 @@ message("Neuron bodyids: ", length(all.bodyids))
 # Read all neurons
 all.neurons = neuprint_read_neurons(all.bodyids,.parallel = TRUE, all_segments = TRUE)
 missing = setdiff(all.bodyids, names(all.neurons))
-missing.neurons = neuprint_read_neurons(all.bodyids,.parallel = TRUE, all_segments = TRUE, heal.threshold = 10000)
-all.neurons = c(all.neurons, missing.neurons)
+if(length(missing)){
+  missing.neurons = neuprint_read_neurons(missing,.parallel = TRUE, all_segments = TRUE, heal = 10000)
+  all.neurons = c(all.neurons, missing.neurons)
+}
 missing = setdiff(all.bodyids, names(all.neurons))
-missing.neurons = neuprint_read_neurons(all.bodyids,.parallel = TRUE, all_segments = TRUE, heal = FALSE)
-all.neurons = c(all.neurons, missing.neurons)
+if(length(missing)){
+  missing.neurons = neuprint_read_neurons(missing,.parallel = TRUE, all_segments = TRUE, heal = FALSE)
+  all.neurons = c(all.neurons, missing.neurons)
+}
 save(all.neurons, file = "/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/hemibrain_all_neurons.rda")
 message("Neurons read: ", length(all.neurons))
 
@@ -59,8 +63,4 @@ message("Checked ", length(all.neurons.checked), " neurons")
 # Save
 save(all.neurons.checked, file = "/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/hemibrain_all_neurons_flow_checked.rda")
 message("Checked ", length(all.neurons.checked), " neurons")
-
-
-
-
 
