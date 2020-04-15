@@ -18,7 +18,6 @@
 # selected_file = "1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E"
 # selected_col = "#fadadd"
 
-
 # hidden
 ## Set up Google Drive file as database
 setup_splitcheck_sheet <-function(selected_file = "1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E"){
@@ -121,16 +120,19 @@ hemibrain_task_update <- function(bodyids,
   rows = match(bodyids, gs$bodyid)
   rows = rows[!is.na(rows)]
   letter = LETTERS[match(column,colnames(gs))]
-  range = paste0(letter,min(rows)+1,":",letter,max(rows)+1)
   if(length(update)!=length(rows)){
-    update = rep(update, length(rows))
+    update = rep(update[1], length(rows))
   }
-  gsheet_manipulation(FUN = googlesheets4::sheets_edit,
+  for(r in 1:length(rows)){
+    row = rows[r]
+    range = paste0(letter,row+1)
+    gsheet_manipulation(FUN = googlesheets4::sheets_edit,
                         ss = selected_file,
                         range = range,
-                        data = data.frame(update),
+                        data = data.frame(update[r]),
                         sheet = "roots",
                         col_names = FALSE)
+  }
   message("Task updated! ")
 }
 
@@ -449,7 +451,7 @@ gsheet_manipulation <- function(FUN, ...){
       success = TRUE
     }else{
       Sys.sleep(sleep)
-      message("Google sheet read failures, re-trying in ", sleep," seconds ...")
+      message("Google sheet read/write failure(s), re-trying in ", sleep," seconds ...")
       sleep = sleep + 10
       if(sleep > 600){
         slep <- 600
