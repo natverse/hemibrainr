@@ -6,4 +6,7 @@ test_that("hemibrain_read_neurons works", {
             'neuronlist')
   expect_false(any(duplicated(colnames(kcg2))))
 
+  n=kcg2[[1]]
+  n.um=scale_neurons(n, scaling = 8/1000)
+  expect_equal(n.um$d$W,n$d$W*8/1000)
 })
