@@ -78,7 +78,7 @@ setup_splitcheck_sheet <-function(selected_file = "1YjkVjokXL4p4Q6BR-rGGGKWecXU3
                              sheet = "roots")
   batches = split(1:nrow(roots), ceiling(seq_along(1:nrow(roots))/5000))
   for(i in batches){
-    gsheet_manipulation(FUN = googlesheets4::sheets_append,
+    gsheet_manipulation(FUN = googlesheets4::sheet_append,
                         data = roots[min(i):max(i),],
                         ss = selected_file,
                         sheet = "roots")
@@ -131,7 +131,7 @@ hemibrain_task_update <- function(bodyids,
   for(r in 1:length(rows)){
     row = rows[r]
     range = paste0(letter,row+1)
-    gsheet_manipulation(FUN = googlesheets4::sheets_edit,
+    gsheet_manipulation(FUN = googlesheets4::range_write,
                         ss = selected_file,
                         range = range,
                         data = data.frame(update[r]),
@@ -195,6 +195,7 @@ hemibrain_task_update <- function(bodyids,
 #' through branches as a quick way to assign axon/dendrite.}
 #' \item{Phase III}{ - Review manually modified neurons.}
 #' }
+#' If you have authentication issues with the Google sheet, look \href{(https://googlesheets4.tidyverse.org/articles/articles/auth.html)}{here} first.
 #' Video tutorial: \url{https://drive.google.com/open?id=1FB7m1QFKApysO74maHAx-yg2CQWkx49C}
 #' @examples
 #' \donttest{
@@ -308,7 +309,8 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
                                                 savedir = FALSE,
                                                 remove.bad.synapses = FALSE,
                                                 microns = FALSE,
-                                                clean = FALSE)
+                                                clean = FALSE,
+                                                OmitFailures = TRUE)
       }
       if(clean){
         someneuronlist = hemibrain_clean_skeleton(someneuronlist, rval = "neuron")
@@ -393,7 +395,7 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
         if(nrow(mes.sp)){
           message("Saving new manual splits ...")
           success = FALSE
-          gsheet_manipulation(FUN = googlesheets4::sheets_append,
+          gsheet_manipulation(FUN = googlesheets4::sheet_append,
                               data = mes.sp[,colnames(manual)],
                               ss = selected_file,
                               sheet = "manual")
@@ -411,7 +413,9 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
       update1 = hemibrain_seetags(someneuronlist)
       checked = suppress(as.numeric(purify(gs[rows,]$checked)))
       users = unlist(gs[rows,]$user)
+      users = users[users!="flyconnectome"]
       users= paste(users[users!=initials],initials, sep = "/")
+      users = gsub("^/","",users)
       checked[is.na(checked)] = 0
       update2 = data.frame(
         checked = checked + 1,
@@ -423,7 +427,7 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
       rownames(update) = rows
       for(r in rows){
         range = paste0("H",r+1,":Q",r+1)
-        gsheet_manipulation(FUN = googlesheets4::sheets_edit,
+        gsheet_manipulation(FUN = googlesheets4::range_write,
                             ss = selected_file,
                             range = range,
                             data = update[as.character(r),intersect(colnames(gs),colnames(update))],
@@ -756,6 +760,10 @@ ENTER to continue (with notes made), c to cancel (without notes made).
       message("Skeletonization status is: ", x$tags$skeletonization)
     }else if (chc == "r"){
       x$tags$soma <- !hemibrain_choice(prompt = "Is this neuron missing its soma/obvious tract to soma? yes/no ")
+      if(x$tags$soma){
+        reset <- hemibrain_choice(prompt = "Does the soma need to be manually re-set? yes/no ")
+        x$tags$soma <- ifelse(reset,"manual",TRUE)
+      }
       message("Soma status is: ", x$tags$soma)
     }else if (chc == "k"){
       x$tags$cut <- hemibrain_iscropped()

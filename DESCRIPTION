@@ -18,13 +18,13 @@ Suggests:
     testthat (>= 2.1.0),
     knitr,
     rmarkdown,
-    covr,
-    googlesheets4
+    covr
 VignetteBuilder: knitr
 Depends:
     R (>= 3.1),
     neuprintr (>= 0.4),
-    nat,
+    nat  (>= 1.10.1),
+    googlesheets4 (>= 0.1.1.9100)
 Imports:
     igraph,
     nat.templatebrains,

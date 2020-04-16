@@ -8,6 +8,7 @@
 hemibrain_task_update(
   bodyids,
   update,
+  gs = NULL,
   selected_file = "1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E",
   column = c("soma", "cut", "truncated", "manual_edit", "splittable", "checked",
     "user", "time", "note", "priority", "edited.cable", "skeletonization")
@@ -106,6 +107,7 @@ so it is good to define these first for a neuron, and then cycle
 through branches as a quick way to assign axon/dendrite.}
 \item{Phase III}{ - Review manually modified neurons.}
 }
+If you have authentication issues with the Google sheet, look \href{(https://googlesheets4.tidyverse.org/articles/articles/auth.html)}{here} first.
 Video tutorial: \url{https://drive.google.com/open?id=1FB7m1QFKApysO74maHAx-yg2CQWkx49C}
 }
 \examples{

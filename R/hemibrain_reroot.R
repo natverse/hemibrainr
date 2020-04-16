@@ -278,7 +278,6 @@ hemibrain_skeleton_check <- function(x, # as read by neuprint_read_neurons
 
   # Re-root somas where necessary
   x.nosoma = x[!x[,"soma"]]
-  # has to be nat setdiff not base one, so must prefix (or import)
   x.soma = nat::setdiff(x,x.nosoma)
   if(length(x.nosoma)){
     message("Re-rooting ", length(x.nosoma), " neurons without a soma")
