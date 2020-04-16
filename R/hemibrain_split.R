@@ -777,7 +777,7 @@ hemibrain_flow_centrality.neuronlist <- function(x, splitpoints = hemibrainr::he
   if(length(missed)>0){
     warning(length(missed), " neurons are not represented in the given splitpoints: ", paste(names(missed),collapse=", "))
   }
-  y = hemibrain_use_splitpoints(x, splitpoints, knn = knn, ...)
+  y = nat::nlapply(x, FUN = hemibrain_use_splitpoints, splitpoints, knn = knn, ...)
   y
 }
 
