@@ -464,6 +464,8 @@ hemibrain_seetags.neuron <- function(x,...){
 #' @export
 hemibrain_seetags.neuronlist<-function(x,...){
   data = lapply(x,hemibrain_seetags.neuron,...)
-  do.call(plyr::rbind.fill, data)
+  data = do.call(plyr::rbind.fill, data)
+  data[is.na(data)] = "none"
+  data
 }
 

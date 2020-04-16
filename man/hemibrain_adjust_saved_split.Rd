@@ -121,6 +121,16 @@ Video tutorial: \url{https://drive.google.com/open?id=1FB7m1QFKApysO74maHAx-yg2C
 \dontrun{
 # Assign mPN review to Nik Drummond (ND)
 hemibrain_task_update(bodyids = mpn.ids, column = "user", update = "ND")
+
+# Assign members of the FlyConnectome group to work on their favourite neurons:
+ton.batches = split(hemibrainr::ton.ids, ceiling(seq_along(1:length(hemibrainr::ton.ids))/2700))
+hemibrain_task_update(bodyids = c(hemibrainr::upn.ids,hemibrainr::mpn.ids, hemibrainr::orn.ids), column = "user", update = "ND", gs = gs)
+hemibrain_task_update(bodyids = hemibrainr::dan.ids, column = "user", update = "GD", gs = gs)
+hemibrain_task_update(bodyids = c(hemibrainr::vppn.ids,hemibrainr::hrn.ids), column = "user", update = "RT", gs = gs)
+hemibrain_task_update(bodyids = hemibrainr::alln.ids, column = "user", update = "TS", gs = gs)
+hemibrain_task_update(bodyids = hemibrainr::mbon.ids, column = "user", update = "MWP", gs = gs)
+hemibrain_task_update(bodyids = ton.batches[[1]], column = "user", update = "AJ", gs = gs)hemibrain_task_update(bodyids = ton.batches[[2]], column = "user", update = "IT", gs = gs)
+hemibrain_task_update(bodyids = ton.batches[[3]], column = "user", update = "JH", gs = gs)
 }}
 \donttest{
 \dontrun{

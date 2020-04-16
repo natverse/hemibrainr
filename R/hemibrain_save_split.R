@@ -309,29 +309,8 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
       ranks = purify(gs[match(batch,gs$bodyid),"priority"])
       message("Highest priority neuron under consideration: ", max(ranks, na.rm=TRUE))
       ### Read batch
-      message("Reading batch of ", batch_size," neurons from the hemibrain project")
-      readfail = FALSE
-      if(!is.null(db)){
-        message("Reading locally saved neurons ...")
-        someneuronlist = tryCatch( db[as.character(batch)], error = function(e) NULL)
-        if(is.null(someneuronlist)){
-          message("Errors reading from given neuronlist, reading batch from neuPrint instead ...")
-          readfail = TRUE
-        }
-      }
-      if(is.null(db)|readfail){
-        if(motivate){plot_inspirobot()}
-        message("Reading and manipulating neurons from neuPrint ...")
-        someneuronlist = hemibrain_read_neurons(x = as.character(batch),
-                                                savedir = FALSE,
-                                                remove.bad.synapses = FALSE,
-                                                microns = FALSE,
-                                                clean = FALSE,
-                                                OmitFailures = TRUE)
-      }
-      if(clean){
-        someneuronlist = hemibrain_clean_skeleton(someneuronlist, rval = "neuron")
-      }
+      message("Reading batch of ", batch_size," hemibrain neurons")
+      someneuronlist = pipeline_read_neurons(batch = batch, db = db, clean = clean, motivate = motivate)
       ### Get vectors that we will need to update
       edits = replace_with_none(purify(gs[match(names(someneuronlist), gs$bodyid),"manual_edit"]))
       notes = replace_with_none(purify(gs[match(names(someneuronlist), gs$bodyid),"note"]))
@@ -348,6 +327,8 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
                                          cut = cuts,
                                          skeletonization = skels,
                                          soma = somas)
+      message("Current entries:")
+      print(knitr::kable(hemibrain_seetags(someneuronlist)))
       ### Let's Go. For. It.
       satisfied = FALSE
       while(!satisfied){
@@ -828,9 +809,46 @@ hemibrain_adjust_saved_somas <- function(bodyids = hemibrainr::hemibrain_neuron_
   ### Get cell body fibre information
   meta = neuprint_get_meta(bodyids)
   cbfs = unique(meta$cellBodyFiber)
+  ### For each CBF, correct somas ...
+  for(cbf in cbfs){
+    ids = subset(meta, meta$cellBodyFiber == cbf)
+    ids = as.character(ids$bodyid)
+    someneuronlist = pipeline_read_neurons(batch = ids, db = db, clean = clean, motivate = FALSE)
+
+  }
 
 }
 
+
+# hidden
+pipeline_read_neurons <- function(batch,
+                                  db = NULL,
+                                  motivate = TRUE,
+                                  clean = TRUE){
+  readfail = FALSE
+  if(!is.null(db)){
+    message("Reading locally saved neurons ...")
+    someneuronlist = tryCatch( db[as.character(batch)], error = function(e) NULL)
+    if(is.null(someneuronlist)){
+      message("Errors reading from given neuronlist, reading batch from neuPrint instead ...")
+      readfail = TRUE
+    }
+  }
+  if(is.null(db)|readfail){
+    if(motivate){plot_inspirobot()}
+    message("Reading and manipulating neurons from neuPrint ...")
+    someneuronlist = hemibrain_read_neurons(x = as.character(batch),
+                                            savedir = FALSE,
+                                            remove.bad.synapses = FALSE,
+                                            microns = FALSE,
+                                            clean = FALSE,
+                                            OmitFailures = TRUE)
+  }
+  if(clean){
+    someneuronlist = hemibrain_clean_skeleton(someneuronlist, rval = "neuron")
+  }
+  someneuronlist
+}
 
 
 
