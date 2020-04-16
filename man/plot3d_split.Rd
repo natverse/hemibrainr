@@ -3,6 +3,7 @@
 \name{plot3d_split}
 \alias{plot3d_split}
 \alias{nlscan_split}
+\alias{plot3d_somas}
 \title{Plot neurons split up by flow centrality}
 \usage{
 plot3d_split(
@@ -36,6 +37,13 @@ nlscan_split(
   selected_col = "#fadadd",
   yaml = TRUE,
   ...
+)
+
+plot3d_somas(
+  x,
+  col = hemibrainr::hemibrain_bright_colors["green"],
+  radius = 300,
+  soma.alpha = 0.5
 )
 }
 \arguments{

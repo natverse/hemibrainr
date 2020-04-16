@@ -468,4 +468,14 @@ hemibrain_seetags.neuronlist<-function(x,...){
   data[is.na(data)] = "none"
   data
 }
+# hidden
+hemibrain_carryover_tags <- function(x, y){
+   tags = names(x$tags)
+   if(!is.issue(tags)){
+     for(t in tags){
+       y$tags[t] <- x$tags[[t]]
+     }
+   }
+  y
+}
 

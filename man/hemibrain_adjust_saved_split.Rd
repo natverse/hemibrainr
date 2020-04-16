@@ -11,7 +11,7 @@ hemibrain_task_update(
   update,
   gs = NULL,
   selected_file = "1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E",
-  column = c("soma", "cut", "truncated", "manual_edit", "splittable", "checked",
+  column = c("soma.edit", "cut", "truncated", "manual_edit", "splittable", "checked",
     "user", "time", "note", "priority", "edited.cable", "skeletonization")
 )
 
@@ -35,6 +35,8 @@ hemibrain_adjust_saved_split(
 
 hemibrain_adjust_saved_somas(
   bodyids = hemibrainr::hemibrain_neuron_bodyids(),
+  brain = hemibrainr::hemibrain.surf,
+  lock = TRUE,
   db = NULL
 )
 }

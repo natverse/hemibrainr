@@ -44,7 +44,8 @@ Imports:
     png,
     googledrive,
     jsonlite,
-    plyr
+    plyr,
+    catmaid
 Remotes: 
     natverse/neuprintr,
     tidyverse/googlesheets4

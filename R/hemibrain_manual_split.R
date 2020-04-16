@@ -149,7 +149,8 @@ hemibrain_prune_online.neuron <- function (x, brain = NULL, Label = NULL, lock =
     continue = must_be("Finished with this selection? yes/no ", answers = c("y","yes","n","no"))
     rgl::pop3d(id = unlist(ids))
   }
-  frag = carryover_tags(x = x, y = frag)
+  frag = hemibrain_carryover_tags(x = x, y = frag)
+  frag = hemibrain_carryover_labels(x=x,y=frag)
   frag
 }
 
@@ -219,10 +220,10 @@ hemibrain_correctsoma <- function(x, ...) {
   is.there.a.soma = hemibrain_choice(prompt = "Is there even a soma for this neuron? yes/no ")
   if(is.there.a.soma){
     if(is.null( x$tags$soma)){
-    x$tags$soma = "automatic"
+    x$tags$soma = TRUE
     }
   }else{
-    x$tags$soma = "missing"
+    x$tags$soma = FALSE
     message("Soma recorded as missing. Please still choose a sensible 'root' point ")
   }
   while(progress %in% c("n", "no")) {
@@ -237,15 +238,16 @@ hemibrain_correctsoma <- function(x, ...) {
       } else if (length(selected.point)) {
         corrected = nat::as.neuron(nat::as.ngraph(x), origin = selected.point)
         corrected = hemibrain_carryover_labels(y = corrected, x = x)
+        corrected = hemibrain_carryover_tags(x=x,y=corrected)
         reset3d(...)
         plot3d_split(corrected, ...)
       }
-      x$tags$soma = "manual"
       x$tags$manual_edit = TRUE
+      x$tags$edited.soma = TRUE
       progress = must_be(prompt = "Good enough? yes/no  ", answers = c("y","yes","n","no"))
   }
   x = add_Label(x = x, PointNo = selected.point, Label = 1, erase = TRUE)
-  corrected = carryover_tags(x = x, y = corrected)
+  corrected = hemibrain_carryover_tags(x = x, y = corrected)
   corrected
 }
 

@@ -29,8 +29,8 @@ setup_splitcheck_sheet <-function(selected_file = "1YjkVjokXL4p4Q6BR-rGGGKWecXU3
   ### Underlying data.frame for database
   roots$type = hemibrainr::hemibrain_metrics[as.character(roots$bodyid),"type"]
   roots$type[is.na(roots$type)] = paste0("unknown_",roots$bodyid[is.na(roots$type)] )
-  roots$soma = hemibrainr::hemibrain_metrics[as.character(roots$bodyid),"soma"]
-  roots[as.character(i),]$soma = unlist(nullToNA(lhn.gs[as.character(i),]$hasSoma))
+  roots$soma.edit = !hemibrainr::hemibrain_metrics[as.character(roots$bodyid),"soma"]
+  #roots[as.character(i),]$soma = unlist(nullToNA(lhn.gs[as.character(i),]$hasSoma))
   roots$cut = hemibrainr::hemibrain_metrics[as.character(roots$bodyid),"cropped"]
   roots[as.character(i),]$cut = unlist(nullToNA(lhn.gs[as.character(i),]$cropped2))
   roots$truncated = roots$cut
@@ -84,9 +84,6 @@ setup_splitcheck_sheet <-function(selected_file = "1YjkVjokXL4p4Q6BR-rGGGKWecXU3
   roots[c(hemibrainr::lhn.ids),"user"] = "AJ"
   roots[ton.batches[[1]],"user"] = "IT"
   roots[ton.batches[[2]],"user"] = "JH"
-
-
-
   ### Write to Google Sheet
   googlesheets4::write_sheet(roots[0,],
                              ss = selected_file,
@@ -129,7 +126,7 @@ hemibrain_task_update <- function(bodyids,
                                  update,
                                  gs = NULL,
                                  selected_file = "1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E",
-                                 column = c("soma","cut", "truncated", "manual_edit", "splittable", "checked", "user",
+                                 column = c("soma.edit","cut", "truncated", "manual_edit", "splittable", "checked", "user",
                                               "time", "note", "priority", "edited.cable", "skeletonization")
                                  ){
   column = match.arg(column)
@@ -318,7 +315,7 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
       splittable = replace_with_none(purify(gs[match(names(someneuronlist), gs$bodyid),"splittable"]))
       cuts = replace_with_none(purify(gs[match(names(someneuronlist), gs$bodyid),"cut"]))
       skels = replace_with_none(purify(gs[match(names(someneuronlist), gs$bodyid),"skeletonization"]))
-      somas = replace_with_none(purify(gs[match(names(someneuronlist), gs$bodyid),"soma"]))
+      soma.edits = replace_with_none(purify(gs[match(names(someneuronlist), gs$bodyid),"soma.edit"]))
       someneuronlist = hemibrain_settags(someneuronlist,
                                          manual_edit = edits,
                                          note = notes,
@@ -326,7 +323,7 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
                                          splittable = splittable,
                                          cut = cuts,
                                          skeletonization = skels,
-                                         soma = somas)
+                                         soma.edit = soma.edits)
       message("Current entries:")
       print(knitr::kable(hemibrain_seetags(someneuronlist)))
       ### Let's Go. For. It.
@@ -728,11 +725,11 @@ hemibrain_perfectstart <-function(x, ...) UseMethod("hemibrain_perfectstart")
 hemibrain_perfectstart.neuron <- function(x, ...){
   x$tags$manual_edit = FALSE
   x$tags$cut = FALSE
-  x$tags$soma = "automatic"
+  x$tags$soma.edit = "automatic"
   x$tags$truncated = FALSE
   x$tags$splittable = TRUE
   x$tags$skeletonization = "good"
-  x$tags$soma = "automatic"
+  x$tags$soma.edit = "automatic"
   x$tags$note = "none"
   x
 }
@@ -770,12 +767,12 @@ ENTER to continue (with notes made), c to cancel (without notes made).
       x$tags$skeletonization <- dec
       message("Skeletonization status is: ", x$tags$skeletonization)
     }else if (chc == "r"){
-      x$tags$soma <- !hemibrain_choice(prompt = "Is this neuron missing its soma/obvious tract to soma? yes/no ")
-      if(x$tags$soma){
+      x$tags$soma.edit <- !hemibrain_choice(prompt = "Is this neuron missing its soma/obvious tract to soma? yes/no ")
+      if(x$tags$soma.edit){
         reset <- hemibrain_choice(prompt = "Does the soma need to be manually re-set? yes/no ")
-        x$tags$soma <- ifelse(reset,"manual",TRUE)
+        x$tags$soma.edit <- ifelse(reset,"manual",TRUE)
       }
-      message("Soma status is: ", x$tags$soma)
+      message("Soma status is: ", x$tags$soma.edit)
     }else if (chc == "k"){
       x$tags$cut <- hemibrain_iscropped()
       if(x$tags$cut %in% c(TRUE,"TRUE","MB")){
@@ -800,24 +797,124 @@ ENTER to continue (with notes made), c to cancel (without notes made).
   x
 }
 
-
 #' @export
 #' @rdname hemibrain_adjust_saved_split
 hemibrain_adjust_saved_somas <- function(bodyids = hemibrainr::hemibrain_neuron_bodyids(),
+                                         brain = hemibrainr::hemibrain.surf,
+                                         lock = TRUE,
                                          db = NULL){
-
+  ### Get GoogleSheet Database
+  gs = googlesheets4::read_sheet(ss = selected_file, sheet = "roots")
+  gs = as.data.frame(gs)
+  gs = gs[!is.na(gs$bodyid),]
   ### Get cell body fibre information
   meta = neuprint_get_meta(bodyids)
   cbfs = unique(meta$cellBodyFiber)
-  ### For each CBF, correct somas ...
+  ### For each CBF, correct somas
   for(cbf in cbfs){
+    message("Examining cell body fibre: ", cbf)
     ids = subset(meta, meta$cellBodyFiber == cbf)
     ids = as.character(ids$bodyid)
-    someneuronlist = pipeline_read_neurons(batch = ids, db = db, clean = clean, motivate = FALSE)
+    neurons = pipeline_read_neurons(batch = ids, db = db, clean = clean, motivate = FALSE)
+    continue = TRUE
+    while(isTRUE(continue)){
+      ### PLot
+      reset3d(brain=brain)
+      pnts = primary_neurite_cable(neurons, OmitFailures = TRUE)
+      plot3d(pnts, lwd = 2, col = hemibrainr::hemibrain_bright_colors["purple"], soma = FALSE)
+      plot3d(neurons, lwd = 2, col = hemibrainr::hemibrain_bright_colors["cerise"], soma = FALSE)
+      plot3d_somas(pnts)
+      ###
+      mode <- must_be(prompt = "Which mode do you want to use? single neurons (s) / group (g)",answers = c("s","g"))
+      if(mode=="s"){
+        neurons = correct_singles(neurons, brain = brain)
+      }
+      if(mode=="g"){
+        neurons = correct_group(neurons, brain = brain)
+      }
+      continue <- !hemibrain_choice(prompt = paste0("Are we finished with ", cbf,"? yes/no "))
+    }
 
   }
 
 }
+
+# hidden
+correct_singles <- function(neurons, brain = NULL){
+  message("select neurons that you would like to re-root:")
+  selected = as.character(nlscan_split(neurons, brain = brain))
+  for(s in selected){
+    reset3d(brain=brain)
+    x = neurons[[s]]
+    y = hemibrain_correctsoma(x)
+    y <- carryover_tags(x=x,y=y)
+    y$tags$soma.edit = TRUE
+    y <- hemibrain_neuron_class(y)
+    neurons[[s]] = y
+  }
+  y
+}
+
+# hidden
+correct_group <- function(neurons, brain = NULL){
+  ### Cycle
+  continue = TRUE
+  while (isTRUE(continue)) {
+    ### Extract primary neurites, as labelled
+    neuron.points = do.call(plyr::rbind.fill, lapply(neurons, function(x) x$d))
+    points = nat::xyzmatrix(neuron.points)
+    pnts = primary_neurite_cable(neurons, OmitFailures = TRUE)
+    ### Plot
+    reset3d(brain=brain)
+    plot3d(pnts, lwd = 2, col = hemibrainr::hemibrain_bright_colors["purple"], soma = FALSE)
+    plot3d(neurons, lwd = 2, col = hemibrainr::hemibrain_bright_colors["cerise"], soma = FALSE)
+    plot3d_somas(pnts)
+    ### Should we continue?
+    continue <- hemibrain_choice(prompt = c("Select new soma points? yes/no "))
+    if(!continue){
+      break
+    }
+    ### Select region to reroot
+    make.selection = TRUE
+    while(make.selection){
+      angle <- readline(prompt = "Position data in order to make selection ")
+      message("Draw box over true soma region")
+      selection <- rgl::select3d()
+      selected <- selection(points)
+      selected.points <- neuron.points[selected,]
+      bis <- unique(selected.points$bodyid)
+      bis <- bis[!is.na(bis)]
+      message("Points in ", length(bis)," neurons selected")
+      make.selection <- !hemibrain_choice(prompt = c("Happy with selection? yes/no "))
+    }
+    ### Reroot neurons in selection
+    if(!is.issue(bis)){
+      for(bi in bis){
+        x <- neurons[[bi]]
+        eps <- nat::endpoints(x)
+        ep.sel <- selection(nat::xyzmatrix(x)[eps,])
+        ep.sel <- eps[ep.sel][1]
+        if(is.issue(ep.sel)){
+          eps <- nat::branchpoints(x)
+          ep.sel <- selection(nat::xyzmatrix(x)[eps,])
+          ep.sel <- eps[ep.sel][1]
+        }
+        if(!is.issue(ep.sel)){
+          soma.id <- x$d$PointNo[match(ep.sel, 1:nrow(x$d))]
+          y <- nat::as.neuron(nat::as.ngraph(x$d), origin = soma.id)
+          y <- hemibrain_carryover_labels(x=x,y=y)
+          y <- hemibrain_carryover_tags(x=x,y=y)
+          y$tags$soma.edit <- TRUE
+          y$tags$soma <- soma.id
+          y = hemibrain_neuron_class(y)
+          neurons[[bi]] <- y
+        }
+      }
+    }
+  }
+  neurons
+}
+
 
 
 # hidden
