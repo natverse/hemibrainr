@@ -580,7 +580,7 @@ hemibrain_use_splitpoints.neuron <-function(x, df, knn = FALSE, ...){
     }
 
     # Assign root and mark soma
-    y = nat::as.neuron(nat::as.ngraph(x$d), origin = root)
+    y = nat::as.neuron(nat::as.ngraph(x$d), origin = x$d$PointNo[match(root, 1:nrow(x$d))])
     y$connectors = x$connectors
     n = nat::as.ngraph(y$d)
     y$tags$soma = root

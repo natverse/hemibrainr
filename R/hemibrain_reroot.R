@@ -80,7 +80,7 @@ hemibrain_reroot.neuron <- function(x, meshes = hemibrainr::hemibrain.surf, ...)
     }else{
       root = longest.out[1]
     }
-    y = nat::as.neuron(nat::as.ngraph(x$d), origin = c(root))
+    y = nat::as.neuron(nat::as.ngraph(x$d), origin = x$d$PointNo[match(root, 1:nrow(x$d))])
     y$d$Label = x$d$Label[match(y$d$PointNo, x$d$PointNo)]
     y$connectors = x$connectors
     y$connectors$treenode_id = y$d$PointNo[match(x$connectors$treenode_id, y$d$PointNo)]
