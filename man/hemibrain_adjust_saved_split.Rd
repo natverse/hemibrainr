@@ -3,6 +3,7 @@
 \name{hemibrain_task_update}
 \alias{hemibrain_task_update}
 \alias{hemibrain_adjust_saved_split}
+\alias{hemibrain_adjust_saved_somas}
 \title{Manually review split neurons and save your results to a Google Sheet for everyone to use}
 \usage{
 hemibrain_task_update(
@@ -30,6 +31,11 @@ hemibrain_adjust_saved_split(
   selected_file = "1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E",
   selected_col = "#fadadd",
   ...
+)
+
+hemibrain_adjust_saved_somas(
+  bodyids = hemibrainr::hemibrain_neuron_bodyids(),
+  db = NULL
 )
 }
 \arguments{

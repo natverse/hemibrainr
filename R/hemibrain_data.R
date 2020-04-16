@@ -36,6 +36,9 @@
 #' @name classed.ids
 #' @rdname classed.ids
 "ton.ids"
+#' @name classed.ids
+#' @rdname classed.ids
+"lhn.ids"
 
 #' The hemibrain mesh
 #'

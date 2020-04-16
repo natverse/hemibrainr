@@ -102,7 +102,9 @@ usethis::use_data(hemibrain_al.surf, overwrite = TRUE)
 
 # Just save the ORN and HRN bodyids
 ton.ids = read.csv("data-raw/annotations/bodyids_thirdorder.csv")
+lhn.ids = read.csv("data-raw/annotations/bodyids_lhns.csv")
 ton.ids = purify(ton.ids$x)
+lhn.ids = purify(lhn.ids$x)
 rn.ids = class2ids("RN", possible = TRUE)
 orn.ids = class2ids("ORN")
 hrn.ids = class2ids("HRN")
@@ -116,6 +118,7 @@ mbon.ids = class2ids("MBON")
 
 ## Use them bodyids
 usethis::use_data(ton.ids, overwrite = TRUE)
+usethis::use_data(lhn.ids, overwrite = TRUE)
 usethis::use_data(rn.ids, overwrite = TRUE)
 usethis::use_data(orn.ids, overwrite = TRUE)
 usethis::use_data(hrn.ids, overwrite = TRUE)

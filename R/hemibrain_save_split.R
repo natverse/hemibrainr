@@ -55,7 +55,7 @@ setup_splitcheck_sheet <-function(selected_file = "1YjkVjokXL4p4Q6BR-rGGGKWecXU3
   mbon.ids = class2ids("MBON")
   ### Prioritise the neurons we care about most
   roots$priority = 0
-  roots$priority[roots$bodyid%in%lhn.gs$bodyId] = 3
+  roots$priority[roots$bodyid%in%ton.ids] = 2
   roots$priority[roots$bodyid%in%alln.ids] = 2
   roots$priority[roots$bodyid%in%dan.ids] = 2
   roots$priority[roots$bodyid%in%pn.ids] = 2
@@ -65,6 +65,7 @@ setup_splitcheck_sheet <-function(selected_file = "1YjkVjokXL4p4Q6BR-rGGGKWecXU3
   roots$priority[roots$bodyid%in%vppn.ids] = 1
   roots$priority[roots$bodyid%in%orn.ids] = 1
   roots$priority[roots$bodyid%in%hrn.ids] = 1
+  roots$priority[roots$bodyid%in%lhn.gs$bodyId] = 3
   roots = roots[order(roots$bodyid, decreasing = TRUE),]
   roots = roots[order(roots$priority, decreasing = TRUE),]
   ### Get ready to record cable edits
@@ -72,6 +73,20 @@ setup_splitcheck_sheet <-function(selected_file = "1YjkVjokXL4p4Q6BR-rGGGKWecXU3
   ### Record original values
   roots$orig.soma = hemibrainr::hemibrain_metrics[as.character(roots$bodyid),"soma"]
   roots$orig.cut = hemibrainr::hemibrain_metrics[as.character(roots$bodyid),"cropped"]
+  ### Assign users
+  rownames(roots) = roots$bodyid
+  ton.batches = split(ton.ids, ceiling(seq_along(1:length(ton.ids))/2800))
+  roots[c(hemibrainr::upn.ids,hemibrainr::mpn.ids, hemibrainr::orn.ids),"user"] = "ND"
+  roots[c(hemibrainr::dan.ids),"user"] = "GD"
+  roots[c(hemibrainr::vppn.ids,hemibrainr::hrn.ids),"user"] = "RT"
+  roots[c(hemibrainr::mbon.ids),"user"] = "MWP"
+  roots[c(hemibrainr::alln.ids),"user"] = "TS"
+  roots[c(hemibrainr::lhn.ids),"user"] = "AJ"
+  roots[ton.batches[[1]],"user"] = "IT"
+  roots[ton.batches[[2]],"user"] = "JH"
+
+
+
   ### Write to Google Sheet
   googlesheets4::write_sheet(roots[0,],
                              ss = selected_file,
@@ -89,15 +104,7 @@ setup_splitcheck_sheet <-function(selected_file = "1YjkVjokXL4p4Q6BR-rGGGKWecXU3
   ### Some assignments for tracers in the FlyConnectome group
   gs = googlesheets4::read_sheet(ss = selected_file, sheet = "roots")
   gs = as.data.frame(gs)
-  ton.batches = split(hemibrainr::ton.ids, ceiling(seq_along(1:length(hemibrainr::ton.ids))/2700))
-  hemibrain_task_update(bodyids = c(hemibrainr::upn.ids,hemibrainr::mpn.ids, hemibrainr::orn.ids), column = "user", update = "ND", gs = gs)
-  hemibrain_task_update(bodyids = hemibrainr::dan.ids, column = "user", update = "GD", gs = gs)
-  hemibrain_task_update(bodyids = c(hemibrainr::vppn.ids,hemibrainr::hrn.ids), column = "user", update = "RT", gs = gs)
-  hemibrain_task_update(bodyids = hemibrainr::alln.ids, column = "user", update = "TS", gs = gs)
-  hemibrain_task_update(bodyids = hemibrainr::mbon.ids, column = "user", update = "MWP", gs = gs)
-  hemibrain_task_update(bodyids = ton.batches[[1]], column = "user", update = "AJ", gs = gs)
-  hemibrain_task_update(bodyids = ton.batches[[2]], column = "user", update = "IT", gs = gs)
-  hemibrain_task_update(bodyids = ton.batches[[3]], column = "user", update = "JH", gs = gs)
+
 }
 
 #' @examples
@@ -105,6 +112,16 @@ setup_splitcheck_sheet <-function(selected_file = "1YjkVjokXL4p4Q6BR-rGGGKWecXU3
 #' \dontrun{
 #' # Assign mPN review to Nik Drummond (ND)
 #' hemibrain_task_update(bodyids = mpn.ids, column = "user", update = "ND")
+#'
+#' # Assign members of the FlyConnectome group to work on their favourite neurons:
+#' ton.batches = split(hemibrainr::ton.ids, ceiling(seq_along(1:length(hemibrainr::ton.ids))/2700))
+#' hemibrain_task_update(bodyids = c(hemibrainr::upn.ids,hemibrainr::mpn.ids, hemibrainr::orn.ids), column = "user", update = "ND", gs = gs)
+#' hemibrain_task_update(bodyids = hemibrainr::dan.ids, column = "user", update = "GD", gs = gs)
+#' hemibrain_task_update(bodyids = c(hemibrainr::vppn.ids,hemibrainr::hrn.ids), column = "user", update = "RT", gs = gs)
+#' hemibrain_task_update(bodyids = hemibrainr::alln.ids, column = "user", update = "TS", gs = gs)
+#' hemibrain_task_update(bodyids = hemibrainr::mbon.ids, column = "user", update = "MWP", gs = gs)
+#' hemibrain_task_update(bodyids = ton.batches[[1]], column = "user", update = "AJ", gs = gs)hemibrain_task_update(bodyids = ton.batches[[2]], column = "user", update = "IT", gs = gs)
+#' hemibrain_task_update(bodyids = ton.batches[[3]], column = "user", update = "JH", gs = gs)
 #' }}
 #' @export
 #' @rdname hemibrain_adjust_saved_split
@@ -446,10 +463,10 @@ prepare_update <- function(someneuronlist,
     time = Sys.time())
   update = cbind(update1,update2)
   update[is.na(update)] = ""
-  update = update[,colnames(update)!="bodyid"]
-  rownames(update) = rows
+  update = update3 = update[,colnames(update)!="bodyid"]
+  rownames(update) = rows + 1
   message("Your updates: ")
-  print(knitr::kable(update))
+  print(knitr::kable(update3))
   update
 }
 
