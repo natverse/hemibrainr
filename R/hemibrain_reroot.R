@@ -42,7 +42,6 @@
 hemibrain_reroot <-function(x, meshes = hemibrainr::hemibrain.surf, ...)
   UseMethod("hemibrain_reroot")
 
-
 #' @export
 hemibrain_reroot.neuron <- function(x, meshes = hemibrainr::hemibrain.surf, ...){
   # Find out of volume points

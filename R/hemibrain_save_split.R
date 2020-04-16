@@ -375,6 +375,7 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
           phases = "complete"
         }
         ### Continue?
+        update = prepare_update(someneuronlist=someneuronlist,gs=gs,initials=initials)
         satisfied = !hemibrain_choice(prompt = "Final check: Do you want to run the edit process again? yes/no
                                      ")
       }
@@ -409,23 +410,8 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
         if(motivate){plot_inspirobot()}
         gs = googlesheets4::read_sheet(ss = selected_file, sheet = "roots")
       }
+      update = prepare_update(someneuronlist=someneuronlist,gs=gs,initials=initials)
       rows = match(names(someneuronlist), purify(gs$bodyid))
-      update1 = hemibrain_seetags(someneuronlist)
-      checked = suppress(as.numeric(purify(gs[rows,]$checked)))
-      users = unlist(gs[rows,]$user)
-      users[users=="flyconnectome"] = ""
-      users = gsub(initials,"",users)
-      users= paste(users,initials, sep = "/")
-      users = gsub("^/","",users)
-      checked[is.na(checked)] = 0
-      update2 = data.frame(
-        checked = checked + 1,
-        user = users,
-        time = Sys.time())
-      update = cbind(update1,update2)
-      update[is.na(update)] = ""
-      update = update[,colnames(update)!="bodyid"]
-      rownames(update) = rows
       for(r in rows){
         range = paste0("H",r+1,":Q",r+1)
         gsheet_manipulation(FUN = googlesheets4::range_write,
@@ -439,6 +425,32 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
       say_encouragement(greet = initials)
     }
   }
+}
+
+# hidden
+prepare_update <- function(someneuronlist,
+                           gs,
+                           initials){
+  rows = match(names(someneuronlist), purify(gs$bodyid))
+  update1 = hemibrain_seetags(someneuronlist)
+  checked = suppress(as.numeric(purify(gs[rows,]$checked)))
+  users = unlist(gs[rows,]$user)
+  users[users=="flyconnectome"] = ""
+  users = gsub(initials,"",users)
+  users= paste(users,initials, sep = "/")
+  users = gsub("^/","",users)
+  checked[is.na(checked)] = 0
+  update2 = data.frame(
+    checked = checked + 1,
+    user = users,
+    time = Sys.time())
+  update = cbind(update1,update2)
+  update[is.na(update)] = ""
+  update = update[,colnames(update)!="bodyid"]
+  rownames(update) = rows
+  message("Your updates: ")
+  print(knitr::kable(update))
+  update
 }
 
 # hidden
@@ -789,3 +801,21 @@ ENTER to continue (with notes made), c to cancel (without notes made).
   }
   x
 }
+
+
+#' @export
+#' @rdname hemibrain_adjust_saved_split
+hemibrain_adjust_saved_somas <- function(bodyids = hemibrainr::hemibrain_neuron_bodyids(),
+                                         db = NULL){
+
+  ### Get cell body fibre information
+  meta = neuprint_get_meta(bodyids)
+  cbfs = unique(meta$cellBodyFiber)
+
+}
+
+
+
+
+
+

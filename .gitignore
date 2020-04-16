@@ -10,3 +10,4 @@ examples
 inst/doc
 docs/
 *hemibrain_data/
+data-raw/annotations/
