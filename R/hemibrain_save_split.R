@@ -413,8 +413,9 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
       update1 = hemibrain_seetags(someneuronlist)
       checked = suppress(as.numeric(purify(gs[rows,]$checked)))
       users = unlist(gs[rows,]$user)
-      users = users[users!="flyconnectome"]
-      users= paste(users[users!=initials],initials, sep = "/")
+      users[users=="flyconnectome"] = ""
+      users = gsub(initials,"",users)
+      users= paste(users,initials, sep = "/")
       users = gsub("^/","",users)
       checked[is.na(checked)] = 0
       update2 = data.frame(
