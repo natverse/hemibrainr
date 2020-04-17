@@ -98,10 +98,6 @@ setup_splitcheck_sheet <-function(selected_file = "1YjkVjokXL4p4Q6BR-rGGGKWecXU3
   googlesheets4::write_sheet(manual[0,],
                              ss = selected_file,
                              sheet = "manual")
-  ### Some assignments for tracers in the FlyConnectome group
-  gs = googlesheets4::read_sheet(ss = selected_file, sheet = "roots")
-  gs = as.data.frame(gs)
-
 }
 
 #' @examples
