@@ -40,7 +40,7 @@ nlscan_split(
 )
 
 plot3d_somas(
-  x,
+  someneuronlist,
   col = hemibrainr::hemibrain_bright_colors["green"],
   radius = 300,
   soma.alpha = 0.5
