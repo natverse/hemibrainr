@@ -219,6 +219,10 @@ hemibrain_task_update <- function(bodyids,
 #' db = hemibrain_neurons()
 #' nat::nopen3d()
 #' hemibrain_adjust_saved_split(db=db)
+#'
+#' # We can also try to correct somas en masse
+#' nat::nopen3d()
+#' hemibrain_adjust_somas()
 #' }}
 #' @export
 #' @rdname hemibrain_adjust_saved_split
@@ -246,13 +250,11 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
                       ss = selected_file,
                       sheet = "roots",
                       return = TRUE)
-  gs = as.data.frame(gs)
   gs = gs[!is.na(gs$bodyid),]
   manual = gsheet_manipulation(FUN = googlesheets4::read_sheet,
                            ss = selected_file,
                            sheet = "manual",
                            return = TRUE)
-  manual = as.data.frame(manual)
   manual = manual[!is.na(manual$bodyid),]
   say_hello(greet = initials)
   ### Process data
@@ -409,9 +411,9 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
         gs = googlesheets4::read_sheet(ss = selected_file, sheet = "roots")
       }
       update = prepare_update(someneuronlist=someneuronlist,gs=gs,initials=initials)
-      rows = match(names(someneuronlist), purify(gs$bodyid))
+      rows = as.numeric(rownames(update))
       for(r in rows){
-        range = paste0("H",r+1,":Q",r+1)
+        range = paste0("H",r,":Q",r)
         gsheet_manipulation(FUN = googlesheets4::range_write,
                             ss = selected_file,
                             range = range,
@@ -482,6 +484,7 @@ gsheet_manipulation <- function(FUN, ..., return = FALSE){
     }
   }
   if(return){
+    g = as.data.frame(g)
     return(g)
   }
 }
@@ -810,8 +813,10 @@ hemibrain_adjust_saved_somas <- function(bodyids = hemibrainr::hemibrain_neuron_
                                          lock = TRUE,
                                          db = NULL){
   ### Get GoogleSheet Database
-  gs = googlesheets4::read_sheet(ss = selected_file, sheet = "roots")
-  gs = as.data.frame(gs)
+  gs = gsheet_manipulation(FUN = googlesheets4::read_sheet,
+                           ss = selected_file,
+                           sheet = "roots",
+                           return = TRUE)
   gs = gs[!is.na(gs$bodyid),]
   ### Get cell body fibre information
   meta = neuprint_get_meta(bodyids)
@@ -820,17 +825,28 @@ hemibrain_adjust_saved_somas <- function(bodyids = hemibrainr::hemibrain_neuron_
   for(cbf in cbfs){
     message("Examining cell body fibre: ", cbf)
     ids = subset(meta, meta$cellBodyFiber == cbf)
-    ids = as.character(ids$bodyid)
+    ns = neuprint_search(search = cbf,field = "cellBodyFiber",all_segments = TRUE)
+    ids = as.character(ns$bodyid)
     neurons = pipeline_read_neurons(batch = ids, db = db, clean = clean, motivate = FALSE)
     continue = TRUE
+    ### Automatically re-root some neurons that can be
+    if(sum(ns$soma)!=nrow(ns)){
+      # For every neuron with an unlabelled soma
+      pnts = primary_neurite_cable(neurons, OmitFailures = TRUE)
+
+      ## Find closest neuron with a labelled soma, within range
+      ## Move soma tag to closes leaf to that closest soma
+
+
+    }
     while(isTRUE(continue)){
-      ### PLot
+      ### Plot
       reset3d(brain=brain)
       pnts = primary_neurite_cable(neurons, OmitFailures = TRUE)
       plot3d(pnts, lwd = 2, col = hemibrainr::hemibrain_bright_colors["purple"], soma = FALSE)
       plot3d(neurons, lwd = 2, col = hemibrainr::hemibrain_bright_colors["cerise"], soma = FALSE)
       plot3d_somas(pnts)
-      ###
+      ### Choose how to edit
       mode <- must_be(prompt = "Which mode do you want to use? single neurons (s) / group (g)",answers = c("s","g"))
       if(mode=="s"){
         neurons = correct_singles(neurons, brain = brain)
