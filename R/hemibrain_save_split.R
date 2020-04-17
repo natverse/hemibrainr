@@ -827,7 +827,6 @@ ENTER to continue (with notes made), c to cancel (without notes made).
 #' @rdname hemibrain_adjust_saved_split
 hemibrain_adjust_saved_somas <- function(bodyids = hemibrainr::hemibrain_neuron_bodyids(),
                                          brain = hemibrainr::hemibrain.surf,
-                                         lock = TRUE,
                                          db = NULL){
   ### Get GoogleSheet Database
   gs = gsheet_manipulation(FUN = googlesheets4::read_sheet,

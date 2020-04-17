@@ -36,7 +36,6 @@ hemibrain_adjust_saved_split(
 hemibrain_adjust_saved_somas(
   bodyids = hemibrainr::hemibrain_neuron_bodyids(),
   brain = hemibrainr::hemibrain.surf,
-  lock = TRUE,
   db = NULL
 )
 }
