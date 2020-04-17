@@ -251,7 +251,7 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
                       sheet = "roots",
                       return = TRUE)
   gs = gs[!is.na(gs$bodyid),]
-  if(is.issue(gs)){
+  if(is.null(gs)){
     stop("Google sheet database could not be read: ", selected_file)
   }
   manual = gsheet_manipulation(FUN = googlesheets4::read_sheet,
@@ -417,7 +417,7 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
                                  sheet = "roots",
                                  return = TRUE)
         gs = gs[!is.na(gs$bodyid),]
-        if(is.issue(gs)){
+        if(is.null(gs)){
           gs = gs.safe
         }
       }
