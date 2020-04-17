@@ -144,5 +144,9 @@ hemibrain_adjust_saved_split()
 db = hemibrain_neurons()
 nat::nopen3d()
 hemibrain_adjust_saved_split(db=db)
+
+# We can also try to correct somas en masse
+nat::nopen3d()
+hemibrain_adjust_somas()
 }}
 }
