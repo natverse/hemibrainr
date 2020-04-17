@@ -101,6 +101,7 @@ setup_splitcheck_sheet <-function(selected_file = "1YjkVjokXL4p4Q6BR-rGGGKWecXU3
                              sheet = "manual")
 }
 
+#' @param gs A Google sheet object. FIXME: Alex add details!
 #' @examples
 #' \donttest{
 #' \dontrun{
