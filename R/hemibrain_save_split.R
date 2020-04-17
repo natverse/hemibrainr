@@ -244,12 +244,14 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
   ### Get Google Sheet data
   gs = gsheet_manipulation(FUN = googlesheets4::read_sheet,
                       ss = selected_file,
-                      sheet = "roots")
+                      sheet = "roots",
+                      return = TRUE)
   gs = as.data.frame(gs)
   gs = gs[!is.na(gs$bodyid),]
   manual = gsheet_manipulation(FUN = googlesheets4::read_sheet,
                            ss = selected_file,
-                           sheet = "manual")
+                           sheet = "manual",
+                           return = TRUE)
   manual = as.data.frame(manual)
   manual = manual[!is.na(manual$bodyid),]
   say_hello(greet = initials)
@@ -459,7 +461,7 @@ must_be <- function(prompt, answers){
 }
 
 # hidden
-gsheet_manipulation <- function(FUN, ...){
+gsheet_manipulation <- function(FUN, ..., return = FALSE){
   sleep = 10
   success = FALSE
   while(!success){
@@ -478,6 +480,9 @@ gsheet_manipulation <- function(FUN, ...){
         slep <- 600
       }
     }
+  }
+  if(return){
+    return(g)
   }
 }
 
