@@ -109,13 +109,14 @@ setup_splitcheck_sheet <-function(selected_file = "1YjkVjokXL4p4Q6BR-rGGGKWecXU3
 #'
 #' # Assign members of the FlyConnectome group to work on their favourite neurons:
 #' ton.batches = split(hemibrainr::ton.ids, ceiling(seq_along(1:length(hemibrainr::ton.ids))/2700))
-#' hemibrain_task_update(bodyids = c(hemibrainr::upn.ids,hemibrainr::mpn.ids, hemibrainr::orn.ids), column = "user", update = "ND", gs = gs)
-#' hemibrain_task_update(bodyids = hemibrainr::dan.ids, column = "user", update = "GD", gs = gs)
-#' hemibrain_task_update(bodyids = c(hemibrainr::vppn.ids,hemibrainr::hrn.ids), column = "user", update = "RT", gs = gs)
-#' hemibrain_task_update(bodyids = hemibrainr::alln.ids, column = "user", update = "TS", gs = gs)
-#' hemibrain_task_update(bodyids = hemibrainr::mbon.ids, column = "user", update = "MWP", gs = gs)
-#' hemibrain_task_update(bodyids = ton.batches[[1]], column = "user", update = "AJ", gs = gs)hemibrain_task_update(bodyids = ton.batches[[2]], column = "user", update = "IT", gs = gs)
-#' hemibrain_task_update(bodyids = ton.batches[[3]], column = "user", update = "JH", gs = gs)
+#' hemibrain_task_update(bodyids = c(hemibrainr::upn.ids,hemibrainr::mpn.ids, hemibrainr::orn.ids), column = "user", update = "ND")
+#' hemibrain_task_update(bodyids = hemibrainr::dan.ids, column = "user", update = "GD")
+#' hemibrain_task_update(bodyids = c(hemibrainr::vppn.ids,hemibrainr::hrn.ids), column = "user", update = "RT")
+#' hemibrain_task_update(bodyids = hemibrainr::alln.ids, column = "user", update = "TS")
+#' hemibrain_task_update(bodyids = hemibrainr::mbon.ids, column = "user", update = "MWP")
+#' hemibrain_task_update(bodyids = ton.batches[[1]], column = "user", update = "AJ")
+#' hemibrain_task_update(bodyids = ton.batches[[2]], column = "user", update = "IT")
+#' hemibrain_task_update(bodyids = ton.batches[[3]], column = "user", update = "JH")
 #' }}
 #' @export
 #' @rdname hemibrain_adjust_saved_split
@@ -447,21 +448,23 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
 # hidden
 prepare_update <- function(someneuronlist,
                            gs,
-                           initials){
+                           initials = NULL){
   rows = match(names(someneuronlist), purify(gs$bodyid))
-  update1 = hemibrain_seetags(someneuronlist)
+  update = hemibrain_seetags(someneuronlist)
   checked = suppress(as.numeric(purify(gs[rows,]$checked)))
-  users = unlist(gs[rows,]$user)
-  users[users=="flyconnectome"] = ""
-  users = gsub(initials,"",users)
-  users= paste(users,initials, sep = "/")
-  users = gsub("^/","",users)
-  checked[is.na(checked)] = 0
-  update2 = data.frame(
-    checked = checked + 1,
-    user = users,
-    time = Sys.time())
-  update = cbind(update1,update2)
+  if(!is.null(initials)){
+    users = unlist(gs[rows,]$user)
+    users[users=="flyconnectome"] = ""
+    users = gsub(initials,"",users)
+    users= paste(users,initials, sep = "/")
+    users = gsub("^/","",users)
+    checked[is.na(checked)] = 0
+    update2 = data.frame(
+      checked = checked + 1,
+      user = users,
+      time = Sys.time())
+    update = cbind(update,update2)
+  }
   update[is.na(update)] = ""
   update = update3 = update[,colnames(update)!="bodyid"]
   rownames(update) = rows + 1
@@ -846,16 +849,6 @@ hemibrain_adjust_saved_somas <- function(bodyids = hemibrainr::hemibrain_neuron_
     ids = as.character(ns$bodyid)
     neurons = pipeline_read_neurons(batch = ids, db = db, clean = clean, motivate = FALSE)
     continue = TRUE
-    ### Automatically re-root some neurons that can be
-    if(sum(ns$soma)!=nrow(ns)){
-      # For every neuron with an unlabelled soma
-      pnts = primary_neurite_cable(neurons, OmitFailures = TRUE)
-
-      ## Find closest neuron with a labelled soma, within range
-      ## Move soma tag to closes leaf to that closest soma
-
-
-    }
     while(isTRUE(continue)){
       ### Plot
       reset3d(brain=brain)
@@ -873,6 +866,25 @@ hemibrain_adjust_saved_somas <- function(bodyids = hemibrainr::hemibrain_neuron_
       }
       continue <- !hemibrain_choice(prompt = paste0("Are we finished with ", cbf,"? yes/no "))
     }
+    ### Save to Google Sheet
+    update = prepare_update(someneuronlist=neurons,gs=gs,initials=initials)
+    rows = as.numeric(rownames(update))
+    for(r in rows){
+      range = paste0("H",r,":Q",r)
+      up = update[as.character(r),intersect(colnames(gs),colnames(update))]
+      if(sum(is.na(up))>1){
+        messge("Erroneuous NAs generated for row ", r, ", dropping this update")
+        print(up)
+        next
+      }
+      gsheet_manipulation(FUN = googlesheets4::range_write,
+                          ss = selected_file,
+                          range = range,
+                          data = up,
+                          sheet = "roots",
+                          col_names = FALSE)
+    }
+    message("Task updated! ")
 
   }
 
@@ -886,6 +898,7 @@ correct_singles <- function(neurons, brain = NULL){
     reset3d(brain=brain)
     x = neurons[[s]]
     y = hemibrain_correctsoma(x)
+    y <- carryover_labels(x=x,y=y)
     y <- carryover_tags(x=x,y=y)
     y$tags$soma.edit = TRUE
     y <- hemibrain_neuron_class(y)
@@ -954,8 +967,6 @@ correct_group <- function(neurons, brain = NULL){
   neurons
 }
 
-
-
 # hidden
 pipeline_read_neurons <- function(batch,
                                   db = NULL,
@@ -987,6 +998,21 @@ pipeline_read_neurons <- function(batch,
 }
 
 
+# hidden
+cbf_somagroup <- function(neurons){
+  if(sum(ns$soma)!=nrow(ns)){
+    # For every neuron with an unlabelled soma
+    pnts = primary_neurite_cable(neurons, OmitFailures = TRUE)
 
+    neurons.soma = neurons[neurons[,"soma"]]
+    somapos.soma <- as.data.frame(catmaid::soma(neurons.soma))
+
+    neurons.nosoma = neurons[!neurons[,"soma"]]
+    somapos.soma <- as.data.frame(catmaid::soma(neurons.nosoma))
+
+    ## Find closest neuron with a labelled soma, within range
+    ## Move soma tag to closes leaf to that closest soma
+  }
+}
 
 
