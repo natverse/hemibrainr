@@ -76,14 +76,15 @@ setup_splitcheck_sheet <-function(selected_file = "1YjkVjokXL4p4Q6BR-rGGGKWecXU3
   ### Assign users
   rownames(roots) = roots$bodyid
   ton.batches = split(ton.ids, ceiling(seq_along(1:length(ton.ids))/2800))
-  roots[c(hemibrainr::upn.ids,hemibrainr::mpn.ids, hemibrainr::orn.ids),"user"] = "ND"
-  roots[c(hemibrainr::dan.ids),"user"] = "GD"
-  roots[c(hemibrainr::vppn.ids,hemibrainr::hrn.ids),"user"] = "RT"
-  roots[c(hemibrainr::mbon.ids),"user"] = "MWP"
-  roots[c(hemibrainr::alln.ids),"user"] = "TS"
-  roots[c(hemibrainr::lhn.ids),"user"] = "AJ"
-  roots[ton.batches[[1]],"user"] = "IT"
-  roots[ton.batches[[2]],"user"] = "JH"
+  roots[roots$bodyid%in%c(hemibrainr::upn.ids,hemibrainr::mpn.ids, hemibrainr::orn.ids),"user"] = "ND"
+  roots[roots$bodyid%in%c(hemibrainr::dan.ids),"user"] = "GD"
+  roots[roots$bodyid%in%c(hemibrainr::vppn.ids,hemibrainr::hrn.ids),"user"] = "RT"
+  roots[roots$bodyid%in%c(hemibrainr::mbon.ids),"user"] = "MWP"
+  roots[roots$bodyid%in%c(hemibrainr::alln.ids),"user"] = "TS"
+  roots[roots$bodyid%in%c(hemibrainr::lhn.ids),"user"] = "AJ"
+  roots[roots$bodyid%in%ton.batches[[1]],"user"] = "IT"
+  roots[roots$bodyid%in%ton.batches[[2]],"user"] = "JH"
+  roots = subset(roots, !is.na(roots$bodyid))
   ### Write to Google Sheet
   googlesheets4::write_sheet(roots[0,],
                              ss = selected_file,
@@ -241,10 +242,14 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
   if(motivate){plot_inspirobot()}
   initials = readline(prompt = "What are your initials? ")
   ### Get Google Sheet data
-  gs = googlesheets4::read_sheet(ss = selected_file, sheet = "roots")
+  gs = gsheet_manipulation(FUN = googlesheets4::read_sheet,
+                      ss = selected_file,
+                      sheet = "roots")
   gs = as.data.frame(gs)
   gs = gs[!is.na(gs$bodyid),]
-  manual = googlesheets4::read_sheet(ss = selected_file, sheet = "manual")
+  manual = gsheet_manipulation(FUN = googlesheets4::read_sheet,
+                           ss = selected_file,
+                           sheet = "manual")
   manual = as.data.frame(manual)
   manual = manual[!is.na(manual$bodyid),]
   say_hello(greet = initials)
@@ -670,7 +675,7 @@ check_undoneids <- function(undone.ids,
   ### Choose particular IDs if selected
   if(!is.null(bodyids)){
     undone.ids = intersect(bodyids, undone.ids)
-    nids = intersect(bodyids, undone.ids)
+    nids = setdiff(bodyids, undone.ids)
     if(length(nids)){
       message("Some of the given IDs have already been examined by < check_users: ", paste(nids,collapse=", "))
       message("Examining ", length(undone.ids)," ids")
