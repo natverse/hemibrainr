@@ -52,7 +52,7 @@ hemibrain_roi_meshes <- function(rois=NULL, microns = FALSE, superLevel=NULL, Om
   hemibrain.rois <- nlapply(fakelist, function(roi) {
     mesh = neuprint_ROI_mesh(roi)
     if(microns){
-      mesh*(8/1000)
+      mesh <- mesh*(8/1000)
       nat.templatebrains::regtemplate(mesh) = "JRCFIB2018F"
     }else{
       nat.templatebrains::regtemplate(mesh) = "JRCFIB2018Fraw"
