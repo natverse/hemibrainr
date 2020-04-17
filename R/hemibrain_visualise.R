@@ -235,11 +235,11 @@ nlscan_split <- function (someneuronlist,
 
 #' @export
 #' @rdname plot3d_split
-plot3d_somas <- function(x,
+plot3d_somas <- function(someneuronlist,
                          col = hemibrainr::hemibrain_bright_colors["green"],
                          radius = 300,
                          soma.alpha = 1){
-  somapos <- as.data.frame(catmaid::soma(neurons))
+  somapos <- as.data.frame(catmaid::soma(someneuronlist))
   somapos <- somapos[!is.na(somapos$X),]
   rgl::spheres3d(somapos, radius = radius, alpha = soma.alpha, col = col)
 }

@@ -101,6 +101,7 @@ setup_splitcheck_sheet <-function(selected_file = "1YjkVjokXL4p4Q6BR-rGGGKWecXU3
                              sheet = "manual")
 }
 
+#' @param gs A Google sheet object. FIXME: Alex add details!
 #' @examples
 #' \donttest{
 #' \dontrun{
@@ -428,7 +429,7 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
         range = paste0("H",r,":Q",r)
         up = update[as.character(r),intersect(colnames(gs),colnames(update))]
         if(sum(is.na(up))>1){
-          messge("Erroneuous NAs generated for row ", r, ", dropping this update")
+          message("Erroneuous NAs generated for row ", r, ", dropping this update")
           print(up)
           next
         }
@@ -830,7 +831,6 @@ ENTER to continue (with notes made), c to cancel (without notes made).
 #' @rdname hemibrain_adjust_saved_split
 hemibrain_adjust_saved_somas <- function(bodyids = hemibrainr::hemibrain_neuron_bodyids(),
                                          brain = hemibrainr::hemibrain.surf,
-                                         lock = TRUE,
                                          db = NULL){
   ### Get GoogleSheet Database
   gs = gsheet_manipulation(FUN = googlesheets4::read_sheet,
@@ -845,7 +845,7 @@ hemibrain_adjust_saved_somas <- function(bodyids = hemibrainr::hemibrain_neuron_
   for(cbf in cbfs){
     message("Examining cell body fibre: ", cbf)
     ids = subset(meta, meta$cellBodyFiber == cbf)
-    ns = neuprint_search(search = cbf,field = "cellBodyFiber",all_segments = TRUE)
+    ns = neuprint::neuprint_search(search = cbf,field = "cellBodyFiber",all_segments = TRUE)
     ids = as.character(ns$bodyid)
     neurons = pipeline_read_neurons(batch = ids, db = db, clean = clean, motivate = FALSE)
     continue = TRUE
