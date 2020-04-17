@@ -238,7 +238,7 @@ nlscan_split <- function (someneuronlist,
 plot3d_somas <- function(x,
                          col = hemibrainr::hemibrain_bright_colors["green"],
                          radius = 300,
-                         soma.alpha = 0.5){
+                         soma.alpha = 1){
   somapos <- as.data.frame(catmaid::soma(neurons))
   somapos <- somapos[!is.na(somapos$X),]
   rgl::spheres3d(somapos, radius = radius, alpha = soma.alpha, col = col)
