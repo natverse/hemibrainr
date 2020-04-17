@@ -27,6 +27,7 @@
 #'}
 #' @name hemibrain_colours
 #' @export
+#' @importFrom grDevices colorRampPalette
 hemibrain_colours <- hemibrain_colors <- c(red = "#A53600", magenta = "#B32DB5", midblue = "#0072B2",
                                            darkgold = "#908827", green = "#348E53", blue = "#053CFF")
 #' @rdname hemibrain_colours
