@@ -425,10 +425,16 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
       rows = as.numeric(rownames(update))
       for(r in rows){
         range = paste0("H",r,":Q",r)
+        up = update[as.character(r),intersect(colnames(gs),colnames(update))]
+        if(sum(is.na(up))>1){
+          messge("Erroneuous NAs generated for row ", r, ", dropping this update")
+          print(up)
+          next
+        }
         gsheet_manipulation(FUN = googlesheets4::range_write,
                             ss = selected_file,
                             range = range,
-                            data = update[as.character(r),intersect(colnames(gs),colnames(update))],
+                            data = up,
                             sheet = "roots",
                             col_names = FALSE)
       }
