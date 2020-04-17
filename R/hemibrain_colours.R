@@ -36,13 +36,18 @@ hemibrain_colour_ramp = grDevices::colorRampPalette(hemibrain_colours)
 
 #' @rdname hemibrain_colours
 #' @export
-hemibrain_bright_colours <- hemibrain_bright_colors <- c(purple = "#C70E7B", pink = "#FC6882", blue = "#007BC3", cyan = "#54BCD1",
+hemibrain_bright_colours <- c(purple = "#C70E7B", pink = "#FC6882", blue = "#007BC3", cyan = "#54BCD1",
                                                          darkorange = "#EF7C12", paleorange = "#F4B95A", darkgreen = "#009F3F",
                                                          green = "#8FDA04", brown = "#AF6125", palebrown = "#F4E3C7",
                                                          mauve = "#B25D91", lightpink = "#EFC7E6", orange = "#EF7C12",
                                                          midorange = "#F4B95A", darkred = "#C23A4B", darkyellow = "#FBBB48",
                                                          yellow = "#EFEF46", palegreen = "#31D64D", navy = "#132157",
                                                          cerise = "#EE4244", red = "#D72000", marine = "#1BB6AF")
+
+#' @rdname hemibrain_colours
+#' @export
+hemibrain_bright_colors <- hemibrain_bright_colours
+
 #' @rdname hemibrain_colours
 #' @export
 hemibrain_bright_colour_ramp = grDevices::colorRampPalette(hemibrain_bright_colours)

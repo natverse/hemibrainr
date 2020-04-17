@@ -43,7 +43,7 @@ plot3d_somas(
   someneuronlist,
   col = hemibrainr::hemibrain_bright_colors["green"],
   radius = 300,
-  soma.alpha = 0.5
+  soma.alpha = 1
 )
 }
 \arguments{

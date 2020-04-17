@@ -845,7 +845,7 @@ hemibrain_adjust_saved_somas <- function(bodyids = hemibrainr::hemibrain_neuron_
   for(cbf in cbfs){
     message("Examining cell body fibre: ", cbf)
     ids = subset(meta, meta$cellBodyFiber == cbf)
-    ns = neuprint::neuprint_search(search = cbf,field = "cellBodyFiber",all_segments = TRUE)
+    ns = neuprintr::neuprint_search(search = cbf,field = "cellBodyFiber",all_segments = TRUE)
     ids = as.character(ns$bodyid)
     neurons = pipeline_read_neurons(batch = ids, db = db, clean = clean, motivate = FALSE)
     continue = TRUE
