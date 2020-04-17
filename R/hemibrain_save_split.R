@@ -251,6 +251,9 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
                       sheet = "roots",
                       return = TRUE)
   gs = gs[!is.na(gs$bodyid),]
+  if(is.issue(gs)){
+    stop("Google sheet database could not be read: ", selected_file)
+  }
   manual = gsheet_manipulation(FUN = googlesheets4::read_sheet,
                            ss = selected_file,
                            sheet = "manual",
@@ -408,7 +411,15 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
       if(phases == "I" & update_regularly & sample(1:10,1)==10 ){
         message("Checking status of task by reading Google Sheet ...")
         if(motivate){plot_inspirobot()}
-        gs = googlesheets4::read_sheet(ss = selected_file, sheet = "roots")
+        gs.safe = gs
+        gs = gsheet_manipulation(FUN = googlesheets4::read_sheet,
+                                 ss = selected_file,
+                                 sheet = "roots",
+                                 return = TRUE)
+        gs = gs[!is.na(gs$bodyid),]
+        if(is.issue(gs)){
+          gs = gs.safe
+        }
       }
       update = prepare_update(someneuronlist=someneuronlist,gs=gs,initials=initials)
       rows = as.numeric(rownames(update))
