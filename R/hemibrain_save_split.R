@@ -873,7 +873,7 @@ hemibrain_adjust_saved_somas <- function(bodyids = hemibrainr::hemibrain_neuron_
       range = paste0("H",r,":Q",r)
       up = update[as.character(r),intersect(colnames(gs),colnames(update))]
       if(sum(is.na(up))>1){
-        messge("Erroneuous NAs generated for row ", r, ", dropping this update")
+        message("Erroneuous NAs generated for row ", r, ", dropping this update")
         print(up)
         next
       }
