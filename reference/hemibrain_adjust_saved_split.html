@@ -140,8 +140,9 @@ the <a href='https://docs.google.com/spreadsheets/d/1YjkVjokXL4p4Q6BR-rGGGKWecXU
     <pre class="usage"><span class='fu'>hemibrain_task_update</span>(
   <span class='no'>bodyids</span>,
   <span class='no'>update</span>,
+  <span class='kw'>gs</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>selected_file</span> <span class='kw'>=</span> <span class='st'>"1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E"</span>,
-  <span class='kw'>column</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"soma"</span>, <span class='st'>"cut"</span>, <span class='st'>"truncated"</span>, <span class='st'>"manual_edit"</span>, <span class='st'>"splittable"</span>, <span class='st'>"checked"</span>,
+  <span class='kw'>column</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"soma.edit"</span>, <span class='st'>"cut"</span>, <span class='st'>"truncated"</span>, <span class='st'>"manual_edit"</span>, <span class='st'>"splittable"</span>, <span class='st'>"checked"</span>,
     <span class='st'>"user"</span>, <span class='st'>"time"</span>, <span class='st'>"note"</span>, <span class='st'>"priority"</span>, <span class='st'>"edited.cable"</span>, <span class='st'>"skeletonization"</span>)
 )
 
@@ -161,6 +162,12 @@ the <a href='https://docs.google.com/spreadsheets/d/1YjkVjokXL4p4Q6BR-rGGGKWecXU
   <span class='kw'>selected_file</span> <span class='kw'>=</span> <span class='st'>"1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E"</span>,
   <span class='kw'>selected_col</span> <span class='kw'>=</span> <span class='st'>"#fadadd"</span>,
   <span class='no'>...</span>
+)
+
+<span class='fu'>hemibrain_adjust_saved_somas</span>(
+  <span class='kw'>bodyids</span> <span class='kw'>=</span> <span class='kw pkg'>hemibrainr</span><span class='kw ns'>::</span><span class='fu'><a href='hemibrain_googledrive.html'>hemibrain_neuron_bodyids</a></span>(),
+  <span class='kw'>brain</span> <span class='kw'>=</span> <span class='kw pkg'>hemibrainr</span><span class='kw ns'>::</span><span class='no'><a href='hemibrain.surf.html'>hemibrain.surf</a></span>,
+  <span class='kw'>db</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -174,6 +181,10 @@ the <a href='https://docs.google.com/spreadsheets/d/1YjkVjokXL4p4Q6BR-rGGGKWecXU
       <th>update</th>
       <td><p>a vector of <code><a href='https://rdrr.io/r/base/length.html'>length(bodyids)</a></code> or <code>1</code>, which will replace cells in the column specified by <code>column</code> for given bodyids (<code>bodyids</code>).
 E.g. If I wanted to changed the given bodyids on the task sheet to checked = TRUE, I would use <code>update = TRUE</code>.</p></td>
+    </tr>
+    <tr>
+      <th>gs</th>
+      <td><p>A Google sheet object. FIXME: Alex add details!</p></td>
     </tr>
     <tr>
       <th>selected_file</th>
@@ -266,13 +277,29 @@ at a time. This works by removing the primary neurite and linker,
 so it is good to define these first for a neuron, and then cycle
 through branches as a quick way to assign axon/dendrite.</p></li>
 <li><p>Phase III - Review manually modified neurons.</p></li>
-</ul><p>Video tutorial: <a href='https://drive.google.com/open?id=1FB7m1QFKApysO74maHAx-yg2CQWkx49C'>https://drive.google.com/open?id=1FB7m1QFKApysO74maHAx-yg2CQWkx49C</a></p>
+</ul><p>If you have authentication issues with the Google sheet, look <a href='(https://googlesheets4.tidyverse.org/articles/articles/auth.html)'>here</a> first.
+Video tutorial: <a href='https://drive.google.com/open?id=1FB7m1QFKApysO74maHAx-yg2CQWkx49C'>https://drive.google.com/open?id=1FB7m1QFKApysO74maHAx-yg2CQWkx49C</a></p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
 <span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
 <span class='co'># Assign mPN review to Nik Drummond (ND)</span>
 <span class='fu'>hemibrain_task_update</span>(<span class='kw'>bodyids</span> <span class='kw'>=</span> <span class='no'>mpn.ids</span>, <span class='kw'>column</span> <span class='kw'>=</span> <span class='st'>"user"</span>, <span class='kw'>update</span> <span class='kw'>=</span> <span class='st'>"ND"</span>)
+
+<span class='co'># Assign members of the FlyConnectome group to work on their favourite neurons:</span>
+<span class='no'>ton.batches</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/split.html'>split</a></span>(<span class='kw pkg'>hemibrainr</span><span class='kw ns'>::</span><span class='no'><a href='classed.ids.html'>ton.ids</a></span>,
+  <span class='fu'><a href='https://rdrr.io/r/base/Round.html'>ceiling</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq_along</a></span>(<span class='fl'>1</span>:<span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span>(<span class='kw pkg'>hemibrainr</span><span class='kw ns'>::</span><span class='no'><a href='classed.ids.html'>ton.ids</a></span>))/<span class='fl'>2700</span>))
+<span class='fu'>hemibrain_task_update</span>(<span class='kw'>bodyids</span> <span class='kw'>=</span>
+  <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='kw pkg'>hemibrainr</span><span class='kw ns'>::</span><span class='no'><a href='classed.ids.html'>upn.ids</a></span>, <span class='kw pkg'>hemibrainr</span><span class='kw ns'>::</span><span class='no'><a href='classed.ids.html'>mpn.ids</a></span>, <span class='kw pkg'>hemibrainr</span><span class='kw ns'>::</span><span class='no'><a href='classed.ids.html'>orn.ids</a></span>),
+  <span class='kw'>column</span> <span class='kw'>=</span> <span class='st'>"user"</span>, <span class='kw'>update</span> <span class='kw'>=</span> <span class='st'>"ND"</span>)
+<span class='fu'>hemibrain_task_update</span>(<span class='kw'>bodyids</span> <span class='kw'>=</span> <span class='kw pkg'>hemibrainr</span><span class='kw ns'>::</span><span class='no'><a href='classed.ids.html'>dan.ids</a></span>, <span class='kw'>column</span> <span class='kw'>=</span> <span class='st'>"user"</span>, <span class='kw'>update</span> <span class='kw'>=</span> <span class='st'>"GD"</span>)
+<span class='fu'>hemibrain_task_update</span>(<span class='kw'>bodyids</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='kw pkg'>hemibrainr</span><span class='kw ns'>::</span><span class='no'><a href='classed.ids.html'>vppn.ids</a></span>,<span class='kw pkg'>hemibrainr</span><span class='kw ns'>::</span><span class='no'><a href='classed.ids.html'>hrn.ids</a></span>),
+  <span class='kw'>column</span> <span class='kw'>=</span> <span class='st'>"user"</span>, <span class='kw'>update</span> <span class='kw'>=</span> <span class='st'>"RT"</span>)
+<span class='fu'>hemibrain_task_update</span>(<span class='kw'>bodyids</span> <span class='kw'>=</span> <span class='kw pkg'>hemibrainr</span><span class='kw ns'>::</span><span class='no'><a href='classed.ids.html'>alln.ids</a></span>, <span class='kw'>column</span> <span class='kw'>=</span> <span class='st'>"user"</span>, <span class='kw'>update</span> <span class='kw'>=</span> <span class='st'>"TS"</span>)
+<span class='fu'>hemibrain_task_update</span>(<span class='kw'>bodyids</span> <span class='kw'>=</span> <span class='kw pkg'>hemibrainr</span><span class='kw ns'>::</span><span class='no'><a href='classed.ids.html'>mbon.ids</a></span>, <span class='kw'>column</span> <span class='kw'>=</span> <span class='st'>"user"</span>, <span class='kw'>update</span> <span class='kw'>=</span> <span class='st'>"MWP"</span>)
+<span class='fu'>hemibrain_task_update</span>(<span class='kw'>bodyids</span> <span class='kw'>=</span> <span class='no'>ton.batches</span><span class='kw'>[[</span><span class='fl'>1</span>]], <span class='kw'>column</span> <span class='kw'>=</span> <span class='st'>"user"</span>, <span class='kw'>update</span> <span class='kw'>=</span> <span class='st'>"AJ"</span>)
+<span class='fu'>hemibrain_task_update</span>(<span class='kw'>bodyids</span> <span class='kw'>=</span> <span class='no'>ton.batches</span><span class='kw'>[[</span><span class='fl'>2</span>]], <span class='kw'>column</span> <span class='kw'>=</span> <span class='st'>"user"</span>, <span class='kw'>update</span> <span class='kw'>=</span> <span class='st'>"IT"</span>)
+<span class='fu'>hemibrain_task_update</span>(<span class='kw'>bodyids</span> <span class='kw'>=</span> <span class='no'>ton.batches</span><span class='kw'>[[</span><span class='fl'>3</span>]], <span class='kw'>column</span> <span class='kw'>=</span> <span class='st'>"user"</span>, <span class='kw'>update</span> <span class='kw'>=</span> <span class='st'>"JH"</span>)
 }<span class='co'># }</span>
 <span class='co'># \donttest{</span>
 <span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
@@ -284,6 +311,10 @@ through branches as a quick way to assign axon/dendrite.</p></li>
 <span class='no'>db</span> <span class='kw'>=</span> <span class='fu'><a href='hemibrain_read_neurons.html'>hemibrain_neurons</a></span>()
 <span class='kw pkg'>nat</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/nat/man/nopen3d.html'>nopen3d</a></span>()
 <span class='fu'>hemibrain_adjust_saved_split</span>(<span class='kw'>db</span><span class='kw'>=</span><span class='no'>db</span>)
+
+<span class='co'># We can also try to correct somas en masse</span>
+<span class='kw pkg'>nat</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/nat/man/nopen3d.html'>nopen3d</a></span>()
+<span class='fu'>hemibrain_adjust_somas</span>()
 }<span class='co'># }</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
