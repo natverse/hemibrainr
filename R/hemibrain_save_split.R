@@ -109,10 +109,14 @@ setup_splitcheck_sheet <-function(selected_file = "1YjkVjokXL4p4Q6BR-rGGGKWecXU3
 #' hemibrain_task_update(bodyids = mpn.ids, column = "user", update = "ND")
 #'
 #' # Assign members of the FlyConnectome group to work on their favourite neurons:
-#' ton.batches = split(hemibrainr::ton.ids, ceiling(seq_along(1:length(hemibrainr::ton.ids))/2700))
-#' hemibrain_task_update(bodyids = c(hemibrainr::upn.ids,hemibrainr::mpn.ids, hemibrainr::orn.ids), column = "user", update = "ND")
+#' ton.batches = split(hemibrainr::ton.ids,
+#'   ceiling(seq_along(1:length(hemibrainr::ton.ids))/2700))
+#' hemibrain_task_update(bodyids =
+#'   c(hemibrainr::upn.ids, hemibrainr::mpn.ids, hemibrainr::orn.ids),
+#'   column = "user", update = "ND")
 #' hemibrain_task_update(bodyids = hemibrainr::dan.ids, column = "user", update = "GD")
-#' hemibrain_task_update(bodyids = c(hemibrainr::vppn.ids,hemibrainr::hrn.ids), column = "user", update = "RT")
+#' hemibrain_task_update(bodyids = c(hemibrainr::vppn.ids,hemibrainr::hrn.ids),
+#'   column = "user", update = "RT")
 #' hemibrain_task_update(bodyids = hemibrainr::alln.ids, column = "user", update = "TS")
 #' hemibrain_task_update(bodyids = hemibrainr::mbon.ids, column = "user", update = "MWP")
 #' hemibrain_task_update(bodyids = ton.batches[[1]], column = "user", update = "AJ")
