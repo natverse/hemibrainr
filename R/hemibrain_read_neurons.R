@@ -64,7 +64,7 @@ hemibrain_read_neurons<-function(x = NULL,
       if(!is.null(neurons.flow.fh)){
         y = intersect(x,names(neurons.flow.fh))
         z = setdiff(x,names(neurons.flow.fh))
-        if(!length(z)){
+        if(length(z)>0){
           warning("The following bodyids could not be read from your saved neurolistfh object. If they exist, you
                 may need to read them from neuPrint by changing the savedir argument of this function to FALSE: ",
                   paste(z,collapse=", "))
