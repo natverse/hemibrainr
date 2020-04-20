@@ -104,8 +104,7 @@ hemibrain_read_neurons<-function(x = NULL,
 scale_neurons <-function(x, scaling = (8/1000), ...) UseMethod("scale_neurons")
 scale_neurons.neuron <- function(x, scaling, ...){
   nat::xyzmatrix(x$d) = nat::xyzmatrix(x$d)*scaling
-  # special case negative diameter is sometimes used as a signalling value
-  gt0=x$d$W > 0
+  gt0=x$d$W > 0   # special case negative diameter is sometimes used as a signalling value
   x$d$W[gt0] = x$d$W[gt0]*scaling
   nat::xyzmatrix(x$connectors) = nat::xyzmatrix(x$connectors)*scaling
   x
