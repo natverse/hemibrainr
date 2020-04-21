@@ -70,6 +70,10 @@ nat.templatebrains::regtemplate(hemibrain.surf) = "JRCFIB2018Fraw"
 usethis::use_data(hemibrain_microns.surf, overwrite = TRUE)
 usethis::use_data(hemibrain.surf, overwrite = TRUE)
 
+### Other roi meshes
+# hemibrain_rois = hemibrain_roi_meshes()
+# usethis::use_data(hemibrain_rois, overwrite = TRUE)
+
 ### AL glomeruli meshes
 al.objs = list.files("data-raw/AL/",pattern = ".obj",full.names = TRUE)
 al.meshes = sapply(al.objs, readobj::read.obj, convert.rgl = TRUE)
