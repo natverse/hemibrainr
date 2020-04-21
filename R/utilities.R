@@ -163,7 +163,6 @@ remove_duplicates <- function(manual){
   manual[setdiff(rownames(manual),delete),]
 }
 
-
 # hidden
 suppress <- function(x, ...){
   suppressWarnings(suppressMessages(x, ...), ...)
@@ -175,5 +174,17 @@ replace_with_none <- function(x, FUN = is.na){
   x
 }
 
+# hidden
+unlist_df <- function(df){
+  if(nrow(df)&ncol(df)){
+    data = as.data.frame(df)
+    data = apply(data,2,function(c) unlist(nullToNA(c)))
+    data = as.data.frame(unlist(data))
+    dimnames(data) = dimnames(df)
+    data
+  }else{
+    as.data.frame(df)
+  }
+}
 
 
