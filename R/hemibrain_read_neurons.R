@@ -97,6 +97,7 @@ hemibrain_read_neurons<-function(x = NULL,
   }
   neurons.flow[,] = df
   neurons.flow = add_field_seq(neurons.flow,neurons.flow[,"bodyid"],field="bodyid")
+  neurons.flow = metadata_add_tags(neurons.flow)
   neurons.flow
 }
 
@@ -475,6 +476,8 @@ hemibrain_carryover_tags <- function(x, y){
        y$tags[t] <- x$tags[[t]]
      }
    }
+  y$bodyid = x$bodyid
+  y$soma = x$soma
   y
 }
 
