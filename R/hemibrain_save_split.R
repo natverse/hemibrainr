@@ -268,10 +268,15 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
   ### Process data
   message("
           ###Colours###
-          By default: axon = orange, dendrite = blue,
-          linker = green, primary neurite = purple,
-          input = navy, output = red
-          ###Colours###")
+          By default:
+          axon = orange,
+          dendrite = blue,
+          linker = green,
+          primary neurite = purple,
+          input = navy,
+          output = red
+          ###Colours###
+          ")
   ### Get chosen bodyIDs
   undone.ids <- check_undoneids(bodyids = bodyids,
                                 check_thresh = check_thresh,
@@ -739,7 +744,7 @@ check_undoneids <- function(bodyids,
     undone.ids = intersect(bodyids, undone.ids)
     nids = setdiff(bodyids, undone.ids)
     if(length(nids)){
-      message("Some of the given IDs have already been examined by < check_users: ", paste(nids,collapse=", "))
+      message("Some of the given IDs have already been examined by >=", check_thresh ," users: ", paste(nids,collapse=", "))
       message("Examining ", length(undone.ids)," ids")
     }
   }
@@ -870,7 +875,6 @@ hemibrain_adjust_saved_somas <- function(bodyids = hemibrainr::hemibrain_neuron_
                            ss = selected_file,
                            sheet = "roots",
                            return = TRUE)
-  gs = gs[!is.na(gs$bodyid),]
   ### Get cell body fibre information
   meta = neuprint_get_meta(bodyids)
   cbfs = unique(meta$cellBodyFiber)
