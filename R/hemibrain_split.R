@@ -124,6 +124,7 @@ flow_centrality.neuron <- function(x,
                                    ...){
   split = match.arg(split)
   mode = match.arg(mode)
+  x.safe = x
   x$d$Label = 0
   el = x$d[x$d$Parent != -1, c("Parent", "PointNo")]
   n = nat::ngraph(data.matrix(el[, 2:1]), x$d$PointNo, directed = TRUE, xyz = nat::xyzmatrix(x$d), diam = x$d$W)
@@ -133,7 +134,7 @@ flow_centrality.neuron <- function(x,
   segs = x$SegList
   nodes = x$d
   nodes[, c("post","pre","up.syns.in","up.syns.out","flow.cent")] = 0
-  nodes[,"Label"] = 3
+  nodes[,"Label"] = 0
   nodes = nodes[unlist(c(root, lapply(segs, function(x) x[-1]))),]
   nodes = nodes[order(as.numeric(rownames(nodes))), ]
   syns.in = x$connectors[x$connectors$prepost == 1, ][, "treenode_id"]
@@ -322,11 +323,13 @@ flow_centrality.neuron <- function(x,
     }
     else if (choice) {
       nodes[as.character(downstream.unclassed), "Label"] = 2
+      nodes[as.character(upstream.unclassed), "Label"] = 3
       axon.nodes = downstream.unclassed
       dendrite.nodes = upstream.unclassed
     }
     else {
       nodes[as.character(upstream.unclassed), "Label"] = 2
+      nodes[as.character(downstream.unclassed), "Label"] = 3
       axon.nodes = upstream.unclassed
       dendrite.nodes = downstream.unclassed
     }
@@ -336,11 +339,13 @@ flow_centrality.neuron <- function(x,
     dist.downstream.to.primary.branchpoint = suppressWarnings(length(unlist(igraph::shortest_paths(n,to = as.numeric(primary.branch.point), from = as.numeric(downstream.tract.parent))$vpath)))
     if (dist.upstream.to.primary.branchpoint < dist.downstream.to.primary.branchpoint) {
       nodes[as.character(downstream.unclassed), "Label"] = 2
+      nodes[as.character(upstream.unclassed), "Label"] = 3
       axon.nodes = downstream.unclassed
       dendrite.nodes = upstream.unclassed
     }
     else if (dist.upstream.to.primary.branchpoint > dist.downstream.to.primary.branchpoint) {
       nodes[as.character(upstream.unclassed), "Label"] = 2
+      nodes[as.character(downstream.unclassed), "Label"] = 3
       axon.nodes = upstream.unclassed
       dendrite.nodes = downstream.unclassed
     }
@@ -351,22 +356,27 @@ flow_centrality.neuron <- function(x,
                                               "post"])
       if (choice) {
         nodes[as.character(downstream.unclassed), "Label"] = 2
+        nodes[as.character(upstream.unclassed), "Label"] = 3
         axon.nodes = downstream.unclassed
         dendrite.nodes = upstream.unclassed
       }
       else {
         nodes[as.character(upstream.unclassed), "Label"] = 2
+        nodes[as.character(downstream.unclassed), "Label"] = 3
         axon.nodes = upstream.unclassed
         dendrite.nodes = downstream.unclassed
       }
     }
   }
   p.d = as.numeric(unique(unlist(igraph::shortest_paths(n, primary.branch.point, to = highs, mode = "all"))))
+  pd.dists = tryCatch(igraph::distances(n, v = p.d, to = as.numeric(p.d), mode = c("all")),error = function(e) NA)
+  linkers = suppress(tryCatch(rownames(which(pd.dists == max(pd.dists), arr.ind = TRUE)),error = function(e) NULL))
   nodes[p.d, "Label"] = 4
   nodes[p.n, "Label"] = 7
   if(length(p.d)==nrow(nodes)){
     nodes[p.d, "Label"] = 3
     p.d = NULL
+    linkers = NULL
   }
   if(soma){
     if(is.null(p.d)|length(dendrite.nodes)==nrow(nodes)|length(axon.nodes)==nrow(nodes)){
@@ -416,6 +426,7 @@ flow_centrality.neuron <- function(x,
   x$secondary.branch.points = secondary.branch.points
   x$max.flow.centrality = as.numeric(ais)
   x$split = TRUE
+  x = hemibrain_carryover_tags(x = x.safe, y = x)
   x = hemibrain_neuron_class(x)
   x
 }
