@@ -45,7 +45,7 @@ hemibrain_adjust_saved_somas(
 \item{update}{a vector of \code{length(bodyids)} or \code{1}, which will replace cells in the column specified by \code{column} for given bodyids (\code{bodyids}).
 E.g. If I wanted to changed the given bodyids on the task sheet to checked = TRUE, I would use \code{update = TRUE}.}
 
-\item{gs}{A Google sheet object. FIXME: Alex add details!}
+\item{gs}{A Google sheet object, as read by \code{googlesheets4::read_sheet(selected_file)}.}
 
 \item{selected_file}{an optional path to a yaml file that already contains a selection}
 
