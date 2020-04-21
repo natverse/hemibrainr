@@ -290,9 +290,7 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
   ### Make batches
   if(by.type){
     message("You will be presented with ", batch_size, " cell types at a time (which may be more neurons)")
-    pcts = unique(purify(gs[match(undone.ids, gs$bodyid),"type"]))
-    pcts = pcts[order(pcts)]
-    batches = split(pcts, ceiling(seq_along(pcts)/batch_size))
+    batches = type_batches(undone.ids, gs = gs, batch_size = batch_size)
   }else{
     batches = split(undone.ids, ceiling(seq_along(undone.ids)/batch_size))
   }
@@ -454,7 +452,8 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
 # hidden
 prepare_update <- function(someneuronlist,
                            gs,
-                           initials = NULL){
+                           initials = NULL,
+                           print = TRUE){
   rows = match(names(someneuronlist), purify(gs$bodyid))
   update = hemibrain_seetags(someneuronlist)
   checked = suppress(as.numeric(purify(gs[rows,]$checked)))
@@ -474,8 +473,10 @@ prepare_update <- function(someneuronlist,
   update[is.na(update)] = ""
   update = update3 = update[,colnames(update)!="bodyid"]
   rownames(update) = rows + 1
-  message("Your updates: ")
-  print(knitr::kable(update3))
+  if(print){
+    message("Your updates: ")
+    print(knitr::kable(update3))
+  }
   update
 }
 
@@ -869,7 +870,8 @@ ENTER to continue (with notes made), c to cancel (without notes made).
 #' @rdname hemibrain_adjust_saved_split
 hemibrain_adjust_saved_somas <- function(bodyids = hemibrainr::hemibrain_neuron_bodyids(),
                                          brain = hemibrainr::hemibrain.surf,
-                                         db = NULL){
+                                         db = NULL,
+                                         batch_size = 5){
   ### Get GoogleSheet Database
   gs = gsheet_manipulation(FUN = googlesheets4::read_sheet,
                            ss = selected_file,
@@ -878,53 +880,31 @@ hemibrain_adjust_saved_somas <- function(bodyids = hemibrainr::hemibrain_neuron_
   ### Get cell body fibre information
   meta = neuprint_get_meta(bodyids)
   cbfs = unique(meta$cellBodyFiber)
+  cbfs = cbfs[!is.na(cbfs)]
+  cbfs = c(cbfs, "unknown")
   ### For each CBF, correct somas
   for(cbf in cbfs){
     message("Examining cell body fibre: ", cbf)
-    ids = subset(meta, meta$cellBodyFiber == cbf)
-    ns = neuprintr::neuprint_search(search = cbf,field = "cellBodyFiber",all_segments = TRUE)
-    ids = as.character(ns$bodyid)
-    neurons = pipeline_read_neurons(batch = ids, db = db, clean = clean, motivate = FALSE)
-    continue = TRUE
-    while(isTRUE(continue)){
-      ### Plot
-      reset3d(brain=brain)
-      pnts = primary_neurite_cable(neurons, OmitFailures = TRUE)
-      plot3d(pnts, lwd = 2, col = hemibrainr::hemibrain_bright_colors["purple"], soma = FALSE)
-      plot3d(neurons, lwd = 2, col = hemibrainr::hemibrain_bright_colors["cerise"], soma = FALSE)
-      plot3d_somas(pnts)
-      ### Choose how to edit
-      mode <- must_be(prompt = "Which mode do you want to use? single neurons (s) / group (g)",answers = c("s","g"))
-      if(mode=="s"){
-        neurons = correct_singles(neurons, brain = brain)
+    if(cbf == "unknown"){
+      ids = as.character(meta$bodyid)[is.na(meta$cellBodyFiber)]
+      batches = type_batches(ids = ids, batch_size = batch_size, gs = gs)
+      for(b in 1:length(batches)){
+        message(b, "/", length(batches)," batches of neurons without a CBF")
+        batch = batches[[b]]
+        batch = gs$bodyid[gs$type%in%batch]
+        if(is.issue(batch)){
+            next
+        }
+        message("Neurons in batch: ", length(batch))
+        neurons = cbf_check(ids = batch, motivate = FALSE, cbf = cbf)
       }
-      if(mode=="g"){
-        neurons = correct_group(neurons, brain = brain)
-      }
-      continue <- !hemibrain_choice(prompt = paste0("Are we finished with ", cbf,"? yes/no "))
+    }else{
+      ids = subset(meta, meta$cellBodyFiber == cbf)
+      ns = neuprintr::neuprint_search(search = cbf,field = "cellBodyFiber",all_segments = TRUE)
+      ids = as.character(ns$bodyid)
+      neurons = cbf_check(ids = ids, motivate = FALSE)
     }
-    ### Save to Google Sheet
-    update = prepare_update(someneuronlist=neurons,gs=gs,initials=initials)
-    rows = as.numeric(rownames(update))
-    for(r in rows){
-      range = paste0("H",r,":Q",r)
-      up = update[as.character(r),intersect(colnames(gs),colnames(update))]
-      if(sum(is.na(up))>1){
-        message("Erroneuous NAs generated for row ", r, ", dropping this update")
-        print(up)
-        next
-      }
-      gsheet_manipulation(FUN = googlesheets4::range_write,
-                          ss = selected_file,
-                          range = range,
-                          data = up,
-                          sheet = "roots",
-                          col_names = FALSE)
-    }
-    message("Task updated! ")
-
   }
-
 }
 
 # hidden
@@ -945,6 +925,59 @@ correct_singles <- function(neurons, brain = NULL){
 }
 
 # hidden
+cbf_check<-function(ids,
+                    cbf = "unknown batch",
+                    db = NULL,
+                    clean = FALSE,
+                    motivate = FALSE){
+  neurons = pipeline_read_neurons(batch = ids, db = db, clean = FALSE, motivate = motivate)
+  continue = TRUE
+  while(isTRUE(continue)){
+    ### Plot
+    reset3d(brain=brain)
+    pnts = primary_neurite_cable(neurons, OmitFailures = TRUE)
+    rgl::plot3d(pnts, lwd = 2, col = hemibrainr::hemibrain_bright_colors["purple"], soma = FALSE)
+    rgl::plot3d(neurons, lwd = 2, col = hemibrainr::hemibrain_bright_colors["cerise"], soma = FALSE)
+    plot3d_somas(neurons)
+    ### Choose how to edit
+    mode <- must_be(prompt = "Which mode do you want to use? single neurons (s) / group (g) / skip (k)",answers = c("s","g","k"))
+    if(mode=="s"){
+      neurons = correct_singles(neurons, brain = brain)
+    }
+    if(mode=="g"){
+      neurons = correct_group(neurons, brain = brain)
+    }
+    continue <- !hemibrain_choice(prompt = paste0("Are we finished with ", cbf,"? yes/no "))
+  }
+  ### Save to Google Sheet
+  update = prepare_update(someneuronlist=neurons,gs=gs,initials="flyconnectome",print=FALSE)
+  update$position = update$soma
+  update = update[,!colnames(update)%in%c("checked", "user", "time","soma")]
+  update = cbind(update, catmaid::soma(neurons))
+  update$soma.edit = as.logical(update$soma.edit)
+  update = subset(update, update$soma.edit)
+  message("Your updates: ")
+  print(knitr::kable(update))
+  rows = as.numeric(rownames(update))
+  for(r in rows){
+    range = paste0("C",r,":H",r)
+    up = update[as.character(r),intersect(colnames(gs),colnames(update))]
+    if(sum(is.na(up))>1){
+      message("Erroneous NAs generated for row ", r, ", dropping this update")
+      print(up)
+      next
+    }
+    gsheet_manipulation(FUN = googlesheets4::range_write,
+                        ss = selected_file,
+                        range = range,
+                        data = up,
+                        sheet = "roots",
+                        col_names = FALSE)
+  }
+  message("Task updated! ")
+}
+
+# hidden
 correct_group <- function(neurons, brain = NULL){
   ### Cycle
   continue = TRUE
@@ -957,7 +990,7 @@ correct_group <- function(neurons, brain = NULL){
     reset3d(brain=brain)
     plot3d(pnts, lwd = 2, col = hemibrainr::hemibrain_bright_colors["purple"], soma = FALSE)
     plot3d(neurons, lwd = 2, col = hemibrainr::hemibrain_bright_colors["cerise"], soma = FALSE)
-    plot3d_somas(pnts)
+    plot3d_somas(neurons)
     ### Should we continue?
     continue <- hemibrain_choice(prompt = c("Select new soma points? yes/no "))
     if(!continue){
@@ -1031,6 +1064,7 @@ pipeline_read_neurons <- function(batch,
   if(clean){
     someneuronlist = hemibrain_clean_skeleton(someneuronlist, rval = "neuron")
   }
+  someneuronlist = add_field_seq(someneuronlist,someneuronlist[,"bodyid"],field="bodyid")
   someneuronlist
 }
 
@@ -1052,4 +1086,10 @@ cbf_somagroup <- function(neurons){
   }
 }
 
-
+# hidden
+type_batches <- function(ids, gs, batch_size = 10){
+  pcts = unique(purify(gs[match(ids, gs$bodyid),"type"]))
+  pcts = pcts[order(pcts)]
+  batches = split(pcts, ceiling(seq_along(pcts)/batch_size))
+  batches
+}
