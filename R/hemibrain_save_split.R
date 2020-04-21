@@ -23,7 +23,7 @@
 setup_splitcheck_sheet <-function(selected_file = "1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E"){
   ### Set up
   roots = subset(hemibrainr::hemibrain_all_splitpoints, hemibrainr::hemibrain_all_splitpoints$point == "root")
-  lhn.gs = as.data.frame(googlesheets4::read_sheet(ss = "1dH4d3-9aWLvoA8U3bz94JWMXOtW1krzLPnFc7tkgZnM"))
+  lhn.gs = unlist_df(googlesheets4::read_sheet(ss = "1dH4d3-9aWLvoA8U3bz94JWMXOtW1krzLPnFc7tkgZnM"))
   rownames(lhn.gs) = lhn.gs$bodyId
   i = intersect(roots$bodyid,lhn.gs$bodyId)
   ### Underlying data.frame for database
@@ -101,7 +101,7 @@ setup_splitcheck_sheet <-function(selected_file = "1YjkVjokXL4p4Q6BR-rGGGKWecXU3
                              sheet = "manual")
 }
 
-#' @param gs A Google sheet object. FIXME: Alex add details!
+#' @param gs A Google sheet object, as read by \code{googlesheets4::read_sheet(selected_file)}.
 #' @examples
 #' \donttest{
 #' \dontrun{
@@ -136,7 +136,7 @@ hemibrain_task_update <- function(bodyids,
   message("Updating task field: ", column)
   if(is.null(gs)){
     gs = googlesheets4::read_sheet(ss = selected_file, sheet = "roots")
-    gs = as.data.frame(gs)
+    gs = unlist_df(gs)
   }
   bodyids = bodyids[bodyids%in%unlist(gs$bodyid)]
   rows = match(bodyids, gs$bodyid)
@@ -267,17 +267,6 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
   manual = manual[!is.na(manual$bodyid),]
   say_hello(greet = initials)
   ### Process data
-  lookedat = unlist(gs$checked)
-  lookedat[lookedat=="FALSE"] = 0
-  lookedat[lookedat=="TRUE"] = 1
-  undone = gs[lookedat<check_thresh,]
-  undone.ids = unique(undone$bodyid)
-  done = gs[lookedat>=check_thresh,]
-  message(length(unique(done$bodyid)), "/",length(unique(gs$bodyid))," have been checked by at least ",check_thresh," user")
-  users = unlist(done[,"user"])
-  print(table(users))
-  message("Manual splits by users: ")
-  print(table(manual[!duplicated(manual$bodyid),]$user))
   message("
           ###Colours###
           By default: axon = orange, dendrite = blue,
@@ -285,13 +274,8 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
           input = navy, output = red
           ###Colours###")
   ### Get chosen bodyIDs
-  if(phases=="II"){
-    undone = gs[!gs$bodyid %in% unique(manual$bodyid) & gs$manual_edit,]
-  }else if(phases=="III"){
-    undone = gs[gs$bodyid %in% unique(manual$bodyid),]
-  }
-  undone.ids <- check_undoneids(undone.ids = undone.ids,
-                                bodyids = bodyids,
+  undone.ids <- check_undoneids(bodyids = bodyids,
+                                check_thresh = check_thresh,
                                 gs = gs,
                                 phases = phases,
                                 assignments = assignments,
@@ -301,6 +285,7 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
                                 by.type = by.type)
   ### Make batches
   if(by.type){
+    message("You will be presented with ", batch_size, " cell types at a time (which may be more neurons)")
     pcts = unique(purify(gs[match(undone.ids, gs$bodyid),"type"]))
     pcts = pcts[order(pcts)]
     batches = split(pcts, ceiling(seq_along(pcts)/batch_size))
@@ -311,9 +296,14 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
     stop("None of the given bodyIDs have been checked by less than ",check_thresh," user(s)")
   }else{
     for(batch in batches){
+      exit = FALSE
       ### Get bodyids
       if(by.type){
-        batch = purify(unlist(gs$bodyid)[match(batch, unlist(gs$type))])
+        batch = gs$bodyid[gs$type%in%batch]
+        batch = intersect(batch, undone.ids)
+        if(is.issue(batch)){
+          next
+        }
         message("Neurons in batch: ", length(batch))
       }
       ### What priority are we at
@@ -351,6 +341,7 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
                                       selected_col = selected_col)
           selected = phaseI[["selected"]]
           someneuronlist = phaseI[["someneuronlist"]]
+          exit = someneuronlist = phaseI[["exit"]]
           mes <- NULL
           someneuronlist[names(mes)] <- hemibrain_settags(someneuronlist[names(mes)],manual_edit = rep(TRUE,length(mes)))
         }else{
@@ -446,8 +437,12 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
       }
       message("Task updated! ")
       say_encouragement(greet = initials)
+      if(exit){
+        break
+      }
     }
   }
+  message("That's all folks!")
 }
 
 # hidden
@@ -509,7 +504,7 @@ gsheet_manipulation <- function(FUN, ..., return = FALSE){
     }
   }
   if(return){
-    g = as.data.frame(g)
+    g = unlist_df(g)
     return(g)
   }
 }
@@ -533,6 +528,8 @@ splitcheck_phaseI <- function(someneuronlist,
   chc <- NULL
   rgl::bg3d(color = "white")
   reset3d(brain=brain)
+  WithConnectors = TRUE
+  exit = FALSE
   while(TRUE) {
     if (i > length(neurons) || i < 1){
       reset3d(brain=brain)
@@ -565,16 +562,25 @@ manual editing
     }else{
       rgl::bg3d(color = "white")
     }
-    plot3d_split(someneuronlist[i], soma.alpha = 0.5)
+    plot3d_split(someneuronlist[i], soma.alpha = 0.5, WithConnectors = WithConnectors)
     chc <- must_be(prompt = "
-Return to continue, b to go back, s to (de)select (needs edit), n to make a note
-(i.e. truncated, cropped, bad soma, unsplittable, bad skeletoniztion, custom),
-c to cancel (with selection) ",
-                   answers = c("","b","s","n","c"))
+Return to continue, b to go back, s to (de)select (needs edit), y to toggle synapses
+n to make a note: truncated, cropped, bad soma, unsplittable, bad skeletoniztion, custom
+c to cancel (with selection) and 'exit' to exit with current edits and end  ",
+                   answers = c("","b","s","n","c","y","exit"))
     if (chc == "c") {
       if (is.null(chc) || chc == "c")
         chc = must_be(prompt = sprintf("Selection is: %s . Continue (c) or go back and make selection (b)? ",paste(ifelse(length(selected),selected,"none"),collapse=", ")), answers = c("c","b"))
       if (is.null(chc) || chc == "c"){
+        break
+      }
+    }
+    if (chc == "exit") {
+      chc = must_be(prompt = paste0("Exit this pipeline and save current changes for the first", i ," neurons in this batch (exit)? Or go back and make selection (b)? "), answers = c("exit","b"))
+      if (is.null(chc) || chc == "exit"){
+        someneuronlist = someneuronlist[1:i]
+        someneuronlist = nat::union(someneuronlist, someneuronlist[as.charcter(selected)])
+        exit = TRUE
         break
       }
     }
@@ -587,6 +593,9 @@ c to cancel (with selection) ",
     }
     if (chc == "b"){
       i <- i - 1
+    }else if (chs =="y"){
+      WithConnectors = !WithConnectors
+      message("Plot synapses: ", WithConnectors)
     }else if (chc == "n"){
       someneuronlist[[i]] = hemibrain_makenote(x=someneuronlist[[i]])
     }else{
@@ -595,7 +604,8 @@ c to cancel (with selection) ",
     reset3d(brain=brain)
   }
   list(selected = selected,
-       someneuronlist = someneuronlist)
+       someneuronlist = someneuronlist,
+       exit = exit)
 }
 
 # hidden
@@ -696,8 +706,8 @@ splitcheck_phaseIII <- function(mes = NULL,
 }
 
 # hidden
-check_undoneids <- function(undone.ids,
-                            bodyids,
+check_undoneids <- function(bodyids,
+                            check_thresh = 1,
                             gs,
                             phases,
                             assignments,
@@ -705,6 +715,24 @@ check_undoneids <- function(undone.ids,
                             manual,
                             prioritise,
                             by.type){
+  ### Find undone
+  lookedat = unlist(gs$checked)
+  lookedat[lookedat=="FALSE"] = 0
+  lookedat[lookedat=="TRUE"] = 1
+  undone = gs[as.numeric(lookedat)<check_thresh,]
+  if(phases=="II"){
+    undone = gs[!gs$bodyid %in% unique(manual$bodyid) & gs$manual_edit,]
+  }else if(phases=="III"){
+    undone = gs[gs$bodyid %in% unique(manual$bodyid),]
+  }
+  ### Get unseen IDs
+  undone.ids = unique(undone$bodyid)
+  done = gs[as.numeric(lookedat)>=check_thresh,]
+  message(length(unique(done$bodyid)), "/",length(unique(gs$bodyid))," have been checked by at least ",check_thresh," user")
+  users = unlist(done[,"user"])
+  print(table(users))
+  message("Manual splits by users: ")
+  print(table(manual[!duplicated(manual$bodyid),]$user))
   ### Choose particular IDs if selected
   if(!is.null(bodyids)){
     undone.ids = intersect(bodyids, undone.ids)
