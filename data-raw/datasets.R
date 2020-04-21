@@ -16,11 +16,11 @@ for(i in 1:nrow(hemibrain_drive_data)){
 ### Download the status of the splitsave files
 selected_file = "1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E"
 gs = googlesheets4::read_sheet(ss = selected_file, sheet = "roots")
-gs = as.data.frame(gs)
+gs = unlist_df(gs)
 manual = googlesheets4::read_sheet(ss = selected_file, sheet = "manual")
-manual = as.data.frame(manual)
-write.csv(gs, file = "data-raw/hemibrain_data/hemibrain_manual/split_pipeline_roots.csv", row.names=FALSE)
-write.csv(manual, file = "data-raw/hemibrain_data/hemibrain_manual/split_pipeline_manualsplits.csv", row.names=FALSE)
+manual = unlist_df(manual)
+write.csv(gs, file = "data-raw/hemibrain_data/hemibrain_manual/split_pipeline_roots.csv")
+write.csv(manual, file = "data-raw/hemibrain_data/hemibrain_manual/split_pipeline_manualsplits.csv")
 
 ### Split points
 hemibrain_splitpoints_polypre_centrifugal_distance <- read.csv("data-raw/hemibrain_all_neurons_splitpoints_polypre_centrifugal_distance.csv")
