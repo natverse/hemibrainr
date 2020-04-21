@@ -256,7 +256,6 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
                       ss = selected_file,
                       sheet = "roots",
                       return = TRUE)
-  gs = gs[!is.na(gs$bodyid),]
   if(is.null(gs)){
     stop("Google sheet database could not be read: ", selected_file)
   }
@@ -310,7 +309,7 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
       ranks = purify(gs[match(batch,gs$bodyid),"priority"])
       message("Highest priority neuron under consideration: ", max(ranks, na.rm=TRUE))
       ### Read batch
-      message("Reading batch of ", batch_size," hemibrain neurons")
+      message("Reading batch of ", length(batch)," hemibrain neurons")
       someneuronlist = pipeline_read_neurons(batch = batch, db = db, clean = clean, motivate = motivate)
       ### Get vectors that we will need to update
       edits = replace_with_none(purify(gs[match(names(someneuronlist), gs$bodyid),"manual_edit"]))
@@ -341,9 +340,11 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
                                       selected_col = selected_col)
           selected = phaseI[["selected"]]
           someneuronlist = phaseI[["someneuronlist"]]
-          exit = someneuronlist = phaseI[["exit"]]
+          exit = phaseI[["exit"]]
+          if(length(selected)){
+            someneuronlist[as.character(selected)] <- hemibrain_settags(someneuronlist[as.character(selected)],manual_edit = rep(TRUE,length(selected)))
+          }
           mes <- NULL
-          someneuronlist[names(mes)] <- hemibrain_settags(someneuronlist[names(mes)],manual_edit = rep(TRUE,length(mes)))
         }else{
           selected <- as.character(batch)
         }
@@ -407,13 +408,13 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
       message("Updating task completion ...")
       if(phases == "I" & update_regularly & sample(1:10,1)==10 ){
         message("Checking status of task by reading Google Sheet ...")
+        message("Note: this can take ~ a minute")
         if(motivate){plot_inspirobot()}
         gs.safe = gs
         gs = gsheet_manipulation(FUN = googlesheets4::read_sheet,
                                  ss = selected_file,
                                  sheet = "roots",
                                  return = TRUE)
-        gs = gs[!is.na(gs$bodyid),]
         if(is.null(gs)){
           gs = gs.safe
         }
@@ -593,7 +594,7 @@ c to cancel (with selection) and 'exit' to exit with current edits and end  ",
     }
     if (chc == "b"){
       i <- i - 1
-    }else if (chs =="y"){
+    }else if (chc =="y"){
       WithConnectors = !WithConnectors
       message("Plot synapses: ", WithConnectors)
     }else if (chc == "n"){
