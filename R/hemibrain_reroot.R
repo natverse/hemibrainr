@@ -21,7 +21,6 @@
 #' # Read in these neurons
 #' neurons.bs = neuprintr::neuprint_read_neurons(bad.soma)
 #'
-#'
 #' # Re-root
 #' neurons = hemibrain_reroot(neurons.bs, meshes = hemibrain.surf)
 #'
@@ -39,13 +38,14 @@
 #' }}
 #' @export
 #' @seealso \code{\link{flow_centrality}}
-hemibrain_reroot <-function(x, meshes = hemibrainr::hemibrain.surf, ...)
+hemibrain_reroot <-function(x, meshes = hemibrain_roi_meshes(), ...)
   UseMethod("hemibrain_reroot")
 
 #' @export
-hemibrain_reroot.neuron <- function(x, meshes = hemibrainr::hemibrain.surf, ...){
+hemibrain_reroot.neuron <- function(x, meshes = hemibrain_roi_meshes(), ...){
   # Find out of volume points
   x$d$roi = NA
+  root.orig = nat::rootpoints(x)
   if(!is.hxsurf(meshes)){
     for(roi in names(meshes)){
       inside = nat::pointsinside(nat::xyzmatrix(x$d), surf = meshes[[roi]])
@@ -79,18 +79,22 @@ hemibrain_reroot.neuron <- function(x, meshes = hemibrainr::hemibrain.surf, ...)
     }else{
       root = longest.out[1]
     }
-    y = nat::as.neuron(nat::as.ngraph(x$d), origin = x$d$PointNo[match(root, 1:nrow(x$d))])
-    y$d$Label = x$d$Label[match(y$d$PointNo, x$d$PointNo)]
+    somid = x$d$PointNo[match(root, 1:nrow(x$d))]
+    y = nat::as.neuron(nat::as.ngraph(x$d), origin = somid)
+    y = hemibrain_carryover_labels(x=x,y=y)
+    y = hemibrain_carryover_tags(x=x,y=y)
     y$connectors = x$connectors
     y$connectors$treenode_id = y$d$PointNo[match(x$connectors$treenode_id, y$d$PointNo)]
-    y$soma = "estimated"
+    y$soma = y$tags$soma = somid
+    y$tags$soma.edit = ifelse(root.orig==root,FALSE,"estimated")
+    y = hemibrain_neuron_class(y)
     y
   }
 }
 
 
 #' @export
-hemibrain_reroot.neuronlist <- function(x, meshes, ...){
+hemibrain_reroot.neuronlist <- function(x, meshes = hemibrain_roi_meshes(), ...){
   neurons = suppressWarnings(nat::nlapply(x, hemibrain_reroot.neuron, meshes, ...))
   if(sum(!names(x)%in%names(neurons))>0){
     missed = setdiff(names(x),names(neurons))
@@ -148,7 +152,7 @@ hemibrain_reroot.neuronlist <- function(x, meshes, ...){
 #' @export
 #' @seealso \code{\link{hemibrain_reroot}}
 hemibrain_remove_bad_synapses <- function(x,
-                                          meshes = hemibrainr::hemibrain.surf,
+                                          meshes = hemibrain_roi_meshes(),
                                           soma = TRUE,
                                           min.nodes.from.soma = 100,
                                           min.nodes.from.pnt = 5,
@@ -157,11 +161,14 @@ hemibrain_remove_bad_synapses <- function(x,
 
 
 #' @export
-hemibrain_remove_bad_synapses.neuron <- function(x, meshes = NULL, soma = TRUE,
+hemibrain_remove_bad_synapses.neuron <- function(x,
+                                                 meshes = hemibrain_roi_meshes(),
+                                                 soma = TRUE,
                                                  min.nodes.from.soma = 100,
                                                  min.nodes.from.pnt = 5,
                                                  primary.branchpoint = 0.25,
                                                  ...){
+  x.safe = x
   if(!is.null(meshes)){
     x$inside = NA
     if(is.hxsurf(meshes)){
@@ -193,12 +200,19 @@ hemibrain_remove_bad_synapses.neuron <- function(x, meshes = NULL, soma = TRUE,
     names(dists) = syns
     x$connectors = x$connectors[x$connectors$treenode_id %in% names(dists)[dists==0],]
   }
+  removed = nrow(x$connectors) - nrow(x.safe$connectors)
+  if(removed>0){
+    x$tags$synapses.removed = removed
+  }else{
+    x$tags$synapses.removed = 0
+  }
   x = hemibrain_neuron_class(x)
   x
 }
 
 #' @export
-hemibrain_remove_bad_synapses.neuronlist <- function(x, meshes = NULL,
+hemibrain_remove_bad_synapses.neuronlist <- function(x,
+                                                     meshes = hemibrain_roi_meshes(),
                                                      soma = TRUE,
                                                      min.nodes.from.soma = 125,
                                                      min.nodes.from.pnt = 5,
@@ -251,12 +265,12 @@ hemibrain_remove_bad_synapses.neuronlist <- function(x, meshes = NULL,
 #' ## give you the ROI for each point and synapse in a neuron's skeleton!!
 #'
 #' # Re-root
-#' neuron.checked = hemibrain_skeleton_check(neurons, meshes = hemibrain.rois)
+#' neurons.checked = hemibrain_skeleton_check(neurons, meshes = hemibrain.rois)
 #'
 #' \dontrun{
 #' # Let's check that this worked
 #' nat::nopen3d()
-#' for(n in neuron.checked){
+#' for(n in neurons.checked){
 #'      clear3d();
 #'      message(n$bodyid)
 #'      plot3d(n,col="brown",lwd=2)
@@ -269,22 +283,24 @@ hemibrain_remove_bad_synapses.neuronlist <- function(x, meshes = NULL,
 #' @seealso \code{\link{hemibrain_reroot}}
 #' @importFrom nat as.neuronlist
 hemibrain_skeleton_check <- function(x, # as read by neuprint_read_neurons
-                                     meshes = hemibrainr::hemibrain.surf,
+                                     meshes = hemibrain_roi_meshes(),
                                      min.nodes.from.soma = 100,
                                      min.nodes.from.pnt = 5,
                                      OmitFailures = FALSE,
                                      ...){
 
   # Re-root somas where necessary
+  x = add_field_seq(x,x[,"bodyid"],field="bodyid")
   x.nosoma = x[!x[,"soma"]]
   x.soma = nat::setdiff(x,x.nosoma)
+  x.soma = hemibrain_settags(x.soma, soma.edit = rep(FALSE,length(x.soma)))
   if(length(x.nosoma)){
     message("Re-rooting ", length(x.nosoma), " neurons without a soma")
     x.estsoma = hemibrain_reroot(x = x.nosoma, meshes = meshes, OmitFailures = OmitFailures, ...)
     nams = intersect(names(x),c(names(x.soma),names(x.estsoma)))
     x.new = c(x.soma, x.estsoma)[nams]
   } else {
-    x.new = x
+    x.new = x.soma
   }
 
   # Remove erroneous synapses, out of mesh and on pnt/soma
@@ -296,5 +312,21 @@ hemibrain_skeleton_check <- function(x, # as read by neuprint_read_neurons
                                             min.nodes.from.pnt = min.nodes.from.pnt,
                                             OmitFailures = OmitFailures,
                                             ...)
+
+  # Add new info to meta-data
+  x.goodsyn = metadata_add_tags(x.goodsyn)
   x.goodsyn
+}
+
+# hidden
+metadata_add_tags <- function(x){
+  x = add_field_seq(x,x[,"bodyid"],field="bodyid")
+  tags = hemibrain_seetags(x)
+  tags$somapos = tags$soma
+  tags$soma = NULL
+  df = (x[,c( "bodyid",setdiff( colnames(x[,]), colnames(tags)) )])
+  df = merge(df, tags, all.x = TRUE, all.y = FALSE)
+  rownames(df) = df$bodyid
+  x[,] = df[names(x),]
+  x
 }
