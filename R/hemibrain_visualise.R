@@ -85,8 +85,7 @@ plot3d_split = function(someneuronlist,
     error = function(e) NULL)
     tryCatch(rgl::plot3d(p.d, col = col[4], WithNodes = WithNodes, soma = FALSE, lwd = lwd, add = TRUE,...),
     error = function(e) NULL)
-    tryCatch(rgl::plot3d(neuron, col = "grey30", WithNodes = WithNodes, soma = FALSE, add = TRUE,),
-    error = function(e) NULL)
+    tryCatch(rgl::plot3d(neuron, col = "grey30", WithNodes = WithNodes, soma = FALSE, add = TRUE, ...), error = function(e) NULL)
     if(soma){
       rgl::spheres3d(nat::xyzmatrix(neuron)[neuron$StartPoint,], radius = soma, col = col[3], alpha = soma.alpha)
     }

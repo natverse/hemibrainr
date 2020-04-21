@@ -124,15 +124,17 @@ flow_centrality.neuron <- function(x,
                                    ...){
   split = match.arg(split)
   mode = match.arg(mode)
-  x.safe = x
+  ### Make use of ngraph
   x$d$Label = 0
   el = x$d[x$d$Parent != -1, c("Parent", "PointNo")]
   n = nat::ngraph(data.matrix(el[, 2:1]), x$d$PointNo, directed = TRUE, xyz = nat::xyzmatrix(x$d), diam = x$d$W)
   igraph::V(n)$name = igraph::V(n)
   leaves = which(igraph::degree(n, v = igraph::V(n), mode = "in") == 0, useNames = T)
   root = which(igraph::degree(n, v = igraph::V(n), mode = "out") == 0, useNames = T)
+  bps = nat::branchpoints(x)
   segs = x$SegList
   nodes = x$d
+  ### Find no. synaspse up/downstream of each node
   nodes[, c("post","pre","up.syns.in","up.syns.out","flow.cent")] = 0
   nodes[,"Label"] = 0
   nodes = nodes[unlist(c(root, lapply(segs, function(x) x[-1]))),]
@@ -153,48 +155,43 @@ flow_centrality.neuron <- function(x,
   nodes.out = tapply(nodes.out, point.no.out, sum)
   nodes[names(nodes.in), "post"] <- nodes.in
   nodes[names(nodes.out), "pre"] <- nodes.out
-  ins = c(0, lapply(segs, function(x) if (!is.null(x)) {
+  ### How many synapses upstream of each node
+  ins = lapply(segs, function(x) if (!is.null(x)) {
     rev(cumsum(rev(unlist(lapply(x, function(x) ifelse(x %in% names(nodes.in), nodes[as.character(x), "post"],  0))))))
-  }))
-  outs = c(0, lapply(segs, function(x) if (!is.null(x)) {
-    rev(cumsum(rev(unlist(lapply(x, function(x) ifelse(x %in%
-                                                         names(nodes.out), nodes[as.character(x), "pre"],
-                                                       0))))))
-  }))
-  nodes[, "up.syns.in"] = nodes[, "up.syns.in"] + c(0, unlist(lapply(ins, function(x) x[-1])))
-  nodes[, "up.syns.out"] = nodes[, "up.syns.out"] + c(0, unlist(lapply(outs,  function(x) x[-1])))
-  in.bps = unlist(lapply(ins, function(x) x[1]))[-1]
-  out.bps = unlist(lapply(outs, function(x) x[1]))[-1]
-  names(in.bps) = names(out.bps) = bps = c(root, unlist(lapply(segs, function(x) x[1]))[-1])
-  in.bps.child = tapply(in.bps, names(in.bps), function(x) ifelse(names(x)[1] %in%
-                                                                    names(nodes.in), sum(x) - (nodes.in[names(x)[1]] * length(x)),
-                                                                  sum(x)))
-  out.bps.child = tapply(out.bps, names(out.bps), function(x) ifelse(names(x)[1] %in%
-                                                                       names(nodes.out), sum(x) - (nodes.out[names(x)[1]] *
-                                                                                                     length(x)), sum(x)))
-  nodes[names(in.bps.child), "up.syns.in"] = in.bps.child
-  nodes[names(out.bps.child), "up.syns.out"] = out.bps.child
+  })
+  outs = lapply(segs, function(x) if (!is.null(x)) {
+    rev(cumsum(rev(unlist(lapply(x, function(x) ifelse(x %in% names(nodes.out), nodes[as.character(x), "pre"], 0))))))
+  })
+  ins = unlist(lapply(ins, function(x) x))
+  outs = unlist(lapply(outs, function(x) x))
+  names(ins) = names(outs) = unlist(lapply(segs, function(x) x))
+  ins = tapply(ins, names(ins), FUN=sum)
+  outs = tapply(outs, names(outs), FUN=sum)
+  nodes[names(ins), "up.syns.in"] = nodes[names(ins), "post"] + ins
+  nodes[names(outs), "up.syns.out"] = nodes[names(outs), "pre"] + outs
+  ### Take special care of branch points
+  in.bps = ins[as.character(bps)]
+  out.bps = outs[as.character(bps)]
   bps = as.numeric(names(in.bps.child))
   for (i in 1:length(bps)) {
     bp = bps[i]
-    new.in = new.out = c(rep(0, nrow(nodes)))
-    names(new.in) = names(new.out) = rownames(nodes)
-    vertices = unlist(igraph::shortest_paths(n, bp, to = root)$vpath)[-1]
-    new.in[as.character(vertices)] = new.in[as.character(vertices)] + in.bps.child[i]
-    new.out[as.character(vertices)] = new.out[as.character(vertices)] + out.bps.child[i]
-    nodes[, "up.syns.in"] = nodes[, "up.syns.in"] + new.in
-    nodes[, "up.syns.out"] = nodes[, "up.syns.out"] + new.out
+    vertices = as.numeric(unlist(igraph::shortest_paths(n, bp, to = root)$vpath)[-1])
+    nodes[vertices, "up.syns.in"] = nodes[vertices, "up.syns.in"] + in.bps[as.character(bp)]
+    nodes[vertices, "up.syns.out"] = nodes[vertices, "up.syns.out"] + out.bps[as.character(bp)]
   }
+  ### Calculate flow
   in.total = sum(nodes[,"post"])
   out.total = sum(nodes[,"pre"])
+  nodes[, "flow"] = ((in.total - nodes[, "up.syns.in"]) * nodes[, "up.syns.out"]) + ((out.total - nodes[, "up.syns.out"]) * nodes[, "up.syns.in"])
   if(mode == "centrifugal") {
     nodes[, "flow.cent"] = (in.total - nodes[, "up.syns.in"]) * nodes[, "up.syns.out"]
   }else if (mode == "centripetal") {
     nodes[, "flow.cent"] = (out.total - nodes[, "up.syns.out"]) * nodes[, "up.syns.in"]
   }else {
-    nodes[, "flow.cent"] = ((in.total - nodes[, "up.syns.in"]) * nodes[, "up.syns.out"]) + ((out.total - nodes[, "up.syns.out"]) * nodes[, "up.syns.in"])
+    nodes[, "flow.cent"] = nodes[, "flow"]
   }
-  for (bp in bps) {  # bending flow
+  ### Bending flow
+  for (bp in bps) {
     down = unlist(igraph::ego(n, 1, nodes = bp, mode = "in", mindist = 0))[-1]
     bf = c()
     for (u in down) {
@@ -204,6 +201,7 @@ flow_centrality.neuron <- function(x,
     }
     nodes[bp, "flow.cent"] = nodes[bp, "flow.cent"] + sum(bf)
   }
+  ### Primary dendrite and neurite
   high = max(nodes[!rownames(nodes)%in%bps, "flow.cent"]) # some bps are too high!
   if (!is.null(primary.dendrite)) {
     highs = subset(rownames(nodes), nodes[, "flow.cent"] >= (primary.dendrite * high))
@@ -410,23 +408,17 @@ flow_centrality.neuron <- function(x,
   if (is.na(segregation.index)) {
     segregation.index = 0
   }
-  secondary.branch.points = as.numeric(c(downstream.tract.parent, upstream.tract.parent))
-  starts = sapply(unique(c(p.n,p.d)),function(s) igraph::neighbors(n, v=s, mode = c("in")))
-  starts = unique(unlist(starts))
-  axon.starts = as.numeric(rownames(axon[rownames(axon)%in%starts,]))
-  dendrite.starts = as.numeric(rownames(dendrites[rownames(dendrites)%in%starts,]))
+  ### Set branches with no flow to Label = 0
+  nulls = which(nodes$flow==0)
+  nulls = setdiff(nulls,c(p.d,p.n,root))
+  nodes[nulls,"Label"] = 0
+  ### record key points
   x$d = nodes
+  x = internal_assignments(x)
+  ### Prepare neuron for release
   x$AD.segregation.index = segregation.index
-  x$primary.branch.point = as.numeric(primary.branch.point)
-  x$axon.start = nullToNA(axon.starts)
-  x$dendrite.start = nullToNA(dendrite.starts)
-  nsbp <- nodes[secondary.branch.points,]
-  x$axon.primary = nullToNA(nsbp$PointNo[!nsbp$PointNo%in%dendrite.nodes])
-  x$dendrite.primary = nullToNA(nsbp$PointNo[nsbp$PointNo%in%dendrite.nodes])
-  x$secondary.branch.points = secondary.branch.points
   x$max.flow.centrality = as.numeric(ais)
-  x$split = TRUE
-  x = hemibrain_carryover_tags(x = x.safe, y = x)
+  x$split = x$tags$split = TRUE
   x = hemibrain_neuron_class(x)
   x
 }
@@ -476,6 +468,7 @@ hemibrain_splitpoints <- function(x){
               dendrite.primary = nullToNA(n$dendrite.primary),
               axon.start = nullToNA(n$axon.start),
               dendrite.start = nullToNA(n$dendrite.start),
+              nulls.start = nullToNA(n$nulls.start),
               linker = nullToNA(n$linker))
     points.m = reshape2::melt(points)
     points.m$point = rownames(points.m)
@@ -581,6 +574,9 @@ hemibrain_use_splitpoints.neuron <-function(x, df, knn = FALSE, ...){
     linkers = as.numeric(df[grepl("linker",df$point),"position"])
     axon.start = unique(c(axon.start,axon.primary))
     dendrite.start = unique(c(dendrite.start,dendrite.primary))
+    nulls.start = as.numeric(df[grepl("nulls.start",df$point),"position"])
+    all.leaves = nat::endpoints(x)
+    n = nat::as.ngraph(x)
 
     # Work around errors
     if(is.na(dendrite.primary)){
@@ -595,8 +591,8 @@ hemibrain_use_splitpoints.neuron <-function(x, df, knn = FALSE, ...){
     y = nat::as.neuron(nat::as.ngraph(x$d), origin = soma.id)
     y$connectors = x$connectors
     n = nat::as.ngraph(y$d)
-    y$tags$soma = root
-    y$d$Label = 0
+    y$soma = y$tags$soma = soma.id
+    y$d$Label =  0
     y$connectors$Label = 0
 
     # Find non synaptic cable
@@ -617,13 +613,20 @@ hemibrain_use_splitpoints.neuron <-function(x, df, knn = FALSE, ...){
     pd = setdiff(pd,c(axon.start,dendrite.start))
     pnt = setdiff(pnt,c(axon.start,dendrite.start))
     if(!is.null(pd)){
-      y = add_Label(x = y, PointNo = pd, Label = 4, erase = TRUE)
+      y = add_Label(x = y, PointNo = x$d[pd,"PointNo"], Label = 4, erase = TRUE)
     }
     if(!is.null(pnt)){
-      y = add_Label(x = y, PointNo = pnt, Label = 7, erase = TRUE)
+      y = add_Label(x = y, PointNo = x$d[pnt,"PointNo"], Label = 7, erase = TRUE)
     }
     if(!is.null(root)){
-      y = add_Label(x = y, PointNo = root, Label = 1, erase = TRUE)
+      y = add_Label(x = y, PointNo = soma.id, Label = 1, erase = TRUE)
+    }
+
+    # Mark synapse-less twigs
+    if(!is.null(nulls.start)){
+      nulls = sapply(nulls.start, function(ns) suppressWarnings(unique(unlist(igraph::shortest_paths(n, from = as.numeric(ns), to = as.numeric(all.leaves), mode = "out")$vpath))))
+      nulls = unlist(unique(nulls))
+      y = add_Label(x = y, PointNo = x$d[nulls,"PointNo"], Label = 0, erase = FALSE, lock = c(1,4,7))
     }
 
     # Split into arbour cable
@@ -678,6 +681,7 @@ hemibrain_use_splitpoints.neuron <-function(x, df, knn = FALSE, ...){
     }
 
     # Calculate segregation score
+    ### missing
 
     # Add in branch points
     y$primary.branch.point = primary.branch.point
@@ -688,7 +692,7 @@ hemibrain_use_splitpoints.neuron <-function(x, df, knn = FALSE, ...){
     # Assign bodyid
     y$tags$soma = soma.id
     y$bodyid = y$d$bodyid = x$bodyid
-    y$split = TRUE
+    y$split = y$tags$split = TRUE
 
   }
   # Return split skeleton
@@ -960,3 +964,4 @@ add_field_seq <- function(x, entries, field = "bodyid", ...){
 
 # "5901222683", "266200011", "203598499", "204613133","420221276", "331662710", "662197764"
 
+# "973765182

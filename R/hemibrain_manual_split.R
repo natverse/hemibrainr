@@ -341,7 +341,7 @@ internal_assignments <- function(x){
   axon = setdiff(axon, root)
   p.d = subset(rownames(x$d), x$d$Label == 4)
   p.n = subset(rownames(x$d), x$d$Label == 7)
-  nulls = subset(rownames(x$d), !x$d$Label %in% c(2,3))
+  nulls = subset(rownames(x$d), x$d$Label == 0)
   ## Get possible cable change points
   if(length(nulls)){
     s.n = change_points(x = x, v = nulls)
@@ -363,8 +363,11 @@ internal_assignments <- function(x){
   d.starts = tryCatch(sapply(d.starts,function(s) !s%in%dendrites), error = function(e) NA)
   a.starts = tryCatch(sapply(s.a,function(s) igraph::neighbors(n, v=s, mode = c("in"))), error = function(e) NA)
   a.starts = tryCatch(sapply(a.starts,function(s) !s%in%axon), error = function(e) NA)
+  n.starts = tryCatch(sapply(s.n,function(s) igraph::neighbors(n, v=s, mode = c("in"))), error = function(e) NA)
+  n.starts = tryCatch(sapply(n.starts,function(s) !s%in%nulls), error = function(e) NA)
   axon.starts = s.a[unlist(a.starts)]
   dendrites.starts = s.d[unlist(d.starts)]
+  nulls.starts = s.n[unlist(n.starts)]
   ## Assign primaries
   if(length(p.d)){
     possible = c(p.d[1],p.d[length(p.d)])
@@ -389,6 +392,7 @@ internal_assignments <- function(x){
   x$primary.branch.point = purify(primary.branch.point)
   x$axon.start = purify(axon.starts)
   x$dendrite.start = purify(dendrites.starts)
+  x$nulls.start = purify(nulls.starts)
   x$axon.primary = purify(axon.primary)
   x$dendrite.primary = purify(dendrite.primary)
   x$linker = purify(linkers)
