@@ -187,4 +187,16 @@ unlist_df <- function(df){
   }
 }
 
+# hidden
+very_simple_connectivity <- function(conn.df){
+  conn = apply(conn.df, 1, function(row) c(
+    name = row["name"],
+    bodyid = ifelse(is.na(row["input"]),row["output"],row["input"]),
+    type = row["type"],
+    total.weight = sum(as.numeric(row[grepl("weight",names(row))]), na.rm = TRUE) ))
+  conn = as.data.frame(t(conn))
+  colnames(conn) = gsub( "\\..*", "",colnames(conn) )
+  conn
+}
+
 
