@@ -4,7 +4,7 @@
 \alias{hemibrain_reroot}
 \title{Re-root a neuron/neurons}
 \usage{
-hemibrain_reroot(x, meshes = hemibrainr::hemibrain.surf, ...)
+hemibrain_reroot(x, meshes = hemibrain_roi_meshes(), ...)
 }
 \arguments{
 \item{x}{a \code{nat::neuronlist} or \code{nat::neuron} object}
@@ -28,7 +28,6 @@ bad.soma = c("5813015982","885788485","5813013913")
 
 # Read in these neurons
 neurons.bs = neuprintr::neuprint_read_neurons(bad.soma)
-
 
 # Re-root
 neurons = hemibrain_reroot(neurons.bs, meshes = hemibrain.surf)

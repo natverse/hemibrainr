@@ -55,7 +55,7 @@ setup_splitcheck_sheet <-function(selected_file = "1YjkVjokXL4p4Q6BR-rGGGKWecXU3
   mbon.ids = class2ids("MBON")
   ### Prioritise the neurons we care about most
   roots$priority = 0
-  roots$priority[roots$bodyid%in%ton.ids] = 2
+  roots$priority[roots$bodyid%in%hemibrainr::ton.ids] = 2
   roots$priority[roots$bodyid%in%alln.ids] = 2
   roots$priority[roots$bodyid%in%dan.ids] = 2
   roots$priority[roots$bodyid%in%pn.ids] = 2
@@ -228,7 +228,7 @@ hemibrain_task_update <- function(bodyids,
 #'
 #' # We can also try to correct somas en masse
 #' nat::nopen3d()
-#' hemibrain_adjust_somas()
+#' hemibrain_adjust_saved_somas()
 #' }}
 #' @export
 #' @rdname hemibrain_adjust_saved_split
@@ -586,7 +586,7 @@ c to cancel (with selection) and 'exit' to exit with current edits and end  ",
       chc = must_be(prompt = paste0("Exit this pipeline and save current changes for the first", i ," neurons in this batch (exit)? Or go back and make selection (b)? "), answers = c("exit","b"))
       if (is.null(chc) || chc == "exit"){
         someneuronlist = someneuronlist[1:i]
-        someneuronlist = nat::union(someneuronlist, someneuronlist[as.charcter(selected)])
+        someneuronlist = nat::union(someneuronlist, someneuronlist[as.character(selected)])
         exit = TRUE
         break
       }
@@ -870,6 +870,7 @@ ENTER to continue (with notes made), c to cancel (without notes made).
 #' @rdname hemibrain_adjust_saved_split
 hemibrain_adjust_saved_somas <- function(bodyids = hemibrainr::hemibrain_neuron_bodyids(),
                                          brain = hemibrainr::hemibrain.surf,
+                                         selected_file = "1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E",
                                          db = NULL,
                                          batch_size = 5){
   ### Get GoogleSheet Database
@@ -915,8 +916,8 @@ correct_singles <- function(neurons, brain = NULL){
     reset3d(brain=brain)
     x = neurons[[s]]
     y = hemibrain_correctsoma(x)
-    y <- carryover_labels(x=x,y=y)
-    y <- carryover_tags(x=x,y=y)
+    y <- hemibrain_carryover_labels(x=x,y=y)
+    y <- hemibrain_carryover_tags(x=x,y=y)
     y$tags$soma.edit = TRUE
     y <- hemibrain_neuron_class(y)
     neurons[[s]] = y
@@ -926,10 +927,13 @@ correct_singles <- function(neurons, brain = NULL){
 
 # hidden
 cbf_check<-function(ids,
+                    gs,
+                    selected_file = "1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E",
                     cbf = "unknown batch",
                     db = NULL,
                     clean = FALSE,
-                    motivate = FALSE){
+                    motivate = FALSE,
+                    brain = hemibrainr::hemibrain.surf){
   neurons = pipeline_read_neurons(batch = ids, db = db, clean = FALSE, motivate = motivate)
   continue = TRUE
   while(isTRUE(continue)){
@@ -1071,7 +1075,7 @@ pipeline_read_neurons <- function(batch,
 
 # hidden
 cbf_somagroup <- function(neurons){
-  if(sum(ns$soma)!=nrow(ns)){
+  if(sum(neurons[,]$soma)!=length(neurons)){
     # For every neuron with an unlabelled soma
     pnts = primary_neurite_cable(neurons, OmitFailures = TRUE)
 

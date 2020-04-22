@@ -317,16 +317,3 @@ hemibrain_skeleton_check <- function(x, # as read by neuprint_read_neurons
   x.goodsyn = metadata_add_tags(x.goodsyn)
   x.goodsyn
 }
-
-# hidden
-metadata_add_tags <- function(x){
-  x = add_field_seq(x,x[,"bodyid"],field="bodyid")
-  tags = hemibrain_seetags(x)
-  tags$somapos = tags$soma
-  tags$soma = NULL
-  df = (x[,c( "bodyid",setdiff( colnames(x[,]), colnames(tags)) )])
-  df = merge(df, tags, all.x = TRUE, all.y = FALSE)
-  rownames(df) = df$bodyid
-  x[,] = df[names(x),]
-  x
-}

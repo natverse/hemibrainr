@@ -110,7 +110,7 @@ flow_centrality <-function(x,
                            soma = TRUE,
                            primary.dendrite = 0.9,
                            primary.branchpoint = 0.25,
-                           split = c("distance","synapses"),
+                           split = c("synapses","distance"),
                            ...) UseMethod("flow_centrality")
 
 #' @export
@@ -172,7 +172,6 @@ flow_centrality.neuron <- function(x,
   ### Take special care of branch points
   in.bps = ins[as.character(bps)]
   out.bps = outs[as.character(bps)]
-  bps = as.numeric(names(in.bps.child))
   for (i in 1:length(bps)) {
     bp = bps[i]
     vertices = as.numeric(unlist(igraph::shortest_paths(n, bp, to = root)$vpath)[-1])
@@ -430,7 +429,7 @@ flow_centrality.neuronlist <- function(x,
                                        soma = TRUE,
                                        primary.dendrite = 0.9,
                                        primary.branchpoint = 0.25,
-                                       split = c("distance","synapses"),
+                                       split = c("synapses","distance"),
                                        ...){
   split = match.arg(split)
   mode = match.arg(mode)
@@ -868,48 +867,6 @@ add_Label.neuronlist <- function(x, PointNo = NULL, Label = 2, erase = FALSE, lo
                ...)
 }
 
-#' Add a field to neuron objects (inc. in a neuronlist)
-#'
-#' @description At an item to the the list object that comprises a neuron
-#'
-#' @inheritParams flow_centrality
-#' @param entry item to add.
-#' @param entries a vector/list of entries, the same length as \code{x}.
-#' Each neuron in \code{x} will have the entry in entries as the same index, added to it
-#' as \code{field}.
-#' @param field name of new field, or field to overwrite.
-#'
-#' @return a \code{neuron} or \code{neuronlist}
-#' @seealso \code{\link{add_Label}}
-add_field <-function(x, entry, field = "bodyid", ...) UseMethod("add_field")
-#' @export
-add_field.neuron <- function(x, entry, field = "bodyid", ...){
-  x[[field]] = entry
-  x
-}
-#' @export
-add_field.neuronlist <- function(x, entry, field = "bodyid", ...){
-  nat::nlapply(x, add_Label.neuron, entry, field = "bodyid", ...)
-}
-#' @export
-#' @rdname add_field
-add_field_seq <- function(x, entries, field = "bodyid", ...){
-  x = nat::as.neuronlist(x)
-  if(length(entries)!=length(x)){
-    stop("The length of the entries to add must be the same as the length of the neuronlist, x")
-  }
-  nl = nat::neuronlist()
-  for(i in 1:length(x)){
-    y = x[[i]]
-    entry = entries[i]
-    y = add_field(y, entry = entry, field = field, ...)
-    nl = c(nl, nat::as.neuronlist(y))
-  }
-  names(nl) = names(x)
-  nl[,] = x[,]
-  nl
-}
-
 # # test set of tricky neurons:
 # friends = c("327499164", "328861282", "487144598","480590566","574688051",
 #             "514375643", "5813087438", "421641859", "604709727","328533761",
@@ -962,6 +919,4 @@ add_field_seq <- function(x, entries, field = "bodyid", ...){
 # nlscan_split(neurons.flow, WithConnectors = TRUE)
 
 
-# "5901222683", "266200011", "203598499", "204613133","420221276", "331662710", "662197764"
-
-# "973765182
+# tougher = c("5901222683", "266200011", "203598499", "204613133","420221276", "331662710", "662197764")

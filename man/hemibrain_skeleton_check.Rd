@@ -6,7 +6,7 @@
 \usage{
 hemibrain_skeleton_check(
   x,
-  meshes = hemibrainr::hemibrain.surf,
+  meshes = hemibrain_roi_meshes(),
   min.nodes.from.soma = 100,
   min.nodes.from.pnt = 5,
   OmitFailures = FALSE,
@@ -66,12 +66,12 @@ hemibrain.rois = hemibrain_roi_meshes()
 ## give you the ROI for each point and synapse in a neuron's skeleton!!
 
 # Re-root
-neuron.checked = hemibrain_skeleton_check(neurons, meshes = hemibrain.rois)
+neurons.checked = hemibrain_skeleton_check(neurons, meshes = hemibrain.rois)
 
 \dontrun{
 # Let's check that this worked
 nat::nopen3d()
-for(n in neuron.checked){
+for(n in neurons.checked){
      clear3d();
      message(n$bodyid)
      plot3d(n,col="brown",lwd=2)

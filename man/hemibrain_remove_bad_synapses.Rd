@@ -6,7 +6,7 @@
 \usage{
 hemibrain_remove_bad_synapses(
   x,
-  meshes = hemibrainr::hemibrain.surf,
+  meshes = hemibrain_roi_meshes(),
   soma = TRUE,
   min.nodes.from.soma = 100,
   min.nodes.from.pnt = 5,

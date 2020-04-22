@@ -36,7 +36,9 @@ hemibrain_adjust_saved_split(
 hemibrain_adjust_saved_somas(
   bodyids = hemibrainr::hemibrain_neuron_bodyids(),
   brain = hemibrainr::hemibrain.surf,
-  db = NULL
+  selected_file = "1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E",
+  db = NULL,
+  batch_size = 5
 )
 }
 \arguments{
@@ -153,6 +155,6 @@ hemibrain_adjust_saved_split(db=db)
 
 # We can also try to correct somas en masse
 nat::nopen3d()
-hemibrain_adjust_somas()
+hemibrain_adjust_saved_somas()
 }}
 }
