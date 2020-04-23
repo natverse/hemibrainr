@@ -44,7 +44,7 @@ hemibrain.dps.dendrite=dotprops(all.neurons.dendrite/1e3, k=5, resample=1, .para
 hemibrain.dps.arbour=dotprops(all.neurons.arbour/1e3, k=5, resample=1, .parallel=T, OmitFailures = T)
 
 # Forward FIB->FIB nblasts (normalised)
-# hemibrain.twigs5.aba.mean=nblast_allbyall(hemibrain.twigs5.dps,
+# hemibrain.twigs5.aba.mean=nat.nblast::nblast_allbyall(hemibrain.twigs5.dps,
 #                                     .progress='text',
 #                                     .parallel=TRUE,
 #                                     normalisation='mean')
@@ -52,7 +52,7 @@ hemibrain.dps.arbour=dotprops(all.neurons.arbour/1e3, k=5, resample=1, .parallel
 #                                         file = nblastfolder)
 
 ### NBLAST pnt
-hemibrain.pnt.aba.mean=nblast_allbyall(hemibrain.dps.pnt,
+hemibrain.pnt.aba.mean=nat.nblast::nblast_allbyall(hemibrain.dps.pnt,
                                     .progress='text',
                                     .parallel=TRUE,
                                     normalisation='mean')
@@ -60,7 +60,7 @@ hemibrainr:::save_compressed_nblast_mat(hemibrain.pnt.aba.mean,
                                         file = nblastfolder)
 
 ### NBLAST pd
-hemibrain.pd.aba.mean=nblast_allbyall(hemibrain.dps.pd,
+hemibrain.pd.aba.mean=nat.nblast::nblast_allbyall(hemibrain.dps.pd,
                                         .progress='text',
                                         .parallel=TRUE,
                                         normalisation='mean')
@@ -68,7 +68,7 @@ hemibrainr:::save_compressed_nblast_mat(hemibrain.pd.aba.mean,
                                         file = nblastfolder)
 
 ### NBLAST axon
-hemibrain.axon.aba.mean=nblast_allbyall(hemibrain.dps.axon,
+hemibrain.axon.aba.mean=nat.nblast::nblast_allbyall(hemibrain.dps.axon,
                                         .progress='text',
                                         .parallel=TRUE,
                                         normalisation='mean')
@@ -76,7 +76,7 @@ hemibrainr:::save_compressed_nblast_mat(hemibrain.axon.aba.mean,
                                         file = nblastfolder)
 
 ### NBLAST dendrite
-hemibrain.dendrite.aba.mean=nblast_allbyall(hemibrain.dps.dendrite,
+hemibrain.dendrite.aba.mean=nat.nblast::nblast_allbyall(hemibrain.dps.dendrite,
                                         .progress='text',
                                         .parallel=TRUE,
                                         normalisation='mean')
@@ -84,7 +84,7 @@ hemibrainr:::save_compressed_nblast_mat(hemibrain.dendrite.aba.mean,
                                         file = nblastfolder)
 
 ### NBLAST arbour
-hemibrain.arbour.aba.mean=nblast_allbyall(hemibrain.dps.arbour,
+hemibrain.arbour.aba.mean=nat.nblast::nblast_allbyall(hemibrain.dps.arbour,
                                         .progress='text',
                                         .parallel=TRUE,
                                         normalisation='mean')
