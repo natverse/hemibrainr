@@ -26,7 +26,7 @@ hemibrain_nblast= subset(drive_hemibrain,name=="hemibrain_nblast")
 nblast.folder = subset(drive_hemibrain,name==paste0("nblast_",identifier))
 
 # Save NBLAST files
-nblast.files  = list.files("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/NBLAST/",pattern = "rda", full.name = TRUE)
+nblast.files  = list.files(paste0("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/NBLAST/",identifier),pattern = "rda", full.name = TRUE)
 for(nblast.file in nblast.files){
   drive_upload(media = nblast.file,
                path = nblast.folder,

@@ -1,4 +1,4 @@
-###### Script to split NBALST all neurons and their compartments  #######
+############## Script to split NBALST all neurons and their compartments  ###############
 ######## Originally run from JData5, the Jefferis lab drive on Max at the MRC LMB #######
 
 # Parameters
@@ -95,7 +95,7 @@ hemibrain.arbour.aba.mean=nat.nblast::nblast_allbyall(hemibrain.dps.arbour,
                                         .parallel=TRUE,
                                         normalisation='mean')
 hemibrainr:::save_compressed_nblast_mat(hemibrain.arbour.aba.mean,
-                                        file = nblastfolder)
+                                        file = nblastfolder)s
 
 ### NBLAST spine
 hemibrain.spine.aba.mean=nat.nblast::nblast_allbyall(hemibrain.dps.spine,

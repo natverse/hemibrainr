@@ -5,12 +5,14 @@
 #' Read precomputed information from the hemibrain Google Drive
 #'
 #' @description Read precomputed data available on the hemibrain Google Team Drive. This includes all synapses, neuron-neuron connections
-#' and an edgelist for all hemibrain neurons, broken down by axon and dendrite assignments.
+#' and an edgelist for all hemibrain neurons, broken down by axon and dendrite assignments. NBLAST matrices for all neurons against all neurons in
+#' rhe data set is also available, inluding ones broken down by neuron compartment.
 #'
 #' @param savedir directory in which neuron data has been deposited. If \code{TRUE} your default save directory is used, which is stored as: \code{options()$Gdrive_hemibrain_data}
 #' @param local logical, whether to try to read locally saved neurons (by default at: \code{options()$hemibrain_data}) or neurons from Google Drive (\code{options()$Gdrive_hemibrain_data}).
 #' @param neuron.split read saved neurons spit in which way? Folder names indicative of arguments passed to \code{\link{flow_centrality}}.
 #' and \code{\link{hemibrain_flow_centrality}}
+#' @param nblast the NBLAST you would like to retrieve, i.e. \code{"arbours"} gives you a normalised all by all NBLAST matrix of all branching arbour.
 #'
 #' @return a \code{data.frame} or character vector
 #'
@@ -76,6 +78,34 @@ hemibrain_connections <- function(savedir = TRUE, local = FALSE,
   gcsv
 }
 
+#' @rdname hemibrain_nblast
+#' @export
+hemibrain_nblast <- function(savedir = TRUE,
+                             local = FALSE,
+                             nblast = c("all",
+                                        "primary.neurites",
+                                        "primary.dendrites",
+                                        "axons",
+                                        "dendrites",
+                                        "spines"),
+                             neuron.split = c("polypre_centrifugal_synapses",
+                                              "polypre_centrifugal_distance")){
+  nblast = match.arg(nblast)
+  neuron.split = match.arg(neuron.split)
+  savedir = good_savedir(savedir = savedir,local = local)
+  folder = paste0("hemibrain_nblast/")
+  if(nblast=="all"){gfile = find_gfile(savedir = savedir, file = "hemibrain.aba.mean.compress.rda", folder = folder)}
+  if(nblast=="spines"){gfile = find_gfile(savedir = savedir, file = "hemibrain.spines.aba.mean.compress.rda", folder = folder)}
+  if(nblast=="primary.neurites"){gfile = find_gfile(savedir = savedir, file = paste0("nblast",neuron.split,"/hemibrain.pnts.aba.mean.compress.rda"), folder = folder)}
+  if(nblast=="primary.dendrites"){gfile = find_gfile(savedir = savedir, file = paste0("nblast_",neuron.split,"/hemibrain.pd.aba.mean.compress.rda"), folder = folder)}
+  if(nblast=="axons"){gfile = find_gfile(savedir = savedir, file = paste0("nblast_",neuron.split,"/hemibrain.axon.aba.mean.compress.rda"), folder = folder)}
+  if(nblast=="dendrites"){gfile = find_gfile(savedir = savedir, file = paste0("nblast_",neuron.split,"/hemibrain.dendrite.aba.mean.compress.rda"), folder = folder)}
+  if(nblast=="arbour"){gfile = find_gfile(savedir = savedir, file = paste0("nblast_",neuron.split,"/hemibrain.arbour.aba.mean.compress.rda"), folder = folder)}
+  message("Loading NBLAST matrix from ", gfile)
+  env <- new.env()
+  assign(nblast, get(load(gfile, env)))
+  return(e[[nblast]])
+}
 
 # hidden
 find_gfile <- function(savedir,

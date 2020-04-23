@@ -34,13 +34,16 @@ hemibrain_connections(
 
 \item{neuron.split}{read saved neurons spit in which way? Folder names indicative of arguments passed to \code{\link{flow_centrality}}.
 and \code{\link{hemibrain_flow_centrality}}}
+
+\item{nblast}{the NBLAST you would like to retrieve, i.e. \code{"arbours"} gives you a normalised all by all NBLAST matrix of all branching arbour.}
 }
 \value{
 a \code{data.frame} or character vector
 }
 \description{
 Read precomputed data available on the hemibrain Google Team Drive. This includes all synapses, neuron-neuron connections
-and an edgelist for all hemibrain neurons, broken down by axon and dendrite assignments.
+and an edgelist for all hemibrain neurons, broken down by axon and dendrite assignments. NBLAST matrices for all neurons against all neurons in
+rhe data set is also available, inluding ones broken down by neuron compartment.
 }
 \examples{
 \donttest{
