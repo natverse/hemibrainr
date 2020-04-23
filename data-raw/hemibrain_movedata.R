@@ -22,6 +22,17 @@ library(googledrive)
 hemibrain = team_drive_get("hemibrain")
 drive_hemibrain = drive_find(type = "folder", team_drive = hemibrain)
 hemibrain_neurons= subset(drive_hemibrain,name=="hemibrain_neurons")
+hemibrain_nblast= subset(drive_hemibrain,name=="hemibrain_nblast")
+nblast.folder = subset(drive_hemibrain,name==paste0("nblast_",identifier))
+
+# Save NBLAST files
+nblast.files  = list.files("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/NBLAST/",pattern = "rda", full.name = TRUE)
+for(nblast.file in nblast.files){
+  drive_upload(media = nblast.file,
+               path = nblast.folder,
+               overwrite = TRUE,
+               verbose = TRUE)
+}
 
 # Save all neuron bodyids
 drive_upload(media = "/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/hemibrain_all_neuron_bodyids.csv",
