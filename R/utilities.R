@@ -176,15 +176,16 @@ replace_with_none <- function(x, FUN = is.na){
 
 # hidden
 unlist_df <- function(df){
+  data = as.data.frame(df, stringsAsFactors = FALSE)
   if(nrow(df)&ncol(df)){
     data = as.data.frame(df, stringsAsFactors = FALSE)
     data = apply(data,2,function(c) unlist(nullToNA(c)))
     data = as.data.frame(unlist(data), stringsAsFactors = FALSE)
     dimnames(data) = dimnames(df)
     data
-  }else{
-    as.data.frame(df, stringsAsFactors = FALSE)
   }
+  data[] <- lapply(data, as.character)
+  data
 }
 
 # hidden
