@@ -48,7 +48,8 @@
 
 <meta property="og:title" content="Read precomputed information from the hemibrain Google Drive — hemibrain_neuron_bodyids" />
 <meta property="og:description" content="Read precomputed data available on the hemibrain Google Team Drive. This includes all synapses, neuron-neuron connections
-and an edgelist for all hemibrain neurons, broken down by axon and dendrite assignments." />
+and an edgelist for all hemibrain neurons, broken down by axon and dendrite assignments. NBLAST matrices for all neurons against all neurons in
+rhe data set is also available, inluding ones broken down by neuron compartment." />
 <meta property="og:image" content="/logo.svg" />
 
 
@@ -124,7 +125,8 @@ and an edgelist for all hemibrain neurons, broken down by axon and dendrite assi
 
     <div class="ref-description">
     <p>Read precomputed data available on the hemibrain Google Team Drive. This includes all synapses, neuron-neuron connections
-and an edgelist for all hemibrain neurons, broken down by axon and dendrite assignments.</p>
+and an edgelist for all hemibrain neurons, broken down by axon and dendrite assignments. NBLAST matrices for all neurons against all neurons in
+rhe data set is also available, inluding ones broken down by neuron compartment.</p>
     </div>
 
     <pre class="usage"><span class='fu'>hemibrain_neuron_bodyids</span>(<span class='kw'>savedir</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>local</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
@@ -145,6 +147,14 @@ and an edgelist for all hemibrain neurons, broken down by axon and dendrite assi
   <span class='kw'>savedir</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>local</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>neuron.split</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"polypre_centrifugal_synapses"</span>, <span class='st'>"polypre_centrifugal_distance"</span>)
+)
+
+<span class='fu'>hemibrain_nblast</span>(
+  <span class='kw'>savedir</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>local</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>nblast</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"all"</span>, <span class='st'>"primary.neurites"</span>, <span class='st'>"primary.dendrites"</span>, <span class='st'>"axons"</span>, <span class='st'>"dendrites"</span>,
+    <span class='st'>"spines"</span>),
+  <span class='kw'>neuron.split</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"polypre_centrifugal_synapses"</span>, <span class='st'>"polypre_centrifugal_distance"</span>)
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -162,6 +172,10 @@ and an edgelist for all hemibrain neurons, broken down by axon and dendrite assi
       <th>neuron.split</th>
       <td><p>read saved neurons spit in which way? Folder names indicative of arguments passed to <code><a href='flow_centrality.html'>flow_centrality</a></code>.
 and <code><a href='hemibrain_flow_centrality.html'>hemibrain_flow_centrality</a></code></p></td>
+    </tr>
+    <tr>
+      <th>nblast</th>
+      <td><p>the NBLAST you would like to retrieve, i.e. <code>"arbours"</code> gives you a normalised all by all NBLAST matrix of all branching arbour.</p></td>
     </tr>
     </table>
 

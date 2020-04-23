@@ -129,7 +129,7 @@ by finding the longest path outside of a given neuropil mesh/meshes, as in insec
 neurons the soma should be located in a cortex outside of the neuropil proper.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>hemibrain_reroot</span>(<span class='no'>x</span>, <span class='kw'>meshes</span> <span class='kw'>=</span> <span class='kw pkg'>hemibrainr</span><span class='kw ns'>::</span><span class='no'><a href='hemibrain.surf.html'>hemibrain.surf</a></span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>hemibrain_reroot</span>(<span class='no'>x</span>, <span class='kw'>meshes</span> <span class='kw'>=</span> <span class='fu'><a href='hemibrain_roi_meshes.html'>hemibrain_roi_meshes</a></span>(), <span class='no'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -162,7 +162,6 @@ neurons the soma should be located in a cortex outside of the neuropil proper.</
 
 <span class='co'># Read in these neurons</span>
 <span class='no'>neurons.bs</span> <span class='kw'>=</span> <span class='kw pkg'>neuprintr</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/neuprintr/man/neuprint_read_neurons.html'>neuprint_read_neurons</a></span>(<span class='no'>bad.soma</span>)
-
 
 <span class='co'># Re-root</span>
 <span class='no'>neurons</span> <span class='kw'>=</span> <span class='fu'>hemibrain_reroot</span>(<span class='no'>neurons.bs</span>, <span class='kw'>meshes</span> <span class='kw'>=</span> <span class='no'>hemibrain.surf</span>)

@@ -117,7 +117,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Set and see tags on a neuron object inc. within a neuronlist</h1>
-    <small class="dont-index">Source: <a href='https://github.com/flyconnectome/hemibrainr/blob/master/R/hemibrain_read_neurons.R'><code>R/hemibrain_read_neurons.R</code></a></small>
+    <small class="dont-index">Source: <a href='https://github.com/flyconnectome/hemibrainr/blob/master/R/hemibrain_tags.R'><code>R/hemibrain_tags.R</code></a></small>
     <div class="hidden name"><code>hemibrain_tags.Rd</code></div>
     </div>
 
@@ -139,14 +139,18 @@
 <span class='fu'>hemibrain_seetags</span>(<span class='no'>x</span>, <span class='no'>...</span>)
 
 <span class='co'># S3 method for neuronlist</span>
-<span class='fu'>hemibrain_seetags</span>(<span class='no'>x</span>, <span class='no'>...</span>)</pre>
+<span class='fu'>hemibrain_seetags</span>(<span class='no'>x</span>, <span class='no'>...</span>)
+
+<span class='fu'>hemibrain_carryover_tags</span>(<span class='no'>x</span>, <span class='no'>y</span>)
+
+<span class='fu'>metadata_add_tags</span>(<span class='no'>x</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>x</th>
-      <td><p>a <code><a href='https://rdrr.io/pkg/nat/man/neuronlist.html'>nat::neuronlist</a></code> or <code><a href='https://rdrr.io/pkg/nat/man/neuron.html'>nat::neuron</a></code> object</p></td>
+      <td><p>a <code><a href='https://rdrr.io/pkg/nat/man/neuronlist.html'>nat::neuronlist</a></code> or <code><a href='https://rdrr.io/pkg/nat/man/neuron.html'>nat::neuron</a></code> object.</p></td>
     </tr>
     <tr>
       <th>i</th>
@@ -158,6 +162,10 @@ are a vector of greater than length 1. Principally for use within method <code>h
       <td><p>named arguments with values, to be added to x$tags. E.e. using soma = TRUE,
 will add <code>x$tags$soma</code>, where <code>x$tags$soma</code> is <code>TRUE</code>. Tags are expected to be of length 1.
 If x is a <code>neuronlist</code> then tags may be supplied of <code><a href='https://rdrr.io/r/base/length.html'>length(x)</a></code>.</p></td>
+    </tr>
+    <tr>
+      <th>y</th>
+      <td><p>a neuron object, which is to receive tags from x, loccated at <code>x$tags</code>.</p></td>
     </tr>
     </table>
 
@@ -177,8 +185,7 @@ If x is a <code>neuronlist</code> then tags may be supplied of <code><a href='ht
 <span class='no'>neurons</span> <span class='kw'>=</span> <span class='fu'>hemibrain_settags</span>(<span class='no'>neurons</span>, <span class='kw'>antennal.lobe</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
 
 <span class='co'># See tags</span>
-<span class='fu'>hemibrain_seetags</span>(<span class='no'>x</span>)</div><div class='output co'>#&gt; <span class='error'>Error in hemibrain_seetags(x): object 'x' not found</span></div><div class='input'># }
-</div></pre>
+<span class='fu'>hemibrain_seetags</span>(<span class='no'>x</span>)</div><div class='output co'>#&gt; <span class='error'>Error in hemibrain_seetags(x): object 'x' not found</span></div><div class='input'><span class='co'># }</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

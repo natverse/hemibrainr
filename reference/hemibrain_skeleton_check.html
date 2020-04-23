@@ -131,7 +131,7 @@ the hemibrain neuprintr project, that have no marked soma, and
 
     <pre class="usage"><span class='fu'>hemibrain_skeleton_check</span>(
   <span class='no'>x</span>,
-  <span class='kw'>meshes</span> <span class='kw'>=</span> <span class='kw pkg'>hemibrainr</span><span class='kw ns'>::</span><span class='no'><a href='hemibrain.surf.html'>hemibrain.surf</a></span>,
+  <span class='kw'>meshes</span> <span class='kw'>=</span> <span class='fu'><a href='hemibrain_roi_meshes.html'>hemibrain_roi_meshes</a></span>(),
   <span class='kw'>min.nodes.from.soma</span> <span class='kw'>=</span> <span class='fl'>100</span>,
   <span class='kw'>min.nodes.from.pnt</span> <span class='kw'>=</span> <span class='fl'>5</span>,
   <span class='kw'>OmitFailures</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
@@ -206,11 +206,11 @@ message the moment there is an error.</p></td>
 <span class='co'>## give you the ROI for each point and synapse in a neuron's skeleton!!</span>
 
 <span class='co'># Re-root</span>
-<span class='no'>neuron.checked</span> <span class='kw'>=</span> <span class='fu'>hemibrain_skeleton_check</span>(<span class='no'>neurons</span>, <span class='kw'>meshes</span> <span class='kw'>=</span> <span class='no'>hemibrain.rois</span>)</div><div class='output co'>#&gt; <span class='message'>Re-rooting 2 neurons without a soma</span></div><div class='output co'>#&gt; <span class='message'>Removing synapses at somas and along primary neurite for 5 neurons</span></div><div class='input'>
+<span class='no'>neurons.checked</span> <span class='kw'>=</span> <span class='fu'>hemibrain_skeleton_check</span>(<span class='no'>neurons</span>, <span class='kw'>meshes</span> <span class='kw'>=</span> <span class='no'>hemibrain.rois</span>)</div><div class='output co'>#&gt; <span class='message'>Re-rooting 2 neurons without a soma</span></div><div class='output co'>#&gt; <span class='message'>Removing synapses at somas and along primary neurite for 5 neurons</span></div><div class='input'>
 <span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
 <span class='co'># Let's check that this worked</span>
 <span class='kw pkg'>nat</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/nat/man/nopen3d.html'>nopen3d</a></span>()
-<span class='kw'>for</span>(<span class='no'>n</span> <span class='kw'>in</span> <span class='no'>neuron.checked</span>){
+<span class='kw'>for</span>(<span class='no'>n</span> <span class='kw'>in</span> <span class='no'>neurons.checked</span>){
      <span class='fu'>clear3d</span>();
      <span class='fu'><a href='https://rdrr.io/r/base/message.html'>message</a></span>(<span class='no'>n</span>$<span class='no'>bodyid</span>)
      <span class='fu'>plot3d</span>(<span class='no'>n</span>,<span class='kw'>col</span><span class='kw'>=</span><span class='st'>"brown"</span>,<span class='kw'>lwd</span><span class='kw'>=</span><span class='fl'>2</span>)
