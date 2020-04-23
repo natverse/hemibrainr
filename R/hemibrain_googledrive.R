@@ -93,14 +93,18 @@ hemibrain_nblast <- function(savedir = TRUE,
   nblast = match.arg(nblast)
   neuron.split = match.arg(neuron.split)
   savedir = good_savedir(savedir = savedir,local = local)
-  folder = paste0("hemibrain_nblast/")
+  folder = if(nblast %in% c("all","spines")){
+    paste0("hemibrain_nblast/")
+  }else{
+    paste0("hemibrain_nblast/nblast_",neuron.split,"/")
+  }
   if(nblast=="all"){gfile = find_gfile(savedir = savedir, file = "hemibrain.aba.mean.compress.rda", folder = folder)}
   if(nblast=="spines"){gfile = find_gfile(savedir = savedir, file = "hemibrain.spines.aba.mean.compress.rda", folder = folder)}
-  if(nblast=="primary.neurites"){gfile = find_gfile(savedir = savedir, file = paste0("nblast",neuron.split,"/hemibrain.pnts.aba.mean.compress.rda"), folder = folder)}
-  if(nblast=="primary.dendrites"){gfile = find_gfile(savedir = savedir, file = paste0("nblast_",neuron.split,"/hemibrain.pd.aba.mean.compress.rda"), folder = folder)}
-  if(nblast=="axons"){gfile = find_gfile(savedir = savedir, file = paste0("nblast_",neuron.split,"/hemibrain.axon.aba.mean.compress.rda"), folder = folder)}
-  if(nblast=="dendrites"){gfile = find_gfile(savedir = savedir, file = paste0("nblast_",neuron.split,"/hemibrain.dendrite.aba.mean.compress.rda"), folder = folder)}
-  if(nblast=="arbour"){gfile = find_gfile(savedir = savedir, file = paste0("nblast_",neuron.split,"/hemibrain.arbour.aba.mean.compress.rda"), folder = folder)}
+  if(nblast=="primary.neurites"){gfile = find_gfile(savedir = savedir, file = "hemibrain.pnt.aba.mean.compressed.rda", folder = folder)}
+  if(nblast=="primary.dendrites"){gfile = find_gfile(savedir = savedir, file = "hemibrain.pd.aba.mean.compressed.rda", folder = folder)}
+  if(nblast=="axons"){gfile = find_gfile(savedir = savedir, file = "hemibrain.axon.aba.mean.compressed.rda", folder = folder)}
+  if(nblast=="dendrites"){gfile = find_gfile(savedir = savedir, file = "hemibrain.dendrite.aba.mean.compressed.rda", folder = folder)}
+  if(nblast=="arbour"){gfile = find_gfile(savedir = savedir, file = "hemibrain.arbour.aba.mean.compressed.rda", folder = folder)}
   message("Loading NBLAST matrix from ", gfile)
   env <- new.env(parent = parent.frame())
   assign(nblast, get(load(gfile, env), envir = env), envir = env)
