@@ -102,9 +102,9 @@ hemibrain_nblast <- function(savedir = TRUE,
   if(nblast=="dendrites"){gfile = find_gfile(savedir = savedir, file = paste0("nblast_",neuron.split,"/hemibrain.dendrite.aba.mean.compress.rda"), folder = folder)}
   if(nblast=="arbour"){gfile = find_gfile(savedir = savedir, file = paste0("nblast_",neuron.split,"/hemibrain.arbour.aba.mean.compress.rda"), folder = folder)}
   message("Loading NBLAST matrix from ", gfile)
-  env <- new.env()
-  assign(nblast, get(load(gfile, env)))
-  return(e[[nblast]])
+  env <- new.env(parent = parent.frame())
+  assign(nblast, get(load(gfile, env), envir = env), envir = env)
+  return(env[[nblast]])
 }
 
 # hidden
