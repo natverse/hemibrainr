@@ -199,4 +199,28 @@ very_simple_connectivity <- function(conn.df){
   conn
 }
 
+# We can make another version of the matrix that contains essentially all
+# the useful information, but compresses much smaller (~16x at time of writing)
+save_compressed_nblast_mat <- function(x,
+                                       file = NULL,
+                                       threshold=-0.5,
+                                       digits=3,
+                                       format=c("rda", "rds"),
+                                       ...) {
+  objname=deparse(substitute(x))
+  format=match.arg(format)
+  x[x<threshold]=threshold
+  x=round(x, digits=digits)
+  newobjname <- paste0(objname, ".compressed")
+  fname <- paste0(paste0(file, newobjname), ".", format)
+  message("Resaving a compressed version of ", objname, " to ", fname)
+  if(format=="rds") {
+    saveRDS(x, file=fname, ...)
+  } else {
+    # the object being saved must have the name that you would like it
+    # to have when it is loaded again
+    assign(newobjname, x)
+    save(list = newobjname, file = fname, ...)
+  }
+}
 
