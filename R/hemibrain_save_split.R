@@ -528,7 +528,7 @@ splitcheck_phaseI <- function(someneuronlist,
           or have a bad skeletonization (z). You can also make custom notes (e).
           ###################################PhaseI####################################")
   neurons = names(someneuronlist)
-  nams = as.data.frame(someneuronlist)$name
+  nams = as.data.frame(someneuronlist, stringsAsFactors = FALSE)$name
   frames <- length(neurons)
   selected <- character()
   i <- 1
@@ -1080,10 +1080,10 @@ cbf_somagroup <- function(neurons){
     pnts = primary_neurite_cable(neurons, OmitFailures = TRUE)
 
     neurons.soma = neurons[neurons[,"soma"]]
-    somapos.soma <- as.data.frame(catmaid::soma(neurons.soma))
+    somapos.soma <- as.data.frame(catmaid::soma(neurons.soma), stringsAsFactors = FALSE)
 
     neurons.nosoma = neurons[!neurons[,"soma"]]
-    somapos.soma <- as.data.frame(catmaid::soma(neurons.nosoma))
+    somapos.soma <- as.data.frame(catmaid::soma(neurons.nosoma), stringsAsFactors = FALSE)
 
     ## Find closest neuron with a labelled soma, within range
     ## Move soma tag to closes leaf to that closest soma

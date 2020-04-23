@@ -37,11 +37,11 @@ all.neurons.arbour = arbour_cable(x = all.neurons.flow, .parallel = TRUE, OmitFa
 
 # Make dps objects
 ## hemibrain.twigs5.dps=dotprops(all.neurons.flow/1e3, k=5, resample=1, .parallel=T, OmitFailures = T)
-hemibrain.twigs5.pnt=dotprops(all.neurons.pnt/1e3, k=5, resample=1, .parallel=T, OmitFailures = T)
-hemibrain.twigs5.pd=dotprops(all.neurons.pd/1e3, k=5, resample=1, .parallel=T, OmitFailures = T)
-hemibrain.twigs5.axon=dotprops(all.neurons.axon/1e3, k=5, resample=1, .parallel=T, OmitFailures = T)
-hemibrain.twigs5.dendrite=dotprops(all.neurons.dendrite/1e3, k=5, resample=1, .parallel=T, OmitFailures = T)
-hemibrain.twigs5.arbour=dotprops(all.neurons.arbour/1e3, k=5, resample=1, .parallel=T, OmitFailures = T)
+hemibrain.dps.pnt=dotprops(all.neurons.pnt/1e3, k=5, resample=1, .parallel=T, OmitFailures = T)
+hemibrain.dps.pd=dotprops(all.neurons.pd/1e3, k=5, resample=1, .parallel=T, OmitFailures = T)
+hemibrain.dps.axon=dotprops(all.neurons.axon/1e3, k=5, resample=1, .parallel=T, OmitFailures = T)
+hemibrain.dps.dendrite=dotprops(all.neurons.dendrite/1e3, k=5, resample=1, .parallel=T, OmitFailures = T)
+hemibrain.dps.arbour=dotprops(all.neurons.arbour/1e3, k=5, resample=1, .parallel=T, OmitFailures = T)
 
 # Forward FIB->FIB nblasts (normalised)
 # hemibrain.twigs5.aba.mean=nblast_allbyall(hemibrain.twigs5.dps,
@@ -52,43 +52,43 @@ hemibrain.twigs5.arbour=dotprops(all.neurons.arbour/1e3, k=5, resample=1, .paral
 #                                         file = nblastfolder)
 
 ### NBLAST pnt
-hemibrain.twigs5.pnt.aba.mean=nblast_allbyall(hemibrain.twigs5.pnt,
+hemibrain.pnt.aba.mean=nblast_allbyall(hemibrain.dps.pnt,
                                     .progress='text',
                                     .parallel=TRUE,
                                     normalisation='mean')
-hemibrainr:::save_compressed_nblast_mat(hemibrain.twigs5.pnt,
+hemibrainr:::save_compressed_nblast_mat(hemibrain.pnt.aba.mean,
                                         file = nblastfolder)
 
 ### NBLAST pd
-hemibrain.twigs5.pd.aba.mean=nblast_allbyall(hemibrain.twigs5.pd,
+hemibrain.pd.aba.mean=nblast_allbyall(hemibrain.dps.pd,
                                         .progress='text',
                                         .parallel=TRUE,
                                         normalisation='mean')
-hemibrainr:::save_compressed_nblast_mat(hemibrain.twigs5.pd,
+hemibrainr:::save_compressed_nblast_mat(hemibrain.pd.aba.mean,
                                         file = nblastfolder)
 
 ### NBLAST axon
-hemibrain.twigs5.axon.aba.mean=nblast_allbyall(hemibrain.twigs5.axon,
+hemibrain.axon.aba.mean=nblast_allbyall(hemibrain.dps.axon,
                                         .progress='text',
                                         .parallel=TRUE,
                                         normalisation='mean')
-hemibrainr:::save_compressed_nblast_mat(hemibrain.twigs5.axon,
+hemibrainr:::save_compressed_nblast_mat(hemibrain.axon.aba.mean,
                                         file = nblastfolder)
 
 ### NBLAST dendrite
-hemibrain.twigs5.dendrite.aba.mean=nblast_allbyall(hemibrain.twigs5.dendrite,
+hemibrain.dendrite.aba.mean=nblast_allbyall(hemibrain.dps.dendrite,
                                         .progress='text',
                                         .parallel=TRUE,
                                         normalisation='mean')
-hemibrainr:::save_compressed_nblast_mat(hemibrain.twigs5.dendrite,
+hemibrainr:::save_compressed_nblast_mat(hemibrain.dendrite.aba.mean,
                                         file = nblastfolder)
 
 ### NBLAST arbour
-hemibrain.twigs5.arbour.aba.mean=nblast_allbyall(hemibrain.twigs5.arbour,
+hemibrain.arbour.aba.mean=nblast_allbyall(hemibrain.dps.arbour,
                                         .progress='text',
                                         .parallel=TRUE,
                                         normalisation='mean')
-hemibrainr:::save_compressed_nblast_mat(hemibrain.twigs5.arbour,
+hemibrainr:::save_compressed_nblast_mat(hemibrain.arbour.aba.mean,
                                         file = nblastfolder)
 
 

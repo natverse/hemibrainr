@@ -177,13 +177,13 @@ replace_with_none <- function(x, FUN = is.na){
 # hidden
 unlist_df <- function(df){
   if(nrow(df)&ncol(df)){
-    data = as.data.frame(df)
+    data = as.data.frame(df, stringsAsFactors = FALSE)
     data = apply(data,2,function(c) unlist(nullToNA(c)))
-    data = as.data.frame(unlist(data))
+    data = as.data.frame(unlist(data), stringsAsFactors = FALSE)
     dimnames(data) = dimnames(df)
     data
   }else{
-    as.data.frame(df)
+    as.data.frame(df, stringsAsFactors = FALSE)
   }
 }
 
@@ -194,7 +194,7 @@ very_simple_connectivity <- function(conn.df){
     bodyid = ifelse(is.na(row["input"]),row["output"],row["input"]),
     type = row["type"],
     total.weight = sum(as.numeric(row[grepl("weight",names(row))]), na.rm = TRUE) ))
-  conn = as.data.frame(t(conn))
+  conn = as.data.frame(t(conn), stringsAsFactors = FALSE)
   colnames(conn) = gsub( "\\..*", "",colnames(conn) )
   conn
 }

@@ -7,7 +7,7 @@
 
 # Parameters
 polypre = TRUE
-split = "distance"
+split = "synapses"
 mode = "centrifugal"
 identifier = paste(ifelse(polypre,"polypre","pre"),mode,split,sep="_")
 message("Saving splits with paramaters: ", identifier)
