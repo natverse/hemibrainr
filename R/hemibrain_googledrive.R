@@ -138,19 +138,27 @@ flycircuit_neurons <- function(savedir = TRUE,
                                           "arbour"),
                                data = c("neuronlist",
                                         "nblast",
-                                        "dps")){
+                                        "dps"),
+                               brainspace = c("JRCFIB2018F","FCWB")){
   type = match.arg(type)
   data = match.arg(data)
-  data = if(data!="neuronlist"){
-    paste0("_",data)
+  brainspace = match.arg(brainspace)
+  brainspace = if(brainspace!="FCWB"){
+    paste0("_",brainspace)
   }else{
     ""
   }
+  if(data!="neuronlist"){
+    data = paste0("_",data)
+    brainspace = ""
+  }else{
+    data =  ""
+  }
   savedir = good_savedir(savedir = savedir,local = local)
   gfile = find_gfile(savedir = savedir, file = "hemibrain_all_neuron_bodyids", folder = folder)
-  if(type=="all"){gfile = find_gfile(savedir = savedir, file = sprintf("FlyCircuit_all_neurons%s.rds",data), folder = folder)}
-  if(type=="primary.neurites"){gfile = find_gfile(savedir = savedir, file = sprintf("FlyCircuit_all_pnts.rds",data), folder = folder)}
-  if(type=="all"){gfile = find_gfile(savedir = savedir, file = sprintf("FlyCircuit_all_arbour.rds",data), folder = folder)}
+  if(type=="all"){gfile = find_gfile(savedir = savedir, file = sprintf("FlyCircuit_all_neurons%s%s.rds",data,brainspace), folder = folder)}
+  if(type=="primary.neurites"){gfile = find_gfile(savedir = savedir, file = sprintf("FlyCircuit_all_pnts%s%s.rds",data,brainspace), folder = folder)}
+  if(type=="all"){gfile = find_gfile(savedir = savedir, file = sprintf("FlyCircuit_all_arbour%s.rds",data), folder = folder)}
   readRDS(gfile)
 }
 
