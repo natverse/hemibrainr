@@ -99,7 +99,7 @@ hemibrain_nblast <- function(savedir = TRUE,
     paste0("hemibrain_nblast/nblast_",neuron.split,"/")
   }
   if(nblast=="all"){gfile = find_gfile(savedir = savedir, file = "hemibrain.aba.mean.compress.rda", folder = folder)}
-  if(nblast=="spines"){gfile = find_gfile(savedir = savedir, file = "hemibrain.spines.aba.mean.compress.rda", folder = folder)}
+  if(nblast=="spines"){gfile = find_gfile(savedir = savedir, file = "hemibrain.spine.aba.mean.compressed.rda", folder = folder)}
   if(nblast=="primary.neurites"){gfile = find_gfile(savedir = savedir, file = "hemibrain.pnt.aba.mean.compressed.rda", folder = folder)}
   if(nblast=="primary.dendrites"){gfile = find_gfile(savedir = savedir, file = "hemibrain.pd.aba.mean.compressed.rda", folder = folder)}
   if(nblast=="axons"){gfile = find_gfile(savedir = savedir, file = "hemibrain.axon.aba.mean.compressed.rda", folder = folder)}
