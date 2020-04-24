@@ -98,7 +98,7 @@ hemibrain_nblast <- function(savedir = TRUE,
   nblast = match.arg(nblast)
   neuron.split = match.arg(neuron.split)
   savedir = good_savedir(savedir = savedir,local = local)
-  folder = if(nblast %in% c("all","spines")){
+  folder = if(nblast %in% c("all")){
     paste0("hemibrain_nblast/")
   }else{
     paste0("hemibrain_nblast/nblast_",neuron.split,"/")
