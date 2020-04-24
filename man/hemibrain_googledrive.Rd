@@ -6,6 +6,7 @@
 \alias{hemibrain_synapses}
 \alias{hemibrain_connections}
 \alias{hemibrain_nblast}
+\alias{flycircuit_neurons}
 \title{Read precomputed information from the hemibrain Google Drive}
 \usage{
 hemibrain_neuron_bodyids(savedir = TRUE, local = FALSE)
@@ -32,8 +33,16 @@ hemibrain_nblast(
   savedir = TRUE,
   local = FALSE,
   nblast = c("all", "primary.neurites", "primary.dendrites", "axons", "dendrites",
-    "spines"),
+    "spines", "tracts", "arbour", "simplified"),
   neuron.split = c("polypre_centrifugal_synapses", "polypre_centrifugal_distance")
+)
+
+flycircuit_neurons(
+  savedir = TRUE,
+  local = FALSE,
+  folder = "hemibrain_neurons/light_level/flycircuit",
+  cable = c("all", "primary.neurites", "arbour"),
+  data = c("neuronlist", "nblast", "dps")
 )
 }
 \arguments{
@@ -45,6 +54,10 @@ hemibrain_nblast(
 and \code{\link{hemibrain_flow_centrality}}}
 
 \item{nblast}{the NBLAST you would like to retrieve, i.e. \code{"arbours"} gives you a normalised all by all NBLAST matrix of all branching arbour.}
+
+\item{cable}{the type of cable we want to read. \code{"all"} indicates full neurons.}
+
+\item{data}{the type of data to read, i.e. neurons, an nblast matrix or a \code{dotprops} object.}
 }
 \value{
 a \code{data.frame} or character vector

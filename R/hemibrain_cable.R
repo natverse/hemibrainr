@@ -282,6 +282,10 @@ primary_dendrite_cable<-function(x, ...) UseMethod("primary_dendrite_cable")
 primary_neurite_cable<-function(x, ...) UseMethod("primary_neurite_cable")
 
 #' @export
+#' @rdname extract_cable
+tract_cable<-function(x, ...) UseMethod("tract_cable")
+
+#' @export
 axonic_cable.neuron <- function(x, mixed=FALSE, ...){
   points=x$d
   if (mixed==TRUE){
@@ -341,7 +345,6 @@ arbour_cable.neuron <- function(x, mixed = FALSE, ...){
   neuron
 }
 
-
 #' @export
 arbour_cable.neuprintneuron <- arbour_cable.neuron
 
@@ -372,7 +375,7 @@ primary_dendrite_cable.neuron <- function(x, ...){
   }else{
     neuron = nat::prune_vertices(x,verticestoprune=v,invert=TRUE)
   }
-  neuron$d$Label=3
+  neuron$d$Label=4
   neuron
 }
 
@@ -385,7 +388,19 @@ primary_neurite_cable.neuron <- function(x, ...){
   }else{
     neuron = nat::prune_vertices(x,verticestoprune=v,invert=TRUE)
   }
-  neuron$d$Label=3
+  neuron$d$Label=7
+  neuron
+}
+
+#' @export
+tract_cable.neuron <- function(x, ...){
+  points=x$d
+  v = subset(rownames(x$d), x$d$Label %in% c(4,7))
+  if("neuprintneuron"%in%class(x)){
+    neuron = prune_vertices.neuprintneuron(x,verticestoprune=v,invert=TRUE)
+  }else{
+    neuron = nat::prune_vertices(x,verticestoprune=v,invert=TRUE)
+  }
   neuron
 }
 
@@ -417,6 +432,11 @@ primary_dendrite_cable.neuronlist <- function(x, ...){
 #' @export
 primary_neurite_cable.neuronlist <- function(x, ...){
   nat::nlapply(x,primary_neurite_cable.neuron, ...)
+}
+
+#' @export
+tract_cable.neuronlist <- function(x, ...){
+  nat::nlapply(x,tract_cable.neuron, ...)
 }
 
 #' Prune vertices from a neuprint neuron (taking care of synapse etc information)

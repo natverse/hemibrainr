@@ -23,6 +23,7 @@ hemibrain = team_drive_get("hemibrain")
 drive_hemibrain = drive_find(type = "folder", team_drive = hemibrain)
 hemibrain_neurons= subset(drive_hemibrain,name=="hemibrain_neurons")
 hemibrain_nblast= subset(drive_hemibrain,name=="hemibrain_nblast")
+flycircuit= subset(drive_hemibrain,name=="flycircuit")
 nblast.folder = subset(drive_hemibrain,name==paste0("nblast_",identifier))
 
 # Save NBLAST files

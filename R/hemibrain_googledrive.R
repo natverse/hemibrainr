@@ -13,6 +13,8 @@
 #' @param neuron.split read saved neurons spit in which way? Folder names indicative of arguments passed to \code{\link{flow_centrality}}.
 #' and \code{\link{hemibrain_flow_centrality}}
 #' @param nblast the NBLAST you would like to retrieve, i.e. \code{"arbours"} gives you a normalised all by all NBLAST matrix of all branching arbour.
+#' @param cable the type of cable we want to read. \code{"all"} indicates full neurons.
+#' @param data the type of data to read, i.e. neurons, an nblast matrix or a \code{dotprops} object.
 #'
 #' @return a \code{data.frame} or character vector
 #'
@@ -78,7 +80,6 @@ hemibrain_connections <- function(savedir = TRUE, local = FALSE,
   gcsv
 }
 
-
 #' @export
 #' @rdname hemibrain_googledrive
 hemibrain_nblast <- function(savedir = TRUE,
@@ -88,7 +89,10 @@ hemibrain_nblast <- function(savedir = TRUE,
                                         "primary.dendrites",
                                         "axons",
                                         "dendrites",
-                                        "spines"),
+                                        "spines",
+                                        "tracts",
+                                        "arbour",
+                                        "simplified"),
                              neuron.split = c("polypre_centrifugal_synapses",
                                               "polypre_centrifugal_distance")){
   nblast = match.arg(nblast)
@@ -106,6 +110,8 @@ hemibrain_nblast <- function(savedir = TRUE,
   if(nblast=="axons"){gfile = find_gfile(savedir = savedir, file = "hemibrain.axon.aba.mean.compressed.rda", folder = folder)}
   if(nblast=="dendrites"){gfile = find_gfile(savedir = savedir, file = "hemibrain.dendrite.aba.mean.compressed.rda", folder = folder)}
   if(nblast=="arbour"){gfile = find_gfile(savedir = savedir, file = "hemibrain.arbour.aba.mean.compressed.rda", folder = folder)}
+  if(nblast=="tracts"){gfile = find_gfile(savedir = savedir, file = "hemibrain.tract.aba.mean.compressed.rda", folder = folder)}
+  if(nblast=="simplified"){gfile = find_gfile(savedir = savedir, file = "hemibrain.simp.aba.mean.compressed.rda", folder = folder)}
   message("Loading NBLAST matrix from ", gfile)
   env <- new.env(parent = parent.frame())
   assign(nblast, get(load(gfile, env), envir = env), envir = env)
@@ -121,3 +127,33 @@ find_gfile <- function(savedir,
   gfile = sort(gfile)[1]
   gfile
 }
+
+#' @export
+#' @rdname hemibrain_googledrive
+flycircuit_neurons <- function(savedir = TRUE,
+                               local = FALSE,
+                               folder = "hemibrain_neurons/light_level/flycircuit",
+                               cable = c("all",
+                                          "primary.neurites",
+                                          "arbour"),
+                               data = c("neuronlist",
+                                        "nblast",
+                                        "dps")){
+  type = match.arg(type)
+  data = match.arg(data)
+  data = if(data!="neuronlist"){
+    paste0("_",data)
+  }else{
+    ""
+  }
+  savedir = good_savedir(savedir = savedir,local = local)
+  gfile = find_gfile(savedir = savedir, file = "hemibrain_all_neuron_bodyids", folder = folder)
+  if(type=="all"){gfile = find_gfile(savedir = savedir, file = sprintf("FlyCircuit_all_neurons%s.rds",data), folder = folder)}
+  if(type=="primary.neurites"){gfile = find_gfile(savedir = savedir, file = sprintf("FlyCircuit_all_pnts.rds",data), folder = folder)}
+  if(type=="all"){gfile = find_gfile(savedir = savedir, file = sprintf("FlyCircuit_all_arbour.rds",data), folder = folder)}
+  readRDS(gfile)
+}
+
+
+
+

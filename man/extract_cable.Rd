@@ -17,6 +17,7 @@
 \alias{unsure_cable}
 \alias{primary_dendrite_cable}
 \alias{primary_neurite_cable}
+\alias{tract_cable}
 \title{Extract axonic/dendritic points/cable from a neuron/neuronlist}
 \usage{
 axonic_points(x, ...)
@@ -50,6 +51,8 @@ unsure_cable(x, mixed = FALSE, ...)
 primary_dendrite_cable(x, ...)
 
 primary_neurite_cable(x, ...)
+
+tract_cable(x, ...)
 }
 \arguments{
 \item{x}{a neuron/neuronlist object that has its axons/dendrites labelled in swc format in its neuron$d dataframes}
