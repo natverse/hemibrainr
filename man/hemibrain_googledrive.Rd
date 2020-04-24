@@ -5,6 +5,7 @@
 \alias{hemibrain_elist}
 \alias{hemibrain_synapses}
 \alias{hemibrain_connections}
+\alias{hemibrain_nblast}
 \title{Read precomputed information from the hemibrain Google Drive}
 \usage{
 hemibrain_neuron_bodyids(savedir = TRUE, local = FALSE)
@@ -24,6 +25,14 @@ hemibrain_synapses(
 hemibrain_connections(
   savedir = TRUE,
   local = FALSE,
+  neuron.split = c("polypre_centrifugal_synapses", "polypre_centrifugal_distance")
+)
+
+hemibrain_nblast(
+  savedir = TRUE,
+  local = FALSE,
+  nblast = c("all", "primary.neurites", "primary.dendrites", "axons", "dendrites",
+    "spines"),
   neuron.split = c("polypre_centrifugal_synapses", "polypre_centrifugal_distance")
 )
 }

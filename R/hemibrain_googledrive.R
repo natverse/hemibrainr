@@ -78,8 +78,9 @@ hemibrain_connections <- function(savedir = TRUE, local = FALSE,
   gcsv
 }
 
-#' @rdname hemibrain_nblast
+
 #' @export
+#' @rdname hemibrain_googledrive
 hemibrain_nblast <- function(savedir = TRUE,
                              local = FALSE,
                              nblast = c("all",
