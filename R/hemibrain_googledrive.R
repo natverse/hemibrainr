@@ -4,17 +4,30 @@
 
 #' Read precomputed information from the hemibrain Google Drive
 #'
-#' @description Read precomputed data available on the hemibrain Google Team Drive. This includes all synapses, neuron-neuron connections
-#' and an edgelist for all hemibrain neurons, broken down by axon and dendrite assignments. NBLAST matrices for all neurons against all neurons in
-#' rhe data set is also available, inluding ones broken down by neuron compartment.
+#' @description Read precomputed data available on the hemibrain Google Team
+#'   Drive. This includes all synapses, neuron-neuron connections and an
+#'   edgelist for all hemibrain neurons, broken down by axon and dendrite
+#'   assignments. NBLAST matrices for all neurons against all neurons in the
+#'   data set are also available, including ones broken down by neuron
+#'   compartment.
 #'
-#' @param savedir directory in which neuron data has been deposited. If \code{TRUE} your default save directory is used, which is stored as: \code{options()$Gdrive_hemibrain_data}
-#' @param local logical, whether to try to read locally saved neurons (by default at: \code{options()$hemibrain_data}) or neurons from Google Drive (\code{options()$Gdrive_hemibrain_data}).
-#' @param neuron.split read saved neurons spit in which way? Folder names indicative of arguments passed to \code{\link{flow_centrality}}.
-#' and \code{\link{hemibrain_flow_centrality}}
-#' @param nblast the NBLAST you would like to retrieve, i.e. \code{"arbours"} gives you a normalised all by all NBLAST matrix of all branching arbour.
-#' @param cable the type of cable we want to read. \code{"all"} indicates full neurons.
-#' @param data the type of data to read, i.e. neurons, an nblast matrix or a \code{dotprops} object.
+#' @param savedir directory in which neuron data has been deposited. If
+#'   \code{TRUE} your default save directory is used, which is stored as:
+#'   \code{getOption("Gdrive_hemibrain_data")}
+#' @param local logical, whether to try to read locally saved neurons (by
+#'   default at: \code{getOption("hemibrain_data")}) or neurons from Google
+#'   Drive (\code{getOption("Gdrive_hemibrain_data")}).
+#' @param neuron.split read saved neurons split in which way? Folder names
+#'   indicative of arguments passed to \code{\link{flow_centrality}}. and
+#'   \code{\link{hemibrain_flow_centrality}}
+#' @param nblast the NBLAST matrix you would like to retrieve, e.g.
+#'   \code{"arbours"} gives you a normalised all by all NBLAST matrix of all
+#'   branching arbour.
+#' @param cable the type of cable we want to read. \code{"all"} indicates full
+#'   neurons.
+#' @param data the type of data to read, i.e. neurons, an NBLAST matrix or a
+#'   \code{\link{dotprops}} object.
+#' @param folder A subfolder containing the data object to read.
 #'
 #' @return a \code{data.frame} or character vector
 #'
@@ -22,16 +35,19 @@
 #' \donttest{
 #' \dontrun{
 #'
-#' #  All neurpritn IDs for neurons that have a split precomputed
+#' #  All neuprint IDs for neurons that have a split precomputed
 #' ids = hemibrain_neuron_bodyids()
 #'
 #' # Connectivity edgelist, broken down by axon/dendrite
 #' elist = hemibrain_edgelist()
 #'
 #' }}
-#' @seealso \code{\link{hemibrain_splitpoints}}, \code{\link{hemibrain_flow_centrality}},
-#' \code{\link{hemibrain_precomputed_splitpoints}}, \code{\link{hemibrain_metrics}}
-#' @rdname hemibrain_googledrive
+#' @seealso \code{\link{hemibrain_splitpoints}},
+#'   \code{\link{hemibrain_flow_centrality}},
+#'   \code{\link{hemibrain_precomputed_splitpoints}},
+#'   \code{\link{hemibrain_metrics}}
+#' @name hemibrain_googledrive
+#' @aliases hemibrain_neuron_bodyids
 #' @export
 hemibrain_neuron_bodyids <- function(savedir = TRUE,
                                         local = FALSE){
