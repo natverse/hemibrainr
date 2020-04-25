@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Read precomputed information from the hemibrain Google Drive — hemibrain_neuron_bodyids • hemibrainr</title>
+<title>Read precomputed information from the hemibrain Google Drive — hemibrain_googledrive • hemibrainr</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,10 +46,13 @@
 
 
 
-<meta property="og:title" content="Read precomputed information from the hemibrain Google Drive — hemibrain_neuron_bodyids" />
-<meta property="og:description" content="Read precomputed data available on the hemibrain Google Team Drive. This includes all synapses, neuron-neuron connections
-and an edgelist for all hemibrain neurons, broken down by axon and dendrite assignments. NBLAST matrices for all neurons against all neurons in
-rhe data set is also available, inluding ones broken down by neuron compartment." />
+<meta property="og:title" content="Read precomputed information from the hemibrain Google Drive — hemibrain_googledrive" />
+<meta property="og:description" content="Read precomputed data available on the hemibrain Google Team
+  Drive. This includes all synapses, neuron-neuron connections and an
+  edgelist for all hemibrain neurons, broken down by axon and dendrite
+  assignments. NBLAST matrices for all neurons against all neurons in the
+  data set are also available, including ones broken down by neuron
+  compartment." />
 <meta property="og:image" content="/logo.svg" />
 
 
@@ -124,9 +127,12 @@ rhe data set is also available, inluding ones broken down by neuron compartment.
     </div>
 
     <div class="ref-description">
-    <p>Read precomputed data available on the hemibrain Google Team Drive. This includes all synapses, neuron-neuron connections
-and an edgelist for all hemibrain neurons, broken down by axon and dendrite assignments. NBLAST matrices for all neurons against all neurons in
-rhe data set is also available, inluding ones broken down by neuron compartment.</p>
+    <p>Read precomputed data available on the hemibrain Google Team
+  Drive. This includes all synapses, neuron-neuron connections and an
+  edgelist for all hemibrain neurons, broken down by axon and dendrite
+  assignments. NBLAST matrices for all neurons against all neurons in the
+  data set are also available, including ones broken down by neuron
+  compartment.</p>
     </div>
 
     <pre class="usage"><span class='fu'>hemibrain_neuron_bodyids</span>(<span class='kw'>savedir</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>local</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
@@ -150,11 +156,19 @@ rhe data set is also available, inluding ones broken down by neuron compartment.
 )
 
 <span class='fu'>hemibrain_nblast</span>(
+  <span class='kw'>nblast</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"all"</span>, <span class='st'>"primary.neurites"</span>, <span class='st'>"primary.dendrites"</span>, <span class='st'>"axons"</span>, <span class='st'>"dendrites"</span>,
+    <span class='st'>"spines"</span>, <span class='st'>"tracts"</span>, <span class='st'>"arbour"</span>, <span class='st'>"simplified"</span>),
   <span class='kw'>savedir</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>local</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>nblast</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"all"</span>, <span class='st'>"primary.neurites"</span>, <span class='st'>"primary.dendrites"</span>, <span class='st'>"axons"</span>, <span class='st'>"dendrites"</span>,
-    <span class='st'>"spines"</span>),
   <span class='kw'>neuron.split</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"polypre_centrifugal_synapses"</span>, <span class='st'>"polypre_centrifugal_distance"</span>)
+)
+
+<span class='fu'>flycircuit_neurons</span>(
+  <span class='kw'>savedir</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>local</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>folder</span> <span class='kw'>=</span> <span class='st'>"hemibrain_neurons/light_level/flycircuit"</span>,
+  <span class='kw'>cable</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"all"</span>, <span class='st'>"primary.neurites"</span>, <span class='st'>"arbour"</span>),
+  <span class='kw'>data</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"neuronlist"</span>, <span class='st'>"nblast"</span>, <span class='st'>"dps"</span>)
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -162,20 +176,41 @@ rhe data set is also available, inluding ones broken down by neuron compartment.
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>savedir</th>
-      <td><p>directory in which neuron data has been deposited. If <code>TRUE</code> your default save directory is used, which is stored as: <code>options()$Gdrive_hemibrain_data</code></p></td>
+      <td><p>directory in which neuron data has been deposited. If
+<code>TRUE</code> your default save directory is used, which is stored as:
+<code><a href='https://rdrr.io/r/base/options.html'>getOption("Gdrive_hemibrain_data")</a></code></p></td>
     </tr>
     <tr>
       <th>local</th>
-      <td><p>logical, whether to try to read locally saved neurons (by default at: <code>options()$hemibrain_data</code>) or neurons from Google Drive (<code>options()$Gdrive_hemibrain_data</code>).</p></td>
+      <td><p>logical, whether to try to read locally saved neurons (by
+default at: <code><a href='https://rdrr.io/r/base/options.html'>getOption("hemibrain_data")</a></code>) or neurons from Google
+Drive (<code><a href='https://rdrr.io/r/base/options.html'>getOption("Gdrive_hemibrain_data")</a></code>).</p></td>
     </tr>
     <tr>
       <th>neuron.split</th>
-      <td><p>read saved neurons spit in which way? Folder names indicative of arguments passed to <code><a href='flow_centrality.html'>flow_centrality</a></code>.
-and <code><a href='hemibrain_flow_centrality.html'>hemibrain_flow_centrality</a></code></p></td>
+      <td><p>read saved neurons split in which way? Folder names
+indicative of arguments passed to <code><a href='flow_centrality.html'>flow_centrality</a></code>. and
+<code><a href='hemibrain_flow_centrality.html'>hemibrain_flow_centrality</a></code></p></td>
     </tr>
     <tr>
       <th>nblast</th>
-      <td><p>the NBLAST you would like to retrieve, i.e. <code>"arbours"</code> gives you a normalised all by all NBLAST matrix of all branching arbour.</p></td>
+      <td><p>the NBLAST matrix you would like to retrieve, e.g.
+<code>"arbours"</code> gives you a normalised all by all NBLAST matrix of all
+branching arbour.</p></td>
+    </tr>
+    <tr>
+      <th>folder</th>
+      <td><p>A subfolder containing the data object to read.</p></td>
+    </tr>
+    <tr>
+      <th>cable</th>
+      <td><p>the type of cable we want to read. <code>"all"</code> indicates full
+neurons.</p></td>
+    </tr>
+    <tr>
+      <th>data</th>
+      <td><p>the type of data to read, i.e. neurons, an NBLAST matrix or a
+<code>dotprops</code> object.</p></td>
     </tr>
     </table>
 
@@ -184,14 +219,16 @@ and <code><a href='hemibrain_flow_centrality.html'>hemibrain_flow_centrality</a>
     <p>a <code>data.frame</code> or character vector</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='hemibrain_splitpoints.html'>hemibrain_splitpoints</a></code>, <code><a href='hemibrain_flow_centrality.html'>hemibrain_flow_centrality</a></code>,
-<code><a href='hemibrain_precomputed_splitpoints.html'>hemibrain_precomputed_splitpoints</a></code>, <code><a href='hemibrain_metrics.html'>hemibrain_metrics</a></code></p></div>
+    <div class='dont-index'><p><code><a href='hemibrain_splitpoints.html'>hemibrain_splitpoints</a></code>,
+  <code><a href='hemibrain_flow_centrality.html'>hemibrain_flow_centrality</a></code>,
+  <code><a href='hemibrain_precomputed_splitpoints.html'>hemibrain_precomputed_splitpoints</a></code>,
+  <code><a href='hemibrain_metrics.html'>hemibrain_metrics</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
 <span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
 
-<span class='co'>#  All neurpritn IDs for neurons that have a split precomputed</span>
+<span class='co'>#  All neuprint IDs for neurons that have a split precomputed</span>
 <span class='no'>ids</span> <span class='kw'>=</span> <span class='fu'>hemibrain_neuron_bodyids</span>()
 
 <span class='co'># Connectivity edgelist, broken down by axon/dendrite</span>
