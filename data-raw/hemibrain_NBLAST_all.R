@@ -21,15 +21,16 @@ message("functions loaded")
 
 # Parallelise
 numCores <- detectCores()
-doMC::registerDoMC(numCores/2)
-message("Using ", numCores/2, " cores")
+doMC::registerDoMC(numCores/4)
+message("Using ", numCores/4, " cores")
 
 # Load split neurons
 load(paste0("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/hemibrain_all_neurons_flow_",identifier,".rda"))
 message("Loaded: ", length(all.neurons.flow), " neurons")
 
 # Scale
-all.neurons.flow.microns.microns = hemibrainr:::scale_neurons.neuronlist(all.neurons.flow, .parallel = TRUE)
+all.neurons.flow.microns = hemibrainr:::scale_neurons.neuronlist(all.neurons.flow, .parallel = TRUE)
+rm("all.neurons.flow")
 message("Neurons scaled!")
 
 # Extract compartments
@@ -47,6 +48,7 @@ library(lhns)
 library(nat.jrcbrains)
 download_saalfeldlab_registrations()
 most.lhns.hemi.dps = nat.templatebrains::xform_brain(lhns::most.lhns.dps, reference= "JRCFIB2018F", sample="FCWB")
+most.lhns.hemi = nat.templatebrains::xform_brain(lhns::most.lhns, reference= "JRCFIB2018F", sample="FCWB")
 
 # Make dps objects
 hemibrain.dps=dotprops(all.neurons.flow.microns, k=5, resample=1, .parallel=T, OmitFailures = T)
@@ -112,7 +114,7 @@ hemibrain.arbour.aba.mean=nat.nblast::nblast_allbyall(hemibrain.dps.arbour,
                                         .parallel=TRUE,
                                         normalisation='mean')
 hemibrainr:::save_compressed_nblast_mat(hemibrain.arbour.aba.mean,
-                                        file = nblastfolder)s
+                                        file = nblastfolder)
 
 ### NBLAST spine
 hemibrain.spine.aba.mean=nat.nblast::nblast_allbyall(hemibrain.dps.spine,

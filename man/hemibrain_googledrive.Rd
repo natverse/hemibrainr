@@ -7,6 +7,7 @@
 \alias{hemibrain_connections}
 \alias{hemibrain_nblast}
 \alias{flycircuit_neurons}
+\alias{hemibrain_lm_lhns}
 \title{Read precomputed information from the hemibrain Google Drive}
 \usage{
 hemibrain_neuron_bodyids(savedir = TRUE, local = FALSE)
@@ -42,7 +43,16 @@ flycircuit_neurons(
   local = FALSE,
   folder = "hemibrain_neurons/light_level/flycircuit",
   cable = c("all", "primary.neurites", "arbour"),
-  data = c("neuronlist", "nblast", "dps")
+  data = c("neuronlist", "nblast", "dps"),
+  brainspace = c("JRCFIB2018F", "JRCFIB2018Fraw", "FCWB")
+)
+
+hemibrain_lm_lhns(
+  savedir = TRUE,
+  local = FALSE,
+  folder = "hemibrain_neurons/light_level/lhns",
+  data = c("neuronlist", "nblast", "dps"),
+  brainspace = c("JRCFIB2018F", "JRCFIB2018Fraw", "FCWB")
 )
 }
 \arguments{

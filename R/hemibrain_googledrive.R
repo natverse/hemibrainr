@@ -139,8 +139,8 @@ flycircuit_neurons <- function(savedir = TRUE,
                                data = c("neuronlist",
                                         "nblast",
                                         "dps"),
-                               brainspace = c("JRCFIB2018F","FCWB")){
-  type = match.arg(type)
+                               brainspace = c("JRCFIB2018F","JRCFIB2018Fraw","FCWB")){
+  cable = match.arg(cable)
   data = match.arg(data)
   brainspace = match.arg(brainspace)
   brainspace = if(brainspace!="FCWB"){
@@ -155,13 +155,36 @@ flycircuit_neurons <- function(savedir = TRUE,
     data =  ""
   }
   savedir = good_savedir(savedir = savedir,local = local)
-  gfile = find_gfile(savedir = savedir, file = "hemibrain_all_neuron_bodyids", folder = folder)
-  if(type=="all"){gfile = find_gfile(savedir = savedir, file = sprintf("FlyCircuit_all_neurons%s%s.rds",data,brainspace), folder = folder)}
-  if(type=="primary.neurites"){gfile = find_gfile(savedir = savedir, file = sprintf("FlyCircuit_all_pnts%s%s.rds",data,brainspace), folder = folder)}
-  if(type=="all"){gfile = find_gfile(savedir = savedir, file = sprintf("FlyCircuit_all_arbour%s.rds",data), folder = folder)}
+  if(cable=="all"){gfile = find_gfile(savedir = savedir, file = sprintf("FlyCircuit_all_neurons%s%s.rds",data,brainspace), folder = folder)}
+  if(cable=="primary.neurites"){gfile = find_gfile(savedir = savedir, file = sprintf("FlyCircuit_all_pnts%s%s.rds",data,brainspace), folder = folder)}
+  if(cable=="all"){gfile = find_gfile(savedir = savedir, file = sprintf("FlyCircuit_all_arbour%s.rds",data), folder = folder)}
   readRDS(gfile)
 }
 
-
+#' @export
+#' @rdname hemibrain_googledrive
+hemibrain_lm_lhns <- function(savedir = TRUE,
+                              local = FALSE,
+                              folder = "hemibrain_neurons/light_level/lhns",
+                              data = c("neuronlist",
+                                       "nblast",
+                                       "dps"),
+                              brainspace = c("JRCFIB2018F","JRCFIB2018Fraw","FCWB")){
+  brainspace = match.arg(brainspace)
+  data = match.arg(data)
+  brainspace = if(brainspace=="FCWB"){
+    return(lhns::most.lhns)
+  }else{
+    brainspace = paste0("_",brainspace)
+  }
+  if(data!="neuronlist"){
+    data = paste0("_",data)
+  }else{
+    data =  ""
+  }
+  savedir = good_savedir(savedir = savedir,local = local)
+  gfile = find_gfile(savedir = savedir, file = sprintf("most_lhns%s%s.rds",data,brainspace), folder = folder)
+  readRDS(gfile)
+}
 
 
