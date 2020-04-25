@@ -98,9 +98,7 @@ hemibrain_connections <- function(savedir = TRUE, local = FALSE,
 
 #' @export
 #' @rdname hemibrain_googledrive
-hemibrain_nblast <- function(savedir = TRUE,
-                             local = FALSE,
-                             nblast = c("all",
+hemibrain_nblast <- function(nblast = c("all",
                                         "primary.neurites",
                                         "primary.dendrites",
                                         "axons",
@@ -109,6 +107,8 @@ hemibrain_nblast <- function(savedir = TRUE,
                                         "tracts",
                                         "arbour",
                                         "simplified"),
+                             savedir = TRUE,
+                             local = FALSE,
                              neuron.split = c("polypre_centrifugal_synapses",
                                               "polypre_centrifugal_distance")){
   nblast = match.arg(nblast)

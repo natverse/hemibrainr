@@ -31,10 +31,10 @@ hemibrain_connections(
 )
 
 hemibrain_nblast(
-  savedir = TRUE,
-  local = FALSE,
   nblast = c("all", "primary.neurites", "primary.dendrites", "axons", "dendrites",
     "spines", "tracts", "arbour", "simplified"),
+  savedir = TRUE,
+  local = FALSE,
   neuron.split = c("polypre_centrifugal_synapses", "polypre_centrifugal_distance")
 )
 
@@ -86,7 +86,7 @@ Read precomputed data available on the hemibrain Google Team
 \donttest{
 \dontrun{
 
-#  All neurpritn IDs for neurons that have a split precomputed
+#  All neuprint IDs for neurons that have a split precomputed
 ids = hemibrain_neuron_bodyids()
 
 # Connectivity edgelist, broken down by axon/dendrite
