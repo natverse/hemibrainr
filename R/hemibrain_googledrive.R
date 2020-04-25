@@ -115,19 +115,23 @@ hemibrain_nblast <- function(savedir = TRUE,
   neuron.split = match.arg(neuron.split)
   savedir = good_savedir(savedir = savedir,local = local)
   folder = if(nblast %in% c("all")){
-    paste0("hemibrain_nblast/")
+    "hemibrain_nblast"
   }else{
-    paste0("hemibrain_nblast/nblast_",neuron.split,"/")
+    paste0("hemibrain_nblast/nblast_", neuron.split)
   }
-  if(nblast=="all"){gfile = find_gfile(savedir = savedir, file = "hemibrain.aba.mean.compress.rda", folder = folder)}
-  if(nblast=="spines"){gfile = find_gfile(savedir = savedir, file = "hemibrain.spine.aba.mean.compressed.rda", folder = folder)}
-  if(nblast=="primary.neurites"){gfile = find_gfile(savedir = savedir, file = "hemibrain.pnt.aba.mean.compressed.rda", folder = folder)}
-  if(nblast=="primary.dendrites"){gfile = find_gfile(savedir = savedir, file = "hemibrain.pd.aba.mean.compressed.rda", folder = folder)}
-  if(nblast=="axons"){gfile = find_gfile(savedir = savedir, file = "hemibrain.axon.aba.mean.compressed.rda", folder = folder)}
-  if(nblast=="dendrites"){gfile = find_gfile(savedir = savedir, file = "hemibrain.dendrite.aba.mean.compressed.rda", folder = folder)}
-  if(nblast=="arbour"){gfile = find_gfile(savedir = savedir, file = "hemibrain.arbour.aba.mean.compressed.rda", folder = folder)}
-  if(nblast=="tracts"){gfile = find_gfile(savedir = savedir, file = "hemibrain.tract.aba.mean.compressed.rda", folder = folder)}
-  if(nblast=="simplified"){gfile = find_gfile(savedir = savedir, file = "hemibrain.simp.aba.mean.compressed.rda", folder = folder)}
+  file = switch(nblast,
+    all = "hemibrain.aba.mean.compress.rda",
+    spines = "hemibrain.spine.aba.mean.compressed.rda",
+    primary.neurites = "hemibrain.pnt.aba.mean.compressed.rda",
+    primary.dendrites = "hemibrain.pd.aba.mean.compressed.rda",
+    axons = "hemibrain.axon.aba.mean.compressed.rda",
+    dendrites = "hemibrain.dendrite.aba.mean.compressed.rda",
+    arbour = "hemibrain.arbour.aba.mean.compressed.rda",
+    tracts = "hemibrain.tract.aba.mean.compressed.rda",
+    simplified = "hemibrain.simp.aba.mean.compressed.rda",
+    stop("Unrecognised value of nblast argument!")
+  )
+  gfile = find_gfile(savedir = savedir, file = file, folder = folder)
   message("Loading NBLAST matrix from ", gfile)
   env <- new.env(parent = parent.frame())
   assign(nblast, get(load(gfile, env), envir = env), envir = env)
@@ -137,9 +141,10 @@ hemibrain_nblast <- function(savedir = TRUE,
 # hidden
 find_gfile <- function(savedir,
                        file,
-                       folder = "hemibrain_neurons/"){
-  glist = list.files(paste0(savedir,folder),recursive = FALSE, full.names = TRUE)
-  gfile = glist[grepl(file,glist)]
+                       folder = "hemibrain_neurons"){
+  glist = list.files(file.path(savedir,folder), recursive = FALSE,
+                     full.names = TRUE)
+  gfile = glist[grepl(file, glist)]
   gfile = sort(gfile)[1]
   gfile
 }
