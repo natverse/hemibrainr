@@ -37,7 +37,7 @@ are a vector of greater than length 1. Principally for use within method \code{h
 will add \code{x$tags$soma}, where \code{x$tags$soma} is \code{TRUE}. Tags are expected to be of length 1.
 If x is a \code{neuronlist} then tags may be supplied of \code{length(x)}.}
 
-\item{y}{a neuron object, which is to receive tags from x, loccated at \code{x$tags}.}
+\item{y}{a neuron object, which is to receive tags from x, located at \code{x$tags}.}
 }
 \description{
 Set the x$tags field within a neuron object.

@@ -7,7 +7,7 @@
 #' @description Set the x$tags field within a neuron object.
 #'
 #' @param x a \code{nat::neuronlist} or \code{nat::neuron} object.
-#' @param y a neuron object, which is to receive tags from x, loccated at \code{x$tags}.
+#' @param y a neuron object, which is to receive tags from x, located at \code{x$tags}.
 #' @param i the index of the arguments provides through ..., to be used as the tag, if these arguments
 #' are a vector of greater than length 1. Principally for use within method \code{hemibrainr:::list}.
 #' @param ... named arguments with values, to be added to x$tags. E.e. using soma = TRUE,
