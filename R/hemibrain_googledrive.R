@@ -184,6 +184,8 @@ flycircuit_neurons <- function(savedir = TRUE,
 
 #' @export
 #' @rdname hemibrain_googledrive
+#' @param brainspace A template brain space for neurons loaded by
+#'   \code{hemibrain_lm_lhns}. Defaults to \code{JRCFIB2018F}.
 hemibrain_lm_lhns <- function(savedir = TRUE,
                               local = FALSE,
                               folder = "hemibrain_neurons/light_level/lhns",
@@ -193,9 +195,12 @@ hemibrain_lm_lhns <- function(savedir = TRUE,
                               brainspace = c("JRCFIB2018F","JRCFIB2018Fraw","FCWB")){
   brainspace = match.arg(brainspace)
   data = match.arg(data)
-  brainspace = if(brainspace=="FCWB"){
+  brainspace = if(brainspace=="FCWB") {
+    if(!requireNamespace("lhns"))
+      stop("To use these data, please install the optional lhns package:\n",
+           "remotes::install_github('jefferislab/lhns')")
     return(lhns::most.lhns)
-  }else{
+  } else {
     brainspace = paste0("_",brainspace)
   }
   if(data!="neuronlist"){

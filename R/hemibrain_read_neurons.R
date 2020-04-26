@@ -273,12 +273,9 @@ hemibrain_download_neurons <- function(savedir = TRUE,
                                        overwrite = FALSE,
                                        ...
                                        ){
-  message("NOTE: This function is experimental. The recommended method of reading all hemibrain neuron quickly is
-          to load Google drive using Goolge Filstream and use the function: hemibrain_neurons.
-          You must have access to the Google Team Drive 'hemibrain', administered by flyconnectome group at the University of Cambidge, to do this.
-          If in doubt over access, you can contact us.")
+  message("NOTE: This function is experimental. The recommended method of reading all hemibrain neurons quickly is to set up Google Drive using Google Filestream and use the function: hemibrain_neurons. You must have access to the Google Team Drive 'hemibrain', administered by the flyconnectome group at the University of Cambidge, to do this. If in doubt over access, you can contact us.")
   savedir = good_savedir(savedir=savedir, local = TRUE)
-  message(sprintf("If this takes to much time, you can also download the relevant Google Drive folder manually. To do so, open this link: %s and then download the folder to this location on your computer: ",
+  message(sprintf("If this takes too much time, you can also download the relevant Google Drive folder manually. To do so, open this link: %s and then download the folder to this location on your computer: ",
           "https://drive.google.com/open?id=1px6o2R_heFLRCtTF4Q2SvJNR9CWFhud0. Remember to unzip all files.",
           paste0(savedir,"hemibrain_neurons/")))
   ### Download file hash meta data
@@ -289,9 +286,9 @@ hemibrain_download_neurons <- function(savedir = TRUE,
     utils::browseURL("https://drive.google.com/drive/folders/14UPg7CvHDtvzNjvNgAULYnxZ018Xgf5H?usp=sharing",
                      browser = getOption("browser"),
                      encodeIfNeeded = FALSE)
-    stop("Google Drive download failed. This might be because you have not added our data folder to your drive.
-            Please follow this link: https://drive.google.com/drive/folders/14UPg7CvHDtvzNjvNgAULYnxZ018Xgf5H?usp=sharing,
-            and add this folder to your Google Drive. If you do not have permission, you can contact us for access.")
+    stop("Google Drive download failed. This might be because you have not added our data folder to your drive. Please follow this link:","
+    https://drive.google.com/drive/folders/14UPg7CvHDtvzNjvNgAULYnxZ018Xgf5H?usp=sharing",
+            "\nand add this folder to your Google Drive. If you do not have permission, you can contact us for access.")
   }
   ### Download neuronlist as a .rds file
   message("Downloading metadata ...")

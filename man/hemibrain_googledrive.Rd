@@ -80,6 +80,9 @@ neurons.}
 
 \item{data}{the type of data to read, i.e. neurons, an NBLAST matrix or a
 \code{\link{dotprops}} object.}
+
+\item{brainspace}{A template brain space for neurons loaded by
+\code{hemibrain_lm_lhns}. Defaults to \code{JRCFIB2018F}.}
 }
 \value{
 a \code{data.frame} or character vector
