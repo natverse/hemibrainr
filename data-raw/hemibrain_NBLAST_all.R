@@ -43,24 +43,24 @@ all.neurons.simp = nat::nlapply(X = all.neurons.flow.microns, FUN = nat::simplif
 all.neurons.tract = tract_cable(x = all.neurons.flow.microns, .parallel = TRUE, OmitFailures = TRUE)
 all.neurons.spine = nat::nlapply(X = all.neurons.flow.microns, FUN = nat::spine, n = 1, UseStartPoint = TRUE, .parallel = TRUE, OmitFailures = TRUE)
 
-# Light level neurons (LHNs)
-# library(lhns)
-# library(nat.jrcbrains)
-# download_saalfeldlab_registrations()
-# most.lhns.hemi.dps = nat.templatebrains::xform_brain(lhns::most.lhns.dps, reference= "JRCFIB2018F", sample="FCWB")
-# most.lhns.hemi = nat.templatebrains::xform_brain(lhns::most.lhns, reference= "JRCFIB2018F", sample="FCWB")
-most.lhns.hemi.dps = hemibrain_lm_lhns(data="dps", brainspace = "JRCFIB2018F")
-
 # Make dps objects
 hemibrain.dps=dotprops(all.neurons.flow.microns, k=5, resample=1, .parallel=T, OmitFailures = T)
 hemibrain.dps.pnt=dotprops(all.neurons.pnt, k=5, resample=1, .parallel=T, OmitFailures = T)
+rm("all.neurons.pnt")
 hemibrain.dps.pd=dotprops(all.neurons.pd, k=5, resample=1, .parallel=T, OmitFailures = T)
+rm("all.neurons.pd")
 hemibrain.dps.axon=dotprops(all.neurons.axon, k=5, resample=1, .parallel=T, OmitFailures = T)
+rm("all.neurons.axon")
 hemibrain.dps.dendrite=dotprops(all.neurons.dendrite, k=5, resample=1, .parallel=T, OmitFailures = T)
+rm("all.neurons.dendrite")
 hemibrain.dps.arbour=dotprops(all.neurons.arbour, k=5, resample=1, .parallel=T, OmitFailures = T)
+rm("all.neurons.arbour")
 hemibrain.dps.spine=dotprops(all.neurons.spine, k=5, resample=1, .parallel=T, OmitFailures = T)
+rm("all.neurons.spine")
 hemibrain.dps.simp=dotprops(all.neurons.simp, k=5, resample=1, .parallel=T, OmitFailures = T)
+rm("all.neurons.simp")
 hemibrain.dps.tract=dotprops(all.neurons.tract, k=5, resample=1, .parallel=T, OmitFailures = T)
+rm("all.neurons.tract")
 
 # Forward FIB->FIB nblasts (normalised)
 # hemibrain.aba.mean=nat.nblast::nblast_allbyall(hemibrain.twigs5.dps,
@@ -69,13 +69,6 @@ hemibrain.dps.tract=dotprops(all.neurons.tract, k=5, resample=1, .parallel=T, Om
 #                                     normalisation='mean')
 # hemibrainr:::save_compressed_nblast_mat(hemibrain.aba.mean,
 #                                         file = nblastfolder)
-
-### NBLAST with light level
-hemibrain.lhns.mean = nat.nblast::nblast(query = most.lhns.hemi.dps,
-                                         target = hemibrain.dps,
-                                         normalised = TRUE)
-hemibrainr:::save_compressed_nblast_mat(hemibrain.lhns.mean,
-                                        file = nblastfolder)
 
 ### NBLAST pnt
 hemibrain.pnt.aba.mean=nat.nblast::nblast_allbyall(hemibrain.dps.pnt,
@@ -140,3 +133,41 @@ hemibrain.tract.aba.mean=nat.nblast::nblast_allbyall(hemibrain.dps.tract,
                                                      normalisation='mean')
 hemibrainr:::save_compressed_nblast_mat(hemibrain.tract.aba.mean,
                                         file = nblastfolder)
+
+
+####################
+# Light level data #
+####################
+
+# Light level neurons
+lhfolder = paste0("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/light_level/lhns/")
+flycircuitfolder = paste0("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/light_level/flycircuit/")
+most.lhns.hemi.dps = hemibrain_lm_lhns(savedir = lhfolder,
+                                       folder="",
+                                       local = TRUE,
+                                       cable = "all",
+                                       data = "dps",
+                                       brainspace = "JRCFIB2018F")
+fcs.hemi.dps = flycircuit_neurons(savedir = flycircuitfolder,
+                                  folder="",
+                                  local = TRUE,
+                                  cable = "all",
+                                  data = "dps",
+                                  brainspace = "JRCFIB2018F")
+
+### NBLAST with light level
+hemibrain.lhns.mean = nat.nblast::nblast(query = most.lhns.hemi.dps,
+                                         target = hemibrain.dps,
+                                         normalised = TRUE)
+hemibrainr:::save_compressed_nblast_mat(hemibrain.lhns.mean,
+                                        file = nblastfolder)
+
+### NBLAST with FlyCircuit
+hemibrain.flycircuit.mean = nat.nblast::nblast(query = fcs.hemi.dps,
+                                         target = hemibrain.dps,
+                                         normalised = TRUE)
+hemibrainr:::save_compressed_nblast_mat(hemibrain.flycircuit.mean,
+                                        file = nblastfolder)
+
+
+
