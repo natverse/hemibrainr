@@ -41,7 +41,9 @@ a \code{nat::neuronlist} or \code{nat::neuron} object
 \description{
 Call \code{\link{hemibrain_reroot}} on neurons read from
 the hemibrain neuprintr project, that have no marked soma, and
-\code{\link{hemibrain_remove_bad_synapses}} on all neurons.
+\code{\link{hemibrain_remove_bad_synapses}} on all neurons. Does not prune synapses
+from soma positions / along the primary neurite, but does remove synapss outside
+of the hemibrain volume.
 }
 \examples{
 \donttest{
