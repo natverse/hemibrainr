@@ -44,11 +44,12 @@ all.neurons.tract = tract_cable(x = all.neurons.flow.microns, .parallel = TRUE, 
 all.neurons.spine = nat::nlapply(X = all.neurons.flow.microns, FUN = nat::spine, n = 1, UseStartPoint = TRUE, .parallel = TRUE, OmitFailures = TRUE)
 
 # Light level neurons (LHNs)
-library(lhns)
-library(nat.jrcbrains)
-download_saalfeldlab_registrations()
-most.lhns.hemi.dps = nat.templatebrains::xform_brain(lhns::most.lhns.dps, reference= "JRCFIB2018F", sample="FCWB")
-most.lhns.hemi = nat.templatebrains::xform_brain(lhns::most.lhns, reference= "JRCFIB2018F", sample="FCWB")
+# library(lhns)
+# library(nat.jrcbrains)
+# download_saalfeldlab_registrations()
+# most.lhns.hemi.dps = nat.templatebrains::xform_brain(lhns::most.lhns.dps, reference= "JRCFIB2018F", sample="FCWB")
+# most.lhns.hemi = nat.templatebrains::xform_brain(lhns::most.lhns, reference= "JRCFIB2018F", sample="FCWB")
+most.lhns.hemi.dps = hemibrain_lm_lhns(data="dps", brainspace = "JRCFIB2018F")
 
 # Make dps objects
 hemibrain.dps=dotprops(all.neurons.flow.microns, k=5, resample=1, .parallel=T, OmitFailures = T)
