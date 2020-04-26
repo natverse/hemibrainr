@@ -184,6 +184,8 @@ flycircuit_neurons <- function(savedir = TRUE,
 
 #' @export
 #' @rdname hemibrain_googledrive
+#' @param brainspace A template brain space for neurons loaded by
+#'   \code{hemibrain_lm_lhns}. Defaults to \code{JRCFIB2018F}.
 hemibrain_lm_lhns <- function(savedir = TRUE,
                               local = FALSE,
                               folder = "hemibrain_neurons/light_level/lhns",
