@@ -233,7 +233,9 @@ hemibrain_remove_bad_synapses.neuronlist <- function(x,
 #'
 #' @description Call \code{\link{hemibrain_reroot}} on neurons read from
 #' the hemibrain neuprintr project, that have no marked soma, and
-#' \code{\link{hemibrain_remove_bad_synapses}} on all neurons.
+#' \code{\link{hemibrain_remove_bad_synapses}} on all neurons. Does not prune synapses
+#' from soma positions / along the primary neurite, but does remove synapss outside
+#' of the hemibrain volume.
 #' @inheritParams hemibrain_remove_bad_synapses
 #' @inheritParams hemibrain_reroot
 #' @param OmitFailures Whether to omit neurons for which FUN gives an error.
@@ -304,10 +306,10 @@ hemibrain_skeleton_check <- function(x, # as read by neuprint_read_neurons
   }
 
   # Remove erroneous synapses, out of mesh and on pnt/soma
-  message("Removing synapses at somas and along primary neurite for ", length(x.new), " neurons")
+  message("Removing synapses outside the hemibrain neuropil volume for ", length(x.new), " neurons")
   x.goodsyn = hemibrain_remove_bad_synapses(x.new,
                                             meshes = meshes,
-                                            soma = TRUE,
+                                            soma = FALSE,
                                             min.nodes.from.soma = min.nodes.from.soma,
                                             min.nodes.from.pnt = min.nodes.from.pnt,
                                             OmitFailures = OmitFailures,
