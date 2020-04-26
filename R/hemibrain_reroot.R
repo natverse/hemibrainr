@@ -234,7 +234,7 @@ hemibrain_remove_bad_synapses.neuronlist <- function(x,
 #' @description Call \code{\link{hemibrain_reroot}} on neurons read from
 #' the hemibrain neuprintr project, that have no marked soma, and
 #' \code{\link{hemibrain_remove_bad_synapses}} on all neurons. Does not prune synapses
-#' from soma positions / along the primary neurite, but does remove synapss outside
+#' from soma positions / along the primary neurite, but does remove synapses outside
 #' of the hemibrain volume.
 #' @inheritParams hemibrain_remove_bad_synapses
 #' @inheritParams hemibrain_reroot
