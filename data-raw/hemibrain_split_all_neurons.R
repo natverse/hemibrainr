@@ -37,6 +37,7 @@ message("Flow centrality calculated for ", length(all.neurons.flow), " neurons")
 sensories = unique(c(rn.ids,orn.ids,hrn.ids))
 rn.flow = hemibrainr::add_Label(all.neurons.flow[intersect(as.character(sensories),names(all.neurons.flow))], Label = 2, internal.assignments = TRUE)
 all.neurons.flow[names(rn.flow)] = rn.flow
+rm("all.neurons.checked")
 
 # Save
 save(all.neurons.flow, file = paste0("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/hemibrain_all_neurons_flow_",identifier,".rda"))
