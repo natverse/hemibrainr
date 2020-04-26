@@ -211,6 +211,9 @@ flow_centrality.neuron <- function(x,
   highs = as.numeric(unique(unlist(igraph::shortest_paths(n,highs, to = highs, mode = "all")))) # fill in any missed points
   if(soma){
     primary.branch.point = primary_branchpoint(x, primary_neurite = TRUE, first = primary.branchpoint)
+    if(is.na(primary.branch.point)){
+      primary.branch.point = primary_branchpoint(x, primary_neurite = FALSE)
+    }
   }else{
     primary.branch.point = primary_branchpoint(x, primary_neurite = FALSE)
   }
