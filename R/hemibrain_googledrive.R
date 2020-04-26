@@ -195,9 +195,12 @@ hemibrain_lm_lhns <- function(savedir = TRUE,
                               brainspace = c("JRCFIB2018F","JRCFIB2018Fraw","FCWB")){
   brainspace = match.arg(brainspace)
   data = match.arg(data)
-  brainspace = if(brainspace=="FCWB"){
+  brainspace = if(brainspace=="FCWB") {
+    if(!requireNamespace("lhns"))
+      stop("To use these data, please install the optional lhns package:\n",
+           "remotes::install_github('jefferislab/lhns')")
     return(lhns::most.lhns)
-  }else{
+  } else {
     brainspace = paste0("_",brainspace)
   }
   if(data!="neuronlist"){
