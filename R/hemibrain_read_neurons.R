@@ -274,8 +274,8 @@ hemibrain_download_neurons <- function(savedir = TRUE,
                                        ...
                                        ){
   message("NOTE: This function is experimental. The recommended method of reading all hemibrain neuron quickly is
-          to load Google drive and use the function: hemibrain_neurons. You must have access to the Google Team Drive
-          'hemibrain', administered by flyconnectome group at the University of Cambidge, to do this.
+          to load Google drive using Goolge Filstream and use the function: hemibrain_neurons.
+          You must have access to the Google Team Drive 'hemibrain', administered by flyconnectome group at the University of Cambidge, to do this.
           If in doubt over access, you can contact us.")
   savedir = good_savedir(savedir=savedir, local = TRUE)
   message(sprintf("If this takes to much time, you can also download the relevant Google Drive folder manually. To do so, open this link: %s and then download the folder to this location on your computer: ",
