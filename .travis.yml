@@ -13,6 +13,7 @@ addons:
   apt:
     packages:
     - libglu1-mesa-dev
+    - libhdf5-dev
 before_install:
   - R -e 'install.packages("remotes"); remotes::install_github("natverse/nat",dependencies = TRUE)'
 before_cache: Rscript -e 'remotes::install_github("r-lib/pkgdown")'
