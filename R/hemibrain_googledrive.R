@@ -178,7 +178,7 @@ flycircuit_neurons <- function(savedir = TRUE,
   savedir = good_savedir(savedir = savedir,local = local)
   if(cable=="all"){gfile = find_gfile(savedir = savedir, file = sprintf("FlyCircuit_all_neurons%s%s.rds",data,brainspace), folder = folder)}
   if(cable=="primary.neurites"){gfile = find_gfile(savedir = savedir, file = sprintf("FlyCircuit_all_pnts%s%s.rds",data,brainspace), folder = folder)}
-  if(cable=="all"){gfile = find_gfile(savedir = savedir, file = sprintf("FlyCircuit_all_arbour%s.rds",data), folder = folder)}
+  if(cable=="arbour"){gfile = find_gfile(savedir = savedir, file = sprintf("FlyCircuit_all_arbour%s.rds",data), folder = folder)}
   readRDS(gfile)
 }
 

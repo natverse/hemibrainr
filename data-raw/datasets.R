@@ -118,11 +118,9 @@ vppn.ids = class2ids("VPPN")
 alln.ids = class2ids("ALLN")
 dan.ids = class2ids("DAN")
 mbon.ids = class2ids("MBON")
-lhn.ids = lhns:::hemibrain.lhns.bodyids
 
 ## Use them bodyids
 usethis::use_data(ton.ids, overwrite = TRUE)
-usethis::use_data(lhn.ids, overwrite = TRUE)
 usethis::use_data(rn.ids, overwrite = TRUE)
 usethis::use_data(orn.ids, overwrite = TRUE)
 usethis::use_data(hrn.ids, overwrite = TRUE)
@@ -134,6 +132,37 @@ usethis::use_data(alln.ids, overwrite = TRUE)
 usethis::use_data(dan.ids, overwrite = TRUE)
 usethis::use_data(dan.ids, overwrite = TRUE)
 usethis::use_data(mbon.ids, overwrite = TRUE)
+
+###################################################################################
+# LHNs are neurons with 1% of their synaptic input / 10 synapses coming from uPNs #
+###################################################################################
+# LHNs must be downstream of uPNs ...
+upns = neuprint_read_neurons(hemibrainr::upn.ids)
+upn.syns = hemibrainr::hemibrain_extract_connections(upns)
+# And they must be 'neuron' objects in the LH(R) ROI ...
+lh.info = neuprintr::neuprint_find_neurons(
+  input_ROIs = "LH(R)",
+  output_ROIs =  'LH(R)',
+  all_segments = FALSE )
+lh.ids = intersect(lh.info$bodyid,upns.down.ids)
+# And they must get at least 1% of their inputs from uPNs, and not themselves be a PN ...
+upn.syns %>%
+  dplyr::filter(partner %in% lh.info$bodyid
+                & ! partner %in% c(hemibrainr::upn.ids, hemibrainr::mpn.ids, hemibrainr::mbon.ids)
+                & prepost == 1) %>%
+  dplyr::mutate(npost = lh.info[,"npost"][match(partner,lh.info$bodyid)]) %>%
+  dplyr::group_by(partner) %>%
+  dplyr::mutate(pn.weight = sum(as.numeric(weight))) %>%
+  dplyr::mutate(norm = pn.weight/as.numeric(npost)) %>%
+  dplyr::filter(norm > 0.01 | pn.weight > 10) %>%
+  dplyr::ungroup() %>%
+  dplyr::filter(!duplicated(partner)) %>%
+  as.data.frame() ->
+  upn.conn
+lh.meta = neuprint_get_meta(unique(upn.conn$partner))
+ns = neuprint_search(paste(unique(lh.meta$type),collapse="|"),field="type")
+lhn.ids =  unique(c(ns$bodyid,upn.conn$partner))
+usethis::use_data(lhn.ids, overwrite = TRUE)
 
 ## Some notes on data
 # Badly skeletonised: "5812986485"

@@ -1,6 +1,9 @@
 ###### Script to split all neurons in the hemibrain into putative axon / dendrite #######
 ######## Originally run from JData5, the Jefferis lab drive on Max at the MRC LMB #######
 
+# source /public/flybrain/flybrain.csh
+# source /public/gcc/gcc7_1_0.csh
+
 # Set things ups
 message("Start")
 source("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/R/startup/packages.R")
@@ -49,6 +52,7 @@ if(length(missing)){
   missing.neurons = neuprint_read_neurons(missing,.parallel = TRUE, all_segments = TRUE, heal = FALSE)
   all.neurons = c(all.neurons, missing.neurons)
 }
+all.neurons = add_field_seq(all.neurons,all.neurons[,"bodyid"],field="bodyid")
 save(all.neurons, file = "/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/hemibrain_all_neurons.rda")
 message("Neurons read: ", length(all.neurons))
 
