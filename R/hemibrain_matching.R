@@ -122,7 +122,7 @@ hemibrain_FAFB_matching <- function(bodyids = NULL,
     sel = c("go","for","it")
     k = 1
     j = batch_size
-    # Cycle theough potential matches
+    # Cycle through potential matches
     while(length(sel)>1){
       if(j>10){
         fafb = union(fafb, read.neurons.catmaid(names(r)[(k+1):j]))
