@@ -28,11 +28,11 @@
 #' nat.jrcbrains::download_saalfeldlab_registrations()
 #'
 #' # Load precomputed NBLAST from the flyconnectome Team Drive
-#' load("/Volumes/GoogleDrive/Shared\ drives/flyconnectome/fafbpipeline/fafb (1).fib.twigs5.crossnblast.rda")
-#'  # load("/Volumes/GoogleDrive/Shared\ drives/flyconnectome/fafbpipeline/fafb.fib.twigs5.crossnblast.rda") ## Or this one
+#' load("/Volumes/GoogleDrive/Shared drives/flyconnectome/fafbpipeline/fib.fafb.crossnblast.twigs5.mean.compress.rda")
+#'  # load("/Volumes/GoogleDrive/Shared drives/flyconnectome/fafbpipeline/fib.fafb.crossnblast.twigs5.mean.compress (1).rda") ## Or this one
 #'
 #' # Match!
-#' hemibrain_FAFB_matching(hemibrain.fafb.nblast = fafb.fib.twigs5.crossnblast)
+#' hemibrain_FAFB_matching(hemibrain.fafb.nblast = fib.fafb.crossnblast.twigs5.mean.compress)
 #' }}
 #' @rdname hemibrain_FAFB_matching
 #' @export
@@ -59,10 +59,9 @@ hemibrain_FAFB_matching <- function(bodyids = NULL,
   ## Get NBLAST
   if(is.null(hemibrain.fafb.nblast)){
     message("Loading FAFB-FIB NBLAST from flyconnectome Google Team Drive using Google Filestream: ")
-    load("/Volumes/GoogleDrive/Shared\ drives/flyconnectome/fafbpipeline/fafb (1).fib.twigs5.crossnblast.rda")
-    # load("/Volumes/GoogleDrive/Shared\ drives/flyconnectome/fafbpipeline/fafb.fib.twigs5.crossnblast.rda") ## Or this one
-    hemibrain.fafb.nblast = t(fafb.fib.twigs5.crossnblast)
-    rm("fafb.fib.twigs5.crossnblast")
+    load("/Volumes/GoogleDrive/Shared drives/flyconnectome/fafbpipeline/fib.fafb.crossnblast.twigs5.mean.compress.rda")
+    hemibrain.fafb.nblast = t(fib.fafb.crossnblast.twigs5.mean.compress)
+    rm("fib.fafb.crossnblast.twigs5.mean.compress")
   }
   # Read the Google Sheet
   gs = gsheet_manipulation(FUN = googlesheets4::read_sheet,
