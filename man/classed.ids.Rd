@@ -39,7 +39,7 @@ An object of class \code{character} of length 231.
 
 An object of class \code{character} of length 7856.
 
-An object of class \code{character} of length 2260.
+An object of class \code{numeric} of length 2226.
 }
 \usage{
 rn.ids
