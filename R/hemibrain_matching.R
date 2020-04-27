@@ -43,6 +43,7 @@ hemibrain_FAFB_matching <- function(bodyids = NULL,
                          batch_size = 10){
   requireNamespace("nat.jrcbrains")
   requireNamespace("elmr")
+  #
   # Motivate!
   nat::nopen3d()
   plot_inspirobot()
@@ -79,9 +80,7 @@ hemibrain_FAFB_matching <- function(bodyids = NULL,
   meta = neuprintr::neuprint_get_meta(bodyids)
   meta = meta[order(meta$type),]
   meta = subset(meta, meta$bodyid%in%bodyids)
-  if(is.null(db)){
-    db = hemibrain_neurons()
-  }
+  db = tryCatch(hemibrain_neurons(), error = function(e) NULL)
   # How much is done?
   done = subset(gs, !is.na(gs$FAFB.match))
   message("Neurons matches: ", nrow(done))
