@@ -256,7 +256,7 @@ The compartment closest to this branchpoint is most usually the dendrite
 
 <span class='co'># Now make sure the neurons have a soma marked</span>
 <span class='co'>## Some hemibrain neurons do not, as the soma was chopped off</span>
-<span class='no'>neurons.checked</span> <span class='kw'>=</span> <span class='fu'><a href='hemibrain_skeleton_check.html'>hemibrain_skeleton_check</a></span>(<span class='no'>neurons</span>, <span class='kw'>meshes</span> <span class='kw'>=</span> <span class='no'>hemibrain.surf</span>)</div><div class='output co'>#&gt; <span class='message'>Re-rooting 2 neurons without a soma</span></div><div class='output co'>#&gt; <span class='message'>Removing synapses at somas and along primary neurite for 5 neurons</span></div><div class='input'>
+<span class='no'>neurons.checked</span> <span class='kw'>=</span> <span class='fu'><a href='hemibrain_skeleton_check.html'>hemibrain_skeleton_check</a></span>(<span class='no'>neurons</span>, <span class='kw'>meshes</span> <span class='kw'>=</span> <span class='no'>hemibrain.surf</span>)</div><div class='output co'>#&gt; <span class='message'>Re-rooting 2 neurons without a soma</span></div><div class='output co'>#&gt; <span class='message'>Removing synapses outside the hemibrain neuropil volume for 5 neurons</span></div><div class='input'>
 <span class='co'># Split neuron</span>
 <span class='co'>## These are the recommended parameters for hemibrain neurons</span>
 <span class='no'>neurons.flow</span> <span class='kw'>=</span> <span class='fu'>flow_centrality</span>(<span class='no'>neurons.checked</span>,

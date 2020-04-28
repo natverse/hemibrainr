@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Bodyids for neuron classes — classed.ids • hemibrainr</title>
+<title>Plot chosen neurons and see all neurons in that type — hemibrain_type_plot • hemibrainr</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,9 +46,9 @@
 
 
 
-<meta property="og:title" content="Bodyids for neuron classes — classed.ids" />
-<meta property="og:description" content="Bodyids for neuron classes. Hard saved equivalent for class2ids.
-However, you should use class2ids for the most up-to-date information." />
+<meta property="og:title" content="Plot chosen neurons and see all neurons in that type — hemibrain_type_plot" />
+<meta property="og:description" content="Plot your selected neuron (rightmost pane) and then see all of the neurons in the hemibrain project that belong to
+the types you have plotted (left pane)." />
 <meta property="og:image" content="/logo.svg" />
 
 
@@ -117,69 +117,69 @@ However, you should use class2ids for the most up-to-date information." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Bodyids for neuron classes</h1>
-    <small class="dont-index">Source: <a href='https://github.com/flyconnectome/hemibrainr/blob/master/R/hemibrain_data.R'><code>R/hemibrain_data.R</code></a></small>
-    <div class="hidden name"><code>classed.ids.Rd</code></div>
+    <h1>Plot chosen neurons and see all neurons in that type</h1>
+    <small class="dont-index">Source: <a href='https://github.com/flyconnectome/hemibrainr/blob/master/R/hemibrain_visualise.R'><code>R/hemibrain_visualise.R</code></a></small>
+    <div class="hidden name"><code>hemibrain_type_plot.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Bodyids for neuron classes. Hard saved equivalent for <code><a href='class2ids.html'>class2ids</a></code>.
-However, you should use <code><a href='class2ids.html'>class2ids</a></code> for the most up-to-date information.</p>
+    <p>Plot your selected neuron (rightmost pane) and then see all of the neurons in the hemibrain project that belong to
+the types you have plotted (left pane).</p>
     </div>
 
-    <pre class="usage"><span class='no'>rn.ids</span>
+    <pre class="usage"><span class='fu'>hemibrain_type_plot</span>(
+  <span class='kw'>bodyids</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>someneuronlist</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>brain</span> <span class='kw'>=</span> <span class='kw pkg'>hemibrainr</span><span class='kw ns'>::</span><span class='no'><a href='hemibrain.surf.html'>hemibrain.surf</a></span>,
+  <span class='kw'>print</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>meta</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
+)</pre>
 
-<span class='no'>orn.ids</span>
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>bodyids</th>
+      <td><p>bodyids for the neurons you want to plot. If <code>someneuronlist</code> is null then <code>hemibrain_neurons</code> will be used
+to load a neuron database.</p></td>
+    </tr>
+    <tr>
+      <th>someneuronlist</th>
+      <td><p>a neuronlist or neuron object to plot. If <code>bodyids</code> is <code>NULL</code> then <code>bodyids = names(someneuronlist)</code>.</p></td>
+    </tr>
+    <tr>
+      <th>brain</th>
+      <td><p>a <code>mesh3d</code> or <code>hxsurf</code> object, such as a template brain, to plot alongside neurons of interest.</p></td>
+    </tr>
+    <tr>
+      <th>print</th>
+      <td><p>logical, whether or not to print the name of the cell types being plotted and their Body IDs.</p></td>
+    </tr>
+    <tr>
+      <th>meta</th>
+      <td><p>a <code>data.frame</code> with a <code>bodyid</code> and a <code>type</code> field, such as one pulled by <code>neuprint_get_meta</code>. If <code>NULL</code>
+then meta will be acquired as <code>neuprint_get_meta(bodyids)</code>.</p></td>
+    </tr>
+    </table>
 
-<span class='no'>hrn.ids</span>
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-<span class='no'>pn.ids</span>
-
-<span class='no'>upn.ids</span>
-
-<span class='no'>mpn.ids</span>
-
-<span class='no'>vppn.ids</span>
-
-<span class='no'>dan.ids</span>
-
-<span class='no'>mbon.ids</span>
-
-<span class='no'>alln.ids</span>
-
-<span class='no'>ton.ids</span>
-
-<span class='no'>lhn.ids</span></pre>
-
-
-    <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
-
-    <p>An object of class <code>character</code> of length 2545.</p>
-<p>An object of class <code>character</code> of length 2469.</p>
-<p>An object of class <code>character</code> of length 56.</p>
-<p>An object of class <code>character</code> of length 330.</p>
-<p>An object of class <code>character</code> of length 137.</p>
-<p>An object of class <code>character</code> of length 193.</p>
-<p>An object of class <code>character</code> of length 42.</p>
-<p>An object of class <code>character</code> of length 318.</p>
-<p>An object of class <code>character</code> of length 67.</p>
-<p>An object of class <code>character</code> of length 231.</p>
-<p>An object of class <code>character</code> of length 7856.</p>
-<p>An object of class <code>numeric</code> of length 2226.</p>
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
-    <p>neuPrint bodyids for neurons that the FlyConnectome groups at the University of Cambridge Department of Zoology,
-have determined to fall into different classes.</p>
+    <p>Plots coloured neuron(s)</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='class2ids.html'>class2ids</a></code></p></div>
+    <div class='dont-index'><p><code><a href='plot3d_split.html'>plot3d_split</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='no'>rn.ids</span>)</div><div class='output co'>#&gt; [1] "1888183031" "1888183512" "1888528200" "1918885778" "1918889952"
-#&gt; [6] "1978908720"</div><div class='input'># }
+<span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
 
-</div></pre>
+<span class='co'># Choose neurons</span>
+<span class='no'>ids</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"605063393"</span>, <span class='st'>"573708714"</span>, <span class='st'>"485387561"</span>, <span class='st'>"5813083717"</span>)
+
+<span class='co'># Plot</span>
+<span class='fu'>hemibrain_type_plot</span>(<span class='no'>ids</span>)
+
+}<span class='co'># }</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

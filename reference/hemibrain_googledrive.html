@@ -168,7 +168,16 @@
   <span class='kw'>local</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>folder</span> <span class='kw'>=</span> <span class='st'>"hemibrain_neurons/light_level/flycircuit"</span>,
   <span class='kw'>cable</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"all"</span>, <span class='st'>"primary.neurites"</span>, <span class='st'>"arbour"</span>),
-  <span class='kw'>data</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"neuronlist"</span>, <span class='st'>"nblast"</span>, <span class='st'>"dps"</span>)
+  <span class='kw'>data</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"neuronlist"</span>, <span class='st'>"nblast"</span>, <span class='st'>"dps"</span>),
+  <span class='kw'>brainspace</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"JRCFIB2018F"</span>, <span class='st'>"JRCFIB2018Fraw"</span>, <span class='st'>"FCWB"</span>)
+)
+
+<span class='fu'>hemibrain_lm_lhns</span>(
+  <span class='kw'>savedir</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>local</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>folder</span> <span class='kw'>=</span> <span class='st'>"hemibrain_neurons/light_level/lhns"</span>,
+  <span class='kw'>data</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"neuronlist"</span>, <span class='st'>"nblast"</span>, <span class='st'>"dps"</span>),
+  <span class='kw'>brainspace</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"JRCFIB2018F"</span>, <span class='st'>"JRCFIB2018Fraw"</span>, <span class='st'>"FCWB"</span>)
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -211,6 +220,11 @@ neurons.</p></td>
       <th>data</th>
       <td><p>the type of data to read, i.e. neurons, an NBLAST matrix or a
 <code>dotprops</code> object.</p></td>
+    </tr>
+    <tr>
+      <th>brainspace</th>
+      <td><p>A template brain space for neurons loaded by
+<code>hemibrain_lm_lhns</code>. Defaults to <code>JRCFIB2018F</code>.</p></td>
     </tr>
     </table>
 
