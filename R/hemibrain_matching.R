@@ -20,7 +20,7 @@
 #'   \href{https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit#gid=0}{Google
 #'   Sheet}, for which the user will attempt to make a match if one has not been
 #'   made already.
-#' @param hemibrain.fafb.nblast a FAFB (columns) - hemibrain (rows) normalised
+#' @param hemibrain.fafb.nblast a FAFB (rows) - hemibrain (columns) normalised
 #'   NBLAST matrix. By default this is read from the flyconnectome Team Drive.
 #' @param selected_file the Google Sheet database to read and write from. For
 #'   now, defaults to a
@@ -86,10 +86,17 @@ hemibrain_FAFB_matching <- function(bodyids = NULL,
           ")
   ## Get NBLAST
   if(is.null(hemibrain.fafb.nblast)){
-    message("Loading FAFB-FIB NBLAST from flyconnectome Google Team Drive using Google Filestream: ")
-    load("/Volumes/GoogleDrive/Shared drives/flyconnectome/fafbpipeline/fib.fafb.crossnblast.twigs5.mean.compress.rda")
-    hemibrain.fafb.nblast = t(fib.fafb.crossnblast.twigs5.mean.compress)
-    rm("fib.fafb.crossnblast.twigs5.mean.compress")
+    matname="fib.fafb.crossnblast.twigs5.mean.compress"
+    if(exists(matname)) {
+      message("Using loaded FAFB-FIB NBLAST: ", matname)
+      hemibrain.fafb.nblast = get(matname)
+    } else {
+      message("Loading FAFB-FIB NBLAST ", matname,
+              " from flyconnectome Google Team Drive using Google Filestream: ")
+      load(sprintf("/Volumes/GoogleDrive/Shared drives/flyconnectome/fafbpipeline/%s.rda", matname))
+      hemibrain.fafb.nblast = get(matname)
+      rm("fib.fafb.crossnblast.twigs5.mean.compress")
+    }
   }
   # Read the Google Sheet
   gs = gsheet_manipulation(FUN = googlesheets4::read_sheet,
@@ -146,7 +153,7 @@ hemibrain_FAFB_matching <- function(bodyids = NULL,
     message("Hemibrain-assigned cell type :",lhn[n,"type"])
     # Read top 10 FAFB matches
     message(sprintf("Reading the top %s FAFB hits",batch_size))
-    r = sort(hemibrain.fafb.nblast[n,],decreasing = TRUE)
+    r = sort(hemibrain.fafb.nblast[,n],decreasing = TRUE)
     plot3d(lhn[n], lwd = 2, soma = 500, col = "black")
     fafb = catmaid::read.neurons.catmaid(names(r)[1:batch_size])
     sel = c("go","for","it")

@@ -18,7 +18,7 @@ hemibrain_FAFB_matching(
 Sheet}, for which the user will attempt to make a match if one has not been
 made already.}
 
-\item{hemibrain.fafb.nblast}{a FAFB (columns) - hemibrain (rows) normalised
+\item{hemibrain.fafb.nblast}{a FAFB (rows) - hemibrain (columns) normalised
 NBLAST matrix. By default this is read from the flyconnectome Team Drive.}
 
 \item{selected_file}{the Google Sheet database to read and write from. For
