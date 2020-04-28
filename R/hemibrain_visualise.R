@@ -289,8 +289,10 @@ hemibrain_type_plot <- function(bodyids = NULL,
   # Get metadata
   if(is.null(meta)){
     meta = neuprintr::neuprint_get_meta(bodyids)
+  }else{
+    types = subset(meta, meta$bodyid %in% bodyids)$type
+    meta = subset(meta, meta$type %in% unique(types))
   }
-
   ito.cts = unique(meta$type)
 
   # Neurons
