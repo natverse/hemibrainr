@@ -29,7 +29,7 @@ load(paste0("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem
 message("Loaded: ", length(all.neurons.flow), " neurons")
 
 # Scale
-all.neurons.flow.microns = hemibrainr:::scale_neurons.neuronlist(all.neurons.flow, .parallel = TRUE)
+all.neurons.flow.microns = hemibrainr:::scale_neurons.neuronlist(all.neurons.flow, .parallel = TRUE, OmitFailures = TRUE)
 rm("all.neurons.flow")
 message("Neurons scaled!")
 
