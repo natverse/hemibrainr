@@ -18,7 +18,7 @@ to load a neuron database.}
 
 \item{someneuronlist}{a neuronlist or neuron object to plot. If \code{bodyids} is \code{NULL} then \code{bodyids = names(someneuronlist)}.}
 
-\item{brain}{a \code{mesh3d} object, such as a template brain, to plot alongside neurons of interest.}
+\item{brain}{a \code{mesh3d} or \code{hxsurf} object, such as a template brain, to plot alongside neurons of interest.}
 
 \item{print}{logical, whether or not to print the name of the cell types being plotted and their Body IDs.}
 
