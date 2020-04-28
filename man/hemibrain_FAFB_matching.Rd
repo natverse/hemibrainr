@@ -55,7 +55,7 @@ Currently, the
   is recorded, the user selects a quality for that match. There can be no
   match (n), a poor match (p) an okay match (o) or an exact match (e). As a
   rule of thumb, a poor match could be a neuron from a very similar same cell
-  tye or a highly untraced neuron that may be the correct cell type. An okay
+  type or a highly untraced neuron that may be the correct cell type. An okay
   match should be a neuron that looks to be from the same morphological cell
   type but there may be some discrepancies in its arbour. An exact match is a
   neuron that corresponds well between FAFB and the hemibrain data.

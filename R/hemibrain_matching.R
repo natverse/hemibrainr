@@ -148,7 +148,7 @@ hemibrain_FAFB_matching <- function(bodyids = NULL,
       next
     }
     # Plot brain
-    clear3d()
+    rgl::clear3d()
     plot3d(elmr::FAFB14.surf, alpha = 0.1, col ="grey")
     # Read hemibrain neuron
     if(is.null(db)){
@@ -175,7 +175,7 @@ hemibrain_FAFB_matching <- function(bodyids = NULL,
     # Cycle through potential matches
     while(length(sel)>1){
       if(j>10){
-        fafb = union(fafb, read.neurons.catmaid(names(r)[(k+1):j]))
+        fafb = union(fafb, catmaid::read.neurons.catmaid(names(r)[(k+1):j]))
       }
       sel = nat::nlscan(fafb[names(r)[1:j]], col = "red", soma = TRUE)
       if(length(sel)>1){
