@@ -10,22 +10,22 @@
 #'   Sheet} on the hemibrain Google Team Drive operated by the flyconnectome
 #'   group at the University of Cambridge. This function
 #'   only considers lateral horn neurons. You must have access to the Team Drive
-#'   in order to use this function. This function makes use of Google
-#'   Filestream, which should be mounted on your machine. Further, note that
-#'   neurons are read from the FAFB CATMAID project, and you must have log-in
-#'   details for this project recorded in your .Renviron for this function to
-#'   work.
+#'   in order to use this function. This function makes use of the Google
+#'   Filestream application, which should be installed on your machine. Further,
+#'   note that neurons are read from the FAFB CATMAID project, and you must have
+#'   log-in details for this project recorded in your .Renviron for this
+#'   function to work.
 #'
 #' @param bodyids body IDs for hemibrain neurons present in the
 #'   \href{https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit#gid=0}{Google
-#'   Sheet}, for which the user will attempt to make a match if one has not been
-#'   made already.
+#'    Sheet}, for which the user will attempt to make a match if one has not
+#'   been made already.
 #' @param hemibrain.fafb.nblast a FAFB (rows) - hemibrain (columns) normalised
 #'   NBLAST matrix. By default this is read from the flyconnectome Team Drive.
 #' @param selected_file the Google Sheet database to read and write from. For
 #'   now, defaults to a
 #'   \href{https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit#gid=0}{Google
-#'   Sheet for lateral horn neurons}. No other databases have been prepared.
+#'    Sheet for lateral horn neurons}. No other databases have been prepared.
 #' @param batch_size the number of FAFB top matches to read from CATMAID in one
 #'   go.
 #' @param db Either a neuronlist or the name of a character vector naming a
@@ -33,7 +33,7 @@
 #'
 #' @details Currently, the
 #'   \href{https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit#gid=0}{Google
-#'   Sheet} is set up with  limited number of users, each of whom have been
+#'    Sheet} is set up with  limited number of users, each of whom have been
 #'   assigned a number of neurons to match up. In order to add yourself as a
 #'   user, simply open this Google Sheet in your browser and add your initials
 #'   to neurons of your choosing on the rightmost column 'Users'. Once a match

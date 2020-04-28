@@ -186,6 +186,7 @@ flycircuit_neurons <- function(savedir = TRUE,
 #' @rdname hemibrain_googledrive
 #' @param brainspace A template brain space for neurons loaded by
 #'   \code{hemibrain_lm_lhns}. Defaults to \code{JRCFIB2018F}.
+#' @importFrom utils installed.packages
 hemibrain_lm_lhns <- function(savedir = TRUE,
                               local = FALSE,
                               folder = "hemibrain_neurons/light_level/lhns",
@@ -197,10 +198,13 @@ hemibrain_lm_lhns <- function(savedir = TRUE,
   brainspace = match.arg(brainspace)
   data = match.arg(data)
   brainspace = if(brainspace=="FCWB") {
-    if(!requireNamespace("lhns"))
+    # To be honest, this is a bit of a hack to avoid R CMD check
+    # errors since lhns is not Suggested
+    # I think lhns is too big and complicated a package
+    if(isFALSE("lhns" %in% rownames(installed.packages())))
       stop("To use these data, please install the optional lhns package:\n",
            "remotes::install_github('jefferislab/lhns')")
-    return(lhns::most.lhns)
+    return(eval(str2lang("lhns::most.lhns")))
   } else {
     brainspace = paste0("_",brainspace)
   }
