@@ -33,11 +33,11 @@ go.}
 neuronlist. Defaults to the value of \code{\link{hemibrain_neurons}()}.}
 }
 \description{
-Match up neurons between the hemibrain and FAFB and save rhe
-  result fo a
+Match up neurons between the hemibrain and FAFB and save the
+  result using a
   \href{https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit#gid=0}{Google
   Sheet} on the hemibrain Google Team Drive operated by the flyconnectome
-  group at the University of Cambridge. Currently by default this function
+  group at the University of Cambridge. This function
   only considers lateral horn neurons. You must have access to the Team Drive
   in order to use this function. This function makes use of Google
   Filestream, which should be mounted on your machine. Further, note that
