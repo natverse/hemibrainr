@@ -40,7 +40,7 @@
 #'   is recorded, the user selects a quality for that match. There can be no
 #'   match (n), a poor match (p) an okay match (o) or an exact match (e). As a
 #'   rule of thumb, a poor match could be a neuron from a very similar same cell
-#'   tye or a highly untraced neuron that may be the correct cell type. An okay
+#'   type or a highly untraced neuron that may be the correct cell type. An okay
 #'   match should be a neuron that looks to be from the same morphological cell
 #'   type but there may be some discrepancies in its arbour. An exact match is a
 #'   neuron that corresponds well between FAFB and the hemibrain data.
@@ -114,7 +114,14 @@ hemibrain_FAFB_matching <- function(bodyids = NULL,
   meta = neuprintr::neuprint_get_meta(bodyids)
   meta = meta[order(meta$type),]
   meta = subset(meta, meta$bodyid%in%bodyids)
-  if(is.character(db)) {
+  if(missing(db)) {
+    # this means we weren't told to use a specific neuronlist, so
+    # we'll use the default. force() means evaluate hemibrain_neurons() now.
+    db=tryCatch(force(db), error=function(e) {
+      message("Unable to use `hemibrain_neurons()`. ",
+              "I will read neurons from neuPrint, but this will be slower!")
+    })
+  } else if(is.character(db)) {
     db=tryCatch(get(db), error=function(e) stop("Unable to find neuronlist: ", db))
   }
   # How much is done?
@@ -140,11 +147,11 @@ hemibrain_FAFB_matching <- function(bodyids = NULL,
     # Read hemibrain neuron
     if(is.null(db)){
       lhn  = neuprintr::neuprint_read_neurons(n)
-    }else{
-      lhn = tryCatch(db[as.character(n)], error = function(e) NULL)
-    }
-    if(is.null(lhn)){
-      lhn  = neuprintr::neuprint_read_neurons(n)
+    } else {
+      lhn = tryCatch(db[as.character(n)], error = function(e) {
+        warning("Cannot read neuron: ", n, " from local db; fetching from neuPrint!")
+        neuprintr::neuprint_read_neurons(n)
+        })
     }
     # Transform hemibrain neuron to FAFB space
     lhn = scale_neurons.neuronlist(lhn, scaling = (8/1000))
