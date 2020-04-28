@@ -131,7 +131,7 @@ hemibrain_FAFB_matching <- function(bodyids = NULL,
   }
   # How much is done?
   done = subset(gs, !is.na(gs$FAFB.match))
-  message("Neurons matches: ", nrow(done))
+  message("Neuron matches: ", nrow(done))
   print(table(gs$FAFB.match.quality))
   # Choose user
   message("Users: ", paste(unique(gs$User),collapse = " "))
@@ -176,11 +176,22 @@ hemibrain_FAFB_matching <- function(bodyids = NULL,
       if(j>10){
         fafb = union(fafb, catmaid::read.neurons.catmaid(names(r)[(k+1):j]))
       }
-      sel = nat::nlscan(fafb[names(r)[1:j]], col = "red", soma = TRUE)
+      sel = sel.orig = nat::nlscan(fafb[names(r)[1:j]], col = "red", lwd = 2, soma = TRUE)
       if(length(sel)>1){
         message("You selected more than one neuron, please select again ... ")
       }
       prog = hemibrain_choice(sprintf("You selected %s neurons. Are you happy with that? ",length(sel)))
+      while(length(sel)>1){
+        message("Choose single best match: ")
+        sel = nat::nlscan(fafb[sel.orig], col = "orange", lwd = 2, soma = TRUE)
+        message(sprintf("You selected %s neurons", length(sel)))
+        if(!length(sel)){
+          noselection = hemibrain_choice("You selected no neurons. Are you happy with that? ")
+          if(!noselection){
+            sel = sel.orig
+          }
+        }
+      }
       if(!prog){
         sel = c("go","for","it")
         prog = hemibrain_choice("Do you want to read more neurons from CATMAID? ")
@@ -205,6 +216,14 @@ hemibrain_FAFB_matching <- function(bodyids = NULL,
     print(knitr::kable(gs[unsaved,c("bodyid","type","FAFB.match","FAFB.match.quality")]))
     p = must_be("Continue (enter) or save (s)? ", answers = c("","s"))
     if(p=="s"){
+      # Read!
+      gs2 = gsheet_manipulation(FUN = googlesheets4::read_sheet,
+                               ss = selected_file,
+                               sheet = "lhns",
+                               return = TRUE)
+      gs2$bodyid = correct_id(gs2$bodyid)
+      rownames(gs2) = gs2$bodyid
+      gs = gs[rownames(gs2),]
       # Write!
       plot_inspirobot()
       write_matches(gs=gs,
@@ -213,13 +232,9 @@ hemibrain_FAFB_matching <- function(bodyids = NULL,
       write_matches(gs=gs,
                  bodyids = unsaved,
                  column = "FAFB.match.quality")
-      gs = gsheet_manipulation(FUN = googlesheets4::read_sheet,
-                                            ss = selected_file,
-                                            sheet = "lhns",
-                                            return = TRUE)
-      gs$bodyid = correct_id(gs$bodyid)
-      rownames(gs) = gs$bodyid
+
       unsaved = c()
+      gs = gs2
       rgl::bg3d("white")
     }
   }

@@ -53,6 +53,7 @@ hemibrain_lm_lhns(
   local = FALSE,
   folder = "hemibrain_neurons/light_level/lhns",
   data = c("neuronlist", "nblast", "dps"),
+  cable = c("lhns", "lhins"),
   brainspace = c("JRCFIB2018F", "JRCFIB2018Fraw", "FCWB")
 )
 }
