@@ -292,12 +292,17 @@ hemibrain_type_plot <- function(bodyids = NULL,
   }else{
     types = subset(meta, meta$bodyid %in% bodyids)$type
     meta = subset(meta, meta$type %in% unique(types))
+    missing = setdiff(bodyids,meta$bodyid)
+    if(length(missing)){
+      meta = plyr::rbind.fill(meta,
+                              neuprintr::neuprint_get_meta(missing))
+    }
   }
   ito.cts = unique(meta$type)
 
   # Neurons
   bodyids = as.character(bodyids)
-  all.bodyids = unique(meta$bodyid)
+  all.bodyids = unique(c(bodyids,as.character(unique(meta$bodyid))))
   if(is.null(someneuronlist)){
     someneuronlist = hemibrain_neurons()
   }
@@ -319,7 +324,8 @@ hemibrain_type_plot <- function(bodyids = NULL,
   rgl::plot3d(hemibrainr::hemibrain.surf, col = "grey", alpha = 0.1, add = TRUE)
   cols = rainbow(length(ito.cts))
   for(i in 1:length(ito.cts)){
-    n = neurons[neurons[,"type"]==ito.cts[i]]
+    ids = subset(meta,meta$type==ito.cts[i])$bodyid
+    n = neurons[as.character(ids)]
     col = grDevices::colorRampPalette(colors = c(cols[i],"grey10"))
     col = col(length(n)+2)[1:length(n)]
     rgl::plot3d(n, lwd = 2, soma = TRUE, col = col)
@@ -336,7 +342,7 @@ hemibrain_type_plot <- function(bodyids = NULL,
                                          0.891240775585175, 0, -0.133243337273598, -0.890630483627319,
                                          -0.434768080711365, 0, 0, 0, 0, 1), .Dim = c(4L, 4L)), zoom = 1)
   rgl::plot3d(brain, col = "grey", alpha = 0.1, add = TRUE)
-  rgl::plot3d(neurons, col = hemibrain_bright_colour_ramp(length(neurons)), lwd=2, soma = TRUE)
+  rgl::plot3d(neurons[bodyids], col = hemibrain_bright_colour_ramp(length(bodyids)), lwd=2, soma = TRUE)
 
   # Body Ids
   if(print){
