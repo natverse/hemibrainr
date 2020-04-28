@@ -4,19 +4,46 @@
 
 #' Match up neurons between the hemibrain and FAFB
 #'
-#' @description Match up neurons between the hemibrain and FAFB and save rhe result fo a \href{https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit#gid=0}{Google Sheet} on the hemibrain Google Team Drive operated by
-#' the FlyConnctome group at the University of Cambridge. Currently by default this function only considers lateral horn neurons. You must have access to the Team Drive in order to use this function. This function makes use of Google Filestream, which should be mounted
-#' on your machine. Further, note that neurons are read from the FAFB CATMAID project, and you must have log-in details for this project recorded in your .renviron for this function to work.
+#' @description Match up neurons between the hemibrain and FAFB and save rhe
+#'   result fo a
+#'   \href{https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit#gid=0}{Google
+#'   Sheet} on the hemibrain Google Team Drive operated by the flyconnectome
+#'   group at the University of Cambridge. Currently by default this function
+#'   only considers lateral horn neurons. You must have access to the Team Drive
+#'   in order to use this function. This function makes use of Google
+#'   Filestream, which should be mounted on your machine. Further, note that
+#'   neurons are read from the FAFB CATMAID project, and you must have log-in
+#'   details for this project recorded in your .Renviron for this function to
+#'   work.
 #'
-#' @param bodyids body IDs for hemibrain neurons present in the \href{https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit#gid=0}{Google Sheet}, for which the user will attempt to make a match if one has not been made already.
-#' @param hemibrain.fafb.nblast a FAFB (columns) - hemibrain (rows) normalised NBLAST matrix. By default this is read from the FlyConnectome Team Drive.
-#' @param selected_file the Google Sheet databse to read and write from. For now, defaults to a \href{https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit#gid=0}{Google Sheet for lateral horn neurons}. No other databases have been prepared.
-#' @param batch_size the number of FAFB top matches to read from CATMAID in one go.
+#' @param bodyids body IDs for hemibrain neurons present in the
+#'   \href{https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit#gid=0}{Google
+#'   Sheet}, for which the user will attempt to make a match if one has not been
+#'   made already.
+#' @param hemibrain.fafb.nblast a FAFB (rows) - hemibrain (columns) normalised
+#'   NBLAST matrix. By default this is read from the flyconnectome Team Drive.
+#' @param selected_file the Google Sheet database to read and write from. For
+#'   now, defaults to a
+#'   \href{https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit#gid=0}{Google
+#'   Sheet for lateral horn neurons}. No other databases have been prepared.
+#' @param batch_size the number of FAFB top matches to read from CATMAID in one
+#'   go.
+#' @param db Either a neuronlist or the name of a character vector naming a
+#'   neuronlist. Defaults to the value of \code{\link{hemibrain_neurons}()}.
 #'
-#' @details Currently, the \href{https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit#gid=0}{Google Sheet} is set up with  limited number of users, each of whom have been assigned a number of neurons to match up. In order
-#' to add yourself as a user, simply open this Google Sheet in your browser and add your initials to neurons of your choosing on the rightmost column 'Users'. Once a match is recorded, the user selects a quality for that match. There can be
-#' no match (n), a poor match (p) an okay match (o) or an exact match (e). As a rule of thumb, a poor match could be a neuron from a very similar same cell tye or a highly untraced neuron that may be the correct cell type. An okay match should be a neuron
-#' that looks to be from the same morphological cell type but there may be some discrepancies in its arbour. An exact match is a neuron that corresponds well between FAFB and the hemibrain data.
+#' @details Currently, the
+#'   \href{https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit#gid=0}{Google
+#'   Sheet} is set up with  limited number of users, each of whom have been
+#'   assigned a number of neurons to match up. In order to add yourself as a
+#'   user, simply open this Google Sheet in your browser and add your initials
+#'   to neurons of your choosing on the rightmost column 'Users'. Once a match
+#'   is recorded, the user selects a quality for that match. There can be no
+#'   match (n), a poor match (p) an okay match (o) or an exact match (e). As a
+#'   rule of thumb, a poor match could be a neuron from a very similar same cell
+#'   type or a highly untraced neuron that may be the correct cell type. An okay
+#'   match should be a neuron that looks to be from the same morphological cell
+#'   type but there may be some discrepancies in its arbour. An exact match is a
+#'   neuron that corresponds well between FAFB and the hemibrain data.
 #'
 #' @examples
 #' \donttest{
@@ -40,9 +67,16 @@
 hemibrain_FAFB_matching <- function(bodyids = NULL,
                          hemibrain.fafb.nblast = NULL,
                          selected_file = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw",
-                         batch_size = 10){
-  requireNamespace("nat.jrcbrains")
-  requireNamespace("elmr")
+                         batch_size = 10,
+                         db=hemibrain_neurons()){
+  if(!requireNamespace("nat.jrcbrains", quietly = TRUE)) {
+    stop("Please install nat.jrcbrains using:\n", call. = FALSE,
+         "remotes::install_github('natverse/nat.jrcbrains')")
+  }
+  if(!requireNamespace("elmr", quietly = TRUE)) {
+    stop("Please install elmr using:\n", call. = FALSE,
+         "remotes::install_github('natverse/elmr')")
+  }
   #
   # Motivate!
   nat::nopen3d()
@@ -58,10 +92,17 @@ hemibrain_FAFB_matching <- function(bodyids = NULL,
           ")
   ## Get NBLAST
   if(is.null(hemibrain.fafb.nblast)){
-    message("Loading FAFB-FIB NBLAST from flyconnectome Google Team Drive using Google Filestream: ")
-    load("/Volumes/GoogleDrive/Shared drives/flyconnectome/fafbpipeline/fib.fafb.crossnblast.twigs5.mean.compress.rda")
-    hemibrain.fafb.nblast = t(fib.fafb.crossnblast.twigs5.mean.compress)
-    rm("fib.fafb.crossnblast.twigs5.mean.compress")
+    matname="fib.fafb.crossnblast.twigs5.mean.compress"
+    if(exists(matname)) {
+      message("Using loaded FAFB-FIB NBLAST: ", matname)
+      hemibrain.fafb.nblast = get(matname)
+    } else {
+      message("Loading FAFB-FIB NBLAST ", matname,
+              " from flyconnectome Google Team Drive using Google Filestream: ")
+      load(sprintf("/Volumes/GoogleDrive/Shared drives/flyconnectome/fafbpipeline/%s.rda", matname))
+      hemibrain.fafb.nblast = get(matname)
+      rm("fib.fafb.crossnblast.twigs5.mean.compress")
+    }
   }
   # Read the Google Sheet
   gs = gsheet_manipulation(FUN = googlesheets4::read_sheet,
@@ -79,7 +120,16 @@ hemibrain_FAFB_matching <- function(bodyids = NULL,
   meta = neuprintr::neuprint_get_meta(bodyids)
   meta = meta[order(meta$type),]
   meta = subset(meta, meta$bodyid%in%bodyids)
-  db = tryCatch(hemibrain_neurons(), error = function(e) NULL)
+  if(missing(db)) {
+    # this means we weren't told to use a specific neuronlist, so
+    # we'll use the default. force() means evaluate hemibrain_neurons() now.
+    db=tryCatch(force(db), error=function(e) {
+      message("Unable to use `hemibrain_neurons()`. ",
+              "I will read neurons from neuPrint, but this will be slower!")
+    })
+  } else if(is.character(db)) {
+    db=tryCatch(get(db), error=function(e) stop("Unable to find neuronlist: ", db))
+  }
   # How much is done?
   done = subset(gs, !is.na(gs$FAFB.match))
   message("Neurons matches: ", nrow(done))
@@ -98,16 +148,16 @@ hemibrain_FAFB_matching <- function(bodyids = NULL,
       next
     }
     # Plot brain
-    clear3d()
-    plot3d(elmr::FAFB14,alpha = 0.1, col ="grey")
+    rgl::clear3d()
+    plot3d(elmr::FAFB14.surf, alpha = 0.1, col ="grey")
     # Read hemibrain neuron
     if(is.null(db)){
       lhn  = neuprintr::neuprint_read_neurons(n)
-    }else{
-      lhn = tryCatch(db[as.character(n)], error = function(e) NULL)
-    }
-    if(is.null(lhn)){
-      lhn  = neuprintr::neuprint_read_neurons(n)
+    } else {
+      lhn = tryCatch(db[as.character(n)], error = function(e) {
+        warning("Cannot read neuron: ", n, " from local db; fetching from neuPrint!")
+        neuprintr::neuprint_read_neurons(n)
+        })
     }
     # Transform hemibrain neuron to FAFB space
     lhn = scale_neurons.neuronlist(lhn, scaling = (8/1000))
@@ -116,7 +166,7 @@ hemibrain_FAFB_matching <- function(bodyids = NULL,
     message("Hemibrain-assigned cell type :",lhn[n,"type"])
     # Read top 10 FAFB matches
     message(sprintf("Reading the top %s FAFB hits",batch_size))
-    r = sort(hemibrain.fafb.nblast[n,],decreasing = TRUE)
+    r = sort(hemibrain.fafb.nblast[,n],decreasing = TRUE)
     plot3d(lhn[n], lwd = 2, soma = 500, col = "black")
     fafb = catmaid::read.neurons.catmaid(names(r)[1:batch_size])
     sel = c("go","for","it")
@@ -125,7 +175,7 @@ hemibrain_FAFB_matching <- function(bodyids = NULL,
     # Cycle through potential matches
     while(length(sel)>1){
       if(j>10){
-        fafb = union(fafb, read.neurons.catmaid(names(r)[(k+1):j]))
+        fafb = union(fafb, catmaid::read.neurons.catmaid(names(r)[(k+1):j]))
       }
       sel = nat::nlscan(fafb[names(r)[1:j]], col = "red", soma = TRUE)
       if(length(sel)>1){

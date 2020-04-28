@@ -271,6 +271,7 @@ plot3d_somas <- function(someneuronlist,
 #' }}
 #' @export
 #' @seealso \code{\link{plot3d_split}}
+#' @importFrom grDevices rainbow
 hemibrain_type_plot <- function(bodyids = NULL,
                                 someneuronlist = NULL,
                                 brain = hemibrainr::hemibrain.surf,
@@ -315,7 +316,7 @@ hemibrain_type_plot <- function(bodyids = NULL,
                                          -0.129098162055016, 0, 0.0781147107481956, -0.446752369403839,
                                          0.891240775585175, 0, -0.133243337273598, -0.890630483627319,
                                          -0.434768080711365, 0, 0, 0, 0, 1), .Dim = c(4L, 4L)), zoom = 1)
-  rgl::plot3d(hemibrain.surf, col = "grey", alpha = 0.1, add = TRUE)
+  rgl::plot3d(hemibrainr::hemibrain.surf, col = "grey", alpha = 0.1, add = TRUE)
   cols = rainbow(length(ito.cts))
   for(i in 1:length(ito.cts)){
     n = neurons[neurons[,"type"]==ito.cts[i]]
