@@ -52,7 +52,12 @@ write.neuronlistfh(all.neurons.flow.fh, file=paste0(savedirfh,"hemibrain_all_neu
 # Save key points
 all.neurons.points = hemibrain_splitpoints(all.neurons.flow)
 write.csv(all.neurons.points, file = paste0("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/hemibrain_all_neurons_splitpoints_",identifier,".csv"), row.names=FALSE)
-message("Split points calculated for neurons: ", nrow(all.neurons.points))
+message("Split points: ", nrow(all.neurons.points))
+
+# Save compressed verssio
+all.neurons.points.comp = subset(all.neurons.points, !grepl("null",all.neurons.points$point))
+write.csv(all.neurons.points.comp, file = paste0("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/hemibrain_all_neurons_splitpoints_",identifier,"_compressed.csv"), row.names=FALSE)
+message("Compressed split points: ", nrow(all.neurons.points.comp))
 
 # Get Synapses
 all.neurons.flow.syns = hemibrain_extract_synapses(all.neurons.flow)
