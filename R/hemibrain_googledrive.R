@@ -192,6 +192,7 @@ hemibrain_lm_lhns <- function(savedir = TRUE,
                               data = c("neuronlist",
                                        "nblast",
                                        "dps"),
+                              cable = c("lhns","lhins"),
                               brainspace = c("JRCFIB2018F","JRCFIB2018Fraw","FCWB")){
   brainspace = match.arg(brainspace)
   data = match.arg(data)
@@ -209,7 +210,7 @@ hemibrain_lm_lhns <- function(savedir = TRUE,
     data =  ""
   }
   savedir = good_savedir(savedir = savedir,local = local)
-  gfile = find_gfile(savedir = savedir, file = sprintf("most_lhns%s%s.rds",data,brainspace), folder = folder)
+  gfile = find_gfile(savedir = savedir, file = sprintf("most_%s%s%s.rds",cable,data,brainspace), folder = folder)
   readRDS(gfile)
 }
 
