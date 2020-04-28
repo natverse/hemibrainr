@@ -5,10 +5,10 @@
 #' Match up neurons between the hemibrain and FAFB
 #'
 #' @description Match up neurons between the hemibrain and FAFB and save the
-#'   result to a
+#'   result using a
 #'   \href{https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit#gid=0}{Google
-#'    Sheet} on the hemibrain Google Team Drive operated by the flyconnectome
-#'   group at the University of Cambridge. Currently by default this function
+#'   Sheet} on the hemibrain Google Team Drive operated by the flyconnectome
+#'   group at the University of Cambridge. This function
 #'   only considers lateral horn neurons. You must have access to the Team Drive
 #'   in order to use this function. This function makes use of the Google
 #'   Filestream application, which should be installed on your machine. Further,
@@ -77,7 +77,6 @@ hemibrain_FAFB_matching <- function(bodyids = NULL,
     stop("Please install elmr using:\n", call. = FALSE,
          "remotes::install_github('natverse/elmr')")
   }
-  #
   # Motivate!
   nat::nopen3d()
   plot_inspirobot()
@@ -86,8 +85,8 @@ hemibrain_FAFB_matching <- function(bodyids = NULL,
           #######################Colours#######################
           black = hemibrain neuron,
           red = potential FAFB matches based on NBLAST score,
-          green = a chosen neuron during scanning,
-          blue = your selected match,
+          green = a chosen FAFB neuron during scanning,
+          blue = your selected FAFB match.
           #######################Colours#######################
           ")
   ## Get NBLAST
