@@ -69,8 +69,14 @@ hemibrain_FAFB_matching <- function(bodyids = NULL,
                          selected_file = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw",
                          batch_size = 10,
                          db=hemibrain_neurons()){
-  requireNamespace("nat.jrcbrains")
-  requireNamespace("elmr")
+  if(!requireNamespace("nat.jrcbrains", quietly = TRUE)) {
+    stop("Please install nat.jrcbrains using:\n", call. = FALSE,
+         "remotes::install_github('natverse/nat.jrcbrains')")
+  }
+  if(!requireNamespace("elmr", quietly = TRUE)) {
+    stop("Please install elmr using:\n", call. = FALSE,
+         "remotes::install_github('natverse/elmr')")
+  }
   #
   # Motivate!
   nat::nopen3d()
@@ -143,7 +149,7 @@ hemibrain_FAFB_matching <- function(bodyids = NULL,
     }
     # Plot brain
     clear3d()
-    plot3d(elmr::FAFB14,alpha = 0.1, col ="grey")
+    plot3d(elmr::FAFB14.surf, alpha = 0.1, col ="grey")
     # Read hemibrain neuron
     if(is.null(db)){
       lhn  = neuprintr::neuprint_read_neurons(n)
