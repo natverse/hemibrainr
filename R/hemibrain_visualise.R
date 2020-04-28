@@ -235,10 +235,112 @@ nlscan_split <- function (someneuronlist,
 #' @export
 #' @rdname plot3d_split
 plot3d_somas <- function(someneuronlist,
-                         col = hemibrainr::hemibrain_bright_colors["green"],
+                         col = hemibrain_bright_colors["green"],
                          radius = 300,
                          soma.alpha = 1){
   somapos <- as.data.frame(catmaid::soma(someneuronlist))
   somapos <- somapos[!is.na(somapos$X),]
   rgl::spheres3d(somapos, radius = radius, alpha = soma.alpha, col = col)
 }
+
+
+#' Plot chosen neurons and see all neurons in that type
+#'
+#' @description Plot your selected neuron (rightmost pane) and then see all of the neurons in the hemibrain project that belong to
+#' the types you have plotted (left pane).
+#'
+#' @param someneuronlist a neuronlist or neuron object to plot. If \code{bodyids} is \code{NULL} then \code{bodyids = names(someneuronlist)}.
+#' @param bodyids bodyids for the neurons you want to plot. If \code{someneuronlist} is null then \code{hemibrain_neurons} will be used
+#' to load a neuron database.
+#' @param print logical, whether or not to print the name of the cell types being plotted and their Body IDs.
+#' @param meta a \code{data.frame} with a \code{bodyid} and a \code{type} field, such as one pulled by \code{neuprint_get_meta}. If \code{NULL}
+#' then meta will be acquired as \code{neuprint_get_meta(bodyids)}.
+#' @param brain a \code{mesh3d} or \code{hxsurf} object, such as a template brain, to plot alongside neurons of interest.
+#'
+#' @return Plots coloured neuron(s)
+#' @examples
+#' \donttest{
+#' \dontrun{
+#'
+#' # Choose neurons
+#' ids = c("605063393", "573708714", "485387561", "5813083717")
+#'
+#' # Plot
+#' hemibrain_type_plot(ids)
+#'
+#' }}
+#' @export
+#' @seealso \code{\link{plot3d_split}}
+hemibrain_type_plot <- function(bodyids = NULL,
+                                someneuronlist = NULL,
+                                brain = hemibrainr::hemibrain.surf,
+                                print = TRUE,
+                                meta = NULL){
+
+  # Get bodyids
+  if(is.null(bodyids)){
+    if(is.null(someneuronlist)){
+      stop("Either bodyids or someneuronlist must be given")
+    }
+    bodyids = names(someneuronlist)
+  }
+
+  # Get metadata
+  if(is.null(meta)){
+    meta = neuprintr::neuprint_get_meta(bodyids)
+  }else{
+    types = subset(meta, meta$bodyid %in% bodyids)$type
+    meta = subset(meta, meta$type %in% unique(types))
+  }
+  ito.cts = unique(meta$type)
+
+  # Neurons
+  bodyids = as.character(bodyids)
+  all.bodyids = unique(meta$bodyid)
+  if(is.null(someneuronlist)){
+    someneuronlist = hemibrain_neurons()
+  }
+  neurons = tryCatch(someneuronlist[all.bodyids], error = function(e) NULL)
+  if(is.null(neurons)){
+      neurons = neuprintr::neuprint_read_neurons(all.bodyids)
+  }
+
+  # Set up rgl
+  rgl::clear3d()
+  mat <- matrix(1:2, nrow = 1, 2)
+  rgl::layout3d(mat, height = 3, sharedMouse = TRUE)
+
+  # Plot
+  rgl::rgl.viewpoint(userMatrix = structure(c(0.988000273704529, -0.0847902745008469,
+                                         -0.129098162055016, 0, 0.0781147107481956, -0.446752369403839,
+                                         0.891240775585175, 0, -0.133243337273598, -0.890630483627319,
+                                         -0.434768080711365, 0, 0, 0, 0, 1), .Dim = c(4L, 4L)), zoom = 1)
+  rgl::plot3d(hemibrain.surf, col = "grey", alpha = 0.1, add = TRUE)
+  cols = rainbow(length(ito.cts))
+  for(i in 1:length(ito.cts)){
+    n = neurons[neurons[,"type"]==ito.cts[i]]
+    col = grDevices::colorRampPalette(colors = c(cols[i],"grey10"))
+    col = col(length(n)+2)[1:length(n)]
+    rgl::plot3d(n, lwd = 2, soma = TRUE, col = col)
+    if(print){
+      message("Type: ", ito.cts[i])
+      print(dput(names(n)))
+    }
+  }
+
+  # Plot the given IDs
+  rgl::next3d()
+  rgl::rgl.viewpoint(userMatrix = structure(c(0.988000273704529, -0.0847902745008469,
+                                         -0.129098162055016, 0, 0.0781147107481956, -0.446752369403839,
+                                         0.891240775585175, 0, -0.133243337273598, -0.890630483627319,
+                                         -0.434768080711365, 0, 0, 0, 0, 1), .Dim = c(4L, 4L)), zoom = 1)
+  rgl::plot3d(brain, col = "grey", alpha = 0.1, add = TRUE)
+  rgl::plot3d(neurons, col = hemibrain_bright_colour_ramp(length(neurons)), lwd=2, soma = TRUE)
+
+  # Body Ids
+  if(print){
+    message("right: ")
+    print(dput(bodyids))
+  }
+}
+

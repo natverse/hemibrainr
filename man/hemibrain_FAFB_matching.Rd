@@ -41,11 +41,11 @@ remotes::install_github('natverse/nat.jrcbrains')
 nat.jrcbrains::download_saalfeldlab_registrations()
 
 # Load precomputed NBLAST from the flyconnectome Team Drive
-load("/Volumes/GoogleDrive/Shared\ drives/flyconnectome/fafbpipeline/fafb (1).fib.twigs5.crossnblast.rda")
- # load("/Volumes/GoogleDrive/Shared\ drives/flyconnectome/fafbpipeline/fafb.fib.twigs5.crossnblast.rda") ## Or this one
+load("/Volumes/GoogleDrive/Shared drives/flyconnectome/fafbpipeline/fib.fafb.crossnblast.twigs5.mean.compress.rda")
+ # load("/Volumes/GoogleDrive/Shared drives/flyconnectome/fafbpipeline/fib.fafb.crossnblast.twigs5.mean.compress (1).rda") ## Or this one
 
 # Match!
-hemibrain_FAFB_matching(hemibrain.fafb.nblast = fafb.fib.twigs5.crossnblast)
+hemibrain_FAFB_matching(hemibrain.fafb.nblast = fib.fafb.crossnblast.twigs5.mean.compress)
 }}
 }
 \seealso{
