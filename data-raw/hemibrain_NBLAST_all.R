@@ -145,9 +145,17 @@ flycircuitfolder = paste0("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/
 most.lhns.hemi.dps = hemibrain_lm_lhns(savedir = lhfolder,
                                        folder="",
                                        local = TRUE,
-                                       cable = "all",
                                        data = "dps",
                                        brainspace = "JRCFIB2018F")
+most.lhins.hemi.dps = hemibrain_lm_lhns(savedir = lhfolder,
+                                       folder="",
+                                       local = TRUE,
+                                       data = "dps",
+                                       cable = "lhins",
+                                       brainspace = "JRCFIB2018F")
+most.lh.hemi.dps = union(most.lhns.hemi.dps,most.lhins.dps)
+check = sapply(most.lh.hemi.dps, function(e) nrow(e$points)>2)
+most.lh.hemi.dps = most.lh.hemi.dps[check]
 fcs.hemi.dps = flycircuit_neurons(savedir = flycircuitfolder,
                                   folder="",
                                   local = TRUE,
@@ -158,6 +166,7 @@ fcs.hemi.dps = flycircuit_neurons(savedir = flycircuitfolder,
 ### NBLAST with light level
 hemibrain.lhns.mean = nat.nblast::nblast(query = most.lhns.hemi.dps,
                                          target = hemibrain.dps,
+                                         .parallel=TRUE,
                                          normalised = TRUE)
 hemibrainr:::save_compressed_nblast_mat(hemibrain.lhns.mean,
                                         file = nblastfolder)
@@ -165,6 +174,7 @@ hemibrainr:::save_compressed_nblast_mat(hemibrain.lhns.mean,
 ### NBLAST with FlyCircuit
 hemibrain.flycircuit.mean = nat.nblast::nblast(query = fcs.hemi.dps,
                                          target = hemibrain.dps,
+                                         .parallel=TRUE,
                                          normalised = TRUE)
 hemibrainr:::save_compressed_nblast_mat(hemibrain.flycircuit.mean,
                                         file = nblastfolder)
