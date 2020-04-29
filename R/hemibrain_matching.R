@@ -30,8 +30,8 @@
 #'   go.
 #' @param db Either a neuronlist or the name of a character vector naming a
 #'   neuronlist. Defaults to the value of \code{\link{hemibrain_neurons}()}.
-#' @param match.type whether to match up FAFB skeletons (\code{"EM}) or light level
-#' skeletons from Dolan et al. and Frechter et al. 2019 (eLife), stored in the package \code{lhns} as
+#' @param match.type whether to match up FAFB skeletons (\code{"EM"}) or light level
+#' skeletons  (\code{"LM"}) from Dolan et al. and Frechter et al. 2019 (eLife), stored in the package \code{lhns} as
 #' \code{most.lhns}.
 #' @param query a neuronlist of light level neurons to match against. Should correspond to the given NBLAST matrix.
 #' Defaults to reading a transformed \code{most.lhns} from the Hemibrain Google Team Drive.
