@@ -442,7 +442,7 @@ lm_matching <- function(ids = NULL,
       }
       if(!prog){
         sel = c("go","for","it")
-          prog = hemibrain_choice(sprintf("Do you want to read %s more neurons from CATMAID? ", batch_size))
+          prog = hemibrain_choice(sprintf("Do you want to read %s more neurons? ", batch_size))
           if(prog){
             k = j
             j = j + batch_size
