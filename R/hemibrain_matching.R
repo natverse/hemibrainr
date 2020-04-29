@@ -132,15 +132,15 @@ hemibrain_matching <- function(ids = NULL,
                            return = TRUE)
   gs$bodyid = correct_id(gs$bodyid)
   rownames(gs) = gs$bodyid
-  if(is.null(bodyids)){
-    bodyids = gs$bodyid
+  if(is.null(ids)){
+    ids = gs$bodyid
   }else{
-    bodyids = intersect(bodyids,gs$bodyid)
+    ids = intersect(ids,gs$bodyid)
   }
   # Read neuron meta data
-  meta = neuprintr::neuprint_get_meta(bodyids)
+  meta = neuprintr::neuprint_get_meta(ids)
   meta = meta[order(meta$type),]
-  meta = subset(meta, meta$bodyid%in%bodyids)
+  meta = subset(meta, meta$bodyid%in%ids)
   if(missing(db)) {
     # this means we weren't told to use a specific neuronlist, so
     # we'll use the default. force() means evaluate hemibrain_neurons() now.
@@ -268,10 +268,10 @@ hemibrain_matching <- function(ids = NULL,
       gs = gs[rownames(gs2),]
       # Write!
       write_matches(gs=gs,
-                 bodyids = unsaved,
+                 ids = unsaved,
                  column = match.field)
       write_matches(gs=gs,
-                 bodyids = unsaved,
+                 ids = unsaved,
                  column = quality.field)
       unsaved = c()
       gs = gs2
