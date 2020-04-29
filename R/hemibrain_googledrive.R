@@ -197,6 +197,7 @@ hemibrain_lm_lhns <- function(savedir = TRUE,
                               brainspace = c("JRCFIB2018F","JRCFIB2018Fraw","FCWB")){
   brainspace = match.arg(brainspace)
   data = match.arg(data)
+  cable = match.arg(cable)
   brainspace = if(brainspace=="FCWB") {
     # To be honest, this is a bit of a hack to avoid R CMD check
     # errors since lhns is not Suggested
