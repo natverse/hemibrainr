@@ -164,18 +164,28 @@ fcs.hemi.dps = flycircuit_neurons(savedir = flycircuitfolder,
                                   brainspace = "JRCFIB2018F")
 
 ### NBLAST with light level
-hemibrain.lhns.mean = nat.nblast::nblast(query = most.lhns.hemi.dps,
+hemibrain.lhns.mean.1 = nat.nblast::nblast(query = most.lhns.hemi.dps,
                                          target = hemibrain.dps,
                                          .parallel=TRUE,
                                          normalised = TRUE)
+hemibrain.lhns.mean.2 = nat.nblast::nblast(query = most.lhns.hemi.dps,
+                                         target = hemibrain.dps,
+                                         .parallel=TRUE,
+                                         normalised = TRUE)
+hemibrain.lhns.mean = (hemibrain.lhns.mean.1+t(hemibrain.lhns.mean.2))/2
 hemibrainr:::save_compressed_nblast_mat(hemibrain.lhns.mean,
                                         file = nblastfolder)
 
 ### NBLAST with FlyCircuit
-hemibrain.flycircuit.mean = nat.nblast::nblast(query = fcs.hemi.dps,
+hemibrain.flycircuit.mean.1 = nat.nblast::nblast(query = fcs.hemi.dps,
                                          target = hemibrain.dps,
                                          .parallel=TRUE,
                                          normalised = TRUE)
+hemibrain.flycircuit.mean.2 = nat.nblast::nblast(query = hemibrain.dps,
+                                               target = fcs.hemi.dps,
+                                               .parallel=TRUE,
+                                               normalised = TRUE)
+hemibrain.flycircuit.mean = (hemibrain.flycircuit.mean.1+t(hemibrain.flycircuit.mean.2))/2
 hemibrainr:::save_compressed_nblast_mat(hemibrain.flycircuit.mean,
                                         file = nblastfolder)
 
