@@ -133,7 +133,9 @@ the types you have plotted (left pane).</p>
   <span class='kw'>brain</span> <span class='kw'>=</span> <span class='kw pkg'>hemibrainr</span><span class='kw ns'>::</span><span class='no'><a href='hemibrain.surf.html'>hemibrain.surf</a></span>,
   <span class='kw'>print</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>meta</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
-)</pre>
+)
+
+<span class='fu'>hemibrain_multi3d</span>(<span class='no'>...</span>, <span class='kw'>someneuronlist</span> <span class='kw'>=</span> <span class='fu'><a href='hemibrain_read_neurons.html'>hemibrain_neurons</a></span>())</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -160,6 +162,10 @@ to load a neuron database.</p></td>
       <td><p>a <code>data.frame</code> with a <code>bodyid</code> and a <code>type</code> field, such as one pulled by <code>neuprint_get_meta</code>. If <code>NULL</code>
 then meta will be acquired as <code>neuprint_get_meta(bodyids)</code>.</p></td>
     </tr>
+    <tr>
+      <th>...</th>
+      <td><p>vector lists of bodyids, each of which will be plotted in a different set of colours.</p></td>
+    </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
@@ -178,6 +184,13 @@ then meta will be acquired as <code>neuprint_get_meta(bodyids)</code>.</p></td>
 
 <span class='co'># Plot</span>
 <span class='fu'>hemibrain_type_plot</span>(<span class='no'>ids</span>)
+
+<span class='co'># Plot multi</span>
+<span class='fu'>open3d</span>()
+<span class='no'>a</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"546511447"</span>, <span class='st'>"573333903"</span>, <span class='st'>"577546843"</span>, <span class='st'>"573333284"</span>, <span class='st'>"573683455"</span>,
+ <span class='st'>"609941228"</span>, <span class='st'>"604368022"</span>)
+<span class='no'>b</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"573670049"</span>, <span class='st'>"579576294"</span>, <span class='st'>"727838223"</span>, <span class='st'>"696432315"</span>)
+<span class='fu'>hemibrain_multi3d</span>(<span class='no'>a</span>, <span class='no'>b</span>)
 
 }<span class='co'># }</span></div></pre>
   </div>

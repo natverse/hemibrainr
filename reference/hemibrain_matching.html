@@ -146,24 +146,33 @@
     </div>
 
     <pre class="usage"><span class='fu'>hemibrain_matching</span>(
-  <span class='kw'>bodyids</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>ids</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>hemibrain.nblast</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>selected_file</span> <span class='kw'>=</span> <span class='st'>"1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw"</span>,
   <span class='kw'>batch_size</span> <span class='kw'>=</span> <span class='fl'>10</span>,
   <span class='kw'>db</span> <span class='kw'>=</span> <span class='fu'><a href='hemibrain_read_neurons.html'>hemibrain_neurons</a></span>(),
   <span class='kw'>match.type</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"FAFB"</span>, <span class='st'>"LM"</span>),
   <span class='kw'>query</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
+)
+
+<span class='fu'>lm_matching</span>(
+  <span class='kw'>ids</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>hemibrain.nblast</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>selected_file</span> <span class='kw'>=</span> <span class='st'>"1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw"</span>,
+  <span class='kw'>batch_size</span> <span class='kw'>=</span> <span class='fl'>50</span>,
+  <span class='kw'>db</span> <span class='kw'>=</span> <span class='fu'><a href='hemibrain_read_neurons.html'>hemibrain_neurons</a></span>(),
+  <span class='kw'>query</span> <span class='kw'>=</span> <span class='fu'><a href='hemibrain_googledrive.html'>hemibrain_lm_lhns</a></span>(<span class='kw'>brainspace</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"JRCFIB2018F"</span>))
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>bodyids</th>
+      <th>ids</th>
       <td><p>body IDs for hemibrain neurons present in the
 <a href='https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit#gid=0'>Google
  Sheet</a>, for which the user will attempt to make a match if one has not
-been made already.</p></td>
+been made already. Else, LM neuron IDs in the tab 'lm' when using <code>lm_matching</code>.</p></td>
     </tr>
     <tr>
       <th>hemibrain.nblast</th>
@@ -233,7 +242,7 @@ Defaults to reading a transformed <code>most.lhns</code> from the Hemibrain Goog
  <span class='co'># load("/Volumes/GoogleDrive/Shared drives/flyconnectome/fafbpipeline/fib.fafb.crossnblast.twigs5.mean.compress (1).rda") ## Or this one</span>
 
 <span class='co'># Match!</span>
-<span class='fu'>hemibrain_FAFB_matching</span>(<span class='kw'>hemibrain.nblast</span> <span class='kw'>=</span> <span class='no'>fib.fafb.crossnblast.twigs5.mean.compress</span>)
+<span class='fu'>hemibrain_FAFB_matching</span>(<span class='kw'>hemibrain.nblast</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/t.html'>t</a></span>(<span class='no'>fib.fafb.crossnblast.twigs5.mean.compress</span>))
 }<span class='co'># }</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
