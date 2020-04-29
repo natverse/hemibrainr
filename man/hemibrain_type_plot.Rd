@@ -2,6 +2,7 @@
 % Please edit documentation in R/hemibrain_visualise.R
 \name{hemibrain_type_plot}
 \alias{hemibrain_type_plot}
+\alias{hemibrain_multi3d}
 \title{Plot chosen neurons and see all neurons in that type}
 \usage{
 hemibrain_type_plot(
@@ -11,6 +12,8 @@ hemibrain_type_plot(
   print = TRUE,
   meta = NULL
 )
+
+hemibrain_multi3d(..., someneuronlist = hemibrain_neurons())
 }
 \arguments{
 \item{bodyids}{bodyids for the neurons you want to plot. If \code{someneuronlist} is null then \code{hemibrain_neurons} will be used
@@ -24,6 +27,8 @@ to load a neuron database.}
 
 \item{meta}{a \code{data.frame} with a \code{bodyid} and a \code{type} field, such as one pulled by \code{neuprint_get_meta}. If \code{NULL}
 then meta will be acquired as \code{neuprint_get_meta(bodyids)}.}
+
+\item{...}{vector lists of bodyids, each of which will be plotted in a different set of colours.}
 }
 \value{
 Plots coloured neuron(s)
@@ -41,6 +46,13 @@ ids = c("605063393", "573708714", "485387561", "5813083717")
 
 # Plot
 hemibrain_type_plot(ids)
+
+# Plot multi
+open3d()
+a = c("546511447", "573333903", "577546843", "573333284", "573683455",
+ "609941228", "604368022")
+b = c("573670049", "579576294", "727838223", "696432315")
+hemibrain_multi3d(a, b)
 
 }}
 }

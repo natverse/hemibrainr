@@ -256,6 +256,7 @@ plot3d_somas <- function(someneuronlist,
 #' @param meta a \code{data.frame} with a \code{bodyid} and a \code{type} field, such as one pulled by \code{neuprint_get_meta}. If \code{NULL}
 #' then meta will be acquired as \code{neuprint_get_meta(bodyids)}.
 #' @param brain a \code{mesh3d} or \code{hxsurf} object, such as a template brain, to plot alongside neurons of interest.
+#' @param ... vector lists of bodyids, each of which will be plotted in a different set of colours.
 #'
 #' @return Plots coloured neuron(s)
 #' @examples
@@ -267,6 +268,13 @@ plot3d_somas <- function(someneuronlist,
 #'
 #' # Plot
 #' hemibrain_type_plot(ids)
+#'
+#' # Plot multi
+#' open3d()
+#' a = c("546511447", "573333903", "577546843", "573333284", "573683455",
+#'  "609941228", "604368022")
+#' b = c("573670049", "579576294", "727838223", "696432315")
+#' hemibrain_multi3d(a, b)
 #'
 #' }}
 #' @export
@@ -348,6 +356,23 @@ hemibrain_type_plot <- function(bodyids = NULL,
   if(print){
     message("right: ")
     print(dput(bodyids))
+  }
+}
+
+
+#' @export
+#' @rdname hemibrain_type_plot
+hemibrain_multi3d <- function(..., someneuronlist = hemibrain_neurons()){
+  m = as.list(match.call())
+  count = length(m)-1
+  cols = rainbow(count)
+  for(i in 1:count){
+    j = i+1
+    n = as.character(get(as.character(m[[j]])))
+    n = n[n%in%names(someneuronlist)]
+    col = grDevices::colorRampPalette(colors = c(cols[i],"grey10"))
+    col = col(length(n)+2)[1:length(n)]
+    rgl::plot3d(someneuronlist[n], lwd = 2, col = col, soma = TRUE)
   }
 }
 
