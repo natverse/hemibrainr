@@ -20,7 +20,7 @@
 #'   \href{https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit#gid=0}{Google
 #'    Sheet}, for which the user will attempt to make a match if one has not
 #'   been made already.
-#' @param hemibrain.fafb.nblast a FAFB (rows) - hemibrain (columns) normalised
+#' @param hemibrain.nblast a FAFB (rows) - hemibrain (columns) normalised
 #'   NBLAST matrix. By default this is read from the flyconnectome Team Drive.
 #' @param selected_file the Google Sheet database to read and write from. For
 #'   now, defaults to a
@@ -30,6 +30,11 @@
 #'   go.
 #' @param db Either a neuronlist or the name of a character vector naming a
 #'   neuronlist. Defaults to the value of \code{\link{hemibrain_neurons}()}.
+#' @param match.type whether to match up FAFB skeletons (\code{"EM}) or light level
+#' skeletons from Dolan et al. and Frechter et al. 2019 (eLife), stored in the package \code{lhns} as
+#' \code{most.lhns}.
+#' @param query a neuronlist of light level neurons to match against. Should correspond to the given NBLAST matrix.
+#' Defaults to reading a transformed \code{most.lhns} from the Hemibrain Google Team Drive.
 #'
 #' @details Currently, the
 #'   \href{https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit#gid=0}{Google
@@ -59,16 +64,19 @@
 #'  # load("/Volumes/GoogleDrive/Shared drives/flyconnectome/fafbpipeline/fib.fafb.crossnblast.twigs5.mean.compress (1).rda") ## Or this one
 #'
 #' # Match!
-#' hemibrain_FAFB_matching(hemibrain.fafb.nblast = fib.fafb.crossnblast.twigs5.mean.compress)
+#' hemibrain_FAFB_matching(hemibrain.nblast = fib.fafb.crossnblast.twigs5.mean.compress)
 #' }}
-#' @rdname hemibrain_FAFB_matching
+#' @rdname hemibrain_matching
 #' @export
 #' @seealso \code{\link{hemibrain_adjust_saved_split}}
-hemibrain_FAFB_matching <- function(bodyids = NULL,
-                         hemibrain.fafb.nblast = NULL,
+hemibrain_matching <- function(bodyids = NULL,
+                         hemibrain.nblast = NULL,
                          selected_file = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw",
                          batch_size = 10,
-                         db=hemibrain_neurons()){
+                         db=hemibrain_neurons(),
+                         match.type = c("FAFB", "LM"),
+                         query = NULL){
+  match.type = match.arg(match.type)
   if(!requireNamespace("nat.jrcbrains", quietly = TRUE)) {
     stop("Please install nat.jrcbrains using:\n", call. = FALSE,
          "remotes::install_github('natverse/nat.jrcbrains')")
@@ -90,17 +98,31 @@ hemibrain_FAFB_matching <- function(bodyids = NULL,
           #######################Colours#######################
           ")
   ## Get NBLAST
-  if(is.null(hemibrain.fafb.nblast)){
+  if(is.null(hemibrain.nblast) & match.type =="FAFB"){
     matname="fib.fafb.crossnblast.twigs5.mean.compress"
     if(exists(matname)) {
       message("Using loaded FAFB-FIB NBLAST: ", matname)
-      hemibrain.fafb.nblast = get(matname)
+      hemibrain.nblast = get(matname)
     } else {
       message("Loading FAFB-FIB NBLAST ", matname,
               " from flyconnectome Google Team Drive using Google Filestream: ")
       load(sprintf("/Volumes/GoogleDrive/Shared drives/flyconnectome/fafbpipeline/%s.rda", matname))
-      hemibrain.fafb.nblast = get(matname)
+      hemibrain.nblast = get(matname)
       rm("fib.fafb.crossnblast.twigs5.mean.compress")
+    }
+  }
+  if(is.null(hemibrain.nblast) & match.type =="LM"){
+    matname="hemibrain.lhns.mean.compressed"
+    if(exists(matname)) {
+      message("Using loaded LM-FIB NBLAST: ", matname)
+      hemibrain.nblast = get(matname)
+    } else {
+      message("Loading LM-FIB NBLAST ", matname,
+              " from hemibrain Google Team Drive using Google Filestream: ")
+      load(sprintf("/Volumes/GoogleDrive/Shared\ drives/hemibrain/hemibrain_nblast/%s.rda", matname))
+      hemibrain.nblast = get(matname)
+      hemibrain.nblast = t(hemibrain.nblast)
+      rm("hemibrain.lhns.mean.compressed")
     }
   }
   # Read the Google Sheet
@@ -123,32 +145,45 @@ hemibrain_FAFB_matching <- function(bodyids = NULL,
     # this means we weren't told to use a specific neuronlist, so
     # we'll use the default. force() means evaluate hemibrain_neurons() now.
     db=tryCatch(force(db), error=function(e) {
-      message("Unable to use `hemibrain_neurons()`. ",
-              "I will read neurons from neuPrint, but this will be slower!")
-    })
+        message("Unable to use `hemibrain_neurons()`. ",
+                "I will read neurons from neuPrint, but this will be slower!")
+      })
   } else if(is.character(db)) {
     db=tryCatch(get(db), error=function(e) stop("Unable to find neuronlist: ", db))
   }
+  if(match.type=="LM" & is.null(query)){
+    fafb = hemibrain_lm_lhns(brainspace = c("JRCFIB2018F"))
+  }else if(match.type=="LM"){
+    fafb = query
+  }
   # How much is done?
-  done = subset(gs, !is.na(gs$FAFB.match))
+  match.field = paste0(match.type,".match")
+  quality.field = paste0(match.type,".match.quality")
+  done = subset(gs, !is.na(gs[[match.field]]))
   message("Neuron matches: ", nrow(done))
-  print(table(gs$FAFB.match.quality))
+  print(table(gs[[quality.field]]))
   # Choose user
   message("Users: ", paste(unique(gs$User),collapse = " "))
   initials = must_be("Choose a user : ", answers = unique(gs$User))
   rgl::bg3d("white")
+  # choose brain
+  if(match.type=="FAFB"){
+    brain = elmr::FAFB14.surf
+  }else{
+    brain = hemibrain_microns.surf
+  }
   # Make matches!
   for(n in meta$bodyid){
     # Get bodyid
     n = as.character(n)
     # Remove neurons with matches
-    donotdo = subset(gs, !is.na(gs$FAFB.match) | User != initials)
+    donotdo = subset(gs, !is.na(gs[[match.field]]) | User != initials)
     if(n%in%donotdo$bodyid){
       next
     }
     # Plot brain
     rgl::clear3d()
-    plot3d(elmr::FAFB14.surf, alpha = 0.1, col ="grey")
+    plot3d(brain, alpha = 0.1, col ="grey")
     # Read hemibrain neuron
     if(is.null(db)){
       lhn  = neuprintr::neuprint_read_neurons(n)
@@ -160,30 +195,32 @@ hemibrain_FAFB_matching <- function(bodyids = NULL,
     }
     # Transform hemibrain neuron to FAFB space
     lhn = scale_neurons.neuronlist(lhn, scaling = (8/1000))
-    lhn = suppressWarnings(nat.templatebrains::xform_brain(lhn, reference = "FAFB14", sample = "JRCFIB2018F"))
     message("Hemibrain body ID: ", lhn[n,"bodyid"])
-    message("Hemibrain-assigned cell type :",lhn[n,"type"])
+    message("Hemibrain-assigned cell type : ",lhn[n,"type"])
     # Read top 10 FAFB matches
-    message(sprintf("Reading the top %s FAFB hits",batch_size))
-    r = sort(hemibrain.fafb.nblast[,n],decreasing = TRUE)
-    plot3d(lhn[n], lwd = 2, soma = 500, col = "black")
-    fafb = catmaid::read.neurons.catmaid(names(r)[1:batch_size])
+    if(match.type=="FAFB"){
+      lhn = suppressWarnings(nat.templatebrains::xform_brain(lhn, reference = "FAFB14", sample = "JRCFIB2018F"))
+      message(sprintf("Reading the top %s FAFB hits",batch_size))
+      r = sort(hemibrain.nblast[,n],decreasing = TRUE)
+      fafb = catmaid::read.neurons.catmaid(names(r)[1:batch_size])
+      j = batch_size
+    }else{
+      r = sort(hemibrain.nblast[,n],decreasing = TRUE)
+      j = length(fafb)
+    }
+    plot3d(lhn[n], lwd = 2, soma = TRUE, col = "black")
     sel = c("go","for","it")
     k = 1
-    j = batch_size
     # Cycle through potential matches
     while(length(sel)>1){
-      if(j>10){
-        fafb = union(fafb, catmaid::read.neurons.catmaid(names(r)[(k+1):j]))
-      }
       sel = sel.orig = nat::nlscan(fafb[names(r)[1:j]], col = "red", lwd = 2, soma = TRUE)
       if(length(sel)>1){
-        message("You selected more than one neuron, please select again ... ")
+        message("Note: You selected more than one neuron")
       }
       prog = hemibrain_choice(sprintf("You selected %s neurons. Are you happy with that? ",length(sel)))
       while(length(sel)>1){
         message("Choose single best match: ")
-        sel = nat::nlscan(fafb[sel.orig], col = "orange", lwd = 2, soma = TRUE)
+        sel = nat::nlscan(fafb[as.character(sel.orig)], col = "orange", lwd = 2, soma = TRUE)
         message(sprintf("You selected %s neurons", length(sel)))
         if(!length(sel)){
           noselection = hemibrain_choice("You selected no neurons. Are you happy with that? ")
@@ -194,26 +231,29 @@ hemibrain_FAFB_matching <- function(bodyids = NULL,
       }
       if(!prog){
         sel = c("go","for","it")
-        prog = hemibrain_choice("Do you want to read more neurons from CATMAID? ")
-        if(prog){
-          k = j
-          j = j + batch_size
+        if(match.type=="FAFB"){
+          prog = hemibrain_choice(sprintf("Do you want to read %s more neurons from CATMAID? ", batch_size))
+          if(prog){
+            k = j
+            j = j + batch_size
+            fafb = nat::union(fafb, catmaid::read.neurons.catmaid(names(r)[(k+1):j]))
+          }
         }
       }
     }
     # Assign match and its quality
-    gs[n,"FAFB.match"] = ifelse(length(sel)==0,'none',sel)
+    gs[n,match.field] = ifelse(length(sel)==0,'none',sel)
     if(length(sel)){
       rgl::plot3d(fafb[sel],col="blue",lwd=2,soma=TRUE)
-      quality = must_be("What is the quality of this match? exact(e)/okay(o)/poor(p) ", answers = c("e","o","p"))
+      quality = must_be("What is the quality of this match? good(e)/okay(o)/poor(p) ", answers = c("e","o","p"))
     }else{
       quality = "n"
     }
-    gs[n,"FAFB.match.quality"] = quality
+    gs[n,quality.field] = quality
     gs = gs[!duplicated(gs$bodyid),]
     unsaved = c(unsaved, n)
     message(length(unsaved), " unsaved matches")
-    print(knitr::kable(gs[unsaved,c("bodyid","type","FAFB.match","FAFB.match.quality")]))
+    print(knitr::kable(gs[unsaved,c("bodyid","type",match.field,quality.field)]))
     p = must_be("Continue (enter) or save (s)? ", answers = c("","s"))
     if(p=="s"){
       # Read!
@@ -228,11 +268,10 @@ hemibrain_FAFB_matching <- function(bodyids = NULL,
       plot_inspirobot()
       write_matches(gs=gs,
                  bodyids = unsaved,
-                 column = "FAFB.match")
+                 column = match.field)
       write_matches(gs=gs,
                  bodyids = unsaved,
-                 column = "FAFB.match.quality")
-
+                 column = quality.field)
       unsaved = c()
       gs = gs2
       rgl::bg3d("white")
