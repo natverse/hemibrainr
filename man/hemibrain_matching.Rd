@@ -2,6 +2,7 @@
 % Please edit documentation in R/hemibrain_matching.R
 \name{hemibrain_matching}
 \alias{hemibrain_matching}
+\alias{lm_matching}
 \title{Match up neurons between the hemibrain and FAFB}
 \usage{
 hemibrain_matching(
@@ -12,6 +13,15 @@ hemibrain_matching(
   db = hemibrain_neurons(),
   match.type = c("FAFB", "LM"),
   query = NULL
+)
+
+lm_matching(
+  ids = NULL,
+  hemibrain.nblast = NULL,
+  selected_file = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw",
+  batch_size = 50,
+  db = hemibrain_neurons(),
+  query = hemibrain_lm_lhns(brainspace = c("JRCFIB2018F"))
 )
 }
 \arguments{

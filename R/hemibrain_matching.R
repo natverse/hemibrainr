@@ -165,6 +165,7 @@ hemibrain_matching <- function(bodyids = NULL,
   # Choose user
   message("Users: ", paste(unique(gs$User),collapse = " "))
   initials = must_be("Choose a user : ", answers = unique(gs$User))
+  say_hello(initials)
   rgl::bg3d("white")
   # choose brain
   if(match.type=="FAFB"){
@@ -256,6 +257,7 @@ hemibrain_matching <- function(bodyids = NULL,
     print(knitr::kable(gs[unsaved,c("bodyid","type",match.field,quality.field)]))
     p = must_be("Continue (enter) or save (s)? ", answers = c("","s"))
     if(p=="s"){
+      plot_inspirobot()
       # Read!
       gs2 = gsheet_manipulation(FUN = googlesheets4::read_sheet,
                                ss = selected_file,
@@ -265,7 +267,6 @@ hemibrain_matching <- function(bodyids = NULL,
       rownames(gs2) = gs2$bodyid
       gs = gs[rownames(gs2),]
       # Write!
-      plot_inspirobot()
       write_matches(gs=gs,
                  bodyids = unsaved,
                  column = match.field)
@@ -282,7 +283,9 @@ hemibrain_matching <- function(bodyids = NULL,
 # hidden
 ## Google sheet write function
 write_matches <- function(gs,
-                       bodyids = NULL,
+                       ids = NULL,
+                       id.field = "bodyid",
+                       ws = "lhns",
                        selected_file = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw",
                        column = colnames(gs)){
   if((!identical(colnames(gs),column) & length(column) > 1)|(sum(column%in%colnames(gs))<1)){
@@ -290,8 +293,8 @@ write_matches <- function(gs,
   }
   rows = (1:nrow(gs))+1
   rownames(gs) = rows
-  if(!is.null(bodyids)){
-    gs = subset(gs, gs$bodyid %in% bodyids)
+  if(!is.null(ids)){
+    gs = subset(gs, gs[[id.field]] %in% ids)
     message("Updating ", nrow(gs), " entries")
     rows = rownames(gs)
   }
@@ -306,7 +309,7 @@ write_matches <- function(gs,
                                      ss = selected_file,
                                      range = range,
                                      data = as.data.frame(gs[as.character(r),column], stringsAsFactors = FALSE),
-                                     sheet = "lhns",
+                                     sheet = ws,
                                      col_names = FALSE)
   }
 }
@@ -315,3 +318,185 @@ write_matches <- function(gs,
 correct_id <-function(v){
   gsub(" ","",v)
 }
+
+
+#' @rdname hemibrain_matching
+#' @export
+lm_matching <- function(ids = NULL,
+                        hemibrain.nblast = NULL,
+                        selected_file = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw",
+                        batch_size = 50,
+                        db=hemibrain_neurons(),
+                        query = hemibrain_lm_lhns(brainspace = c("JRCFIB2018F")) ){
+  # Motivate!
+  nat::nopen3d()
+  plot_inspirobot()
+  unsaved = c()
+  message("
+          #######################Colours#######################
+          black = LM neuron,
+          red = potential hemibrain matches based on NBLAST score,
+          green = a chosen hemibrain neuron during scanning,
+          blue = your selected hemibrain match.
+          #######################Colours#######################
+          ")
+  ## Get NBLAST
+  if(is.null(hemibrain.nblast)){
+    matname="hemibrain.lhns.mean.compressed"
+    if(exists(matname)) {
+      message("Using loaded LM-FIB NBLAST: ", matname)
+      hemibrain.nblast = get(matname)
+    } else {
+      message("Loading LM-FIB NBLAST ", matname,
+              " from hemibrain Google Team Drive using Google Filestream: ")
+      load(sprintf("/Volumes/GoogleDrive/Shared\ drives/hemibrain/hemibrain_nblast/%s.rda", matname))
+      hemibrain.nblast = get(matname)
+      rm("hemibrain.lhns.mean.compressed")
+    }
+  }
+  # Read the Google Sheet
+  gs = gsheet_manipulation(FUN = googlesheets4::read_sheet,
+                           ss = selected_file,
+                           sheet = "lm",
+                           return = TRUE)
+  gs$id = correct_id(gs$id)
+  rownames(gs) = gs$id
+  if(is.null(ids)){
+    ids = gs$id
+  }else{
+    ids = intersect(ids,gs$id)
+  }
+  # Get hemibrain neurons
+  if(missing(db)) {
+    # this means we weren't told to use a specific neuronlist, so
+    # we'll use the default. force() means evaluate hemibrain_neurons() now.
+    db=tryCatch(force(db), error=function(e) {
+      stop("Unable to use `hemibrain_neurons()`. ",
+              "You must load the hemibrain Google Team Drive")
+    })
+  }
+  # How much is done?
+  match.field = paste0("hemibrain",".match")
+  quality.field = paste0("hemibrain",".match.quality")
+  done = subset(gs, !is.na(gs[[match.field]]))
+  message("Neuron matches: ", nrow(done), "/", nrow(gs))
+  print(table(gs[[quality.field]]))
+  # Choose user
+  message("Users: ", paste(unique(gs$User),collapse = " "))
+  initials = must_be("Choose a user : ", answers = unique(gs$User))
+  say_hello(initials)
+  rgl::bg3d("white")
+  # choose brain
+  brain = hemibrain.surf
+  # Make matches!
+  for(n in gs$id){
+    # Get id
+    n = as.character(n)
+    # Remove neurons with matches
+    donotdo = subset(gs, !is.na(gs[[match.field]]) | User != initials | !id%in%ids)
+    if(n%in%donotdo$id | !n%in%names(query)){
+      next
+    }
+    # Plot brain
+    rgl::clear3d()
+    plot3d(brain, alpha = 0.1, col ="grey")
+    # Transform hemibrain neuron to FAFB space
+    lhn = query[n]
+    lhn = scale_neurons(lhn, scaling = (1000/8))
+    plot3d(lhn, lwd = 2, soma = TRUE, col = "black")
+    message("ID: ", n)
+    message("cell type : ",lhn[n,"cell.type"])
+    # Read top 10 FAFB matches
+    r = sort(hemibrain.nblast[,n],decreasing = TRUE)
+    message(sprintf("Reading the top %s hemibrain hits",batch_size))
+    r = sort(hemibrain.nblast[,n],decreasing = TRUE)
+    # Read hemibrain neurons
+    if(is.null(db)){
+      hemi  = neuprintr::neuprint_read_neurons((names(r)[1:batch_size]))
+    } else {
+      hemi = tryCatch(db[(names(r)[1:batch_size])], error = function(e) {
+        warning("Cannot read neuron: ", n, " from local db; fetching from neuPrint!")
+        neuprintr::neuprint_read_neurons((names(r)[1:batch_size]))
+      })
+    }
+    sel = c("go","for","it")
+    k = 1
+    j = batch_size
+    # Cycle through potential matches
+    while(length(sel)>1){
+      sel = sel.orig = nat::nlscan(hemi[names(r)[1:j]], col = "red", lwd = 2, soma = TRUE)
+      if(length(sel)>1){
+        message("Note: You selected more than one neuron")
+      }
+      prog = hemibrain_choice(sprintf("You selected %s neurons. Are you happy with that? ",length(sel)))
+      while(length(sel)>1){
+        message("Choose single best match: ")
+        sel = nat::nlscan(hemi[as.character(sel.orig)], col = "orange", lwd = 2, soma = TRUE)
+        message(sprintf("You selected %s neurons", length(sel)))
+        if(!length(sel)){
+          noselection = hemibrain_choice("You selected no neurons. Are you happy with that? ")
+          if(!noselection){
+            sel = sel.orig
+          }
+        }
+      }
+      if(!prog){
+        sel = c("go","for","it")
+          prog = hemibrain_choice(sprintf("Do you want to read %s more neurons from CATMAID? ", batch_size))
+          if(prog){
+            k = j
+            j = j + batch_size
+            if(is.null(db)){
+              hemi2  = neuprintr::neuprint_read_neurons((names(r)[(k+1):j]))
+            } else {
+              hemi2 = tryCatch(db[(names(r)[(k+1):j])], error = function(e) {
+                warning("Cannot read neuron: ", n, " from local db; fetching from neuPrint!")
+                neuprintr::neuprint_read_neurons((names(r)[(k+1):j]))
+              })
+            }
+            hemi = nat::union(hemi, hemi2)
+          }
+      }
+    }
+    # Assign match and its quality
+    gs[n,match.field] = ifelse(length(sel)==0,'none',sel)
+    if(length(sel)){
+      rgl::plot3d(hemi[sel],col="blue",lwd=2,soma=TRUE)
+      quality = must_be("What is the quality of this match? good(e)/okay(o)/poor(p) ", answers = c("e","o","p"))
+    }else{
+      quality = "n"
+    }
+    gs[n,quality.field] = quality
+    gs = gs[!duplicated(gs$id),]
+    unsaved = c(unsaved, n)
+    message(length(unsaved), " unsaved matches")
+    print(knitr::kable(gs[unsaved,c("id","type",match.field,quality.field)]))
+    p = must_be("Continue (enter) or save (s)? ", answers = c("","s"))
+    if(p=="s"){
+      plot_inspirobot()
+      # Read!
+      gs2 = gsheet_manipulation(FUN = googlesheets4::read_sheet,
+                                ss = selected_file,
+                                sheet = "lm",
+                                return = TRUE)
+      gs2$id = correct_id(gs2$id)
+      rownames(gs2) = gs2$id
+      gs = gs[rownames(gs2),]
+      # Write!
+      write_matches(gs=gs,
+                    ids = unsaved,
+                    id.field = "id",
+                    column = match.field,
+                    ws = "lm")
+      write_matches(gs=gs,
+                    ids = unsaved,
+                    id.field = "id",
+                    column = quality.field,
+                    ws = "lm")
+      unsaved = c()
+      gs = gs2
+      rgl::bg3d("white")
+    }
+  }
+}
+
