@@ -259,6 +259,7 @@ hemibrain_matching <- function(ids = NULL,
     p = must_be("Continue (enter) or save (s)? ", answers = c("","s"))
     if(p=="s"){
       plot_inspirobot()
+      say_encouragement(initials)
       # Read!
       gs2 = gsheet_manipulation(FUN = googlesheets4::read_sheet,
                                ss = selected_file,
@@ -395,6 +396,7 @@ lm_matching <- function(ids = NULL,
   for(n in gs$id){
     # Get id
     n = as.character(n)
+    end = n==gs$id[length(gs$id)]
     # Remove neurons with matches
     donotdo = subset(gs, !is.na(gs[[match.field]]) | User != initials | !id%in%ids)
     if(n%in%donotdo$id | !n%in%names(query)){
@@ -431,17 +433,12 @@ lm_matching <- function(ids = NULL,
       if(length(sel)>1){
         message("Note: You selected more than one neuron")
       }
+      if(length(sel) > 0){
+        rgl::plot3d(hemi[sel], lwd = 2, soma = TRUE)
+      }
       prog = hemibrain_choice(sprintf("You selected %s neurons. Are you happy with that? ",length(sel)))
-      while(length(sel)>1){
-        message("Choose single best match: ")
-        sel = nat::nlscan(hemi[as.character(sel.orig)], col = "orange", lwd = 2, soma = TRUE)
-        message(sprintf("You selected %s neurons", length(sel)))
-        if(!length(sel)){
-          noselection = hemibrain_choice("You selected no neurons. Are you happy with that? ")
-          if(!noselection){
-            sel = sel.orig
-          }
-        }
+      if(length(sel)>0){
+        nat::npop3d()
       }
       if(!prog){
         sel = c("go","for","it")
@@ -459,6 +456,18 @@ lm_matching <- function(ids = NULL,
             }
             hemi = nat::union(hemi, hemi2)
           }
+      }else{
+        while(length(sel)>1){
+          message("Choose single best match: ")
+          sel = nat::nlscan(hemi[as.character(sel.orig)], col = "orange", lwd = 2, soma = TRUE)
+          message(sprintf("You selected %s neurons", length(sel)))
+          if(!length(sel)){
+            noselection = hemibrain_choice("You selected no neurons. Are you happy with that? ")
+            if(!noselection){
+              sel = sel.orig
+            }
+          }
+        }
       }
     }
     # Assign match and its quality
@@ -475,8 +484,9 @@ lm_matching <- function(ids = NULL,
     message(length(unsaved), " unsaved matches")
     print(knitr::kable(gs[unsaved,c("id","type",match.field,quality.field)]))
     p = must_be("Continue (enter) or save (s)? ", answers = c("","s"))
-    if(p=="s"){
+    if(p=="s"|end){
       plot_inspirobot()
+      say_encouragement(initials)
       # Read!
       gs2 = gsheet_manipulation(FUN = googlesheets4::read_sheet,
                                 ss = selected_file,
@@ -502,5 +512,6 @@ lm_matching <- function(ids = NULL,
       rgl::bg3d("white")
     }
   }
+  say_encouragement(initials)
 }
 
