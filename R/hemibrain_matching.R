@@ -64,7 +64,7 @@
 #'  # load("/Volumes/GoogleDrive/Shared drives/flyconnectome/fafbpipeline/fib.fafb.crossnblast.twigs5.mean.compress (1).rda") ## Or this one
 #'
 #' # Match!
-#' hemibrain_FAFB_matching(hemibrain.nblast = t(fib.fafb.crossnblast.twigs5.mean.compress))
+#' hemibrain_FAFB_matching(hemibrain.nblast = fib.fafb.crossnblast.twigs5.mean.compress)
 #' }}
 #' @rdname hemibrain_matching
 #' @export
@@ -100,32 +100,20 @@ hemibrain_matching <- function(ids = NULL,
   ## Get NBLAST
   if(is.null(hemibrain.nblast) & match.type =="FAFB"){
     matname="fib.fafb.crossnblast.twigs5.mean.compress"
-    if(exists(matname)) {
-      message("Using loaded FAFB-FIB NBLAST: ", matname)
-      hemibrain.nblast = get(matname)
-      hemibrain.nblast = t(hemibrain.nblast)
-    } else {
       message("Loading FAFB-FIB NBLAST ", matname,
               " from flyconnectome Google Team Drive using Google Filestream: ")
       load(sprintf("/Volumes/GoogleDrive/Shared drives/flyconnectome/fafbpipeline/%s.rda", matname))
       hemibrain.nblast = get(matname)
-      hemibrain.nblast = t(hemibrain.nblast)
       rm("fib.fafb.crossnblast.twigs5.mean.compress")
-    }
   }
   if(is.null(hemibrain.nblast) & match.type =="LM"){
     matname="hemibrain.lhns.mean.compressed"
-    if(exists(matname)) {
-      message("Using loaded LM-FIB NBLAST: ", matname)
-      hemibrain.nblast = get(matname)
-    } else {
       message("Loading LM-FIB NBLAST ", matname,
               " from hemibrain Google Team Drive using Google Filestream: ")
       load(sprintf("/Volumes/GoogleDrive/Shared\ drives/hemibrain/hemibrain_nblast/%s.rda", matname))
       hemibrain.nblast = get(matname)
       hemibrain.nblast = t(hemibrain.nblast)
       rm("hemibrain.lhns.mean.compressed")
-    }
   }
   # Read the Google Sheet
   gs = gsheet_manipulation(FUN = googlesheets4::read_sheet,
@@ -182,7 +170,7 @@ hemibrain_matching <- function(ids = NULL,
     n = as.character(n)
     # Remove neurons with matches
     donotdo = subset(gs, !is.na(gs[[match.field]]) | User != initials)
-    if(n%in%donotdo$bodyid){
+    if(n%in%donotdo$bodyid | !n%in%unlist(dimnames(hemibrain.nblast))){
       next
     }
     # Plot brain
@@ -204,8 +192,11 @@ hemibrain_matching <- function(ids = NULL,
     # Read top 10 FAFB matches
     if(match.type=="FAFB"){
       lhn = suppressWarnings(nat.templatebrains::xform_brain(lhn, reference = "FAFB14", sample = "JRCFIB2018F"))
-      message(sprintf("Reading the top %s FAFB hits",batch_size))
-      r = sort(hemibrain.nblast[,n],decreasing = TRUE)
+      message(sprintf("Reading the top %s FAFB matches",batch_size))
+      r = tryCatch(sort(hemibrain.nblast[,as.character(n)],decreasing = TRUE), error = function(e) NULL)
+      if(is.null(r)){
+        r = sort(hemibrain.nblast[as.character(n),],decreasing = TRUE)
+      }
       fafb = catmaid::read.neurons.catmaid(names(r)[1:batch_size])
       j = batch_size
     }else{
