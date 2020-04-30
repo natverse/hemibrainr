@@ -79,8 +79,11 @@ remotes::install_github('natverse/nat.jrcbrains')
 nat.jrcbrains::download_saalfeldlab_registrations()
 
 # Load precomputed NBLAST from the flyconnectome Team Drive
-load("/Volumes/GoogleDrive/Shared drives/flyconnectome/fafbpipeline/fib.fafb.crossnblast.twigs5.mean.compress.rda")
- # load("/Volumes/GoogleDrive/Shared drives/flyconnectome/fafbpipeline/fib.fafb.crossnblast.twigs5.mean.compress (1).rda") ## Or this one
+load(file.path("/Volumes/GoogleDrive/Shared drives/flyconnectome/",
+  "fafbpipeline/fib.fafb.crossnblast.twigs5.mean.compress.rda"))
+# Sometimes the filenames are changed by drive
+# load(file.path("/Volumes/GoogleDrive/Shared drives/flyconnectome",
+# "fafbpipeline/fib.fafb.crossnblast.twigs5.mean.compress (1).rda"))
 
 # Match!
 hemibrain_FAFB_matching(hemibrain.nblast = fib.fafb.crossnblast.twigs5.mean.compress)
