@@ -103,11 +103,13 @@ hemibrain_matching <- function(ids = NULL,
     if(exists(matname)) {
       message("Using loaded FAFB-FIB NBLAST: ", matname)
       hemibrain.nblast = get(matname)
+      hemibrain.nblast = t(hemibrain.nblast)
     } else {
       message("Loading FAFB-FIB NBLAST ", matname,
               " from flyconnectome Google Team Drive using Google Filestream: ")
       load(sprintf("/Volumes/GoogleDrive/Shared drives/flyconnectome/fafbpipeline/%s.rda", matname))
       hemibrain.nblast = get(matname)
+      hemibrain.nblast = t(hemibrain.nblast)
       rm("fib.fafb.crossnblast.twigs5.mean.compress")
     }
   }
