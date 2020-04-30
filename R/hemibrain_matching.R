@@ -129,6 +129,7 @@ hemibrain_matching <- function(ids = NULL,
   gs = gsheet_manipulation(FUN = googlesheets4::read_sheet,
                            ss = selected_file,
                            sheet = "lhns",
+                           guess_max = 3000,
                            return = TRUE)
   gs$bodyid = correct_id(gs$bodyid)
   rownames(gs) = gs$bodyid
@@ -262,6 +263,7 @@ hemibrain_matching <- function(ids = NULL,
       gs2 = gsheet_manipulation(FUN = googlesheets4::read_sheet,
                                ss = selected_file,
                                sheet = "lhns",
+                               guess_max = 3000,
                                return = TRUE)
       gs2$bodyid = correct_id(gs2$bodyid)
       rownames(gs2) = gs2$bodyid
@@ -333,12 +335,12 @@ lm_matching <- function(ids = NULL,
   plot_inspirobot()
   unsaved = c()
   message("
-          #######################Colours#######################
+          #######################Colours##########################
           black = LM neuron,
           red = potential hemibrain matches based on NBLAST score,
           green = a chosen hemibrain neuron during scanning,
           blue = your selected hemibrain match.
-          #######################Colours#######################
+          #######################Colours##########################
           ")
   ## Get NBLAST
   if(is.null(hemibrain.nblast)){
@@ -358,6 +360,7 @@ lm_matching <- function(ids = NULL,
   gs = gsheet_manipulation(FUN = googlesheets4::read_sheet,
                            ss = selected_file,
                            sheet = "lm",
+                           guess_max = 3000,
                            return = TRUE)
   gs$id = correct_id(gs$id)
   rownames(gs) = gs$id
@@ -478,6 +481,7 @@ lm_matching <- function(ids = NULL,
       gs2 = gsheet_manipulation(FUN = googlesheets4::read_sheet,
                                 ss = selected_file,
                                 sheet = "lm",
+                                guess_max = 3000,
                                 return = TRUE)
       gs2$id = correct_id(gs2$id)
       rownames(gs2) = gs2$id
