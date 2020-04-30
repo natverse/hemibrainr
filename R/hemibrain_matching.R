@@ -170,7 +170,7 @@ hemibrain_matching <- function(bodyids = NULL,
   if(match.type=="FAFB"){
     brain = elmr::FAFB14.surf
   }else{
-    brain = hemibrain_microns.surf
+    brain = hemibrainr::hemibrain_microns.surf
   }
   # Make matches!
   for(n in meta$bodyid){
