@@ -2,10 +2,11 @@
 % Please edit documentation in R/hemibrain_matching.R
 \name{hemibrain_matching}
 \alias{hemibrain_matching}
+\alias{lm_matching}
 \title{Match up neurons between the hemibrain and FAFB}
 \usage{
 hemibrain_matching(
-  bodyids = NULL,
+  ids = NULL,
   hemibrain.nblast = NULL,
   selected_file = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw",
   batch_size = 10,
@@ -13,12 +14,21 @@ hemibrain_matching(
   match.type = c("FAFB", "LM"),
   query = NULL
 )
+
+lm_matching(
+  ids = NULL,
+  hemibrain.nblast = NULL,
+  selected_file = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw",
+  batch_size = 50,
+  db = hemibrain_neurons(),
+  query = hemibrain_lm_lhns(brainspace = c("JRCFIB2018F"))
+)
 }
 \arguments{
-\item{bodyids}{body IDs for hemibrain neurons present in the
+\item{ids}{body IDs for hemibrain neurons present in the
 \href{https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit#gid=0}{Google
  Sheet}, for which the user will attempt to make a match if one has not
-been made already.}
+been made already. Else, LM neuron IDs in the tab 'lm' when using \code{lm_matching}.}
 
 \item{hemibrain.nblast}{a FAFB (rows) - hemibrain (columns) normalised
 NBLAST matrix. By default this is read from the flyconnectome Team Drive.}
@@ -86,7 +96,7 @@ load(file.path("/Volumes/GoogleDrive/Shared drives/flyconnectome/",
 # "fafbpipeline/fib.fafb.crossnblast.twigs5.mean.compress (1).rda"))
 
 # Match!
-hemibrain_FAFB_matching(hemibrain.nblast = fib.fafb.crossnblast.twigs5.mean.compress)
+hemibrain_FAFB_matching(hemibrain.nblast = t(fib.fafb.crossnblast.twigs5.mean.compress))
 }}
 }
 \seealso{
