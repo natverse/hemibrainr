@@ -67,7 +67,7 @@
 #' # "fafbpipeline/fib.fafb.crossnblast.twigs5.mean.compress (1).rda"))
 #'
 #' # Match!
-#' hemibrain_FAFB_matching(hemibrain.nblast = t(fib.fafb.crossnblast.twigs5.mean.compress))
+#' hemibrain_FAFB_matching(hemibrain.nblast = fib.fafb.crossnblast.twigs5.mean.compress)
 #' }}
 #' @rdname hemibrain_matching
 #' @export
@@ -103,35 +103,26 @@ hemibrain_matching <- function(ids = NULL,
   ## Get NBLAST
   if(is.null(hemibrain.nblast) & match.type =="FAFB"){
     matname="fib.fafb.crossnblast.twigs5.mean.compress"
-    if(exists(matname)) {
-      message("Using loaded FAFB-FIB NBLAST: ", matname)
-      hemibrain.nblast = get(matname)
-    } else {
       message("Loading FAFB-FIB NBLAST ", matname,
               " from flyconnectome Google Team Drive using Google Filestream: ")
       load(sprintf("/Volumes/GoogleDrive/Shared drives/flyconnectome/fafbpipeline/%s.rda", matname))
       hemibrain.nblast = get(matname)
       rm("fib.fafb.crossnblast.twigs5.mean.compress")
-    }
   }
   if(is.null(hemibrain.nblast) & match.type =="LM"){
     matname="hemibrain.lhns.mean.compressed"
-    if(exists(matname)) {
-      message("Using loaded LM-FIB NBLAST: ", matname)
-      hemibrain.nblast = get(matname)
-    } else {
       message("Loading LM-FIB NBLAST ", matname,
               " from hemibrain Google Team Drive using Google Filestream: ")
       load(sprintf("/Volumes/GoogleDrive/Shared\ drives/hemibrain/hemibrain_nblast/%s.rda", matname))
       hemibrain.nblast = get(matname)
       hemibrain.nblast = t(hemibrain.nblast)
       rm("hemibrain.lhns.mean.compressed")
-    }
   }
   # Read the Google Sheet
   gs = gsheet_manipulation(FUN = googlesheets4::read_sheet,
                            ss = selected_file,
                            sheet = "lhns",
+                           guess_max = 3000,
                            return = TRUE)
   gs$bodyid = correct_id(gs$bodyid)
   rownames(gs) = gs$bodyid
@@ -182,7 +173,7 @@ hemibrain_matching <- function(ids = NULL,
     n = as.character(n)
     # Remove neurons with matches
     donotdo = subset(gs, !is.na(gs[[match.field]]) | User != initials)
-    if(n%in%donotdo$bodyid){
+    if(n%in%donotdo$bodyid | !n%in%unlist(dimnames(hemibrain.nblast))){
       next
     }
     # Plot brain
@@ -204,8 +195,11 @@ hemibrain_matching <- function(ids = NULL,
     # Read top 10 FAFB matches
     if(match.type=="FAFB"){
       lhn = suppressWarnings(nat.templatebrains::xform_brain(lhn, reference = "FAFB14", sample = "JRCFIB2018F"))
-      message(sprintf("Reading the top %s FAFB hits",batch_size))
-      r = sort(hemibrain.nblast[,n],decreasing = TRUE)
+      message(sprintf("Reading the top %s FAFB matches",batch_size))
+      r = tryCatch(sort(hemibrain.nblast[,as.character(n)],decreasing = TRUE), error = function(e) NULL)
+      if(is.null(r)){
+        r = sort(hemibrain.nblast[as.character(n),],decreasing = TRUE)
+      }
       fafb = catmaid::read.neurons.catmaid(names(r)[1:batch_size])
       j = batch_size
     }else{
@@ -261,10 +255,12 @@ hemibrain_matching <- function(ids = NULL,
     p = must_be("Continue (enter) or save (s)? ", answers = c("","s"))
     if(p=="s"){
       plot_inspirobot()
+      say_encouragement(initials)
       # Read!
       gs2 = gsheet_manipulation(FUN = googlesheets4::read_sheet,
                                ss = selected_file,
                                sheet = "lhns",
+                               guess_max = 3000,
                                return = TRUE)
       gs2$bodyid = correct_id(gs2$bodyid)
       rownames(gs2) = gs2$bodyid
@@ -336,12 +332,12 @@ lm_matching <- function(ids = NULL,
   plot_inspirobot()
   unsaved = c()
   message("
-          #######################Colours#######################
+          #######################Colours##########################
           black = LM neuron,
           red = potential hemibrain matches based on NBLAST score,
           green = a chosen hemibrain neuron during scanning,
           blue = your selected hemibrain match.
-          #######################Colours#######################
+          #######################Colours##########################
           ")
   ## Get NBLAST
   if(is.null(hemibrain.nblast)){
@@ -361,6 +357,7 @@ lm_matching <- function(ids = NULL,
   gs = gsheet_manipulation(FUN = googlesheets4::read_sheet,
                            ss = selected_file,
                            sheet = "lm",
+                           guess_max = 3000,
                            return = TRUE)
   gs$id = correct_id(gs$id)
   rownames(gs) = gs$id
@@ -395,6 +392,7 @@ lm_matching <- function(ids = NULL,
   for(n in gs$id){
     # Get id
     n = as.character(n)
+    end = n==gs$id[length(gs$id)]
     # Remove neurons with matches
     donotdo = subset(gs, !is.na(gs[[match.field]]) | User != initials | !id%in%ids)
     if(n%in%donotdo$id | !n%in%names(query)){
@@ -431,21 +429,16 @@ lm_matching <- function(ids = NULL,
       if(length(sel)>1){
         message("Note: You selected more than one neuron")
       }
+      if(length(sel) > 0){
+        rgl::plot3d(hemi[sel], lwd = 2, soma = TRUE)
+      }
       prog = hemibrain_choice(sprintf("You selected %s neurons. Are you happy with that? ",length(sel)))
-      while(length(sel)>1){
-        message("Choose single best match: ")
-        sel = nat::nlscan(hemi[as.character(sel.orig)], col = "orange", lwd = 2, soma = TRUE)
-        message(sprintf("You selected %s neurons", length(sel)))
-        if(!length(sel)){
-          noselection = hemibrain_choice("You selected no neurons. Are you happy with that? ")
-          if(!noselection){
-            sel = sel.orig
-          }
-        }
+      if(length(sel)>0){
+        nat::npop3d()
       }
       if(!prog){
         sel = c("go","for","it")
-          prog = hemibrain_choice(sprintf("Do you want to read %s more neurons from CATMAID? ", batch_size))
+          prog = hemibrain_choice(sprintf("Do you want to read %s more neurons? ", batch_size))
           if(prog){
             k = j
             j = j + batch_size
@@ -459,6 +452,18 @@ lm_matching <- function(ids = NULL,
             }
             hemi = nat::union(hemi, hemi2)
           }
+      }else{
+        while(length(sel)>1){
+          message("Choose single best match: ")
+          sel = nat::nlscan(hemi[as.character(sel.orig)], col = "orange", lwd = 2, soma = TRUE)
+          message(sprintf("You selected %s neurons", length(sel)))
+          if(!length(sel)){
+            noselection = hemibrain_choice("You selected no neurons. Are you happy with that? ")
+            if(!noselection){
+              sel = sel.orig
+            }
+          }
+        }
       }
     }
     # Assign match and its quality
@@ -475,12 +480,14 @@ lm_matching <- function(ids = NULL,
     message(length(unsaved), " unsaved matches")
     print(knitr::kable(gs[unsaved,c("id","type",match.field,quality.field)]))
     p = must_be("Continue (enter) or save (s)? ", answers = c("","s"))
-    if(p=="s"){
+    if(p=="s"|end){
       plot_inspirobot()
+      say_encouragement(initials)
       # Read!
       gs2 = gsheet_manipulation(FUN = googlesheets4::read_sheet,
                                 ss = selected_file,
                                 sheet = "lm",
+                                guess_max = 3000,
                                 return = TRUE)
       gs2$id = correct_id(gs2$id)
       rownames(gs2) = gs2$id
@@ -501,5 +508,6 @@ lm_matching <- function(ids = NULL,
       rgl::bg3d("white")
     }
   }
+  say_encouragement(initials)
 }
 

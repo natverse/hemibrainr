@@ -96,7 +96,7 @@ load(file.path("/Volumes/GoogleDrive/Shared drives/flyconnectome/",
 # "fafbpipeline/fib.fafb.crossnblast.twigs5.mean.compress (1).rda"))
 
 # Match!
-hemibrain_FAFB_matching(hemibrain.nblast = t(fib.fafb.crossnblast.twigs5.mean.compress))
+hemibrain_FAFB_matching(hemibrain.nblast = fib.fafb.crossnblast.twigs5.mean.compress)
 }}
 }
 \seealso{
