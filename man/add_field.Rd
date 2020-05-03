@@ -28,7 +28,7 @@ as \code{field}.}
 a \code{neuron} or \code{neuronlist}
 }
 \description{
-At an item to the the list object that comprises a neuron
+Add an item to the the list object that comprises a neuron
 }
 \seealso{
 \code{\link{add_Label}}
