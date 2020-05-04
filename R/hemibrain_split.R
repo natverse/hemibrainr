@@ -190,13 +190,16 @@ flow_centrality.neuron <- function(x,
     nodes[, "flow.cent"] = nodes[, "flow"]
   }
   ### Bending flow
-  for (bp in bps) {
-    down = unlist(igraph::ego(n, 1, nodes = bp, mode = "in", mindist = 0))[-1]
-    bf = c()
-    for (u in down) {
-      this.seg.posts = nodes[u, ]$up.syns.in
-      other.segs.pre = sum(nodes[down[!down == u], ]$up.syns.out)
-      bf = c(bf, sum(this.seg.posts * other.segs.pre))
+  downs = igraph::ego(n, 1, nodes = bps, mode = "in", mindist = 1)
+  for (i in seq_along(bps)) {
+    bp=bps[i]
+    down=downs[[i]]
+    bf = numeric(length = length(downs))
+    for (j in seq_along(down)) {
+      u=down[j]
+      this.seg.posts = nodes[u, "up.syns.in"]
+      other.segs.pre = sum(nodes[down[down != u], "up.syns.out"])
+      bf[j] = sum(this.seg.posts * other.segs.pre)
     }
     nodes[bp, "flow.cent"] = nodes[bp, "flow.cent"] + sum(bf)
   }
