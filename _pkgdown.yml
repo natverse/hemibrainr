@@ -7,11 +7,14 @@ reference:
   - title: General skeleton functions
     desc: ~
     contents:
+    - '`hemibrain_read_neurons`'
+    - '`hemibrain_download_neurons`'
     - '`hemibrain_reroot`'
     - '`primary_neurite`'
     - '`hemibrain_skeleton_check`'
     - '`hemibrain_overlap_locality`'
     - '`prune_vertices.neuprintneuron`'
+    - '`hemibrain_clean_skeleton`'
   - title: Neuronal compartments (axons, dendrites)
     desc: ~
     contents:
@@ -23,7 +26,8 @@ reference:
     - '`hemibrain_use_splitpoints`'
     - '`hemibrain_compartment_metrics`'
     - '`hemibrain_metrics`'
-    - '`hemibrain_splitpoints_distance`'
+    - '`hemibrain_precomputed_splitpoints`'
+    - '`manually_assign_labels`'
   - title: Synapses and meshes
     desc: ~
     contents:
@@ -31,13 +35,33 @@ reference:
     - '`hemibrain_remove_bad_synapses`'
     - '`hemibrain_roi_meshes`'
     - 'hemibrain.surf'
+    - 'hemibrain_al.surf'
   - title: Connectivity
     desc: ~
     contents:
     - 'grouped_adjacency'
+    - 'hemibrain_connectivity_similarity'
   - title: Annotations
     desc: ~
     contents:
     - '`class2ids`'
+    - '`classed.ids`'
     - '`glomerulus`'
     - '`standard_transmitters`'
+    - 'hemibrain_cbf'
+  - title: Neuron matching across datasets
+    desc: Includes functions for loading a range of different neuronal datasets
+    and assigning matches between related neurons.
+    contents:
+    - hemibrain_matching
+    - hemibrain_googledrive
+    - hemibrain_task_update
+    - hemibrain_type_plot
+  - title: Utility
+    desc: ~
+    contents:
+    - 'hemibrain_colours'
+    - 'add_field'
+    - 'add_Label'
+    - 'hemibrain_settags'
+    - 'plot_inspirobot'
