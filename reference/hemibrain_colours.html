@@ -6,8 +6,8 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Some nice colours used by Schlegel and Bates et al. 2020 (in prep.) and
-Li et al. 2020 (in prep) — hemibrain_colours • hemibrainr</title>
+<title>Some nice colours used by Schlegel and Bates et al. 2020 (in prep.) and Li et
+al. 2020 (in prep) — hemibrain_colours • hemibrainr</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -47,10 +47,18 @@ Li et al. 2020 (in prep) — hemibrain_colours • hemibrainr</title>
 
 
 
-<meta property="og:title" content="Some nice colours used by Schlegel and Bates et al. 2020 (in prep.) and
-Li et al. 2020 (in prep) — hemibrain_colours" />
-<meta property="og:description" content="A colour blind friendly palette from Li et al. 2020 (in prep).
-Also, nicer brighter colours inspired by the LaCroix colour palette." />
+<meta property="og:title" content="Some nice colours used by Schlegel and Bates et al. 2020 (in prep.) and Li et
+al. 2020 (in prep) — hemibrain_colours" />
+<meta property="og:description" content="hemibrain_colours (also hemibrain_blender_colours)
+  is a 6 colour palette from Li et al. 2020 (in prep). Although this has been
+  described as colour blind friendly it is really not very friendly for green
+  colour blind or green anomalous individuals and was actually designed to
+  achieve similar perceptual brightness in Blender renderings.
+hemibrain_fig_colours is an 8 colour palette that has been used for
+  some of the figures. This actually works better for colour blind
+  individiuals.
+hemibrain_bright_colours are nice brighter colours inspired by the
+  LaCroix colour palette." />
 <meta property="og:image" content="/logo.svg" />
 
 
@@ -119,18 +127,28 @@ Also, nicer brighter colours inspired by the LaCroix colour palette." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Some nice colours used by Schlegel and Bates et al. 2020 (in prep.) and
-Li et al. 2020 (in prep)</h1>
+    <h1>Some nice colours used by Schlegel and Bates et al. 2020 (in prep.) and Li et
+al. 2020 (in prep)</h1>
     <small class="dont-index">Source: <a href='https://github.com/flyconnectome/hemibrainr/blob/master/R/hemibrain_colours.R'><code>R/hemibrain_colours.R</code></a></small>
     <div class="hidden name"><code>hemibrain_colours.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>A colour blind friendly palette from Li et al. 2020 (in prep).
-Also, nicer brighter colours inspired by the LaCroix colour palette.</p>
+    <p><code>hemibrain_colours</code> (also <code>hemibrain_blender_colours</code>)
+  is a 6 colour palette from Li et al. 2020 (in prep). Although this has been
+  described as colour blind friendly it is really not very friendly for green
+  colour blind or green anomalous individuals and was actually designed to
+  achieve similar perceptual brightness in Blender renderings.</p>
+<p><code>hemibrain_fig_colours</code> is an 8 colour palette that has been used for
+  some of the figures. This actually works better for colour blind
+  individiuals.</p>
+<p><code>hemibrain_bright_colours</code> are nice brighter colours inspired by the
+  LaCroix colour palette.</p>
     </div>
 
-    <pre class="usage"><span class='no'>hemibrain_colours</span>
+    <pre class="usage"><span class='no'>hemibrain_blender_colours</span>
+
+<span class='no'>hemibrain_fig_colours</span>
 
 <span class='fu'>hemibrain_colour_ramp</span>(<span class='no'>n</span>)
 
@@ -152,6 +170,7 @@ Also, nicer brighter colours inspired by the LaCroix colour palette.</p>
     <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
 
     <p>An object of class <code>character</code> of length 6.</p>
+<p>An object of class <code>character</code> of length 8.</p>
 <p>An object of class <code>character</code> of length 22.</p>
 <p>An object of class <code>character</code> of length 22.</p>
     <h2 class="hasAnchor" id="source"><a class="anchor" href="#source"></a>Source</h2>
@@ -160,16 +179,22 @@ Also, nicer brighter colours inspired by the LaCroix colour palette.</p>
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>a named vector of colours</p>
+    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
+
+    <p><a href='https://en.wikipedia.org/wiki/Color_blindness'>https://en.wikipedia.org/wiki/Color_blindness</a></p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
 
-<span class='co'># Dark colours</span>
+<span class='co'># Li et al dark colours (Blender)</span>
 <span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span>(<span class='kw'>mar</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>0</span>, <span class='fl'>4</span>))
-<span class='fu'><a href='https://rdrr.io/r/graphics/pie.html'>pie</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>1</span>, <span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span>(<span class='no'>hemibrain_colours</span>)), <span class='kw'>col</span> <span class='kw'>=</span> <span class='no'>hemibrain_colours</span>)</div><div class='img'><img src='hemibrain_colours-1.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='fu'><a href='https://rdrr.io/r/graphics/pie.html'>pie</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>1</span>, <span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span>(<span class='no'>hemibrain_colours</span>)), <span class='kw'>col</span> <span class='kw'>=</span> <span class='no'>hemibrain_colours</span>)</div><div class='output co'>#&gt; <span class='error'>Error in pie(rep(1, length(hemibrain_colours)), col = hemibrain_colours): object 'hemibrain_colours' not found</span></div><div class='input'>
+<span class='co'># Li et al figure colours</span>
+<span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span>(<span class='kw'>mar</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>0</span>, <span class='fl'>4</span>))
+<span class='fu'><a href='https://rdrr.io/r/graphics/pie.html'>pie</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>1</span>, <span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span>(<span class='no'>hemibrain_fig_colours</span>)), <span class='kw'>col</span> <span class='kw'>=</span> <span class='no'>hemibrain_fig_colours</span>)</div><div class='output co'>#&gt; <span class='error'>Error in pie(rep(1, length(hemibrain_fig_colours)), col = hemibrain_fig_colours): object 'hemibrain_fig_colours' not found</span></div><div class='input'>
 <span class='co'># Bright colours</span>
 <span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span>(<span class='kw'>mar</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>0</span>, <span class='fl'>4</span>))
-<span class='fu'><a href='https://rdrr.io/r/graphics/pie.html'>pie</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>1</span>, <span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span>(<span class='no'>hemibrain_bright_colours</span>)), <span class='kw'>col</span> <span class='kw'>=</span> <span class='no'>hemibrain_bright_colours</span>)</div><div class='img'><img src='hemibrain_colours-2.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='fu'><a href='https://rdrr.io/r/graphics/pie.html'>pie</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>1</span>, <span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span>(<span class='no'>hemibrain_bright_colours</span>)), <span class='kw'>col</span> <span class='kw'>=</span> <span class='no'>hemibrain_bright_colours</span>)</div><div class='img'><img src='hemibrain_colours-1.png' alt='' width='700' height='433' /></div><div class='input'>
 # }
 </div></pre>
   </div>

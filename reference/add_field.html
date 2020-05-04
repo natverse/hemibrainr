@@ -47,7 +47,7 @@
 
 
 <meta property="og:title" content="Add a field to neuron objects (inc. in a neuronlist) — add_field" />
-<meta property="og:description" content="At an item to the the list object that comprises a neuron" />
+<meta property="og:description" content="Add an item to the the list object that comprises a neuron" />
 <meta property="og:image" content="/logo.svg" />
 
 
@@ -122,7 +122,7 @@
     </div>
 
     <div class="ref-description">
-    <p>At an item to the the list object that comprises a neuron</p>
+    <p>Add an item to the the list object that comprises a neuron</p>
     </div>
 
     <pre class="usage"><span class='fu'>add_field</span>(<span class='no'>x</span>, <span class='no'>entry</span>, <span class='kw'>field</span> <span class='kw'>=</span> <span class='st'>"bodyid"</span>, <span class='no'>...</span>)
@@ -135,8 +135,9 @@
     <tr>
       <th>x</th>
       <td><p>a <code><a href='https://rdrr.io/pkg/nat/man/neuronlist.html'>nat::neuronlist</a></code> or <code><a href='https://rdrr.io/pkg/nat/man/neuron.html'>nat::neuron</a></code> object. It is assumed
-that this neuron has been read in by <code><a href='https://rdrr.io/pkg/neuprintr/man/neuprint_read_neurons.html'>neuprintr::neuprint_read_neurons</a></code> or
-possibly <code><a href='https://rdrr.io/pkg/catmaid/man/read.neuron.catmaid.html'>catmaid::read.neurons.catmaid</a></code>.</p></td>
+that this neuron has been read in by
+<code><a href='https://rdrr.io/pkg/neuprintr/man/neuprint_read_neurons.html'>neuprintr::neuprint_read_neurons</a></code> or possibly
+<code><a href='https://rdrr.io/pkg/catmaid/man/read.neuron.catmaid.html'>catmaid::read.neurons.catmaid</a></code>.</p></td>
     </tr>
     <tr>
       <th>entry</th>
@@ -148,7 +149,8 @@ possibly <code><a href='https://rdrr.io/pkg/catmaid/man/read.neuron.catmaid.html
     </tr>
     <tr>
       <th>...</th>
-      <td><p>methods sent to <code><a href='https://rdrr.io/pkg/nat/man/nlapply.html'>nat::nlapply</a></code></p></td>
+      <td><p>Additional arguments passed to methods or eventually to
+<code><a href='https://rdrr.io/pkg/nat/man/nlapply.html'>nat::nlapply</a></code></p></td>
     </tr>
     <tr>
       <th>entries</th>
