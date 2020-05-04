@@ -13,8 +13,9 @@ hemibrain_flow_centrality(
 }
 \arguments{
 \item{x}{a \code{nat::neuronlist} or \code{nat::neuron} object. It is assumed
-that this neuron has been read in by \code{neuprintr::neuprint_read_neurons} or
-possibly \code{catmaid::read.neurons.catmaid}.}
+that this neuron has been read in by
+\code{neuprintr::neuprint_read_neurons} or possibly
+\code{catmaid::read.neurons.catmaid}.}
 
 \item{splitpoints}{a \code{data.frame} of splitpoints from running \code{\link{flow_centrality}},
 as produced by \code{\link{hemibrain_splitpoints}}. If a custom set of splitpoints is not given, precomputed splitpoints
@@ -28,7 +29,8 @@ between \code{splitpoints} and \code{x$d} using a nearest neighbour search in 3D
 space (TRUE) or just use the given point IDs in \code{splitpoints} (i.e. if neurons
 have not been resampled or their skeletons otherwise modified).}
 
-\item{...}{methods sent to \code{nat::nlapply}}
+\item{...}{Additional arguments passed to methods or eventually to
+\code{nat::\link{nlapply}}}
 }
 \value{
 a \code{neuronlist}

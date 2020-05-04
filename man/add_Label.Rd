@@ -16,8 +16,9 @@ add_Label(
 }
 \arguments{
 \item{x}{a \code{nat::neuronlist} or \code{nat::neuron} object. It is assumed
-that this neuron has been read in by \code{neuprintr::neuprint_read_neurons} or
-possibly \code{catmaid::read.neurons.catmaid}.}
+that this neuron has been read in by
+\code{neuprintr::neuprint_read_neurons} or possibly
+\code{catmaid::read.neurons.catmaid}.}
 
 \item{PointNo}{the points in the neuron for which the \code{Label}
 will be added.If \code{NULL} all points are used.}
@@ -33,7 +34,8 @@ in \code{PointNo} are set to \code{0}.}
 a neurons dendrite/axon start points, primary branch point, linker start points, etc. in line with the changes
 produced by this function.}
 
-\item{...}{methods sent to \code{nat::nlapply}}
+\item{...}{Additional arguments passed to methods or eventually to
+\code{nat::\link{nlapply}}}
 }
 \value{
 a \code{neuron} or \code{neuronlist}

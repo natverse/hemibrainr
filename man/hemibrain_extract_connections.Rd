@@ -14,12 +14,14 @@ hemibrain_extract_compartment_edgelist(x, ...)
 }
 \arguments{
 \item{x}{a \code{nat::neuronlist} or \code{nat::neuron} object. It is assumed
-that this neuron has been read in by \code{neuprintr::neuprint_read_neurons} or
-possibly \code{catmaid::read.neurons.catmaid}.}
+that this neuron has been read in by
+\code{neuprintr::neuprint_read_neurons} or possibly
+\code{catmaid::read.neurons.catmaid}.}
 
 \item{prepost}{whether to get presynapses, postsynapses or both}
 
-\item{...}{methods sent to \code{nat::nlapply}}
+\item{...}{Additional arguments passed to methods or eventually to
+\code{nat::\link{nlapply}}}
 }
 \value{
 a \code{data.frame}

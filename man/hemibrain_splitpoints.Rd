@@ -8,8 +8,9 @@ hemibrain_splitpoints(x)
 }
 \arguments{
 \item{x}{a \code{nat::neuronlist} or \code{nat::neuron} object. It is assumed
-that this neuron has been read in by \code{neuprintr::neuprint_read_neurons} or
-possibly \code{catmaid::read.neurons.catmaid}.}
+that this neuron has been read in by
+\code{neuprintr::neuprint_read_neurons} or possibly
+\code{catmaid::read.neurons.catmaid}.}
 }
 \value{
 a \code{data.frame}

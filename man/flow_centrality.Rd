@@ -17,8 +17,9 @@ flow_centrality(
 }
 \arguments{
 \item{x}{a \code{nat::neuronlist} or \code{nat::neuron} object. It is assumed
-that this neuron has been read in by \code{neuprintr::neuprint_read_neurons} or
-possibly \code{catmaid::read.neurons.catmaid}.}
+that this neuron has been read in by
+\code{neuprintr::neuprint_read_neurons} or possibly
+\code{catmaid::read.neurons.catmaid}.}
 
 \item{mode}{type of flow centrality to calculate. There are three flavours:
 (1) centrifugal, which counts paths from proximal inputs to distal outputs;
@@ -28,44 +29,44 @@ and (3) the sum of both.}
 \item{polypre}{whether to consider the number of presynapses as a multiple of
 the numbers of connections each makes}
 
-\item{soma}{logical, whether or not the given neuron has a soma.
-The soma should be its root. If it does, \code{\link{primary_neurite}}
-will be called to make sure the primary neurite is labelled correctly.}
+\item{soma}{logical, whether or not the given neuron has a soma. The soma
+should be its root. If it does, \code{\link{primary_neurite}} will be
+called to make sure the primary neurite is labelled correctly.}
 
 \item{primary.dendrite}{whether to try to assign nodes to a 'primary
 dendrite'. Defaults to considering nodes of 0.9*maximal flow centrality.
 Assigning to NULL will prevent generating this compartment.}
 
-\item{primary.branchpoint}{the proportion of the maximum branchpoint score needed
-for a point to be assigned as the primary branchpoint. Used only when \code{soma = TRUE}.
-See the \code{first} argument in \code{\link{primary_neurite}} for details.}
+\item{primary.branchpoint}{the proportion of the maximum branchpoint score
+needed for a point to be assigned as the primary branchpoint. Used only
+when \code{soma = TRUE}. See the \code{first} argument in
+\code{\link{primary_neurite}} for details.}
 
-\item{split}{the algorithm will assign two main neurite compartments,
-which as per SWC format will be indicates as either axon (Label =2)
-or dendrite (Label = 3) in the returned objects, at neuron$d$Label.
-This assignment can be based which compartment contains the most
-postsynapses ("postsynapses") or presynapses ("presynapses"),
-or the geodesic distance of its first branch point from the primary branch
-point (i.e. the first branch point from the soma) ("distance").
-The compartment closest to this branchpoint is most usually the dendrite
-(Bates & Schlegel 2020).}
+\item{split}{the algorithm will assign two main neurite compartments, which
+as per SWC format will be indicates as either axon (Label =2) or dendrite
+(Label = 3) in the returned objects, at neuron$d$Label. This assignment can
+be based which compartment contains the most postsynapses ("postsynapses")
+or presynapses ("presynapses"), or the geodesic distance of its first
+branch point from the primary branch point (i.e. the first branch point
+from the soma) ("distance"). The compartment closest to this branchpoint is
+most usually the dendrite (Bates & Schlegel 2020).}
 
-\item{...}{methods sent to \code{nat::nlapply}}
+\item{...}{Additional arguments passed to methods or eventually to
+\code{nat::\link{nlapply}}}
 }
 \value{
 the neuron or neuron list object inputted, with centripetal flow
-  centrality information added to neuron$d and a segregation index score.
-  The neuron$d$Label now gives the compartment, where axon is Label = 2,
-  dendrite Label = 3, primary dendrite Label = 9 and
-  primary neurite Label = 7.
-  Soma is Label = 1.
+  centrality information added to neuron$d and a segregation index score. The
+  neuron$d$Label now gives the compartment, where axon is Label = 2, dendrite
+  Label = 3, primary dendrite Label = 9 and primary neurite Label = 7. Soma
+  is Label = 1.
 }
 \description{
 implementation of the algorithm for calculating flow
-  centralities from Schneider-Mizell et al. (2016) (slightly modified).
-  Can be used on \code{nat::neuronlist}
-  objects read using \code{neuprintr::neuprint_read_neurons}. The example code
-  below gives the recommended arguments when using hemibrain data.
+  centralities from Schneider-Mizell et al. (2016) (slightly modified). Can
+  be used on \code{nat::neuronlist} objects read using
+  \code{neuprintr::neuprint_read_neurons}. The example code below gives the
+  recommended arguments when using hemibrain data.
 }
 \details{
 From Schneider-Mizell et al. (2016): "We use flow centrality for
@@ -126,6 +127,9 @@ Schneider-Mizell, C. M., Gerhard, S., Longair, M., Kazimiers, T.,
   \href{http://doi.org/10.1101/026617}{doi:10.1101/026617}.
 }
 \seealso{
-\code{\link{primary_neurite}}, \code{\link{hemibrain_skeleton_check}}, \code{\link{hemibrain_flow_centrality}}, \code{\link{hemibrain_use_splitpoints}}
-\code{\link{hemibrain_splitpoints}},
+\code{\link{primary_neurite}},
+  \code{\link{hemibrain_skeleton_check}},
+  \code{\link{hemibrain_flow_centrality}},
+  \code{\link{hemibrain_use_splitpoints}}
+  \code{\link{hemibrain_splitpoints}},
 }

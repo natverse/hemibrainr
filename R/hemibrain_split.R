@@ -5,39 +5,41 @@
 #' Determine a neuron's dendrite and axon by calculating flow centrality
 #'
 #' @description implementation of the algorithm for calculating flow
-#'   centralities from Schneider-Mizell et al. (2016) (slightly modified).
-#'   Can be used on \code{nat::neuronlist}
-#'   objects read using \code{neuprintr::neuprint_read_neurons}. The example code
-#'   below gives the recommended arguments when using hemibrain data.
+#'   centralities from Schneider-Mizell et al. (2016) (slightly modified). Can
+#'   be used on \code{nat::neuronlist} objects read using
+#'   \code{neuprintr::neuprint_read_neurons}. The example code below gives the
+#'   recommended arguments when using hemibrain data.
 #'
 #' @param x a \code{nat::neuronlist} or \code{nat::neuron} object. It is assumed
-#' that this neuron has been read in by \code{neuprintr::neuprint_read_neurons} or
-#' possibly \code{catmaid::read.neurons.catmaid}.
+#'   that this neuron has been read in by
+#'   \code{neuprintr::neuprint_read_neurons} or possibly
+#'   \code{catmaid::read.neurons.catmaid}.
 #' @param mode type of flow centrality to calculate. There are three flavours:
 #'   (1) centrifugal, which counts paths from proximal inputs to distal outputs;
 #'   (2) centripetal, which counts paths from distal inputs to proximal outputs;
 #'   and (3) the sum of both.
 #' @param polypre whether to consider the number of presynapses as a multiple of
 #'   the numbers of connections each makes
-#' @param soma logical, whether or not the given neuron has a soma.
-#' The soma should be its root. If it does, \code{\link{primary_neurite}}
-#' will be called to make sure the primary neurite is labelled correctly.
+#' @param soma logical, whether or not the given neuron has a soma. The soma
+#'   should be its root. If it does, \code{\link{primary_neurite}} will be
+#'   called to make sure the primary neurite is labelled correctly.
 #' @param primary.dendrite whether to try to assign nodes to a 'primary
 #'   dendrite'. Defaults to considering nodes of 0.9*maximal flow centrality.
 #'   Assigning to NULL will prevent generating this compartment.
-#' @param primary.branchpoint the proportion of the maximum branchpoint score needed
-#' for a point to be assigned as the primary branchpoint. Used only when \code{soma = TRUE}.
-#' See the \code{first} argument in \code{\link{primary_neurite}} for details.
-#' @param split the algorithm will assign two main neurite compartments,
-#' which as per SWC format will be indicates as either axon (Label =2)
-#' or dendrite (Label = 3) in the returned objects, at neuron$d$Label.
-#' This assignment can be based which compartment contains the most
-#' postsynapses ("postsynapses") or presynapses ("presynapses"),
-#' or the geodesic distance of its first branch point from the primary branch
-#' point (i.e. the first branch point from the soma) ("distance").
-#' The compartment closest to this branchpoint is most usually the dendrite
-#' (Bates & Schlegel 2020).
-#' @param ... methods sent to \code{nat::nlapply}
+#' @param primary.branchpoint the proportion of the maximum branchpoint score
+#'   needed for a point to be assigned as the primary branchpoint. Used only
+#'   when \code{soma = TRUE}. See the \code{first} argument in
+#'   \code{\link{primary_neurite}} for details.
+#' @param split the algorithm will assign two main neurite compartments, which
+#'   as per SWC format will be indicates as either axon (Label =2) or dendrite
+#'   (Label = 3) in the returned objects, at neuron$d$Label. This assignment can
+#'   be based which compartment contains the most postsynapses ("postsynapses")
+#'   or presynapses ("presynapses"), or the geodesic distance of its first
+#'   branch point from the primary branch point (i.e. the first branch point
+#'   from the soma) ("distance"). The compartment closest to this branchpoint is
+#'   most usually the dendrite (Bates & Schlegel 2020).
+#' @param ... Additional arguments passed to methods or eventually to
+#'   \code{nat::\link{nlapply}}
 #'
 #' @details From Schneider-Mizell et al. (2016): "We use flow centrality for
 #'   four purposes. First, to split an arbor into axon and dendrite at the
@@ -59,11 +61,10 @@
 #'   \href{http://doi.org/10.1101/026617}{doi:10.1101/026617}.
 #'
 #' @return the neuron or neuron list object inputted, with centripetal flow
-#'   centrality information added to neuron$d and a segregation index score.
-#'   The neuron$d$Label now gives the compartment, where axon is Label = 2,
-#'   dendrite Label = 3, primary dendrite Label = 9 and
-#'   primary neurite Label = 7.
-#'   Soma is Label = 1.
+#'   centrality information added to neuron$d and a segregation index score. The
+#'   neuron$d$Label now gives the compartment, where axon is Label = 2, dendrite
+#'   Label = 3, primary dendrite Label = 9 and primary neurite Label = 7. Soma
+#'   is Label = 1.
 #'
 #' @examples
 #' \donttest{
@@ -102,8 +103,11 @@
 #'
 #' }}
 #' @export
-#' @seealso \code{\link{primary_neurite}}, \code{\link{hemibrain_skeleton_check}}, \code{\link{hemibrain_flow_centrality}}, \code{\link{hemibrain_use_splitpoints}}
-#' \code{\link{hemibrain_splitpoints}},
+#' @seealso \code{\link{primary_neurite}},
+#'   \code{\link{hemibrain_skeleton_check}},
+#'   \code{\link{hemibrain_flow_centrality}},
+#'   \code{\link{hemibrain_use_splitpoints}}
+#'   \code{\link{hemibrain_splitpoints}},
 flow_centrality <-function(x,
                            mode = c("centrifugal", "centripetal", "sum"),
                            polypre = TRUE,
