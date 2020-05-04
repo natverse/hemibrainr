@@ -285,9 +285,11 @@ flow_centrality.neuron <- function(x,
   if (sum(downstream.tract.parent %in% c(p.n,highs,primary.branch.point)) > 0) {
     bps.all = intersect(nat::branchpoints(nodes),main1)
     bps.downstream = bps.all[bps.all %in% downstream.unclassed]
-    runstoprimarybranchpoint = unlist(lapply(bps.downstream,
-                                             function(x) length(unlist(suppressWarnings(igraph::shortest_paths(n,to = as.numeric(downstream.tract.parent), from = x)$vpath)))))
-    downstream.tract.parent = bps.downstream[which.min(runstoprimarybranchpoint)]
+    runstoprimarybranchpoint = igraph::distances(
+      n, to = as.numeric(downstream.tract.parent), v = bps.downstream,
+      mode = 'out', weights = NA
+    )
+    downstream.tract.parent = bps.downstream[which.min(c(runstoprimarybranchpoint))]
   }
   upstream.unclassed = upstream[!upstream %in% c(p.n, highs, root, primary.branch.point)]
   remove = rownames(nodes)[!rownames(nodes) %in% intersect(upstream.unclassed,primary.branch.point.downstream)]
@@ -301,8 +303,13 @@ flow_centrality.neuron <- function(x,
   if (sum(upstream.tract.parent %in% c(p.n,highs,primary.branch.point)) > 0) {
     bps.all = intersect(nat::branchpoints(nodes),main2)
     bps.upstream = bps.all[bps.all %in% upstream.unclassed]
-    runstoprimarybranchpoint = unlist(lapply(bps.upstream,function(x) length(unlist(suppressWarnings(igraph::shortest_paths(n,to = as.numeric(upstream.tract.parent), from = x)$vpath)))))
-    upstream.tract.parent = bps.upstream[which.min(runstoprimarybranchpoint)]
+    # nb weights = NA just consider distance by number of nodes not microns
+    runstoprimarybranchpoint = igraph::distances(
+      n, to = as.numeric(upstream.tract.parent), v = bps.upstream,
+      mode = 'out', weights = NA
+    )
+    # nb c() turns matrix into vector
+    upstream.tract.parent = bps.upstream[which.min(c(runstoprimarybranchpoint))]
   }
   ### Assign axon versus dendrite
   if (grepl("synapses", split)) {
