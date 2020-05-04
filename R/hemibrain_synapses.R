@@ -15,10 +15,15 @@
 #'
 #' @return a \code{data.frame}
 #'
+#' @export
+#' @rdname hemibrain_extract_connections
+#' @seealso \code{\link{flow_centrality}}
+#' @importFrom nat nlapply is.neuron is.neuronlist
 #' @examples
 #' \dontrun{
-#' # Choose a bodyids
-#' al.local.neurons = c("1702323386", "2068966051", "2069311379", "1702305987", "5812996027",
+#' # Choose bodyids
+#' al.local.neurons =
+#'  c("1702323386", "2068966051", "2069311379", "1702305987", "5812996027",
 #'  "1702336197", "1793744512", "1976565858", "2007578510", "2101339904",
 #'  "5813003258", "2069647778", "1947192569", "1883788812", "1916485259",
 #' "1887177026", "2101348562", "2132375072", "2256863785", "5813002313",
@@ -30,8 +35,7 @@
 #'
 #' # Re-root
 #' neurons.flow = flow_centrality(neurons, polypre = TRUE,
-#' mode = "centrifugal",
-#' split = "distance")
+#'   mode = "centrifugal", split = "distance")
 #'
 #' # Let's check that this worked
 #' syns = hemibrain_extract_synapses(neurons.flow)
@@ -39,17 +43,12 @@
 #' # Get the edgelist by compartment
 #' elist = hemibrain_extract_compartment_edgelist(neurons.flow)
 #'
-#' \dontrun{
 #' # See result
 #' library(nat)
 #' plot3d_split(neuron.flow)
 #' points3d(xyzmatrix(subset(syns,prepost==1)), col = "cyan")
 #' points3d(xyzmatrix(subset(syns,prepost==0)), col = "red")
-#' }}
-#' @export
-#' @rdname hemibrain_extract_connections
-#' @seealso \code{\link{flow_centrality}}
-#' @importFrom nat nlapply is.neuron is.neuronlist
+#' }
 hemibrain_extract_synapses <- function(x,
                                        prepost = c("BOTH","PRE","POST"),
                                        ...){
