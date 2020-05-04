@@ -50,8 +50,9 @@ reference:
     - '`standard_transmitters`'
     - 'hemibrain_cbf'
   - title: Neuron matching across datasets
-    desc: Includes functions for loading a range of different neuronal datasets
-    and assigning matches between related neurons.
+    desc: >
+      Includes functions for loading a range of different neuronal datasets and
+      assigning matches between related neurons.
     contents:
     - hemibrain_matching
     - hemibrain_googledrive
