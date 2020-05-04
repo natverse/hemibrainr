@@ -160,6 +160,18 @@
       <tr>
         
         <td>
+          <p><code><a href="hemibrain_read_neurons.html">hemibrain_read_neurons()</a></code> <code><a href="hemibrain_read_neurons.html">hemibrain_neurons()</a></code> </p>
+        </td>
+        <td><p>Read neurons from the hemibrain connectome project</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="hemibrain_download_neurons.html">hemibrain_download_neurons()</a></code> </p>
+        </td>
+        <td><p>Download all automatically split neurons from the hemibrain project</p></td>
+      </tr><tr>
+        
+        <td>
           <p><code><a href="hemibrain_reroot.html">hemibrain_reroot()</a></code> </p>
         </td>
         <td><p>Re-root a neuron/neurons</p></td>
@@ -187,6 +199,12 @@
           <p><code><a href="prune_vertices.neuprintneuron.html">prune_vertices.neuprintneuron()</a></code> </p>
         </td>
         <td><p>Prune vertices from a neuprint neuron (taking care of synapse etc information)</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="hemibrain_clean_skeleton.html">hemibrain_clean_skeleton()</a></code> </p>
+        </td>
+        <td><p>Remove erroneous branchlets to beautify neuron skeletons</p></td>
       </tr>
     </tbody><tbody>
       <tr>
@@ -248,6 +266,18 @@
           <p><code><a href="hemibrain_metrics.html">hemibrain_metrics</a></code> <code><a href="hemibrain_metrics.html">hemibrain_metrics_polypre_centrifugal_distance</a></code> <code><a href="hemibrain_metrics.html">hemibrain_metrics_polypre_centrifugal_synapses</a></code> </p>
         </td>
         <td><p>Neuron metrics for all neurons in the hemibrain dataset</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="hemibrain_precomputed_splitpoints.html">hemibrain_all_splitpoints</a></code> <code><a href="hemibrain_precomputed_splitpoints.html">hemibrain_splitpoints_polypre_centrifugal_distance</a></code> <code><a href="hemibrain_precomputed_splitpoints.html">hemibrain_splitpoints_pre_centrifugal_distance</a></code> <code><a href="hemibrain_precomputed_splitpoints.html">hemibrain_splitpoints_polypre_centrifugal_synapses</a></code> </p>
+        </td>
+        <td><p>Axon-dendrite split points calculated for all hemibrain neurons</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="manually_assign_labels.html">manually_assign_labels()</a></code> <code><a href="manually_assign_labels.html">hemibrain_prune_online()</a></code> <code><a href="manually_assign_labels.html">hemibrain_correctsoma()</a></code> </p>
+        </td>
+        <td><p>Manually assign the dendrite and axon to a neuron</p></td>
       </tr>
     </tbody><tbody>
       <tr>
@@ -285,6 +315,12 @@
           <p><code><a href="hemibrain.surf.html">hemibrain.surf</a></code> <code><a href="hemibrain.surf.html">hemibrain_microns.surf</a></code> </p>
         </td>
         <td><p>The hemibrain mesh</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="hemibrain_al.surf.html">hemibrain_al.surf</a></code> <code><a href="hemibrain_al.surf.html">hemibrain_al_microns.surf</a></code> </p>
+        </td>
+        <td><p>Meshes for antennal love glomeruli</p></td>
       </tr>
     </tbody><tbody>
       <tr>
@@ -304,6 +340,12 @@
           <p><code><a href="grouped_adjacency.html">grouped_adjacency()</a></code> </p>
         </td>
         <td><p>Flexible grouping of rows/columns of a raw adjacency matrix</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="hemibrain_connectivity_similarity.html">hemibrain_connectivity_similarity()</a></code> <code><a href="hemibrain_connectivity_similarity.html">hemibrain_connectivity_similarity_distance()</a></code> <code><a href="hemibrain_connectivity_similarity.html">hemibrain_connectivity_similarity_matrix()</a></code> </p>
+        </td>
+        <td><p>Calculate a connectivity similarity score between two connectivity profiles</p></td>
       </tr>
     </tbody><tbody>
       <tr>
@@ -326,6 +368,12 @@
       </tr><tr>
         
         <td>
+          <p><code><a href="classed.ids.html">rn.ids</a></code> <code><a href="classed.ids.html">orn.ids</a></code> <code><a href="classed.ids.html">hrn.ids</a></code> <code><a href="classed.ids.html">pn.ids</a></code> <code><a href="classed.ids.html">upn.ids</a></code> <code><a href="classed.ids.html">mpn.ids</a></code> <code><a href="classed.ids.html">vppn.ids</a></code> <code><a href="classed.ids.html">dan.ids</a></code> <code><a href="classed.ids.html">mbon.ids</a></code> <code><a href="classed.ids.html">alln.ids</a></code> <code><a href="classed.ids.html">ton.ids</a></code> <code><a href="classed.ids.html">lhn.ids</a></code> </p>
+        </td>
+        <td><p>Bodyids for neuron classes</p></td>
+      </tr><tr>
+        
+        <td>
           <p><code><a href="glomerulus.html">glomerulus()</a></code> </p>
         </td>
         <td><p>Find the antennal lobe glomerulus for hemibrain body ids</p></td>
@@ -335,6 +383,93 @@
           <p><code><a href="standardise.html">standard_transmitters()</a></code> <code><a href="standardise.html">standard_lineages()</a></code> <code><a href="standardise.html">standard_compartments()</a></code> <code><a href="standardise.html">standardise()</a></code> </p>
         </td>
         <td><p>Use standard names and spellings</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="hemibrain_cbf.html">hemibrain_cbf()</a></code> </p>
+        </td>
+        <td><p>Return consistent cell body fiber annotation for neurons</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-neuron-matching-across-datasets" class="hasAnchor"><a href="#section-neuron-matching-across-datasets" class="anchor"></a>Neuron matching across datasets</h2>
+          <p class="section-desc"><p>Includes functions for loading a range of different neuronal datasets and assigning matches between related neurons.</p></p>
+        </th>
+      </tr>
+      
+      
+    </tbody><tbody>
+      
+      
+      <tr>
+        
+        <td>
+          <p><code><a href="hemibrain_matching.html">hemibrain_matching()</a></code> <code><a href="hemibrain_matching.html">lm_matching()</a></code> </p>
+        </td>
+        <td><p>Match up neurons between the hemibrain and FAFB</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="hemibrain_googledrive.html">hemibrain_neuron_bodyids()</a></code> <code><a href="hemibrain_googledrive.html">hemibrain_elist()</a></code> <code><a href="hemibrain_googledrive.html">hemibrain_synapses()</a></code> <code><a href="hemibrain_googledrive.html">hemibrain_connections()</a></code> <code><a href="hemibrain_googledrive.html">hemibrain_nblast()</a></code> <code><a href="hemibrain_googledrive.html">flycircuit_neurons()</a></code> <code><a href="hemibrain_googledrive.html">hemibrain_lm_lhns()</a></code> </p>
+        </td>
+        <td><p>Read precomputed information from the hemibrain Google Drive</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="hemibrain_adjust_saved_split.html">hemibrain_task_update()</a></code> <code><a href="hemibrain_adjust_saved_split.html">hemibrain_adjust_saved_split()</a></code> <code><a href="hemibrain_adjust_saved_split.html">hemibrain_adjust_saved_somas()</a></code> </p>
+        </td>
+        <td><p>Manually review split neurons and save your results to a Google Sheet for everyone to use</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="hemibrain_type_plot.html">hemibrain_type_plot()</a></code> <code><a href="hemibrain_type_plot.html">hemibrain_multi3d()</a></code> </p>
+        </td>
+        <td><p>Plot chosen neurons and see all neurons in that type</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-utility" class="hasAnchor"><a href="#section-utility" class="anchor"></a>Utility</h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      
+      
+    </tbody><tbody>
+      
+      
+      <tr>
+        
+        <td>
+          <p><code><a href="hemibrain_colours.html">hemibrain_blender_colours</a></code> <code><a href="hemibrain_colours.html">hemibrain_fig_colours</a></code> <code><a href="hemibrain_colours.html">hemibrain_colour_ramp()</a></code> <code><a href="hemibrain_colours.html">hemibrain_bright_colours</a></code> <code><a href="hemibrain_colours.html">hemibrain_bright_colors</a></code> <code><a href="hemibrain_colours.html">hemibrain_bright_colour_ramp()</a></code> </p>
+        </td>
+        <td><p>Some nice colours used by Schlegel and Bates et al. 2020 (in prep.) and Li et
+al. 2020 (in prep)</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="add_field.html">add_field()</a></code> <code><a href="add_field.html">add_field_seq()</a></code> </p>
+        </td>
+        <td><p>Add a field to neuron objects (inc. in a neuronlist)</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="add_Label.html">add_Label()</a></code> </p>
+        </td>
+        <td><p>Manually add a Label annotation to a neuron</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="hemibrain_tags.html">hemibrain_settags()</a></code> <code><a href="hemibrain_tags.html">hemibrain_seetags()</a></code> <code><a href="hemibrain_tags.html">hemibrain_carryover_tags()</a></code> <code><a href="hemibrain_tags.html">metadata_add_tags()</a></code> </p>
+        </td>
+        <td><p>Set and see tags on a neuron object inc. within a neuronlist</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="plot_inspirobot.html">plot_inspirobot()</a></code> </p>
+        </td>
+        <td><p>Plot motivations from InspiroBot</p></td>
       </tr>
     </tbody>
     </table>

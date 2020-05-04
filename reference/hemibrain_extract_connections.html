@@ -170,7 +170,35 @@ that this neuron has been read in by
     <div class='dont-index'><p><code><a href='flow_centrality.html'>flow_centrality</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"></pre>
+    <pre class="examples"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
+<span class='co'># Choose bodyids</span>
+<span class='no'>al.local.neurons</span> <span class='kw'>=</span>
+ <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"1702323386"</span>, <span class='st'>"2068966051"</span>, <span class='st'>"2069311379"</span>, <span class='st'>"1702305987"</span>, <span class='st'>"5812996027"</span>,
+ <span class='st'>"1702336197"</span>, <span class='st'>"1793744512"</span>, <span class='st'>"1976565858"</span>, <span class='st'>"2007578510"</span>, <span class='st'>"2101339904"</span>,
+ <span class='st'>"5813003258"</span>, <span class='st'>"2069647778"</span>, <span class='st'>"1947192569"</span>, <span class='st'>"1883788812"</span>, <span class='st'>"1916485259"</span>,
+<span class='st'>"1887177026"</span>, <span class='st'>"2101348562"</span>, <span class='st'>"2132375072"</span>, <span class='st'>"2256863785"</span>, <span class='st'>"5813002313"</span>,
+ <span class='st'>"5813054716"</span>, <span class='st'>"5813018847"</span>, <span class='st'>"5813055448"</span>, <span class='st'>"1763037543"</span>, <span class='st'>"2101391269"</span>,
+ <span class='st'>"1794037618"</span>, <span class='st'>"5813018729"</span>, <span class='st'>"2013333009"</span>)
+
+<span class='co'># Read in these neurons</span>
+<span class='no'>neurons</span> <span class='kw'>=</span> <span class='kw pkg'>neuprintr</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/neuprintr/man/neuprint_read_neurons.html'>neuprint_read_neurons</a></span>(<span class='no'>al.local.neurons</span>)
+
+<span class='co'># Re-root</span>
+<span class='no'>neurons.flow</span> <span class='kw'>=</span> <span class='fu'><a href='flow_centrality.html'>flow_centrality</a></span>(<span class='no'>neurons</span>, <span class='kw'>polypre</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>mode</span> <span class='kw'>=</span> <span class='st'>"centrifugal"</span>, <span class='kw'>split</span> <span class='kw'>=</span> <span class='st'>"distance"</span>)
+
+<span class='co'># Let's check that this worked</span>
+<span class='no'>syns</span> <span class='kw'>=</span> <span class='fu'>hemibrain_extract_synapses</span>(<span class='no'>neurons.flow</span>)
+
+<span class='co'># Get the edgelist by compartment</span>
+<span class='no'>elist</span> <span class='kw'>=</span> <span class='fu'>hemibrain_extract_compartment_edgelist</span>(<span class='no'>neurons.flow</span>)
+
+<span class='co'># See result</span>
+<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>nat</span>)
+<span class='fu'><a href='plot3d_split.html'>plot3d_split</a></span>(<span class='no'>neuron.flow</span>)
+<span class='fu'>points3d</span>(<span class='fu'><a href='https://rdrr.io/pkg/nat/man/xyzmatrix.html'>xyzmatrix</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/nat/man/subset.html'>subset</a></span>(<span class='no'>syns</span>,<span class='no'>prepost</span><span class='kw'>==</span><span class='fl'>1</span>)), <span class='kw'>col</span> <span class='kw'>=</span> <span class='st'>"cyan"</span>)
+<span class='fu'>points3d</span>(<span class='fu'><a href='https://rdrr.io/pkg/nat/man/xyzmatrix.html'>xyzmatrix</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/nat/man/subset.html'>subset</a></span>(<span class='no'>syns</span>,<span class='no'>prepost</span><span class='kw'>==</span><span class='fl'>0</span>)), <span class='kw'>col</span> <span class='kw'>=</span> <span class='st'>"red"</span>)
+}</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
