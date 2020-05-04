@@ -160,15 +160,11 @@ flow_centrality.neuron <- function(x,
   nodes[names(nodes.in), "post"] <- nodes.in
   nodes[names(nodes.out), "pre"] <- nodes.out
   ### How many synapses upstream of each node
-  ins = lapply(segs, function(x) if (!is.null(x)) {
-    rev(cumsum(rev(unlist(lapply(x, function(x) ifelse(x %in% names(nodes.in), nodes[as.character(x), "post"],  0))))))
-  })
-  outs = lapply(segs, function(x) if (!is.null(x)) {
-    rev(cumsum(rev(unlist(lapply(x, function(x) ifelse(x %in% names(nodes.out), nodes[as.character(x), "pre"], 0))))))
-  })
-  ins = unlist(lapply(ins, function(x) x))
-  outs = unlist(lapply(outs, function(x) x))
-  names(ins) = names(outs) = unlist(lapply(segs, function(x) x))
+  ins = lapply(segs, function(x) rev(cumsum(rev(nodes[x,'post']))))
+  outs = lapply(segs, function(x) rev(cumsum(rev(nodes[x,'pre']))))
+  ins = unlist(ins)
+  outs = unlist(outs)
+  names(ins) = names(outs) = unlist(segs)
   ins = tapply(ins, names(ins), FUN=sum)
   outs = tapply(outs, names(outs), FUN=sum)
   nodes[names(ins), "up.syns.in"] = nodes[names(ins), "post"] + ins
