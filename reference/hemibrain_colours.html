@@ -56,7 +56,7 @@ al. 2020 (in prep) — hemibrain_colours" />
   achieve similar perceptual brightness in Blender renderings.
 hemibrain_fig_colours is an 8 colour palette that has been used for
   some of the figures. This actually works better for colour blind
-  individiuals.
+  individuals.
 hemibrain_bright_colours are nice brighter colours inspired by the
   LaCroix colour palette." />
 <meta property="og:image" content="/logo.svg" />
@@ -141,14 +141,22 @@ al. 2020 (in prep)</h1>
   achieve similar perceptual brightness in Blender renderings.</p>
 <p><code>hemibrain_fig_colours</code> is an 8 colour palette that has been used for
   some of the figures. This actually works better for colour blind
-  individiuals.</p>
+  individuals.</p>
 <p><code>hemibrain_bright_colours</code> are nice brighter colours inspired by the
   LaCroix colour palette.</p>
     </div>
 
-    <pre class="usage"><span class='no'>hemibrain_blender_colours</span>
+    <pre class="usage"><span class='no'>hemibrain_colours</span>
+
+<span class='no'>hemibrain_blender_colours</span>
+
+<span class='no'>hemibrain_blender_colors</span>
+
+<span class='no'>hemibrain_colors</span>
 
 <span class='no'>hemibrain_fig_colours</span>
+
+<span class='no'>hemibrain_fig_colors</span>
 
 <span class='fu'>hemibrain_colour_ramp</span>(<span class='no'>n</span>)
 
@@ -170,6 +178,10 @@ al. 2020 (in prep)</h1>
     <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
 
     <p>An object of class <code>character</code> of length 6.</p>
+<p>An object of class <code>character</code> of length 6.</p>
+<p>An object of class <code>character</code> of length 6.</p>
+<p>An object of class <code>character</code> of length 6.</p>
+<p>An object of class <code>character</code> of length 8.</p>
 <p>An object of class <code>character</code> of length 8.</p>
 <p>An object of class <code>character</code> of length 22.</p>
 <p>An object of class <code>character</code> of length 22.</p>
@@ -188,13 +200,13 @@ al. 2020 (in prep)</h1>
 
 <span class='co'># Li et al dark colours (Blender)</span>
 <span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span>(<span class='kw'>mar</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>0</span>, <span class='fl'>4</span>))
-<span class='fu'><a href='https://rdrr.io/r/graphics/pie.html'>pie</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>1</span>, <span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span>(<span class='no'>hemibrain_colours</span>)), <span class='kw'>col</span> <span class='kw'>=</span> <span class='no'>hemibrain_colours</span>)</div><div class='output co'>#&gt; <span class='error'>Error in pie(rep(1, length(hemibrain_colours)), col = hemibrain_colours): object 'hemibrain_colours' not found</span></div><div class='input'>
+<span class='fu'><a href='https://rdrr.io/r/graphics/pie.html'>pie</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>1</span>, <span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span>(<span class='no'>hemibrain_colours</span>)), <span class='kw'>col</span> <span class='kw'>=</span> <span class='no'>hemibrain_colours</span>)</div><div class='img'><img src='hemibrain_colours-1.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'># Li et al figure colours</span>
 <span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span>(<span class='kw'>mar</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>0</span>, <span class='fl'>4</span>))
-<span class='fu'><a href='https://rdrr.io/r/graphics/pie.html'>pie</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>1</span>, <span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span>(<span class='no'>hemibrain_fig_colours</span>)), <span class='kw'>col</span> <span class='kw'>=</span> <span class='no'>hemibrain_fig_colours</span>)</div><div class='output co'>#&gt; <span class='error'>Error in pie(rep(1, length(hemibrain_fig_colours)), col = hemibrain_fig_colours): object 'hemibrain_fig_colours' not found</span></div><div class='input'>
+<span class='fu'><a href='https://rdrr.io/r/graphics/pie.html'>pie</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>1</span>, <span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span>(<span class='no'>hemibrain_fig_colours</span>)), <span class='kw'>col</span> <span class='kw'>=</span> <span class='no'>hemibrain_fig_colours</span>)</div><div class='img'><img src='hemibrain_colours-2.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'># Bright colours</span>
 <span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span>(<span class='kw'>mar</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>0</span>, <span class='fl'>4</span>))
-<span class='fu'><a href='https://rdrr.io/r/graphics/pie.html'>pie</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>1</span>, <span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span>(<span class='no'>hemibrain_bright_colours</span>)), <span class='kw'>col</span> <span class='kw'>=</span> <span class='no'>hemibrain_bright_colours</span>)</div><div class='img'><img src='hemibrain_colours-1.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='fu'><a href='https://rdrr.io/r/graphics/pie.html'>pie</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>1</span>, <span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span>(<span class='no'>hemibrain_bright_colours</span>)), <span class='kw'>col</span> <span class='kw'>=</span> <span class='no'>hemibrain_bright_colours</span>)</div><div class='img'><img src='hemibrain_colours-3.png' alt='' width='700' height='433' /></div><div class='input'>
 # }
 </div></pre>
   </div>
