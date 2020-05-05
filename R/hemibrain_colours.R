@@ -13,7 +13,7 @@
 #'
 #'   \code{hemibrain_fig_colours} is an 8 colour palette that has been used for
 #'   some of the figures. This actually works better for colour blind
-#'   individiuals.
+#'   individuals.
 #'
 #'   \code{hemibrain_bright_colours} are nice brighter colours inspired by the
 #'   LaCroix colour palette.
@@ -43,10 +43,7 @@
 #' @name hemibrain_colours
 #' @export
 #' @importFrom grDevices colorRampPalette
-hemibrain_blender_colours <-
-hemibrain_blender_colors <-
 hemibrain_colours <-
-hemibrain_colors <-
   c(
     red = "#A53600",
     magenta = "#B32DB5",
@@ -55,10 +52,19 @@ hemibrain_colors <-
     green = "#348E53",
     blue = "#053CFF"
   )
+#' @rdname hemibrain_colours
+#' @export
+hemibrain_blender_colours <- hemibrain_colours
+#' @rdname hemibrain_colours
+#' @export
+hemibrain_blender_colors <- hemibrain_colours
+#' @rdname hemibrain_colours
+#' @export
+hemibrain_colors <- hemibrain_colours
 
 #' @rdname hemibrain_colours
+#' @export
 hemibrain_fig_colours <-
-hemibrain_fig_colors <-
   c(
     "#0072b2",
     "#56b4e9",
@@ -69,6 +75,9 @@ hemibrain_fig_colors <-
     "#e69f00",
     "#f0e442"
   )
+#' @rdname hemibrain_colours
+#' @export
+hemibrain_fig_colors <- hemibrain_fig_colours
 
 #' @rdname hemibrain_colours
 #' @export

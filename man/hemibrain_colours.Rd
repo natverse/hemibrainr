@@ -4,7 +4,10 @@
 \name{hemibrain_colours}
 \alias{hemibrain_colours}
 \alias{hemibrain_blender_colours}
+\alias{hemibrain_blender_colors}
+\alias{hemibrain_colors}
 \alias{hemibrain_fig_colours}
+\alias{hemibrain_fig_colors}
 \alias{hemibrain_colour_ramp}
 \alias{hemibrain_bright_colours}
 \alias{hemibrain_bright_colors}
@@ -13,6 +16,14 @@
 al. 2020 (in prep)}
 \format{
 An object of class \code{character} of length 6.
+
+An object of class \code{character} of length 6.
+
+An object of class \code{character} of length 6.
+
+An object of class \code{character} of length 6.
+
+An object of class \code{character} of length 8.
 
 An object of class \code{character} of length 8.
 
@@ -24,9 +35,17 @@ An object of class \code{character} of length 22.
 \url{https://github.com/johannesbjork/LaCroixColoR}
 }
 \usage{
+hemibrain_colours
+
 hemibrain_blender_colours
 
+hemibrain_blender_colors
+
+hemibrain_colors
+
 hemibrain_fig_colours
+
+hemibrain_fig_colors
 
 hemibrain_colour_ramp(n)
 
@@ -51,7 +70,7 @@ a named vector of colours
 
   \code{hemibrain_fig_colours} is an 8 colour palette that has been used for
   some of the figures. This actually works better for colour blind
-  individiuals.
+  individuals.
 
   \code{hemibrain_bright_colours} are nice brighter colours inspired by the
   LaCroix colour palette.
