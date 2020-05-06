@@ -866,6 +866,15 @@ ENTER to continue (with notes made), c to cancel (without notes made).
   x
 }
 
+###
+# Hello Nik below is the adjust soma code.
+# I recommend that you do not use the default master google sheet at first, as
+# if you make a mistake you might wipe soem data from it and people have already made a
+# fair bit of progress with it. So make a new sheet, and change the selected_file argument.
+# Maybe just copy the first sheet on the current master Google Sheet?
+# The code below calls many hidden sub-functions you will find dotted aroudn this .R file and some possible
+# in hemibrain_manual.R.
+# Most of the pipeline is built, so you can try running the code after you change the google sheet.
 #' @export
 #' @rdname hemibrain_adjust_saved_split
 hemibrain_adjust_saved_somas <- function(bodyids = hemibrainr::hemibrain_neuron_bodyids(),
@@ -925,6 +934,8 @@ correct_singles <- function(neurons, brain = NULL){
   y
 }
 
+# Hey nik, this function does a lot of the legt work
+# including saving to google sheet.
 # hidden
 cbf_check<-function(ids,
                     gs,
@@ -981,6 +992,11 @@ cbf_check<-function(ids,
   message("Task updated! ")
 }
 
+# Hey Nik, this is the key function
+# For correcting sets of neurons, groups by cell body
+# fibre at once. It already works I think.
+# Try running on some example neurons, read maybe using
+# neuprint_read_neurons.
 # hidden
 correct_group <- function(neurons, brain = NULL){
   ### Cycle
@@ -1041,6 +1057,7 @@ correct_group <- function(neurons, brain = NULL){
   neurons
 }
 
+# Hey Nik, this function reads neurons for the pipline.
 # hidden
 pipeline_read_neurons <- function(batch,
                                   db = NULL,
@@ -1072,7 +1089,10 @@ pipeline_read_neurons <- function(batch,
   someneuronlist
 }
 
-
+# Hey nik, this is a highly unfinished function to try and
+# auto-detect the soma. It might not be a good idea to try this really.
+# I have already tried to auto-detect the folder on the drive, with the neurons
+# that can be read using hemibrain_neurons()
 # hidden
 cbf_somagroup <- function(neurons){
   if(sum(neurons[,]$soma)!=length(neurons)){
