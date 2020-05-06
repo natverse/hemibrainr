@@ -412,10 +412,15 @@ lm_matching <- function(ids = NULL,
     if(is.null(db)){
       hemi  = neuprintr::neuprint_read_neurons((names(r)[1:batch_size]))
     } else {
-      hemi = tryCatch(db[(names(r)[1:batch_size])], error = function(e) {
-        warning("Cannot read neuron: ", n, " from local db; fetching from neuPrint!")
-        neuprintr::neuprint_read_neurons((names(r)[1:batch_size]))
-      })
+      batch = names(r)[1:batch_size]
+      batch.in = intersect(batch, names(db))
+      hemi = tryCatch(db[match(batch.in,names(db))], error = function(e) NULL)
+      if(is.null(hemi)|length(batch.in)!=length(batch)){
+        message("Cannot read neuron: ", n, " from local db; fetching from neuPrint!")
+        batch.out = setdiff(batch, names(hemi))
+        hemi = c(hemi,neuprintr::neuprint_read_neurons(batch.out))
+        hemi = hemi[as.character(batch)]
+      }
     }
     sel = c("go","for","it")
     k = 1
