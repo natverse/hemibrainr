@@ -3,14 +3,29 @@
 \docType{data}
 \name{hemibrain_colours}
 \alias{hemibrain_colours}
+\alias{hemibrain_blender_colours}
+\alias{hemibrain_blender_colors}
+\alias{hemibrain_colors}
+\alias{hemibrain_fig_colours}
+\alias{hemibrain_fig_colors}
 \alias{hemibrain_colour_ramp}
 \alias{hemibrain_bright_colours}
 \alias{hemibrain_bright_colors}
 \alias{hemibrain_bright_colour_ramp}
-\title{Some nice colours used by Schlegel and Bates et al. 2020 (in prep.) and
-Li et al. 2020 (in prep)}
+\title{Some nice colours used by Schlegel and Bates et al. 2020 (in prep.) and Li et
+al. 2020 (in prep)}
 \format{
 An object of class \code{character} of length 6.
+
+An object of class \code{character} of length 6.
+
+An object of class \code{character} of length 6.
+
+An object of class \code{character} of length 6.
+
+An object of class \code{character} of length 8.
+
+An object of class \code{character} of length 8.
 
 An object of class \code{character} of length 22.
 
@@ -21,6 +36,16 @@ An object of class \code{character} of length 22.
 }
 \usage{
 hemibrain_colours
+
+hemibrain_blender_colours
+
+hemibrain_blender_colors
+
+hemibrain_colors
+
+hemibrain_fig_colours
+
+hemibrain_fig_colors
 
 hemibrain_colour_ramp(n)
 
@@ -37,20 +62,37 @@ hemibrain_bright_colour_ramp(n)
 a named vector of colours
 }
 \description{
-A colour blind friendly palette from Li et al. 2020 (in prep).
-Also, nicer brighter colours inspired by the LaCroix colour palette.
+\code{hemibrain_colours} (also \code{hemibrain_blender_colours})
+  is a 6 colour palette from Li et al. 2020 (in prep). Although this has been
+  described as colour blind friendly it is really not very friendly for green
+  colour blind or green anomalous individuals and was actually designed to
+  achieve similar perceptual brightness in Blender renderings.
+
+  \code{hemibrain_fig_colours} is an 8 colour palette that has been used for
+  some of the figures. This actually works better for colour blind
+  individuals.
+
+  \code{hemibrain_bright_colours} are nice brighter colours inspired by the
+  LaCroix colour palette.
 }
 \examples{
 \donttest{
 
-# Dark colours
+# Li et al dark colours (Blender)
 par(mar = rep(0, 4))
 pie(rep(1, length(hemibrain_colours)), col = hemibrain_colours)
+
+# Li et al figure colours
+par(mar = rep(0, 4))
+pie(rep(1, length(hemibrain_fig_colours)), col = hemibrain_fig_colours)
 
 # Bright colours
 par(mar = rep(0, 4))
 pie(rep(1, length(hemibrain_bright_colours)), col = hemibrain_bright_colours)
 
 }
+}
+\references{
+\url{https://en.wikipedia.org/wiki/Color_blindness}
 }
 \keyword{datasets}

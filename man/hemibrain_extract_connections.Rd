@@ -14,12 +14,14 @@ hemibrain_extract_compartment_edgelist(x, ...)
 }
 \arguments{
 \item{x}{a \code{nat::neuronlist} or \code{nat::neuron} object. It is assumed
-that this neuron has been read in by \code{neuprintr::neuprint_read_neurons} or
-possibly \code{catmaid::read.neurons.catmaid}.}
+that this neuron has been read in by
+\code{neuprintr::neuprint_read_neurons} or possibly
+\code{catmaid::read.neurons.catmaid}.}
 
 \item{prepost}{whether to get presynapses, postsynapses or both}
 
-\item{...}{methods sent to \code{nat::nlapply}}
+\item{...}{Additional arguments passed to methods or eventually to
+\code{nat::\link{nlapply}}}
 }
 \value{
 a \code{data.frame}
@@ -34,8 +36,9 @@ Extract a single data frame describing synapse/connection types,
 }
 \examples{
 \dontrun{
-# Choose a bodyids
-al.local.neurons = c("1702323386", "2068966051", "2069311379", "1702305987", "5812996027",
+# Choose bodyids
+al.local.neurons =
+ c("1702323386", "2068966051", "2069311379", "1702305987", "5812996027",
  "1702336197", "1793744512", "1976565858", "2007578510", "2101339904",
  "5813003258", "2069647778", "1947192569", "1883788812", "1916485259",
 "1887177026", "2101348562", "2132375072", "2256863785", "5813002313",
@@ -47,8 +50,7 @@ neurons = neuprintr::neuprint_read_neurons(al.local.neurons)
 
 # Re-root
 neurons.flow = flow_centrality(neurons, polypre = TRUE,
-mode = "centrifugal",
-split = "distance")
+  mode = "centrifugal", split = "distance")
 
 # Let's check that this worked
 syns = hemibrain_extract_synapses(neurons.flow)
@@ -56,13 +58,12 @@ syns = hemibrain_extract_synapses(neurons.flow)
 # Get the edgelist by compartment
 elist = hemibrain_extract_compartment_edgelist(neurons.flow)
 
-\dontrun{
 # See result
 library(nat)
 plot3d_split(neuron.flow)
 points3d(xyzmatrix(subset(syns,prepost==1)), col = "cyan")
 points3d(xyzmatrix(subset(syns,prepost==0)), col = "red")
-}}
+}
 }
 \seealso{
 \code{\link{flow_centrality}}

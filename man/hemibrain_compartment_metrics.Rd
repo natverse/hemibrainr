@@ -14,8 +14,9 @@ hemibrain_compartment_metrics(
 }
 \arguments{
 \item{x}{a \code{nat::neuronlist} or \code{nat::neuron} object. It is assumed
-that this neuron has been read in by \code{neuprintr::neuprint_read_neurons} or
-possibly \code{catmaid::read.neurons.catmaid}.}
+that this neuron has been read in by
+\code{neuprintr::neuprint_read_neurons} or possibly
+\code{catmaid::read.neurons.catmaid}.}
 
 \item{resample}{stepsize to which to resample neurons. If set to \code{NULL},
 neurons are not resampled.}
@@ -26,7 +27,8 @@ neurons are not resampled.}
 and the overlap locality score will be returned in addition to other
 metrics.}
 
-\item{...}{methods sent to \code{nat::nlapply}}
+\item{...}{Additional arguments passed to methods or eventually to
+\code{nat::\link{nlapply}}}
 }
 \value{
 a \code{data.frame} of metrics broken down by putative axon and dendrite, and their overlap_locality scores

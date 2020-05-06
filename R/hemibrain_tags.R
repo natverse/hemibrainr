@@ -120,7 +120,7 @@ metadata_add_tags <- function(x){
 
 #' Add a field to neuron objects (inc. in a neuronlist)
 #'
-#' @description At an item to the the list object that comprises a neuron
+#' @description Add an item to the the list object that comprises a neuron
 #'
 #' @inheritParams flow_centrality
 #' @param entry item to add.
@@ -131,7 +131,9 @@ metadata_add_tags <- function(x){
 #'
 #' @return a \code{neuron} or \code{neuronlist}
 #' @seealso \code{\link{add_Label}}
+#' @export
 add_field <-function(x, entry, field = "bodyid", ...) UseMethod("add_field")
+
 #' @export
 add_field.neuron <- function(x, entry, field = "bodyid", ...){
   x[[field]] = entry

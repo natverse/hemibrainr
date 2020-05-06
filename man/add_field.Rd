@@ -11,14 +11,16 @@ add_field_seq(x, entries, field = "bodyid", ...)
 }
 \arguments{
 \item{x}{a \code{nat::neuronlist} or \code{nat::neuron} object. It is assumed
-that this neuron has been read in by \code{neuprintr::neuprint_read_neurons} or
-possibly \code{catmaid::read.neurons.catmaid}.}
+that this neuron has been read in by
+\code{neuprintr::neuprint_read_neurons} or possibly
+\code{catmaid::read.neurons.catmaid}.}
 
 \item{entry}{item to add.}
 
 \item{field}{name of new field, or field to overwrite.}
 
-\item{...}{methods sent to \code{nat::nlapply}}
+\item{...}{Additional arguments passed to methods or eventually to
+\code{nat::\link{nlapply}}}
 
 \item{entries}{a vector/list of entries, the same length as \code{x}.
 Each neuron in \code{x} will have the entry in entries as the same index, added to it
@@ -28,7 +30,7 @@ as \code{field}.}
 a \code{neuron} or \code{neuronlist}
 }
 \description{
-At an item to the the list object that comprises a neuron
+Add an item to the the list object that comprises a neuron
 }
 \seealso{
 \code{\link{add_Label}}

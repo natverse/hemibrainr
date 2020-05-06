@@ -8,15 +8,17 @@ hemibrain_overlap_locality(x, resample = 10, delta = 62.5, ...)
 }
 \arguments{
 \item{x}{a \code{nat::neuronlist} or \code{nat::neuron} object. It is assumed
-that this neuron has been read in by \code{neuprintr::neuprint_read_neurons} or
-possibly \code{catmaid::read.neurons.catmaid}.}
+that this neuron has been read in by
+\code{neuprintr::neuprint_read_neurons} or possibly
+\code{catmaid::read.neurons.catmaid}.}
 
 \item{resample}{stepsize to which to resample neurons. If set to \code{NULL},
 neurons are not resampled.}
 
 \item{delta}{the distance at which a synapse might occur}
 
-\item{...}{methods sent to \code{nat::nlapply}}
+\item{...}{Additional arguments passed to methods or eventually to
+\code{nat::\link{nlapply}}}
 }
 \value{
 a named vector of overlap_locality scores
