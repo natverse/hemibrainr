@@ -42,6 +42,6 @@ rgl::shade3d(hemibrain, alpha=.3, col='grey')
 }
 }
 \seealso{
-\code{\link{hemibrain_roi_meshes}}
+\code{\link{hemibrain_roi_meshes}}, \code{\link{hemibrain_al.surf}}
 }
 \keyword{datasets}
