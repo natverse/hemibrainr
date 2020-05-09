@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Meshes for antennal love glomeruli — hemibrain_al.surf • hemibrainr</title>
+<title>Meshes for Antennal Lobe (AL) glomeruli — hemibrain_al.surf • hemibrainr</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,10 +46,11 @@
 
 
 
-<meta property="og:title" content="Meshes for antennal love glomeruli — hemibrain_al.surf" />
-<meta property="og:description" content="3D meshes of 51 olfactory + 7 thermosensory antennal lobe glomeruli for the the hemibrain volume.
-They are represented as a hxsurf object, in which 58 'regions' are defined,
-one for each glomerulus. Meshes available both in raw voxels and in microns." />
+<meta property="og:title" content="Meshes for Antennal Lobe (AL) glomeruli — hemibrain_al.surf" />
+<meta property="og:description" content="3D meshes of 51 olfactory + 7 thermosensory antennal lobe glomeruli for the
+the hemibrain volume. They are represented as a hxsurf
+object, in which 58 'regions' are defined, one for each glomerulus. Meshes
+are available both in raw voxels and in microns." />
 <meta property="og:image" content="/logo.svg" />
 
 
@@ -118,15 +119,16 @@ one for each glomerulus. Meshes available both in raw voxels and in microns." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Meshes for antennal love glomeruli</h1>
+    <h1>Meshes for Antennal Lobe (AL) glomeruli</h1>
     <small class="dont-index">Source: <a href='https://github.com/flyconnectome/hemibrainr/blob/master/R/hemibrain_data.R'><code>R/hemibrain_data.R</code></a></small>
     <div class="hidden name"><code>hemibrain_al.surf.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>3D meshes of 51 olfactory + 7 thermosensory antennal lobe glomeruli for the the hemibrain volume.
-They are represented as a <code><a href='https://rdrr.io/pkg/nat/man/read.hxsurf.html'>hxsurf</a></code> object, in which 58 'regions' are defined,
-one for each glomerulus. Meshes available both in raw voxels and in microns.</p>
+    <p>3D meshes of 51 olfactory + 7 thermosensory antennal lobe glomeruli for the
+the hemibrain volume. They are represented as a <code><a href='https://rdrr.io/pkg/nat/man/read.hxsurf.html'>hxsurf</a></code>
+object, in which 58 'regions' are defined, one for each glomerulus. Meshes
+are available both in raw voxels and in microns.</p>
     </div>
 
     <pre class="usage"><span class='no'>hemibrain_al.surf</span>
@@ -143,20 +145,79 @@ one for each glomerulus. Meshes available both in raw voxels and in microns.</p>
     <p><a href='https://neuprint.janelia.org/'>https://neuprint.janelia.org/</a></p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>note that hemibrain coordinate system does not have the
-  anterior-posterior axis aligned with the Z axis.</p>
+    <p>note that hemibrain coordinate system does has the
+  anterior-posterior axis aligned with the Y axis (rather than the Z axis,
+  which is more commonly observed).</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='hemibrain_roi_meshes.html'>hemibrain_roi_meshes</a></code></p></div>
+    <div class='dont-index'><p><code><a href='hemibrain_roi_meshes.html'>hemibrain_roi_meshes</a></code>, <code><a href='hemibrain.surf.html'>hemibrain.surf</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
-<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>nat</span>)
+<span class='fu'>nvertices</span>(<span class='no'>hemibrain_al.surf</span>)</div><div class='output co'>#&gt; [1] 6053</div><div class='input'><span class='fu'>materials</span>(<span class='no'>hemibrain_al.surf</span>)</div><div class='output co'>#&gt;      name id     col
+#&gt; D       D  1 #C70E7B
+#&gt; DA1   DA1  2 #DA2F7D
+#&gt; DA2   DA2  3 #EE5080
+#&gt; DA3   DA3  4 #E16A88
+#&gt; DA4l DA4l  5 #8471A0
+#&gt; DA4m DA4m  6 #2778B8
+#&gt; DC1   DC1  7 #1188C5
+#&gt; DC2   DC2  8 #30A0CB
+#&gt; DC3   DC3  9 #4FB8D0
+#&gt; DC4   DC4 10 #84A794
+#&gt; DL1   DL1 11 #BE904E
+#&gt; DL2d DL2d 12 #EF7F15
+#&gt; DL2v DL2v 13 #F19530
+#&gt; DL3   DL3 14 #F2AC4A
+#&gt; DL4   DL4 15 #CDB455
+#&gt; DL5   DL5 16 #73AB4B
+#&gt; DM1   DM1 17 #19A141
+#&gt; DM2   DM2 18 #25AE2F
+#&gt; DM3   DM3 19 #5AC419
+#&gt; DM4   DM4 20 #8FDA04
+#&gt; DM5   DM5 21 #9AAD10
+#&gt; DM6   DM6 22 #A6801C
+#&gt; DP1l DP1l 23 #B66E36
+#&gt; DP1m DP1m 24 #CF9E71
+#&gt; V       V 25 #E9CEAD
+#&gt; VA1d VA1d 26 #E6C6BB
+#&gt; VA1v VA1v 27 #CD95A7
+#&gt; VA2   VA2 28 #B56493
+#&gt; VA3   VA3 29 #C57EAB
+#&gt; VA4   VA4 30 #DBA5CB
+#&gt; VA5   VA5 31 #EFC3DA
+#&gt; VA6   VA6 32 #EFA78C
+#&gt; VA7l VA7l 33 #EF8B3E
+#&gt; VA7m VA7m 34 #EF851D
+#&gt; VC1   VC1 35 #F19C37
+#&gt; VC2   VC2 36 #F3B252
+#&gt; VC3l VC3l 37 #E69756
+#&gt; VC3m VC3m 38 #D46850
+#&gt; VC4   VC4 39 #C23A4B
+#&gt; VC5   VC5 40 #D66949
+#&gt; VL1   VL1 41 #EC9948
+#&gt; VL2a VL2a 42 #F9C047
+#&gt; VL2p VL2p 43 #F5D347
+#&gt; VM1   VM1 44 #F0E646
+#&gt; VM2   VM2 45 #C7E947
+#&gt; VM3   VM3 46 #80E04A
+#&gt; VM4   VM4 47 #3BD74C
+#&gt; VM5d VM5d 48 #279C50
+#&gt; VM5v VM5v 49 #1C5A53
+#&gt; VM7d VM7d 50 #1E2255
+#&gt; VM7v VM7v 51 #6F2E4E
+#&gt; VP1d VP1d 52 #BF3B48
+#&gt; VP1l VP1l 53 #EA3C39
+#&gt; VP1m VP1m 54 #E13020
+#&gt; VP2   VP2 55 #D92307
+#&gt; VP3   VP3 56 #A5472E
+#&gt; VP4   VP4 57 #607E6E
+#&gt; VP5   VP5 58 #1BB6AF</div><div class='input'>
 <span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
-<span class='fu'><a href='https://rdrr.io/pkg/nat/man/plot3d.html'>plot3d</a></span>(<span class='no'>hemibrain_al.surf</span>, <span class='kw'>alpha</span><span class='kw'>=</span><span class='fl'>.3</span>)
+<span class='fu'>plot3d</span>(<span class='no'>hemibrain_al.surf</span>, <span class='kw'>alpha</span><span class='kw'>=</span><span class='fl'>.3</span>)
 
 <span class='co'># can also plot single glomeruli</span>
-<span class='fu'><a href='https://rdrr.io/pkg/nat/man/plot3d.html'>plot3d</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/nat/man/subset.html'>subset</a></span>(<span class='no'>hemibrain_al.surf</span>,<span class='st'>"DM1"</span>))
+<span class='fu'>plot3d</span>(<span class='fu'><a href='https://rdrr.io/r/base/subset.html'>subset</a></span>(<span class='no'>hemibrain_al.surf</span>,<span class='st'>"DM1"</span>))
 
 }
 <span class='co'># }</span></div></pre>
