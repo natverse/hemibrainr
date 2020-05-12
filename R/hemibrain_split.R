@@ -557,13 +557,14 @@ hemibrain_use_splitpoints.neuron <-function(x, df, knn = FALSE, ...){
   # Get splitpoints
   df = df[df$bodyid == x$bodyid,]
   df = df[,c("bodyid", "position", "point", "X", "Y", "Z")]
-  df[df==""] = NA
 
   if(!nrow(df)){
     warning("bodyid ", x$bodyid," not in splitpoints, returning neuron unmodified")
     y = x
     y$split = FALSE
-  }else{
+  } else {
+    # convert missing values to NA - will error if df has 0 rows
+    df[df==""] = NA
     # Find nearest points on skeleton
     if(knn){
       near = nabor::knn(query = nat::xyzmatrix(df), data = nat::xyzmatrix(x), k  = 1)
