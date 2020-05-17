@@ -4,7 +4,7 @@
 \name{hemibrain_al.surf}
 \alias{hemibrain_al.surf}
 \alias{hemibrain_al_microns.surf}
-\title{Meshes for antennal love glomeruli}
+\title{Meshes for Antennal Lobe (AL) glomeruli}
 \format{
 An object of class \code{hxsurf} of length 4.
 
@@ -19,17 +19,21 @@ hemibrain_al.surf
 hemibrain_al_microns.surf
 }
 \description{
-3D meshes of 51 olfactory + 7 thermosensory antennal lobe glomeruli for the the hemibrain volume.
-They are represented as a \code{\link[nat]{hxsurf}} object, in which 58 'regions' are defined,
-one for each glomerulus. Meshes available both in raw voxels and in microns.
+3D meshes of 51 olfactory + 7 thermosensory antennal lobe glomeruli for the
+the hemibrain volume. They are represented as a \code{\link[nat]{hxsurf}}
+object, in which 58 'regions' are defined, one for each glomerulus. Meshes
+are available both in raw voxels and in microns.
 }
 \details{
-note that hemibrain coordinate system does not have the
-  anterior-posterior axis aligned with the Z axis.
+note that hemibrain coordinate system does has the
+  anterior-posterior axis aligned with the Y axis (rather than the Z axis,
+  which is more commonly observed).
 }
 \examples{
 \donttest{
-library(nat)
+nvertices(hemibrain_al.surf)
+materials(hemibrain_al.surf)
+
 \dontrun{
 plot3d(hemibrain_al.surf, alpha=.3)
 
@@ -40,6 +44,6 @@ plot3d(subset(hemibrain_al.surf,"DM1"))
 }
 }
 \seealso{
-\code{\link{hemibrain_roi_meshes}}
+\code{\link{hemibrain_roi_meshes}}, \code{\link{hemibrain.surf}}
 }
 \keyword{datasets}
