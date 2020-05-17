@@ -4,7 +4,7 @@
 
 #' Match up neurons between the hemibrain and FAFB
 #'
-#' @description Match up neurons between the hemibrain and FAFB and save the
+#' @description Match up neurons between the hemibrain, FAFB and light level data and save the
 #'   result using a
 #'   \href{https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit#gid=0}{Google
 #'   Sheet} on the hemibrain Google Team Drive operated by the flyconnectome
@@ -517,9 +517,6 @@ lm_matching <- function(ids = NULL,
   }
   say_encouragement(initials)
 }
-
-
-
 
 
 #' @rdname hemibrain_matching
