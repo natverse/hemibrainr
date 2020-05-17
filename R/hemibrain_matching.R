@@ -247,6 +247,7 @@ hemibrain_matching <- function(ids = NULL,
     }else{
       quality = "n"
     }
+    quality = standardise_quality(quality)
     gs[n,quality.field] = quality
     gs = gs[!duplicated(gs$bodyid),]
     unsaved = c(unsaved, n)
@@ -479,6 +480,7 @@ lm_matching <- function(ids = NULL,
     }else{
       quality = "n"
     }
+    quality = standardise_quality(quality)
     gs[n,quality.field] = quality
     gs = gs[!duplicated(gs$id),]
     unsaved = c(unsaved, n)
