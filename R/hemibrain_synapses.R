@@ -53,7 +53,11 @@ hemibrain_extract_synapses <- function(x,
                                        prepost = c("BOTH","PRE","POST"),
                                        ...){
   prepost = match.arg(prepost)
-  x = add_field_seq(x,x[,"bodyid"],field="bodyid")
+  if("bodyid"%in%colnames(x[,])){
+    x = add_field_seq(x,x[,"bodyid"],field="bodyid")
+  }else if("skid"%in%colnames(x[,])){
+    x = add_field_seq(x,x[,"skid"],field="skid")
+  }
   if(is.neuronlist(x)){
     syns = nlapply(x,extract_synapses, unitary = FALSE, ...)
     syns = do.call(rbind,syns)
@@ -106,7 +110,15 @@ extract_synapses <-function(x, unitary = FALSE){
   if(!nrow(syn)){
     warning("Neuron ", x$bodyid," has no synapses")
   }
-  syn$bodyid = nullToNA(x$bodyid)
+  if(!is.null(x$bodyid)){
+    id = "bodyid"
+  }else if(!is.null(x$skid)){
+    id = "skid"
+  }else{
+    id = "id"
+  }
+  syn[[id]] = nullToNA(x[[id]])
+  syn[[id]] = gsub(" ","",syn[[id]])
   syn$Label = nullToNA(x$d$Label[match(syn$treenode_id,x$d$PointNo)])
   if(unitary){ # connections, rather than synapses
     syn %>%
@@ -114,10 +126,10 @@ extract_synapses <-function(x, unitary = FALSE){
         .data$prepost==0 ~ 1,
         .data$prepost==1  ~ 0
       )) %>% # i.e. switch perspective, presynapses connect to postsynaptic partners
-      dplyr::group_by(.data$bodyid, .data$partner, .data$prepost, .data$Label) %>%
+      dplyr::group_by(.data[[id]], .data$partner, .data$prepost, .data$Label) %>%
       dplyr::mutate(weight = dplyr::n()) %>%
-      dplyr::distinct(.data$bodyid, .data$partner, .data$prepost, .data$Label, .data$weight) %>%
-      dplyr::select(.data$bodyid, .data$partner, .data$prepost, .data$Label, .data$weight) %>%
+      dplyr::distinct(.data[[id]], .data$partner, .data$prepost, .data$Label, .data$weight) %>%
+      dplyr::select(.data[[id]], .data$partner, .data$prepost, .data$Label, .data$weight) %>%
       as.data.frame() ->
       syn
   }
