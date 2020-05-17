@@ -14,12 +14,12 @@
 #' @rdname standardise
 standard_transmitters <- function(x){
   x[grepl("^Neurotrans|^neurotrans",x)] = "transmitter"
-  x[grepl("^ACh|^Ach|^ach|^acet|^ChA|^CHa|^cholin",x)] = "acetylcholine"
+  x[grepl("^ACh|^Ach|^ach|^acet|^ChA|^CHa|^cholin|^ACH",x)] = "acetylcholine"
   x[grepl("^gaba|^GABA|^GAD",x)] = "GABA"
-  x[grepl("^glut|^vGlut|^Vglut|^glutamate|^Glutamate",x)] = "glutamate"
-  x[grepl("^5-HT|^5HT|^Dope|^dope|^Dopa|^dopa",x)] = "dopamine"
-  x[grepl("^Sero|^sero|^TH-",x)] = "serotonin"
-  x[grepl("^Oct|^oct",x)] = "octopamine"
+  x[grepl("^glut|^vGlut|^Vglut|^glutamate|^Glutamate|^GLUT",x)] = "glutamate"
+  x[grepl("^5-HT|^5HT|^Dope|^dope|^Dopa|^dopa|^DOP",x)] = "dopamine"
+  x[grepl("^Sero|^sero|^TH-|^SER",x)] = "serotonin"
+  x[grepl("^Oct|^oct|^OCT",x)] = "octopamine"
   x[grepl("^Unknow|NA|unknow|^None|^none",x)] = "unknown"
   x[is.na(x)] = "unknown"
   x
@@ -63,5 +63,14 @@ standardise <- standardize <- function(x){
   x <- standard_transmitters(x)
   x <- standard_lineages(x)
   x <- standard_compartments(x)
+  x
+}
+
+# hidden
+standardise_quality <- function(x){
+  x[x=="e"] = "good"
+  x[x=="o"] = "medium"
+  x[x=="p"] = "poor"
+  x[x=="n"] = "none"
   x
 }
