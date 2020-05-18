@@ -35,6 +35,7 @@
 #' \code{most.lhns}.
 #' @param query a neuronlist of light level neurons to match against. Should correspond to the given NBLAST matrix.
 #' Defaults to reading a transformed \code{most.lhns} from the Hemibrain Google Team Drive.
+#' @param overwrite logical, whether or not to overwrite matches already made.
 #'
 #' @details Currently, the
 #'   \href{https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit#gid=0}{Google
@@ -78,7 +79,8 @@ hemibrain_matching <- function(ids = NULL,
                          batch_size = 10,
                          db=hemibrain_neurons(),
                          match.type = c("FAFB", "LM"),
-                         query = NULL){
+                         query = NULL,
+                         overwrite = FALSE){
   match.type = match.arg(match.type)
   if(!requireNamespace("nat.jrcbrains", quietly = TRUE)) {
     stop("Please install nat.jrcbrains using:\n", call. = FALSE,
@@ -172,7 +174,11 @@ hemibrain_matching <- function(ids = NULL,
     # Get bodyid
     n = as.character(n)
     # Remove neurons with matches
-    donotdo = subset(gs, !is.na(gs[[match.field]]) | User != initials)
+    if(!overwrite){
+      donotdo = subset(gs, !is.na(gs[[match.field]]) | User != initials | !bodyid%in%ids)
+    }else{
+      donotdo = subset(gs, User != initials | !bodyid%in%ids)
+    }
     if(n%in%donotdo$bodyid | !n%in%unlist(dimnames(hemibrain.nblast))){
       next
     }
@@ -327,7 +333,8 @@ lm_matching <- function(ids = NULL,
                         selected_file = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw",
                         batch_size = 50,
                         db=hemibrain_neurons(),
-                        query = hemibrain_lm_lhns(brainspace = c("JRCFIB2018F")) ){
+                        query = hemibrain_lm_lhns(brainspace = c("JRCFIB2018F")),
+                        overwrite = FALSE){
   # Motivate!
   nat::nopen3d()
   plot_inspirobot()
@@ -395,7 +402,11 @@ lm_matching <- function(ids = NULL,
     n = as.character(n)
     end = n==gs$id[length(gs$id)]
     # Remove neurons with matches
-    donotdo = subset(gs, !is.na(gs[[match.field]]) | User != initials | !id%in%ids)
+    if(!overwrite){
+      donotdo = subset(gs, !is.na(gs[[match.field]]) | User != initials | !id%in%ids)
+    }else{
+      donotdo = subset(gs, User != initials | !id%in%ids)
+    }
     if(n%in%donotdo$id | !n%in%names(query)){
       next
     }
@@ -526,7 +537,8 @@ fafb_matching <- function(ids = NULL,
                         selected_file = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw",
                         batch_size = 50,
                         db=hemibrain_neurons(),
-                        query = NULL){
+                        query = NULL,
+                        overwrite = FALSE){
   # Motivate!
   nat::nopen3d()
   plot_inspirobot()
@@ -589,7 +601,11 @@ fafb_matching <- function(ids = NULL,
     n = as.character(n)
     end = n==gs$skid[length(gs$skid)]
     # Remove neurons with matches
-    donotdo = subset(gs, !is.na(gs[[match.field]]) | User != initials | !skid%in%ids)
+    if(!overwrite){
+      donotdo = subset(gs, !is.na(gs[[match.field]]) | User != initials | !skid%in%ids)
+    }else{
+      donotdo = subset(gs, User != initials | !skid%in%ids)
+    }
     if(n%in%donotdo$skid){
       next
     }
