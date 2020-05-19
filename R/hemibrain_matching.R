@@ -775,7 +775,7 @@ hemibrain_matches <- function(priority = c("FAFB","hemibrain")){
 
   # Get matches
   selected_file = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw"
-  hemibrain.matches = gsheet_manipulation(FUN = googlesheets4::read_sheet,
+  hemibrain.matches = hemibrainr:::gsheet_manipulation(FUN = googlesheets4::read_sheet,
                                                        ss = selected_file,
                                                        sheet = "lhns",
                                                        return = TRUE)
@@ -784,17 +784,21 @@ hemibrain_matches <- function(priority = c("FAFB","hemibrain")){
   hemibrain.matches = hemibrain.matches[hemibrain.matches$bodyid!="",]
   hemibrain.matches$ItoLee_Lineage = gsub("_.*","",hemibrain.matches$ItoLee_Hemilineage)
   hemibrain.matches$dataset = "hemibrain"
+  hemibrain.matches = subset(hemibrain.matches, !is.na(hemibrain.matches$bodyid))
+  hemibrain.matches = hemibrain.matches[!duplicated(hemibrain.matches$bodyid),]
   rownames(hemibrain.matches) = hemibrain.matches$bodyid
   hemibrain.matches$cell.type = hemibrain.matches$connectivity.type
 
   # Get FAFB matches
-  fafb.matches = gsheet_manipulation(FUN = googlesheets4::read_sheet,
+  fafb.matches = hemibrainr:::gsheet_manipulation(FUN = googlesheets4::read_sheet,
                                                   ss = selected_file,
                                                   sheet = "fafb",
                                                   return = TRUE)
   fafb.matches$skid = correct_id(fafb.matches$skid)
   fafb.matches = fafb.matches[!duplicated(fafb.matches$skid),]
   fafb.matches = fafb.matches[fafb.matches$skid!="",]
+  fafb.matches = subset(fafb.matches, !is.na(fafb.matches$bodyid))
+  fafb.matches = fafb.matches[!duplicated(fafb.matches$bodyid),]
   fafb.matches$dataset = "FAFB"
   rownames(fafb.matches) = fafb.matches$skid
 
