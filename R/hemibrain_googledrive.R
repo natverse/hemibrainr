@@ -39,7 +39,7 @@
 #' ids = hemibrain_neuron_bodyids()
 #'
 #' # Connectivity edgelist, broken down by axon/dendrite
-#' elist = hemibrain_edgelist()
+#' elist = hemibrain_elist()
 #'
 #' }}
 #' @seealso \code{\link{hemibrain_splitpoints}},
