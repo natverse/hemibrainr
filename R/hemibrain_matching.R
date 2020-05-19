@@ -128,11 +128,6 @@ hemibrain_matching <- function(ids = NULL,
                            return = TRUE)
   gs$bodyid = correct_id(gs$bodyid)
   rownames(gs) = gs$bodyid
-  if(is.null(ids)){
-    ids = gs$bodyid
-  }else{
-    ids = intersect(ids,gs$bodyid)
-  }
   # Read neuron meta data
   meta = neuprintr::neuprint_get_meta(ids)
   meta = meta[order(meta$type),]
@@ -163,6 +158,12 @@ hemibrain_matching <- function(ids = NULL,
   initials = must_be("Choose a user : ", answers = unique(gs$User))
   say_hello(initials)
   rgl::bg3d("white")
+  # choose ids
+  if(is.null(ids)){
+    ids = gs$bodyid[gs$User==initals]
+  }else{
+    ids = intersect(ids,gs$bodyid)
+  }
   # choose brain
   if(match.type=="FAFB"){
     brain = elmr::FAFB14.surf
@@ -175,9 +176,9 @@ hemibrain_matching <- function(ids = NULL,
     n = as.character(n)
     # Remove neurons with matches
     if(!overwrite){
-      donotdo = subset(gs, !is.na(gs[[match.field]]) | User != initials | !bodyid%in%ids)
+      donotdo = subset(gs, !is.na(gs[[match.field]]) | !bodyid%in%ids)
     }else{
-      donotdo = subset(gs, User != initials | !bodyid%in%ids)
+      donotdo = subset(gs, !bodyid%in%ids)
     }
     if(n%in%donotdo$bodyid | !n%in%unlist(dimnames(hemibrain.nblast))){
       next
@@ -568,11 +569,6 @@ fafb_matching <- function(ids = NULL,
                            return = TRUE)
   gs$skid = correct_id(gs$skid)
   rownames(gs) = gs$skid
-  if(is.null(ids)){
-    ids = gs$skid
-  }else{
-    ids = intersect(ids,gs$skid)
-  }
   # Get hemibrain neurons
   if(missing(db)) {
     # this means we weren't told to use a specific neuronlist, so
@@ -593,6 +589,12 @@ fafb_matching <- function(ids = NULL,
   initials = must_be("Choose a user : ", answers = unique(gs$User))
   say_hello(initials)
   rgl::bg3d("white")
+  # choose ids
+  if(is.null(ids)){
+    ids = gs$skid[gs$User==initals]
+  }else{
+    ids = intersect(ids,gs$skid)
+  }
   # choose brain
   brain = hemibrain.surf
   # Make matches!
@@ -602,9 +604,9 @@ fafb_matching <- function(ids = NULL,
     end = n==gs$skid[length(gs$skid)]
     # Remove neurons with matches
     if(!overwrite){
-      donotdo = subset(gs, !is.na(gs[[match.field]]) | User != initials | !skid%in%ids)
+      donotdo = subset(gs, !is.na(gs[[match.field]]) | !skid%in%ids)
     }else{
-      donotdo = subset(gs, User != initials | !skid%in%ids)
+      donotdo = subset(gs, !skid%in%ids)
     }
     if(n%in%donotdo$skid){
       next
@@ -732,3 +734,145 @@ fafb_matching <- function(ids = NULL,
   }
   say_encouragement(initials)
 }
+
+
+
+
+
+#' Retrieve matched up neurons between the hemibrain and FAFB
+#'
+#' @description Many neurons in the hemibrain data have been matched one to one with FAFB neurons (hemibrain->FAFB) and
+#' FAFB neurons have been matched with their hemibrain counterparts (FAFB->hemibrain). These matchs have been done by the
+#' Flyconnectome Group at the University of Cambridge, and are recorded on a
+#' \href{https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit#gid=0}{Google
+#'   Sheet} on our Hemibrain Google Team Drive, to which you will need access
+#' through an authenticated account to view and use this function. Matches have three levels of 'quality', largely
+#' dependent on the degree of manual tracing for FAFB neurons - good (could be the same cell), medium (same cell type) and poor (could be the same or similar cell type).
+#'
+#' @param priority whether to use FAFB->hemibrain matches (FAFB) or hemibrain->FAFB matches (hemibrain) in order to ascribe
+#' cell type names to FAFB neurons. In both cases, cell type names are attached to hemibrain bodyids, and propogated to their FAFB matches.
+#'
+#' @return  a \code{data.frame} which includes neuron's ID (either its CATMAID skeleton ID or neuprint body ID), the data set from which it comes,
+#' its putative cell type and connectivity type, and its match in the other dataset.
+#'
+#' @details Currently, the
+#'   \href{https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit#gid=0}{Google
+#'    Sheet} is set up with  limited number of users, each of whom have been
+#'   assigned a number of neurons to match up. In order to add yourself as a
+#'   user, simply open this Google Sheet in your browser and add your initials
+#'   to neurons of your choosing on the rightmost column 'Users'.
+#'
+#' @examples
+#' \donttest{
+#' \dontrun{
+#'
+#' # Get matches
+#' matched = hemibrain_matches()
+#'
+#' }}
+#' @rdname hemibrain_matches
+#' @export
+#' @seealso \code{\link{hemibrain_matching}}
+hemibrain_matches <- function(priority = c("FAFB","hemibrain")){
+  priority = match.arg(priority)
+
+  # Get matches
+  selected_file = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw"
+  hemibrain_matches = gsheet_manipulation(FUN = googlesheets4::read_sheet,
+                                                       ss = selected_file,
+                                                       sheet = "lhns",
+                                                       return = TRUE)
+  hemibrain_matches$bodyid = correct_id(hemibrain_matches$bodyid)
+  hemibrain_matches = hemibrain_matches[!duplicated(hemibrain_matches$bodyid),]
+  hemibrain_matches = hemibrain_matches[hemibrain_matches$bodyid!="",]
+  hemibrain_matches$ItoLee_Lineage = gsub("_.*","",hemibrain_matches$ItoLee_Hemilineage)
+  hemibrain_matches$dataset = "hemibrain"
+  rownames(hemibrain_matches) = hemibrain_matches$bodyid
+  hemibrain_matches$cell.type = hemibrain_matches$connectivity.type
+
+  # Get FAFB matches
+  fafb_matches = gsheet_manipulation(FUN = googlesheets4::read_sheet,
+                                                  ss = selected_file,
+                                                  sheet = "fafb",
+                                                  return = TRUE)
+  fafb_matches$skid = correct_id(fafb_matches$skid)
+  fafb_matches = fafb_matches[!duplicated(fafb_matches$skid),]
+  fafb_matches = fafb_matches[fafb_matches$skid!="",]
+  fafb_matches$dataset = "FAFB"
+  rownames(fafb_matches) = fafb_matches$skid
+
+  # Address FAFB cell types
+  fafb_matches$cell.type = NA
+  for(q in c("good","medium","poor")){
+    if(is.na(q)){
+      next
+    }
+    if(priority=="FAFB"){
+      # FAFB -> Hemibrain
+      inq = as.character(subset(fafb_matches, fafb_matches$hemibrain.match.quality==q)$skid)
+      inq = inq[!is.na(inq)]
+      isna = is.na(fafb_matches[inq,]$cell.type)
+      cts = hemibrain_matches$cell.type[match(fafb_matches[inq,]$hemibrain.match,hemibrain_matches$bodyid)]
+      fafb_matches[inq,]$cell.type[isna] = cts[isna]
+      # Hemibrain -> FAFB
+      inq = as.character(subset(hemibrain_matches, hemibrain_matches$FAFB.match.quality==q)$FAFB.match)
+      inq = inq[!is.na(inq)]
+      isna = is.na(fafb_matches[inq,]$cell.type)
+      fafb_matches[inq,]$cell.type[isna] = hemibrain_matches$cell.type[match(fafb_matches[inq,]$skid[isna],hemibrain_matches$FAFB.match)]
+    }else{
+      # Hemibrain -> FAFB
+      inq = as.character(subset(hemibrain_matches, hemibrain_matches$FAFB.match.quality==q)$FAFB.match)
+      inq = inq[!is.na(inq)]
+      isna = is.na(fafb_matches[inq,]$cell.type)
+      fafb_matches[inq,]$cell.type[isna] = hemibrain_matches$cell.type[match(fafb_matches[inq,]$skid[isna],hemibrain_matches$FAFB.match)]
+      # FAFB -> Hemibrain
+      inq = as.character(subset(fafb_matches, fafb_matches$hemibrain.match.quality==q)$skid)
+      inq = inq[!is.na(inq)]
+      isna = is.na(fafb_matches[inq,]$cell.type)
+      cts = hemibrain_matches$cell.type[match(fafb_matches[inq,]$hemibrain.match,hemibrain_matches$bodyid)]
+      fafb_matches[inq,]$cell.type[isna] = cts[isna]
+    }
+  }
+
+  # Work out lineages
+  for(id in as.character(fafb_matches$skid)){
+    ct = fafb_matches[id,"cell.type"]
+    if(is.na(ct)){
+      fafb_matches[id,"cell.type"] = hemibrain_matches.chosen$cell.type[match(id,hemibrain_matches.chosen$FAFB.match)]
+      fafb_matches[id,"ItoLee_Hemilineage"] = hemibrain_matches.chosen$ItoLee_Hemilineage[match(id,hemibrain_matches.chosen$FAFB.match)]
+    }else{
+      fafb_matches[id,"ItoLee_Hemilineage"] = hemibrain_matches.chosen$ItoLee_Hemilineage[match(ct,hemibrain_matches.chosen$cell.type)]
+    }
+  }
+
+  # Rename cells
+  fafb_matches$cell = paste0(fafb_matches$cell.type,"#",ave(fafb_matches$cell.type,fafb_matches$cell.type,FUN= seq.int))
+  hemibrain_matches$cell = paste0(hemibrain_matches$cell.type,"#",ave(hemibrain_matches$cell.type,hemibrain_matches$cell.type,FUN= seq.int))
+
+  # Fix hemilineages
+  hl = hemibrain_matches$ItoLee_Hemilineage[match(fafb_matches$skid,hemibrain_matches$FAFB.match)]
+  l = hemibrain_matches$ItoLee_Lineage[match(fafb_matches$skid,hemibrain_matches$FAFB.match)]
+  fafb_matches$ItoLee_Hemilineage[!is.na(hl)] = hl[!is.na(hl)]
+  fafb_matches$ItoLee_Lineage[!is.na(l)] = l[!is.na(l)]
+
+  # Make matching data frame
+  matched.h = hemibrain_matches[,c("bodyid", "cell.type", "cell", "ItoLee_Hemilineage",
+                                   "FAFB.match", "FAFB.match.quality", "LM.match", "LM.match.quality", "dataset")]
+  matched.f = fafb_matches[,c("skid",  "cell.type",  "cell", "ItoLee_Hemilineage",
+                              "hemibrain.match", "hemibrain.match.quality", "LM.match", "LM.match.quality","dataset")]
+  colnames(matched.h) = colnames(matched.f) = c("id","cell.type", "cell","ItoLee_Hemilineage","match","quality", "LM.match", "LM.match.quality","dataset")
+  matched = rbind(matched.h,matched.f)
+  matched$quality[is.na(matched$match)] = "none"
+  matched$match[is.na(matched$match)] = "none"
+
+  # Sort out types
+  hemibrain_matches$connectivity.type = hemibrain_matches$cell.type
+  matched$cell.type = gsub("[a-z]$","",matched$cell.type)
+  matched$cell.type[is.na(matched$cell.type)] = "uncertain"
+
+  # Return
+  matched
+
+}
+
+
