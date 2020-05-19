@@ -47,7 +47,7 @@
 
 
 <meta property="og:title" content="Match up neurons between the hemibrain and FAFB — hemibrain_matching" />
-<meta property="og:description" content="Match up neurons between the hemibrain and FAFB and save the
+<meta property="og:description" content="Match up neurons between the hemibrain, FAFB and light level data and save the
   result using a
   Google
   Sheet on the hemibrain Google Team Drive operated by the flyconnectome
@@ -132,7 +132,7 @@
     </div>
 
     <div class="ref-description">
-    <p>Match up neurons between the hemibrain and FAFB and save the
+    <p>Match up neurons between the hemibrain, FAFB and light level data and save the
   result using a
   <a href='https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit#gid=0'>Google
   Sheet</a> on the hemibrain Google Team Drive operated by the flyconnectome
@@ -152,7 +152,8 @@
   <span class='kw'>batch_size</span> <span class='kw'>=</span> <span class='fl'>10</span>,
   <span class='kw'>db</span> <span class='kw'>=</span> <span class='fu'><a href='hemibrain_read_neurons.html'>hemibrain_neurons</a></span>(),
   <span class='kw'>match.type</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"FAFB"</span>, <span class='st'>"LM"</span>),
-  <span class='kw'>query</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
+  <span class='kw'>query</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>overwrite</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
 )
 
 <span class='fu'>lm_matching</span>(
@@ -161,7 +162,8 @@
   <span class='kw'>selected_file</span> <span class='kw'>=</span> <span class='st'>"1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw"</span>,
   <span class='kw'>batch_size</span> <span class='kw'>=</span> <span class='fl'>50</span>,
   <span class='kw'>db</span> <span class='kw'>=</span> <span class='fu'><a href='hemibrain_read_neurons.html'>hemibrain_neurons</a></span>(),
-  <span class='kw'>query</span> <span class='kw'>=</span> <span class='fu'><a href='hemibrain_googledrive.html'>hemibrain_lm_lhns</a></span>(<span class='kw'>brainspace</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"JRCFIB2018F"</span>))
+  <span class='kw'>query</span> <span class='kw'>=</span> <span class='fu'><a href='hemibrain_googledrive.html'>hemibrain_lm_lhns</a></span>(<span class='kw'>brainspace</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"JRCFIB2018F"</span>)),
+  <span class='kw'>overwrite</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
 )
 
 <span class='fu'>fafb_matching</span>(
@@ -170,7 +172,8 @@
   <span class='kw'>selected_file</span> <span class='kw'>=</span> <span class='st'>"1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw"</span>,
   <span class='kw'>batch_size</span> <span class='kw'>=</span> <span class='fl'>50</span>,
   <span class='kw'>db</span> <span class='kw'>=</span> <span class='fu'><a href='hemibrain_read_neurons.html'>hemibrain_neurons</a></span>(),
-  <span class='kw'>query</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
+  <span class='kw'>query</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>overwrite</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -215,6 +218,10 @@ skeletons  (<code>"LM"</code>) from Dolan et al. and Frechter et al. 2019 (eLife
       <th>query</th>
       <td><p>a neuronlist of light level neurons to match against. Should correspond to the given NBLAST matrix.
 Defaults to reading a transformed <code>most.lhns</code> from the Hemibrain Google Team Drive.</p></td>
+    </tr>
+    <tr>
+      <th>overwrite</th>
+      <td><p>logical, whether or not to overwrite matches already made.</p></td>
     </tr>
     </table>
 
