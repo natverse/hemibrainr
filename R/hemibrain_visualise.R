@@ -127,7 +127,8 @@ nlscan_split <- function (someneuronlist,
                           sleep = 0.1,
                           selected_file = NULL,
                           selected_col = "#fadadd",
-                          yaml = TRUE, ...){
+                          yaml = TRUE,
+                          brain = FALSE, ...){
   if(!requireNamespace('yaml', quietly = TRUE))
     stop("Suggested package yaml is required to use this function!")
   if (nat::is.neuronlist(someneuronlist)) {
@@ -168,11 +169,17 @@ nlscan_split <- function (someneuronlist,
     selected_file
   }
   chc <- NULL
+  if (!isFALSE(brain)){
+    brain = brain
+  }
   while (TRUE) {
     if (i > length(neurons) || i < 1){
       rgl::clear3d()
       rgl::bg3d(color = "white")
       if(length(selected)){
+        if (!isFALSE(brain)){
+          rgl::plot3d(brain, col = "grey70", alpha = 0.1)
+        }
         rgl::plot3d(someneuronlist[selected], ..., col = hemibrain_bright_colour_ramp(length(selected)))
       }
       end = hemibrain_choice("Done selecting/scanning neurons? yes/no ")
@@ -194,6 +201,9 @@ nlscan_split <- function (someneuronlist,
       rgl::bg3d(color = selected_col)
     }else{
       rgl::bg3d(color = "white")
+    }
+    if (!isFALSE(brain)){
+      rgl::plot3d(brain, col = "grey70", alpha = 0.1)
     }
     pl <- plot3d_split(someneuronlist[i], col = col, WithConnectors = WithConnectors, WithNodes = WithNodes, soma = soma, highflow = highflow, radius = radius, ...)
     if (Wait) {
@@ -231,6 +241,7 @@ nlscan_split <- function (someneuronlist,
   }
   selected
 }
+
 
 #' @export
 #' @rdname plot3d_split
