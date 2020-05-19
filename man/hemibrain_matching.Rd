@@ -13,7 +13,8 @@ hemibrain_matching(
   batch_size = 10,
   db = hemibrain_neurons(),
   match.type = c("FAFB", "LM"),
-  query = NULL
+  query = NULL,
+  overwrite = FALSE
 )
 
 lm_matching(
@@ -22,7 +23,8 @@ lm_matching(
   selected_file = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw",
   batch_size = 50,
   db = hemibrain_neurons(),
-  query = hemibrain_lm_lhns(brainspace = c("JRCFIB2018F"))
+  query = hemibrain_lm_lhns(brainspace = c("JRCFIB2018F")),
+  overwrite = FALSE
 )
 
 fafb_matching(
@@ -31,7 +33,8 @@ fafb_matching(
   selected_file = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw",
   batch_size = 50,
   db = hemibrain_neurons(),
-  query = NULL
+  query = NULL,
+  overwrite = FALSE
 )
 }
 \arguments{
@@ -60,9 +63,11 @@ skeletons  (\code{"LM"}) from Dolan et al. and Frechter et al. 2019 (eLife), sto
 
 \item{query}{a neuronlist of light level neurons to match against. Should correspond to the given NBLAST matrix.
 Defaults to reading a transformed \code{most.lhns} from the Hemibrain Google Team Drive.}
+
+\item{overwrite}{logical, whether or not to overwrite matches already made.}
 }
 \description{
-Match up neurons between the hemibrain and FAFB and save the
+Match up neurons between the hemibrain, FAFB and light level data and save the
   result using a
   \href{https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit#gid=0}{Google
   Sheet} on the hemibrain Google Team Drive operated by the flyconnectome

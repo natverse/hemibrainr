@@ -36,6 +36,7 @@ nlscan_split(
   selected_file = NULL,
   selected_col = "#fadadd",
   yaml = TRUE,
+  brain = FALSE,
   ...
 )
 

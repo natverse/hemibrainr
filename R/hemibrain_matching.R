@@ -767,7 +767,7 @@ fafb_matching <- function(ids = NULL,
 #' \dontrun{
 #'
 #' # Get matches
-#' matched = hemibrain_matches()
+#' matched = hemibrain.matches()
 #'
 #' }}
 #' @rdname hemibrain_matches
@@ -778,87 +778,97 @@ hemibrain_matches <- function(priority = c("FAFB","hemibrain")){
 
   # Get matches
   selected_file = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw"
-  hemibrain_matches = gsheet_manipulation(FUN = googlesheets4::read_sheet,
+  hemibrain.matches = gsheet_manipulation(FUN = googlesheets4::read_sheet,
                                                        ss = selected_file,
                                                        sheet = "lhns",
                                                        return = TRUE)
-  hemibrain_matches$bodyid = correct_id(hemibrain_matches$bodyid)
-  hemibrain_matches = hemibrain_matches[!duplicated(hemibrain_matches$bodyid),]
-  hemibrain_matches = hemibrain_matches[hemibrain_matches$bodyid!="",]
-  hemibrain_matches$ItoLee_Lineage = gsub("_.*","",hemibrain_matches$ItoLee_Hemilineage)
-  hemibrain_matches$dataset = "hemibrain"
-  rownames(hemibrain_matches) = hemibrain_matches$bodyid
-  hemibrain_matches$cell.type = hemibrain_matches$connectivity.type
+  hemibrain.matches$bodyid = correct_id(hemibrain.matches$bodyid)
+  hemibrain.matches = hemibrain.matches[!duplicated(hemibrain.matches$bodyid),]
+  hemibrain.matches = hemibrain.matches[hemibrain.matches$bodyid!="",]
+  hemibrain.matches$ItoLee_Lineage = gsub("_.*","",hemibrain.matches$ItoLee_Hemilineage)
+  hemibrain.matches$dataset = "hemibrain"
+  rownames(hemibrain.matches) = hemibrain.matches$bodyid
+  hemibrain.matches$cell.type = hemibrain.matches$connectivity.type
 
   # Get FAFB matches
-  fafb_matches = gsheet_manipulation(FUN = googlesheets4::read_sheet,
+  fafb.matches = gsheet_manipulation(FUN = googlesheets4::read_sheet,
                                                   ss = selected_file,
                                                   sheet = "fafb",
                                                   return = TRUE)
-  fafb_matches$skid = correct_id(fafb_matches$skid)
-  fafb_matches = fafb_matches[!duplicated(fafb_matches$skid),]
-  fafb_matches = fafb_matches[fafb_matches$skid!="",]
-  fafb_matches$dataset = "FAFB"
-  rownames(fafb_matches) = fafb_matches$skid
+  fafb.matches$skid = correct_id(fafb.matches$skid)
+  fafb.matches = fafb.matches[!duplicated(fafb.matches$skid),]
+  fafb.matches = fafb.matches[fafb.matches$skid!="",]
+  fafb.matches$dataset = "FAFB"
+  rownames(fafb.matches) = fafb.matches$skid
 
   # Address FAFB cell types
-  fafb_matches$cell.type = NA
+  fafb.matches$cell.type = NA
   for(q in c("good","medium","poor")){
     if(is.na(q)){
       next
     }
     if(priority=="FAFB"){
       # FAFB -> Hemibrain
-      inq = as.character(subset(fafb_matches, fafb_matches$hemibrain.match.quality==q)$skid)
+      inq = as.character(subset(fafb.matches, fafb.matches$hemibrain.match.quality==q)$skid)
       inq = inq[!is.na(inq)]
-      isna = is.na(fafb_matches[inq,]$cell.type)
-      cts = hemibrain_matches$cell.type[match(fafb_matches[inq,]$hemibrain.match,hemibrain_matches$bodyid)]
-      fafb_matches[inq,]$cell.type[isna] = cts[isna]
+      isna = is.na(fafb.matches[inq,]$cell.type)
+      cts = hemibrain.matches$cell.type[match(fafb.matches[inq,]$hemibrain.match,hemibrain.matches$bodyid)]
+      fafb.matches[inq,]$cell.type[isna] = cts[isna]
       # Hemibrain -> FAFB
-      inq = as.character(subset(hemibrain_matches, hemibrain_matches$FAFB.match.quality==q)$FAFB.match)
+      inq = as.character(subset(hemibrain.matches, hemibrain.matches$FAFB.match.quality==q)$FAFB.match)
       inq = inq[!is.na(inq)]
-      isna = is.na(fafb_matches[inq,]$cell.type)
-      fafb_matches[inq,]$cell.type[isna] = hemibrain_matches$cell.type[match(fafb_matches[inq,]$skid[isna],hemibrain_matches$FAFB.match)]
+      isna = is.na(fafb.matches[inq,]$cell.type)
+      fafb.matches[inq,]$cell.type[isna] = hemibrain.matches$cell.type[match(fafb.matches[inq,]$skid[isna],hemibrain.matches$FAFB.match)]
     }else{
       # Hemibrain -> FAFB
-      inq = as.character(subset(hemibrain_matches, hemibrain_matches$FAFB.match.quality==q)$FAFB.match)
+      inq = as.character(subset(hemibrain.matches, hemibrain.matches$FAFB.match.quality==q)$FAFB.match)
       inq = inq[!is.na(inq)]
-      isna = is.na(fafb_matches[inq,]$cell.type)
-      fafb_matches[inq,]$cell.type[isna] = hemibrain_matches$cell.type[match(fafb_matches[inq,]$skid[isna],hemibrain_matches$FAFB.match)]
+      isna = is.na(fafb.matches[inq,]$cell.type)
+      fafb.matches[inq,]$cell.type[isna] = hemibrain.matches$cell.type[match(fafb.matches[inq,]$skid[isna],hemibrain.matches$FAFB.match)]
       # FAFB -> Hemibrain
-      inq = as.character(subset(fafb_matches, fafb_matches$hemibrain.match.quality==q)$skid)
+      inq = as.character(subset(fafb.matches, fafb.matches$hemibrain.match.quality==q)$skid)
       inq = inq[!is.na(inq)]
-      isna = is.na(fafb_matches[inq,]$cell.type)
-      cts = hemibrain_matches$cell.type[match(fafb_matches[inq,]$hemibrain.match,hemibrain_matches$bodyid)]
-      fafb_matches[inq,]$cell.type[isna] = cts[isna]
+      isna = is.na(fafb.matches[inq,]$cell.type)
+      cts = hemibrain.matches$cell.type[match(fafb.matches[inq,]$hemibrain.match,hemibrain.matches$bodyid)]
+      fafb.matches[inq,]$cell.type[isna] = cts[isna]
     }
   }
 
+  # Add in neuprint types
+  ntotype = hemibrain.matches$bodyid[is.na(hemibrain.matches$cell.type)]
+  meta = neuprintr::neuprint_get_meta(ntotype)
+  types = meta$type
+  names(types) = meta$bodyid
+  hemibrain.matches[names(types),"cell.type"] = types
+
   # Work out lineages
-  for(id in as.character(fafb_matches$skid)){
-    ct = fafb_matches[id,"cell.type"]
+  for(id in as.character(fafb.matches$skid)){
+    if(is.na(id)){
+      next
+    }
+    ct = fafb.matches[id,"cell.type"]
     if(is.na(ct)){
-      fafb_matches[id,"cell.type"] = hemibrain_matches.chosen$cell.type[match(id,hemibrain_matches.chosen$FAFB.match)]
-      fafb_matches[id,"ItoLee_Hemilineage"] = hemibrain_matches.chosen$ItoLee_Hemilineage[match(id,hemibrain_matches.chosen$FAFB.match)]
+      fafb.matches[id,"cell.type"] = hemibrain.matches$cell.type[match(id,hemibrain.matches$FAFB.match)]
+      fafb.matches[id,"ItoLee_Hemilineage"] = hemibrain.matches$ItoLee_Hemilineage[match(id,hemibrain.matches$FAFB.match)]
     }else{
-      fafb_matches[id,"ItoLee_Hemilineage"] = hemibrain_matches.chosen$ItoLee_Hemilineage[match(ct,hemibrain_matches.chosen$cell.type)]
+      fafb.matches[id,"ItoLee_Hemilineage"] = hemibrain.matches$ItoLee_Hemilineage[match(ct,hemibrain.matches$cell.type)]
     }
   }
 
   # Rename cells
-  fafb_matches$cell = paste0(fafb_matches$cell.type,"#",ave(fafb_matches$cell.type,fafb_matches$cell.type,FUN= seq.int))
-  hemibrain_matches$cell = paste0(hemibrain_matches$cell.type,"#",ave(hemibrain_matches$cell.type,hemibrain_matches$cell.type,FUN= seq.int))
+  fafb.matches$cell = paste0(fafb.matches$cell.type,"#",ave(fafb.matches$cell.type,fafb.matches$cell.type,FUN= seq.int))
+  hemibrain.matches$cell = paste0(hemibrain.matches$cell.type,"#",ave(hemibrain.matches$cell.type,hemibrain.matches$cell.type,FUN= seq.int))
 
   # Fix hemilineages
-  hl = hemibrain_matches$ItoLee_Hemilineage[match(fafb_matches$skid,hemibrain_matches$FAFB.match)]
-  l = hemibrain_matches$ItoLee_Lineage[match(fafb_matches$skid,hemibrain_matches$FAFB.match)]
-  fafb_matches$ItoLee_Hemilineage[!is.na(hl)] = hl[!is.na(hl)]
-  fafb_matches$ItoLee_Lineage[!is.na(l)] = l[!is.na(l)]
+  hl = hemibrain.matches$ItoLee_Hemilineage[match(fafb.matches$skid,hemibrain.matches$FAFB.match)]
+  l = hemibrain.matches$ItoLee_Lineage[match(fafb.matches$skid,hemibrain.matches$FAFB.match)]
+  fafb.matches$ItoLee_Hemilineage[!is.na(hl)] = hl[!is.na(hl)]
+  fafb.matches$ItoLee_Lineage[!is.na(l)] = l[!is.na(l)]
 
   # Make matching data frame
-  matched.h = hemibrain_matches[,c("bodyid", "cell.type", "cell", "ItoLee_Hemilineage",
+  matched.h = hemibrain.matches[,c("bodyid", "cell.type", "cell", "ItoLee_Hemilineage",
                                    "FAFB.match", "FAFB.match.quality", "LM.match", "LM.match.quality", "dataset")]
-  matched.f = fafb_matches[,c("skid",  "cell.type",  "cell", "ItoLee_Hemilineage",
+  matched.f = fafb.matches[,c("skid",  "cell.type",  "cell", "ItoLee_Hemilineage",
                               "hemibrain.match", "hemibrain.match.quality", "LM.match", "LM.match.quality","dataset")]
   colnames(matched.h) = colnames(matched.f) = c("id","cell.type", "cell","ItoLee_Hemilineage","match","quality", "LM.match", "LM.match.quality","dataset")
   matched = rbind(matched.h,matched.f)
@@ -866,7 +876,7 @@ hemibrain_matches <- function(priority = c("FAFB","hemibrain")){
   matched$match[is.na(matched$match)] = "none"
 
   # Sort out types
-  hemibrain_matches$connectivity.type = hemibrain_matches$cell.type
+  hemibrain.matches$connectivity.type = hemibrain.matches$cell.type
   matched$cell.type = gsub("[a-z]$","",matched$cell.type)
   matched$cell.type[is.na(matched$cell.type)] = "uncertain"
 
