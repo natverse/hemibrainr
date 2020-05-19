@@ -14,6 +14,7 @@
 #' @param WithNodes whether to plot branch points
 #' @param lwd Line width (default 1)
 #' @param radius For connectors and axon-dendrite split node (default 1). If \code{NULL}, an appropriate value is guessed.
+#' @param brain a template brain to plot. \code{FALSE} results in no brain plotted.
 #' @param highflow whether to plot the nodes of highest (with in one standard deviation less than maximum) flow centrality (pink points)
 #' @param Verbose logical indicating that info about each selected neuron should be printed (default TRUE)
 #' @param Wait logical indicating that there should be a pause between each displayed neuron

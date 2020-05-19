@@ -83,6 +83,8 @@ plot3d_somas(
 \item{selected_col}{the color in which selected neurons (such as those specified in selected_file) should be plotted}
 
 \item{yaml}{a logical indicating that selections should be saved to disk in (human-readable) yaml rather than (machine-readable) rda format}
+
+\item{brain}{a template brain to plot. \code{FALSE} results in no brain plotted.}
 }
 \value{
 Plots coloured neuron(s)

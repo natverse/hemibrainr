@@ -736,9 +736,6 @@ fafb_matching <- function(ids = NULL,
 }
 
 
-
-
-
 #' Retrieve matched up neurons between the hemibrain and FAFB
 #'
 #' @description Many neurons in the hemibrain data have been matched one to one with FAFB neurons (hemibrain->FAFB) and
