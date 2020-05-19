@@ -797,8 +797,8 @@ hemibrain_matches <- function(priority = c("FAFB","hemibrain")){
   fafb.matches$skid = correct_id(fafb.matches$skid)
   fafb.matches = fafb.matches[!duplicated(fafb.matches$skid),]
   fafb.matches = fafb.matches[fafb.matches$skid!="",]
-  fafb.matches = subset(fafb.matches, !is.na(fafb.matches$bodyid))
-  fafb.matches = fafb.matches[!duplicated(fafb.matches$bodyid),]
+  fafb.matches = subset(fafb.matches, !is.na(fafb.matches$skid))
+  fafb.matches = fafb.matches[!duplicated(fafb.matches$skid),]
   fafb.matches$dataset = "FAFB"
   rownames(fafb.matches) = fafb.matches$skid
 
