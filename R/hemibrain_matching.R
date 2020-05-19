@@ -877,7 +877,7 @@ hemibrain_matches <- function(priority = c("FAFB","hemibrain")){
   matched$match[is.na(matched$match)] = "none"
 
   # Sort out types
-  hemibrain.matches$connectivity.type = hemibrain.matches$cell.type
+  matched$connectivity.type = matched$cell.type
   matched$cell.type = gsub("[a-z]$","",matched$cell.type)
   matched$cell.type[is.na(matched$cell.type)] = "uncertain"
 
