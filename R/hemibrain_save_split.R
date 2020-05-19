@@ -877,6 +877,7 @@ ENTER to continue (with notes made), c to cancel (without notes made).
 # Most of the pipeline is built, so you can try running the code after you change the google sheet.
 #' @export
 #' @rdname hemibrain_adjust_saved_split
+##### lets tear this function apart
 hemibrain_adjust_saved_somas <- function(bodyids = hemibrainr::hemibrain_neuron_bodyids(),
                                          brain = hemibrainr::hemibrain.surf,
                                          selected_file = "1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E",
@@ -887,54 +888,50 @@ hemibrain_adjust_saved_somas <- function(bodyids = hemibrainr::hemibrain_neuron_
                            ss = selected_file,
                            sheet = "roots",
                            return = TRUE)
-  ### Get cell body fibre information
-  meta = neuprint_get_meta(bodyids)
-  cbfs = unique(meta$cellBodyFiber)
-  cbfs = cbfs[!is.na(cbfs)]
-  cbfs = c(cbfs, "unknown")
-  ### For each CBF, correct somas
-  for(cbf in cbfs){
-    message("Examining cell body fibre: ", cbf)
-    if(cbf == "unknown"){
-      ids = as.character(meta$bodyid)[is.na(meta$cellBodyFiber)]
-      batches = type_batches(ids = ids, batch_size = batch_size, gs = gs)
-      for(b in 1:length(batches)){
-        message(b, "/", length(batches)," batches of neurons without a CBF")
-        batch = batches[[b]]
-        batch = gs$bodyid[gs$type%in%batch]
-        if(is.issue(batch)){
+  # how would you like to go through neurons? one at a time, or based on cell body fibre
+  # or Auto, if I ever add it...
+  mode <- must_be(prompt = "Which mode do you want to use? single neurons (s) / Cell body fibre group (g)",answers = c("s","g"))
+  # reset3d(brain=brain)
+  if(mode=="s"){
+    neurons = correct_singles(bodyids = bodyids, brain = brain)
+    save_soma_to_gsheet(neurons = neurons, gs = gs, selected_file = selected_file)
+    message("Task updated! ")
+  }
+  if(mode=="g"){
+    ### Get cell body fibre information
+    meta = neuprint_get_meta(bodyids)
+    cbfs = unique(meta$cellBodyFiber)
+    cbfs = cbfs[!is.na(cbfs)]
+    cbfs = c(cbfs, "unknown")
+    ### For each CBF, correct somas
+    for(cbf in cbfs){
+      message("Examining cell body fibre: ", cbf)
+      if(cbf == "unknown"){
+        ids = as.character(meta$bodyid)[is.na(meta$cellBodyFiber)]
+        batches = type_batches(ids = ids, batch_size = batch_size, gs = gs)
+        for(b in 1:length(batches)){
+          message(b, "/", length(batches)," batches of neurons without a CBF")
+          batch = batches[[b]]
+          batch = gs$bodyid[gs$type%in%batch]
+          if(is.issue(batch)){
             next
+          }
+          message("Neurons in batch: ", length(batch))
+          neurons = cbf_check(ids = batch, gs = gs, motivate = FALSE, cbf = cbf)
         }
-        message("Neurons in batch: ", length(batch))
-        neurons = cbf_check(ids = batch, motivate = FALSE, cbf = cbf)
+      }else{
+        ids = subset(meta, meta$cellBodyFiber == cbf)
+        ns = neuprintr::neuprint_search(search = cbf,field = "cellBodyFiber",all_segments = TRUE)
+        ids = as.character(ns$bodyid)
+        neurons = cbf_check(ids = ids, motivate = FALSE)
       }
-    }else{
-      ids = subset(meta, meta$cellBodyFiber == cbf)
-      ns = neuprintr::neuprint_search(search = cbf,field = "cellBodyFiber",all_segments = TRUE)
-      ids = as.character(ns$bodyid)
-      neurons = cbf_check(ids = ids, motivate = FALSE)
     }
+    message("Task updated! ")
   }
 }
 
-# hidden
-correct_singles <- function(neurons, brain = NULL){
-  message("select neurons that you would like to re-root:")
-  selected = as.character(nlscan_split(neurons, brain = brain))
-  for(s in selected){
-    reset3d(brain=brain)
-    x = neurons[[s]]
-    y = hemibrain_correctsoma(x)
-    y <- hemibrain_carryover_labels(x=x,y=y)
-    y <- hemibrain_carryover_tags(x=x,y=y)
-    y$tags$soma.edit = TRUE
-    y <- hemibrain_neuron_class(y)
-    neurons[[s]] = y
-  }
-  y
-}
-
-# Hey nik, this function does a lot of the legt work
+####
+# Hey nik, this function does a lot of the leg work
 # including saving to google sheet.
 # hidden
 cbf_check<-function(ids,
@@ -955,40 +952,12 @@ cbf_check<-function(ids,
     rgl::plot3d(neurons, lwd = 2, col = hemibrainr::hemibrain_bright_colors["cerise"], soma = FALSE)
     plot3d_somas(neurons)
     ### Choose how to edit
-    mode <- must_be(prompt = "Which mode do you want to use? single neurons (s) / group (g) / skip (k)",answers = c("s","g","k"))
-    if(mode=="s"){
-      neurons = correct_singles(neurons, brain = brain)
-    }
-    if(mode=="g"){
-      neurons = correct_group(neurons, brain = brain)
-    }
+    reset3d(brain=brain)
+    neurons = correct_group(neurons, brain = brain)
     continue <- !hemibrain_choice(prompt = paste0("Are we finished with ", cbf,"? yes/no "))
   }
   ### Save to Google Sheet
-  update = prepare_update(someneuronlist=neurons,gs=gs,initials="flyconnectome",print=FALSE)
-  update$position = update$soma
-  update = update[,!colnames(update)%in%c("checked", "user", "time","soma")]
-  update = cbind(update, catmaid::soma(neurons))
-  update$soma.edit = as.logical(update$soma.edit)
-  update = subset(update, update$soma.edit)
-  message("Your updates: ")
-  print(knitr::kable(update))
-  rows = as.numeric(rownames(update))
-  for(r in rows){
-    range = paste0("C",r,":H",r)
-    up = update[as.character(r),intersect(colnames(gs),colnames(update))]
-    if(sum(is.na(up))>1){
-      message("Erroneous NAs generated for row ", r, ", dropping this update")
-      print(up)
-      next
-    }
-    gsheet_manipulation(FUN = googlesheets4::range_write,
-                        ss = selected_file,
-                        range = range,
-                        data = up,
-                        sheet = "roots",
-                        col_names = FALSE)
-  }
+  save_soma_to_gsheet(neurons = neurons, gs = gs, selected_file = selected_file)
   message("Task updated! ")
 }
 
@@ -1007,9 +976,8 @@ correct_group <- function(neurons, brain = NULL){
     points = nat::xyzmatrix(neuron.points)
     pnts = primary_neurite_cable(neurons, OmitFailures = TRUE)
     ### Plot
-    reset3d(brain=brain)
     plot3d(pnts, lwd = 2, col = hemibrainr::hemibrain_bright_colors["purple"], soma = FALSE)
-    plot3d(neurons, lwd = 2, col = hemibrainr::hemibrain_bright_colors["cerise"], soma = FALSE)
+    plot3d(neurons, lwd = 2, col = hemibrainr::hemibrain_bright_colors["paleorange"], soma = FALSE)
     plot3d_somas(neurons)
     ### Should we continue?
     continue <- hemibrain_choice(prompt = c("Select new soma points? yes/no "))
@@ -1019,7 +987,7 @@ correct_group <- function(neurons, brain = NULL){
     ### Select region to reroot
     make.selection = TRUE
     while(make.selection){
-      angle <- readline(prompt = "Position data in order to make selection ")
+      angle <- readline(prompt = "Rotate data in order to best select somas (Enter to continue) ")
       message("Draw box over true soma region")
       selection <- rgl::select3d()
       selected <- selection(points)
@@ -1056,6 +1024,110 @@ correct_group <- function(neurons, brain = NULL){
   }
   neurons
 }
+
+# hidden
+correct_singles <- function(bodyids, brain = NULL){
+  neurons = hemibrain_read_neurons(bodyids)
+  nopen3d()
+  correcting = TRUE
+  while(correcting){
+    for (n in neurons) {
+      n.points =  nat::xyzmatrix(n)
+      end_points = nat::endpoints(n)
+      end_points = n.points[end_points,]
+      clear3d()
+      plot3d(brain, col = "grey70", alpha = 0.1)
+      #
+      points3d(n.points, lwd = 2, col = hemibrainr::hemibrain_bright_colors["yellow"], soma = FALSE)
+      plot3d_somas(n)
+      fix = hemibrain_choice(prompt = "Does the soma need fixing - Current possition in Green? yes/no ")
+      if(isTRUE(fix)) {
+        make.selection = TRUE
+      }
+      else {
+        make.selection = FALSE
+      }
+      while(make.selection){
+        angle = readline(prompt = "position view in order to best select soma (Enter to continue) ")
+        message("Click and drag a box over an end point, in red, to select new soma location")
+        clear3d()
+        plot3d(brain, col = "grey70", alpha = 0.1)
+        points3d(end_points, lwd = 2, col = hemibrainr::hemibrain_bright_colors["red"], soma = FALSE)
+        points3d(n.points, lwd = 2, col = hemibrainr::hemibrain_bright_colors["yellow"], soma = FALSE)
+
+        selection <- rgl::select3d()
+
+        selected = selection(end_points)
+        selected.point = end_points[selected,]
+        if (length(selected.point) != 3) {
+          selected.point = selected.point[1,]
+        }
+        clear3d()
+        plot3d(brain, col = "grey70", alpha = 0.1)
+        points3d(n.points, lwd = 2, col = hemibrainr::hemibrain_bright_colors["yellow"], soma = FALSE)
+        spheres3d(selected.point, radius = 300, col = 'blue')
+        plot3d_somas(n)
+        make.selection = !hemibrain_choice(prompt = c("Happy with selection? (old soma in Green, new soma in Blue) yes/no "))
+
+        # reroot neuron
+        eps <- nat::endpoints(n)
+        #
+        ep.sel <- selection(nat::xyzmatrix(n)[eps,])
+        ep.sel <- eps[ep.sel][1]
+        soma.id <- n$d$PointNo[match(ep.sel, 1:nrow(n$d))]
+        # create ourneuron as a graph, with the new origin point
+        y <- nat::as.neuron(nat::as.ngraph(n$d), origin =26)
+        # carryover labels and tags
+        y <- hemibrain_carryover_labels(x=n,y=y)
+        y <- hemibrain_carryover_tags(x=n,y=y)
+        y$tags$soma = soma.id
+        y$tags$soma.edit = TRUE
+        y = hemibrain_neuron_class(y)
+        neurons[[toString(n$bodyid)]] = y
+      }
+    }
+    clear3d()
+    plot3d(neurons, soma = TRUE, WithConnectors = FALSE)
+    plot3d_somas(neurons)
+    correcting = !hemibrain_choice(prompt = c("Final check, are you happy with the new soma possitions? yes/no "))
+  }
+  neurons
+}
+
+# hidden
+save_soma_to_gsheet = function(neurons = neurons,
+                               gs = gs,
+                               selected_file = selected_file){
+  ### Save to Google Sheet
+  update = prepare_update(someneuronlist=neurons,gs=gs,initials="flyconnectome",print=FALSE)
+  update$position = update$soma
+  update$point = "root"
+  update = update[,!colnames(update)%in%c("checked", "user", "time","soma")]
+  update = cbind(update, catmaid::soma(neurons))
+  ### add neuron type here
+  update$type = gs$type[as.numeric(row.names(update))]
+  update$soma.edit = as.logical(update$soma.edit)
+  update = subset(update, update$soma.edit)
+  message("Your updates: ")
+  print(knitr::kable(update))
+  rows = as.numeric(rownames(update))
+  for(r in rows){
+    range = paste0("B",r,":H",r)
+    up = update[as.character(r),intersect(colnames(gs),colnames(update))]
+    if(sum(is.na(up))>1){
+      message("Erroneous NAs generated for row ", r, ", dropping this update")
+      print(up)
+      next
+    }
+    gsheet_manipulation(FUN = googlesheets4::range_write,
+                        ss = selected_file,
+                        range = range,
+                        data = up,
+                        sheet = "roots",
+                        col_names = FALSE)
+  }
+}
+
 
 # Hey Nik, this function reads neurons for the pipline.
 # hidden
