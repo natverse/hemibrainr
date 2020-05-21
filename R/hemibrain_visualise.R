@@ -318,7 +318,8 @@ hemibrain_type_plot <- function(bodyids = NULL,
                               neuprintr::neuprint_get_meta(missing))
     }
   }
-  ito.cts = unique(meta$type)
+  # NB this means that NA -> "NA"
+  ito.cts = as.character(unique(meta$type))
 
   # Neurons
   bodyids = as.character(bodyids)
