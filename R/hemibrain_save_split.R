@@ -1026,8 +1026,12 @@ correct_group <- function(neurons, brain = NULL){
 }
 
 # hidden
-correct_singles <- function(bodyids, brain = NULL){
-  neurons = hemibrain_read_neurons(bodyids)
+correct_singles <- function(neurons, brain = NULL){
+  list = 1
+  if (is.neuron(neurons)) {
+    neurons = neuronlist(neurons)
+    list = 0
+  }
   nopen3d()
   correcting = TRUE
   while(correcting){
@@ -1040,7 +1044,7 @@ correct_singles <- function(bodyids, brain = NULL){
       #
       points3d(n.points, lwd = 2, col = hemibrainr::hemibrain_bright_colors["yellow"], soma = FALSE)
       plot3d_somas(n)
-      fix = hemibrain_choice(prompt = "Does the soma need fixing - Current possition in Green? yes/no ")
+      fix = hemibrain_choice(prompt = "Does the soma need fixing? Current possition in Green, if present yes/no ")
       if(isTRUE(fix)) {
         make.selection = TRUE
       }
@@ -1090,6 +1094,9 @@ correct_singles <- function(bodyids, brain = NULL){
     plot3d(neurons, soma = TRUE, WithConnectors = FALSE)
     plot3d_somas(neurons)
     correcting = !hemibrain_choice(prompt = c("Final check, are you happy with the new soma possitions? yes/no "))
+  }
+  if (list == 0) {
+    neurons = hemibrain_neuron_class(neurons)
   }
   neurons
 }
