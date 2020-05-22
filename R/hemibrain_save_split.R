@@ -893,7 +893,8 @@ hemibrain_adjust_saved_somas <- function(bodyids = hemibrainr::hemibrain_neuron_
   mode <- must_be(prompt = "Which mode do you want to use? single neurons (s) / Cell body fibre group (g)",answers = c("s","g"))
   # reset3d(brain=brain)
   if(mode=="s"){
-    neurons = correct_singles(bodyids = bodyids, brain = brain)
+    neurons = pipeline_read_neurons(batch = bodyids, db = NULL, clean = FALSE, motivate = FALSE)
+    neurons = correct_singles(neurons, brain = brain)
     save_soma_to_gsheet(neurons = neurons, gs = gs, selected_file = selected_file)
     message("Task updated! ")
   }
