@@ -160,7 +160,7 @@ hemibrain_matching <- function(ids = NULL,
   rgl::bg3d("white")
   # choose ids
   if(is.null(ids)){
-    ids = gs$bodyid[gs$User==initals]
+    ids = gs$bodyid[gs$User==initials]
   }else{
     ids = intersect(ids,gs$bodyid)
   }
@@ -591,7 +591,7 @@ fafb_matching <- function(ids = NULL,
   rgl::bg3d("white")
   # choose ids
   if(is.null(ids)){
-    ids = gs$skid[gs$User==initals]
+    ids = gs$skid[gs$User==initials]
   }else{
     ids = intersect(ids,gs$skid)
   }
