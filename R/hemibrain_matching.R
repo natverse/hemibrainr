@@ -13,7 +13,7 @@
 #'   in order to use this function. This function makes use of the Google
 #'   Filestream application, which should be installed on your machine. Further,
 #'   note that neurons are read from the FAFB CATMAID project, and you must have
-#'   log-in details for this project recorded in your .Renviron for this
+#'   login details for this project recorded in your .Renviron for this
 #'   function to work.
 #'
 #' @param ids body IDs for hemibrain neurons present in the
