@@ -68,7 +68,7 @@
 #' # "fafbpipeline/fib.fafb.crossnblast.twigs5.mean.compress (1).rda"))
 #'
 #' # Match!
-#' hemibrain_FAFB_matching(hemibrain.nblast = fib.fafb.crossnblast.twigs5.mean.compress)
+#' hemibrain_matching(hemibrain.nblast = fib.fafb.crossnblast.twigs5.mean.compress)
 #' }}
 #' @rdname hemibrain_matching
 #' @export
@@ -540,6 +540,15 @@ fafb_matching <- function(ids = NULL,
                         db=hemibrain_neurons(),
                         query = NULL,
                         overwrite = FALSE){
+  # Packages
+  if(!requireNamespace("nat.jrcbrains", quietly = TRUE)) {
+    stop("Please install nat.jrcbrains using:\n", call. = FALSE,
+         "remotes::install_github('natverse/nat.jrcbrains')")
+  }
+  if(!requireNamespace("elmr", quietly = TRUE)) {
+    stop("Please install elmr using:\n", call. = FALSE,
+         "remotes::install_github('natverse/elmr')")
+  }
   # Motivate!
   nat::nopen3d()
   plot_inspirobot()
