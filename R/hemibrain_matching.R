@@ -784,7 +784,7 @@ hemibrain_matches <- function(priority = c("FAFB","hemibrain")){
 
   # Get matches
   selected_file = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw"
-  hemibrain.matches = hemibrainr:::gsheet_manipulation(FUN = googlesheets4::read_sheet,
+  hemibrain.matches = gsheet_manipulation(FUN = googlesheets4::read_sheet,
                                                        ss = selected_file,
                                                        sheet = "lhns",
                                                        return = TRUE)
@@ -799,7 +799,7 @@ hemibrain_matches <- function(priority = c("FAFB","hemibrain")){
   hemibrain.matches$cell.type = hemibrain.matches$connectivity.type
 
   # Get FAFB matches
-  fafb.matches = hemibrainr:::gsheet_manipulation(FUN = googlesheets4::read_sheet,
+  fafb.matches = gsheet_manipulation(FUN = googlesheets4::read_sheet,
                                                   ss = selected_file,
                                                   sheet = "fafb",
                                                   return = TRUE)
