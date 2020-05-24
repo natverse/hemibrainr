@@ -396,7 +396,7 @@ lm_matching <- function(ids = NULL,
   say_hello(initials)
   rgl::bg3d("white")
   # choose brain
-  brain = hemibrain.surf
+  brain = hemibrainr::hemibrain.surf
   # Make matches!
   for(n in gs$id){
     # Get id
@@ -605,7 +605,7 @@ fafb_matching <- function(ids = NULL,
     ids = intersect(ids,gs$skid)
   }
   # choose brain
-  brain = hemibrain.surf
+  brain = hemibrainr::hemibrain.surf
   # Make matches!
   for(n in gs$skid){
     # Get id
