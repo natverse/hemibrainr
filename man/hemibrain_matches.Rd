@@ -8,7 +8,7 @@ hemibrain_matches(priority = c("FAFB", "hemibrain"))
 }
 \arguments{
 \item{priority}{whether to use FAFB->hemibrain matches (FAFB) or hemibrain->FAFB matches (hemibrain) in order to ascribe
-cell type names to FAFB neurons. In both cases, cell type names are attached to hemibrain bodyids, and propogated to their FAFB matches.}
+cell type names to FAFB neurons. In both cases, cell type names are attached to hemibrain bodyids, and propagated to their FAFB matches.}
 }
 \value{
 a \code{data.frame} which includes neuron's ID (either its CATMAID skeleton ID or neuprint body ID), the data set from which it comes,
@@ -16,10 +16,10 @@ its putative cell type and connectivity type, and its match in the other dataset
 }
 \description{
 Many neurons in the hemibrain data have been matched one to one with FAFB neurons (hemibrain->FAFB) and
-FAFB neurons have been matched with their hemibrain counterparts (FAFB->hemibrain). These matchs have been done by the
+FAFB neurons have been matched with their hemibrain counterparts (FAFB->hemibrain). These matches have been done by the
 Flyconnectome Group at the University of Cambridge, and are recorded on a
 \href{https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit#gid=0}{Google
-  Sheet} on our Hemibrain Google Team Drive, to which you will need access
+  Sheet} on our hemibrain Google Team Drive, to which you will need access
 through an authenticated account to view and use this function. Matches have three levels of 'quality', largely
 dependent on the degree of manual tracing for FAFB neurons - good (could be the same cell), medium (same cell type) and poor (could be the same or similar cell type).
 }
