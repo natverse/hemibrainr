@@ -779,6 +779,7 @@ fafb_matching <- function(ids = NULL,
 #' @rdname hemibrain_matches
 #' @export
 #' @seealso \code{\link{hemibrain_matching}}
+#' @importFrom stats ave
 hemibrain_matches <- function(priority = c("FAFB","hemibrain")){
   priority = match.arg(priority)
 
