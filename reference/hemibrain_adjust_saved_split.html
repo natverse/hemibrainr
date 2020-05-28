@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Manually review split neurons and save your results to a Google Sheet for everyone to use — hemibrain_adjust_saved_somas • hemibrainr</title>
+<title>List all dependencies between natverse packages Adapted from the function — hemibrain_adjust_saved_somas • hemibrainr</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,7 +46,7 @@
 
 
 
-<meta property="og:title" content="Manually review split neurons and save your results to a Google Sheet for everyone to use — hemibrain_adjust_saved_somas" />
+<meta property="og:title" content="List all dependencies between natverse packages Adapted from the function — hemibrain_adjust_saved_somas" />
 <meta property="og:description" content="A 3D interactive pipeline for reviewing our hemibrain_precomputed_splitpoints. Each user can
 manually edit neurons if needs be, add whether or not they have a soma or are cropped, and make additional notes. The purpose of this
 function if for interested users to work together to curate axon-dendrite splits suggested by the flow_centrality algorithm.
@@ -122,7 +122,7 @@ the Google Sheet database to your Google Drive." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Manually review split neurons and save your results to a Google Sheet for everyone to use</h1>
+    <h1>List all dependencies between natverse packages Adapted from the function</h1>
     <small class="dont-index">Source: <a href='https://github.com/flyconnectome/hemibrainr/blob/master/R/hemibrain_fix_soma.R'><code>R/hemibrain_fix_soma.R</code></a>, <a href='https://github.com/flyconnectome/hemibrainr/blob/master/R/hemibrain_save_split.R'><code>R/hemibrain_save_split.R</code></a></small>
     <div class="hidden name"><code>hemibrain_adjust_saved_split.Rd</code></div>
     </div>
@@ -186,7 +186,7 @@ it is recommended to use <code>hemibrain.surf</code> (which is in raw voxel spac
     </tr>
     <tr>
       <th>selected_file</th>
-      <td><p>an optional path to a yaml file that already contains a selection</p></td>
+      <td><p>identifier for google sheet</p></td>
     </tr>
     <tr>
       <th>db</th>
@@ -283,7 +283,12 @@ through branches as a quick way to assign axon/dendrite.</p></li>
 Video tutorial: <a href='https://drive.google.com/open?id=1FB7m1QFKApysO74maHAx-yg2CQWkx49C'>https://drive.google.com/open?id=1FB7m1QFKApysO74maHAx-yg2CQWkx49C</a></p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
+    <pre class="examples"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
+<span class='kw'>if</span> (!<span class='fu'><a href='https://rdrr.io/r/base/library.html'>require</a></span>(<span class='no'>RColorBrewer</span>)) <span class='kw pkg'>utils</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/r/utils/install.packages.html'>install.packages</a></span>(<span class='st'>"RColorBrewer"</span>)
+<span class='kw'>if</span> (!<span class='fu'><a href='https://rdrr.io/r/base/library.html'>require</a></span>(<span class='no'>dbscan</span>)) <span class='kw pkg'>utils</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/r/utils/install.packages.html'>install.packages</a></span>(<span class='st'>"dbscan"</span>)
+<span class='co'>#' dep &lt;- hemibrain_adjust_saved_somas(bodyids, brain = hemibrain.surf, selected_file = 1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E, db = NULL, batch_size = 5)</span>
+}
+<span class='co'># \donttest{</span>
 <span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
 <span class='co'># Assign mPN review to Nik Drummond (ND)</span>
 <span class='fu'>hemibrain_task_update</span>(<span class='kw'>bodyids</span> <span class='kw'>=</span> <span class='no'>mpn.ids</span>, <span class='kw'>column</span> <span class='kw'>=</span> <span class='st'>"user"</span>, <span class='kw'>update</span> <span class='kw'>=</span> <span class='st'>"ND"</span>)
