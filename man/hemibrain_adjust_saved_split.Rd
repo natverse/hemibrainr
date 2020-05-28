@@ -4,7 +4,7 @@
 \alias{hemibrain_adjust_saved_somas}
 \alias{hemibrain_task_update}
 \alias{hemibrain_adjust_saved_split}
-\title{Manually review split neurons and save your results to a Google Sheet for everyone to use}
+\title{List all dependencies between natverse packages Adapted from the function}
 \usage{
 hemibrain_adjust_saved_somas(
   bodyids = NULL,
@@ -47,7 +47,7 @@ hemibrain_adjust_saved_split(
 \item{brain}{which brain to plot while splitting neuron. If \code{NULL} no brain is plotted. Otherwise
 it is recommended to use \code{hemibrain.surf} (which is in raw voxel space).}
 
-\item{selected_file}{an optional path to a yaml file that already contains a selection}
+\item{selected_file}{identifier for google sheet}
 
 \item{db}{a \code{neuronlist} object to act as a database of neuron skeletons. If you want to provide all
 hemibrain neurons that could possibly be split, then you can use \code{\link{hemibrain_download_neurons}} to download
@@ -122,6 +122,11 @@ If you have authentication issues with the Google sheet, look \href{(https://goo
 Video tutorial: \url{https://drive.google.com/open?id=1FB7m1QFKApysO74maHAx-yg2CQWkx49C}
 }
 \examples{
+\dontrun{
+if (!require(RColorBrewer)) utils::install.packages("RColorBrewer")
+if (!require(dbscan)) utils::install.packages("dbscan")
+#' dep <- hemibrain_adjust_saved_somas(bodyids, brain = hemibrain.surf, selected_file = 1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E, db = NULL, batch_size = 5)
+}
 \donttest{
 \dontrun{
 # Assign mPN review to Nik Drummond (ND)

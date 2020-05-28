@@ -20,7 +20,9 @@ Suggests:
     rmarkdown,
     covr,
     nat.jrcbrains,
-    elmr
+    elmr,
+    dbscan,
+    RColorBrewer
 VignetteBuilder: knitr
 Depends:
     R (>= 3.1),
@@ -47,9 +49,7 @@ Imports:
     googledrive,
     jsonlite,
     plyr,
-    catmaid,
-    dbscan,
-    RColorBrewer
+    catmaid
 Remotes: 
     natverse/neuprintr,
     tidyverse/googlesheets4,
