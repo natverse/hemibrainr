@@ -47,7 +47,9 @@ Imports:
     googledrive,
     jsonlite,
     plyr,
-    catmaid
+    catmaid,
+    dbscan,
+    RColorBrewer
 Remotes: 
     natverse/neuprintr,
     tidyverse/googlesheets4,
