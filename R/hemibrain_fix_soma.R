@@ -1,10 +1,6 @@
-
-
-
-
 ### Core Function
 
-#' List all dependencies between natverse packages Adapted from the function
+#' Manually, or semiatomatically check and edit soma possitions for hemibrain neurons
 #' @param bodyids list of bodyids
 #' @param brain hemibrain surface mesh
 #' @param selected_file identifier for google sheet
@@ -32,7 +28,7 @@ hemibrain_adjust_saved_somas <- function(bodyids = NULL,
   # how would you like to go through neurons? one at a time, or based on cell body fibre
   # or Auto, if I ever add it...
   mode <-
-    must_be(prompt = "Which mode do you want to use? single neurons (s) / Cell body fibre from neurons (n) / Indifical cbf (c)", answers = c("s", "n", "c"))
+    must_be(prompt = "Which mode do you want to use? single neurons (s) / Cell body fibre from neurons (n) / Identified cbf (c): ", answers = c("s", "n", "c"))
   # reset3d(brain=brain)
   if (mode == "s") {
     if (is.null(bodyids)) {
@@ -88,7 +84,7 @@ hemibrain_adjust_saved_somas <- function(bodyids = NULL,
                   answers = cbf_list())
     if (cbf == "no answer yet fool") {
       message(
-        "You must provide a cbf which exists in the hemibrain data. Use the cbf_list() function to check the list"
+        "You must provide a cbf which exists in the hemibrain data. Use hemibrainr:::cbf_list() function to check the list"
       )
       stop()
     }
@@ -264,7 +260,7 @@ save_soma_to_gsheet = function(neurons = neurons,
   update = cbind(update, catmaid::soma(neurons))
   ### add neuron type here
   update$type = gs$type[as.numeric(row.names(update))]
-  update$soma.edit = as.logical(update$soma.edit)
+  update$soma.edit = as.logical(1)
   update = subset(update, update$soma.edit)
   message("Your updates: ")
   print(knitr::kable(update))
@@ -300,16 +296,17 @@ save_checked_soma_to_gsheet = function(neurons = neurons,
     print = FALSE
   )
   rows = as.numeric(rownames(update))
-  checked = as.data.frame(matrix(TRUE, nrow = length(neurons), ncol = 1))
-  range = paste0("V", rows[1], ":V", rows[length(rows)])
-  gsheet_manipulation(
-    FUN = googlesheets4::range_write,
-    ss = selected_file,
-    range = range,
-    data = checked,
-    sheet = "roots",
-    col_names = FALSE
-  )
+  for (r in rows){
+    range = paste0("V",r)
+    gsheet_manipulation(
+      FUN = googlesheets4::range_write,
+      ss = selected_file,
+      range = range,
+      data = as.data.frame(TRUE),
+      sheet = "roots",
+      col_names = FALSE
+    )
+  }
 }
 
 #### Cell fibre body related functions
@@ -534,7 +531,7 @@ fix_missing_soma = function(neurons) {
 # run dbscan on a set of neurons - have this as a higher level function...
 dbscan_neurons = function(neurons,
                           eps = 1600,
-                          MinPts = 5) {
+                          minPts = 5) {
   if (!requireNamespace("dbscan", quietly = TRUE)) {
     stop("Please install dbscan using:\n",
          call. = FALSE,
@@ -548,5 +545,5 @@ dbscan_neurons = function(neurons,
 
   # dbscan on soma points
   set.seed(123)
-  db = dbscan::dbscan(somas[, c('X', 'Y', 'Z')], eps = eps, MinPts = MinPts)
+  db = dbscan::dbscan(somas[, c('X', 'Y', 'Z')], eps = eps, minPts = minPts)
 }
