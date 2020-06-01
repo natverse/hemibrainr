@@ -1,23 +1,24 @@
 ### Core Function
 
-#' Manually, or semiatomatically check and edit soma possitions for hemibrain neurons
+#' Manually, or semi-automatically check and edit soma possitions for hemibrain neurons
 #' @param bodyids list of bodyids
+#' @param cbf string of a cell body fibre
 #' @param brain hemibrain surface mesh
 #' @param selected_file identifier for google sheet
 #' @examples
 #' \dontrun{
 #' if (!require(RColorBrewer)) utils::install.packages("RColorBrewer")
 #' if (!require(dbscan)) utils::install.packages("dbscan")
-#' #' dep <- hemibrain_adjust_saved_somas(bodyids, brain = hemibrain.surf, selected_file = 1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E, db = NULL, batch_size = 5)
+#' #' dep <- hemibrain_adjust_saved_somas(bodyids, brain = hemibrain.surf, selected_file = 1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E, db = NULL)
 #' }
 #' @export
 #' @rdname hemibrain_adjust_saved_split
 ##### lets tear this function apart
 hemibrain_adjust_saved_somas <- function(bodyids = NULL,
+                                         cbf = NULL,
                                          brain = hemibrainr::hemibrain.surf,
                                          selected_file = "1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E",
-                                         db = NULL,
-                                         batch_size = 5) {
+                                         db = NULL) {
   ### Get GoogleSheet Database
   gs = gsheet_manipulation(
     FUN = googlesheets4::read_sheet,
@@ -45,9 +46,6 @@ hemibrain_adjust_saved_somas <- function(bodyids = NULL,
     save_soma_to_gsheet(neurons = neurons,
                         gs = gs,
                         selected_file = selected_file)
-    save_checked_soma_to_gsheet(neurons = neurons,
-                                gs = gs,
-                                selected_file = selected_file)
     message("Task updated! ")
   }
   if (mode == "n") {
@@ -55,7 +53,7 @@ hemibrain_adjust_saved_somas <- function(bodyids = NULL,
       message("Please provide neuron bodyids as input, exiting pipeline")
       stop()
     }
-    message("Collecting Cell fibre bodies from provided neurons")
+    message("Collecting Cell fibre bodies from provided neurons...")
     # get cell fibre body list from neurons
     cbfs = cbf_from_bodyid(bodyids)
     # how many are their, and list them
@@ -78,15 +76,14 @@ hemibrain_adjust_saved_somas <- function(bodyids = NULL,
     }
   }
   if (mode == "c") {
-    # input a cell fibre body
-    cbfs = cbf_list()
-    cbf = must_be(prompt = "Please input a Cell fibre body to correct",
-                  answers = cbf_list())
-    if (cbf == "no answer yet fool") {
+    if (is.null(cbf)) {
+      # input a cell fibre body
+      cbfs = cbf_list()
       message(
-        "You must provide a cbf which exists in the hemibrain data. Use hemibrainr:::cbf_list() function to check the list"
+        " You need to provide a valid cell body fibre here. If you're not sure, check hemibrainr:::cbf_list() for a list"
       )
-      stop()
+      cbf = must_be(prompt = "Please input a Cell body fibre to correct: ",
+                    answers = cbf_list())
     }
     # if yes, fix...
     message(c("Fixing Cell fibre body: ", cbf))
@@ -95,6 +92,7 @@ hemibrain_adjust_saved_somas <- function(bodyids = NULL,
                 selected_file = selected_file)
   }
 }
+
 
 #### Correct single neurons
 
@@ -113,7 +111,7 @@ correct_singles <- function(neurons, brain = NULL) {
     for (n in neurons) {
       n.points =  nat::xyzmatrix(n)
       end_points = nat::endpoints(n)
-      end_points = n.points[end_points,]
+      end_points = n.points[end_points, ]
       clear3d()
       plot3d(brain, col = "grey70", alpha = 0.1)
       #
@@ -152,9 +150,9 @@ correct_singles <- function(neurons, brain = NULL) {
         selection <- rgl::select3d()
 
         selected = selection(end_points)
-        selected.point = end_points[selected,]
+        selected.point = end_points[selected, ]
         if (length(selected.point) != 3) {
-          selected.point = selected.point[1,]
+          selected.point = selected.point[1, ]
         }
         clear3d()
         plot3d(brain, col = "grey70", alpha = 0.1)
@@ -173,7 +171,7 @@ correct_singles <- function(neurons, brain = NULL) {
         # reroot neuron
         eps <- nat::endpoints(n)
         #
-        ep.sel <- selection(nat::xyzmatrix(n)[eps,])
+        ep.sel <- selection(nat::xyzmatrix(n)[eps, ])
         ep.sel <- eps[ep.sel][1]
         soma.id <- n$d$PointNo[match(ep.sel, 1:nrow(n$d))]
         # create ourneuron as a graph, with the new origin point
@@ -244,75 +242,45 @@ pipeline_read_neurons <- function(batch,
 }
 
 # hidden
-save_soma_to_gsheet = function(neurons = neurons,
+save_soma_to_gsheet = function(neurons = NULL,
+                               cbf = NULL,
                                gs = gs,
                                selected_file = selected_file) {
-  ### Save to Google Sheet
-  update = prepare_update(
-    someneuronlist = neurons,
-    gs = gs,
-    initials = "flyconnectome",
-    print = FALSE
-  )
-  update$position = update$soma
-  update$point = "root"
-  update = update[,!colnames(update) %in% c("checked", "user", "time", "soma")]
-  update = cbind(update, catmaid::soma(neurons))
-  ### add neuron type here
-  update$type = gs$type[as.numeric(row.names(update))]
-  update$soma.edit = as.logical(1)
-  update = subset(update, update$soma.edit)
-  message("Your updates: ")
-  print(knitr::kable(update))
-  rows = as.numeric(rownames(update))
-  for (r in rows) {
-    range = paste0("B", r, ":H", r)
-    up = update[as.character(r), intersect(colnames(gs), colnames(update))]
-    if (sum(is.na(up)) > 1) {
-      message("Erroneous NAs generated for row ",
-              r,
-              ", dropping this update")
-      print(up)
-      next
+  ### get index of bodyids in gs
+  if(!is.null(cbf)){
+    c = cbf
+    bodyids = subset(gs, cbf == c)$bodyid
+  }
+  ind = which(gs$bodyid %in% bodyids)
+  update = gs[ind,]
+  update$soma.checked = "TRUE"
+  # for each neuron in the neuron list:
+  for(n in neurons){
+    # if the root point id doesn't match between the update and the neuron list
+    if(n$soma != update[which(update$bodyid == n$bodyid),]$position) {
+      # update the values in update with the ones from the neuron list
+      update[which(update$bodyid == n$bodyid),]$position = n$soma
+      update[which(update$bodyid == n$bodyid),]$X = n$d[n$soma,]$X
+      update[which(update$bodyid == n$bodyid),]$Y = n$d[n$soma,]$Y
+      update[which(update$bodyid == n$bodyid),]$Z = n$d[n$soma,]$Z
+      update[which(update$bodyid == n$bodyid),]$soma.edit = "TRUE"
     }
-    gsheet_manipulation(
-      FUN = googlesheets4::range_write,
-      ss = selected_file,
-      range = range,
-      data = up,
-      sheet = "roots",
-      col_names = FALSE
-    )
   }
-}
-
-save_checked_soma_to_gsheet = function(neurons = neurons,
-                                       gs = gs,
-                                       selected_file = selected_file) {
-  update = prepare_update(
-    someneuronlist = neurons,
-    gs = gs,
-    initials = "flyconnectome",
-    print = FALSE
+  range = paste0("A",ind[1],":W",ind[length(ind)])
+  gsheet_manipulation(
+    FUN = googlesheets4::range_write,
+    ss = selected_file,
+    range = range,
+    data = update,
+    sheet = "roots",
+    col_names = FALSE
   )
-  rows = as.numeric(rownames(update))
-  for (r in rows){
-    range = paste0("V",r)
-    gsheet_manipulation(
-      FUN = googlesheets4::range_write,
-      ss = selected_file,
-      range = range,
-      data = as.data.frame(TRUE),
-      sheet = "roots",
-      col_names = FALSE
-    )
-  }
 }
 
 #### Cell fibre body related functions
 
 #' @importFrom rgl clear3d spheres3d legend3d
-correct_cbf = function(cbf = cbf, gs, selected_file) {
+correct_cbf = function(cbf = cbf, gs, selected_file, neurons_from_gs = TRUE) {
   if (!requireNamespace("RColorBrewer", quietly = TRUE)) {
     stop(
       "Please install RColorBrewer using:\n",
@@ -320,12 +288,18 @@ correct_cbf = function(cbf = cbf, gs, selected_file) {
       "install.packages('RColorBrewer')"
     )
   }
-  neurons = neurons_in_cbf(cbf)
+  if(!isTRUE(neurons_from_gs)){
+    neurons = neurons_in_cbf(cbf)
+  } else {
+    c = cbf
+    neurons = hemibrain_read_neurons(subset(gs, cbf == c)$bodyid)
+  }
+
   db = dbscan_neurons(neurons)
 
   ###
   # If only returns 0 in cluster...
-  if (unique(db$cluster) == 0) {
+  if (length(unique(db$cluster)) == 1 & unique(db$cluster) == 0) {
     message("All", length(db$cluster),  " somas have been labeled as noise")
     fix = hemibrain_choice(prompt = "Do you wish to correct each manually? yes|no")
     if (isTRUE(fix)) {
@@ -347,8 +321,8 @@ correct_cbf = function(cbf = cbf, gs, selected_file) {
     if (length(unique(db$cluster)) <= 2) {
       somas = soma_locations(neurons)
       # remove the 'noise' somas
-      noise = somas[which(db$cluster == 0),]
-      somas = somas[which(db$cluster == 1),]
+      noise = somas[which(db$cluster == 0), ]
+      somas = somas[which(db$cluster == 1), ]
       # plot and check if cluster is correct
       clear3d()
       plot3d(neurons, col = "grey70")
@@ -374,7 +348,7 @@ correct_cbf = function(cbf = cbf, gs, selected_file) {
     } else {
       ### if multiple potential clusters were returned
       # get colour vector of distinct colours
-      qual_col_pals = RColorBrewer::brewer.pal.info[brewer.pal.info$category == 'qual',]
+      qual_col_pals = RColorBrewer::brewer.pal.info[brewer.pal.info$category == 'qual', ]
       col = unlist(mapply(
         RColorBrewer::brewer.pal,
         qual_col_pals$maxcolors,
@@ -428,11 +402,9 @@ correct_cbf = function(cbf = cbf, gs, selected_file) {
     }
   }
   save_soma_to_gsheet(neurons = neurons,
+                      cbf = cbf,
                       gs = gs,
                       selected_file = selected_file)
-  save_checked_soma_to_gsheet(neurons = neurons,
-                              gs = gs,
-                              selected_file = selected_file)
   message("Task updated! ")
 }
 
@@ -480,18 +452,18 @@ soma_locations = function(neurons) {
                             ncol = length(colnames(neurons[[1]]$d))))
   colnames(somas) = colnames(neurons[[1]]$d)
   for (n in 1:length(neurons)) {
-    if (sum(is.na(neurons[[n]]$d[neurons[[n]]$soma,])) == 0) {
-      if (!"bodyid" %in% names(neurons[[n]]$d[neurons[[n]]$soma,])) {
-        add = neurons[[n]]$d[neurons[[n]]$soma,]
+    if (sum(is.na(neurons[[n]]$d[neurons[[n]]$soma, ])) == 0) {
+      if (!"bodyid" %in% names(neurons[[n]]$d[neurons[[n]]$soma, ])) {
+        add = neurons[[n]]$d[neurons[[n]]$soma, ]
         add$bodyid = neurons[[n]]$bodyid
-        somas[n,] = add
+        somas[n, ] = add
       } else {
-        somas[n,] = neurons[[n]]$d[neurons[[n]]$soma,]
+        somas[n, ] = neurons[[n]]$d[neurons[[n]]$soma, ]
       }
     }
   }
   # remove some of the columns...
-  somas = somas[,!colnames(somas) %in% c("Label", "W", "Parent")]
+  somas = somas[, !colnames(somas) %in% c("Label", "W", "Parent")]
   somas
 }
 
@@ -530,7 +502,7 @@ fix_missing_soma = function(neurons) {
 
 # run dbscan on a set of neurons - have this as a higher level function...
 dbscan_neurons = function(neurons,
-                          eps = 1600,
+                          eps = 1500,
                           minPts = 5) {
   if (!requireNamespace("dbscan", quietly = TRUE)) {
     stop("Please install dbscan using:\n",
