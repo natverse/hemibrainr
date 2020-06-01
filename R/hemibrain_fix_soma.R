@@ -175,7 +175,7 @@ correct_singles <- function(neurons, brain = NULL) {
         ep.sel <- eps[ep.sel][1]
         soma.id <- n$d$PointNo[match(ep.sel, 1:nrow(n$d))]
         # create ourneuron as a graph, with the new origin point
-        y <- nat::as.neuron(nat::as.ngraph(n$d), origin = 26)
+        y <- nat::as.neuron(nat::as.ngraph(n$d), origin = soma.id)
         # carryover labels and tags
         y <- hemibrain_carryover_labels(x = n, y = y)
         y <- hemibrain_carryover_tags(x = n, y = y)
