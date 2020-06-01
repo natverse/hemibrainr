@@ -111,7 +111,7 @@ correct_singles <- function(neurons, brain = NULL) {
     for (n in neurons) {
       n.points =  nat::xyzmatrix(n)
       end_points = nat::endpoints(n)
-      end_points = n.points[end_points, ]
+      end_points = n.points[end_points,]
       clear3d()
       plot3d(brain, col = "grey70", alpha = 0.1)
       #
@@ -150,9 +150,9 @@ correct_singles <- function(neurons, brain = NULL) {
         selection <- rgl::select3d()
 
         selected = selection(end_points)
-        selected.point = end_points[selected, ]
+        selected.point = end_points[selected,]
         if (length(selected.point) != 3) {
-          selected.point = selected.point[1, ]
+          selected.point = selected.point[1,]
         }
         clear3d()
         plot3d(brain, col = "grey70", alpha = 0.1)
@@ -167,11 +167,10 @@ correct_singles <- function(neurons, brain = NULL) {
         make.selection = !hemibrain_choice(prompt = c(
           "Happy with selection? (old soma in Green, new soma in Blue) yes/no "
         ))
-
         # reroot neuron
         eps <- nat::endpoints(n)
         #
-        ep.sel <- selection(nat::xyzmatrix(n)[eps, ])
+        ep.sel <- selection(nat::xyzmatrix(n)[eps,])
         ep.sel <- eps[ep.sel][1]
         soma.id <- n$d$PointNo[match(ep.sel, 1:nrow(n$d))]
         # create ourneuron as a graph, with the new origin point
@@ -179,8 +178,10 @@ correct_singles <- function(neurons, brain = NULL) {
         # carryover labels and tags
         y <- hemibrain_carryover_labels(x = n, y = y)
         y <- hemibrain_carryover_tags(x = n, y = y)
-        y$tags$soma = soma.id
-        y$tags$soma.edit = TRUE
+        y$tags = as.list(y$tags)
+        y$tags["soma"] = soma.id
+        y$tags["soma.edit"] = TRUE
+        y$soma = y$tags$soma
         y = hemibrain_neuron_class(y)
         neurons[[toString(n$bodyid)]] = y
       }
@@ -247,26 +248,26 @@ save_soma_to_gsheet = function(neurons = NULL,
                                gs = gs,
                                selected_file = selected_file) {
   ### get index of bodyids in gs
-  if(!is.null(cbf)){
+  if (!is.null(cbf)) {
     c = cbf
     bodyids = subset(gs, cbf == c)$bodyid
   }
   ind = which(gs$bodyid %in% bodyids)
-  update = gs[ind,]
+  update = gs[ind, ]
   update$soma.checked = "TRUE"
   # for each neuron in the neuron list:
-  for(n in neurons){
+  for (n in neurons) {
     # if the root point id doesn't match between the update and the neuron list
-    if(n$soma != update[which(update$bodyid == n$bodyid),]$position) {
+    if (n$soma != update[which(update$bodyid == n$bodyid), ]$position) {
       # update the values in update with the ones from the neuron list
-      update[which(update$bodyid == n$bodyid),]$position = n$soma
-      update[which(update$bodyid == n$bodyid),]$X = n$d[n$soma,]$X
-      update[which(update$bodyid == n$bodyid),]$Y = n$d[n$soma,]$Y
-      update[which(update$bodyid == n$bodyid),]$Z = n$d[n$soma,]$Z
-      update[which(update$bodyid == n$bodyid),]$soma.edit = "TRUE"
+      update[which(update$bodyid == n$bodyid), ]$position = n$soma
+      update[which(update$bodyid == n$bodyid), ]$X = n$d[n$soma, ]$X
+      update[which(update$bodyid == n$bodyid), ]$Y = n$d[n$soma, ]$Y
+      update[which(update$bodyid == n$bodyid), ]$Z = n$d[n$soma, ]$Z
+      update[which(update$bodyid == n$bodyid), ]$soma.edit = "TRUE"
     }
   }
-  range = paste0("A",ind[1]+1,":W",ind[length(ind)]+1)
+  range = paste0("A", ind[1] + 1, ":W", ind[length(ind)] + 1)
   gsheet_manipulation(
     FUN = googlesheets4::range_write,
     ss = selected_file,
@@ -280,7 +281,10 @@ save_soma_to_gsheet = function(neurons = NULL,
 #### Cell fibre body related functions
 
 #' @importFrom rgl clear3d spheres3d legend3d
-correct_cbf = function(cbf = cbf, gs, selected_file, neurons_from_gs = TRUE) {
+correct_cbf = function(cbf = cbf,
+                       gs,
+                       selected_file,
+                       neurons_from_gs = TRUE) {
   if (!requireNamespace("RColorBrewer", quietly = TRUE)) {
     stop(
       "Please install RColorBrewer using:\n",
@@ -288,7 +292,7 @@ correct_cbf = function(cbf = cbf, gs, selected_file, neurons_from_gs = TRUE) {
       "install.packages('RColorBrewer')"
     )
   }
-  if(!isTRUE(neurons_from_gs)){
+  if (!isTRUE(neurons_from_gs)) {
     neurons = neurons_in_cbf(cbf)
   } else {
     c = cbf
@@ -301,7 +305,9 @@ correct_cbf = function(cbf = cbf, gs, selected_file, neurons_from_gs = TRUE) {
   # If only returns 0 in cluster...
   if (length(unique(db$cluster)) == 1) {
     if (unique(db$cluster) == 0) {
-      message("All", length(db$cluster),  " somas have been labeled as noise")
+      message("All",
+              length(db$cluster),
+              " somas have been labeled as noise")
       fix = hemibrain_choice(prompt = "Do you wish to correct each manually? yes|no")
       if (isTRUE(fix)) {
         correct_singles(neurons)
@@ -323,8 +329,8 @@ correct_cbf = function(cbf = cbf, gs, selected_file, neurons_from_gs = TRUE) {
     if (length(unique(db$cluster)) <= 2) {
       somas = soma_locations(neurons)
       # remove the 'noise' somas
-      noise = somas[which(db$cluster == 0), ]
-      somas = somas[which(db$cluster == 1), ]
+      noise = somas[which(db$cluster == 0),]
+      somas = somas[which(db$cluster == 1),]
       # plot and check if cluster is correct
       clear3d()
       plot3d(neurons, col = "grey70")
@@ -350,7 +356,7 @@ correct_cbf = function(cbf = cbf, gs, selected_file, neurons_from_gs = TRUE) {
     } else {
       ### if multiple potential clusters were returned
       # get colour vector of distinct colours
-      qual_col_pals = RColorBrewer::brewer.pal.info[brewer.pal.info$category == 'qual', ]
+      qual_col_pals = RColorBrewer::brewer.pal.info[brewer.pal.info$category == 'qual',]
       col = unlist(mapply(
         RColorBrewer::brewer.pal,
         qual_col_pals$maxcolors,
@@ -403,10 +409,12 @@ correct_cbf = function(cbf = cbf, gs, selected_file, neurons_from_gs = TRUE) {
       }
     }
   }
-  save_soma_to_gsheet(neurons = neurons,
-                      cbf = cbf,
-                      gs = gs,
-                      selected_file = selected_file)
+  save_soma_to_gsheet(
+    neurons = neurons,
+    cbf = cbf,
+    gs = gs,
+    selected_file = selected_file
+  )
   message("Task updated! ")
 }
 
@@ -454,18 +462,18 @@ soma_locations = function(neurons) {
                             ncol = length(colnames(neurons[[1]]$d))))
   colnames(somas) = colnames(neurons[[1]]$d)
   for (n in 1:length(neurons)) {
-    if (sum(is.na(neurons[[n]]$d[neurons[[n]]$soma, ])) == 0) {
-      if (!"bodyid" %in% names(neurons[[n]]$d[neurons[[n]]$soma, ])) {
-        add = neurons[[n]]$d[neurons[[n]]$soma, ]
+    if (sum(is.na(neurons[[n]]$d[neurons[[n]]$soma,])) == 0) {
+      if (!"bodyid" %in% names(neurons[[n]]$d[neurons[[n]]$soma,])) {
+        add = neurons[[n]]$d[neurons[[n]]$soma,]
         add$bodyid = neurons[[n]]$bodyid
-        somas[n, ] = add
+        somas[n,] = add
       } else {
-        somas[n, ] = neurons[[n]]$d[neurons[[n]]$soma, ]
+        somas[n,] = neurons[[n]]$d[neurons[[n]]$soma,]
       }
     }
   }
   # remove some of the columns...
-  somas = somas[, !colnames(somas) %in% c("Label", "W", "Parent")]
+  somas = somas[,!colnames(somas) %in% c("Label", "W", "Parent")]
   somas
 }
 
