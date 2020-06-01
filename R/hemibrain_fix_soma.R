@@ -266,7 +266,7 @@ save_soma_to_gsheet = function(neurons = NULL,
       update[which(update$bodyid == n$bodyid),]$soma.edit = "TRUE"
     }
   }
-  range = paste0("A",ind[1],":W",ind[length(ind)])
+  range = paste0("A",ind[1]+1,":W",ind[length(ind)]+1)
   gsheet_manipulation(
     FUN = googlesheets4::range_write,
     ss = selected_file,
