@@ -299,14 +299,16 @@ correct_cbf = function(cbf = cbf, gs, selected_file, neurons_from_gs = TRUE) {
 
   ###
   # If only returns 0 in cluster...
-  if (length(unique(db$cluster)) == 1 & unique(db$cluster) == 0) {
-    message("All", length(db$cluster),  " somas have been labeled as noise")
-    fix = hemibrain_choice(prompt = "Do you wish to correct each manually? yes|no")
-    if (isTRUE(fix)) {
-      correct_singles(neurons)
-    } else {
-      message("You lazy person you... exiting pipeline")
-      stop()
+  if (length(unique(db$cluster)) == 1) {
+    if (unique(db$cluster) == 0) {
+      message("All", length(db$cluster),  " somas have been labeled as noise")
+      fix = hemibrain_choice(prompt = "Do you wish to correct each manually? yes|no")
+      if (isTRUE(fix)) {
+        correct_singles(neurons)
+      } else {
+        message("You lazy person you... exiting pipeline")
+        stop()
+      }
     }
   } else {
     # how many clusters and noise points are their?
