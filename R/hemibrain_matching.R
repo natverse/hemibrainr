@@ -527,6 +527,31 @@ lm_matching <- function(ids = NULL,
       rgl::bg3d("white")
     }
   }
+  plot_inspirobot()
+  say_encouragement(initials)
+  # Read!
+  gs2 = gsheet_manipulation(FUN = googlesheets4::read_sheet,
+                            ss = selected_file,
+                            sheet = "lm",
+                            guess_max = 3000,
+                            return = TRUE)
+  gs2$id = correct_id(gs2$id)
+  rownames(gs2) = gs2$id
+  gs = gs[rownames(gs2),]
+  # Write!
+  write_matches(gs=gs,
+                ids = unsaved,
+                id.field = "id",
+                column = match.field,
+                ws = "lm")
+  write_matches(gs=gs,
+                ids = unsaved,
+                id.field = "id",
+                column = quality.field,
+                ws = "lm")
+  unsaved = c()
+  gs = gs2
+  rgl::bg3d("white")
   say_encouragement(initials)
 }
 
@@ -887,7 +912,7 @@ hemibrain_matches <- function(priority = c("FAFB","hemibrain")){
 
   # Sort out types
   matched$connectivity.type = matched$cell.type
-  matched$cell.type = gsub("[a-z]$","",matched$cell.type)
+  matched$cell.type = gsub("_.*","",matched$cell.type)
   matched$cell.type[is.na(matched$cell.type)] = "uncertain"
   matched$connectivity.type[is.na(matched$connectivity.type)] = "uncertain"
 
@@ -895,5 +920,4 @@ hemibrain_matches <- function(priority = c("FAFB","hemibrain")){
   matched
 
 }
-
 

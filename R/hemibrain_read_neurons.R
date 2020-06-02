@@ -52,7 +52,7 @@ hemibrain_read_neurons<-function(x = NULL,
                                  local = FALSE,
                                  microns = FALSE,
                                  remove.bad.synapses = FALSE,
-                                 clean = TRUE,
+                                 clean = FALSE,
                                  ...){
   if(is.null(x) && isFALSE(savedir)){
     stop("You must either supply bodyids to read from neuPrint using x, or
@@ -386,6 +386,3 @@ good_savedir <- function(savedir = TRUE,
   }
   savedir
 }
-
-
-

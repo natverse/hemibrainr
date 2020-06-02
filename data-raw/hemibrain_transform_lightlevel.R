@@ -61,8 +61,16 @@ for(r in 1:nrow(fcs)){
 }
 
 # Convert most.lhns
-# most.lhns.hemi.dps = nat.templatebrains::xform_brain(lhns::most.lhns.dps, reference= "JRCFIB2018F", sample="FCWB", .parallel = TRUE, OmitFailures = TRUE)
-# most.lhns.hemi = nat.templatebrains::xform_brain(lhns::most.lhns, reference= "JRCFIB2018F", sample="FCWB", .parallel = TRUE, OmitFailures = TRUE)
+jlns = lhns::jfw.lhns
+jlns[,] = lhns::jfw.lhns[,intersect(colnames(lhns::most.lhns),colnames(lhns::jfw.lhns))]
+jlns.dps = lhns::jfw.lhns.dps
+jlns.dps[,] = lhns::jfw.lhns[,intersect(colnames(lhns::most.lhns.dps),colnames(lhns::jfw.lhns.dps))]
+most.lhns = c(lhns::most.lhns, jlns)
+most.lhns.dps = c(lhns::most.lhns, jlns.dps)
+most.lhns.hemi.dps = nat.templatebrains::xform_brain(lhns::most.lhns.dps, reference= "JRCFIB2018F", sample="FCWB", .parallel = TRUE, OmitFailures = TRUE)
+most.lhns.hemi = nat.templatebrains::xform_brain(lhns::most.lhns, reference= "JRCFIB2018F", sample="FCWB", .parallel = TRUE, OmitFailures = TRUE)
+saveRDS(most.lhns.hemi.dps, file = paste0(lhfolder,"most_lhns_dps_JRCFIB2018F.rds"))
+saveRDS(most.lhns.hemi, file = paste0(lhfolder,"most_lhns_JRCFIB2018F.rds"))
 
 # Convert most.lhins
 most.lhins.hemi.dps = nat.templatebrains::xform_brain(lhns::most.lhins.dps, reference= "JRCFIB2018F", sample="FCWB", .parallel = TRUE, OmitFailures = TRUE)
