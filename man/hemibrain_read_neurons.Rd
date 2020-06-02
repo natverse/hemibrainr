@@ -11,7 +11,7 @@ hemibrain_read_neurons(
   local = FALSE,
   microns = FALSE,
   remove.bad.synapses = FALSE,
-  clean = TRUE,
+  clean = FALSE,
   ...
 )
 
