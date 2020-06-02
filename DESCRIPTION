@@ -20,7 +20,9 @@ Suggests:
     rmarkdown,
     covr,
     nat.jrcbrains,
-    elmr
+    elmr,
+    dbscan,
+    RColorBrewer
 VignetteBuilder: knitr
 Depends:
     R (>= 3.1),

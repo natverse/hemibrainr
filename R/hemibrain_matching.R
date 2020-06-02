@@ -396,7 +396,7 @@ lm_matching <- function(ids = NULL,
   say_hello(initials)
   rgl::bg3d("white")
   # choose brain
-  brain = hemibrain.surf
+  brain = hemibrainr::hemibrain.surf
   # Make matches!
   for(n in gs$id){
     # Get id
@@ -630,7 +630,7 @@ fafb_matching <- function(ids = NULL,
     ids = intersect(ids,gs$skid)
   }
   # choose brain
-  brain = hemibrain.surf
+  brain = hemibrainr::hemibrain.surf
   # Make matches!
   for(n in gs$skid){
     # Get id
@@ -773,15 +773,15 @@ fafb_matching <- function(ids = NULL,
 #' Retrieve matched up neurons between the hemibrain and FAFB
 #'
 #' @description Many neurons in the hemibrain data have been matched one to one with FAFB neurons (hemibrain->FAFB) and
-#' FAFB neurons have been matched with their hemibrain counterparts (FAFB->hemibrain). These matchs have been done by the
+#' FAFB neurons have been matched with their hemibrain counterparts (FAFB->hemibrain). These matches have been done by the
 #' Flyconnectome Group at the University of Cambridge, and are recorded on a
 #' \href{https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit#gid=0}{Google
-#'   Sheet} on our Hemibrain Google Team Drive, to which you will need access
+#'   Sheet} on our hemibrain Google Team Drive, to which you will need access
 #' through an authenticated account to view and use this function. Matches have three levels of 'quality', largely
 #' dependent on the degree of manual tracing for FAFB neurons - good (could be the same cell), medium (same cell type) and poor (could be the same or similar cell type).
 #'
 #' @param priority whether to use FAFB->hemibrain matches (FAFB) or hemibrain->FAFB matches (hemibrain) in order to ascribe
-#' cell type names to FAFB neurons. In both cases, cell type names are attached to hemibrain bodyids, and propogated to their FAFB matches.
+#' cell type names to FAFB neurons. In both cases, cell type names are attached to hemibrain bodyids, and propagated to their FAFB matches.
 #'
 #' @return  a \code{data.frame} which includes neuron's ID (either its CATMAID skeleton ID or neuprint body ID), the data set from which it comes,
 #' its putative cell type and connectivity type, and its match in the other dataset.
@@ -804,12 +804,13 @@ fafb_matching <- function(ids = NULL,
 #' @rdname hemibrain_matches
 #' @export
 #' @seealso \code{\link{hemibrain_matching}}
+#' @importFrom stats ave
 hemibrain_matches <- function(priority = c("FAFB","hemibrain")){
   priority = match.arg(priority)
 
   # Get matches
   selected_file = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw"
-  hemibrain.matches = hemibrainr:::gsheet_manipulation(FUN = googlesheets4::read_sheet,
+  hemibrain.matches = gsheet_manipulation(FUN = googlesheets4::read_sheet,
                                                        ss = selected_file,
                                                        sheet = "lhns",
                                                        return = TRUE)
@@ -824,7 +825,7 @@ hemibrain_matches <- function(priority = c("FAFB","hemibrain")){
   hemibrain.matches$cell.type = hemibrain.matches$connectivity.type
 
   # Get FAFB matches
-  fafb.matches = hemibrainr:::gsheet_manipulation(FUN = googlesheets4::read_sheet,
+  fafb.matches = gsheet_manipulation(FUN = googlesheets4::read_sheet,
                                                   ss = selected_file,
                                                   sheet = "fafb",
                                                   return = TRUE)
