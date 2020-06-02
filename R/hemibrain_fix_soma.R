@@ -356,7 +356,7 @@ correct_cbf = function(cbf = cbf,
     } else {
       ### if multiple potential clusters were returned
       # get colour vector of distinct colours
-      qual_col_pals = RColorBrewer::brewer.pal.info[brewer.pal.info$category == 'qual',]
+      qual_col_pals = RColorBrewer::brewer.pal.info[RColorBrewer::brewer.pal.info$category == 'qual',]
       col = unlist(mapply(
         RColorBrewer::brewer.pal,
         qual_col_pals$maxcolors,
