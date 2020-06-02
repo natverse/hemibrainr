@@ -78,12 +78,12 @@ hemibrain_adjust_saved_somas <- function(bodyids = NULL,
   if (mode == "c") {
     if (is.null(cbf)) {
       # input a cell fibre body
-      cbfs = cbf_list()
+      cbfs = unique(gs$cbf)
       message(
-        " You need to provide a valid cell body fibre here. If you're not sure, check hemibrainr:::cbf_list() for a list"
+        " You need to provide a valid cell body fibre here."
       )
       cbf = must_be(prompt = "Please input a Cell body fibre to correct: ",
-                    answers = cbf_list())
+                    answers = cbfs)
     }
     # if yes, fix...
     message(c("Fixing Cell fibre body: ", cbf))
