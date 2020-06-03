@@ -436,7 +436,7 @@ correct_cbf = function(cbf = cbf,
           " somas individually."
         ))
         #
-        neurons[which(db$cluster == clusters)] = correct_singles(neurons[which(db$cluster == clusters)], brain = brain)
+        neurons[which(db$cluster != clusters)] = correct_singles(neurons[which(db$cluster != clusters)], brain = brain)
       }
     }
   }
