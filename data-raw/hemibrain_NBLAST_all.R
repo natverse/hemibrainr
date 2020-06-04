@@ -168,8 +168,8 @@ hemibrain.lhns.mean.1 = nat.nblast::nblast(query = most.lhns.hemi.dps,
                                          target = hemibrain.dps,
                                          .parallel=TRUE,
                                          normalised = TRUE)
-hemibrain.lhns.mean.2 = nat.nblast::nblast(query = most.lhns.hemi.dps,
-                                         target = hemibrain.dps,
+hemibrain.lhns.mean.2 = nat.nblast::nblast(query = hemibrain.dps,
+                                         target = most.lhns.hemi.dps,
                                          .parallel=TRUE,
                                          normalised = TRUE)
 hemibrain.lhns.mean = (hemibrain.lhns.mean.1+t(hemibrain.lhns.mean.2))/2

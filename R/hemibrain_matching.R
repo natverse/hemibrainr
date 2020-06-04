@@ -285,6 +285,26 @@ hemibrain_matching <- function(ids = NULL,
       rgl::bg3d("white")
     }
   }
+  if(length(unsaved)){
+    plot_inspirobot()
+    say_encouragement(initials)
+    # Read!
+    gs2 = gsheet_manipulation(FUN = googlesheets4::read_sheet,
+                              ss = selected_file,
+                              sheet = "lhns",
+                              guess_max = 3000,
+                              return = TRUE)
+    gs2$bodyid = correct_id(gs2$bodyid)
+    rownames(gs2) = gs2$bodyid
+    gs = gs[rownames(gs2),]
+    # Write!
+    write_matches(gs=gs,
+                  ids = unsaved,
+                  column = match.field)
+    write_matches(gs=gs,
+                  ids = unsaved,
+                  column = quality.field)
+  }
 }
 
 # hidden
@@ -527,31 +547,30 @@ lm_matching <- function(ids = NULL,
       rgl::bg3d("white")
     }
   }
-  plot_inspirobot()
-  say_encouragement(initials)
-  # Read!
-  gs2 = gsheet_manipulation(FUN = googlesheets4::read_sheet,
-                            ss = selected_file,
-                            sheet = "lm",
-                            guess_max = 3000,
-                            return = TRUE)
-  gs2$id = correct_id(gs2$id)
-  rownames(gs2) = gs2$id
-  gs = gs[rownames(gs2),]
-  # Write!
-  write_matches(gs=gs,
-                ids = unsaved,
-                id.field = "id",
-                column = match.field,
-                ws = "lm")
-  write_matches(gs=gs,
-                ids = unsaved,
-                id.field = "id",
-                column = quality.field,
-                ws = "lm")
-  unsaved = c()
-  gs = gs2
-  rgl::bg3d("white")
+  if(length(unsaved)){
+    plot_inspirobot()
+    say_encouragement(initials)
+    # Read!
+    gs2 = gsheet_manipulation(FUN = googlesheets4::read_sheet,
+                              ss = selected_file,
+                              sheet = "lm",
+                              guess_max = 3000,
+                              return = TRUE)
+    gs2$id = correct_id(gs2$id)
+    rownames(gs2) = gs2$id
+    gs = gs[rownames(gs2),]
+    # Write!
+    write_matches(gs=gs,
+                  ids = unsaved,
+                  id.field = "id",
+                  column = match.field,
+                  ws = "lm")
+    write_matches(gs=gs,
+                  ids = unsaved,
+                  id.field = "id",
+                  column = quality.field,
+                  ws = "lm")
+  }
   say_encouragement(initials)
 }
 
@@ -765,6 +784,31 @@ fafb_matching <- function(ids = NULL,
       gs = gs2
       rgl::bg3d("white")
     }
+  }
+  if(length(unsaved)){
+    plot_inspirobot()
+    say_encouragement(initials)
+    # Read!
+    gs2 = gsheet_manipulation(FUN = googlesheets4::read_sheet,
+                              ss = selected_file,
+                              sheet = "fafb",
+                              guess_max = 3000,
+                              return = TRUE)
+    gs2$skid = correct_id(gs2$skid)
+    rownames(gs2) = gs2$skid
+    gs = gs[rownames(gs2),]
+    gs = gs[!duplicated(gs$skid),]
+    # Write!
+    write_matches(gs=gs,
+                  ids = unsaved,
+                  id.field = "skid",
+                  column = match.field,
+                  ws = "fafb")
+    write_matches(gs=gs,
+                  ids = unsaved,
+                  id.field = "skid",
+                  column = quality.field,
+                  ws = "fafb")
   }
   say_encouragement(initials)
 }

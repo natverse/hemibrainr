@@ -4,14 +4,14 @@
 \alias{hemibrain_adjust_saved_somas}
 \alias{hemibrain_task_update}
 \alias{hemibrain_adjust_saved_split}
-\title{List all dependencies between natverse packages Adapted from the function}
+\title{Manually, or semi-automatically check and edit soma possitions for hemibrain neurons}
 \usage{
 hemibrain_adjust_saved_somas(
   bodyids = NULL,
+  cbf = NULL,
   brain = hemibrainr::hemibrain.surf,
   selected_file = "1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E",
-  db = NULL,
-  batch_size = 5
+  db = NULL
 )
 
 hemibrain_task_update(
@@ -44,6 +44,8 @@ hemibrain_adjust_saved_split(
 \arguments{
 \item{bodyids}{bodyids which specify individual neurons, as used in the relevant neuPrint project}
 
+\item{cbf}{string of a cell body fibre}
+
 \item{brain}{which brain to plot while splitting neuron. If \code{NULL} no brain is plotted. Otherwise
 it is recommended to use \code{hemibrain.surf} (which is in raw voxel space).}
 
@@ -53,11 +55,6 @@ it is recommended to use \code{hemibrain.surf} (which is in raw voxel space).}
 hemibrain neurons that could possibly be split, then you can use \code{\link{hemibrain_download_neurons}} to download
 all hemibrain neurons as a \code{nat::neuronlistfh} file. All neurons can be read
 using \code{db = hemibrain_read_neurons(savedir=TRUE)}. This can then be given as the argument to \code{db}.}
-
-\item{batch_size}{when reviewing splits for hemibrain neurons, we examine neurons (or putative cell types, see parameter \code{by.type}) in batches of this size. We then go through two phases,
-choosing neurons that are incorrect in some way (wrongly split, cropped) and then editing them manually, before saving them to a Google Sheet.
-You may not have access to this Google Sheet, in which case you will not be able to contribute manual splits for neurons to this package. Contact us
-if you would like access.}
 
 \item{update}{a vector of \code{length(bodyids)} or \code{1}, which will replace cells in the column specified by \code{column} for given bodyids (\code{bodyids}).
 E.g. If I wanted to changed the given bodyids on the task sheet to checked = TRUE, I would use \code{update = TRUE}.}
@@ -74,6 +71,11 @@ is to go through all three phases with sequential batches of neurons, of \code{b
 
 \item{check_thresh}{when checking skeleton splits and correcting them, we do not want to look at skeletons that have already been checked by others many times.
 If a skeleton has already been checked by this many users or more, it will not be given to the user to edit.}
+
+\item{batch_size}{when reviewing splits for hemibrain neurons, we examine neurons (or putative cell types, see parameter \code{by.type}) in batches of this size. We then go through two phases,
+choosing neurons that are incorrect in some way (wrongly split, cropped) and then editing them manually, before saving them to a Google Sheet.
+You may not have access to this Google Sheet, in which case you will not be able to contribute manual splits for neurons to this package. Contact us
+if you would like access.}
 
 \item{by.type}{logical. If \code{TRUE} then putative cell types (as assigned as the type field in neuPrint) of neurons are presented. The number of cell types pulled
 are of size \code{batch_size}.}
@@ -125,7 +127,7 @@ Video tutorial: \url{https://drive.google.com/open?id=1FB7m1QFKApysO74maHAx-yg2C
 \dontrun{
 if (!require(RColorBrewer)) utils::install.packages("RColorBrewer")
 if (!require(dbscan)) utils::install.packages("dbscan")
-#' dep <- hemibrain_adjust_saved_somas(bodyids, brain = hemibrain.surf, selected_file = 1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E, db = NULL, batch_size = 5)
+#' dep <- hemibrain_adjust_saved_somas(bodyids, brain = hemibrain.surf, selected_file = 1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E, db = NULL)
 }
 \donttest{
 \dontrun{
