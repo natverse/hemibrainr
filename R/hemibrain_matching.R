@@ -983,6 +983,124 @@ hemibrain_matches <- function(priority = c("FAFB","hemibrain")){
 
   # Return
   matched
+}
+
+#' @rdname hemibrain_matches
+#' @export
+lm_matches <- function(priority = c("hemibrain","lm")){
+  priority = match.arg(priority)
+
+  # Get matches
+  selected_file = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw"
+  hemibrain.matches = gsheet_manipulation(FUN = googlesheets4::read_sheet,
+                                          ss = selected_file,
+                                          sheet = "lhns",
+                                          return = TRUE)
+  hemibrain.matches$bodyid = correct_id(hemibrain.matches$bodyid)
+  hemibrain.matches = hemibrain.matches[!duplicated(hemibrain.matches$bodyid),]
+  hemibrain.matches = hemibrain.matches[hemibrain.matches$bodyid!="",]
+  hemibrain.matches$ItoLee_Lineage = gsub("_.*","",hemibrain.matches$ItoLee_Hemilineage)
+  hemibrain.matches$dataset = "hemibrain"
+  hemibrain.matches = subset(hemibrain.matches, !is.na(hemibrain.matches$bodyid))
+  hemibrain.matches = hemibrain.matches[!duplicated(hemibrain.matches$bodyid),]
+  rownames(hemibrain.matches) = hemibrain.matches$bodyid
+  hemibrain.matches$cell.type = hemibrain.matches$connectivity.type
+
+  # Get lm matches
+  lm.matches = gsheet_manipulation(FUN = googlesheets4::read_sheet,
+                                     ss = selected_file,
+                                     sheet = "lm",
+                                     return = TRUE)
+  lm.matches$id = correct_id(lm.matches$id)
+  lm.matches = lm.matches[!duplicated(lm.matches$id),]
+  lm.matches = lm.matches[lm.matches$id!="",]
+  lm.matches = subset(lm.matches, !is.na(lm.matches$id))
+  lm.matches = lm.matches[!duplicated(lm.matches$id),]
+  lm.matches$dataset = "lm"
+  rownames(lm.matches) = lm.matches$id
+
+  # Address lm cell types
+  lm.matches$cell.type = NA
+  for(q in c("good","medium","poor")){
+    if(is.na(q)){
+      next
+    }
+    if(priority=="lm"){
+      # lm -> Hemibrain
+      inq = as.character(subset(lm.matches, lm.matches$hemibrain.match.quality==q)$id)
+      inq = inq[!is.na(inq)]
+      isna = is.na(lm.matches[inq,]$cell.type)
+      cts = hemibrain.matches$cell.type[match(lm.matches[inq,]$hemibrain.match,hemibrain.matches$bodyid)]
+      lm.matches[inq,]$cell.type[isna] = cts[isna]
+      # Hemibrain -> lm
+      inq = as.character(subset(hemibrain.matches, hemibrain.matches$lm.match.quality==q)$lm.match)
+      inq = inq[!is.na(inq)]
+      isna = is.na(lm.matches[inq,]$cell.type)
+      lm.matches[inq,]$cell.type[isna] = hemibrain.matches$cell.type[match(lm.matches[inq,]$id[isna],hemibrain.matches$lm.match)]
+    }else{
+      # Hemibrain -> lm
+      inq = as.character(subset(hemibrain.matches, hemibrain.matches$lm.match.quality==q)$lm.match)
+      inq = inq[!is.na(inq)]
+      isna = is.na(lm.matches[inq,]$cell.type)
+      lm.matches[inq,]$cell.type[isna] = hemibrain.matches$cell.type[match(lm.matches[inq,]$id[isna],hemibrain.matches$lm.match)]
+      # lm -> Hemibrain
+      inq = as.character(subset(lm.matches, lm.matches$hemibrain.match.quality==q)$id)
+      inq = inq[!is.na(inq)]
+      isna = is.na(lm.matches[inq,]$cell.type)
+      cts = hemibrain.matches$cell.type[match(lm.matches[inq,]$hemibrain.match,hemibrain.matches$bodyid)]
+      lm.matches[inq,]$cell.type[isna] = cts[isna]
+    }
+  }
+
+  # Add in neuprint types
+  ntotype = hemibrain.matches$bodyid[is.na(hemibrain.matches$cell.type)]
+  meta = neuprintr::neuprint_get_meta(ntotype)
+  types = meta$type
+  names(types) = meta$bodyid
+  hemibrain.matches[names(types),"cell.type"] = types
+
+  # Work out lineages
+  for(id in as.character(lm.matches$id)){
+    if(is.na(id)){
+      next
+    }
+    ct = lm.matches[id,"cell.type"]
+    if(is.na(ct)){
+      lm.matches[id,"cell.type"] = hemibrain.matches$cell.type[match(id,hemibrain.matches$lm.match)]
+      lm.matches[id,"ItoLee_Hemilineage"] = hemibrain.matches$ItoLee_Hemilineage[match(id,hemibrain.matches$lm.match)]
+    }else{
+      lm.matches[id,"ItoLee_Hemilineage"] = hemibrain.matches$ItoLee_Hemilineage[match(ct,hemibrain.matches$cell.type)]
+    }
+  }
+
+  # Rename cells
+  lm.matches$cell = paste0(lm.matches$cell.type,"#",ave(lm.matches$cell.type,lm.matches$cell.type,FUN= seq.int))
+  hemibrain.matches$cell = paste0(hemibrain.matches$cell.type,"#",ave(hemibrain.matches$cell.type,hemibrain.matches$cell.type,FUN= seq.int))
+
+  # Fix hemilineages
+  hl = hemibrain.matches$ItoLee_Hemilineage[match(lm.matches$id,hemibrain.matches$lm.match)]
+  l = hemibrain.matches$ItoLee_Lineage[match(lm.matches$id,hemibrain.matches$lm.match)]
+  lm.matches$ItoLee_Hemilineage[!is.na(hl)] = hl[!is.na(hl)]
+  lm.matches$ItoLee_Lineage[!is.na(l)] = l[!is.na(l)]
+
+  # Make matching data frame
+  matched.h = hemibrain.matches[,c("bodyid", "cell.type", "cell", "ItoLee_Hemilineage",
+                                   "LM.match", "LM.match.quality", "FAFB.match", "FAFB.match.quality", "dataset")]
+  matched.f = lm.matches[,c("id",  "cell.type",  "cell", "ItoLee_Hemilineage",
+                              "hemibrain.match", "hemibrain.match.quality", "FAFB.match", "FAFB.match.quality","dataset")]
+  colnames(matched.h) = colnames(matched.f) = c("id","cell.type", "cell","ItoLee_Hemilineage","match","quality", "LM.match", "LM.match.quality","dataset")
+  matched = rbind(matched.h,matched.f)
+  matched$quality[is.na(matched$match)] = "none"
+  matched$match[is.na(matched$match)] = "none"
+
+  # Sort out types
+  matched$connectivity.type = matched$cell.type
+  matched$cell.type = gsub("_.*","",matched$cell.type)
+  matched$cell.type[is.na(matched$cell.type)] = "uncertain"
+  matched$connectivity.type[is.na(matched$connectivity.type)] = "uncertain"
+
+  # Return
+  matched
 
 }
 

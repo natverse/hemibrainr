@@ -2,9 +2,12 @@
 % Please edit documentation in R/hemibrain_matching.R
 \name{hemibrain_matches}
 \alias{hemibrain_matches}
+\alias{lm_matches}
 \title{Retrieve matched up neurons between the hemibrain and FAFB}
 \usage{
 hemibrain_matches(priority = c("FAFB", "hemibrain"))
+
+lm_matches(priority = c("hemibrain", "lm"))
 }
 \arguments{
 \item{priority}{whether to use FAFB->hemibrain matches (FAFB) or hemibrain->FAFB matches (hemibrain) in order to ascribe

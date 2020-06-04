@@ -9,7 +9,7 @@
 hemibrain_adjust_saved_somas(
   bodyids = NULL,
   cbf = NULL,
-  brain = hemibrainr::hemibrain.surf,
+  brain = NULL,
   selected_file = "1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E",
   db = NULL
 )
