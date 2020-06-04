@@ -865,3 +865,11 @@ ENTER to continue (with notes made), c to cancel (without notes made).
   }
   x
 }
+
+# hidden
+type_batches <- function(ids, gs, batch_size = 10){
+  pcts = unique(purify(gs[match(ids, gs$bodyid),"type"]))
+  pcts = pcts[order(pcts)]
+  batches = split(pcts, ceiling(seq_along(pcts)/batch_size))
+  batches
+}
