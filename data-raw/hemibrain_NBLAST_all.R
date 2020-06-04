@@ -29,8 +29,10 @@ load(paste0("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem
 message("Loaded: ", length(all.neurons.flow), " neurons")
 
 # Scale
-all.neurons.flow.microns = hemibrainr:::scale_neurons.neuronlist(all.neurons.flow, .parallel = TRUE, OmitFailures = TRUE)
+fib.twigs5=nlapply(all.neurons.flow, prune_twigs, twig_length=5000, .parallel = TRUE, OmitFailures = TRUE)
+all.neurons.flow.microns = hemibrainr:::scale_neurons.neuronlist(fib.twigs5, .parallel = TRUE, OmitFailures = TRUE)
 rm("all.neurons.flow")
+rm("fib.twigs5")
 message("Neurons scaled!")
 
 # Extract compartments
@@ -153,8 +155,8 @@ most.lhins.hemi.dps = hemibrain_lm_lhns(savedir = lhfolder,
                                        data = "dps",
                                        cable = "lhins",
                                        brainspace = "JRCFIB2018F")
-most.lh.hemi.dps = union(most.lhns.hemi.dps,most.lhins.dps)
-check = sapply(most.lh.hemi.dps, function(e) nrow(e$points)>2)
+most.lh.hemi.dps = nat::union(most.lhns.hemi.dps,most.lhins.dps)
+check = unlist(sapply(most.lh.hemi.dps, function(e) nrow(e$points)>2))
 most.lh.hemi.dps = most.lh.hemi.dps[check]
 fcs.hemi.dps = flycircuit_neurons(savedir = flycircuitfolder,
                                   folder="",

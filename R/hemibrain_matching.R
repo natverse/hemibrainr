@@ -128,10 +128,8 @@ hemibrain_matching <- function(ids = NULL,
                            return = TRUE)
   gs$bodyid = correct_id(gs$bodyid)
   rownames(gs) = gs$bodyid
-  # Read neuron meta data
-  meta = neuprintr::neuprint_get_meta(ids)
-  meta = meta[order(meta$type),]
-  meta = subset(meta, meta$bodyid%in%ids)
+  gs$User[is.na(gs$User)] = ""
+  # Get hemibrain neurons
   if(missing(db)) {
     # this means we weren't told to use a specific neuronlist, so
     # we'll use the default. force() means evaluate hemibrain_neurons() now.
@@ -164,22 +162,31 @@ hemibrain_matching <- function(ids = NULL,
   }else{
     ids = intersect(ids,gs$bodyid)
   }
+  ids = ids[!is.na(ids)]
+  # Read neuron meta data
+  meta = neuprintr::neuprint_get_meta(ids)
+  meta = meta[order(meta$type),]
+  meta = subset(meta, meta$bodyid%in%ids)
   # choose brain
   if(match.type=="FAFB"){
     brain = elmr::FAFB14.surf
   }else{
     brain = hemibrainr::hemibrain_microns.surf
   }
+  # Deselect some IDs
+  if(!overwrite){
+    donotdo = subset(gs, !is.na(gs[[match.field]]) | !bodyid%in%ids)
+  }else{
+    donotdo = subset(gs, !bodyid%in%ids)
+  }
+  if(sum(ids%in%donotdo$bodyid)==length(ids)){
+    message("No matches to make for ", initials, " either assign more neurons to your initials, or use overwrite = TRUE to replace matches already made")
+  }
   # Make matches!
   for(n in meta$bodyid){
     # Get bodyid
     n = as.character(n)
     # Remove neurons with matches
-    if(!overwrite){
-      donotdo = subset(gs, !is.na(gs[[match.field]]) | !bodyid%in%ids)
-    }else{
-      donotdo = subset(gs, !bodyid%in%ids)
-    }
     if(n%in%donotdo$bodyid | !n%in%unlist(dimnames(hemibrain.nblast))){
       next
     }
@@ -354,12 +361,11 @@ lm_matching <- function(ids = NULL,
                         selected_file = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw",
                         batch_size = 50,
                         db=hemibrain_neurons(),
-                        query = hemibrain_lm_lhns(brainspace = c("JRCFIB2018F")),
+                        query = NULL,
                         overwrite = FALSE){
   # Motivate!
   nat::nopen3d()
   plot_inspirobot()
-  unsaved = c()
   message("
           #######################Colours##########################
           black = LM neuron,
@@ -382,6 +388,11 @@ lm_matching <- function(ids = NULL,
       rm("hemibrain.lhns.mean.compressed")
     }
   }
+  if(is.null(query)){
+    q1= hemibrain_lm_lhns(brainspace = c("JRCFIB2018F"))
+    q2= hemibrain_lm_lhns(cable = "lhins", brainspace = c("JRCFIB2018F"))
+    query = nat::union(q1, q2)
+  }
   # Read the Google Sheet
   gs = gsheet_manipulation(FUN = googlesheets4::read_sheet,
                            ss = selected_file,
@@ -390,11 +401,7 @@ lm_matching <- function(ids = NULL,
                            return = TRUE)
   gs$id = correct_id(gs$id)
   rownames(gs) = gs$id
-  if(is.null(ids)){
-    ids = gs$id
-  }else{
-    ids = intersect(ids,gs$id)
-  }
+  gs$User[is.na(gs$User)] = ""
   # Get hemibrain neurons
   if(missing(db)) {
     # this means we weren't told to use a specific neuronlist, so
@@ -415,19 +422,27 @@ lm_matching <- function(ids = NULL,
   initials = must_be("Choose a user : ", answers = unique(gs$User))
   say_hello(initials)
   rgl::bg3d("white")
+  # choose ids
+  if(is.null(ids)){
+    ids = gs$id[gs$User==initials]
+  }else{
+    ids = intersect(ids,gs$id)
+  }
+  # Do not do
+  if(!overwrite){
+    donotdo = subset(gs, !is.na(gs[[match.field]]) | !id%in%ids)
+  }else{
+    donotdo = subset(gs,!id%in%ids)
+  }
   # choose brain
   brain = hemibrainr::hemibrain.surf
+  unsaved = c()
   # Make matches!
   for(n in gs$id){
     # Get id
     n = as.character(n)
     end = n==gs$id[length(gs$id)]
     # Remove neurons with matches
-    if(!overwrite){
-      donotdo = subset(gs, !is.na(gs[[match.field]]) | User != initials | !id%in%ids)
-    }else{
-      donotdo = subset(gs, User != initials | !id%in%ids)
-    }
     if(n%in%donotdo$id | !n%in%names(query)){
       next
     }
@@ -452,7 +467,7 @@ lm_matching <- function(ids = NULL,
       batch.in = intersect(batch, names(db))
       hemi = tryCatch(db[match(batch.in,names(db))], error = function(e) NULL)
       if(is.null(hemi)|length(batch.in)!=length(batch)){
-        message("Cannot read neuron: ", n, " from local db; fetching from neuPrint!")
+        message("Cannot read neurons from local db; fetching from neuPrint!")
         batch.out = setdiff(batch, names(hemi))
         hemi = c(hemi,neuprintr::neuprint_read_neurons(batch.out))
         hemi = hemi[as.character(batch)]
@@ -622,6 +637,7 @@ fafb_matching <- function(ids = NULL,
                            return = TRUE)
   gs$skid = correct_id(gs$skid)
   rownames(gs) = gs$skid
+  gs$User[is.na(gs$User)] = ""
   # Get hemibrain neurons
   if(missing(db)) {
     # this means we weren't told to use a specific neuronlist, so
@@ -648,6 +664,15 @@ fafb_matching <- function(ids = NULL,
   }else{
     ids = intersect(ids,gs$skid)
   }
+  # Deselect some IDs
+  if(!overwrite){
+    donotdo = subset(gs, !is.na(gs[[match.field]]) | !skid%in%ids)
+  }else{
+    donotdo = subset(gs, !skid%in%ids)
+  }
+  if(sum(ids%in%donotdo$skid)==length(ids)){
+    message("No matches to make for ", initials, " either assign more neurons to your initials, or use overwrite = TRUE to replace matches already made")
+  }
   # choose brain
   brain = hemibrainr::hemibrain.surf
   # Make matches!
@@ -656,11 +681,6 @@ fafb_matching <- function(ids = NULL,
     n = as.character(n)
     end = n==gs$skid[length(gs$skid)]
     # Remove neurons with matches
-    if(!overwrite){
-      donotdo = subset(gs, !is.na(gs[[match.field]]) | !skid%in%ids)
-    }else{
-      donotdo = subset(gs, !skid%in%ids)
-    }
     if(n%in%donotdo$skid){
       next
     }
@@ -689,7 +709,7 @@ fafb_matching <- function(ids = NULL,
       batch.in = intersect(batch, names(db))
       hemi = tryCatch(db[match(batch.in,names(db))], error = function(e) NULL)
       if(is.null(hemi)|length(batch.in)!=length(batch)){
-        message("Cannot read neuron: ", n, " from local db; fetching from neuPrint!")
+        message("Cannot read neurons from local db; fetching from neuPrint!")
         batch.out = setdiff(batch, names(hemi))
         hemi = c(hemi,neuprintr::neuprint_read_neurons(batch.out))
         hemi = hemi[as.character(batch)]
