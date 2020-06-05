@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Manually, or semi-automatically check and edit soma possitions for hemibrain neurons — hemibrain_adjust_saved_somas • hemibrainr</title>
+<title>Manually review split neurons and save your results to a Google Sheet for everyone to use — hemibrain_task_update • hemibrainr</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,7 +46,7 @@
 
 
 
-<meta property="og:title" content="Manually, or semi-automatically check and edit soma possitions for hemibrain neurons — hemibrain_adjust_saved_somas" />
+<meta property="og:title" content="Manually review split neurons and save your results to a Google Sheet for everyone to use — hemibrain_task_update" />
 <meta property="og:description" content="A 3D interactive pipeline for reviewing our hemibrain_precomputed_splitpoints. Each user can
 manually edit neurons if needs be, add whether or not they have a soma or are cropped, and make additional notes. The purpose of this
 function if for interested users to work together to curate axon-dendrite splits suggested by the flow_centrality algorithm.
@@ -122,8 +122,8 @@ the Google Sheet database to your Google Drive." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Manually, or semi-automatically check and edit soma possitions for hemibrain neurons</h1>
-    <small class="dont-index">Source: <a href='https://github.com/flyconnectome/hemibrainr/blob/master/R/hemibrain_fix_soma.R'><code>R/hemibrain_fix_soma.R</code></a>, <a href='https://github.com/flyconnectome/hemibrainr/blob/master/R/hemibrain_save_split.R'><code>R/hemibrain_save_split.R</code></a></small>
+    <h1>Manually review split neurons and save your results to a Google Sheet for everyone to use</h1>
+    <small class="dont-index">Source: <a href='https://github.com/flyconnectome/hemibrainr/blob/master/R/hemibrain_save_split.R'><code>R/hemibrain_save_split.R</code></a></small>
     <div class="hidden name"><code>hemibrain_adjust_saved_split.Rd</code></div>
     </div>
 
@@ -137,15 +137,7 @@ when using <code><a href='hemibrain_flow_centrality.html'>hemibrain_flow_central
 the <a href='https://docs.google.com/spreadsheets/d/1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E/edit?usp=sharing'>Google Sheet database</a> to your Google Drive.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>hemibrain_adjust_saved_somas</span>(
-  <span class='kw'>bodyids</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>cbf</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>brain</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>selected_file</span> <span class='kw'>=</span> <span class='st'>"1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E"</span>,
-  <span class='kw'>db</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
-)
-
-<span class='fu'>hemibrain_task_update</span>(
+    <pre class="usage"><span class='fu'>hemibrain_task_update</span>(
   <span class='no'>bodyids</span>,
   <span class='no'>update</span>,
   <span class='kw'>gs</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
@@ -180,26 +172,6 @@ the <a href='https://docs.google.com/spreadsheets/d/1YjkVjokXL4p4Q6BR-rGGGKWecXU
       <td><p>bodyids which specify individual neurons, as used in the relevant neuPrint project</p></td>
     </tr>
     <tr>
-      <th>cbf</th>
-      <td><p>string of a cell body fibre</p></td>
-    </tr>
-    <tr>
-      <th>brain</th>
-      <td><p>which brain to plot while splitting neuron. If <code>NULL</code> no brain is plotted. Otherwise
-it is recommended to use <code>hemibrain.surf</code> (which is in raw voxel space).</p></td>
-    </tr>
-    <tr>
-      <th>selected_file</th>
-      <td><p>identifier for google sheet</p></td>
-    </tr>
-    <tr>
-      <th>db</th>
-      <td><p>a <code>neuronlist</code> object to act as a database of neuron skeletons. If you want to provide all
-hemibrain neurons that could possibly be split, then you can use <code><a href='hemibrain_download_neurons.html'>hemibrain_download_neurons</a></code> to download
-all hemibrain neurons as a <code><a href='https://rdrr.io/pkg/nat/man/neuronlistfh.html'>nat::neuronlistfh</a></code> file. All neurons can be read
-using <code>db = hemibrain_read_neurons(savedir=TRUE)</code>. This can then be given as the argument to <code>db</code>.</p></td>
-    </tr>
-    <tr>
       <th>update</th>
       <td><p>a vector of <code><a href='https://rdrr.io/r/base/length.html'>length(bodyids)</a></code> or <code>1</code>, which will replace cells in the column specified by <code>column</code> for given bodyids (<code>bodyids</code>).
 E.g. If I wanted to changed the given bodyids on the task sheet to checked = TRUE, I would use <code>update = TRUE</code>.</p></td>
@@ -207,6 +179,10 @@ E.g. If I wanted to changed the given bodyids on the task sheet to checked = TRU
     <tr>
       <th>gs</th>
       <td><p>A Google sheet object, as read by <code><a href='https://rdrr.io/pkg/googlesheets4/man/range_read.html'>googlesheets4::read_sheet(selected_file)</a></code>.</p></td>
+    </tr>
+    <tr>
+      <th>selected_file</th>
+      <td><p>an optional path to a yaml file that already contains a selection</p></td>
     </tr>
     <tr>
       <th>column</th>
@@ -219,6 +195,13 @@ E.g. If I wanted to changed the given bodyids on the task sheet to checked = TRU
 making notes on them and marking if they are truncated by by the volume or not Phase II involves manually splitting those neurons that have been flagged as
 as in need to splitting. And Phase III involves reviewing the manual splits that have been made, and re-splitting neurons if needs be. The default, complete,
 is to go through all three phases with sequential batches of neurons, of <code>batch_size</code>.</p></td>
+    </tr>
+    <tr>
+      <th>db</th>
+      <td><p>a <code>neuronlist</code> object to act as a database of neuron skeletons. If you want to provide all
+hemibrain neurons that could possibly be split, then you can use <code><a href='hemibrain_download_neurons.html'>hemibrain_download_neurons</a></code> to download
+all hemibrain neurons as a <code><a href='https://rdrr.io/pkg/nat/man/neuronlistfh.html'>nat::neuronlistfh</a></code> file. All neurons can be read
+using <code>db = hemibrain_read_neurons(savedir=TRUE)</code>. This can then be given as the argument to <code>db</code>.</p></td>
     </tr>
     <tr>
       <th>check_thresh</th>
@@ -241,6 +224,11 @@ are of size <code>batch_size</code>.</p></td>
       <th>assignments</th>
       <td><p>logical. If TRUE then the user is invited to examine only neurons that they are flagged for them. These are entries into the 'roots' tab of the Google Sheet,
 where the user column is the same as the initials the user enters.</p></td>
+    </tr>
+    <tr>
+      <th>brain</th>
+      <td><p>which brain to plot while splitting neuron. If <code>NULL</code> no brain is plotted. Otherwise
+it is recommended to use <code>hemibrain.surf</code> (which is in raw voxel space).</p></td>
     </tr>
     <tr>
       <th>update_regularly</th>
@@ -287,12 +275,7 @@ through branches as a quick way to assign axon/dendrite.</p></li>
 Video tutorial: <a href='https://drive.google.com/open?id=1FB7m1QFKApysO74maHAx-yg2CQWkx49C'>https://drive.google.com/open?id=1FB7m1QFKApysO74maHAx-yg2CQWkx49C</a></p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
-<span class='kw'>if</span> (!<span class='fu'><a href='https://rdrr.io/r/base/library.html'>require</a></span>(<span class='no'>RColorBrewer</span>)) <span class='kw pkg'>utils</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/r/utils/install.packages.html'>install.packages</a></span>(<span class='st'>"RColorBrewer"</span>)
-<span class='kw'>if</span> (!<span class='fu'><a href='https://rdrr.io/r/base/library.html'>require</a></span>(<span class='no'>dbscan</span>)) <span class='kw pkg'>utils</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/r/utils/install.packages.html'>install.packages</a></span>(<span class='st'>"dbscan"</span>)
-<span class='co'>#' dep &lt;- hemibrain_adjust_saved_somas(bodyids, brain = hemibrain.surf, selected_file = 1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E, db = NULL)</span>
-}
-<span class='co'># \donttest{</span>
+    <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
 <span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
 <span class='co'># Assign mPN review to Nik Drummond (ND)</span>
 <span class='fu'>hemibrain_task_update</span>(<span class='kw'>bodyids</span> <span class='kw'>=</span> <span class='no'>mpn.ids</span>, <span class='kw'>column</span> <span class='kw'>=</span> <span class='st'>"user"</span>, <span class='kw'>update</span> <span class='kw'>=</span> <span class='st'>"ND"</span>)
