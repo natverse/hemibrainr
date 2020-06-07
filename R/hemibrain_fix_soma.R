@@ -12,6 +12,7 @@
 #'
 #' @examples
 #' @export
+#' @rdname hemibrain_adjust_saved_somas
 hemibrain_adjust_saved_somas = function(bodyids = NULL,
                                         c = NULL,
                                         brain = NULL,
