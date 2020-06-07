@@ -9,9 +9,9 @@
 #' @param db Optional. if provided, local directory to read neurons from.
 #'
 #' @return
-#' @export
 #'
 #' @examples
+#' @export
 hemibrain_adjust_saved_somas = function(bodyids = NULL,
                                         c = NULL,
                                         brain = NULL,
