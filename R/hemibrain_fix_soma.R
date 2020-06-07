@@ -1,6 +1,4 @@
-# Core --------------------------------------------------------------------
-
-#' Title
+#' Title heibrain_adjust_saved_somas
 #'
 #' @param bodyids Optional, unless using neurons method. Otherwise, list of neuron bodyids
 #' @param c Optional. For use when correcting Cell body fibres. If not input, function will ask you to enter one later
@@ -56,18 +54,12 @@ neuron_method = function(bodyids = NULL,
     message("Please provide neuron bodyids as input, exiting pipeline")
     stop()
   }
-  # read in neurons
-  neurons = pipeline_read_neurons(
-    batch = bodyids,
-    db = NULL,
-    clean = FALSE,
-    motivate = FALSE
-  )
+
   # create update sheet and indicies
   ind = which(gs$bodyid %in% bodyids)
   update = gs[ind,]
   # would you like to try DBSCAN on your neurons somas?
-  data = list(neurons = neurons, update = update)
+  data = list(neurons = list(), update = update, gs_somas = data.matrix(update[c('X','Y','Z')]))
   single_or_batch = must_be(
     "Would you like to correct somas individualy (s), or try DBSCAN on them (d)?",
     answers = c("s", "d")
@@ -78,6 +70,7 @@ neuron_method = function(bodyids = NULL,
                           brain = brain)
     # if no, just go through each individualy
   } else {
+    # read in all neurons here to data object
     data = correct_singles(data = data,
                            brain = brain)
   }
@@ -103,18 +96,12 @@ cbf_method = function(cbf = NULL,
                 answers = cbfs)
   }
   message(c("Fixing Cell body fibre", c))
-  # get neurons in cbf
-  if (!isTRUE(neurons_from_gs)) {
-    neurons = neurons_in_cbf(c)
-  } else {
-    neurons = hemibrain_read_neurons(subset(gs, cbf == c)$bodyid)
-  }
   bodyids = subset(gs, cbf == c)$bodyid
   # create update sheet and indicies
   ind = which(gs$bodyid %in% bodyids)
   update = gs[ind,]
   # dbscan neurons
-  data = list(neurons = neurons, update = update)
+  data = list(neurons = list(), update = update, gs_somas = data,matrix(update[c('X','Y','Z')]))
   data = correct_DBSCAN(data = data,
                         brain = brain)
   # write update
@@ -137,9 +124,17 @@ correct_singles <- function(data = NULL,
     list = 0
   }
   if (!is.null(subset)) {
-    N_all = data$neurons[subset]
+    if (length(data$neurons) == 0){
+      N_all = pipeline_read_neurons(data$update$bodyid[subset])
+    } else {
+      N_all = data$neurons[subset]
+    }
   } else {
-    N_all = data$neurons
+    if (length(data$neurons == 0)){
+      N_all = pipeline_read_neurons(data$update$bodyid)
+    } else {
+      N_all = data$neurons
+    }
   }
   nopen3d()
   correcting = TRUE
@@ -236,7 +231,8 @@ correct_DBSCAN = function(data = NULL,
       "install.packages('RColorBrewer')"
     )
   }
-  db = dbscan_neurons(data = data,
+  # Run dbscan on neurons (soma possitions, without readin in gsheet)
+  db = dbscan_neurons(somas = data$gs_somas,
                       brain = brain)
 
   # If only returns 1 cluster...
@@ -245,13 +241,13 @@ correct_DBSCAN = function(data = NULL,
       message("All",
               length(db$cluster),
               " somas have been labeled as noise")
-      # plot all neurons:
-      somas = soma_locations(data = data)
+      # read in neurons
+      data$neurons = pipeline_read_neurons(update$bodyid, clean = FALSE)
       # plot and check if cluster is correct
       clear3d()
       plot3d(brain, col = "grey70", alpha = 0.1)
       plot3d(data$neurons, col = "grey70")
-      spheres3d(somas[, c('X', 'Y', 'Z')], radius = 300, col = 'blue')
+      spheres3d(data$gs_somas, radius = 300, col = 'red')
       fix = hemibrain_choice(prompt = "Do you wish to correct each manually? yes|no ")
       if (isTRUE(fix)) {
         correct_singles(data = data,
@@ -261,16 +257,28 @@ correct_DBSCAN = function(data = NULL,
         stop()
       }
     } else if (unique(db$cluster) == 1) {
-      message("all neurons seem to have a labeled soma,and form a single cluster. Good times")
-      somas = soma_locations(data = data)
+      message("all neurons seem to have a labeled soma, and form a single cluster. Good times")
       # plot and check if cluster is correct
       clear3d()
       plot3d(brain, col = "grey70", alpha = 0.1)
-      plot3d(data$neurons, col = "grey70")
+      # plot3d(data$neurons, col = "grey70")
       spheres3d(somas[, c('X', 'Y', 'Z')], radius = 300, col = 'blue')
       cluster_correct = hemibrain_choice(prompt = c(
         "Has dbscan identified the correct soma cluster (in blue) yes|no "
       ))
+      message("Would you like to plot the neurons along with the soma, to double check?")
+      double_check = hemibrain_choice(prompt = "If you are confident the somas are correct, say no... (yes|no): ")
+      if(isTRUE(double_check)){
+        data$neurons = pipeline_read_neurons(data$update$bodyids)
+        # plot and check if cluster is correct
+        clear3d()
+        plot3d(brain, col = "grey70", alpha = 0.1)
+        plot3d(data$neurons, col = "grey70")
+        spheres3d(somas[, c('X', 'Y', 'Z')], radius = 300, col = 'blue')
+        cluster_correct = hemibrain_choice(prompt = c(
+          "Has dbscan identified the correct soma cluster (in blue) yes|no "
+        ))
+      }
       if (!isTRUE(cluster_correct)) {
         fix = hemibrain_choice(
           prompt = c(
@@ -295,24 +303,37 @@ correct_DBSCAN = function(data = NULL,
               " incorrect 'noise' somas")
     }
     # if only a single cluster and noise
-    if (length(unique(db$cluster)) <= 2) {
-      somas = soma_locations(data = data)
+    if ((length(unique(db$cluster)) == 2) & (0 %in% db$cluster)) {
+      somas = data$gs_somas
       # remove the 'noise' somas
       noise = somas[which(db$cluster == 0),]
       somas = somas[which(db$cluster == 1),]
       # plot and check if cluster is correct
       clear3d()
       plot3d(brain, col = "grey70", alpha = 0.1)
-      plot3d(data$neurons, col = "grey70")
+      # plot3d(data$neurons, col = "grey70")
       spheres3d(somas[, c('X', 'Y', 'Z')], radius = 300, col = 'blue')
       spheres3d(noise[, c('X', 'Y', 'Z')], radius = 300, col = 'red')
       cluster_correct = hemibrain_choice(prompt = c(
         "Has dbscan identified the correct soma cluster (in blue) yes|no "
       ))
+      message("Would you like to plot the neurons along with the soma, to double check?")
+      double_check = hemibrain_choice(prompt = "If you are confident the somas are correct, say no... (yes|no): ")
+      if(isTRUE(double_check)){
+        data$neurons = pipeline_read_neurons(data$update$bodyids)
+        # plot and check if cluster is correct
+        clear3d()
+        plot3d(brain, col = "grey70", alpha = 0.1)
+        plot3d(data$neurons, col = "grey70")
+        spheres3d(somas[, c('X', 'Y', 'Z')], radius = 300, col = 'blue')
+        cluster_correct = hemibrain_choice(prompt = c(
+          "Has dbscan identified the correct soma cluster (in blue) yes|no "
+        ))
+      }
       ###
       # if present correct 'noise' somas
       if (isTRUE(cluster_correct)) {
-        if (length(noise$PointNo) > 0) {
+        if (length(noise$X) > 0) {
           correct_noise = hemibrain_choice(prompt = c("Do you want to correct the incorrect somas? yes|no "))
           if (isTRUE(correct_noise)) {
             data = correct_singles(
@@ -337,7 +358,7 @@ correct_DBSCAN = function(data = NULL,
       # plot neurons with each cluster coloured, and select which is correct
       clear3d()
       plot3d(brain, col = "grey70", alpha = 0.1)
-      plot3d(data$neurons, col = "grey70")
+      # plot3d(data$neurons, col = "grey70")
       count = 0
       for (c in unique(db$cluster)) {
         count = count + 1
@@ -361,7 +382,7 @@ correct_DBSCAN = function(data = NULL,
           answers = c(as.character(1:count), "n")
         )
       )
-      any_more = hemibrain_choice(prompt = "Are any other clusters also all somas? yes|no ")
+      any_more = hemibrain_choice(prompt = "Are any other clusters also likely all somas? yes|no ")
       while (isTRUE(any_more)) {
         additional_clusters = as.numeric((
           must_be(prompt = "choose another cluster. ",
@@ -369,6 +390,19 @@ correct_DBSCAN = function(data = NULL,
         ))
         clusters = c(clusters, additional_clusters)
         any_more = hemibrain_choice(prompt = "Are any other clusters also all somas? yes|no ")
+      }
+      message("Would you like to plot the neurons along with the soma, to double check?")
+      double_check = hemibrain_choice(prompt = "If you are confident the somas are correct, say no... (yes|no): ")
+      if(isTRUE(double_check)){
+        data$neurons = pipeline_read_neurons(data$update$bodyids)
+        # plot and check if cluster is correct
+        clear3d()
+        plot3d(brain, col = "grey70", alpha = 0.1)
+        plot3d(data$neurons, col = "grey70")
+        spheres3d(somas[, c('X', 'Y', 'Z')], radius = 300, col = 'blue')
+        cluster_correct = hemibrain_choice(prompt = c(
+          "Has dbscan identified the correct soma cluster(s) (in blue) yes|no "
+        ))
       }
       if (clusters == "n") {
         # if no single cluster contains just somas
@@ -391,6 +425,8 @@ correct_DBSCAN = function(data = NULL,
   }
   data
 }
+
+
 # read/write --------------------------------------------------------------
 chunks = function(ind) {
   bool = diff(ind) == 1
@@ -456,6 +492,7 @@ write_somaupdate = function(update = NULL,
 # dbscan_utils ------------------------------------------------------------
 # run dbscan on a set of neurons
 dbscan_neurons = function(data = NULL,
+                          somas = NULL,
                           eps = 1500,
                           minPts = 5,
                           brain = brain) {
@@ -465,14 +502,18 @@ dbscan_neurons = function(data = NULL,
          "install.packages('dbscan')")
   }
   # check missing somas
-  data = fix_missing_soma(data = data,
-                          brain = brain)
-
+  if(!is.null(data)){
+    data = fix_missing_soma(data = data,
+                            brain = brain)
+  }
   # get soma points
-  somas = soma_locations(data = data)
+  if (is.null(somas)){
+    somas = soma_locations(data = data)
+    somas = somas[, c('X', 'Y', 'Z')]
+  }
   # dbscan on soma points
   set.seed(123)
-  db = dbscan::dbscan(x = data.matrix(somas[, c('X', 'Y', 'Z')]),
+  db = dbscan::dbscan(x = data.matrix(somas),
                       eps = eps,
                       minPts = minPts)
 }
