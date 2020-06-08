@@ -8,7 +8,7 @@
 #'
 #' @return
 #'
-#' @examples
+#'
 #' @export
 #' @rdname hemibrain_adjust_saved_somas
 hemibrain_adjust_saved_somas = function(bodyids = NULL,
@@ -243,7 +243,7 @@ correct_DBSCAN = function(data = NULL,
               length(db$cluster),
               " somas have been labeled as noise")
       # read in neurons
-      data$neurons = pipeline_read_neurons(update$bodyid, clean = FALSE)
+      data$neurons = pipeline_read_neurons(data$update$bodyid)
       # plot and check if cluster is correct
       clear3d()
       plot3d(brain, col = "grey70", alpha = 0.1)
@@ -579,8 +579,8 @@ fix_missing_soma = function(data = NULL,
 
 pipeline_read_neurons <- function(batch,
                                   db = NULL,
-                                  motivate = TRUE,
-                                  clean = TRUE) {
+                                  motivate = FALSE,
+                                  clean = FALSE) {
   readfail = FALSE
   if (!is.null(db)) {
     message("Reading locally saved neurons ...")
