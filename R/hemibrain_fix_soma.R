@@ -82,13 +82,13 @@ neuron_method = function(bodyids = NULL,
                    ss = ss)
 }
 
-cbf_method = function(cbf = NULL,
+cbf_method = function(c = NULL,
                       brain = NULL,
                       gs = NULL,
                       ss = NULL,
                       neurons_from_gs = TRUE) {
   # input a cbf
-  if (is.null(cbf)) {
+  if (is.null(c)) {
     # input a cell fibre body
     cbfs = cbf_list(from = "google_sheet",
                     gs = gs)
@@ -96,13 +96,13 @@ cbf_method = function(cbf = NULL,
     c = must_be(prompt = "Please input a Cell body fibre to correct: ",
                 answers = cbfs)
   }
-  message(c("Fixing Cell body fibre", c))
+  message(c("Fixing Cell body fibre ", c))
   bodyids = subset(gs, cbf == c)$bodyid
   # create update sheet and indicies
   ind = which(gs$bodyid %in% bodyids)
   update = gs[ind,]
   # dbscan neurons
-  data = list(neurons = list(), update = update, gs_somas = data,matrix(update[c('X','Y','Z')]))
+  data = list(neurons = list(), update = update, gs_somas = data.matrix(update[c('X','Y','Z')]))
   data = correct_DBSCAN(data = data,
                         brain = brain)
   # write update
@@ -510,11 +510,11 @@ dbscan_neurons = function(data = NULL,
   # get soma points
   if (is.null(somas)){
     somas = soma_locations(data = data)
-    somas = somas[, c('X', 'Y', 'Z')]
+    somas = data.matrix(somas[,c('X', 'Y', 'Z')])
   }
   # dbscan on soma points
   set.seed(123)
-  db = dbscan::dbscan(x = data.matrix(somas),
+  db = dbscan::dbscan(x = somas,
                       eps = eps,
                       minPts = minPts)
 }
