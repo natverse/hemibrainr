@@ -80,7 +80,8 @@ neuron_method = function(bodyids = NULL,
                            brain = brain)
   }
   # write update
-  data = batch_somaupdate(data = data)
+  # data = batch_somaupdate(data = data)
+  data$update$soma.checked = "TRUE"
   write_somaupdate(update = data$update,
                    ind = ind,
                    ss = ss)
@@ -114,7 +115,8 @@ cbf_method = function(c = NULL,
   data = correct_DBSCAN(data = data,
                         brain = brain)
   # write update
-  data = batch_somaupdate(data = data)
+  # data = batch_somaupdate(data = data)
+  data$update$soma.checked = "TRUE"
   write_somaupdate(update = data$update,
                    ind = ind,
                    ss = ss)
@@ -155,8 +157,8 @@ correct_singles <- function(data = NULL,
       clear3d()
       plot3d(brain, col = "grey70", alpha = 0.1)
       #
-      points3d(
-        n.points,
+      plot3d(
+        n,
         lwd = 2,
         col = hemibrainr::hemibrain_bright_colors["cyan"],
         soma = FALSE
@@ -223,6 +225,17 @@ correct_singles <- function(data = NULL,
     correcting = !hemibrain_choice(prompt = c(
       "Final check, are you happy with the new soma possitions? yes/no "
     ))
+  }
+  data$update
+  for (n in N_all){
+    if (n$soma != data$update[which(data$update$bodyid == n$bodyid),]$position) {
+      # update the values in update with the ones from the neuron list
+      data$update[which(data$update$bodyid == n$bodyid),]$position = n$soma
+      data$update[which(data$update$bodyid == n$bodyid),]$X = n$d[n$soma,]$X
+      data$update[which(data$update$bodyid == n$bodyid),]$Y = n$d[n$soma,]$Y
+      data$update[which(data$update$bodyid == n$bodyid),]$Z = n$d[n$soma,]$Z
+      data$update[which(data$update$bodyid == n$bodyid),]$soma.edit = "TRUE"
+    }
   }
   if (list == 0) {
     data$neurons = hemibrain_neuron_class(data$neurons)
