@@ -155,15 +155,17 @@ correct_singles <- function(data = NULL,
       end_points = nat::endpoints(n)
       end_points = n.points[end_points, ]
       clear3d()
-      plot3d(brain, col = "grey70", alpha = 0.1)
+
       #
       plot3d(
         n,
-        lwd = 2,
+        lwd = 1.5,
         col = hemibrainr::hemibrain_bright_colors["cyan"],
         soma = FALSE,
-        WithConnectors = FALSE
+        WithConnectors = FALSE,
+        WithNodes = FALSE
       )
+      plot3d(brain, col = "grey70", alpha = 0.1)
       plot3d_somas(n)
       fix = hemibrain_choice(prompt = "Does the soma need fixing? Current possition in Green, if present. yes|no ")
       if (isTRUE(fix)) {
@@ -191,25 +193,35 @@ correct_singles <- function(data = NULL,
         points3d(end_points,
                  lwd = 2,
                  col = hemibrain_bright_colors["red"],
-                 soma = FALSE)
-        points3d(n.points,
-                 lwd = 2,
+                 soma = FALSE,
+                WithConnectors = FALSE)
+        plot3d(n,
+                 lwd = 1.5,
                  col = hemibrain_bright_colors["cyan"],
-                 soma = FALSE)
+                 soma = FALSE,
+                WithConnectors = FALSE,
+               WithNodes = FALSE)
 
-        selection <- rgl::select3d()
+        try_again(100,selection <- rgl::select3d())
 
         selected = selection(end_points)
+        while(sum(selected)==0){
+          message("Please select one of the points in red ")
+          try_again(100,selection <- rgl::select3d())
+          selected = selection(end_points)
+        }
         selected.point = end_points[selected, ]
         if (length(selected.point) != 3) {
           selected.point = selected.point[1, ]
         }
         clear3d()
         plot3d(brain, col = "grey70", alpha = 0.1)
-        points3d(n.points,
+        plot3d(n,
                  lwd = 2,
                  col = hemibrain_bright_colors["cyan"],
-                 soma = FALSE)
+                 soma = FALSE,
+                  WithConnectors = FALSE,
+                  WithNodes = FALSE)
         spheres3d(selected.point, radius = 300, col = 'blue')
         plot3d_somas(n)
         make.selection = !hemibrain_choice(prompt = c(
@@ -221,7 +233,7 @@ correct_singles <- function(data = NULL,
       }
     }
     clear3d()
-    plot3d(N_all, WithConnectors = FALSE)
+    plot3d(N_all, WithConnectors = FALSE, WithNodes = FALSE)
     plot3d_somas(N_all)
     correcting = !hemibrain_choice(prompt = c(
       "Final check, are you happy with the new soma possitions? yes/no "
@@ -409,10 +421,10 @@ correct_DBSCAN = function(data = NULL,
           # plot subset of neurons
           if (length(data$gs_somas[which(db$cluster == c)]) < 10){
             clust = pipeline_read_neurons(sample(data$update[which(db$cluster == c),]$bodyid,2))
-            plot3d(clust, col = "grey70")
+            plot3d(clust, col = "grey70", WithConnectors = FALSE)
           } else {
             clust = pipeline_read_neurons(sample(data$update[which(db$cluster == c),]$bodyid,5))
-            plot3d(clust, col = "grey70")
+            plot3d(clust, col = "grey70", WithConnectors = FALSE)
           }
         }
       }
@@ -463,7 +475,7 @@ correct_DBSCAN = function(data = NULL,
           spheres3d(cluster, radius = 500, col = col[count])
         }
         cluster_correct = hemibrain_choice(prompt = c(
-          "Has dbscan identified the correct soma cluster(s) (in blue) yes|no "
+          "Has dbscan identified the correct soma cluster(s) yes|no "
         ))
       }
       if (clusters == "n") {
