@@ -16,6 +16,8 @@
 #' @param radius For connectors and axon-dendrite split node (default 1). If \code{NULL}, an appropriate value is guessed.
 #' @param brain a template brain to plot. \code{FALSE} results in no brain plotted.
 #' @param highflow whether to plot the nodes of highest (with in one standard deviation less than maximum) flow centrality (pink points)
+#' @param volume a \code{mesh3d} or \code{hxsurf} object. Only somas outside this volume will be plotted.
+#' @param invert logical, if \code{TRUE} only somas outside \code{volume} will be plotted, if \code{FALSE}, only those inside.
 #' @param Verbose logical indicating that info about each selected neuron should be printed (default TRUE)
 #' @param Wait logical indicating that there should be a pause between each displayed neuron
 #' @param sleep time to pause between each displayed neuron when Wait=TRUE
@@ -249,9 +251,19 @@ nlscan_split <- function (someneuronlist,
 plot3d_somas <- function(someneuronlist,
                          col = hemibrain_bright_colors["green"],
                          radius = 300,
-                         soma.alpha = 1){
+                         soma.alpha = 1,
+                         volume = NULL,
+                         invert = FALSE){
   somapos <- as.data.frame(catmaid::soma(someneuronlist))
   somapos <- somapos[!is.na(somapos$X),]
+  if(!is.null(volume)){
+    p = nat::pointsinside(somapos, surf = volume)
+    if(invert){
+      somapos = somapos[p,]
+    }else{
+      somapos = somapos[!p,]
+    }
+  }
   rgl::spheres3d(somapos, radius = radius, alpha = soma.alpha, col = col)
 }
 
