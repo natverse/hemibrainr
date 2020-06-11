@@ -202,12 +202,12 @@ correct_singles <- function(data = NULL,
                 WithConnectors = FALSE,
                WithNodes = FALSE)
 
-        try_again(100,selection <- rgl::select3d())
+        testthat::try_again(100,selection <- rgl::select3d())
 
         selected = selection(end_points)
         while(sum(selected)==0){
           message("Please select one of the points in red ")
-          try_again(100,selection <- rgl::select3d())
+          testthat::try_again(100,selection <- rgl::select3d())
           selected = selection(end_points)
         }
         selected.point = end_points[selected, ]
