@@ -163,7 +163,9 @@
   <span class='no'>someneuronlist</span>,
   <span class='kw'>col</span> <span class='kw'>=</span> <span class='no'>hemibrain_bright_colors</span>[<span class='st'>"green"</span>],
   <span class='kw'>radius</span> <span class='kw'>=</span> <span class='fl'>300</span>,
-  <span class='kw'>soma.alpha</span> <span class='kw'>=</span> <span class='fl'>1</span>
+  <span class='kw'>soma.alpha</span> <span class='kw'>=</span> <span class='fl'>1</span>,
+  <span class='kw'>volume</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>invert</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -244,6 +246,14 @@
     <tr>
       <th>brain</th>
       <td><p>a template brain to plot. <code>FALSE</code> results in no brain plotted.</p></td>
+    </tr>
+    <tr>
+      <th>volume</th>
+      <td><p>a <code>mesh3d</code> or <code>hxsurf</code> object. Only somas outside this volume will be plotted.</p></td>
+    </tr>
+    <tr>
+      <th>invert</th>
+      <td><p>logical, if <code>TRUE</code> only somas outside <code>volume</code> will be plotted, if <code>FALSE</code>, only those inside.</p></td>
     </tr>
     </table>
 
