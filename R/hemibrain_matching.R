@@ -446,6 +446,10 @@ lm_matching <- function(ids = NULL,
     if(n%in%donotdo$id | !n%in%names(query)){
       next
     }
+    if(!n%in%colnames(hemibrain.nblast)){
+      message(n, " not found in NBLAST matrix, skipping")
+      next
+    }
     # Plot brain
     rgl::clear3d()
     plot3d(brain, alpha = 0.1, col ="grey")
@@ -894,12 +898,25 @@ hemibrain_matches <- function(priority = c("FAFB","hemibrain")){
                                                   sheet = "fafb",
                                                   return = TRUE)
   fafb.matches$skid = correct_id(fafb.matches$skid)
+  fafb.matches = subset(fafb.matches, !grepl("l",fafb.matches$side))
   fafb.matches = fafb.matches[!duplicated(fafb.matches$skid),]
   fafb.matches = fafb.matches[fafb.matches$skid!="",]
   fafb.matches = subset(fafb.matches, !is.na(fafb.matches$skid))
   fafb.matches = fafb.matches[!duplicated(fafb.matches$skid),]
   fafb.matches$dataset = "FAFB"
   rownames(fafb.matches) = fafb.matches$skid
+
+  # Unmatched
+  unmatched = is.na(fafb.matches$hemibrain.match)|fafb.matches$hemibrain.match==""
+  fafb.matches$hemibrain.match.quality[unmatched] = "none"
+  fafb.matches$hemibrain.match[unmatched] = "none"
+
+  # Add in neuprint types
+  ntotype = hemibrain.matches$bodyid[is.na(hemibrain.matches$cell.type)]
+  meta = neuprintr::neuprint_get_meta(ntotype)
+  types = meta$type
+  names(types) = meta$bodyid
+  hemibrain.matches[names(types),"cell.type"] = types
 
   # Address FAFB cell types
   fafb.matches$cell.type = NA
@@ -934,13 +951,6 @@ hemibrain_matches <- function(priority = c("FAFB","hemibrain")){
     }
   }
 
-  # Add in neuprint types
-  ntotype = hemibrain.matches$bodyid[is.na(hemibrain.matches$cell.type)]
-  meta = neuprintr::neuprint_get_meta(ntotype)
-  types = meta$type
-  names(types) = meta$bodyid
-  hemibrain.matches[names(types),"cell.type"] = types
-
   # Work out lineages
   for(id in as.character(fafb.matches$skid)){
     if(is.na(id)){
@@ -949,7 +959,11 @@ hemibrain_matches <- function(priority = c("FAFB","hemibrain")){
     ct = fafb.matches[id,"cell.type"]
     if(is.na(ct)){
       fafb.matches[id,"cell.type"] = hemibrain.matches$cell.type[match(id,hemibrain.matches$FAFB.match)]
-      fafb.matches[id,"ItoLee_Hemilineage"] = hemibrain.matches$ItoLee_Hemilineage[match(id,hemibrain.matches$FAFB.match)]
+      if(is.na(fafb.matches[id,"cell.type"])){
+        fafb.matches[id,"cell.type"] = "uncertain"
+      }else{
+        fafb.matches[id,"ItoLee_Hemilineage"] = hemibrain.matches$ItoLee_Hemilineage[match(id,hemibrain.matches$FAFB.match)]
+      }
     }else{
       fafb.matches[id,"ItoLee_Hemilineage"] = hemibrain.matches$ItoLee_Hemilineage[match(ct,hemibrain.matches$cell.type)]
     }
@@ -958,12 +972,6 @@ hemibrain_matches <- function(priority = c("FAFB","hemibrain")){
   # Rename cells
   fafb.matches$cell = paste0(fafb.matches$cell.type,"#",ave(fafb.matches$cell.type,fafb.matches$cell.type,FUN= seq.int))
   hemibrain.matches$cell = paste0(hemibrain.matches$cell.type,"#",ave(hemibrain.matches$cell.type,hemibrain.matches$cell.type,FUN= seq.int))
-
-  # Fix hemilineages
-  hl = hemibrain.matches$ItoLee_Hemilineage[match(fafb.matches$skid,hemibrain.matches$FAFB.match)]
-  l = hemibrain.matches$ItoLee_Lineage[match(fafb.matches$skid,hemibrain.matches$FAFB.match)]
-  fafb.matches$ItoLee_Hemilineage[!is.na(hl)] = hl[!is.na(hl)]
-  fafb.matches$ItoLee_Lineage[!is.na(l)] = l[!is.na(l)]
 
   # Make matching data frame
   matched.h = hemibrain.matches[,c("bodyid", "cell.type", "cell", "ItoLee_Hemilineage",
@@ -974,6 +982,7 @@ hemibrain_matches <- function(priority = c("FAFB","hemibrain")){
   matched = rbind(matched.h,matched.f)
   matched$quality[is.na(matched$match)] = "none"
   matched$match[is.na(matched$match)] = "none"
+  matched$ItoLee_Lineage = gsub("_.*","",matched$ItoLee_Hemilineage)
 
   # Sort out types
   matched$connectivity.type = matched$cell.type

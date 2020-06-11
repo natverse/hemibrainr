@@ -149,13 +149,13 @@ most.lhns.hemi.dps = hemibrain_lm_lhns(savedir = lhfolder,
                                        local = TRUE,
                                        data = "dps",
                                        brainspace = "JRCFIB2018F")
-most.lhins.hemi.dps = hemibrain_lm_lhns(savedir = lhfolder,
+most.lhins.hemi.dps = hemibrainr::hemibrain_lm_lhns(savedir = lhfolder,
                                        folder="",
                                        local = TRUE,
                                        data = "dps",
                                        cable = "lhins",
                                        brainspace = "JRCFIB2018F")
-most.lh.hemi.dps = nat::union(most.lhns.hemi.dps,most.lhins.dps)
+most.lh.hemi.dps = nat::union(most.lhns.hemi.dps,most.lhins.hemi.dps)
 check = unlist(sapply(most.lh.hemi.dps, function(e) nrow(e$points)>2))
 most.lh.hemi.dps = most.lh.hemi.dps[check]
 fcs.hemi.dps = flycircuit_neurons(savedir = flycircuitfolder,
@@ -166,12 +166,12 @@ fcs.hemi.dps = flycircuit_neurons(savedir = flycircuitfolder,
                                   brainspace = "JRCFIB2018F")
 
 ### NBLAST with light level
-hemibrain.lhns.mean.1 = nat.nblast::nblast(query = most.lhns.hemi.dps,
+hemibrain.lhns.mean.1 = nat.nblast::nblast(query = most.lh.hemi.dps,
                                          target = hemibrain.dps,
                                          .parallel=TRUE,
                                          normalised = TRUE)
 hemibrain.lhns.mean.2 = nat.nblast::nblast(query = hemibrain.dps,
-                                         target = most.lhns.hemi.dps,
+                                         target = most.lh.hemi.dps,
                                          .parallel=TRUE,
                                          normalised = TRUE)
 hemibrain.lhns.mean = (hemibrain.lhns.mean.1+t(hemibrain.lhns.mean.2))/2

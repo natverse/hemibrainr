@@ -1,6 +1,10 @@
 ### Code to prepare datasets ###
 library(googledrive)
 
+### Lineage information ###
+hemilineages = read.csv("data-raw/annotations/hemilineages_by_transmitter.csv")
+usethis::use_data(hemilineages, overwrite = TRUE)
+
 ### Access Team Drive
 hemibrain = googledrive::team_drive_get("hemibrain")
 drive_hemibrain = googledrive::drive_find(type = "folder", team_drive = hemibrain)

@@ -44,7 +44,9 @@ plot3d_somas(
   someneuronlist,
   col = hemibrain_bright_colors["green"],
   radius = 300,
-  soma.alpha = 1
+  soma.alpha = 1,
+  volume = NULL,
+  invert = FALSE
 )
 }
 \arguments{
@@ -85,6 +87,10 @@ plot3d_somas(
 \item{yaml}{a logical indicating that selections should be saved to disk in (human-readable) yaml rather than (machine-readable) rda format}
 
 \item{brain}{a template brain to plot. \code{FALSE} results in no brain plotted.}
+
+\item{volume}{a \code{mesh3d} or \code{hxsurf} object. Only somas outside this volume will be plotted.}
+
+\item{invert}{logical, if \code{TRUE} only somas outside \code{volume} will be plotted, if \code{FALSE}, only those inside.}
 }
 \value{
 Plots coloured neuron(s)
