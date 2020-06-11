@@ -431,8 +431,10 @@ correct_DBSCAN = function(data = NULL,
       count = 0
       for (c in unique(db$cluster)) {
         count = count + 1
-        cluster = data$gs_somas[which(db$cluster == c), ]
-        spheres3d(cluster, radius = 500, col = col[count])
+        if (c != 0) {
+          cluster = data$gs_somas[which(db$cluster == c), ]
+          spheres3d(cluster, radius = 500, col = col[count])
+        }
       }
       legend3d(
         "topright",
@@ -485,14 +487,14 @@ correct_DBSCAN = function(data = NULL,
       } else {
         message(c(
           "sadly, now you have to fix the other ",
-          as.character(sum(db$cluster != (clusters - 1)),
+          as.character(sum(db$cluster != (clusters)),
           " somas individually."
         )))
         #
         data = correct_singles(
           data = data,
           brain = brain,
-          subset = which(db$cluster != (clusters -1))
+          subset = which(db$cluster != (clusters))
         )
       }
     }
