@@ -161,7 +161,8 @@ correct_singles <- function(data = NULL,
         n,
         lwd = 2,
         col = hemibrainr::hemibrain_bright_colors["cyan"],
-        soma = FALSE
+        soma = FALSE,
+        WithConnectors = FALSE
       )
       plot3d_somas(n)
       fix = hemibrain_choice(prompt = "Does the soma need fixing? Current possition in Green, if present. yes|no ")
@@ -226,7 +227,6 @@ correct_singles <- function(data = NULL,
       "Final check, are you happy with the new soma possitions? yes/no "
     ))
   }
-  data$update
   for (n in N_all){
     if (n$soma != data$update[which(data$update$bodyid == n$bodyid),]$position) {
       # update the values in update with the ones from the neuron list
@@ -286,11 +286,11 @@ correct_DBSCAN = function(data = NULL,
 
       # plot subset of neurons
       if (length(data$gs_somas[which(db$cluster == 1)]) < 10){
-        data$neurons = pipeline_read_neurons(sample(data$update[which(db$cluster == 1),]$bodyid,2))
-        plot3d(data$neurons, col = "grey70")
+        data$subset = pipeline_read_neurons(sample(data$update[which(db$cluster == 1),]$bodyid,2))
+        plot3d(data$subset, col = "grey70")
       } else {
-        data$neurons = pipeline_read_neurons(sample(data$update[which(db$cluster == 1),]$bodyid,5))
-        plot3d(data$neurons, col = "grey70")
+        data$subset = pipeline_read_neurons(sample(data$update[which(db$cluster == 1),]$bodyid,5))
+        plot3d(data$subsets, col = "grey70")
       }
 
       # plot3d(data$neurons, col = "grey70")
@@ -308,7 +308,7 @@ correct_DBSCAN = function(data = NULL,
         plot3d(data$neurons, col = "grey70")
         spheres3d(data$gs_somas, radius = 300, col = 'blue')
         cluster_correct = hemibrain_choice(prompt = c(
-          "Has dbscan identified the correct soma cluster (in blue) yes|no "
+          "Double check: Has dbscan identified the correct soma cluster (in blue) yes|no "
         ))
       }
       if (!isTRUE(cluster_correct)) {
@@ -348,11 +348,11 @@ correct_DBSCAN = function(data = NULL,
       plot3d(brain, col = "grey70", alpha = 0.1)
       # plot subset of neurons
       if (length(data$gs_somas[which(db$cluster == 1)]) < 10){
-        data$neurons = pipeline_read_neurons(sample(data$update[which(db$cluster == 1),]$bodyid,2))
-        plot3d(data$neurons, col = "grey70")
+        data$subset = pipeline_read_neurons(sample(data$update[which(db$cluster == 1),]$bodyid,2))
+        plot3d(data$subset, col = "grey70")
       } else {
-        data$neurons = pipeline_read_neurons(sample(data$update[which(db$cluster == 1),]$bodyid,5))
-        plot3d(data$neurons, col = "grey70")
+        data$subset = pipeline_read_neurons(sample(data$update[which(db$cluster == 1),]$bodyid,5))
+        plot3d(data$subsets, col = "grey70")
       }
       # plot3d(data$neurons, col = "grey70")
       spheres3d(somas, radius = 300, col = 'blue')
@@ -370,7 +370,7 @@ correct_DBSCAN = function(data = NULL,
         plot3d(data$neurons, col = "grey70")
         spheres3d(data$gs_somas, radius = 300, col = 'blue')
         cluster_correct = hemibrain_choice(prompt = c(
-          "Has dbscan identified the correct soma cluster (in blue) yes|no "
+          "Double check: Has dbscan identified the correct soma cluster (in blue) yes|no "
         ))
       }
       ###
