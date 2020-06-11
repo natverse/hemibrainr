@@ -15,10 +15,18 @@ hemibrain_adjust_saved_somas = function(bodyids = NULL,
                                         c = NULL,
                                         brain = NULL,
                                         selected_file = "1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E",
-                                        db = NULL) {
+                                        db = NULL,
+                                        plot_sample = TRUE) {
   if (is.null(brain)) {
     brain = hemibrainr::hemibrain.surf
   }
+
+  if (isTRUE(plot_sample)){
+    plot_sample <<- TRUE
+  } else {
+    plot_sample <<- FALSE
+  }
+
   ### Get GoogleSheet Database
   gs = gsheet_manipulation(
     FUN = googlesheets4::read_sheet,
@@ -297,12 +305,14 @@ correct_DBSCAN = function(data = NULL,
 
 
       # plot subset of neurons
-      if (length(data$gs_somas[which(db$cluster == 1)]) < 10){
-        data$subset = pipeline_read_neurons(sample(data$update[which(db$cluster == 1),]$bodyid,2))
-        plot3d(data$subset, col = "grey70", WithConnectors = FALSE)
-      } else {
-        data$subset = pipeline_read_neurons(sample(data$update[which(db$cluster == 1),]$bodyid,5))
-        plot3d(data$subset, col = "grey70", WithConnectors = FALSE)
+      if (isTRUE(plot_sample)){
+        if (length(data$gs_somas[which(db$cluster == 1)]) < 10){
+          data$subset = pipeline_read_neurons(sample(data$update[which(db$cluster == 1),]$bodyid,2))
+          plot3d(data$subset, col = "grey70", WithConnectors = FALSE)
+        } else {
+          data$subset = pipeline_read_neurons(sample(data$update[which(db$cluster == 1),]$bodyid,5))
+          plot3d(data$subset, col = "grey70", WithConnectors = FALSE)
+        }
       }
       plot3d(brain, col = "grey70", alpha = 0.1)
       # plot3d(data$neurons, col = "grey70")
@@ -359,12 +369,14 @@ correct_DBSCAN = function(data = NULL,
       clear3d()
 
       # plot subset of neurons
-      if (length(data$gs_somas[which(db$cluster == 1)]) < 10){
-        data$subset = pipeline_read_neurons(sample(data$update[which(db$cluster == 1),]$bodyid,2))
-        plot3d(data$subset, col = "grey70", WithConnectors = FALSE)
-      } else {
-        data$subset = pipeline_read_neurons(sample(data$update[which(db$cluster == 1),]$bodyid,5))
-        plot3d(data$subset, col = "grey70", WithConnectors = FALSE)
+      if (isTRUE(plot_sample)) {
+        if (length(data$gs_somas[which(db$cluster == 1)]) < 10){
+          data$subset = pipeline_read_neurons(sample(data$update[which(db$cluster == 1),]$bodyid,2))
+          plot3d(data$subset, col = "grey70", WithConnectors = FALSE)
+        } else {
+          data$subset = pipeline_read_neurons(sample(data$update[which(db$cluster == 1),]$bodyid,5))
+          plot3d(data$subset, col = "grey70", WithConnectors = FALSE)
+        }
       }
       # plot3d(data$neurons, col = "grey70")
       plot3d(brain, col = "grey70", alpha = 0.1)
@@ -416,15 +428,17 @@ correct_DBSCAN = function(data = NULL,
       plot3d(brain, col = "grey70", alpha = 0.1)
 
       # plot random subset of neurons within each ID'd cluster (not noise)
-      for (c in unique(db$cluster)){
-        if (c != 0){
-          # plot subset of neurons
-          if (length(data$gs_somas[which(db$cluster == c)]) < 10){
-            clust = pipeline_read_neurons(sample(data$update[which(db$cluster == c),]$bodyid,2))
-            plot3d(clust, col = "grey70", WithConnectors = FALSE)
-          } else {
-            clust = pipeline_read_neurons(sample(data$update[which(db$cluster == c),]$bodyid,5))
-            plot3d(clust, col = "grey70", WithConnectors = FALSE)
+      if (isTRUE(plot_sample)) {
+        for (c in unique(db$cluster)){
+          if (c != 0){
+            # plot subset of neurons
+            if (length(data$gs_somas[which(db$cluster == c)]) < 10){
+              clust = pipeline_read_neurons(sample(data$update[which(db$cluster == c),]$bodyid,2))
+              plot3d(clust, col = "grey70", WithConnectors = FALSE)
+            } else {
+              clust = pipeline_read_neurons(sample(data$update[which(db$cluster == c),]$bodyid,5))
+              plot3d(clust, col = "grey70", WithConnectors = FALSE)
+            }
           }
         }
       }
