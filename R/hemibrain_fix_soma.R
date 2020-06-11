@@ -282,17 +282,17 @@ correct_DBSCAN = function(data = NULL,
       message("all neurons seem to have a labeled soma, and form a single cluster. Good times")
       # plot and check if cluster is correct
       clear3d()
-      plot3d(brain, col = "grey70", alpha = 0.1)
+
 
       # plot subset of neurons
       if (length(data$gs_somas[which(db$cluster == 1)]) < 10){
         data$subset = pipeline_read_neurons(sample(data$update[which(db$cluster == 1),]$bodyid,2))
-        plot3d(data$subset, col = "grey70")
+        plot3d(data$subset, col = "grey70", WithConnectors = FALSE)
       } else {
         data$subset = pipeline_read_neurons(sample(data$update[which(db$cluster == 1),]$bodyid,5))
-        plot3d(data$subsets, col = "grey70")
+        plot3d(data$subset, col = "grey70", WithConnectors = FALSE)
       }
-
+      plot3d(brain, col = "grey70", alpha = 0.1)
       # plot3d(data$neurons, col = "grey70")
       spheres3d(data$gs_somas, radius = 300, col = 'blue')
       cluster_correct = hemibrain_choice(prompt = c(
@@ -345,16 +345,17 @@ correct_DBSCAN = function(data = NULL,
       somas = as.data.frame(somas[which(db$cluster == 1), ])
       # plot and check if cluster is correct
       clear3d()
-      plot3d(brain, col = "grey70", alpha = 0.1)
+
       # plot subset of neurons
       if (length(data$gs_somas[which(db$cluster == 1)]) < 10){
         data$subset = pipeline_read_neurons(sample(data$update[which(db$cluster == 1),]$bodyid,2))
-        plot3d(data$subset, col = "grey70")
+        plot3d(data$subset, col = "grey70", WithConnectors = FALSE)
       } else {
         data$subset = pipeline_read_neurons(sample(data$update[which(db$cluster == 1),]$bodyid,5))
-        plot3d(data$subsets, col = "grey70")
+        plot3d(data$subset, col = "grey70", WithConnectors = FALSE)
       }
       # plot3d(data$neurons, col = "grey70")
+      plot3d(brain, col = "grey70", alpha = 0.1)
       spheres3d(somas, radius = 300, col = 'blue')
       spheres3d(noise, radius = 300, col = 'red')
       cluster_correct = hemibrain_choice(prompt = c(
