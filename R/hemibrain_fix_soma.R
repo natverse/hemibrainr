@@ -485,14 +485,14 @@ correct_DBSCAN = function(data = NULL,
       } else {
         message(c(
           "sadly, now you have to fix the other ",
-          as.character(sum(db$cluster != clusters)),
+          as.character(sum(db$cluster != (clusters - 1)),
           " somas individually."
-        ))
+        )))
         #
         data = correct_singles(
           data = data,
           brain = brain,
-          subset = which(db$cluster != clusters)
+          subset = which(db$cluster != (clusters -1))
         )
       }
     }
