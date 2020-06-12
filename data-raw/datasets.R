@@ -2,8 +2,8 @@
 library(googledrive)
 
 ### Lineage information ###
-hemilineages = read.csv("data-raw/annotations/hemilineages_by_transmitter.csv")
-usethis::use_data(hemilineages, overwrite = TRUE)
+hemibrain_hemilineages = read.csv("data-raw/annotations/hemilineages_by_transmitter.csv")
+usethis::use_data(hemibrain_hemilineages, overwrite = TRUE)
 
 ### Access Team Drive
 hemibrain = googledrive::team_drive_get("hemibrain")
@@ -23,8 +23,14 @@ gs = googlesheets4::read_sheet(ss = selected_file, sheet = "roots")
 gs = unlist_df(gs)
 manual = googlesheets4::read_sheet(ss = selected_file, sheet = "manual")
 manual = unlist_df(manual)
-write.csv(gs, file = "data-raw/hemibrain_data/hemibrain_manual/split_pipeline_roots.csv")
-write.csv(manual, file = "data-raw/hemibrain_data/hemibrain_manual/split_pipeline_manualsplits.csv")
+write.csv(gs, file = "data-raw/hemibrain_data/hemibrain_manual/split_pipeline_roots.csv", row.names = FALSE)
+write.csv(manual, file = "data-raw/hemibrain_data/hemibrain_manual/split_pipeline_manualsplits.csv", row.names = FALSE)
+
+### Somas
+hemibrain_somas = googlesheets4::read_sheet(ss = selected_file, sheet = "somas")
+hemibrain_somas = as.data.frame(hemibrain_somas)
+rownames(hemibrain_somas) = hemibrain_somas$bodyid
+usethis::use_data(hemibrain_somas, overwrite = TRUE)
 
 ### Split points
 hemibrain_splitpoints_polypre_centrifugal_distance <- read.csv("data-raw/hemibrain_all_neurons_splitpoints_polypre_centrifugal_distance.csv")

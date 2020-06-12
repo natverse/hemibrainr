@@ -174,4 +174,16 @@
 #'
 #' @name hemilineages
 #' @rdname hemilineages
-"hemilineages"
+"hemibrain_hemilineages"
+
+#' Soma locations for hemibrain neurons
+#'
+#' Somas have been manually tagged by the FlyEM project.
+#' However, in some cases the roots are wrong, or somas are outside of the volume. The Fly Connectome team at the University of Cambridge has
+#' manually tagged better root points for these neurons. Soma locations, updated by this work, as saved as \code{\link{hemibrain_somas}} in this package.
+#' A user can read somas from here, or get a bleeding edge version from
+#' the \href{https://docs.google.com/spreadsheets/d/1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E/edit#gid=1524900531}{Google Sheet}.
+#'
+#' @name hemibrain_somas
+#' @rdname hemibrain_somas
+"hemibrain_somas"

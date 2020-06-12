@@ -1,10 +1,11 @@
-#' Title heibrain_adjust_saved_somas
+#' Adjust saved somas manually
 #'
 #' @param bodyids Optional, unless using neurons method. Otherwise, list of neuron bodyids
 #' @param c Optional. For use when correcting Cell body fibres. If not input, function will ask you to enter one later
 #' @param brain Optional. by default will use the hemibrain surface. Other neuropil surfaces can be provided here however
 #' @param selected_file Identifier for gsheet you wish to read from and write to. By default, Curated_splitpoints soma sheet
 #' @param db Optional. if provided, local directory to read neurons from.
+#' @param plot_sample plot a sample of the neurons to be examined
 #'
 #' @return
 #'

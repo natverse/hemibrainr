@@ -4,12 +4,24 @@
 \alias{hemibrain_reroot}
 \title{Re-root a neuron/neurons}
 \usage{
-hemibrain_reroot(x, meshes = hemibrain_roi_meshes(), ...)
+hemibrain_reroot(
+  x,
+  method = c("manual", "estimated"),
+  meshes = NULL,
+  googlesheet = FALSE,
+  ...
+)
 }
 \arguments{
 \item{x}{a \code{nat::neuronlist} or \code{nat::neuron} object}
 
-\item{meshes}{a list/a single object of class \code{mesh3d} or \code{hxsurf}.}
+\item{method}{whether to use the manually curated soma list or estimate soma location.}
+
+\item{meshes}{a list/a single object of class \code{mesh3d} or \code{hxsurf}. Only used for estimation.
+If \code{NULL} then \code{hemibrain_roi_meshes} is called.}
+
+\item{googlesheet}{logical, whether to read soma locations from the \href{https://docs.google.com/spreadsheets/d/1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E/edit#gid=1524900531}{Google Sheet}
+if \code{method == "manual"}.}
 
 \item{...}{methods sent to \code{nat::nlapply}}
 }
@@ -17,8 +29,12 @@ hemibrain_reroot(x, meshes = hemibrain_roi_meshes(), ...)
 a \code{nat::neuronlist} or \code{nat::neuron} object
 }
 \description{
-Re-root neurons by predicting their soma location. This works
-by finding the longest path outside of a given neuropil mesh/meshes, as in insect
+Re-root neurons by predicting their soma location. Somas have been manually tagged by the FlyEM project.
+However, in some cases the roots are wrong, or somas are outside of the volume. The Fly Connectome team at the University of Cambridge has
+manually tagged better root points for these neurons. Soma locations, updated by this work, as saved as \code{\link{hemibrain_somas}} in this package.
+A user can read somas from here, or get a bleeding edge version from
+the \href{https://docs.google.com/spreadsheets/d/1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E/edit#gid=1524900531}{Google Sheet}. Alternaitvely, they
+can 'estimated' a good root-point. This works by finding the longest path outside of a given neuropil mesh/meshes, as in insect
 neurons the soma should be located in a cortex outside of the neuropil proper.
 }
 \examples{
@@ -46,5 +62,5 @@ for(n in neurons){
 }}
 }
 \seealso{
-\code{\link{flow_centrality}}
+\code{\link{flow_centrality}}, \code{\link{hemibrain_somas}}
 }

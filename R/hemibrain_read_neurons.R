@@ -15,9 +15,13 @@
 #' from which hemibrain neurons can be read. If \code{TRUE} your default save directory is used, which is stored as: \code{options()$hemibrain_data}
 #' @param microns convert dimensions from raw voxels into microns (template brain: \code{JRCFIB2018F}, else \code{JRCFIB2018Fraw}).
 #' @param remove.bad.synapses whether or not to run \code{\link{hemibrain_remove_bad_synapses}} on neurons pulled from neuPrint.
+#' @param reroot logical, whether or not somas should be re-rooted.
+#' Note that if FALSE, re-rooting occurs anyway via \code{hemibrain_flow_centrality}. However, setting this argument to \code{TRUE}
+#' @param googlesheet logical, whether or not manually checked somas should be read from the \href{https://docs.google.com/spreadsheets/d/1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E/edit#gid=1524900531}{Google Sheet}
 #' @param clean whether or not to set synapse-less branches to \code{Label = 0}.
 #' @param local logical, whether to try to read locally saved neurons (by default at: \code{options()$hemibrain_data}) or neurons from Google Drive (\code{options()$Gdrive_hemibrain_data}).
 #' @param neuron.split read saved neurons spit in which way? Folder names indicative of arguments passed to \code{\link{flow_centrality}}.
+#' @param scaling the factor by which neuron coordinates in raw voxel space should be multiplied. The default scales to microns.
 #' @param ... arguments passed to \code{neuprintr::neuprint_read_neurons}, \code{\link{hemibrain_remove_bad_synapses}}
 #'  and \code{\link{hemibrain_flow_centrality}}
 #'
@@ -45,12 +49,14 @@
 #' }}
 #' @rdname hemibrain_read_neurons
 #' @export
-#' @seealso \code{\link{hemibrain_splitpoints}}, \code{\link{hemibrain_flow_centrality}},
+#' @seealso \code{\link{hemibrain_splitpoints}}, \code{\link{hemibrain_flow_centrality}}, \code{\link{hemibrain_somas}},
 #' \code{\link{hemibrain_precomputed_splitpoints}}, \code{\link{hemibrain_metrics}},\code{\link{hemibrain_remove_bad_synapses}}
 hemibrain_read_neurons<-function(x = NULL,
                                  savedir = FALSE,
                                  local = FALSE,
                                  microns = FALSE,
+                                 reroot = TRUE,
+                                 googlesheet = FALSE,
                                  remove.bad.synapses = FALSE,
                                  clean = FALSE,
                                  ...){
@@ -84,6 +90,9 @@ hemibrain_read_neurons<-function(x = NULL,
   if(clean){
     neurons.flow = hemibrain_clean_skeleton(neurons.flow, rval = "neuron", ...)
   }
+  if(reroot){
+    neurons.flow = hemibrain_reroot(neurons.flow, method = "manual", googlesheet = googlesheet, ...)
+  }
   selcols=setdiff(colnames(hemibrainr::hemibrain_metrics), colnames(neurons.flow[,]))
   hemibrain_metrics_sel = hemibrainr::hemibrain_metrics[names(neurons.flow), selcols]
   df = cbind(neurons.flow[,], hemibrain_metrics_sel)
@@ -100,8 +109,10 @@ hemibrain_read_neurons<-function(x = NULL,
   neurons.flow
 }
 
-# hidden
+#' @rdname hemibrain_read_neurons
+#' @export
 scale_neurons <-function(x, scaling = (8/1000), ...) UseMethod("scale_neurons")
+#' @export
 scale_neurons.neuron <- function(x, scaling, ...){
   nat::xyzmatrix(x$d) = nat::xyzmatrix(x$d)*scaling
   if(!is.null(x$d$W)){
@@ -113,6 +124,7 @@ scale_neurons.neuron <- function(x, scaling, ...){
   }
   x
 }
+#' @export
 scale_neurons.neuronlist = function(x, scaling = (8/1000), ...){
   nat::nlapply(x,scale_neurons.neuron, scaling = scaling, ...)
 }

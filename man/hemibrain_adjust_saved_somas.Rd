@@ -2,14 +2,15 @@
 % Please edit documentation in R/hemibrain_fix_soma.R
 \name{hemibrain_adjust_saved_somas}
 \alias{hemibrain_adjust_saved_somas}
-\title{Title heibrain_adjust_saved_somas}
+\title{Adjust saved somas manually}
 \usage{
 hemibrain_adjust_saved_somas(
   bodyids = NULL,
   c = NULL,
   brain = NULL,
   selected_file = "1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E",
-  db = NULL
+  db = NULL,
+  plot_sample = TRUE
 )
 }
 \arguments{
@@ -22,10 +23,12 @@ hemibrain_adjust_saved_somas(
 \item{selected_file}{Identifier for gsheet you wish to read from and write to. By default, Curated_splitpoints soma sheet}
 
 \item{db}{Optional. if provided, local directory to read neurons from.}
+
+\item{plot_sample}{plot a sample of the neurons to be examined}
 }
 \value{
 
 }
 \description{
-Title heibrain_adjust_saved_somas
+Adjust saved somas manually
 }

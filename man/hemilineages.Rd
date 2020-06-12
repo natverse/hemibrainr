@@ -3,12 +3,13 @@
 \docType{data}
 \name{hemilineages}
 \alias{hemilineages}
+\alias{hemibrain_hemilineages}
 \title{Hemilineages namdes from T. Lee, K. Ito and V. Hartenstein}
 \format{
 An object of class \code{data.frame} with 123 rows and 5 columns.
 }
 \usage{
-hemilineages
+hemibrain_hemilineages
 }
 \description{
 Hemilineages names and putative transmitter.

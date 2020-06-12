@@ -4,11 +4,19 @@
 
 #' Re-root a neuron/neurons
 #'
-#' @description Re-root neurons by predicting their soma location. This works
-#' by finding the longest path outside of a given neuropil mesh/meshes, as in insect
+#' @description Re-root neurons by predicting their soma location. Somas have been manually tagged by the FlyEM project.
+#' However, in some cases the roots are wrong, or somas are outside of the volume. The Fly Connectome team at the University of Cambridge has
+#' manually tagged better root points for these neurons. Soma locations, updated by this work, as saved as \code{\link{hemibrain_somas}} in this package.
+#' A user can read somas from here, or get a bleeding edge version from
+#' the \href{https://docs.google.com/spreadsheets/d/1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E/edit#gid=1524900531}{Google Sheet}. Alternaitvely, they
+#' can 'estimated' a good root-point. This works by finding the longest path outside of a given neuropil mesh/meshes, as in insect
 #' neurons the soma should be located in a cortex outside of the neuropil proper.
 #' @param x a \code{nat::neuronlist} or \code{nat::neuron} object
-#' @param meshes a list/a single object of class \code{mesh3d} or \code{hxsurf}.
+#' @param method whether to use the manually curated soma list or estimate soma location.
+#' @param googlesheet logical, whether to read soma locations from the \href{https://docs.google.com/spreadsheets/d/1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E/edit#gid=1524900531}{Google Sheet}
+#' if \code{method == "manual"}.
+#' @param meshes a list/a single object of class \code{mesh3d} or \code{hxsurf}. Only used for estimation.
+#' If \code{NULL} then \code{hemibrain_roi_meshes} is called.
 #' @param ... methods sent to \code{nat::nlapply}
 #'
 #' @return a \code{nat::neuronlist} or \code{nat::neuron} object
@@ -37,64 +45,110 @@
 #'}
 #' }}
 #' @export
-#' @seealso \code{\link{flow_centrality}}
-hemibrain_reroot <-function(x, meshes = hemibrain_roi_meshes(), ...)
-  UseMethod("hemibrain_reroot")
+#' @seealso \code{\link{flow_centrality}}, \code{\link{hemibrain_somas}}
+hemibrain_reroot <-function(x,
+                            method = c("manual","estimated"),
+                            meshes = NULL,
+                            googlesheet = FALSE,
+                            ...) UseMethod("hemibrain_reroot")
 
 #' @export
-hemibrain_reroot.neuron <- function(x, meshes = hemibrain_roi_meshes(), ...){
+hemibrain_reroot.neuron <- function(x,
+                                    method = c("manual","estimated"),
+                                    meshes = NULL,
+                                    googlesheet = FALSE,
+                                    ...){
+  method = match.arg(method)
   # Find out of volume points
-  x$d$roi = NA
   root.orig = nat::rootpoints(x)
-  if(!is.hxsurf(meshes)){
-    for(roi in names(meshes)){
-      inside = nat::pointsinside(nat::xyzmatrix(x$d), surf = meshes[[roi]])
-      x$d$roi[inside] = roi
+  if(method == "manual"){
+    if(googlesheet){
+      hemibrain_somas = googlesheets4::read_sheet(ss = selected_file, sheet = "somas")
+      hemibrain_somas = as.data.frame(hemibrain_somas)
+      rownames(hemibrain_somas) = hemibrain_somas$bodyid
     }
-  }else{
-    inside = nat::pointsinside(nat::xyzmatrix(x$d), surf = meshes)
-    x$d$roi[inside] = deparse(substitute(meshes))
-  }
-  # Find longest path outside
-  outside = rownames(x$d)[is.na(x$d$roi)]
-  if(length(outside)==0|is.null(outside)){
-    warning("Neuron ", x$bodyid," has no nodes outside of mesh(es), dropping ...")
-    x
-  }else{
-    segs.out = sapply(x$SegList, function(s) sum(s%in%outside))
-    longest.out = x$SegList[[which.max(segs.out)]]
-    # How many leaf nodes down and upstream of this segment?
-    n = nat::as.ngraph(x)
-    leaves = nat::endpoints(x)
-    downs = igraph::distances(n, v = longest.out, to = leaves, mode = "out")
-    downs[is.infinite(downs)] = 0
-    downs = apply(downs,1,function(r) sum(r>0))
-    down = downs[which.max(downs)]
-    ups = igraph::distances(n, v = longest.out, to = leaves, mode = "in")
-    ups[is.infinite(ups)] = 0
-    ups = apply(ups,1,function(r) sum(r>0))
-    up = ups[which.max(ups)]
-    if(up<down){
-      root = longest.out[length(longest.out)]
+    bis = as.character(x$bodyid)
+    if(is.null(bis)){
+      stop("Neuron must have its bodyid at x$bodyid. If this is not the case, try running x = add_field_seq(x,x[,'bodyid'],field='bodyid')")
+    }else if (!bis%in%rownames(hemibrain_somas)){
+      warning("Neuron ",bis," not in saved soma locations. Estimating soma")
+      root = root.orig
     }else{
-      root = longest.out[1]
+      som = hemibrain_somas[bis,]
+      root = nabor::knn(query = nat::xyzmatrix(som), data = nat::xyzmatrix(x$d), k = 1)$nn.idx
     }
     somid = x$d$PointNo[match(root, 1:nrow(x$d))]
     y = nat::as.neuron(nat::as.ngraph(x$d), origin = somid)
-    y = hemibrain_carryover_labels(x=x,y=y)
-    y = hemibrain_carryover_tags(x=x,y=y)
-    y$connectors = x$connectors
-    y$connectors$treenode_id = y$d$PointNo[match(x$connectors$treenode_id, y$d$PointNo)]
-    y$soma = y$tags$soma = somid
-    y$tags$soma.edit = ifelse(root.orig==root,FALSE,"estimated")
-    y = hemibrain_neuron_class(y)
-    y
+    y$tags$soma.edit = ifelse(root.orig==root,FALSE,"manual")
   }
+  if (method == "estimated"){
+    if(is.null(meshes)){
+      meshes = hemibrain_roi_meshes()
+    }
+    x$d$roi = NA
+    if(!is.hxsurf(meshes)){
+      for(roi in names(meshes)){
+        inside = nat::pointsinside(nat::xyzmatrix(x$d), surf = meshes[[roi]])
+        x$d$roi[inside] = roi
+      }
+    }else{
+      inside = nat::pointsinside(nat::xyzmatrix(x$d), surf = meshes)
+      x$d$roi[inside] = deparse(substitute(meshes))
+    }
+    # Find longest path outside
+    outside = rownames(x$d)[is.na(x$d$roi)]
+    if(length(outside)==0|is.null(outside)){
+      warning("Neuron ", x$bodyid," has no nodes outside of mesh(es), dropping ...")
+      x
+    }else{
+      segs.out = sapply(x$SegList, function(s) sum(s%in%outside))
+      longest.out = x$SegList[[which.max(segs.out)]]
+      # How many leaf nodes down and upstream of this segment?
+      n = nat::as.ngraph(x)
+      leaves = nat::endpoints(x)
+      downs = igraph::distances(n, v = longest.out, to = leaves, mode = "out")
+      downs[is.infinite(downs)] = 0
+      downs = apply(downs,1,function(r) sum(r>0))
+      down = downs[which.max(downs)]
+      ups = igraph::distances(n, v = longest.out, to = leaves, mode = "in")
+      ups[is.infinite(ups)] = 0
+      ups = apply(ups,1,function(r) sum(r>0))
+      up = ups[which.max(ups)]
+      if(up<down){
+        root = longest.out[length(longest.out)]
+      }else{
+        root = longest.out[1]
+      }
+      somid = x$d$PointNo[match(root, 1:nrow(x$d))]
+      y = nat::as.neuron(nat::as.ngraph(x$d), origin = somid)
+      y$tags$soma.edit = ifelse(root.orig==root,FALSE,"estimated")
+    }
+  }
+
+  # Return
+  y = hemibrain_carryover_labels(x=x,y=y)
+  y = hemibrain_carryover_tags(x=x,y=y)
+  y$connectors = x$connectors
+  y$connectors$treenode_id = y$d$PointNo[match(x$connectors$treenode_id, y$d$PointNo)]
+  y$soma = y$tags$soma = somid
+  y = hemibrain_neuron_class(y)
+  y
 }
 
 
 #' @export
-hemibrain_reroot.neuronlist <- function(x, meshes = hemibrain_roi_meshes(), ...){
+hemibrain_reroot.neuronlist <- function(x,
+                                        method = c("manual","estimated"),
+                                        meshes = NULL,
+                                        googlesheet = FALSE,
+                                        ...){
+  method = match.arg(method)
+  if(method == "estimated"){
+    if(is.null(meshes)){
+      meshes = hemibrain_roi_meshes()
+    }
+  }
+  x = add_field_seq(x,x[,"bodyid"],field="bodyid")
   neurons = suppressWarnings(nat::nlapply(x, hemibrain_reroot.neuron, meshes, ...))
   if(sum(!names(x)%in%names(neurons))>0){
     missed = setdiff(names(x),names(neurons))

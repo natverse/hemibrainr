@@ -2,6 +2,7 @@
 % Please edit documentation in R/hemibrain_read_neurons.R
 \name{hemibrain_read_neurons}
 \alias{hemibrain_read_neurons}
+\alias{scale_neurons}
 \alias{hemibrain_neurons}
 \title{Read neurons from the hemibrain connectome project}
 \usage{
@@ -10,10 +11,14 @@ hemibrain_read_neurons(
   savedir = FALSE,
   local = FALSE,
   microns = FALSE,
+  reroot = TRUE,
+  googlesheet = FALSE,
   remove.bad.synapses = FALSE,
   clean = FALSE,
   ...
 )
+
+scale_neurons(x, scaling = (8/1000), ...)
 
 hemibrain_neurons(
   savedir = TRUE,
@@ -31,12 +36,19 @@ from which hemibrain neurons can be read. If \code{TRUE} your default save direc
 
 \item{microns}{convert dimensions from raw voxels into microns (template brain: \code{JRCFIB2018F}, else \code{JRCFIB2018Fraw}).}
 
+\item{reroot}{logical, whether or not somas should be re-rooted.
+Note that if FALSE, re-rooting occurs anyway via \code{hemibrain_flow_centrality}. However, setting this argument to \code{TRUE}}
+
+\item{googlesheet}{logical, whether or not manually checked somas should be read from the \href{https://docs.google.com/spreadsheets/d/1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E/edit#gid=1524900531}{Google Sheet}}
+
 \item{remove.bad.synapses}{whether or not to run \code{\link{hemibrain_remove_bad_synapses}} on neurons pulled from neuPrint.}
 
 \item{clean}{whether or not to set synapse-less branches to \code{Label = 0}.}
 
 \item{...}{arguments passed to \code{neuprintr::neuprint_read_neurons}, \code{\link{hemibrain_remove_bad_synapses}}
 and \code{\link{hemibrain_flow_centrality}}}
+
+\item{scaling}{the factor by which neuron coordinates in raw voxel space should be multiplied. The default scales to microns.}
 
 \item{neuron.split}{read saved neurons spit in which way? Folder names indicative of arguments passed to \code{\link{flow_centrality}}.}
 }
@@ -76,6 +88,6 @@ nlscan_split(neurons, WithConnectors = TRUE)
 }}
 }
 \seealso{
-\code{\link{hemibrain_splitpoints}}, \code{\link{hemibrain_flow_centrality}},
+\code{\link{hemibrain_splitpoints}}, \code{\link{hemibrain_flow_centrality}}, \code{\link{hemibrain_somas}},
 \code{\link{hemibrain_precomputed_splitpoints}}, \code{\link{hemibrain_metrics}},\code{\link{hemibrain_remove_bad_synapses}}
 }
