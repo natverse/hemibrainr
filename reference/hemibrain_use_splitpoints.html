@@ -185,19 +185,16 @@ have not been resampled or their skeletons otherwise modified).</p></td>
 
 <span class='co'># Now make sure the neurons have a soma marked</span>
 <span class='co'>## Some hemibrain neurons do not, as the soma was chopped off</span>
-<span class='no'>neurons.checked</span> <span class='kw'>=</span> <span class='fu'><a href='hemibrain_skeleton_check.html'>hemibrain_skeleton_check</a></span>(<span class='no'>neurons</span>, <span class='kw'>meshes</span> <span class='kw'>=</span> <span class='no'>hemibrain.surf</span>)</div><div class='output co'>#&gt; <span class='message'>Re-rooting 2 neurons without a soma</span></div><div class='output co'>#&gt; <span class='message'>Removing synapses outside the hemibrain neuropil volume for 5 neurons</span></div><div class='input'>
+<span class='no'>neurons.checked</span> <span class='kw'>=</span> <span class='fu'><a href='hemibrain_skeleton_check.html'>hemibrain_skeleton_check</a></span>(<span class='no'>neurons</span>, <span class='kw'>meshes</span> <span class='kw'>=</span> <span class='no'>hemibrain.surf</span>)</div><div class='output co'>#&gt; <span class='message'>Re-rooting 2 neurons without a soma</span></div><div class='output co'>#&gt; <span class='message'>Removing synapses outside the hemibrain neuropil volume for 5 neurons</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Coercing LHS to a list</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Coercing LHS to a list</span></div><div class='output co'>#&gt; <span class='error'>Error in UseMethod("add_field"): no applicable method for 'add_field' applied to an object of class "try-error"</span></div><div class='input'>
 <span class='co'># Split neuron</span>
 <span class='co'>## These are the recommended parameters for hemibrain neurons</span>
 <span class='no'>neurons.flow</span> <span class='kw'>=</span> <span class='fu'><a href='flow_centrality.html'>flow_centrality</a></span>(<span class='no'>neurons.checked</span>, <span class='kw'>polypre</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
 <span class='kw'>mode</span> <span class='kw'>=</span> <span class='st'>"centrifugal"</span>,
-<span class='kw'>split</span> <span class='kw'>=</span> <span class='st'>"distance"</span>)
-
+<span class='kw'>split</span> <span class='kw'>=</span> <span class='st'>"distance"</span>)</div><div class='output co'>#&gt; <span class='error'>Error in flow_centrality(neurons.checked, polypre = TRUE, mode = "centrifugal",     split = "distance"): object 'neurons.checked' not found</span></div><div class='input'>
 <span class='co'># Save the results</span>
-<span class='no'>splitpoints</span> <span class='kw'>=</span> <span class='fu'><a href='hemibrain_splitpoints.html'>hemibrain_splitpoints</a></span>(<span class='no'>neurons.flow</span>)
-
+<span class='no'>splitpoints</span> <span class='kw'>=</span> <span class='fu'><a href='hemibrain_splitpoints.html'>hemibrain_splitpoints</a></span>(<span class='no'>neurons.flow</span>)</div><div class='output co'>#&gt; <span class='error'>Error in nat::as.neuronlist(x): object 'neurons.flow' not found</span></div><div class='input'>
 <span class='co'># Re-use the results</span>
-<span class='no'>neurons.flow.2</span> <span class='kw'>=</span> <span class='fu'>hemibrain_use_splitpoints</span>(<span class='no'>neurons</span>, <span class='no'>splitpoints</span>, <span class='kw'>knn</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
-
+<span class='no'>neurons.flow.2</span> <span class='kw'>=</span> <span class='fu'>hemibrain_use_splitpoints</span>(<span class='no'>neurons</span>, <span class='no'>splitpoints</span>, <span class='kw'>knn</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</div><div class='output co'>#&gt; <span class='error'>Error in FUN(X[[i]], ...): object 'splitpoints' not found</span></div><div class='input'>
 <span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
 <span class='co'># Plot the split to check it</span>
 <span class='kw pkg'>nat</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/nat/man/nopen3d.html'>nopen3d</a></span>()

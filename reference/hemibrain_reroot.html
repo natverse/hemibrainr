@@ -47,8 +47,12 @@
 
 
 <meta property="og:title" content="Re-root a neuron/neurons — hemibrain_reroot" />
-<meta property="og:description" content="Re-root neurons by predicting their soma location. This works
-by finding the longest path outside of a given neuropil mesh/meshes, as in insect
+<meta property="og:description" content="Re-root neurons by predicting their soma location. Somas have been manually tagged by the FlyEM project.
+However, in some cases the roots are wrong, or somas are outside of the volume. The Fly Connectome team at the University of Cambridge has
+manually tagged better root points for these neurons. Soma locations, updated by this work, as saved as hemibrain_somas in this package.
+A user can read somas from here, or get a bleeding edge version from
+the Google Sheet. Alternaitvely, they
+can 'estimated' a good root-point. This works by finding the longest path outside of a given neuropil mesh/meshes, as in insect
 neurons the soma should be located in a cortex outside of the neuropil proper." />
 <meta property="og:image" content="/logo.svg" />
 
@@ -124,12 +128,22 @@ neurons the soma should be located in a cortex outside of the neuropil proper." 
     </div>
 
     <div class="ref-description">
-    <p>Re-root neurons by predicting their soma location. This works
-by finding the longest path outside of a given neuropil mesh/meshes, as in insect
+    <p>Re-root neurons by predicting their soma location. Somas have been manually tagged by the FlyEM project.
+However, in some cases the roots are wrong, or somas are outside of the volume. The Fly Connectome team at the University of Cambridge has
+manually tagged better root points for these neurons. Soma locations, updated by this work, as saved as <code><a href='hemibrain_somas.html'>hemibrain_somas</a></code> in this package.
+A user can read somas from here, or get a bleeding edge version from
+the <a href='https://docs.google.com/spreadsheets/d/1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E/edit#gid=1524900531'>Google Sheet</a>. Alternaitvely, they
+can 'estimated' a good root-point. This works by finding the longest path outside of a given neuropil mesh/meshes, as in insect
 neurons the soma should be located in a cortex outside of the neuropil proper.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>hemibrain_reroot</span>(<span class='no'>x</span>, <span class='kw'>meshes</span> <span class='kw'>=</span> <span class='fu'><a href='hemibrain_roi_meshes.html'>hemibrain_roi_meshes</a></span>(), <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>hemibrain_reroot</span>(
+  <span class='no'>x</span>,
+  <span class='kw'>method</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"manual"</span>, <span class='st'>"estimated"</span>),
+  <span class='kw'>meshes</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>googlesheet</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='no'>...</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -139,8 +153,18 @@ neurons the soma should be located in a cortex outside of the neuropil proper.</
       <td><p>a <code><a href='https://rdrr.io/pkg/nat/man/neuronlist.html'>nat::neuronlist</a></code> or <code><a href='https://rdrr.io/pkg/nat/man/neuron.html'>nat::neuron</a></code> object</p></td>
     </tr>
     <tr>
+      <th>method</th>
+      <td><p>whether to use the manually curated soma list or estimate soma location.</p></td>
+    </tr>
+    <tr>
       <th>meshes</th>
-      <td><p>a list/a single object of class <code>mesh3d</code> or <code>hxsurf</code>.</p></td>
+      <td><p>a list/a single object of class <code>mesh3d</code> or <code>hxsurf</code>. Only used for estimation.
+If <code>NULL</code> then <code>hemibrain_roi_meshes</code> is called.</p></td>
+    </tr>
+    <tr>
+      <th>googlesheet</th>
+      <td><p>logical, whether to read soma locations from the <a href='https://docs.google.com/spreadsheets/d/1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E/edit#gid=1524900531'>Google Sheet</a>
+if <code>method == "manual"</code>.</p></td>
     </tr>
     <tr>
       <th>...</th>
@@ -153,7 +177,7 @@ neurons the soma should be located in a cortex outside of the neuropil proper.</
     <p>a <code><a href='https://rdrr.io/pkg/nat/man/neuronlist.html'>nat::neuronlist</a></code> or <code><a href='https://rdrr.io/pkg/nat/man/neuron.html'>nat::neuron</a></code> object</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='flow_centrality.html'>flow_centrality</a></code></p></div>
+    <div class='dont-index'><p><code><a href='flow_centrality.html'>flow_centrality</a></code>, <code><a href='hemibrain_somas.html'>hemibrain_somas</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
@@ -164,8 +188,7 @@ neurons the soma should be located in a cortex outside of the neuropil proper.</
 <span class='no'>neurons.bs</span> <span class='kw'>=</span> <span class='kw pkg'>neuprintr</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/neuprintr/man/neuprint_read_neurons.html'>neuprint_read_neurons</a></span>(<span class='no'>bad.soma</span>)
 
 <span class='co'># Re-root</span>
-<span class='no'>neurons</span> <span class='kw'>=</span> <span class='fu'>hemibrain_reroot</span>(<span class='no'>neurons.bs</span>, <span class='kw'>meshes</span> <span class='kw'>=</span> <span class='no'>hemibrain.surf</span>)
-
+<span class='no'>neurons</span> <span class='kw'>=</span> <span class='fu'>hemibrain_reroot</span>(<span class='no'>neurons.bs</span>, <span class='kw'>meshes</span> <span class='kw'>=</span> <span class='no'>hemibrain.surf</span>)</div><div class='output co'>#&gt; <span class='error'>Error in match.arg(method): 'arg' must be NULL or a character vector</span></div><div class='input'>
 <span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
 <span class='co'># Let's check that this worked</span>
 <span class='kw pkg'>nat</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/nat/man/nopen3d.html'>nopen3d</a></span>()

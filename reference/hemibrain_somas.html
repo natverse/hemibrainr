@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Adjust saved somas manually — hemibrain_adjust_saved_somas • hemibrainr</title>
+<title>Soma locations for hemibrain neurons — hemibrain_somas • hemibrainr</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,8 +46,12 @@
 
 
 
-<meta property="og:title" content="Adjust saved somas manually — hemibrain_adjust_saved_somas" />
-<meta property="og:description" content="Adjust saved somas manually" />
+<meta property="og:title" content="Soma locations for hemibrain neurons — hemibrain_somas" />
+<meta property="og:description" content="Somas have been manually tagged by the FlyEM project.
+However, in some cases the roots are wrong, or somas are outside of the volume. The Fly Connectome team at the University of Cambridge has
+manually tagged better root points for these neurons. Soma locations, updated by this work, as saved as hemibrain_somas in this package.
+A user can read somas from here, or get a bleeding edge version from
+the Google Sheet." />
 <meta property="og:image" content="/logo.svg" />
 
 
@@ -116,58 +120,25 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Adjust saved somas manually</h1>
-    <small class="dont-index">Source: <a href='https://github.com/flyconnectome/hemibrainr/blob/master/R/hemibrain_fix_soma.R'><code>R/hemibrain_fix_soma.R</code></a></small>
-    <div class="hidden name"><code>hemibrain_adjust_saved_somas.Rd</code></div>
+    <h1>Soma locations for hemibrain neurons</h1>
+    <small class="dont-index">Source: <a href='https://github.com/flyconnectome/hemibrainr/blob/master/R/hemibrain_data.R'><code>R/hemibrain_data.R</code></a></small>
+    <div class="hidden name"><code>hemibrain_somas.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Adjust saved somas manually</p>
+    <p>Somas have been manually tagged by the FlyEM project.
+However, in some cases the roots are wrong, or somas are outside of the volume. The Fly Connectome team at the University of Cambridge has
+manually tagged better root points for these neurons. Soma locations, updated by this work, as saved as <code>hemibrain_somas</code> in this package.
+A user can read somas from here, or get a bleeding edge version from
+the <a href='https://docs.google.com/spreadsheets/d/1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E/edit#gid=1524900531'>Google Sheet</a>.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>hemibrain_adjust_saved_somas</span>(
-  <span class='kw'>bodyids</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>c</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>brain</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>selected_file</span> <span class='kw'>=</span> <span class='st'>"1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E"</span>,
-  <span class='kw'>db</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>plot_sample</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>
-)</pre>
-
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
-    <table class="ref-arguments">
-    <colgroup><col class="name" /><col class="desc" /></colgroup>
-    <tr>
-      <th>bodyids</th>
-      <td><p>Optional, unless using neurons method. Otherwise, list of neuron bodyids</p></td>
-    </tr>
-    <tr>
-      <th>c</th>
-      <td><p>Optional. For use when correcting Cell body fibres. If not input, function will ask you to enter one later</p></td>
-    </tr>
-    <tr>
-      <th>brain</th>
-      <td><p>Optional. by default will use the hemibrain surface. Other neuropil surfaces can be provided here however</p></td>
-    </tr>
-    <tr>
-      <th>selected_file</th>
-      <td><p>Identifier for gsheet you wish to read from and write to. By default, Curated_splitpoints soma sheet</p></td>
-    </tr>
-    <tr>
-      <th>db</th>
-      <td><p>Optional. if provided, local directory to read neurons from.</p></td>
-    </tr>
-    <tr>
-      <th>plot_sample</th>
-      <td><p>plot a sample of the neurons to be examined</p></td>
-    </tr>
-    </table>
-
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
-    
+    <pre class="usage"><span class='no'>hemibrain_somas</span></pre>
 
 
+    <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
+
+    <p>An object of class <code>data.frame</code> with 22567 rows and 11 columns.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

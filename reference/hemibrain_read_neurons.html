@@ -138,10 +138,14 @@ space (as they are stored in neuPrint) to microns.</p>
   <span class='kw'>savedir</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>local</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>microns</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>reroot</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>googlesheet</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>remove.bad.synapses</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>clean</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='no'>...</span>
 )
+
+<span class='fu'>scale_neurons</span>(<span class='no'>x</span>, <span class='kw'>scaling</span> <span class='kw'>=</span> (<span class='fl'>8</span>/<span class='fl'>1000</span>), <span class='no'>...</span>)
 
 <span class='fu'>hemibrain_neurons</span>(
   <span class='kw'>savedir</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
@@ -170,6 +174,15 @@ from which hemibrain neurons can be read. If <code>TRUE</code> your default save
       <td><p>convert dimensions from raw voxels into microns (template brain: <code>JRCFIB2018F</code>, else <code>JRCFIB2018Fraw</code>).</p></td>
     </tr>
     <tr>
+      <th>reroot</th>
+      <td><p>logical, whether or not somas should be re-rooted.
+Note that if FALSE, re-rooting occurs anyway via <code>hemibrain_flow_centrality</code>. However, setting this argument to <code>TRUE</code></p></td>
+    </tr>
+    <tr>
+      <th>googlesheet</th>
+      <td><p>logical, whether or not manually checked somas should be read from the <a href='https://docs.google.com/spreadsheets/d/1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E/edit#gid=1524900531'>Google Sheet</a></p></td>
+    </tr>
+    <tr>
       <th>remove.bad.synapses</th>
       <td><p>whether or not to run <code><a href='hemibrain_remove_bad_synapses.html'>hemibrain_remove_bad_synapses</a></code> on neurons pulled from neuPrint.</p></td>
     </tr>
@@ -181,6 +194,10 @@ from which hemibrain neurons can be read. If <code>TRUE</code> your default save
       <th>...</th>
       <td><p>arguments passed to <code><a href='https://rdrr.io/pkg/neuprintr/man/neuprint_read_neurons.html'>neuprintr::neuprint_read_neurons</a></code>, <code><a href='hemibrain_remove_bad_synapses.html'>hemibrain_remove_bad_synapses</a></code>
 and <code><a href='hemibrain_flow_centrality.html'>hemibrain_flow_centrality</a></code></p></td>
+    </tr>
+    <tr>
+      <th>scaling</th>
+      <td><p>the factor by which neuron coordinates in raw voxel space should be multiplied. The default scales to microns.</p></td>
     </tr>
     <tr>
       <th>neuron.split</th>
@@ -197,7 +214,7 @@ and <code><a href='hemibrain_flow_centrality.html'>hemibrain_flow_centrality</a>
   is Label = 1.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='hemibrain_splitpoints.html'>hemibrain_splitpoints</a></code>, <code><a href='hemibrain_flow_centrality.html'>hemibrain_flow_centrality</a></code>,
+    <div class='dont-index'><p><code><a href='hemibrain_splitpoints.html'>hemibrain_splitpoints</a></code>, <code><a href='hemibrain_flow_centrality.html'>hemibrain_flow_centrality</a></code>, <code><a href='hemibrain_somas.html'>hemibrain_somas</a></code>,
 <code><a href='hemibrain_precomputed_splitpoints.html'>hemibrain_precomputed_splitpoints</a></code>, <code><a href='hemibrain_metrics.html'>hemibrain_metrics</a></code>,<code><a href='hemibrain_remove_bad_synapses.html'>hemibrain_remove_bad_synapses</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
