@@ -83,6 +83,18 @@ class2ids <- function(x, ..., unlist=TRUE, unique=TRUE, refresh=FALSE) {
     res=c(res, sapply(mbn.toget, mbns, simplify = F, ...))
   x=setdiff(x, mbn)
 
+  dnn=c("DN")
+  dnn.toget=intersect(x, dnn)
+  if(length(dnn.toget))
+    res=c(res, sapply(dnn.toget, dnns, simplify = F, ...))
+  x=setdiff(x, dnn)
+
+  tonn=c("TON")
+  tonn.toget=intersect(x, tonn)
+  if(length(tonn.toget))
+    res=c(res, sapply(tonn.toget, tonns, simplify = F, ...))
+  x=setdiff(x, tonn)
+
   if(length(x)) {
     stop("Classes:", paste(x, collapse=" "), " not yet implemented")
   }
@@ -195,6 +207,27 @@ mbns <- function(x=c("MBON", "DAN"), possible=TRUE, refresh=FALSE) {
     neuprint_ids(mbdf[mbdf$classification=='safe',])
   else
     neuprint_ids(mbdf)
+}
+
+dndf <- function(...) {
+  sheet=c("dns")
+  cached_read_sheet("14FtIkZV2XZHUdQFEwhDHundO0SbfWd_HKo0aJwT5kd0", sheet=sheet, ...)
+}
+
+dnns <- function(possible=TRUE, refresh=FALSE) {
+  dndf=dndf(forget=refresh)
+  neuprint_ids(dndf)
+}
+
+tondf <- function(sheet=c("lhns"), ...) {
+  sheet=match.arg(sheet)
+  cached_read_sheet("1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw", sheet=sheet, ...)
+}
+
+tonns <- function(x=c("lhns"), possible=TRUE, refresh=FALSE) {
+ x=match.arg(x)
+ tondf=tondf(x, forget=refresh)
+ neuprint_ids(tondf)
 }
 
 # hidden

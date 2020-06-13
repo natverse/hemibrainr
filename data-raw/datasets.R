@@ -128,8 +128,10 @@ vppn.ids = class2ids("VPPN")
 alln.ids = class2ids("ALLN")
 dan.ids = class2ids("DAN")
 mbon.ids = class2ids("MBON")
+dn.ids = class2ids("DN")
 
 ## Use them bodyids
+usethis::use_data(dn.ids, overwrite = TRUE)
 usethis::use_data(ton.ids, overwrite = TRUE)
 usethis::use_data(rn.ids, overwrite = TRUE)
 usethis::use_data(orn.ids, overwrite = TRUE)
