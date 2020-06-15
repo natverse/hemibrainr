@@ -25,14 +25,10 @@ hemibrain_adjust_saved_somas = function(bodyids = NULL,
                                         ) {
 
   if (is.null(eps)){
-    eps <<- 1500
-  } else {
-    eps <<- eps
+    eps = 1500
   }
   if (is.null(minPts)){
-    minPts <<- 5
-  } else {
-    minPts<<- minPts
+    minPts = 5
   }
 
 
@@ -59,6 +55,7 @@ hemibrain_adjust_saved_somas = function(bodyids = NULL,
       sheet = "Unk_cbf",
       return = TRUE
     )
+    gs$clusters = as.integer(gs$clusters)
   } else {
     gs = gsheet_manipulation(
       FUN = googlesheets4::read_sheet,
@@ -74,18 +71,24 @@ hemibrain_adjust_saved_somas = function(bodyids = NULL,
       bodyids = bodyids,
       brain = brain,
       gs = gs,
-      ss = selected_file
+      ss = selected_file,
+      eps = eps,
+      minPts = minPts
     )
     # or cbf method implemntation
   } else if (mode == "c") {
     cbf_method(brain = brain,
                gs = gs,
-               ss = selected_file)
+               ss = selected_file,
+               eps = eps,
+               minPts = minPts)
 
   } else if (mode == "g"){
     gsheet_method(brain = brain,
                   gs = gs,
-                  ss = selected_file)
+                  ss = selected_file,
+                  eps = eps,
+                  minPts = minPts)
   }
 
 }
@@ -94,7 +97,9 @@ hemibrain_adjust_saved_somas = function(bodyids = NULL,
 neuron_method = function(bodyids = NULL,
                          brain = NULL,
                          gs = NULL,
-                         ss = NULL) {
+                         ss = NULL,
+                         eps = NULL,
+                         minPts = NULL) {
   if (is.null(bodyids)) {
     message("Please provide neuron bodyids as input, exiting pipeline")
     stop()
@@ -116,7 +121,9 @@ neuron_method = function(bodyids = NULL,
   if (single_or_batch == "d") {
     # DBSCAN neurons...
     data = correct_DBSCAN(data = data,
-                          brain = brain)
+                          brain = brain,
+                          minPts = minPts,
+                          eps = eps)
     # if no, just go through each individualy
   } else {
     # read in all neurons here to data object
@@ -135,7 +142,9 @@ cbf_method = function(c = NULL,
                       brain = NULL,
                       gs = NULL,
                       ss = NULL,
-                      neurons_from_gs = TRUE) {
+                      neurons_from_gs = TRUE,
+                      eps = NULL,
+                      minPts = NULL) {
   # input a cbf
   if (is.null(c)) {
     # input a cell fibre body
@@ -157,7 +166,9 @@ cbf_method = function(c = NULL,
     gs_somas = data.matrix(update[c('X', 'Y', 'Z')])
   )
   data = correct_DBSCAN(data = data,
-                        brain = brain)
+                        brain = brain,
+                        minPts = minPts,
+                        eps = eps)
   # write update
   # data = batch_somaupdate(data = data)
   data$update$soma.checked = "TRUE"
@@ -166,13 +177,48 @@ cbf_method = function(c = NULL,
                    ss = ss)
 }
 
+gsheet_method = function(gs = NULL,
+                         ss = NULL,
+                         brain = NULL,
+                         eps = NULL,
+                         minPts = NULL){
+  # select a cluster (1:40)
+  message(" Which cluster of neurons without a CBF would you like to correct?")
+  c = must_be(prompt = "Please input a number from 1:40 to correct: ",
+              answers = c(1:40))
+  # create data object
+  # create update sheet and indicies
+  ind = which(gs$clusters == as.integer(c))
+  update = gs[ind, ]
+
+  data = list(
+    neurons = list(),
+    update = update,
+    gs_somas = data.matrix(update[c('X', 'Y', 'Z')])
+  )
+  # dbscan neurons
+  data = correct_DBSCAN(data = data,
+                        brain = brain,
+                        minPts = minPts,
+                        eps = eps)
+  # write update
+  # data = batch_somaupdate(data = data)
+  data$update$soma.checked = "TRUE"
+  write_somaupdate(update = data$update,
+                   ind = ind,
+                   ss = ss,
+                   method = "g")
+}
+
 # method_implementation ---------------------------------------------------
 
 #' @importFrom nat neuronlist nopen3d
 #' @importFrom rgl clear3d points3d spheres3d
 correct_singles <- function(data = NULL,
                             brain = NULL,
-                            subset = NULL) {
+                            subset = NULL,
+                            eps = NULL,
+                            minPts = NULL) {
   list = 1
   if (is.neuron(data$neurons)) {
     data$neurons = neuronlist(data$neurons)
@@ -301,7 +347,9 @@ correct_singles <- function(data = NULL,
 
 #' @importFrom rgl clear3d spheres3d legend3d
 correct_DBSCAN = function(data = NULL,
-                          brain = NULL) {
+                          brain = NULL,
+                          eps = NULL,
+                          minPts = NULL) {
   if (!requireNamespace("RColorBrewer", quietly = TRUE)) {
     stop(
       "Please install RColorBrewer using:\n",
@@ -310,8 +358,10 @@ correct_DBSCAN = function(data = NULL,
     )
   }
   # Run dbscan on neurons (soma possitions, without readin in gsheet)
-  db = dbscan_neurons(somas = data$gs_somas,
-                      brain = brain)
+  db = dbscan_neurons(data = data,
+                      brain = brain,
+                      eps = eps,
+                      minPts = minPts)
 
   # If only returns 1 cluster...
   if (length(unique(db$cluster)) == 1) {
@@ -586,7 +636,13 @@ batch_somaupdate = function(data) {
 
 write_somaupdate = function(update = NULL,
                             ind = NULL,
-                            ss = NULL) {
+                            ss = NULL,
+                            method = NULL) {
+  if (is.null(method)){
+    sheet = "somas"
+  } else if (method == "g"){
+    sheet = "Unk_cbf"
+  }
   # if ind is consectutive
   if (isTRUE(all(diff(ind) == 1))) {
     range = paste0("A", ind[1] + 1, ":K", ind[length(ind)] + 1)
@@ -595,7 +651,7 @@ write_somaupdate = function(update = NULL,
       ss = ss,
       range = range,
       data = update,
-      sheet = "somas",
+      sheet = sheet,
       col_names = FALSE
     )
   } else {
@@ -608,10 +664,10 @@ write_somaupdate = function(update = NULL,
         ss = ss,
         range = range,
         data = update,
-        sheet = "somas",
+        sheet = sheet,
         col_names = FALSE
       )
-    }
+     }
   }
 }
 
@@ -619,27 +675,29 @@ write_somaupdate = function(update = NULL,
 # run dbscan on a set of neurons
 dbscan_neurons = function(data = NULL,
                           somas = NULL,
-                          eps = eps,
-                          minPts = minPts,
+                          eps = NULL,
+                          minPts = NULL,
                           brain = brain) {
+
   if (!requireNamespace("dbscan", quietly = TRUE)) {
     stop("Please install dbscan using:\n",
          call. = FALSE,
          "install.packages('dbscan')")
   }
-  # check missing somas
-  if (!is.null(data)) {
-    data = fix_missing_soma(data = data,
-                            brain = brain)
-  }
+  # check missing somas - remove for now?
+#  if (is.null(data)) {
+#    data = fix_missing_soma(data = data,
+#                            brain = brain)
+#  }
   # get soma points
-  if (is.null(somas)) {
-    somas = soma_locations(data = data)
-    somas = data.matrix(somas[, c('X', 'Y', 'Z')])
-  }
+#  if (is.null(somas)) {
+#    somas = soma_locations(data = data)
+#    somas = data.matrix(somas[, c('X', 'Y', 'Z')])
+#  }
+
   # dbscan on soma points
   set.seed(123)
-  db = dbscan::dbscan(x = somas,
+  db = dbscan::dbscan(x = data$gs_somas,
                       eps = eps,
                       minPts = minPts)
 }
