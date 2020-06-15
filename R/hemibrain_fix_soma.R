@@ -5,7 +5,9 @@
 #' @param brain Optional. by default will use the hemibrain surface. Other neuropil surfaces can be provided here however
 #' @param selected_file Identifier for gsheet you wish to read from and write to. By default, Curated_splitpoints soma sheet
 #' @param db Optional. if provided, local directory to read neurons from.
-#' @param plot_sample plot a sample of the neurons to be examined
+#' @param plot_sample Bool. TRUE by default, choose if you wish to plot a random subset of neurons within a DBSCAN cluster
+#' @param eps
+#' @param minPts
 #'
 #' @return
 #'
@@ -17,7 +19,23 @@ hemibrain_adjust_saved_somas = function(bodyids = NULL,
                                         brain = NULL,
                                         selected_file = "1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E",
                                         db = NULL,
-                                        plot_sample = TRUE) {
+                                        plot_sample = TRUE,
+                                        eps = NULL,
+                                        minPts = NULL
+                                        ) {
+
+  if (is.null(eps)){
+    eps <<- 1500
+  } else {
+    eps <<- eps
+  }
+  if (is.null(minPts)){
+    minPts <<- 5
+  } else {
+    minPts<<- minPts
+  }
+
+
   if (is.null(brain)) {
     brain = hemibrainr::hemibrain.surf
   }
@@ -28,16 +46,28 @@ hemibrain_adjust_saved_somas = function(bodyids = NULL,
     plot_sample <<- FALSE
   }
 
-  ### Get GoogleSheet Database
-  gs = gsheet_manipulation(
-    FUN = googlesheets4::read_sheet,
-    ss = selected_file,
-    sheet = "somas",
-    return = TRUE
-  )
   # choose method:
   message("which mode would you like to use?")
-  mode = must_be(prompt = "Neurons (n) | Cell fibre body (c)", answers = c("n", "c"))
+  mode = must_be(prompt = "Neurons (n) | Cell fibre body (c) | gsheet (g)", answers = c("n", "c", "g"))
+
+
+  ### Get GoogleSheet Database
+  if(mode == "g"){
+    gs = gsheet_manipulation(
+      FUN = googlesheets4::read_sheet,
+      ss = selected_file,
+      sheet = "Unk_cbf",
+      return = TRUE
+    )
+  } else {
+    gs = gsheet_manipulation(
+      FUN = googlesheets4::read_sheet,
+      ss = selected_file,
+      sheet = "somas",
+      return = TRUE
+    )
+  }
+
   # neuron method implementation
   if (mode == "n") {
     neuron_method(
@@ -52,7 +82,12 @@ hemibrain_adjust_saved_somas = function(bodyids = NULL,
                gs = gs,
                ss = selected_file)
 
+  } else if (mode == "g"){
+    gsheet_method(brain = brain,
+                  gs = gs,
+                  ss = selected_file)
   }
+
 }
 
 # method_functions ---------------------------------------------------
@@ -584,8 +619,8 @@ write_somaupdate = function(update = NULL,
 # run dbscan on a set of neurons
 dbscan_neurons = function(data = NULL,
                           somas = NULL,
-                          eps = 1500,
-                          minPts = 5,
+                          eps = eps,
+                          minPts = minPts,
                           brain = brain) {
   if (!requireNamespace("dbscan", quietly = TRUE)) {
     stop("Please install dbscan using:\n",
