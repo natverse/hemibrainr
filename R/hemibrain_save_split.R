@@ -726,6 +726,8 @@ check_undoneids <- function(bodyids,
   lookedat = unlist(gs$checked)
   lookedat[lookedat=="FALSE"] = 0
   lookedat[lookedat=="TRUE"] = 1
+  lookedat = as.numeric(lookedat)
+  lookedat[is.na(lookedat)] = 0
   undone = gs[as.numeric(lookedat)<check_thresh,]
   if(phases=="II"){
     undone = gs[!gs$bodyid %in% unique(manual$bodyid) & gs$manual_edit,]
@@ -786,7 +788,9 @@ check_undoneids <- function(bodyids,
   if(!length(undone.ids)){
     stop("There are no unchecked neurons to select for Phase:", phases)
   }
-  as.character(undone.ids)
+  undone.ids = as.character(undone.ids)
+  undone.ids = undone.ids[!is.na(undone.ids)]
+  undone.ids
 }
 
 # hidden
