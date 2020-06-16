@@ -389,7 +389,7 @@ lm_matching <- function(ids = NULL,
     }
   }
   if(is.null(query)){
-    q1= hemibrain_lm_lhns(brainspace = c("JRCFIB2018F"))
+    q1 = hemibrain_lm_lhns(brainspace = c("JRCFIB2018F"))
     q2= hemibrain_lm_lhns(cable = "lhins", brainspace = c("JRCFIB2018F"))
     query = nat::union(q1, q2)
   }

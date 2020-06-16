@@ -192,4 +192,22 @@ hemibrainr:::save_compressed_nblast_mat(hemibrain.flycircuit.mean,
                                         file = nblastfolder)
 
 
-
+# NBLAST line images
+# Hemibrain matches
+library(nat.jrcbrains)
+dolan.splits = nat::union(lhns::lhon.splits.dps,lhns::lhln.splits.dps,lhns::lhin.splits.dps)
+dolan.splits = xform_brain(dolan.splits, reference= "JRCFIB2018F", sample="FCWB")
+dolan.splits = dolan.splits*(1000/8) #hemibrainr:::scale_neurons.neuronlist(fafb, scaling = 1000/8)
+dps =  hemibrain.dps
+dps = hemibrain.dps[names(hemibrain.dps)%in%ton.ids]
+hemibrain.dolan.mean.1 = nat.nblast::nblast(query = dolan.splits,
+                                                 target = hemibrain.dps,
+                                                 .parallel=TRUE,
+                                                 normalised = TRUE)
+hemibrain.dolan.mean.2 = nat.nblast::nblast(query = hemibrain.dps,
+                                                 target = dolan.splits,
+                                                 .parallel=TRUE,
+                                                 normalised = TRUE)
+hemibrain.dolan.mean = (hemibrain.dolan.mean.1+t(hemibrain.dolan.mean.2))/2
+hemibrainr:::save_compressed_nblast_mat(hemibrain.dolan.mean,
+                                        file = nblastfolder)
