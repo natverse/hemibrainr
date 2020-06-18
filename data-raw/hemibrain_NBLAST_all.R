@@ -197,14 +197,16 @@ hemibrainr:::save_compressed_nblast_mat(hemibrain.flycircuit.mean,
 library(nat.jrcbrains)
 dolan.splits = nat::union(lhns::lhon.splits.dps,lhns::lhln.splits.dps,lhns::lhin.splits.dps)
 dolan.splits = xform_brain(dolan.splits, reference= "JRCFIB2018F", sample="FCWB")
-dolan.splits = dolan.splits*(1000/8) #hemibrainr:::scale_neurons.neuronlist(fafb, scaling = 1000/8)
+lhfolder = paste0("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/light_level/lhns/")
+saveRDS(dolan.splits, file = paste0(lhfolder,"most_lines_dps_JRCFIB2018F.rds"))
+#dolan.splits = dolan.splits*(1000/8) #hemibrainr:::scale_neurons.neuronlist(fafb, scaling = 1000/8)
 dps =  hemibrain.dps
 dps = hemibrain.dps[names(hemibrain.dps)%in%ton.ids]
 hemibrain.dolan.mean.1 = nat.nblast::nblast(query = dolan.splits,
-                                                 target = hemibrain.dps,
+                                                 target = dps,
                                                  .parallel=TRUE,
                                                  normalised = TRUE)
-hemibrain.dolan.mean.2 = nat.nblast::nblast(query = hemibrain.dps,
+hemibrain.dolan.mean.2 = nat.nblast::nblast(query = dps,
                                                  target = dolan.splits,
                                                  .parallel=TRUE,
                                                  normalised = TRUE)

@@ -376,22 +376,27 @@ lm_matching <- function(ids = NULL,
           ")
   ## Get NBLAST
   if(is.null(hemibrain.nblast)){
-    matname="hemibrain.lhns.mean.compressed"
-    if(exists(matname)) {
-      message("Using loaded LM-FIB NBLAST: ", matname)
-      hemibrain.nblast = get(matname)
-    } else {
-      message("Loading LM-FIB NBLAST ", matname,
-              " from hemibrain Google Team Drive using Google Filestream: ")
-      load(sprintf("/Volumes/GoogleDrive/Shared\ drives/hemibrain/hemibrain_nblast/%s.rda", matname))
-      hemibrain.nblast = get(matname)
+      message("Loading LM-FIB NBLAST from hemibrain Google Team Drive using Google Filestream: ")
+      load(sprintf("/Volumes/GoogleDrive/Shared\ drives/hemibrain/hemibrain_nblast/%s.rda", "hemibrain.lhns.mean.compressed"))
+      load(sprintf("/Volumes/GoogleDrive/Shared\ drives/hemibrain/hemibrain_nblast/%s.rda", "hemibrain.dolan.mean.compressed"))
+      load(sprintf("/Volumes/GoogleDrive/Shared\ drives/hemibrain/hemibrain_nblast/%s.rda", "hemibrain.lhins.mean.compressed"))
+      m <- merge(hemibrain.dolan.mean.compressed, hemibrain.lhns.mean.compressed, by = 0, all = TRUE)
+      m <- m[match(rownames(hemibrain.lhns.mean.compressed), m[, "Row.names"]), -1]
+      rownames(m) <- rownames(hemibrain.lhns.mean.compressed)
+      m2 <- merge(hemibrain.lhins.mean.compressed, m, by = 0, all = TRUE)
+      rnams <- m2[, "Row.names"]
+      hemibrain.nblast <- m2[, -1]
+      rownames(hemibrain.nblast) <- rnams
       rm("hemibrain.lhns.mean.compressed")
-    }
+      rm("hemibrain.dolan.mean.compressed")
+      rm("hemibrain.lhins.mean.compressed")
   }
   if(is.null(query)){
     q1 = hemibrain_lm_lhns(brainspace = c("JRCFIB2018F"))
-    q2= hemibrain_lm_lhns(cable = "lhins", brainspace = c("JRCFIB2018F"))
+    q2 = hemibrain_lm_lhns(cable = "lhins", brainspace = c("JRCFIB2018F"))
+    q3 = hemibrain_lm_lhns(cable = "lines", brainspace = c("JRCFIB2018F"))
     query = nat::union(q1, q2)
+    query = nat::union(query, q3)
   }
   # Read the Google Sheet
   gs = gsheet_manipulation(FUN = googlesheets4::read_sheet,
@@ -401,6 +406,7 @@ lm_matching <- function(ids = NULL,
                            return = TRUE)
   gs$id = correct_id(gs$id)
   rownames(gs) = gs$id
+  gs[gs==""] = NA
   gs$User[is.na(gs$User)] = ""
   # Get hemibrain neurons
   if(missing(db)) {
@@ -455,19 +461,24 @@ lm_matching <- function(ids = NULL,
     plot3d(brain, alpha = 0.1, col ="grey")
     # Transform hemibrain neuron to FAFB space
     lhn = query[n]
-    lhn = scale_neurons(lhn, scaling = (1000/8))
-    plot3d(lhn, lwd = 2, soma = TRUE, col = "black")
+    lhn = tryCatch( scale_neurons(lhn, scaling = (1000/8)),
+                    error = function(e) lhn*(1000/8))
+    if(nat::is.dotprops(lhn[[1]])){
+      points3d(nat::xyzmatrix(lhn), col = "black")
+    }else{
+      plot3d(lhn, lwd = 2, soma = TRUE, col = "black")
+    }
     message("ID: ", n)
     message("cell type : ",lhn[n,"cell.type"])
     # Read top 10 FAFB matches
-    r = sort(hemibrain.nblast[,n],decreasing = TRUE)
     message(sprintf("Reading the top %s hemibrain hits",batch_size))
-    r = sort(hemibrain.nblast[,n],decreasing = TRUE)
+    r = rownames(hemibrain.nblast)[order(hemibrain.nblast[,n],decreasing = TRUE)]
+    r = r[!is.na(r)]
     # Read hemibrain neurons
     if(is.null(db)){
-      hemi  = neuprintr::neuprint_read_neurons((names(r)[1:batch_size]))
+      hemi = neuprintr::neuprint_read_neurons((r[1:batch_size]))
     } else {
-      batch = names(r)[1:batch_size]
+      batch = r[1:batch_size]
       batch.in = intersect(batch, names(db))
       hemi = tryCatch(db[match(batch.in,names(db))], error = function(e) NULL)
       if(is.null(hemi)|length(batch.in)!=length(batch)){
@@ -482,7 +493,9 @@ lm_matching <- function(ids = NULL,
     j = batch_size
     # Cycle through potential matches
     while(length(sel)>1){
-      sel = sel.orig = nat::nlscan(hemi[names(r)[1:j]], col = "red", lwd = 2, soma = TRUE)
+      cycle = hemi[r[1:j]]
+      cycle = cycle[!is.na(names(cycle))]
+      sel = sel.orig = nat::nlscan(cycle, col = "red", lwd = 2, soma = TRUE)
       if(length(sel)>1){
         message("Note: You selected more than one neuron")
       }
@@ -500,11 +513,11 @@ lm_matching <- function(ids = NULL,
             k = j
             j = j + batch_size
             if(is.null(db)){
-              hemi2  = neuprintr::neuprint_read_neurons((names(r)[(k+1):j]))
+              hemi2  = neuprintr::neuprint_read_neurons((r[(k+1):j]))
             } else {
               hemi2 = tryCatch(db[(names(r)[(k+1):j])], error = function(e) {
                 warning("Cannot read neuron: ", n, " from local db; fetching from neuPrint!")
-                neuprintr::neuprint_read_neurons((names(r)[(k+1):j]))
+                neuprintr::neuprint_read_neurons((r[(k+1):j]))
               })
             }
             hemi = nat::union(hemi, hemi2)
@@ -951,6 +964,15 @@ hemibrain_matches <- function(priority = c("FAFB","hemibrain")){
     }
   }
 
+  # Add in neuprint types
+  ntotype = fafb.matches$hemibrain.match[is.na(fafb.matches$cell.type)]
+  ntotype = ntotype[ntotype!="none" & !is.na(ntotype)]
+  meta = neuprintr::neuprint_get_meta(ntotype)
+  types = meta$type
+  names(types) = meta$bodyid
+  types = types[!is.na(types)]
+  fafb.matches[match(names(types),fafb.matches$hemibrain.match),"cell.type"] = types
+
   # Work out lineages
   for(id in as.character(fafb.matches$skid)){
     if(is.na(id)){
@@ -1028,6 +1050,18 @@ lm_matches <- function(priority = c("hemibrain","lm")){
   lm.matches$dataset = "lm"
   rownames(lm.matches) = lm.matches$id
 
+  # Unmatched
+  unmatched = is.na(lm.matches$hemibrain.match)|lm.matches$hemibrain.match==""
+  lm.matches$hemibrain.match.quality[unmatched] = "none"
+  lm.matches$hemibrain.match[unmatched] = "none"
+
+  # Add in neuprint types
+  ntotype = hemibrain.matches$bodyid[is.na(hemibrain.matches$cell.type)]
+  meta = neuprintr::neuprint_get_meta(ntotype)
+  types = meta$type
+  names(types) = meta$bodyid
+  hemibrain.matches[names(types),"cell.type"] = types
+
   # Address lm cell types
   lm.matches$cell.type = NA
   for(q in c("good","medium","poor")){
@@ -1062,11 +1096,13 @@ lm_matches <- function(priority = c("hemibrain","lm")){
   }
 
   # Add in neuprint types
-  ntotype = hemibrain.matches$bodyid[is.na(hemibrain.matches$cell.type)]
+  ntotype = lm.matches$hemibrain.match[is.na(lm.matches$cell.type)]
+  ntotype = ntotype[ntotype!="none" & !is.na(ntotype)]
   meta = neuprintr::neuprint_get_meta(ntotype)
   types = meta$type
   names(types) = meta$bodyid
-  hemibrain.matches[names(types),"cell.type"] = types
+  types = types[!is.na(types)]
+  lm.matches[match(names(types),lm.matches$hemibrain.match),"cell.type"] = types
 
   # Work out lineages
   for(id in as.character(lm.matches$id)){
