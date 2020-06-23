@@ -68,7 +68,8 @@ hemibrain_adjust_saved_somas = function(bodyids = NULL,
     minPts = minPts,
     brain = brain,
     plot_sample = plot_sample,
-    neurons_from_gsheet = neurons_from_gsheet
+    neurons_from_gsheet = neurons_from_gsheet,
+    ss = selected_file
   )
 
   # neuron method implementation
@@ -100,7 +101,8 @@ create_SomaData = function(gs = NULL,
                            minPts = NULL,
                            brain = NULL,
                            plot_sample = NULL,
-                           neurons_from_gsheet = NULL) {
+                           neurons_from_gsheet = NULL,
+                           ss = NULL) {
   # create data
   data = list(
     neurons = list(),
@@ -115,7 +117,8 @@ create_SomaData = function(gs = NULL,
     minPts = minPts,
     brain = brain,
     plot_sample = plot_sample,
-    neurons_from_gsheet = neurons_from_gsheet
+    neurons_from_gsheet = neurons_from_gsheet,
+    ss = ss
   )
 }
 
@@ -170,8 +173,7 @@ neuron_method = function(data = NULL,
   # write update
   # data = batch_somaupdate(data = data)
   data$update$soma.checked = "TRUE"
-  write_somaupdate(data = data,
-                   ss = ss)
+  write_somaupdate(data = data)
 }
 
 cbf_method = function(data = NULL,
@@ -196,8 +198,7 @@ cbf_method = function(data = NULL,
   # write update
   # data = batch_somaupdate(data = data)
   data$update$soma.checked = "TRUE"
-  write_somaupdate(data = data,
-                   ss = ss)
+  write_somaupdate(data = data)
 }
 
 gsheet_method = function(gs = NULL,
@@ -215,8 +216,7 @@ gsheet_method = function(gs = NULL,
   # write update
   # data = batch_somaupdate(data = data)
   data$update$soma.checked = "TRUE"
-  write_somaupdate(data = data,
-                   ss = ss)
+  write_somaupdate(data = data)
 }
 
 # method_implementation ---------------------------------------------------
@@ -568,12 +568,14 @@ correct_DBSCAN = function(data = NULL) {
       )
       # Choose a cluster of correct somas
       message("Which cluster is just the correctly identified somas?")
-      clusters = as.numeric(
+      clusters =
         must_be(
           prompt =  "If none are correct, press n. Otheriwse, provide the number of the correct cluster. ",
           answers = c(as.character(1:count), "n")
-        )
       )
+      if (clusters != "n") {
+        clusters = as.numeric(clusters)
+      }
       any_more = hemibrain_choice(prompt = "Are any other clusters also likely all somas? yes|no ")
       while (isTRUE(any_more)) {
         additional_clusters = as.numeric((
@@ -609,7 +611,7 @@ correct_DBSCAN = function(data = NULL) {
       } else {
         message(c(
           "sadly, now you have to fix the other ",
-          as.character(sum(data$db$cluster != (clusters)),
+          as.character(sum(data$db$cluster %in% clusters),
                        " somas individually.")
         ))
         #
@@ -810,12 +812,14 @@ correct_gsheet = function(data = NULL) {
       )
       # Choose a cluster of correct somas
       message("Which cluster is just the correctly identified somas?")
-      clusters = as.numeric(
+      clusters =
         must_be(
           prompt =  "If none are correct, press n. Otheriwse, provide the number of the correct cluster. ",
           answers = c(as.character(1:count), "n")
-        )
       )
+      if (clusters != "n") {
+        clusters = as.numeric(clusters)
+      }
       any_more = hemibrain_choice(prompt = "Are any other clusters also likely all somas? yes|no ")
       while (isTRUE(any_more)) {
         additional_clusters = as.numeric((
@@ -844,7 +848,7 @@ correct_gsheet = function(data = NULL) {
           "Has dbscan identified the correct soma cluster(s) yes|no "
         ))
       }
-      if (clusters == "n") {
+      if ("n" %in% clusters) {
         # if no single cluster contains just somas
         data$update$soma.checked = "TRUE"
         data$update$unfixed = "TRUE"
@@ -853,7 +857,7 @@ correct_gsheet = function(data = NULL) {
         # note the remainder as noise
         message(c("Noting  ",
                   as.character(
-                    sum(data$db$cluster != (clusters)),
+                    sum(data$db$cluster %in% clusters),
                     " as unfixed."
                   )))
         data$update$unfixed[data$db$cluster %in% clusters] = "TRUE"
@@ -895,19 +899,20 @@ batch_somaupdate = function(data = NULL) {
   data
 }
 
-write_somaupdate = function(data = data,
-                            ss = NULL) {
+write_somaupdate = function(data = data) {
   if (data$mode == "g") {
     sheet = "Unk_cbf"
+    last = ":L"
   } else {
     sheet = "somas"
+    last = ":K"
   }
   # if ind is consectutive
   if (isTRUE(all(diff(data$ind) == 1))) {
-    range = paste0("A", data$ind[1] + 1, ":L", data$ind[length(data$ind)] + 1)
+    range = paste0("A", data$ind[1] + 1, last, data$ind[length(data$ind)] + 1)
     gsheet_manipulation(
       FUN = googlesheets4::range_write,
-      ss = ss,
+      ss = data$ss,
       range = range,
       data = data$update,
       sheet = sheet,
@@ -917,10 +922,10 @@ write_somaupdate = function(data = data,
     chunks = chunks(data$ind)
     for (i in 1:length(chunks)) {
       ind = chunks[[i]]
-      range = paste0("A", ind[1] + 1, ":K", ind[length(ind)] + 1)
+      range = paste0("A", ind[1] + 1, last, ind[length(ind)] + 1)
       gsheet_manipulation(
         FUN = googlesheets4::range_write,
-        ss = ss,
+        ss = data$ss,
         range = range,
         data = data$update,
         sheet = sheet,
