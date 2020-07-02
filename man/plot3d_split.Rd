@@ -18,6 +18,7 @@ plot3d_split(
   lwd = 1,
   radius = NULL,
   already_selected = NULL,
+  check.template = FALSE,
   ...
 )
 
@@ -71,6 +72,8 @@ plot3d_somas(
 \item{radius}{For connectors and axon-dendrite split node (default 1). If \code{NULL}, an appropriate value is guessed.}
 
 \item{already_selected}{a vector of IDs for neurons that are already considered selected. If \code{NULL} then no neurons are considered selected to start with.}
+
+\item{check.template}{check which template space \code{someneuronlist} is in, in order to set default plotting settings.}
 
 \item{...}{additional arguments passed to methods.}
 
