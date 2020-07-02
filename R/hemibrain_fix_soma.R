@@ -108,7 +108,7 @@ create_SomaData = function(gs = NULL,
     neurons = list(),
     subset = list(),
     update = list(),
-    db = list(),
+    db = NULL,
     gs_somas = list(),
     c = c,
     mode = mode,
@@ -132,7 +132,7 @@ generate_update = function(data = NULL,
   }
   # create update sheet and indicies
   data$ind = which(gs$bodyid %in% data$bodyids)
-  data$update = gs[data$ind,]
+  data$update = gs[data$ind, ]
   if (typeof(data$update$X) == "character") {
     data$update$X = as.integer(data$update$X)
   }
@@ -225,6 +225,15 @@ gsheet_method = function(gs = NULL,
 #' @importFrom rgl clear3d points3d spheres3d
 correct_singles <- function(data = NULL,
                             subset_ind = NULL) {
+  if (!requireNamespace("RColorBrewer", quietly = TRUE)) {
+    stop(
+      "Please install RColorBrewer using:\n",
+      call. = FALSE,
+      "install.packages('RColorBrewer')"
+    )
+  }
+
+
   list = 1
   if (is.neuron(data$neurons)) {
     data$neurons = neuronlist(data$neurons)
@@ -248,11 +257,10 @@ correct_singles <- function(data = NULL,
   while (correcting) {
     for (n in N_all) {
       n.points =  nat::xyzmatrix(n)
-      end_points = nat::endpoints(n)
-      end_points = n.points[end_points, ]
-      clear3d()
-
+      end_ind = nat::endpoints(n)
+      end_points = n.points[end_ind,]
       #
+      clear3d()
       plot3d(
         n,
         lwd = 1.5,
@@ -269,91 +277,149 @@ correct_singles <- function(data = NULL,
       } else {
         make.selection = FALSE
       }
+
       while (make.selection) {
         c = hemibrain_choice(prompt = "Do you think the cbf is correct? yes|no ")
         if (!isTRUE(c)) {
           message("making note of possibly incorrect cbf")
-          data$update[which(data$update$bodyid == n$bodyid),]$wrong.cbf = "TRUE"
+          data$update[which(data$update$bodyid == n$bodyid), ]$wrong.cbf = "TRUE"
         }
         f = hemibrain_choice(prompt = "can the soma be easily identified? yes|no ")
         if (!isTRUE(f)) {
           message("passing neuron, making note that soma can't be fixed this way")
-          data$update[which(data$update$bodyid == n$bodyid),]$unfixed = "TRUE"
+          data$update[which(data$update$bodyid == n$bodyid), ]$unfixed = "TRUE"
           make.selection = FALSE
           next
         }
-        angle = readline(prompt = "position view in order to best select soma (Enter to continue) ")
-        message("Click and drag a box over an end point, in red, to select new soma location")
-        clear3d()
-        plot3d(data$brain, col = "grey70", alpha = 0.1)
-        points3d(
-          end_points,
-          lwd = 2,
-          col = hemibrain_bright_colors["red"],
-          soma = FALSE,
-          WithConnectors = FALSE
-        )
-        plot3d(
-          n,
-          lwd = 1.5,
-          col = hemibrain_bright_colors["cyan"],
-          soma = FALSE,
-          WithConnectors = FALSE,
-          WithNodes = FALSE
-        )
 
-        # not needed ?
-        testthat::try_again(100, selection <- rgl::select3d())
-
-        selected = selection(end_points)
-        while (sum(selected) == 0) {
-          message("Please select one of the points in red ")
-          testthat::try_again(100, selection <- rgl::select3d())
-          selected = selection(end_points)
+        # if data$db exists, have a guess at a soma possition for n
+        # and add a message to say so
+        if (!is.null(data$db)) {
+          message("trying to automatically suggest a soma...")
+          sugestion = suggest_soma(data = data,
+                                   points = end_points,
+                                   ind = end_ind)
+          if (length(sugestion$ind) > 1) {
+            # multiple potential somas returned
+            qual_col_pals = RColorBrewer::brewer.pal.info[RColorBrewer::brewer.pal.info$category == 'qual',]
+            col = unlist(mapply(
+              RColorBrewer::brewer.pal,
+              qual_col_pals$maxcolors,
+              rownames(qual_col_pals)
+            ))
+            spheres3d(sugestion[, c("X", "Y", "Z")], radius = 300, col = col[1:length(sugestion)])
+            legend3d(
+              "topright",
+              legend = paste('Sugested soma', c(as.character(
+                1:length(sugestion)
+              ))),
+              pch = 10,
+              col = col[1:length(sugestion)],
+              cex = 1,
+              inset = c(0.02)
+            )
+            message("Which sugested soma is the correct soma?")
+            soma =
+              must_be(prompt =  "If none are correct, press n. Otheriwse, provide the number of the correct soma. ",
+                      answers = c(as.character(1:length(
+                        sugestion
+                      )), "n"))
+            if (soma != "n") {
+              sugestion = c()
+            } else {
+              sugestion = sugestion[which(sugestion$sugg_clust == soma),]
+            }
+          }
+          if (length(sugestion$ind) == 0) {
+            message("No viable soma sugested,  lets do this the old fashioned way")
+          } else if (length(sugestion$ind) == 1) {
+            message("plotting sugested somas in blue")
+            spheres3d(sugestion[, c("X", "Y", "Z")], radius = 300, col = "blue")
+            sug_correct = hemibrain_choice(prompt = "Is the sugested soma possition correct? yes|no ")
+            if (isTRUE(sug_correct)) {
+              # reroot neuron
+              y = reroot_from_suggestion(n, sugestion)
+              N_all[[toString(n$bodyid)]] = y
+              make.selection = FALSE
+            } else {
+              message("bad luck,  lets do this the old fashioned way")
+            }
+          }
+          if (isTRUE(make.selection)) {
+            angle = readline(prompt = "position view in order to best select soma (Enter to continue) ")
+            message("Click and drag a box over an end point, in red, to select new soma location")
+            clear3d()
+            plot3d(data$brain, col = "grey70", alpha = 0.1)
+            points3d(
+              end_points,
+              lwd = 2,
+              col = hemibrain_bright_colors["red"],
+              soma = FALSE,
+              WithConnectors = FALSE
+            )
+            plot3d(
+              n,
+              lwd = 1.5,
+              col = hemibrain_bright_colors["cyan"],
+              soma = FALSE,
+              WithConnectors = FALSE,
+              WithNodes = FALSE
+            )
+            # not needed ?
+            testthat::try_again(100, selection <- rgl::select3d())
+            selected = selection(end_points)
+            while (sum(selected) == 0) {
+              message("Please select one of the points in red ")
+              testthat::try_again(100, selection <- rgl::select3d())
+              selected = selection(end_points)
+            }
+            selected.point = end_points[selected,]
+            if (length(selected.point) != 3) {
+              selected.point = selected.point[1,]
+            }
+            clear3d()
+            plot3d(data$brain, col = "grey70", alpha = 0.1)
+            plot3d(
+              n,
+              lwd = 2,
+              col = hemibrain_bright_colors["cyan"],
+              soma = FALSE,
+              WithConnectors = FALSE,
+              WithNodes = FALSE
+            )
+            spheres3d(selected.point,
+                      radius = 300,
+                      col = 'blue')
+            plot3d_somas(n)
+            make.selection = !hemibrain_choice(prompt = c(
+              "Happy with selection? (old soma in Green, new soma in Blue) yes/no "
+            ))
+            # reroot neuron
+            y = reroot_from_selection(n, selection)
+            N_all[[toString(n$bodyid)]] = y
+          }
         }
-        selected.point = end_points[selected, ]
-        if (length(selected.point) != 3) {
-          selected.point = selected.point[1, ]
-        }
-        clear3d()
-        plot3d(data$brain, col = "grey70", alpha = 0.1)
-        plot3d(
-          n,
-          lwd = 2,
-          col = hemibrain_bright_colors["cyan"],
-          soma = FALSE,
-          WithConnectors = FALSE,
-          WithNodes = FALSE
-        )
-        spheres3d(selected.point, radius = 300, col = 'blue')
-        plot3d_somas(n)
-        make.selection = !hemibrain_choice(prompt = c(
-          "Happy with selection? (old soma in Green, new soma in Blue) yes/no "
-        ))
-        # reroot neuron
-        y = reroot_from_selection(n, selection)
-        N_all[[toString(n$bodyid)]] = y
+      }
+      clear3d()
+      plot3d(N_all, WithConnectors = FALSE, WithNodes = FALSE)
+      plot3d_somas(N_all)
+      correcting = !hemibrain_choice(prompt = c(
+        "Final check, are you happy with the new soma possitions? yes/no "
+      ))
+    }
+    for (n in N_all) {
+      if (n$soma != data$update[which(data$update$bodyid == n$bodyid), ]$position) {
+        # update the values in update with the ones from the neuron list
+        data$update[which(data$update$bodyid == n$bodyid), ]$position = n$soma
+        data$update[which(data$update$bodyid == n$bodyid), ]$X = n$d[n$soma, ]$X
+        data$update[which(data$update$bodyid == n$bodyid), ]$Y = n$d[n$soma, ]$Y
+        data$update[which(data$update$bodyid == n$bodyid), ]$Z = n$d[n$soma, ]$Z
+        data$update[which(data$update$bodyid == n$bodyid), ]$soma.edit = "TRUE"
       }
     }
-    clear3d()
-    plot3d(N_all, WithConnectors = FALSE, WithNodes = FALSE)
-    plot3d_somas(N_all)
-    correcting = !hemibrain_choice(prompt = c(
-      "Final check, are you happy with the new soma possitions? yes/no "
-    ))
-  }
-  for (n in N_all) {
-    if (n$soma != data$update[which(data$update$bodyid == n$bodyid),]$position) {
-      # update the values in update with the ones from the neuron list
-      data$update[which(data$update$bodyid == n$bodyid),]$position = n$soma
-      data$update[which(data$update$bodyid == n$bodyid),]$X = n$d[n$soma,]$X
-      data$update[which(data$update$bodyid == n$bodyid),]$Y = n$d[n$soma,]$Y
-      data$update[which(data$update$bodyid == n$bodyid),]$Z = n$d[n$soma,]$Z
-      data$update[which(data$update$bodyid == n$bodyid),]$soma.edit = "TRUE"
+    if (list == 0) {
+      data$neurons = hemibrain_neuron_class(data$neurons)
     }
-  }
-  if (list == 0) {
-    data$neurons = hemibrain_neuron_class(data$neurons)
   }
   data
 }
@@ -399,12 +465,12 @@ correct_DBSCAN = function(data = NULL) {
       # plot subset of neurons
       if (isTRUE(data$plot_sample)) {
         if (length(data$gs_somas[which(data$db$cluster == 1)]) < 10) {
-          data$subset = pipeline_read_neurons(sample(data$update[which(data$db$cluster == 1),]$bodyid, 2))
+          data$subset = pipeline_read_neurons(sample(data$update[which(data$db$cluster == 1), ]$bodyid, 2))
           plot3d(data$subset,
                  col = "grey70",
                  WithConnectors = FALSE)
         } else {
-          data$subset = pipeline_read_neurons(sample(data$update[which(data$db$cluster == 1),]$bodyid, 5))
+          data$subset = pipeline_read_neurons(sample(data$update[which(data$db$cluster == 1), ]$bodyid, 5))
           plot3d(data$subset,
                  col = "grey70",
                  WithConnectors = FALSE)
@@ -460,24 +526,25 @@ correct_DBSCAN = function(data = NULL) {
     if ((length(unique(data$db$cluster)) == 2) &
         (0 %in% data$db$cluster)) {
       somas = data$gs_somas
+
       #
-      noise = as.data.frame(somas[which(data$db$cluster == 0), ])
+      noise = as.data.frame(somas[which(data$db$cluster == 0),])
       if (length(ncol(noise)) == 1) {
         noise = t(noise)
       }
-      somas = as.data.frame(somas[which(data$db$cluster == 1), ])
+      somas = as.data.frame(somas[which(data$db$cluster == 1),])
       # plot and check if cluster is correct
       clear3d()
 
       # plot subset of neurons
       if (isTRUE(data$plot_sample)) {
         if (length(data$gs_somas[which(data$db$cluster == 1)]) < 10) {
-          data$subset = pipeline_read_neurons(sample(data$update[which(data$db$cluster == 1),]$bodyid, 2))
+          data$subset = pipeline_read_neurons(sample(data$update[which(data$db$cluster == 1), ]$bodyid, 2))
           plot3d(data$subset,
                  col = "grey70",
                  WithConnectors = FALSE)
         } else {
-          data$subset = pipeline_read_neurons(sample(data$update[which(data$db$cluster == 1),]$bodyid, 5))
+          data$subset = pipeline_read_neurons(sample(data$update[which(data$db$cluster == 1), ]$bodyid, 5))
           plot3d(data$subset,
                  col = "grey70",
                  WithConnectors = FALSE)
@@ -521,7 +588,7 @@ correct_DBSCAN = function(data = NULL) {
       # if multiple potential clusters are returned
     } else {
       # get colour vector of distinct colours
-      qual_col_pals = RColorBrewer::brewer.pal.info[RColorBrewer::brewer.pal.info$category == 'qual', ]
+      qual_col_pals = RColorBrewer::brewer.pal.info[RColorBrewer::brewer.pal.info$category == 'qual',]
       col = unlist(mapply(
         RColorBrewer::brewer.pal,
         qual_col_pals$maxcolors,
@@ -537,12 +604,12 @@ correct_DBSCAN = function(data = NULL) {
           if (c != 0) {
             # plot subset of neurons
             if (length(data$gs_somas[which(data$db$cluster == c)]) < 10) {
-              clust = pipeline_read_neurons(sample(data$update[which(data$db$cluster == c),]$bodyid, 2))
+              clust = pipeline_read_neurons(sample(data$update[which(data$db$cluster == c), ]$bodyid, 2))
               plot3d(clust,
                      col = "grey70",
                      WithConnectors = FALSE)
             } else {
-              clust = pipeline_read_neurons(sample(data$update[which(data$db$cluster == c),]$bodyid, 5))
+              clust = pipeline_read_neurons(sample(data$update[which(data$db$cluster == c), ]$bodyid, 5))
               plot3d(clust,
                      col = "grey70",
                      WithConnectors = FALSE)
@@ -554,7 +621,7 @@ correct_DBSCAN = function(data = NULL) {
       for (c in unique(data$db$cluster)) {
         if (c != 0) {
           count = count + 1
-          cluster = data$gs_somas[which(data$db$cluster == c), ]
+          cluster = data$gs_somas[which(data$db$cluster == c),]
           spheres3d(cluster, radius = 500, col = col[count])
         }
       }
@@ -569,10 +636,8 @@ correct_DBSCAN = function(data = NULL) {
       # Choose a cluster of correct somas
       message("Which cluster is just the correctly identified somas?")
       clusters =
-        must_be(
-          prompt =  "If none are correct, press n. Otheriwse, provide the number of the correct cluster. ",
-          answers = c(as.character(1:count), "n")
-      )
+        must_be(prompt =  "If none are correct, press n. Otheriwse, provide the number of the correct cluster. ",
+                answers = c(as.character(1:count), "n"))
       if (clusters != "n") {
         clusters = as.numeric(clusters)
       }
@@ -597,7 +662,7 @@ correct_DBSCAN = function(data = NULL) {
         count = 0
         for (c in unique(data$db$cluster)) {
           count = count + 1
-          cluster = data$gs_somas[which(data$db$cluster == c), ]
+          cluster = data$gs_somas[which(data$db$cluster == c),]
           spheres3d(cluster, radius = 500, col = col[count])
         }
         cluster_correct = hemibrain_choice(prompt = c(
@@ -611,8 +676,10 @@ correct_DBSCAN = function(data = NULL) {
       } else {
         message(c(
           "sadly, now you have to fix the other ",
-          as.character(sum(data$db$cluster %in% clusters),
-                       " somas individually.")
+          as.character(
+            sum(data$db$cluster %in% clusters),
+            " somas individually."
+          )
         ))
         #
         data = correct_singles(data = data,
@@ -653,12 +720,12 @@ correct_gsheet = function(data = NULL) {
       # plot subset of neurons
       if (isTRUE(data$plot_sample)) {
         if (length(data$gs_somas[which(data$db$cluster == 1)]) < 10) {
-          data$subset = pipeline_read_neurons(sample(data$update[which(data$db$cluster == 1),]$bodyid, 2))
+          data$subset = pipeline_read_neurons(sample(data$update[which(data$db$cluster == 1), ]$bodyid, 2))
           plot3d(data$subset,
                  col = "grey70",
                  WithConnectors = FALSE)
         } else {
-          data$subset = pipeline_read_neurons(sample(data$update[which(data$db$cluster == 1),]$bodyid, 5))
+          data$subset = pipeline_read_neurons(sample(data$update[which(data$db$cluster == 1), ]$bodyid, 5))
           plot3d(data$subset,
                  col = "grey70",
                  WithConnectors = FALSE)
@@ -709,23 +776,23 @@ correct_gsheet = function(data = NULL) {
         (0 %in% data$db$cluster)) {
       somas = data$gs_somas
       #
-      noise = as.data.frame(somas[which(data$db$cluster == 0), ])
+      noise = as.data.frame(somas[which(data$db$cluster == 0),])
       if (length(ncol(noise)) == 1) {
         noise = t(noise)
       }
-      somas = as.data.frame(somas[which(data$db$cluster == 1), ])
+      somas = as.data.frame(somas[which(data$db$cluster == 1),])
       # plot and check if cluster is correct
       clear3d()
 
       # plot subset of neurons
       if (isTRUE(data$plot_sample)) {
         if (length(data$gs_somas[which(data$db$cluster == 1)]) < 10) {
-          data$subset = pipeline_read_neurons(sample(data$update[which(data$db$cluster == 1),]$bodyid, 2))
+          data$subset = pipeline_read_neurons(sample(data$update[which(data$db$cluster == 1), ]$bodyid, 2))
           plot3d(data$subset,
                  col = "grey70",
                  WithConnectors = FALSE)
         } else {
-          data$subset = pipeline_read_neurons(sample(data$update[which(data$db$cluster == 1),]$bodyid, 5))
+          data$subset = pipeline_read_neurons(sample(data$update[which(data$db$cluster == 1), ]$bodyid, 5))
           plot3d(data$subset,
                  col = "grey70",
                  WithConnectors = FALSE)
@@ -765,7 +832,7 @@ correct_gsheet = function(data = NULL) {
       # if multiple potential clusters are returned
     } else {
       # get colour vector of distinct colours
-      qual_col_pals = RColorBrewer::brewer.pal.info[RColorBrewer::brewer.pal.info$category == 'qual', ]
+      qual_col_pals = RColorBrewer::brewer.pal.info[RColorBrewer::brewer.pal.info$category == 'qual',]
       col = unlist(mapply(
         RColorBrewer::brewer.pal,
         qual_col_pals$maxcolors,
@@ -781,12 +848,12 @@ correct_gsheet = function(data = NULL) {
           if (c != 0) {
             # plot subset of neurons
             if (length(data$gs_somas[which(data$db$cluster == c)]) < 10) {
-              clust = pipeline_read_neurons(sample(data$update[which(data$db$cluster == c),]$bodyid, 2))
+              clust = pipeline_read_neurons(sample(data$update[which(data$db$cluster == c), ]$bodyid, 2))
               plot3d(clust,
                      col = "grey70",
                      WithConnectors = FALSE)
             } else {
-              clust = pipeline_read_neurons(sample(data$update[which(data$db$cluster == c),]$bodyid, 5))
+              clust = pipeline_read_neurons(sample(data$update[which(data$db$cluster == c), ]$bodyid, 5))
               plot3d(clust,
                      col = "grey70",
                      WithConnectors = FALSE)
@@ -798,7 +865,7 @@ correct_gsheet = function(data = NULL) {
       for (c in unique(data$db$cluster)) {
         if (c != 0) {
           count = count + 1
-          cluster = data$gs_somas[which(data$db$cluster == c), ]
+          cluster = data$gs_somas[which(data$db$cluster == c),]
           spheres3d(cluster, radius = 500, col = col[count])
         }
       }
@@ -813,10 +880,8 @@ correct_gsheet = function(data = NULL) {
       # Choose a cluster of correct somas
       message("Which cluster is just the correctly identified somas?")
       clusters =
-        must_be(
-          prompt =  "If none are correct, press n. Otheriwse, provide the number of the correct cluster. ",
-          answers = c(as.character(1:count), "n")
-      )
+        must_be(prompt =  "If none are correct, press n. Otheriwse, provide the number of the correct cluster. ",
+                answers = c(as.character(1:count), "n"))
       if (clusters != "n") {
         clusters = as.numeric(clusters)
       }
@@ -841,7 +906,7 @@ correct_gsheet = function(data = NULL) {
         count = 0
         for (c in unique(data$db$cluster)) {
           count = count + 1
-          cluster = data$gs_somas[which(data$db$cluster == c), ]
+          cluster = data$gs_somas[which(data$db$cluster == c),]
           spheres3d(cluster, radius = 500, col = col[count])
         }
         cluster_correct = hemibrain_choice(prompt = c(
@@ -887,13 +952,13 @@ batch_somaupdate = function(data = NULL) {
   for (n in data$neurons) {
     data$update$soma.checked = "TRUE"
     # if the root point id doesn't match between the update and the neuron list
-    if (n$soma != data$update[which(data$update$bodyid == n$bodyid),]$position) {
+    if (n$soma != data$update[which(data$update$bodyid == n$bodyid), ]$position) {
       # update the values in update with the ones from the neuron list
-      data$update[which(data$update$bodyid == n$bodyid),]$position = n$soma
-      data$update[which(data$update$bodyid == n$bodyid),]$X = n$d[n$soma,]$X
-      data$update[which(data$update$bodyid == n$bodyid),]$Y = n$d[n$soma,]$Y
-      data$update[which(data$update$bodyid == n$bodyid),]$Z = n$d[n$soma,]$Z
-      data$update[which(data$update$bodyid == n$bodyid),]$soma.edit = "TRUE"
+      data$update[which(data$update$bodyid == n$bodyid), ]$position = n$soma
+      data$update[which(data$update$bodyid == n$bodyid), ]$X = n$d[n$soma, ]$X
+      data$update[which(data$update$bodyid == n$bodyid), ]$Y = n$d[n$soma, ]$Y
+      data$update[which(data$update$bodyid == n$bodyid), ]$Z = n$d[n$soma, ]$Z
+      data$update[which(data$update$bodyid == n$bodyid), ]$soma.edit = "TRUE"
     }
   }
   data
@@ -961,6 +1026,41 @@ dbscan_neurons = function(data = NULL) {
                       minPts = data$minPts)
 }
 
+suggest_soma = function(data = NULL,
+                        points = NULL,
+                        ind = NULL) {
+  if (!requireNamespace("dbscan", quietly = TRUE)) {
+    stop("Please install dbscan using:\n",
+         call. = FALSE,
+         "install.packages('dbscan')")
+  }
+  # suggest which are part of a cluster
+  suggest = dbscan:::predict.dbscan_fast(object = data$db,
+                                         data = data$gs_somas,
+                                         newdata = points)
+  if ((length(unique(suggest)) == 1) && (unique(suggest) == 0)) {
+    message("no pottential soma found")
+    sugg_points = c()
+    return()
+  }
+  sugg_points = data.frame(
+    ind = ind,
+    X = points[, 1],
+    Y = points[, 2],
+    Z = points[, 3],
+    sugg_clust = suggest
+  )
+  sugg_points = sugg_points[which(sugg_points$sugg_clust != 0),]
+  # cut down to the just the points furthest from boundary in each cluster
+  sugg_points$dist = nat::pointsinside(sugg_points[, c("X", "Y", "Z")], data$brain, rval = "distance")
+  # get the minimum distance value for each cluster
+  to_keep = c()
+  for (i in unique(sugg_points$sugg_clust)) {
+    to_keep = c(to_keep, which(sugg_points$dist == min(sugg_points$dist)))
+  }
+  sugg_points = sugg_points[to_keep,]
+}
+
 # get soma coords for neuron list
 soma_locations = function(data = NULL) {
   # get soma possitions, and identify missing
@@ -971,13 +1071,13 @@ soma_locations = function(data = NULL) {
   ))
   colnames(somas) = colnames(data$neurons[[1]]$d)
   for (n in 1:length(data$neurons)) {
-    if (sum(is.na(data$neurons[[n]]$d[data$neurons[[n]]$soma, ])) == 0) {
-      if (!"bodyid" %in% names(data$neurons[[n]]$d[data$neurons[[n]]$soma, ])) {
-        add = data$neurons[[n]]$d[data$neurons[[n]]$soma, ]
+    if (sum(is.na(data$neurons[[n]]$d[data$neurons[[n]]$soma,])) == 0) {
+      if (!"bodyid" %in% names(data$neurons[[n]]$d[data$neurons[[n]]$soma,])) {
+        add = data$neurons[[n]]$d[data$neurons[[n]]$soma,]
         add$bodyid = data$neurons[[n]]$bodyid
-        somas[n, ] = add
+        somas[n,] = add
       } else {
-        somas[n, ] = data$neurons[[n]]$d[data$neurons[[n]]$soma, ]
+        somas[n,] = data$neurons[[n]]$d[data$neurons[[n]]$soma,]
       }
     }
   }
@@ -1062,7 +1162,7 @@ reroot_from_selection = function(neuron = NULL,
   # reroot neuron
   eps <- nat::endpoints(neuron)
   #
-  ep.sel <- selection(nat::xyzmatrix(neuron)[eps, ])
+  ep.sel <- selection(nat::xyzmatrix(neuron)[eps,])
   ep.sel <- eps[ep.sel][1]
   soma.id <- neuron$d$PointNo[match(ep.sel, 1:nrow(neuron$d))]
   # create ourneuron as a graph, with the new origin point
@@ -1075,6 +1175,21 @@ reroot_from_selection = function(neuron = NULL,
   y$tags["soma.edit"] = TRUE
   y$soma = y$tags$soma
   y = hemibrain_neuron_class(y)
+}
+
+reroot_from_suggestion = function (neuron = NULL,
+                                   suggestion = NULL) {
+  y <-
+    nat::as.neuron(nat::as.ngraph(neuron$d), origin = suggestion$ind)
+  # carryover labels and tags
+  y <- hemibrain_carryover_labels(x = neuron, y = y)
+  y <- hemibrain_carryover_tags(x = neuron, y = y)
+  y$tags = as.list(y$tags)
+  y$tags["soma"] = suggestion$ind
+  y$tags["soma.edit"] = TRUE
+  y$soma = y$tags$soma
+  y = hemibrain_neuron_class(y)
+
 }
 # cbf_utils ---------------------------------------------------------------
 

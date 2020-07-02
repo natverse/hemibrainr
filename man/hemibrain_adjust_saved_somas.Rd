@@ -10,13 +10,16 @@ hemibrain_adjust_saved_somas(
   brain = NULL,
   selected_file = "1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E",
   db = NULL,
-  plot_sample = TRUE
+  plot_sample = TRUE,
+  eps = NULL,
+  minPts = NULL,
+  neurons_from_gsheet = TRUE
 )
 }
 \arguments{
 \item{bodyids}{Optional, unless using neurons method. Otherwise, list of neuron bodyids}
 
-\item{c}{Optional. For use when correcting Cell body fibres. If not input, function will ask you to enter one later}
+\item{c}{Optional. For use when correcting Cell body fibers. If not input, function will ask you to enter one later}
 
 \item{brain}{Optional. by default will use the hemibrain surface. Other neuropil surfaces can be provided here however}
 
@@ -24,10 +27,17 @@ hemibrain_adjust_saved_somas(
 
 \item{db}{Optional. if provided, local directory to read neurons from.}
 
-\item{plot_sample}{plot a sample of the neurons to be examined}
+\item{plot_sample}{Bool. TRUE by default, choose if you wish to plot a random subset of neurons within a DBSCAN cluster}
+
+\item{eps}{the distance in nanometers used by DBSCAN to form clusters. 1500 by default}
+
+\item{minPts}{The minimum number of points needed to form a cluster using DBSCAN. 5 by default}
+
+\item{neurons_from_gsheet}{Bool, TRUE by default. If true, will collect neurons based on bodyids in the google sheet,
+otherwise, will search for them based on CBF data in neuprint.}
 }
 \value{
-
+Updates Google Sheet with soma information
 }
 \description{
 Adjust saved somas manually
