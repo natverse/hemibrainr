@@ -271,13 +271,13 @@ correct_singles <- function(data = NULL,
   }
   if (!is.null(subset_ind)) {
     if (length(data$neurons) == 0) {
-      N_all = pipeline_read_neurons(data$update$bodyid[subset_ind])
+      N_all = pipeline_read_neurons(data$bodyids[subset_ind])
     } else {
       N_all = data$neurons[subset_ind]
     }
   } else {
     if (length(data$neurons) == 0) {
-      N_all = pipeline_read_neurons(data$update$bodyid)
+      N_all = pipeline_read_neurons(data$bodyids)
     } else {
       N_all = data$neurons
     }
@@ -305,19 +305,24 @@ correct_singles <- function(data = NULL,
       if (isTRUE(fix)) {
         make.selection = TRUE
       } else {
+        data$update[which(data$update$bodyid == n$bodyid), ]$global = "FALSE"
         make.selection = FALSE
       }
 
       while (make.selection) {
-        c = hemibrain_choice(prompt = "Do you think the cbf is correct? yes|no ")
-        if (!isTRUE(c)) {
-          message("making note of possibly incorrect cbf")
-          data$update[which(data$update$bodyid == n$bodyid), ]$wrong.cbf = "TRUE"
+        if (data$mode == "c") {
+          c = hemibrain_choice(prompt = "Do you think the cbf is correct? yes|no ")
+          if (!isTRUE(c)) {
+            message("making note of possibly incorrect cbf")
+            data$update[which(data$update$bodyid == n$bodyid), ]$wrong.cbf = "TRUE"
+          }
         }
+
         f = hemibrain_choice(prompt = "can the soma be easily identified? yes|no ")
         if (!isTRUE(f)) {
           message("passing neuron, making note that soma can't be fixed this way")
           data$update[which(data$update$bodyid == n$bodyid), ]$unfixed = "TRUE"
+          data$update[which(data$update$bodyid == n$bodyid), ]$global = "FALSE"
           make.selection = FALSE
           next
         }
@@ -326,8 +331,9 @@ correct_singles <- function(data = NULL,
         # and add a message to say so
         if (is.null(data$db)) {
           message("creating a global DBSCAN clustering...")
-
-
+          data$db = dbscan::dbscan(x = data$gs[which(data$gs$soma.checked == TRUE & data$gs$unfixed == FALSE),c("X","Y","Z")],
+                                   eps = data$eps,
+                                   minPts = 3)
         }
         if (!is.null(data$db)) {
           message("trying to automatically suggest a soma...")
@@ -435,13 +441,14 @@ correct_singles <- function(data = NULL,
           }
         }
       }
-      clear3d()
-      plot3d(N_all, WithConnectors = FALSE, WithNodes = FALSE)
-      plot3d_somas(N_all)
-      correcting = !hemibrain_choice(prompt = c(
-        "Final check, are you happy with the new soma possitions? yes/no "
-      ))
     }
+    clear3d()
+    plot3d(N_all, WithConnectors = FALSE, WithNodes = FALSE)
+    plot3d_somas(N_all)
+    correcting = !hemibrain_choice(prompt = c(
+      "Final check, are you happy with the new soma possitions? yes/no "
+    ))
+
     for (n in N_all) {
       if (n$soma != data$update[which(data$update$bodyid == n$bodyid), ]$position) {
         # update the values in update with the ones from the neuron list
@@ -450,6 +457,7 @@ correct_singles <- function(data = NULL,
         data$update[which(data$update$bodyid == n$bodyid), ]$Y = n$d[n$soma, ]$Y
         data$update[which(data$update$bodyid == n$bodyid), ]$Z = n$d[n$soma, ]$Z
         data$update[which(data$update$bodyid == n$bodyid), ]$soma.edit = "TRUE"
+        data$update[which(data$update$bodyid == n$bodyid), ]$global = "TRUE"
       }
     }
     if (list == 0) {
@@ -1002,7 +1010,7 @@ check_coord_nans = function(gs = NULL, selected_file = NULL) {
       # update gs
       gs[i,] = curr
       # write to gs
-      range = paste0("A", i+1, ":L", i+1)
+      range = paste0("A", i+1, ":M", i+1)
       gsheet_manipulation(
         FUN = googlesheets4::range_write,
         ss = selected_file,
