@@ -1,4 +1,15 @@
-#' Adjust saved somas manually
+#' Adjust and correct hemibrain neurons somas.
+#'
+#' @description Currently provides three "modes": correct single neurons, correct cell body fibers, and correct from google sheet.
+#'   Correct singles will allow you to manually correct each neuron in a provided list of bodyids. If requested, DBSCAN can be used
+#'       to try to predict potential soma positions against already correctly identified somas, based on the provided google sheet.
+#'   Correct cell body fibers(cbf) asks for a cbf to be inputted based on those labeled in the google sheet. DBSCAN is then used to
+#'       cluster the already annotated soma positions on the google sheet withing the cbf. This will allow you to identify correct
+#'       soma positions, and then manually fix incorrect somas. for each neuron with an incorrect soma, a potential new soma will be
+#'       suggested based on the DBSCAN clustering result.
+#'   Correct google sheet is useful when screening large numbers of neurons. Once a large group of neurons has been split into
+#'       morphological clusters, using NBLAST for example, this mode will request a cluster id and apply DBSCAN to somas within
+#'       the cluster. You can then quickly screen to identify correct soma clusters, and label incorrect somas to be corrected separately.
 #'
 #' @param bodyids Optional, unless using neurons method. Otherwise, list of neuron bodyids
 #' @param c Optional. For use when correcting Cell body fibers. If not input, function will ask you to enter one later
@@ -42,23 +53,20 @@ hemibrain_adjust_saved_somas = function(bodyids = NULL,
   mode = must_be(prompt = "Neurons (n) | Cell fibre body (c) | gsheet (g): ", answers = c("n", "c", "g"))
 
 
-  ### Get GoogleSheet Data
-  if (mode == "g") {
-    gs = gsheet_manipulation(
-      FUN = googlesheets4::read_sheet,
-      ss = selected_file,
-      sheet = "Unk_cbf",
-      return = TRUE
-    )
-    gs$clusters = as.integer(gs$clusters)
-  } else {
-    gs = gsheet_manipulation(
-      FUN = googlesheets4::read_sheet,
-      ss = selected_file,
-      sheet = "somas",
-      return = TRUE
-    )
-  }
+  gs = gsheet_manipulation(
+    FUN = googlesheets4::read_sheet,
+    ss = selected_file,
+    sheet = "somas",
+    return = TRUE
+  )
+  # sort out stupid data types
+  gs[which(gs$cbf == "unknown"), ]$clusters = as.integer(gs[which(gs$cbf == "unknown"), ]$clusters)
+  gs$position = as.integer(gs$position)
+  gs$X = as.integer(gs$X)
+  gs$Y = as.integer(gs$Y)
+  gs$Z = as.integer(gs$Z)
+  # check for NA in coords
+  gs = check_coord_nans(gs = gs, selected_file = selected_file)
 
   data = create_SomaData(
     gs = gs,
@@ -69,7 +77,8 @@ hemibrain_adjust_saved_somas = function(bodyids = NULL,
     brain = brain,
     plot_sample = plot_sample,
     neurons_from_gsheet = neurons_from_gsheet,
-    ss = selected_file
+    ss = selected_file,
+    bodyids = bodyids
   )
 
   # neuron method implementation
@@ -99,12 +108,15 @@ create_SomaData = function(gs = NULL,
                            mode = NULL,
                            eps = NULL,
                            minPts = NULL,
+                           bodyids = NULL,
                            brain = NULL,
                            plot_sample = NULL,
                            neurons_from_gsheet = NULL,
                            ss = NULL) {
+
   # create data
   data = list(
+    gs = gs,
     neurons = list(),
     subset = list(),
     update = list(),
@@ -118,8 +130,17 @@ create_SomaData = function(gs = NULL,
     brain = brain,
     plot_sample = plot_sample,
     neurons_from_gsheet = neurons_from_gsheet,
-    ss = ss
+    ss = ss,
+    bodyids = bodyids
   )
+
+  if (!is.null(data$gs)) {
+    data$gs$position = as.integer(data$gs$position)
+    data$gs$X = as.integer(data$gs$X)
+    data$gs$Y = as.integer(data$gs$Y)
+    data$gs$Z = as.integer(data$gs$Z)
+  }
+  data
 }
 
 generate_update = function(data = NULL,
@@ -127,7 +148,7 @@ generate_update = function(data = NULL,
   if (data$mode == "g") {
     data$c = as.integer(data$c)
     data$bodyids = subset(gs, gs$clusters == data$c)$bodyid
-  } else {
+  } else if (data$mode == "c"){
     data$bodyids = subset(gs, gs$cbf == data$c)$bodyid
   }
   # create update sheet and indicies
@@ -142,6 +163,15 @@ generate_update = function(data = NULL,
   if (typeof(data$update$Z) == "character") {
     data$update$Z = as.integer(data$update$Z)
   }
+  data$update$soma.checked = FALSE
+  data$update$unfixed = FALSE
+  data$update$wrong.cbf = FALSE
+  data$update$soma.edit = FALSE
+  # fix data types
+  data$update$position = as.integer(data$update$position)
+  data$update$X = as.integer(data$update$X)
+  data$update$Y = as.integer(data$update$Y)
+  data$update$Z = as.integer(data$update$Z)
   # create soma position bit
   data$gs_somas = data.matrix(data$update[, c('X', 'Y', 'Z')])
   data
@@ -294,6 +324,11 @@ correct_singles <- function(data = NULL,
 
         # if data$db exists, have a guess at a soma possition for n
         # and add a message to say so
+        if (is.null(data$db)) {
+          message("creating a global DBSCAN clustering...")
+
+
+        }
         if (!is.null(data$db)) {
           message("trying to automatically suggest a soma...")
           sugestion = suggest_soma(data = data,
@@ -948,6 +983,38 @@ chunks = function(ind) {
   chunks = c(chunks, sub)
 }
 
+check_coord_nans = function(gs = NULL, selected_file = NULL) {
+  ind = which(is.na(gs[,c("X","Y","Z")]))
+  if (length(ind) != 0) {
+    for (i in ind) {
+      curr = gs[i,]
+      # read in neuron
+      n = pipeline_read_neurons(batch = curr$bodyid)[[1]]
+      # update curr
+      curr[,c("X","Y","Z")] = n$d[n$soma,c("X","Y","Z")]
+      # sort data types
+      curr$bodyid = as.integer(curr$bodyid)
+      curr$position = as.integer(curr$position)
+      curr$soma.edit = as.logical(curr$soma.edit)
+      curr$soma.checked = as.logical(curr$soma.checked)
+      curr$wrong.cbf = as.logical(curr$wrong.cbf)
+      curr$unfixed = as.logical(curr$unfixed)
+      # update gs
+      gs[i,] = curr
+      # write to gs
+      range = paste0("A", i+1, ":L", i+1)
+      gsheet_manipulation(
+        FUN = googlesheets4::range_write,
+        ss = selected_file,
+        range = range,
+        data = curr,
+        sheet = "somas",
+        col_names = FALSE
+      )
+    }
+  }
+  gs
+}
 batch_somaupdate = function(data = NULL) {
   for (n in data$neurons) {
     data$update$soma.checked = "TRUE"
@@ -965,14 +1032,10 @@ batch_somaupdate = function(data = NULL) {
 }
 
 write_somaupdate = function(data = data) {
-  if (data$mode == "g") {
-    sheet = "Unk_cbf"
-    last = ":L"
-  } else {
-    sheet = "somas"
-    last = ":K"
-  }
-  # if ind is consectutive
+
+  sheet = "somas"
+  last = ":M"
+  # if ind is consecutive
   if (isTRUE(all(diff(data$ind) == 1))) {
     range = paste0("A", data$ind[1] + 1, last, data$ind[length(data$ind)] + 1)
     gsheet_manipulation(
@@ -992,7 +1055,7 @@ write_somaupdate = function(data = data) {
         FUN = googlesheets4::range_write,
         ss = data$ss,
         range = range,
-        data = data$update,
+        data = data$update[which(rownames(data$update) %in% ind),],
         sheet = sheet,
         col_names = FALSE
       )
@@ -1218,7 +1281,7 @@ cbf_list = function(from = "google_sheet",
   }
 }
 
-### fix so works from gs
+
 # get neurons for a given cbf
 neurons_in_cbf = function(c = NULL,
                           gs = NULL) {
