@@ -21,6 +21,7 @@
 #' @param minPts The minimum number of points needed to form a cluster using DBSCAN. 5 by default
 #' @param neurons_from_gsheet Bool, TRUE by default. If true, will collect neurons based on bodyids in the google sheet,
 #' otherwise, will search for them based on CBF data in neuprint.
+#' @param for_Imaan extra little bit for Imaan... FLASE by default
 #'
 #' @return Updates Google Sheet with soma information
 #'
@@ -35,7 +36,8 @@ hemibrain_adjust_saved_somas = function(bodyids = NULL,
                                         plot_sample = TRUE,
                                         eps = NULL,
                                         minPts = NULL,
-                                        neurons_from_gsheet = TRUE) {
+                                        neurons_from_gsheet = TRUE,
+                                        for_Imaan = FALSE) {
   if (is.null(eps)) {
     eps = 1500
   }
@@ -78,11 +80,27 @@ hemibrain_adjust_saved_somas = function(bodyids = NULL,
     plot_sample = plot_sample,
     neurons_from_gsheet = neurons_from_gsheet,
     ss = selected_file,
-    bodyids = bodyids
+    bodyids = bodyids,
+    for_Imaan = for_Imaan
   )
 
   # neuron method implementation
   if (mode == "n") {
+    if (for_Imaan == TRUE) {
+      message("Good day to you Imaan! hope you're having a good day! Todays task,
+              should you choose to accept it, will be to start working on a final
+              double check of the neurons which have been looked at but have been
+              labeled as unfixed")
+      message(c("There are currently ", length(which(data$gs$unfixed == TRUE & data$gs$soma.checked == TRUE))), " of these guys...")
+      batch_size =
+        must_be(prompt =  "How many of these would you like to have a look at? ",
+                answers = c(1:length(which(data$gs$unfixed == TRUE & data$gs$soma.checked == TRUE))))
+      data$bodyids = gs[which(data$gs$unfixed == TRUE & data$gs$soma.checked == TRUE), ]$bodyid[1:as.integer(batch_size)]
+    }
+
+
+
+
     neuron_method(data = data,
                   gs = gs,
                   ss = selected_file)
@@ -112,7 +130,8 @@ create_SomaData = function(gs = NULL,
                            brain = NULL,
                            plot_sample = NULL,
                            neurons_from_gsheet = NULL,
-                           ss = NULL) {
+                           ss = NULL,
+                           for_Imaan = NULL) {
 
   # create data
   data = list(
@@ -131,7 +150,8 @@ create_SomaData = function(gs = NULL,
     plot_sample = plot_sample,
     neurons_from_gsheet = neurons_from_gsheet,
     ss = ss,
-    bodyids = bodyids
+    bodyids = bodyids,
+    for_Imaan = for_Imaan
   )
 
   if (!is.null(data$gs)) {
@@ -319,10 +339,18 @@ correct_singles <- function(data = NULL,
 
         f = hemibrain_choice(prompt = "can the soma be easily identified? yes|no ")
         if (!isTRUE(f)) {
-          message("passing neuron, making note that soma can't be fixed this way")
-          data$update[which(data$update$bodyid == n$bodyid), ]$unfixed = "TRUE"
-          make.selection = FALSE
-          next
+          if (isTRUE(data$for_Imaan)) {
+            message("passing neuron, making note that soma can't be fixed this way")
+            data$update[which(data$update$bodyid == n$bodyid), ]$unfixed = "No soma"
+            make.selection = FALSE
+            next
+          } else {
+            message("passing neuron, making note that soma can't be fixed this way")
+            data$update[which(data$update$bodyid == n$bodyid), ]$unfixed = "TRUE"
+            make.selection = FALSE
+            next
+          }
+
         }
 
         # if data$db exists, have a guess at a soma possition for n
