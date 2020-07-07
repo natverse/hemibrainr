@@ -237,7 +237,7 @@ gsheet_method = function(gs = NULL,
   # select a cluster (1:40)
   message(" Which cluster of neurons without a CBF would you like to correct?")
   data$c = as.integer(must_be(prompt = "Please input a number from 1:40 to correct: ",
-                              answers = c(1:40)))
+                              answers = c(1:44)))
   #
   data = generate_update(gs = gs,
                          data = data)
@@ -305,7 +305,6 @@ correct_singles <- function(data = NULL,
       if (isTRUE(fix)) {
         make.selection = TRUE
       } else {
-        data$update[which(data$update$bodyid == n$bodyid), ]$global = "FALSE"
         make.selection = FALSE
       }
 
@@ -322,7 +321,6 @@ correct_singles <- function(data = NULL,
         if (!isTRUE(f)) {
           message("passing neuron, making note that soma can't be fixed this way")
           data$update[which(data$update$bodyid == n$bodyid), ]$unfixed = "TRUE"
-          data$update[which(data$update$bodyid == n$bodyid), ]$global = "FALSE"
           make.selection = FALSE
           next
         }
@@ -380,7 +378,15 @@ correct_singles <- function(data = NULL,
             if (isTRUE(sug_correct)) {
               # reroot neuron
               y = reroot_from_suggestion(n, sugestion)
+
               N_all[[toString(n$bodyid)]] = y
+              # update the values in update with the ones from the neuron list
+              data$update[which(data$update$bodyid == n$bodyid), ]$position = n$soma
+              data$update[which(data$update$bodyid == n$bodyid), ]$X = n$d[n$soma, ]$X
+              data$update[which(data$update$bodyid == n$bodyid), ]$Y = n$d[n$soma, ]$Y
+              data$update[which(data$update$bodyid == n$bodyid), ]$Z = n$d[n$soma, ]$Z
+              data$update[which(data$update$bodyid == n$bodyid), ]$soma.edit = "TRUE"
+
               make.selection = FALSE
             } else {
               message("bad luck,  lets do this the old fashioned way")
@@ -438,6 +444,14 @@ correct_singles <- function(data = NULL,
             # reroot neuron
             y = reroot_from_selection(n, selection)
             N_all[[toString(n$bodyid)]] = y
+
+            # update the values in update with the ones from the neuron list
+            data$update[which(data$update$bodyid == n$bodyid), ]$position = n$soma
+            data$update[which(data$update$bodyid == n$bodyid), ]$X = n$d[n$soma, ]$X
+            data$update[which(data$update$bodyid == n$bodyid), ]$Y = n$d[n$soma, ]$Y
+            data$update[which(data$update$bodyid == n$bodyid), ]$Z = n$d[n$soma, ]$Z
+            data$update[which(data$update$bodyid == n$bodyid), ]$soma.edit = "TRUE"
+
           }
         }
       }
@@ -448,18 +462,6 @@ correct_singles <- function(data = NULL,
     correcting = !hemibrain_choice(prompt = c(
       "Final check, are you happy with the new soma possitions? yes/no "
     ))
-
-    for (n in N_all) {
-      if (n$soma != data$update[which(data$update$bodyid == n$bodyid), ]$position) {
-        # update the values in update with the ones from the neuron list
-        data$update[which(data$update$bodyid == n$bodyid), ]$position = n$soma
-        data$update[which(data$update$bodyid == n$bodyid), ]$X = n$d[n$soma, ]$X
-        data$update[which(data$update$bodyid == n$bodyid), ]$Y = n$d[n$soma, ]$Y
-        data$update[which(data$update$bodyid == n$bodyid), ]$Z = n$d[n$soma, ]$Z
-        data$update[which(data$update$bodyid == n$bodyid), ]$soma.edit = "TRUE"
-        data$update[which(data$update$bodyid == n$bodyid), ]$global = "TRUE"
-      }
-    }
     if (list == 0) {
       data$neurons = hemibrain_neuron_class(data$neurons)
     }
@@ -965,10 +967,10 @@ correct_gsheet = function(data = NULL) {
         # note the remainder as noise
         message(c("Noting  ",
                   as.character(
-                    sum(data$db$cluster %in% clusters),
+                    sum(!(data$db$cluster %in% clusters)),
                     " as unfixed."
                   )))
-        data$update$unfixed[data$db$cluster %in% clusters] = "TRUE"
+        data$update$unfixed[!(data$db$cluster %in% clusters)] = "TRUE"
         data$update$soma.checked = "TRUE"
       }
     }
@@ -1042,7 +1044,7 @@ batch_somaupdate = function(data = NULL) {
 write_somaupdate = function(data = data) {
 
   sheet = "somas"
-  last = ":M"
+  last = ":L"
   # if ind is consecutive
   if (isTRUE(all(diff(data$ind) == 1))) {
     range = paste0("A", data$ind[1] + 1, last, data$ind[length(data$ind)] + 1)
