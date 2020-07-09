@@ -51,6 +51,7 @@
 #' @export
 #' @seealso \code{\link{hemibrain_splitpoints}}, \code{\link{hemibrain_flow_centrality}}, \code{\link{hemibrain_somas}},
 #' \code{\link{hemibrain_precomputed_splitpoints}}, \code{\link{hemibrain_metrics}},\code{\link{hemibrain_remove_bad_synapses}}
+#' ,\code{\link{hemibrain_get_meta}}
 hemibrain_read_neurons<-function(x = NULL,
                                  savedir = FALSE,
                                  local = FALSE,
@@ -93,17 +94,13 @@ hemibrain_read_neurons<-function(x = NULL,
   if(reroot){
     neurons.flow = hemibrain_reroot(neurons.flow, method = "manual", googlesheet = googlesheet, ...)
   }
-  selcols=setdiff(colnames(hemibrainr::hemibrain_metrics), colnames(neurons.flow[,]))
-  hemibrain_metrics_sel = hemibrainr::hemibrain_metrics[names(neurons.flow), selcols]
-  df = cbind(neurons.flow[,], hemibrain_metrics_sel)
-  rownames(df) = names(neurons.flow)
   if(microns){
     neurons.flow = scale_neurons(neurons.flow, scaling = (8/1000))
     nat.templatebrains::regtemplate(neurons.flow) = "JRCFIB2018F"
   }else{
     nat.templatebrains::regtemplate(neurons.flow) = "JRCFIB2018Fraw"
   }
-  neurons.flow[,] = df
+  neurons.flow[,] = hemibrain_get_meta(names(neurons.flow))
   neurons.flow = add_field_seq(neurons.flow,neurons.flow[,"bodyid"],field="bodyid")
   neurons.flow = metadata_add_tags(neurons.flow)
   neurons.flow
@@ -113,7 +110,7 @@ hemibrain_read_neurons<-function(x = NULL,
 #' @export
 scale_neurons <-function(x, scaling = (8/1000), ...) UseMethod("scale_neurons")
 #' @export
-scale_neurons.neuron <- function(x, scaling, ...){
+scale_neurons.neuron <- function(x, scaling = (8/1000), ...){
   nat::xyzmatrix(x$d) = nat::xyzmatrix(x$d)*scaling
   if(!is.null(x$d$W)){
     gt0=x$d$W > 0   # special case negative diameter is sometimes used as a signalling value

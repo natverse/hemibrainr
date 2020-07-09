@@ -2,6 +2,14 @@
 ################################ Utilities ##################################
 #############################################################################
 
+# Add missing columns to a df
+add_blanks <- function(df, missing, add = ""){
+  for(m in missing){
+    df[[m]] <- add
+  }
+  df
+}
+
 # hidden
 nullToNA <- function(x) {
   if(is.list(x)){
@@ -225,3 +233,39 @@ save_compressed_nblast_mat <- function(x,
   }
 }
 
+# Transform into template brainspace
+xform.mesh3d <- function(mesh3d, reg = reg){
+  points = t(mesh3d$vb)[,1:3]
+  nat::xyzmatrix(mesh3d)  = nat::xformpoints(reg = reg,
+                                             points = points, transformtype = c("warp"), direction = NULL, FallBackToAffine = FALSE)
+  mesh3d
+}
+xform_brain.mesh3d <- function(mesh3d,
+                               sample = nat.templatebrains::regtemplate(x),
+                               reference){
+  points = t(mesh3d$vb)[,1:3]
+  nat::xyzmatrix(mesh3d)  = nat.templatebrains::xform_brain(x = points, sample=sample, reference = reference)
+  mesh3d
+}
+xform.shapelist <- function(shapelist, reg = reg){
+  shapelist.transformed = lapply(shapelist,xform.mesh3d, reg = reg)
+  class(shapelist.transformed) = c("shape3d","shapelist3d")
+  shapelist.transformed
+}
+xform_brain.shapelist <- function(shapelist,
+                                  sample = nat.templatebrains::regtemplate(x),
+                                  reference){
+  shapelist.transformed = lapply(shapelist,xform_brain.mesh3d, sample = sample, reference = reference)
+  class(shapelist.transformed) = c("shape3d","shapelist3d")
+  shapelist.transformed
+}
+scale_points <-function(x, scaling = (8/1000)){
+  nat::xyzmatrix(x) = nat::xyzmatrix(x)*scaling
+  x
+}
+scale_points.shapelist <- function(shapelist,
+                                   scaling = (8/1000)){
+  shapelist.transformed = lapply(shapelist,scale_points, scaling = scaling)
+  class(shapelist.transformed) = c("shape3d","shapelist3d")
+  shapelist.transformed
+}

@@ -8,13 +8,12 @@
 #'   result using a
 #'   \href{https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit#gid=0}{Google
 #'   Sheet} on the hemibrain Google Team Drive operated by the flyconnectome
-#'   group at the University of Cambridge. This function
-#'   only considers lateral horn neurons. You must have access to the Team Drive
+#'   group at the University of Cambridge. You must have access to the Team Drive
 #'   in order to use this function. This function makes use of the Google
 #'   Filestream application, which should be installed on your machine. Further,
 #'   note that neurons are read from the FAFB CATMAID project, and you must have
-#'   login details for this project recorded in your .Renviron for this
-#'   function to work.
+#'   login details for this project recorded in your .Renviron for these
+#'   functions to work.
 #'
 #' @param ids body IDs for hemibrain neurons present in the
 #'   \href{https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit#gid=0}{Google
@@ -44,7 +43,7 @@
 #'   user, simply open this Google Sheet in your browser and add your initials
 #'   to neurons of your choosing on the rightmost column 'Users'. Once a match
 #'   is recorded, the user selects a quality for that match. There can be no
-#'   match (n), a poor match (p) an okay match (o) or an exact match (e). As a
+#'   match (none), a poor match (poor) an okay match (okay) or an exact match (good). As a
 #'   rule of thumb, a poor match could be a neuron from a very similar same cell
 #'   type or a highly untraced neuron that may be the correct cell type. An okay
 #'   match should be a neuron that looks to be from the same morphological cell
@@ -1146,6 +1145,356 @@ lm_matches <- function(priority = c("hemibrain","lm")){
 
   # Return
   matched
+
+}
+
+
+#' Manage hemibrain-FAFB neuron matches
+#'
+#' @description We can match neurons in the hemibrain data with FAFB neurons (hemibrain->FAFB, hemibrain tab) and
+#' FAFB neurons have been matched with their hemibrain counterparts (FAFB->hemibrain, fafb tab). These matches are recorded on a
+#' \href{https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit#gid=0}{Google
+#'   Sheet} on our hemibrain Google Team Drive, to which you will need access
+#' through an authenticated account to view and use this function. We can use these function to manipulate the Google Sheet.
+#' This include adding new IDs for matching (\code{hemibrain_matching_add}), transfer matches between the sheet's hemibrain and FAFB tabs (\code{hemibrain_matching_transfers})
+#' and add pre-made matches (\code{hemibrain_add_matches}).
+#'
+#' @param df a \code{data.frame} of pre-made matches that the user wants to transfer onto the Google Sheet. This will erase any extant matches for the specified neurons. This data frame
+#' must have columns: bodyid (i.e. the hemibrain neuron), skid (i.e. the FAFB neuron) and quality (i.e. match quality). Matches have three levels of 'quality', largely dependent on the degree of manual tracing for FAFB neurons
+#'  - good (could be the same cell), medium (same cell type) and poor (could be the same or similar cell type).
+#'  @param ids either hemibrain bodyids or FAFB skids to add to a Google Sheet. You will want to add IDs where they do not already exist, so that
+#'  you can use, for example, \code{\link{hemibrain_matching}}.
+#'  @param sheet the tab to which to add your new information. You are either adding to information related ot hemibrain neurons, or FAFB neurons.
+#' @param direction the match direction, i.e. hemibrain->FAFB (hemibrain tab) or FAFB->hemibrain (fafb tab). Defaults to updating both.
+#' @param selected_file Specifies which Google Sheet to use. Unless you are using a personal Google Sheet, this should be \code{"1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw"}.
+#' @param User your initials, so updates can be linked to you. There is a limited number of users, each of whom have been
+#'   assigned a number of neurons to match up. In order to add yourself as a user, simply open this Google Sheet in your browser and add your initials to neurons of your choosing on the rightmost column 'Users'.
+#' @param ... arguments passed to methods for, for example, \code{neuprintr::neuprint_get_meta} and \code{elmr::fafb_get_meta}.
+#'
+#' @return  \code(NULL). Updates the master Google sheet.
+#' @details Currently, information is recorded in a
+#'   \href{https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit#gid=0}{Google
+#'    Sheet}
+#'
+#' @examples
+#' \donttest{
+#' \dontrun{
+#'
+#' # Add a mising FAFB projection neuron, so we can match it later:
+#' hemibrain_matching_add(ids = "16", sheet = "fafb", User = "ASB")
+#'
+#' # Match interactively!
+#' fafb_matching(ids="16", overwrite = TRUE)
+#'
+#' }}
+#' @rdname hemibrain_add
+#' @export
+#' @seealso \code{\link{hemibrain_matching}}
+hemibrain_add_made_matches <- function(df,
+                                  direction = c("both","hemibrain-FAFB","FAFB-hemibrain"),
+                                  ...){
+  direction = match.arg(direction)
+  cnames = c("bodyid","skid","quality")
+  if(!all(cnames%in%colnames(df))){
+    stop("df must have column names: ", paste(cnames,collapse = ", "))
+  }else{
+    df = subset(df,
+                !is.na(df$skid)
+                & !is.na(df$bodyid)
+                & df$skid!=""
+                & df$bodyid != ""
+                & quality %in% c("none","good","medium","poor"))
+  }
+
+  # Update hemibrain sheet
+  if(direction%in%c("both","hemibrain-FAFB")){
+    message("Reading hemibrain sheet")
+    gs = hemibrain_match_sheet(sheet = "hemibrain")
+    missing = setdiff(df$bodyid,gs$bodyid)
+    if(length(missing)){
+      message("Adding missing hemibrain bodyids")
+      hemibrain_matching_add(ids = missing, sheet = "hemibrain", User = User)
+      gs = hemibrain_match_sheet(sheet = "hemibrain")
+    }
+    message("Checking that FAFB matches exist")
+    hdf = subset(df, df$bodyid %in% gs$bodyid)
+    hdf = hdf[!duplicated(hdf$bodyid),]
+    in.fab = suppressWarnings(sapply(hdf$skid,catmaid::catmaid_skids))
+    in.fab = sapply(in.fab,function(x) length(x)!=0)
+    if(sum(!in.fab)){
+      message("Dropping ", sum(!in.fab)," matches as givens skeleton IDs do not exist for FAFB v14")
+      hdf = hdf[in.fab,]
+    }
+    gs[as.character(hdf$bodyid),"FAFB.match"] = hdf$skid
+    gs[as.character(hdf$bodyid),"FAFB.match.quality"] = hdf$quality
+    gs[as.character(hdf$bodyid),"User"] = User
+    message("Adding matches")
+    write_matches(gs=gs,
+                  ids = as.character(hdf$bodyid),
+                  ws="lhns",
+                  id.field ="bodyid",
+                  column = "FAFB.match")
+    write_matches(gs=gs,
+                  ids = as.character(hdf$bodyid),
+                  ws="lhns",
+                  id.field ="bodyid",
+                  column = "FAFB.match.quality")
+  }
+  if(direction%in%c("both","FAFB-hemibrain")){
+    message("Reading FAFB sheet")
+    gs = hemibrain_match_sheet(sheet = "fafb")
+    missing = setdiff(df$skid,gs$skid)
+    if(length(missing)){
+      message("Adding missing FAFB bodyids")
+      hemibrain_matching_add(ids = missing, sheet = "fafb", User = User)
+      gs = hemibrain_match_sheet(sheet = "fafb")
+    }
+    message("Checking that hemibrain matches exist")
+    hdf = subset(df, df$skid %in% gs$skid)
+    hdf = hdf[!duplicated(hdf$skid),]
+    in.hemi = suppressWarnings(sapply(hdf$skid,function(x) tryCatch(neuprintr::neuprint_ids(x),error = function(e) NULL)))
+    in.hemi = sapply(in.hemi,function(x) length(x)!=0)
+    if(sum(!in.hemi)){
+      message("Dropping ", sum(!in.hemi)," matches as givens skeleton IDs do not exist for FAFB v14")
+      hdf = hdf[in.hemi,]
+    }
+    gs[as.character(hdf$skid),"hemibrain.match"] = hdf$bodyid
+    gs[as.character(hdf$skid),"hemibrain.match.quality"] = hdf$quality
+    gs[as.character(hdf$skid),"User"] = User
+    message("Adding matches")
+    write_matches(gs=gs,
+                  ids = as.character(hdf$skid),
+                  ws="fafb",
+                  id.field ="skid",
+                  column = "hemibrain.match")
+    write_matches(gs=gs,
+                  ids = as.character(hdf$skid),
+                  ws="fafb",
+                  id.field ="skid",
+                  column = "hemibrain.match.quality")
+  }
+}
+
+# Get correct GSheet
+hemibrain_match_sheet <- function(selected_file = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw",
+                                  sheet = c("hemibrain","fafb")
+){
+  # Which sheet
+  sheet = match.arg(sheet)
+  sheet[sheet=="hemibrain"] = "lhns"
+  # neuron ID name
+  if(sheet=="lhns"){
+    id.field = "bodyid"
+  }else{
+    id.field = "skid"
+  }
+  # Read sheet
+  gs = hemibrainr:::gsheet_manipulation(FUN = googlesheets4::read_sheet,
+                                        ss = selected_file,
+                                        sheet = sheet,
+                                        return = TRUE)
+  gs[[id.field]] = correct_id(gs[[id.field]])
+  rownames(gs) = gs[[id.field]]
+  gs
+}
+
+
+#' @rdname hemibrain_add
+#' @export
+hemibrain_matching_add <- function(ids,
+                                   sheet = c("hemibrain","FAFB"),
+                                   User = "flyconnectome",
+                                   selected_file  = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw",
+                                   ...){
+  # Read
+  sheet = match.arg(sheet)
+  gs = hemibrain_match_sheet(sheet = sheet, selected_file = selected_file)
+
+  # What are we adding?
+  add = setdiff(ids, rownames(gs))
+
+  # Meta information
+  if(sheet=="hemibrain"){
+    meta = neuprintr::neuprint_get_meta(add, ...)
+    meta$cell.type = meta$type
+  }else{
+    meta = elmr::fafb_get_meta(add, ...)
+  }
+  missing = setdiff(colnames(gs),colnames(meta))
+  meta = add_blanks(meta, missing)
+  meta = meta[colnames(gs)]
+  meta$User = User
+
+  # Add new rows
+  sheet[sheet=="hemibrain"] = "lhns"
+  batches = split(1:nrow(meta), ceiling(seq_along(1:nrow(meta))/500))
+  for(i in batches){
+    hemibrainr:::gsheet_manipulation(FUN = googlesheets4::sheet_append,
+                                     data = meta[min(i):max(i),],
+                                     ss = selected_file,
+                                     sheet = sheet)
+  }
+
+}
+
+#' @rdname hemibrain_add
+#' @export
+hemibrain_matching_transfers <- function(selected_file = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw"){
+  #############
+  # Transfers #
+  #############
+
+  # Read the LM Google Sheet
+  lmg = gsheet_manipulation(FUN = googlesheets4::read_sheet,
+                            ss = selected_file,
+                            sheet = "lm",
+                            guess_max = 3000,
+                            return = TRUE)
+  lmg$id = correct_id(lmg$id)
+  rownames(lmg) = lmg$id
+
+  # Read the FAFB Google Sheet
+  fg = gsheet_manipulation(FUN = googlesheets4::read_sheet,
+                           ss = selected_file,
+                           sheet = "fafb",
+                           guess_max = 3000,
+                           return = TRUE)
+  fg$skid = correct_id(fg$skid)
+  rownames(fg) = fg$skid
+
+  # Read the hemibrain Google Sheet
+  hg = gsheet_manipulation(FUN = googlesheets4::read_sheet,
+                           ss = selected_file,
+                           sheet = "lhns",
+                           guess_max = 3000,
+                           return = TRUE)
+  hg$bodyid = correct_id(hg$bodyid)
+  rownames(hg) = hg$bodyid
+
+  ##############
+  # LM -> FAFB #
+  ##############
+  missing = is.na(fg$LM.match)
+  matches = lmg$id[match(fg$skid[missing],lmg$FAFB.match)]
+  quality = lmg$FAFB.match.quality[match(fg$skid[missing],lmg$FAFB.match)]
+  fg[missing,"LM.match"] = matches
+  fg[missing,"LM.match.quality"] = quality
+  sorted = which(missing)[!is.na(matches)]
+  if(length(sorted)){
+    update_gsheet(update = fg[sorted,],
+                gs = fg,
+                tab = "fafb",
+                match = "LM",
+                id = "skid")
+  }
+
+  ###################
+  # LM -> Hemibrain #
+  ###################
+  missing = is.na(hg$LM.match)
+  matches = lmg$id[match(hg$bodyid[missing],lmg$hemibrain.match)]
+  quality = lmg$hemibrain.match.quality[match(hg$bodyid[missing],lmg$hemibrain.match)]
+  hg[missing,"LM.match"] = matches
+  hg[missing,"LM.match.quality"] = quality
+  sorted = which(missing)[!is.na(matches)]
+  if(length(sorted)){
+    update_gsheet(update = hg[sorted,],
+                gs = hg,
+                tab = "lhns",
+                match = "LM",
+                id = "bodyid")
+  }
+
+  ##############
+  # FAFB -> LM #
+  ##############
+  missing = is.na(lmg$FAFB.match)
+  matches = fg$skid[match(lmg$id[missing],fg$LM.match)]
+  quality = fg$LM.match.quality[match(lmg$id[missing],fg$LM.match)]
+  lmg[missing,"FAFB.match"] = matches
+  lmg[missing,"FAFB.match.quality"] = quality
+  sorted = which(missing)[!is.na(matches)]
+  if(length(sorted)){
+    update_gsheet(update = lmg[sorted,],
+                  gs = lmg,
+                  tab = "lm",
+                  match = "FAFB",
+                  id = "id")
+  }
+
+  #####################
+  # FAFB -> Hemibrain #
+  #####################
+  missing = is.na(hg$FAFB.match)
+  matches = fg$skid[match(hg$bodyid[missing],fg$hemibrain.match)]
+  quality = fg$hemibrain.match.quality[match(hg$bodyid[missing],fg$hemibrain.match)]
+  hg[missing,"FAFB.match"] = matches
+  hg[missing,"FAFB.match.quality"] = quality
+  sorted = which(missing)[!is.na(matches)]
+  if(length(sorted)){
+    update_gsheet(update = hg[sorted,],
+                gs = hg,
+                tab = "lhns",
+                match = "FAFB",
+                id = "bodyid")
+  }
+
+  ###################
+  # Hemibrain -> LM #
+  ###################
+  missing = is.na(lmg$hemibrain.match)
+  matches = hg$bodyid[match(lmg$id[missing],hg$LM.match)]
+  quality = hg$LM.match.quality[match(lmg$id[missing],hg$LM.match)]
+  lmg[missing,"hemibrain.match"] = matches
+  lmg[missing,"hemibrain.quality"] = quality
+  sorted = which(missing)[!is.na(matches)]
+  update_gsheet(update = lmg[sorted,],
+                gs = lmg,
+                tab = "lm",
+                match = "hemibrain",
+                id = "id")
+
+  #####################
+  # Hemibrain -> FAFB #
+  #####################
+  missing = is.na(fg$hemibrain.match)
+  matches = hg$bodyid[match(fg$skid[missing],hg$FAFB.match)]
+  quality = hg$FAFB.match.quality[match(fg$skid[missing],hg$FAFB.match)]
+  fg[missing,"hemibrain.match"] = matches
+  fg[missing,"hemibrain.match.quality"] = quality
+  sorted = which(missing)[!is.na(matches)]
+  update_gsheet(update = fg[sorted,],
+                gs = fg,
+                tab = "fafb",
+                match = "hemibrain",
+                id = "skid")
+}
+
+
+# Udate function
+update_gsheet <- function(update,
+                          gs,
+                          selected_file = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw",
+                          tab,
+                          match,
+                          id){
+  for(row in 1:nrow(update)){
+    columns = c(paste0(match,".match"), paste0(match,".match.quality"))
+    r = match(update[row,id],gs[[id]])+1
+    if(is.na(r)){
+      next
+    }
+    for(column in columns){
+      letter = LETTERS[match(column,colnames(gs))]
+      range = paste0(letter,r)
+      gsheet_manipulation(FUN = googlesheets4::range_write,
+                          ss = selected_file,
+                          range = range,
+                          data = as.data.frame(update[row,column]),
+                          sheet = tab,
+                          col_names = FALSE)
+    }
+  }
 
 }
 
