@@ -42,7 +42,7 @@ assigned a number of neurons to match up. In order to add yourself as a user, si
 \item{selected_file}{Specifies which Google Sheet to use. Unless you are using a personal Google Sheet, this should be \code{"1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw"}.}
 }
 \value{
-\code(NULL). Updates the master Google sheet.
+\code{NULL}. Updates the master Google sheet.
 }
 \description{
 We can match neurons in the hemibrain data with FAFB neurons (hemibrain->FAFB, hemibrain tab) and
