@@ -63,6 +63,8 @@ hemibrain_adjust_saved_somas = function(bodyids = NULL,
   )
   # sort out stupid data types
   gs[which(gs$cbf == "unknown"), ]$clusters = as.integer(gs[which(gs$cbf == "unknown"), ]$clusters)
+  # sometimes bodyids are a character with a psace in front, so fix
+  gs$bodyid = trimws(gs$bodyid)
   gs$position = as.integer(gs$position)
   gs$X = as.integer(gs$X)
   gs$Y = as.integer(gs$Y)
@@ -171,8 +173,9 @@ generate_update = function(data = NULL,
   } else if (data$mode == "c"){
     data$bodyids = subset(gs, gs$cbf == data$c)$bodyid
   }
+
   # create update sheet and indicies
-  data$ind = which(gs$bodyid %in% data$bodyids)
+  data$ind = which(gs$bodyid %in% as.character(data$bodyids))
   data$update = gs[data$ind, ]
   if (typeof(data$update$X) == "character") {
     data$update$X = as.integer(data$update$X)
@@ -1013,7 +1016,7 @@ chunks = function(ind) {
   jump = which(bool == FALSE)
   # for each FALSE...
   chunks = list(ind[1:jump[1]])
-  for (j in 1:(length(jump) - 1)) {
+  for (j in seq_along(jump[-1])) {
     sub = list(ind[jump[j] + 1]:ind[jump[j + 1]])
     chunks = c(chunks, sub)
   }
@@ -1040,7 +1043,7 @@ check_coord_nans = function(gs = NULL, selected_file = NULL) {
       # update gs
       gs[i,] = curr
       # write to gs
-      range = paste0("A", i+1, ":M", i+1)
+      range = paste0("A", i+1, ":L", i+1)
       gsheet_manipulation(
         FUN = googlesheets4::range_write,
         ss = selected_file,
