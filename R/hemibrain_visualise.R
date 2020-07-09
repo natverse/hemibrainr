@@ -17,6 +17,7 @@
 #' @param brain a template brain to plot. \code{FALSE} results in no brain plotted.
 #' @param highflow whether to plot the nodes of highest (with in one standard deviation less than maximum) flow centrality (pink points)
 #' @param volume a \code{mesh3d} or \code{hxsurf} object. Only somas outside this volume will be plotted.
+#' @param check.template check which template space \code{someneuronlist} is in, in order to set default plotting settings.
 #' @param invert logical, if \code{TRUE} only somas outside \code{volume} will be plotted, if \code{FALSE}, only those inside.
 #' @param Verbose logical indicating that info about each selected neuron should be printed (default TRUE)
 #' @param Wait logical indicating that there should be a pause between each displayed neuron
@@ -42,11 +43,16 @@ plot3d_split = function(someneuronlist,
                         lwd = 1,
                         radius = NULL,
                         already_selected = NULL,
+                        check.template = FALSE,
                         ...){
   someneuronlist = nat::as.neuronlist(someneuronlist)
-  temps = nat.templatebrains::all_templatebrains()
-  temps.microns = c(temps[temps$W<2000,"name"],"JRCFIB2018F")
-  reg = nat.templatebrains::regtemplate(someneuronlist)
+  if(check.template){
+    temps = nat.templatebrains::all_templatebrains()
+    temps.microns = c(temps[temps$W<2000,"name"],"JRCFIB2018F")
+    reg = nat.templatebrains::regtemplate(someneuronlist)
+  }else{
+    reg = NULL
+  }
   if(is.null(soma)){
     if(is.null(reg)){
       soma = 500

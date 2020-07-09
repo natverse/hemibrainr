@@ -1,9 +1,20 @@
 ### Code to prepare datasets ###
 library(googledrive)
 
+### Match information ###
+hemibrain_matched = hemibrain_matches()
+lm_matched = lm_matches()
+usethis::use_data(hemibrain_matched, overwrite = TRUE)
+usethis::use_data(lm_matched, overwrite = TRUE)
+
 ### Lineage information ###
-hemibrain_hemilineages = read.csv("data-raw/annotations/hemilineages_by_transmitter.csv")
+hemibrain_hemilineages = read.csv("data-raw/annotations/hemibrain_hemilineages_cbf.csv")
+hemibrain_hemilineages = hemibrain_hemilineages[order(hemibrain_hemilineages$cellBodyFiber),]
 usethis::use_data(hemibrain_hemilineages, overwrite = TRUE)
+
+### Olfactory layers ###
+hemibrain_olfactory_layers= read.csv("data-raw/annotations/hemibrain_olfactory_layers.csv")
+usethis::use_data(hemibrain_olfactory_layers, overwrite = TRUE)
 
 ### Access Team Drive
 hemibrain = googledrive::team_drive_get("hemibrain")
@@ -174,6 +185,9 @@ lh.meta = neuprint_get_meta(unique(upn.conn$partner))
 ns = neuprint_search(paste(unique(lh.meta$type),collapse="|"),field="type")
 lhn.ids =  unique(c(ns$bodyid,upn.conn$partner))
 usethis::use_data(lhn.ids, overwrite = TRUE)
+
+### Lineage information ###
+
 
 ## Some notes on data
 # Badly skeletonised: "5812986485"

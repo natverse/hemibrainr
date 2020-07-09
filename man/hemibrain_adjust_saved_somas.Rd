@@ -13,7 +13,8 @@ hemibrain_adjust_saved_somas(
   plot_sample = TRUE,
   eps = NULL,
   minPts = NULL,
-  neurons_from_gsheet = TRUE
+  neurons_from_gsheet = TRUE,
+  for_Imaan = FALSE
 )
 }
 \arguments{
@@ -35,6 +36,8 @@ hemibrain_adjust_saved_somas(
 
 \item{neurons_from_gsheet}{Bool, TRUE by default. If true, will collect neurons based on bodyids in the google sheet,
 otherwise, will search for them based on CBF data in neuprint.}
+
+\item{for_Imaan}{extra little bit for Imaan... FLASE by default}
 }
 \value{
 Updates Google Sheet with soma information

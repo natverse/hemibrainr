@@ -71,13 +71,12 @@ Match up neurons between the hemibrain, FAFB and light level data and save the
   result using a
   \href{https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit#gid=0}{Google
   Sheet} on the hemibrain Google Team Drive operated by the flyconnectome
-  group at the University of Cambridge. This function
-  only considers lateral horn neurons. You must have access to the Team Drive
+  group at the University of Cambridge. You must have access to the Team Drive
   in order to use this function. This function makes use of the Google
   Filestream application, which should be installed on your machine. Further,
   note that neurons are read from the FAFB CATMAID project, and you must have
-  login details for this project recorded in your .Renviron for this
-  function to work.
+  login details for this project recorded in your .Renviron for these
+  functions to work.
 }
 \details{
 Currently, the
@@ -87,7 +86,7 @@ Currently, the
   user, simply open this Google Sheet in your browser and add your initials
   to neurons of your choosing on the rightmost column 'Users'. Once a match
   is recorded, the user selects a quality for that match. There can be no
-  match (n), a poor match (p) an okay match (o) or an exact match (e). As a
+  match (none), a poor match (poor) an okay match (okay) or an exact match (good). As a
   rule of thumb, a poor match could be a neuron from a very similar same cell
   type or a highly untraced neuron that may be the correct cell type. An okay
   match should be a neuron that looks to be from the same morphological cell

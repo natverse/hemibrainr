@@ -1,6 +1,9 @@
 ############## Script to split NBALST all neurons and their compartments  ###############
 ######## Originally run from JData5, the Jefferis lab drive on Max at the MRC LMB #######
 
+# PATHs on Max
+#/public/flybrain/hdf5/bin:/public/flybrain/cmtk/lib/cmtk/bin/:/public/flybrain/R/:/public/xtal/imosflm/src:/lmb/home/public/xtal/CCP4/ccp4-64/ccp4-7.1_dev/arp_warp_8.0/bin/bin-x86_64-Linux:/lmb/home/public/xtal/CCP4/ccp4-64/ccp4-7.1_dev/ccp4-7.1/etc:/lmb/home/public/xtal/CCP4/ccp4-64/ccp4-7.1_dev/ccp4-7.1/bin:/lmb/home/sharp/BusterVersions/buster_snapshot_20200319/scripts:/lmb/home/sharp/BusterVersions/buster_snapshot_20200319/MakeTNT/bin:/lmb/home/sharp/BusterVersions/buster_snapshot_20200319/autoBUSTER/bin/linux64:/lmb/home/sharp/BusterVersions/buster_snapshot_20200319/scripts:/lmb/home/sharp/sharp-2.9.0/scripts:/public/xtal/imosflm/src:/public/xtal/linux-bin:/public/xtal/bin:/public/xtal/CCP4/ccp4-64/Prerelease/bin:/public/xtal/autoPROC/autoPROC_snapshot_20200206/autoPROC/bin/linux64:/public/xtal/cns/cns_solve_1.3_mp/intel-x86_64bit-linux/bin:/public/xtal/cns/cns_solve_1.3_mp/intel-x86_64bit-linux/utils:.:/lmb/home/public/xtal/main2019/:/lmb/home/public/xtal/main2019//prog:/lmb/home/public/xtal/main2019//config:/lmb/home/public/xtal/Phenix/Phenix64/phenix-1.18.2-3874/build/bin:/public/ImageMagick/latest/bin:/gridware/sge/bin/lx24-amd64:.:/bin:/usr/bin:/usr/local/bin:/public/com:/public/bin/noarch:/public/bin/x86_64:/public/bin/i686:/usr/lib64/qt-3.3/bin:/usr/local/sbin:/usr/sbin:/lmb/home/public/CSD/bin:/lmb/home/public/xtal/morda/MoRDa_DB/bin_linux:/public/xtal/vmd:/public/xtal/Raster3D/Raster3D_2.5f/bin:/public/xtal/situs/Situs_2.6.3/bin:/public/xtal/mafft/mafft-6.240/scripts:/public/xtal/mafft/mafft-6.240/binaries:/public/xtal/script:/lmb/home/public/xtal/CCP4/clustalw-2.0.9/bin:/lmb/home/public/xtal/CCP4/fasta-35.4.1/bin:/lmb/home/public/xtal/CCP4/graphviz-2.20.2/bin:/public/xtal/HKL:/public/xtal/XDS-versions/current:/public/xtal/XDS-versions/share:/public/xtal/XDS-versions/XDS-utils:/public/EM/image2010/bin:/public/EM/image2010/local
+
 # Parameters
 polypre = TRUE
 split = "synapses"
@@ -195,7 +198,7 @@ hemibrainr:::save_compressed_nblast_mat(hemibrain.flycircuit.mean,
 # NBLAST line images
 # Hemibrain matches
 library(nat.jrcbrains)
-dolan.splits = nat::union(lhns::lhon.splits.dps,lhns::lhln.splits.dps,lhns::lhin.splits.dps)
+dolan.splits = lhns::lh.splits.dps #nat::union(lhns::lhon.splits.dps,lhns::lhln.splits.dps,lhns::lhin.splits.dps)
 dolan.splits = xform_brain(dolan.splits, reference= "JRCFIB2018F", sample="FCWB")
 lhfolder = paste0("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/light_level/lhns/")
 saveRDS(dolan.splits, file = paste0(lhfolder,"most_lines_dps_JRCFIB2018F.rds"))

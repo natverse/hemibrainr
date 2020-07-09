@@ -179,6 +179,14 @@
 #' @rdname hemilineages
 "hemibrain_hemilineages"
 
+#' Hemibrain neurons in different Olfactory layers
+#'
+#' Results of an infection model used by Philipp Schlegel.
+#'
+#' @name hemibrain_olfactory_layers
+#' @rdname hemibrain_olfactory_layers
+"hemibrain_olfactory_layers"
+
 #' Soma locations for hemibrain neurons
 #'
 #' Somas have been manually tagged by the FlyEM project.
@@ -190,3 +198,34 @@
 #' @name hemibrain_somas
 #' @rdname hemibrain_somas
 "hemibrain_somas"
+
+#' Manually verified neuron matches between the hemibrain and FAFB dataset
+#'
+#' Manually verified neuron matches between the hemibrain and FAFB dataset, as well as some light level data from the package natverse-compatible \code{lhns}.
+#' The Fly Connectome team at the University of Cambridge has
+#' manually made cell-to-cell matches based on an initual NBLAST calculation, and given matches a qualitative score.
+#' There can be no
+#'   match (none), a poor match (poor) an okay match (okay) or an exact match (good). As a
+#'   rule of thumb, a poor match could be a neuron from a very similar same cell
+#'   type or a highly untraced neuron that may be the correct cell type. An okay
+#'   match should be a neuron that looks to be from the same morphological cell
+#'   type but there may be some discrepancies in its arbour. An exact match is a
+#'   neuron that corresponds well between FAFB and the hemibrain data.
+#' the \href{https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit#gid=0}{Google Sheet} or using \code{\link{hemibrain_matches}}
+#' if they have an authenticated email.
+#'
+#' @name hemibrain_matched
+#' @rdname hemibrain_matched
+"hemibrain_matched"
+#' @rdname hemibrain_matched
+"lm_matched"
+
+#' Meta information of certain neuron classes
+#'
+#' Collated by the Flyconnectome group.
+#'
+#' @name info
+#' @rdname info
+"pn.info"
+#' @rdname info
+"mbon.info"
