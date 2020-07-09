@@ -1171,7 +1171,7 @@ lm_matches <- function(priority = c("hemibrain","lm")){
 #'   assigned a number of neurons to match up. In order to add yourself as a user, simply open this Google Sheet in your browser and add your initials to neurons of your choosing on the rightmost column 'Users'.
 #' @param ... arguments passed to methods for, for example, \code{neuprintr::neuprint_get_meta} and \code{elmr::fafb_get_meta}.
 #'
-#' @return  \code(NULL). Updates the master Google sheet.
+#' @return  \code{NULL}. Updates the master Google sheet.
 #' @details Currently, information is recorded in a
 #'   \href{https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit#gid=0}{Google
 #'    Sheet}
