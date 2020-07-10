@@ -38,19 +38,19 @@ hemibrain_get_meta <- function(x, ...){
 
   # Neuron class
   nmeta$class = NA
-  nmeta$class[dn.ids] = "DN"
-  nmeta$class[ton.ids] = "TON"
-  nmeta$class[lhn.ids] = "LHN"
-  nmeta$class[rn.ids] = "RN"
-  nmeta$class[orn.ids] = "ORN"
-  nmeta$class[hrn.ids] = "HRN"
-  nmeta$class[pn.ids] = "PN"
-  nmeta$class[upn.ids] = "uPN"
-  nmeta$class[mpn.ids] = "mPN"
-  nmeta$class[vppn.ids] = "VPPN"
-  nmeta$class[alln.ids] = "ALLN"
-  nmeta$class[dan.ids] = "DAN"
-  nmeta$class[mbon.ids] = "MBON"
+  nmeta$class[nmeta$bodyid%in%dn.ids] = "DN"
+  nmeta$class[nmeta$bodyid%in%ton.ids] = "TON"
+  nmeta$class[nmeta$bodyid%in%lhn.ids] = "LHN"
+  nmeta$class[nmeta$bodyid%in%rn.ids] = "RN"
+  nmeta$class[nmeta$bodyid%in%orn.ids] = "ORN"
+  nmeta$class[nmeta$bodyid%in%hrn.ids] = "HRN"
+  nmeta$class[nmeta$bodyid%in%pn.ids] = "PN"
+  nmeta$class[nmeta$bodyid%in%upn.ids] = "uPN"
+  nmeta$class[nmeta$bodyid%in%mpn.ids] = "mPN"
+  nmeta$class[nmeta$bodyid%in%vppn.ids] = "VPPN"
+  nmeta$class[nmeta$bodyid%in%alln.ids] = "ALLN"
+  nmeta$class[nmeta$bodyid%in%dan.ids] = "DAN"
+  nmeta$class[nmeta$bodyid%in%mbon.ids] = "MBON"
 
   # Add match information
   nmeta2$FAFB.match = hemibrain_matched[as.character(nmeta2$bodyid),"match"]
@@ -73,3 +73,27 @@ hemibrain_get_meta <- function(x, ...){
   # Return
   nmeta2
 }
+
+
+
+fafb_set_hemilineage <- function(find,
+                                 ItoLee_Hemilineage,
+                                 delete.find = FALSE){
+
+  neurons = catmaid::catmaid_skids(find)
+  ann = grepl("annotation:",find)
+  if(ann){
+
+  }
+
+}
+
+
+
+
+
+
+
+
+
+

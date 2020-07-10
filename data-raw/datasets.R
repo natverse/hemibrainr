@@ -10,6 +10,8 @@ usethis::use_data(lm_matched, overwrite = TRUE)
 ### Lineage information ###
 hemibrain_hemilineages = read.csv("data-raw/annotations/hemibrain_hemilineages_cbf.csv")
 hemibrain_hemilineages = hemibrain_hemilineages[order(hemibrain_hemilineages$cellBodyFiber),]
+hemibrain_hemilineages$notes = NULL
+hemibrain_hemilineages = hemibrain_hemilineages[!duplicated(hemibrain_hemilineages$cellBodyFiber),]
 usethis::use_data(hemibrain_hemilineages, overwrite = TRUE)
 
 ### Olfactory layers ###
