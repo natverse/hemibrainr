@@ -65,6 +65,7 @@ hemibrain_adjust_saved_somas = function(bodyids = NULL,
   gs[which(gs$cbf == "unknown"), ]$clusters = as.integer(gs[which(gs$cbf == "unknown"), ]$clusters)
   # sometimes bodyids are a character with a psace in front, so fix
   gs$bodyid = trimws(gs$bodyid)
+  gs$unfixed = trimws(gs$unfixed)
   gs$position = as.integer(gs$position)
   gs$X = as.integer(gs$X)
   gs$Y = as.integer(gs$Y)
@@ -93,7 +94,7 @@ hemibrain_adjust_saved_somas = function(bodyids = NULL,
               should you choose to accept it, will be to start working on a final
               double check of the neurons which have been looked at but have been
               labeled as unfixed")
-      message(c("There are currently ", length(which(data$gs$unfixed == TRUE & data$gs$soma.checked == TRUE))), " of these guys...")
+      message(c("There are currently ", length(which(data$gs$unfixed == TRUE & data$gs$soma.checked == TRUE)), " of these guys..."))
       batch_size =
         must_be(prompt =  "How many of these would you like to have a look at? ",
                 answers = c(1:length(which(data$gs$unfixed == TRUE & data$gs$soma.checked == TRUE))))
