@@ -65,6 +65,7 @@ hemibrain_adjust_saved_somas = function(bodyids = NULL,
   gs[which(gs$cbf == "unknown"), ]$clusters = as.integer(gs[which(gs$cbf == "unknown"), ]$clusters)
   # sometimes bodyids are a character with a psace in front, so fix
   gs$bodyid = trimws(gs$bodyid)
+  gs$unfixed = trimws(gs$unfixed)
   gs$position = as.integer(gs$position)
   gs$X = as.integer(gs$X)
   gs$Y = as.integer(gs$Y)
@@ -93,7 +94,7 @@ hemibrain_adjust_saved_somas = function(bodyids = NULL,
               should you choose to accept it, will be to start working on a final
               double check of the neurons which have been looked at but have been
               labeled as unfixed")
-      message(c("There are currently ", length(which(data$gs$unfixed == TRUE & data$gs$soma.checked == TRUE))), " of these guys...")
+      message(c("There are currently ", length(which(data$gs$unfixed == TRUE & data$gs$soma.checked == TRUE)), " of these guys..."))
       batch_size =
         must_be(prompt =  "How many of these would you like to have a look at? ",
                 answers = c(1:length(which(data$gs$unfixed == TRUE & data$gs$soma.checked == TRUE))))
@@ -340,21 +341,27 @@ correct_singles <- function(data = NULL,
           }
         }
 
-        f = hemibrain_choice(prompt = "can the soma be easily identified? yes|no ")
+        f = hemibrain_choice(prompt = "can the exact soma be easily identified? yes|no ")
         if (!isTRUE(f)) {
-          if (isTRUE(data$for_Imaan)) {
-            message("passing neuron, making note that soma can't be fixed this way")
-            data$update[which(data$update$bodyid == n$bodyid), ]$unfixed = "No soma"
-            make.selection = FALSE
-            next
-          } else {
-            message("passing neuron, making note that soma can't be fixed this way")
-            data$update[which(data$update$bodyid == n$bodyid), ]$unfixed = "TRUE"
-            make.selection = FALSE
-            next
+          message("So, what is wrong with this bad boy?")
+          ans = must_be(prompt = "Is there no soma (n), is the neuron Bilateral (b), or is this just a fragment(f)? ",
+                        answers = c("n","b","f"))
+          message("passing neuron, and adding note...")
+          if (ans == "n") {
+            data$update[which(data$update$bodyid == n$bodyid), ]$unfixed = "No Soma"
+          } else if (ans == "b") {
+            data$update[which(data$update$bodyid == n$bodyid), ]$unfixed = "Bilateral"
+          } else if (ans == "f") {
+            data$update[which(data$update$bodyid == n$bodyid), ]$unfixed = "Fragment"
           }
-
-        }
+          make.selection = FALSE
+            next
+        } else {
+            soma = hemibrain_choice(prompt = "Is only a tract to the soma visible? yes|no")
+            if (isTRUE(soma)) {
+              data$update[which(data$update$bodyid == n$bodyid), ]$unfixed = "Tract"
+            }
+          }
 
         # if data$db exists, have a guess at a soma possition for n
         # and add a message to say so
