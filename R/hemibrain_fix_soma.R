@@ -341,10 +341,10 @@ correct_singles <- function(data = NULL,
           }
         }
 
-        f = hemibrain_choice(prompt = "can the soma, or path to soma, be easily identified? yes|no ")
+        f = hemibrain_choice(prompt = "can the exact soma be easily identified? yes|no ")
         if (!isTRUE(f)) {
           message("So, what is wrong with this bad boy?")
-          ans = must_be(prompt = "Is there no soma (n), is the neuron Bilateral (b), or is this just a fragment(f)?",
+          ans = must_be(prompt = "Is there no soma (n), is the neuron Bilateral (b), or is this just a fragment(f)? ",
                         answers = c("n","b","f"))
           message("passing neuron, and adding note...")
           if (ans == "n") {
