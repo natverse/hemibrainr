@@ -90,15 +90,18 @@ hemibrain_adjust_saved_somas = function(bodyids = NULL,
   # neuron method implementation
   if (mode == "n") {
     if (for_Imaan == TRUE) {
+      ini = must_be(prompt = "Is this Nik (ND), or Imaan (IT): ",
+                     answers = c("ND","IT"))
+
       message("Good day to you Imaan! hope you're having a good day! Todays task,
               should you choose to accept it, will be to start working on a final
               double check of the neurons which have been looked at but have been
               labeled as unfixed")
-      message(c("There are currently ", length(which(data$gs$unfixed == TRUE & data$gs$soma.checked == TRUE)), " of these guys..."))
+      message(c("There are currently ", length(which(data$gs$init == ini)), " of these guys..."))
       batch_size =
         must_be(prompt =  "How many of these would you like to have a look at? ",
                 answers = c(1:length(which(data$gs$unfixed == TRUE & data$gs$soma.checked == TRUE))))
-      data$bodyids = gs[which(data$gs$unfixed == TRUE & data$gs$soma.checked == TRUE), ]$bodyid[1:as.integer(batch_size)]
+      data$bodyids = gs[which(data$gs$init == ini), ]$bodyid[1:as.integer(batch_size)]
     }
 
 
@@ -341,10 +344,10 @@ correct_singles <- function(data = NULL,
           }
         }
 
-        f = hemibrain_choice(prompt = "can the exact soma be easily identified? yes|no ")
+        f = hemibrain_choice(prompt = "can the soma, or path the soma, be easily identified? yes|no ")
         if (!isTRUE(f)) {
           message("So, what is wrong with this bad boy?")
-          ans = must_be(prompt = "Is there no soma (n), is the neuron Bilateral (b), or is this just a fragment(f)? ",
+          ans = must_be(prompt = "Is there no soma (n), is the neuron Bilateral (b), is this just a fragment(f), or is it just weird(w)? ",
                         answers = c("n","b","f"))
           message("passing neuron, and adding note...")
           if (ans == "n") {
@@ -353,6 +356,8 @@ correct_singles <- function(data = NULL,
             data$update[which(data$update$bodyid == n$bodyid), ]$unfixed = "Bilateral"
           } else if (ans == "f") {
             data$update[which(data$update$bodyid == n$bodyid), ]$unfixed = "Fragment"
+          } else if (ans == "w") {
+            data$update[which(data$update$bodyid == n$bodyid), ]$unfixed = "Weird"
           }
           make.selection = FALSE
             next
