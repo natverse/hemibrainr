@@ -1064,7 +1064,7 @@ check_coord_nans = function(gs = NULL, selected_file = NULL) {
       # update gs
       gs[i, ] = curr
       # write to gs
-      range = paste0("A", i + 1, ":L", i + 1)
+      range = paste0("A", i + 1, ":M", i + 1)
       gsheet_manipulation(
         FUN = googlesheets4::range_write,
         ss = selected_file,
@@ -1095,7 +1095,7 @@ batch_somaupdate = function(data = NULL) {
 
 write_somaupdate = function(data = data) {
   sheet = "somas"
-  last = ":L"
+  last = ":M"
   # if ind is consecutive
   if (isTRUE(all(diff(data$ind) == 1))) {
     range = paste0("A", data$ind[1] + 1, last, data$ind[length(data$ind)] + 1)
