@@ -2,7 +2,7 @@
 % Please edit documentation in R/hemibrain_meta.R
 \name{hemibrain_get_meta}
 \alias{hemibrain_get_meta}
-\title{Read neurons from the hemibrain connectome project}
+\title{Get meta information for hemibrain neurons}
 \usage{
 hemibrain_get_meta(x, ...)
 }
