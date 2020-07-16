@@ -64,7 +64,8 @@ skeletons  (\code{"LM"}) from Dolan et al. and Frechter et al. 2019 (eLife), sto
 \item{query}{a neuronlist of light level neurons to match against. Should correspond to the given NBLAST matrix.
 Defaults to reading a transformed \code{most.lhns} from the Hemibrain Google Team Drive.}
 
-\item{overwrite}{logical, whether or not to overwrite matches already made.}
+\item{overwrite}{logical, whether or not to overwrite matches already made. However, if set to 'none' then the pipeline will
+include neurons with 'tract' and 'none' values in the match column of our Google sheet, i.e. will help you overwrite non-matches.}
 }
 \description{
 Match up neurons between the hemibrain, FAFB and light level data and save the
