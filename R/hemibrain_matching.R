@@ -34,7 +34,8 @@
 #' \code{most.lhns}.
 #' @param query a neuronlist of light level neurons to match against. Should correspond to the given NBLAST matrix.
 #' Defaults to reading a transformed \code{most.lhns} from the Hemibrain Google Team Drive.
-#' @param overwrite logical, whether or not to overwrite matches already made.
+#' @param overwrite logical, whether or not to overwrite matches already made. However, if set to 'none' then the pipeline will
+#' include neurons with 'tract' and 'none' values in the match column of our Google sheet, i.e. will help you overwrite non-matches.
 #'
 #' @details Currently, the
 #'   \href{https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit#gid=0}{Google
@@ -173,7 +174,9 @@ hemibrain_matching <- function(ids = NULL,
     brain = hemibrainr::hemibrain_microns.surf
   }
   # Deselect some IDs
-  if(!overwrite){
+  if(overwrite == "none"){
+    donotdo = subset(gs, !gs[[quality.field]] %in% c("none","n","tract","t") | !bodyid%in%ids)
+  } else if(!overwrite){
     donotdo = subset(gs, !is.na(gs[[match.field]]) | !bodyid%in%ids)
   }else{
     donotdo = subset(gs, !bodyid%in%ids)
@@ -194,11 +197,11 @@ hemibrain_matching <- function(ids = NULL,
     plot3d(brain, alpha = 0.1, col ="grey")
     # Read hemibrain neuron
     if(is.null(db)){
-      lhn  = neuprintr::neuprint_read_skeletons(n, all_segments = TRUE, heal = FALSE)
+      lhn  = neuprintr::neuprint_read_neurons(n, all_segments = TRUE, heal = FALSE)
     } else {
       lhn = tryCatch(db[as.character(n)], error = function(e) {
         warning("Cannot read neuron: ", n, " from local db; fetching from neuPrint!")
-        neuprintr::neuprint_read_skeletons(n, all_segments = TRUE, heal = FALSE)
+        nat::as.neuronlist(neuprintr::neuprint_read_neurons(n, all_segments = TRUE, heal = FALSE))
         })
     }
     # Transform hemibrain neuron to FAFB space
@@ -438,7 +441,9 @@ lm_matching <- function(ids = NULL,
     ids = intersect(ids,gs$id)
   }
   # Do not do
-  if(!overwrite){
+  if(overwrite == "none"){
+    donotdo = subset(gs, !gs[[quality.field]] %in% c("none","n","tract","t") | !id%in%ids)
+  } else if(!overwrite){
     donotdo = subset(gs, !is.na(gs[[match.field]]) | !id%in%ids)
   }else{
     donotdo = subset(gs,!id%in%ids)
@@ -688,7 +693,9 @@ fafb_matching <- function(ids = NULL,
     ids = intersect(ids,gs$skid)
   }
   # Deselect some IDs
-  if(!overwrite){
+  if(overwrite == "none"){
+    donotdo = subset(gs, !gs[[quality.field]] %in% c("none","n","tract","t") | !skid%in%ids)
+  } else if(!overwrite){
     donotdo = subset(gs, !is.na(gs[[match.field]]) | !gs$skid%in%ids)
   }else{
     donotdo = subset(gs, !skid%in%ids)
