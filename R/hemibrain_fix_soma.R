@@ -236,7 +236,7 @@ neuron_method = function(data = NULL,
   # data = batch_somaupdate(data = data)
   data$update$soma.checked = "TRUE"
   if (isTRUE(data$for_Imaan == TRUE)){
-    data$update$init = "NA"
+    data$update$init = "Fixed"
   }
   write_somaupdate(data = data)
 }
