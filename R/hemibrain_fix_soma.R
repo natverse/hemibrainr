@@ -236,7 +236,7 @@ neuron_method = function(data = NULL,
   # data = batch_somaupdate(data = data)
   data$update$soma.checked = "TRUE"
   if (isTRUE(data$for_Imaan == TRUE)){
-    data$update$init = "NA"
+    data$update$init = "Fixed"
   }
   write_somaupdate(data = data)
 }
@@ -357,8 +357,8 @@ correct_singles <- function(data = NULL,
           message("So, what is wrong with this bad boy?")
           ans = must_be(
             prompt = "Is there no soma (n), is the neuron Bilateral (b),
-            is this just a fragment(f), or is it just weird(w)? ",
-            answers = c("n", "b", "f", "w")
+            is this just a fragment(f), maybe it is truncated (t), or is it just weird(w)? ",
+            answers = c("n", "b", "f", "w","t")
           )
           message("passing neuron, and adding note...")
           if (ans == "n") {
@@ -369,6 +369,8 @@ correct_singles <- function(data = NULL,
             data$update[which(data$update$bodyid == n$bodyid),]$unfixed = "Fragment"
           } else if (ans == "w") {
             data$update[which(data$update$bodyid == n$bodyid),]$unfixed = "Weird"
+          } else if (ans == "t") {
+              data$update[which(data$update$bodyid == n$bodyid),]$unfixed = "Truncated"
           }
           make.selection = FALSE
           next
