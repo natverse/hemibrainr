@@ -4,6 +4,8 @@
 \alias{hemibrain_add_made_matches}
 \alias{hemibrain_matching_add}
 \alias{hemibrain_matching_transfers}
+\alias{fafb_matching_rewrite}
+\alias{hemibrain_matching_rewrite}
 \title{Manage hemibrain-FAFB neuron matches}
 \usage{
 hemibrain_add_made_matches(
@@ -22,6 +24,16 @@ hemibrain_matching_add(
 
 hemibrain_matching_transfers(
   selected_file = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw"
+)
+
+fafb_matching_rewrite(
+  selected_file = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw",
+  ...
+)
+
+hemibrain_matching_rewrite(
+  selected_file = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw",
+  ...
 )
 }
 \arguments{

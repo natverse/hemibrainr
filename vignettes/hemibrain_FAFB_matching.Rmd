@@ -34,7 +34,7 @@ For example, by matching neurons up between the hemibrain and FAFB, we see that 
 
 ## What You need
 
-In order to use these tools you will need to have [RStudio](https://rstudio.com/) and to have installed the [natverse](http://natverse.org/). To use them to maximum effect, you will need to also have permission to access the [FAFB CATMAID v14 project](https://neuropil.janelia.org/tracing/fafb/v14/), although some neurons are available to be read by the public from [Virtual Fly Brain](https://v2.virtualflybrain.org/org.geppetto.frontend/geppetto)'s CATMAID project for FAFB and should have the same unique skeleton ID numbers. Our pipeline function makes use of the [Google Filestream](https://support.google.com/a/answer/7491144?hl=en) application, which should be installed on your machine. Further, note that neurons are read from the FAFB CATMAID project, and you must have login details for this project recorded in your .Renviron (edit with: usethis::edit_r_environ) for these functions to work. For help, see [here](https://github.com/natverse/rcatmaid).
+In order to use these tools you will need to have [RStudio](https://rstudio.com/) and to have installed the [natverse](http://natverse.org/). To use them to maximum effect, you will need to also have permission to access the [FAFB CATMAID v14 project](https://neuropil.janelia.org/tracing/fafb/v14/), although some neurons are available to be read by the public from [Virtual Fly Brain](https://v2.virtualflybrain.org/org.geppetto.frontend/geppetto)'s CATMAID project for FAFB and should have the same unique skeleton ID numbers. Our pipeline function makes use of the [Google Filestream](https://support.google.com/a/answer/7491144?hl=en) application, which should be installed on your machine. Further, note that neurons are read from the FAFB CATMAID project, and you must have login details for this project recorded in your .Renviron (edit with: usethis::edit_r_environ) for these functions to work. For help, see [here](https://github.com/natverse/rcatmaid) and [here](https://github.com/natverse/neuprintr).
 
 ## Authorisation
 
@@ -138,7 +138,7 @@ hemibrain_matching_add(ids = "16", sheet = "fafb", User = "ASB")
 
 ### The Match Making Pipeline
 
-You can also use our interactive pipeline to match neurons between hemibrain and FAFB. There are two version of this pipeline. One that takes hemibrain neurons from neuPrint, and tries to find the best match for each hemibrain neuron (`hemibrain_matching`) and one that takes FAFB neurons from CATMAID and tries to find the best heimibrain match for those FAFB neurons (`fafb_matching`). Once matches are made, the result become available with `hemibrain_matches`.
+You can also use our interactive pipeline to match neurons between hemibrain and FAFB. There are two version of this pipeline. One that takes hemibrain neurons from [neuPrint](https://github.com/natverse/neuprintr), and tries to find the best match for each hemibrain neuron (`hemibrain_matching`) and one that takes FAFB neurons from [CATMAID](https://github.com/natverse/rcatmaid) and tries to find the best heimibrain match for those FAFB neurons (`fafb_matching`). Once matches are made, the result become available with `hemibrain_matches`.
 
 For a video tutorial, see [here](https://drive.google.com/drive/folders/1MOwfPGCPvY8eVLZoOfXOBhVcS6U996g9).
 
