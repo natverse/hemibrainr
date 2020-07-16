@@ -21,7 +21,7 @@
 #' @param minPts The minimum number of points needed to form a cluster using DBSCAN. 5 by default
 #' @param neurons_from_gsheet Bool, TRUE by default. If true, will collect neurons based on bodyids in the google sheet,
 #' otherwise, will search for them based on CBF data in neuprint.
-#' @param for_Imaan extra little bit for Imaan... FLASE by default
+#' @param for_Imaan extra little bit for Imaan... FALSE by default
 #'
 #' @return Updates Google Sheet with soma information
 #'
@@ -235,6 +235,9 @@ neuron_method = function(data = NULL,
   # write update
   # data = batch_somaupdate(data = data)
   data$update$soma.checked = "TRUE"
+  if (isTRUE(data$for_Imaan == TRUE)){
+    data$update$init = "NA"
+  }
   write_somaupdate(data = data)
 }
 
