@@ -25,11 +25,12 @@ fafb_hemibrain_annotate(skds)
 ## To match to at least tract level
 gs = hemibrain_match_sheet(sheet = "hemibrain", selected_file = selected_file)
 gs.undone = subset(gs, is.na(gs$FAFB.match))
-cbfs = hemibrain_hemilineages$cellBodyFiber
+gs.done = subset(gs, is.na(gs$FAFB.match))
+cbfs = setdiff(hemibrain_hemilineages$cellBodyFiber, unique(gs.done$cellBodyFiber))
 chosen = c()
 for(cbf in cbfs){
-  choose = subset(gs.undone,cellBodyFiber==cbfs)$bodyid
-  choose = choose[1:ifelse(length(choose)<5,lengt(choose),5)]
+  choose = subset(gs.undone,cellBodyFiber==cbf)$bodyid
+  choose = choose[1:ifelse(length(choose)<5,length(choose),5)]
   chosen = c(chosen,choose)
 }
 gs[chosen,"User"] = "ASB4"
