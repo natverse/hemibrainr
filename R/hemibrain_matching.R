@@ -1179,9 +1179,9 @@ lm_matches <- function(priority = c("hemibrain","lm")){
 #' @param df a \code{data.frame} of pre-made matches that the user wants to transfer onto the Google Sheet. This will erase any extant matches for the specified neurons. This data frame
 #' must have columns: bodyid (i.e. the hemibrain neuron), skid (i.e. the FAFB neuron) and quality (i.e. match quality). Matches have three levels of 'quality', largely dependent on the degree of manual tracing for FAFB neurons
 #'  - good (could be the same cell), medium (same cell type) and poor (could be the same or similar cell type).
-#'  @param ids either hemibrain bodyids or FAFB skids to add to a Google Sheet. You will want to add IDs where they do not already exist, so that
+#' @param ids either hemibrain bodyids or FAFB skids to add to a Google Sheet. You will want to add IDs where they do not already exist, so that
 #'  you can use, for example, \code{\link{hemibrain_matching}}.
-#'  @param sheet the tab to which to add your new information. You are either adding to information related ot hemibrain neurons, or FAFB neurons.
+#' @param sheet the tab to which to add your new information. You are either adding to information related ot hemibrain neurons, or FAFB neurons.
 #' @param direction the match direction, i.e. hemibrain->FAFB (hemibrain tab) or FAFB->hemibrain (fafb tab). Defaults to updating both.
 #' @param selected_file Specifies which Google Sheet to use. Unless you are using a personal Google Sheet, this should be \code{"1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw"}.
 #' @param User your initials, so updates can be linked to you. There is a limited number of users, each of whom have been
@@ -1205,7 +1205,7 @@ lm_matches <- function(priority = c("hemibrain","lm")){
 #'
 #' }}
 #' @seealso \code{\link{hemibrain_matching}}
-#' @rdname hemibrain_add
+#' @rdname hemibrain_add_made_matches
 hemibrain_add_made_matches <- function(df,
                                   direction = c("both","hemibrain-FAFB","FAFB-hemibrain"),
                                   ...){
@@ -1315,7 +1315,7 @@ hemibrain_match_sheet <- function(selected_file = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8
 }
 
 
-#' @rdname hemibrain_add
+#' @rdname hemibrain_add_made_matches
 #' @export
 hemibrain_matching_add <- function(ids,
                                    sheet = c("hemibrain","FAFB"),
@@ -1353,7 +1353,7 @@ hemibrain_matching_add <- function(ids,
 
 }
 
-#' @rdname hemibrain_add
+#' @rdname hemibrain_add_made_matches
 #' @export
 hemibrain_matching_transfers <- function(selected_file = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw"){
   #############
@@ -1519,7 +1519,7 @@ update_gsheet <- function(update,
 }
 
 
-#' @rdname hemibrain_add
+#' @rdname hemibrain_add_made_matches
 #' @export
 fafb_matching_rewrite <- function(selected_file  = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw",
                                    ...){
@@ -1555,7 +1555,7 @@ fafb_matching_rewrite <- function(selected_file  = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd
 }
 
 
-#' @rdname hemibrain_add
+#' @rdname hemibrain_add_made_matches
 #' @export
 hemibrain_matching_rewrite <- function(selected_file  = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw",
                                   ...){

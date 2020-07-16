@@ -106,7 +106,7 @@ and add pre-made matches (hemibrain_add_matches)." />
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/hemibrain_FAFB_matching.html">match_making</a>
+      <a href="../articles/match_making.html">match_making</a>
     </li>
   </ul>
 </li>
@@ -133,7 +133,7 @@ and add pre-made matches (hemibrain_add_matches)." />
     <div class="page-header">
     <h1>Manage hemibrain-FAFB neuron matches</h1>
     <small class="dont-index">Source: <a href='https://github.com/flyconnectome/hemibrainr/blob/master/R/hemibrain_matching.R'><code>R/hemibrain_matching.R</code></a></small>
-    <div class="hidden name"><code>hemibrain_add.Rd</code></div>
+    <div class="hidden name"><code>hemibrain_add_made_matches.Rd</code></div>
     </div>
 
     <div class="ref-description">
@@ -146,13 +146,13 @@ This include adding new IDs for matching (<code>hemibrain_matching_add</code>), 
 and add pre-made matches (<code>hemibrain_add_matches</code>).</p>
     </div>
 
-    <pre class="usage"><span class='fu'>hemibrain_add_made_matches</span>(
+    <pre class="usage"><span class='fu'><a href='hemibrain_add.html'>hemibrain_add_made_matches</a></span>(
   <span class='no'>df</span>,
   <span class='kw'>direction</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"both"</span>, <span class='st'>"hemibrain-FAFB"</span>, <span class='st'>"FAFB-hemibrain"</span>),
   <span class='no'>...</span>
 )
 
-<span class='fu'>hemibrain_matching_add</span>(
+<span class='fu'><a href='hemibrain_add.html'>hemibrain_matching_add</a></span>(
   <span class='no'>ids</span>,
   <span class='kw'>sheet</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"hemibrain"</span>, <span class='st'>"FAFB"</span>),
   <span class='kw'>User</span> <span class='kw'>=</span> <span class='st'>"flyconnectome"</span>,
@@ -160,7 +160,7 @@ and add pre-made matches (<code>hemibrain_add_matches</code>).</p>
   <span class='no'>...</span>
 )
 
-<span class='fu'>hemibrain_matching_transfers</span>(
+<span class='fu'><a href='hemibrain_add.html'>hemibrain_matching_transfers</a></span>(
   <span class='kw'>selected_file</span> <span class='kw'>=</span> <span class='st'>"1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw"</span>
 )
 
@@ -222,7 +222,7 @@ assigned a number of neurons to match up. In order to add yourself as a user, si
 <span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
 
 <span class='co'># Add a mising FAFB projection neuron, so we can match it later:</span>
-<span class='fu'>hemibrain_matching_add</span>(<span class='kw'>ids</span> <span class='kw'>=</span> <span class='st'>"16"</span>, <span class='kw'>sheet</span> <span class='kw'>=</span> <span class='st'>"fafb"</span>, <span class='kw'>User</span> <span class='kw'>=</span> <span class='st'>"ASB"</span>)
+<span class='fu'><a href='hemibrain_add.html'>hemibrain_matching_add</a></span>(<span class='kw'>ids</span> <span class='kw'>=</span> <span class='st'>"16"</span>, <span class='kw'>sheet</span> <span class='kw'>=</span> <span class='st'>"fafb"</span>, <span class='kw'>User</span> <span class='kw'>=</span> <span class='st'>"ASB"</span>)
 
 <span class='co'># Match interactively!</span>
 <span class='fu'><a href='hemibrain_matching.html'>fafb_matching</a></span>(<span class='kw'>ids</span><span class='kw'>=</span><span class='st'>"16"</span>, <span class='kw'>overwrite</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
