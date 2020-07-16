@@ -164,6 +164,28 @@ When you run these functions you will enter an interactive pipeline in an rgl wi
 
 ![pipeline_console](https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/pipeline_console.png)
 
+## Re-setting and transfering
+
+You can transfer matches between the `hemibrain` and `fafb` tabs, as well as refresh these tabs with the most up-to-dat meta data using the following code. You will be manipulating the Google sheet for all users, so please use with caution. If in doubt, do not use.
+
+```{r transfer, eval = FALSE}
+# Add all hemibrain neurons to sheet
+hemibrain_matching_rewrite()
+
+# Add all FAFB neurons with lineage annotations to sheet
+fafb_matching_rewrite()
+
+# Transfer matches made in one sheet to the other
+hemibrain_matching_transfers()
+
+# Get hemibrain information into v14 CATMAID for matches, as annotations:
+matches = hemibrain_matches()
+matches = subset(matches, match.quality %in% c("good","medium","poor") & dataset == "FAFB")
+skds = rownames(matches)
+fafb_hemibrain_annotate(skds)
+```
+
+
 ## Uses
 
 One use we have already found for all of this match making, is to cross-identify neuron cell body fiber tracts and [(hemi)lineages](https://pubmed.ncbi.nlm.nih.gov/23541733/). This means that we now have the locations in FAFB for different known sets of cells. You can see seed planes for them [here](https://docs.google.com/spreadsheets/d/1HI8RZJhV8aWC6hw5T0qh2__9D8V0zKdtxx2kkDsuI8Y/edit?usp=sharing).

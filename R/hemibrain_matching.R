@@ -689,7 +689,7 @@ fafb_matching <- function(ids = NULL,
   }
   # Deselect some IDs
   if(!overwrite){
-    donotdo = subset(gs, !is.na(gs[[match.field]]) | !skid%in%ids)
+    donotdo = subset(gs, !is.na(gs[[match.field]]) | !gs$skid%in%ids)
   }else{
     donotdo = subset(gs, !skid%in%ids)
   }
@@ -1204,9 +1204,9 @@ lm_matches <- function(priority = c("hemibrain","lm")){
 #' fafb_matching(ids="16", overwrite = TRUE)
 #'
 #' }}
+#' @seealso \code{\link{hemibrain_matching}}
 #' @rdname hemibrain_add
 #' @export
-#' @seealso \code{\link{hemibrain_matching}}
 hemibrain_add_made_matches <- function(df,
                                   direction = c("both","hemibrain-FAFB","FAFB-hemibrain"),
                                   ...){
@@ -1537,7 +1537,7 @@ fafb_matching_rewrite <- function(selected_file  = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd
   n$hemibrain.match.quality = gs$hemibrain.match.quality[match(n$skid,gs$skid)]
   n$LM.match = gs$LM.match[match(n$skid,gs$skid)]
   n$LM.match.quality = gs$LM.match.quality[match(n$skid,gs$skid)]
-  lskids = as.character(catmaid::catmaid_skids("annotation:side: left", ..))
+  lskids = as.character(catmaid::catmaid_skids("annotation:side: left", ...))
   n$side = "r"
   n[n$skid%in%lskids,"side"] = "l"
   n$User = gs$User[match(n$skid,gs$skid)]

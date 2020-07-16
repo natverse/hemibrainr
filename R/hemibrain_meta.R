@@ -33,34 +33,34 @@ hemibrain_get_meta <- function(x, ...){
   nmeta = neuprintr::neuprint_get_meta(x, ...)
 
   # Add lineage information
-  nmeta2 = merge(nmeta,hemibrain_hemilineages, all.x = TRUE, all.y = FALSE)
+  nmeta2 = merge(nmeta,hemibrainr::hemibrain_hemilineages, all.x = TRUE, all.y = FALSE)
   nmeta2$FAFB = NULL
 
   # Neuron class
   nmeta$class = NA
-  nmeta$class[nmeta$bodyid%in%dn.ids] = "DN"
-  nmeta$class[nmeta$bodyid%in%ton.ids] = "TON"
-  nmeta$class[nmeta$bodyid%in%lhn.ids] = "LHN"
-  nmeta$class[nmeta$bodyid%in%rn.ids] = "RN"
-  nmeta$class[nmeta$bodyid%in%orn.ids] = "ORN"
-  nmeta$class[nmeta$bodyid%in%hrn.ids] = "HRN"
-  nmeta$class[nmeta$bodyid%in%pn.ids] = "PN"
-  nmeta$class[nmeta$bodyid%in%upn.ids] = "uPN"
-  nmeta$class[nmeta$bodyid%in%mpn.ids] = "mPN"
-  nmeta$class[nmeta$bodyid%in%vppn.ids] = "VPPN"
-  nmeta$class[nmeta$bodyid%in%alln.ids] = "ALLN"
-  nmeta$class[nmeta$bodyid%in%dan.ids] = "DAN"
-  nmeta$class[nmeta$bodyid%in%mbon.ids] = "MBON"
+  nmeta$class[nmeta$bodyid%in%hemibrainr::dn.ids] = "DN"
+  nmeta$class[nmeta$bodyid%in%hemibrainr::ton.ids] = "TON"
+  nmeta$class[nmeta$bodyid%in%hemibrainr::lhn.ids] = "LHN"
+  nmeta$class[nmeta$bodyid%in%hemibrainr::rn.ids] = "RN"
+  nmeta$class[nmeta$bodyid%in%hemibrainr::orn.ids] = "ORN"
+  nmeta$class[nmeta$bodyid%in%hemibrainr::hrn.ids] = "HRN"
+  nmeta$class[nmeta$bodyid%in%hemibrainr::pn.ids] = "PN"
+  nmeta$class[nmeta$bodyid%in%hemibrainr::upn.ids] = "uPN"
+  nmeta$class[nmeta$bodyid%in%hemibrainr::mpn.ids] = "mPN"
+  nmeta$class[nmeta$bodyid%in%hemibrainr::vppn.ids] = "VPPN"
+  nmeta$class[nmeta$bodyid%in%hemibrainr::alln.ids] = "ALLN"
+  nmeta$class[nmeta$bodyid%in%hemibrainr::dan.ids] = "DAN"
+  nmeta$class[nmeta$bodyid%in%hemibrainr::mbon.ids] = "MBON"
 
   # Add match information
-  nmeta2$FAFB.match = hemibrain_matched[as.character(nmeta2$bodyid),"match"]
-  nmeta2$FAFB.match.quality = hemibrain_matched[as.character(nmeta2$bodyid),"quality"]
+  nmeta2$FAFB.match = hemibrainr::hemibrain_matched[as.character(nmeta2$bodyid),"match"]
+  nmeta2$FAFB.match.quality = hemibrainr::hemibrain_matched[as.character(nmeta2$bodyid),"quality"]
 
   # Add olfactory layer information
-  nmeta2$layer = hemibrain_olfactory_layers[match(nmeta2$bodyid,hemibrain_olfactory_layers$node),"layer_mean"]
+  nmeta2$layer = hemibrainr::hemibrain_olfactory_layers[match(nmeta2$bodyid,hemibrain_olfactory_layers$node),"layer_mean"]
   nmeta2$ct.layer = NA
   for(ct in unique(nmeta2$type)){
-    layer = round(mean(subset(nmeta2,type==ct)$layer))
+    layer = round(mean(subset(nmeta2,nmeta2$type==ct)$layer))
     nmeta2$ct.layer[nmeta2$type==ct] = layer
   }
 
@@ -84,6 +84,7 @@ hemibrain_get_meta <- function(x, ...){
 #' @param find an annotation/search term/vector of skids passed to \code{catmaid::catmaid_skids}.
 #' @param ItoLee_Hemilineage character, the correct K. Ito / T. Lee hemilineage. Must be an entry in \code{\link{hemibrain_hemilineages}}. If set to 'wipe' all lineage related annotations will be removed.
 #' @param delete.find logical, is \code{TRUE} then if \code{find} is an annotation, it will be wiped from the neuron after this function is used (if you have permission to remove it)
+#' @param putative if \code{TRUE} the owrd 'putative' is added to all lineage annotations to indicate to users that the labelled neurons may not have been given the correct lineages. More work may need to be done to solidify these assignments.
 #' @param ... arguments passed to \code{neuprintr::neuprint_get_meta} and \code{catmaid::catmaid_login}.
 #'
 #' @return annotations set on CATMAID neurons in specified CATMAID instance, see your \code{catmaid::catmaid_connection()}
@@ -103,13 +104,13 @@ fafb_hemibrain_annotate <- function(x, ...){
 
   # Get matches
   matches = hemibrain_matches()
-  matches = subset(matches, match.quality %in% c("good","medium","poor"))
+  matches = subset(matches, matches$match.quality %in% c("good","medium","poor"))
 
   # Go by neuron and relay the results
   amatches = acts = acbfs = c()
   for(i in x){
     # Get old annotations
-    a = catmaid_get_annotations_for_skeletons(sk, ...)
+    a = catmaid::catmaid_get_annotations_for_skeletons(i, ...)
     ct = a$annotation[grepl("Cell_type: |cell_type: ",a$annotation)]
     cbf = a$annotation[grepl("cellBodyFiber: |CellBodyFiber: ",a$annotation)]
 
@@ -168,16 +169,16 @@ fafb_set_hemilineage <- function(find,
     if(length(ItoLee_Hemilineage)>1|length(ItoLee_Hemilineage)==0){
       stop("Please provide a single ItoLee_Hemilineage")
     }
-    if(!ItoLee_Hemilineage%in%hemibrain_hemilineages$ItoLee_Hemilineage){
+    if(!ItoLee_Hemilineage%in%hemibrainr::hemibrain_hemilineages$ItoLee_Hemilineage){
       stop("Please provide a valid ItoLee_Hemilineage. See 'hemibrain_hemilineages'")
     }
     # Find neurins based on an annotation or as skeleton IDs
     skds = catmaid::catmaid_skids(x = find, ...)
     # Get meta information
     i = ItoLee_Hemilineage
-    ItoLee_Lineage = subset(hemibrain_hemilineages, hemibrain_hemilineages$ItoLee_Hemilineage == i)$ItoLee_Lineage[1]
-    Hartenstein_Lineage = subset(hemibrain_hemilineages, hemibrain_hemilineages$ItoLee_Hemilineage == i)$Hartenstein_Lineage[1]
-    Hartenstein_Hemilineage = subset(hemibrain_hemilineages, hemibrain_hemilineages$ItoLee_Hemilineage == i)$Hartenstein_Hemilineage[1]
+    ItoLee_Lineage = subset(hemibrainr::hemibrain_hemilineages, hemibrainr::hemibrain_hemilineages$ItoLee_Hemilineage == i)$ItoLee_Lineage[1]
+    Hartenstein_Lineage = subset(hemibrainr::hemibrain_hemilineages, hemibrainr::hemibrain_hemilineages$ItoLee_Hemilineage == i)$Hartenstein_Lineage[1]
+    Hartenstein_Hemilineage = subset(hemibrainr::hemibrain_hemilineages, hemibrainr::hemibrain_hemilineages$ItoLee_Hemilineage == i)$Hartenstein_Hemilineage[1]
     # Make new annotations
     ItoLee_Lineage = paste0("ItoLee_Lineage: " , ItoLee_Lineage)
     ItoLee_Hemilineage = paste0("ItoLee_Hemilineage: " , ItoLee_Hemilineage)
@@ -246,7 +247,7 @@ fafb_lineage_complete_wipe <- function(server = "v14seg-Li-190411.0", ...){
     conn$server = paste0("https://neuropil.janelia.org/tracing/fafb/",server,"/")
   }
   a = catmaid::catmaid_get_annotationlist(..., conn = conn)
-  instance = catmaid_login(conn=conn, ...)$server
+  instance = catmaid::catmaid_login(conn=conn, ...)$server
   message("Looking at ", instance)
   old = a$annotations$name[grepl("ItoLee_|Hartenstein_|Volker_|volker_|Itolee_|itolee_|itoLee_|Lineage_",a$annotations$name)]
   for(ann in old){

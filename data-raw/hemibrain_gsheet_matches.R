@@ -26,7 +26,7 @@ fafb_hemibrain_annotate(skds)
 gs = hemibrain_match_sheet(sheet = "hemibrain", selected_file = selected_file)
 gs.undone = subset(gs, is.na(gs$FAFB.match))
 gs.done = subset(gs, !is.na(gs$FAFB.match))
-cbfs = setdiff(hemibrain_hemilineages$ItoLee_Hemilineage, unique(gs.done$ItoLee_Hemilineage))
+cbfs = setdiff(hemibrainr::hemibrain_hemilineages$ItoLee_Hemilineage, unique(gs.done$ItoLee_Hemilineage))
 cbfs = sort(cbfs[!grepl("miss",cbfs)])
 chosen = c()
 for(cbf in cbfs){
