@@ -71,6 +71,7 @@ standardise_quality <- function(x){
   x[x=="e"] = "good"
   x[x=="o"] = "medium"
   x[x=="p"] = "poor"
+  x[x=="t"] = "tract"
   x[x=="n"] = "none"
   x
 }
