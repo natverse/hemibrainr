@@ -23,9 +23,23 @@ fafb_hemibrain_annotate(skds)
 
 # Flag 5 neurons from each cell body fiber
 ## To match to at least tract level
+gs = hemibrain_match_sheet(sheet = "hemibrain", selected_file = selected_file)
+gs.undone = subset(gs, is.na(gs$FAFB.match))
+cbfs = hemibrain_hemilineages$cellBodyFiber
+chosen = c()
+for(cbf in cbfs){
+  choose = subset(gs.undone,cellBodyFiber==cbfs)$bodyid
+  choose = choose[1:ifelse(length(choose)<5,lengt(choose),5)]
+  chosen = c(chosen,choose)
+}
+gs[chosen,"User"] = "ASB4"
+write_matches(gs=gs,
+              ids = chosen,
+              column = "User")
 
 # Organise FAFB hemilineage annotations
 a <- catmaid::catmaid_get_annotationlist()
+volker.old <- subset(a$annotations, grepl("Volker_|volker_", name))
 volker <- subset(a$annotations, grepl("Hartenstein", name))
 itolee <- subset(a$annotations, grepl("Ito", name))
 volker.lineages <-  subset(a$annotations, grepl("Hartenstein_Lineage: ", name))
@@ -50,6 +64,12 @@ for(ann in itolee.lineages$name){
   skids <- catmaid::catmaid_skids(paste0("annotation:", ann))
   catmaid::catmaid_set_annotations_for_skeletons(skids = skids, annotations = "Lineage_annotated")
 }
+wrongs  = c()
+for(o in volker.old$name){
+  w = catmaid::catmaid_skids(o)
+  wrongs = c(wrongs, w)
+}
+catmaid::catmaid_remove_annotations_for_skeletons(unique(wrongs), volker.old$id, force = TRUE)
 
 # Correct mis-assignment in FAFB. Example:
 # ## Wrong FAFB Ito_Lee Hemilineage: CREa2
