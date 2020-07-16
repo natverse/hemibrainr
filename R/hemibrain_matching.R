@@ -22,9 +22,9 @@
 #' @param hemibrain.nblast a FAFB (rows) - hemibrain (columns) normalised
 #'   NBLAST matrix. By default this is read from the flyconnectome Team Drive.
 #' @param selected_file the Google Sheet database to read and write from. For
-#'   now, defaults to a
+#'   now, defaults to this
 #'   \href{https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit#gid=0}{Google
-#'    Sheet for lateral horn neurons}. No other databases have been prepared.
+#'    Sheet}.
 #' @param batch_size the number of FAFB top matches to read from CATMAID in one
 #'   go.
 #' @param db Either a neuronlist or the name of a character vector naming a
@@ -47,7 +47,7 @@
 #'   rule of thumb, a poor match could be a neuron from a very similar same cell
 #'   type or a highly untraced neuron that may be the correct cell type. An okay
 #'   match should be a neuron that looks to be from the same morphological cell
-#'   type but there may be some discrepancies in its arbour. An exact match is a
+#'   type but there may be some discrepancies in its arbour. A good match is a
 #'   neuron that corresponds well between FAFB and the hemibrain data.
 #'
 #' @examples
@@ -269,7 +269,7 @@ hemibrain_matching <- function(ids = NULL,
     gs = gs[!duplicated(gs$bodyid),]
     unsaved = c(unsaved, n)
     message(length(unsaved), " unsaved matches")
-    print(knitr::kable(gs[unsaved,c("bodyid","type",match.field,quality.field)]))
+    print(knitr::kable(gs[unsaved,c("bodyid","cell.type",match.field,quality.field)]))
     p = must_be("Continue (enter) or save (s)? ", answers = c("","s"))
     if(p=="s"){
       plot_inspirobot()
@@ -487,9 +487,12 @@ lm_matching <- function(ids = NULL,
       if(is.null(hemi)|length(batch.in)!=length(batch)){
         message("Cannot read neurons from local db; fetching from neuPrint!")
         batch.out = setdiff(batch, names(hemi))
-        hemi = c(hemi,neuprintr::neuprint_read_skeletons(batch.out, all_segments = TRUE, heal = FALSE))
+        hemi = c(hemi,tryCatch(neuprintr::neuprint_read_skeletons(batch.out, all_segments = TRUE, heal = FALSE),error=function(e) NULL))
         hemi = hemi[as.character(batch)]
       }
+    }
+    if(is.null(hemi)){
+      next
     }
     sel = c("go","for","it")
     k = 1
@@ -552,7 +555,7 @@ lm_matching <- function(ids = NULL,
     gs = gs[!duplicated(gs$id),]
     unsaved = c(unsaved, n)
     message(length(unsaved), " unsaved matches")
-    print(knitr::kable(gs[unsaved,c("id","type",match.field,quality.field)]))
+    print(knitr::kable(gs[unsaved,c("id","cell.type",match.field,quality.field)]))
     p = must_be("Continue (enter) or save (s)? ", answers = c("","s"))
     if(p=="s"|end){
       plot_inspirobot()

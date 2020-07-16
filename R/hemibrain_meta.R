@@ -242,7 +242,9 @@ fafb_set_hemilineage <- function(find,
 fafb_lineage_complete_wipe <- function(server = "v14seg-Li-190411.0", ...){
   # Choose CATMAID server
   conn = catmaid::catmaid_login(...)
-  conn$server = paste0("https://neuropil.janelia.org/tracing/fafb/",server,"/")
+  if(!is.null(server)){
+    conn$server = paste0("https://neuropil.janelia.org/tracing/fafb/",server,"/")
+  }
   a = catmaid::catmaid_get_annotationlist(..., conn = conn)
   instance = catmaid_login(conn=conn, ...)$server
   message("Looking at ", instance)

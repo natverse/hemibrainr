@@ -25,18 +25,29 @@ fafb_hemibrain_annotate(skds)
 ## To match to at least tract level
 gs = hemibrain_match_sheet(sheet = "hemibrain", selected_file = selected_file)
 gs.undone = subset(gs, is.na(gs$FAFB.match))
-gs.done = subset(gs, is.na(gs$FAFB.match))
-cbfs = setdiff(hemibrain_hemilineages$cellBodyFiber, unique(gs.done$cellBodyFiber))
+gs.done = subset(gs, !is.na(gs$FAFB.match))
+cbfs = setdiff(hemibrain_hemilineages$ItoLee_Hemilineage, unique(gs.done$ItoLee_Hemilineage))
+cbfs = sort(cbfs[!grepl("miss",cbfs)])
 chosen = c()
 for(cbf in cbfs){
-  choose = subset(gs.undone,cellBodyFiber==cbf)$bodyid
-  choose = choose[1:ifelse(length(choose)<5,length(choose),5)]
-  chosen = c(chosen,choose)
+  choose = subset(gs.undone,ItoLee_Hemilineage==cbf)$bodyid
+  choose = choose[1:ifelse(length(choose)<3,length(choose),3)]
+  chosen = unique(c(chosen,choose))
 }
-gs[chosen,"User"] = "ASB4"
+gs[chosen%in%gs$bodyid,"User"] = "ASB5"
 write_matches(gs=gs,
-              ids = chosen,
+              ids = intersect(chosen,gs$bodyid),
               column = "User")
+
+# Predict left-side seed planes in FAFB
+seeds = gsheet_manipulation(FUN = googlesheets4::read_sheet,
+                         ss = "1HI8RZJhV8aWC6hw5T0qh2__9D8V0zKdtxx2kkDsuI8Y",
+                         sheet = "seeds",
+                         return = TRUE)
+seeds$left_guess_plane = sapply(seeds$right_seed_plane,elmr::mirror_fafb_url)
+googlesheets4::write_sheet(seeds,
+                           ss = "1HI8RZJhV8aWC6hw5T0qh2__9D8V0zKdtxx2kkDsuI8Y",
+                           sheet = "seeds")
 
 # Organise FAFB hemilineage annotations
 a <- catmaid::catmaid_get_annotationlist()
