@@ -358,7 +358,7 @@ correct_singles <- function(data = NULL,
           ans = must_be(
             prompt = "Is there no soma (n), is the neuron Bilateral (b),
             is this just a fragment(f), maybe it is truncated (t), or is it just weird(w)? ",
-            answers = c("n", "b", "f", "w")
+            answers = c("n", "b", "f", "w","t")
           )
           message("passing neuron, and adding note...")
           if (ans == "n") {
