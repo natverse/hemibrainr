@@ -357,7 +357,7 @@ correct_singles <- function(data = NULL,
           message("So, what is wrong with this bad boy?")
           ans = must_be(
             prompt = "Is there no soma (n), is the neuron Bilateral (b),
-            is this just a fragment(f), or is it just weird(w)? ",
+            is this just a fragment(f), maybe it is truncated (t), or is it just weird(w)? ",
             answers = c("n", "b", "f", "w")
           )
           message("passing neuron, and adding note...")
@@ -369,6 +369,8 @@ correct_singles <- function(data = NULL,
             data$update[which(data$update$bodyid == n$bodyid),]$unfixed = "Fragment"
           } else if (ans == "w") {
             data$update[which(data$update$bodyid == n$bodyid),]$unfixed = "Weird"
+          } else if (ans == "t") {
+              data$update[which(data$update$bodyid == n$bodyid),]$unfixed = "Truncated"
           }
           make.selection = FALSE
           next
