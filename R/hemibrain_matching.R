@@ -1570,6 +1570,7 @@ hemibrain_matching_rewrite <- function(selected_file  = "1OSlDtnR3B1LiB5cwI5x5Ql
   meta$LM.match = gs$LM.match[match(meta$bodyid,gs$bodyid)]
   meta$LM.match.quality = gs$LM.match.quality[match(meta$bodyid,gs$bodyid)]
   meta$User = gs$User[match(meta$bodyid,gs$bodyid)]
+  meta = meta[order(meta$bodyid),]
   meta = meta[order(meta$cell.type),]
   meta = meta[order(meta$ItoLee_Hemilineage),]
   batches = split(1:nrow(meta), ceiling(seq_along(1:nrow(meta))/500))
