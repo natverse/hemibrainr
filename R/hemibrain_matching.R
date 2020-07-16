@@ -1206,7 +1206,6 @@ lm_matches <- function(priority = c("hemibrain","lm")){
 #' }}
 #' @seealso \code{\link{hemibrain_matching}}
 #' @rdname hemibrain_add
-#' @export
 hemibrain_add_made_matches <- function(df,
                                   direction = c("both","hemibrain-FAFB","FAFB-hemibrain"),
                                   ...){
