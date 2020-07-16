@@ -194,6 +194,8 @@ hemibrain_matching_add(ids = "16", sheet = "fafb", User = "ASB")
 
 You can also use our interactive pipeline to match neurons between hemibrain and FAFB. There are two version of this pipeline. One that takes hemibrain neurons from [neuPrint](https://github.com/natverse/neuprintr), and tries to find the best match for each hemibrain neuron (`hemibrain_matching`) and one that takes FAFB neurons from [CATMAID](https://github.com/natverse/rcatmaid) and tries to find the best heimibrain match for those FAFB neurons (`fafb_matching`). Once matches are made, the result become available with `hemibrain_matches`.
 
+The [Google sheet](https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit) is set up with  limited number of users, each of whom have been assigned a number of neurons to match up. In order to add yourself as a user, simply open this Google Sheet in your browser and add your initials to neurons of your choosing on the rightmost column 'Users'.
+
 For a video tutorial, see [here](https://drive.google.com/drive/folders/1MOwfPGCPvY8eVLZoOfXOBhVcS6U996g9).
 
 ```{r interactive.pipeline, eval = FALSE}
@@ -207,11 +209,13 @@ hemibrain_matching() # Automatically, you can choose a User ID and you are given
 hemibrain_matching(ids=c("674108632","739256609")) # Otherwise you can select specific IDs
 hemibrain_matching(ids=c("674108632","739256609"), overwrite = TRUE) # If a match has already been made you can overwrite it
 # Otherwise neurons that have already been given a match will not be shown in the pipeline.
+hemibrain_matching(overwrite = "none") # We can also set the pipeline to 'overwrite' cases where 'none' and 'tract' are the given match quality, i.e. re-look at cases where a proper match could not be made.
 
 # Match FAFB neurons!
 fafb_matching()
 fafb_matching(ids = "16") # Specify IDs
 fafb_matching(ids = "16", overwrite = TRUE) # Overwrite
+fafb_matching(ids = "16", overwrite = "none") # Re-look only if no proper match, or just a tract-only match, was found before.
 ```
 
 When you run these functions you will enter an interactive pipeline in an rgl window. Prompts will be given to you in your R console and you can rotate and pan in the window to see neurons. The neuron selected for-matching is shown in black (i.e. if using `hemibrain_matching` this will be a hemibrain neuron), and potential matches in colour (i.e. if using `hemibrain_matching` these will be FAFB neurons). Potential matches are shown by NBLAST score (a measure of morphological similarity). Usually, for reasonably traced FAFB neurons, a good match appears in the top 10 hits.
