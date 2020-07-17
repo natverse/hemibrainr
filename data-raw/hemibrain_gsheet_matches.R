@@ -24,8 +24,8 @@ fafb_hemibrain_annotate(skds)
 # Flag 5 neurons from each cell body fiber
 ## To match to at least tract level
 gs = hemibrain_match_sheet(sheet = "hemibrain", selected_file = selected_file)
-gs.undone = subset(gs, is.na(gs$FAFB.match))
-gs.done = subset(gs, !is.na(gs$FAFB.match))
+gs.undone = subset(gs, !gs$FAFB.quality.match %in% c("good","medium","poor","tract"))
+gs.done = subset(gs, gs$FAFB.quality.match %in% c("good","medium","poor","tract"))
 cbfs = setdiff(hemibrainr::hemibrain_hemilineages$ItoLee_Hemilineage, unique(gs.done$ItoLee_Hemilineage))
 cbfs = sort(cbfs[!grepl("miss",cbfs)])
 chosen = c()
