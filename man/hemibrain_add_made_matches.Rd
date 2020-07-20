@@ -11,6 +11,7 @@
 hemibrain_add_made_matches(
   df,
   direction = c("both", "hemibrain-FAFB", "FAFB-hemibrain"),
+  User = "flyconnectome",
   ...
 )
 
@@ -43,15 +44,15 @@ must have columns: bodyid (i.e. the hemibrain neuron), skid (i.e. the FAFB neuro
 
 \item{direction}{the match direction, i.e. hemibrain->FAFB (hemibrain tab) or FAFB->hemibrain (fafb tab). Defaults to updating both.}
 
+\item{User}{your initials, so updates can be linked to you. There is a limited number of users, each of whom have been
+assigned a number of neurons to match up. In order to add yourself as a user, simply open this Google Sheet in your browser and add your initials to neurons of your choosing on the rightmost column 'Users'.}
+
 \item{...}{arguments passed to methods for, for example, \code{neuprintr::neuprint_get_meta} and \code{elmr::fafb_get_meta}.}
 
 \item{ids}{either hemibrain bodyids or FAFB skids to add to a Google Sheet. You will want to add IDs where they do not already exist, so that
 you can use, for example, \code{\link{hemibrain_matching}}.}
 
 \item{sheet}{the tab to which to add your new information. You are either adding to information related ot hemibrain neurons, or FAFB neurons.}
-
-\item{User}{your initials, so updates can be linked to you. There is a limited number of users, each of whom have been
-assigned a number of neurons to match up. In order to add yourself as a user, simply open this Google Sheet in your browser and add your initials to neurons of your choosing on the rightmost column 'Users'.}
 
 \item{selected_file}{Specifies which Google Sheet to use. Unless you are using a personal Google Sheet, this should be \code{"1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw"}.}
 }

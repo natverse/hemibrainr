@@ -104,6 +104,7 @@ hemibrain_matching <- function(ids = NULL,
           ")
   ## Get NBLAST
   if(is.null(hemibrain.nblast) & match.type =="FAFB"){
+    fib.fafb.crossnblast.twigs5.mean.compress = NULL
     matname="fib.fafb.crossnblast.twigs5.mean.compress"
       message("Loading FAFB-FIB NBLAST ", matname,
               " from flyconnectome Google Team Drive using Google Filestream: ")
@@ -112,6 +113,7 @@ hemibrain_matching <- function(ids = NULL,
       rm("fib.fafb.crossnblast.twigs5.mean.compress")
   }
   if(is.null(hemibrain.nblast) & match.type =="LM"){
+    hemibrain.lhns.mean.compressed=NULL
     matname="hemibrain.lhns.mean.compressed"
       message("Loading LM-FIB NBLAST ", matname,
               " from hemibrain Google Team Drive using Google Filestream: ")
@@ -175,11 +177,11 @@ hemibrain_matching <- function(ids = NULL,
   }
   # Deselect some IDs
   if(overwrite == "none"){
-    donotdo = subset(gs, !gs[[quality.field]] %in% c("none","n","tract","t") | !bodyid%in%ids)
+    donotdo = subset(gs, !gs[[quality.field]] %in% c("none","n","tract","t") | !gs$bodyid%in%ids)
   } else if(!overwrite){
-    donotdo = subset(gs, !is.na(gs[[match.field]]) | !bodyid%in%ids)
+    donotdo = subset(gs, !is.na(gs[[match.field]]) | !gs$bodyid%in%ids)
   }else{
-    donotdo = subset(gs, !bodyid%in%ids)
+    donotdo = subset(gs, !gs$bodyid%in%ids)
   }
   if(sum(ids%in%donotdo$bodyid)==length(ids)){
     message("No matches to make for ", initials, " either assign more neurons to your initials, or use overwrite = TRUE to replace matches already made")
@@ -254,7 +256,7 @@ hemibrain_matching <- function(ids = NULL,
           if(prog){
             k = j
             j = j + batch_size
-            fafb = nat::union(fafb, catmaid::read.neurons.catmaid(names(r)[(k+1):j]), OmitFailures = TUE)
+            fafb = nat::union(fafb, catmaid::read.neurons.catmaid(names(r)[(k+1):j]), OmitFailures = TRUE)
           }
         }
       }
@@ -383,6 +385,7 @@ lm_matching <- function(ids = NULL,
   ## Get NBLAST
   if(is.null(hemibrain.nblast)){
       message("Loading LM-FIB NBLAST from hemibrain Google Team Drive using Google Filestream: ")
+    hemibrain.lhns.mean.compressed = hemibrain.dolan.mean.compressed = hemibrain.dolan.mean.compressed = hemibrain.lhins.mean.compressed = NULL
       load(sprintf("/Volumes/GoogleDrive/Shared\ drives/hemibrain/hemibrain_nblast/%s.rda", "hemibrain.lhns.mean.compressed"))
       load(sprintf("/Volumes/GoogleDrive/Shared\ drives/hemibrain/hemibrain_nblast/%s.rda", "hemibrain.dolan.mean.compressed"))
       load(sprintf("/Volumes/GoogleDrive/Shared\ drives/hemibrain/hemibrain_nblast/%s.rda", "hemibrain.lhins.mean.compressed"))
@@ -442,11 +445,11 @@ lm_matching <- function(ids = NULL,
   }
   # Do not do
   if(overwrite == "none"){
-    donotdo = subset(gs, !gs[[quality.field]] %in% c("none","n","tract","t") | !id%in%ids)
+    donotdo = subset(gs, !gs[[quality.field]] %in% c("none","n","tract","t") | !gs$id%in%ids)
   } else if(!overwrite){
-    donotdo = subset(gs, !is.na(gs[[match.field]]) | !id%in%ids)
+    donotdo = subset(gs, !is.na(gs[[match.field]]) | !gs$id%in%ids)
   }else{
-    donotdo = subset(gs,!id%in%ids)
+    donotdo = subset(gs,!gs$id%in%ids)
   }
   # choose brain
   brain = hemibrainr::hemibrain.surf
@@ -694,11 +697,11 @@ fafb_matching <- function(ids = NULL,
   }
   # Deselect some IDs
   if(overwrite == "none"){
-    donotdo = subset(gs, !gs[[quality.field]] %in% c("none","n","tract","t") | !skid%in%ids)
+    donotdo = subset(gs, !gs[[quality.field]] %in% c("none","n","tract","t") | !gs$skid%in%ids)
   } else if(!overwrite){
     donotdo = subset(gs, !is.na(gs[[match.field]]) | !gs$skid%in%ids)
   }else{
-    donotdo = subset(gs, !skid%in%ids)
+    donotdo = subset(gs, !gs$skid%in%ids)
   }
   if(sum(ids%in%donotdo$skid)==length(ids)){
     message("No matches to make for ", initials, " either assign more neurons to your initials, or use overwrite = TRUE to replace matches already made")
@@ -1215,6 +1218,7 @@ lm_matches <- function(priority = c("hemibrain","lm")){
 #' @rdname hemibrain_add_made_matches
 hemibrain_add_made_matches <- function(df,
                                   direction = c("both","hemibrain-FAFB","FAFB-hemibrain"),
+                                  User = "flyconnectome",
                                   ...){
   direction = match.arg(direction)
   cnames = c("bodyid","skid","quality")
@@ -1226,7 +1230,7 @@ hemibrain_add_made_matches <- function(df,
                 & !is.na(df$bodyid)
                 & df$skid!=""
                 & df$bodyid != ""
-                & quality %in% c("none","good","medium","poor"))
+                & df$quality %in% c("none","good","medium","poor"))
   }
 
   # Update hemibrain sheet
@@ -1312,7 +1316,7 @@ hemibrain_match_sheet <- function(selected_file = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8
     id.field = "skid"
   }
   # Read sheet
-  gs = hemibrainr:::gsheet_manipulation(FUN = googlesheets4::read_sheet,
+  gs = gsheet_manipulation(FUN = googlesheets4::read_sheet,
                                         ss = selected_file,
                                         sheet = sheet,
                                         return = TRUE)
@@ -1352,7 +1356,7 @@ hemibrain_matching_add <- function(ids,
   sheet[sheet=="hemibrain"] = "hemibrain"
   batches = split(1:nrow(meta), ceiling(seq_along(1:nrow(meta))/500))
   for(i in batches){
-    hemibrainr:::gsheet_manipulation(FUN = googlesheets4::sheet_append,
+    gsheet_manipulation(FUN = googlesheets4::sheet_append,
                                      data = meta[min(i):max(i),],
                                      ss = selected_file,
                                      sheet = sheet)

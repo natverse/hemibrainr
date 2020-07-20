@@ -1164,7 +1164,8 @@ suggest_soma = function(data = NULL,
          "install.packages('dbscan')")
   }
   # suggest which are part of a cluster
-  suggest = dbscan:::predict.dbscan_fast(object = data$db,
+  predict.dbscan_fast <- utils::getFromNamespace("predict.dbscan_fast", "dbscan")
+  suggest = predict.dbscan_fast(object = data$db,
                                          data = data$gs_somas,
                                          newdata = points)
   if ((length(unique(suggest)) == 1) && (unique(suggest) == 0)) {

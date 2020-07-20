@@ -57,7 +57,7 @@ hemibrain_get_meta <- function(x, ...){
   nmeta2$FAFB.match.quality = hemibrainr::hemibrain_matched[as.character(nmeta2$bodyid),"quality"]
 
   # Add olfactory layer information
-  nmeta2$layer = hemibrainr::hemibrain_olfactory_layers[match(nmeta2$bodyid,hemibrain_olfactory_layers$node),"layer_mean"]
+  nmeta2$layer = hemibrainr::hemibrain_olfactory_layers[match(nmeta2$bodyid,hemibrainr::hemibrain_olfactory_layers$node),"layer_mean"]
   nmeta2$ct.layer = NA
   for(ct in unique(nmeta2$type)){
     layer = round(mean(subset(nmeta2,nmeta2$type==ct)$layer))
