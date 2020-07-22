@@ -358,7 +358,7 @@ correct_singles <- function(data = NULL,
           ans = must_be(
             prompt = "Is there no soma (n), is the neuron Bilateral (b),
             is this just a fragment(f), maybe it is truncated (t), or is it just weird(w)? ",
-            answers = c("n", "b", "f", "w","t")
+            answers = c("n", "b", "f", "w")
           )
           message("passing neuron, and adding note...")
           if (ans == "n") {
@@ -370,7 +370,7 @@ correct_singles <- function(data = NULL,
           } else if (ans == "w") {
             data$update[which(data$update$bodyid == n$bodyid),]$unfixed = "Weird"
           } else if (ans == "t") {
-              data$update[which(data$update$bodyid == n$bodyid),]$unfixed = "Truncated"
+            data$update[which(data$update$bodyid == n$bodyid),]$unfixed = "Truncated"
           }
           make.selection = FALSE
           next
@@ -1164,8 +1164,7 @@ suggest_soma = function(data = NULL,
          "install.packages('dbscan')")
   }
   # suggest which are part of a cluster
-  predict.dbscan_fast <- utils::getFromNamespace("predict.dbscan_fast", "dbscan")
-  suggest = predict.dbscan_fast(object = data$db,
+  suggest = dbscan::predict.dbscan_fast(object = data$db,
                                          data = data$gs_somas,
                                          newdata = points)
   if ((length(unique(suggest)) == 1) && (unique(suggest) == 0)) {
