@@ -8,3 +8,5 @@
 ^codecov\.yml$
 ^data-raw$
 ^hemibrain_data$
+^doc$
+^Meta$

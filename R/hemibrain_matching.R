@@ -22,9 +22,9 @@
 #' @param hemibrain.nblast a FAFB (rows) - hemibrain (columns) normalised
 #'   NBLAST matrix. By default this is read from the flyconnectome Team Drive.
 #' @param selected_file the Google Sheet database to read and write from. For
-#'   now, defaults to a
+#'   now, defaults to this
 #'   \href{https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit#gid=0}{Google
-#'    Sheet for lateral horn neurons}. No other databases have been prepared.
+#'    Sheet}.
 #' @param batch_size the number of FAFB top matches to read from CATMAID in one
 #'   go.
 #' @param db Either a neuronlist or the name of a character vector naming a
@@ -34,7 +34,8 @@
 #' \code{most.lhns}.
 #' @param query a neuronlist of light level neurons to match against. Should correspond to the given NBLAST matrix.
 #' Defaults to reading a transformed \code{most.lhns} from the Hemibrain Google Team Drive.
-#' @param overwrite logical, whether or not to overwrite matches already made.
+#' @param overwrite logical, whether or not to overwrite matches already made. However, if set to 'none' then the pipeline will
+#' include neurons with 'tract' and 'none' values in the match column of our Google sheet, i.e. will help you overwrite non-matches.
 #'
 #' @details Currently, the
 #'   \href{https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit#gid=0}{Google
@@ -47,7 +48,7 @@
 #'   rule of thumb, a poor match could be a neuron from a very similar same cell
 #'   type or a highly untraced neuron that may be the correct cell type. An okay
 #'   match should be a neuron that looks to be from the same morphological cell
-#'   type but there may be some discrepancies in its arbour. An exact match is a
+#'   type but there may be some discrepancies in its arbour. A good match is a
 #'   neuron that corresponds well between FAFB and the hemibrain data.
 #'
 #' @examples
@@ -103,6 +104,7 @@ hemibrain_matching <- function(ids = NULL,
           ")
   ## Get NBLAST
   if(is.null(hemibrain.nblast) & match.type =="FAFB"){
+    fib.fafb.crossnblast.twigs5.mean.compress = NULL
     matname="fib.fafb.crossnblast.twigs5.mean.compress"
       message("Loading FAFB-FIB NBLAST ", matname,
               " from flyconnectome Google Team Drive using Google Filestream: ")
@@ -111,6 +113,7 @@ hemibrain_matching <- function(ids = NULL,
       rm("fib.fafb.crossnblast.twigs5.mean.compress")
   }
   if(is.null(hemibrain.nblast) & match.type =="LM"){
+    hemibrain.lhns.mean.compressed=NULL
     matname="hemibrain.lhns.mean.compressed"
       message("Loading LM-FIB NBLAST ", matname,
               " from hemibrain Google Team Drive using Google Filestream: ")
@@ -122,7 +125,7 @@ hemibrain_matching <- function(ids = NULL,
   # Read the Google Sheet
   gs = gsheet_manipulation(FUN = googlesheets4::read_sheet,
                            ss = selected_file,
-                           sheet = "lhns",
+                           sheet = "hemibrain",
                            guess_max = 3000,
                            return = TRUE)
   gs$bodyid = correct_id(gs$bodyid)
@@ -173,10 +176,12 @@ hemibrain_matching <- function(ids = NULL,
     brain = hemibrainr::hemibrain_microns.surf
   }
   # Deselect some IDs
-  if(!overwrite){
-    donotdo = subset(gs, !is.na(gs[[match.field]]) | !bodyid%in%ids)
+  if(overwrite == "none"){
+    donotdo = subset(gs, !gs[[quality.field]] %in% c("none","n","tract","t") | !gs$bodyid%in%ids)
+  } else if(!overwrite){
+    donotdo = subset(gs, !is.na(gs[[match.field]]) | !gs$bodyid%in%ids)
   }else{
-    donotdo = subset(gs, !bodyid%in%ids)
+    donotdo = subset(gs, !gs$bodyid%in%ids)
   }
   if(sum(ids%in%donotdo$bodyid)==length(ids)){
     message("No matches to make for ", initials, " either assign more neurons to your initials, or use overwrite = TRUE to replace matches already made")
@@ -194,11 +199,11 @@ hemibrain_matching <- function(ids = NULL,
     plot3d(brain, alpha = 0.1, col ="grey")
     # Read hemibrain neuron
     if(is.null(db)){
-      lhn  = neuprintr::neuprint_read_neurons(n)
+      lhn  = neuprintr::neuprint_read_neurons(n, all_segments = TRUE, heal = FALSE)
     } else {
       lhn = tryCatch(db[as.character(n)], error = function(e) {
         warning("Cannot read neuron: ", n, " from local db; fetching from neuPrint!")
-        neuprintr::neuprint_read_neurons(n)
+        nat::as.neuronlist(neuprintr::neuprint_read_neurons(n, all_segments = TRUE, heal = FALSE))
         })
     }
     # Transform hemibrain neuron to FAFB space
@@ -211,9 +216,13 @@ hemibrain_matching <- function(ids = NULL,
       message(sprintf("Reading the top %s FAFB matches",batch_size))
       r = tryCatch(sort(hemibrain.nblast[,as.character(n)],decreasing = TRUE), error = function(e) NULL)
       if(is.null(r)){
-        r = sort(hemibrain.nblast[as.character(n),],decreasing = TRUE)
+        r = tryCatch(sort(hemibrain.nblast[as.character(n),],decreasing = TRUE), error = function(e) NULL)
       }
-      fafb = catmaid::read.neurons.catmaid(names(r)[1:batch_size])
+      if(is.null(r)){
+        message(n, " not in NBLAST matrix, skipping ...")
+        next
+      }
+      fafb = catmaid::read.neurons.catmaid(names(r)[1:batch_size], OmitFailures = TRUE)
       j = batch_size
     }else{
       r = sort(hemibrain.nblast[,n],decreasing = TRUE)
@@ -247,7 +256,7 @@ hemibrain_matching <- function(ids = NULL,
           if(prog){
             k = j
             j = j + batch_size
-            fafb = nat::union(fafb, catmaid::read.neurons.catmaid(names(r)[(k+1):j]))
+            fafb = nat::union(fafb, catmaid::read.neurons.catmaid(names(r)[(k+1):j]), OmitFailures = TRUE)
           }
         }
       }
@@ -256,7 +265,7 @@ hemibrain_matching <- function(ids = NULL,
     gs[n,match.field] = ifelse(length(sel)==0,'none',sel)
     if(length(sel)){
       rgl::plot3d(fafb[sel],col="blue",lwd=2,soma=TRUE)
-      quality = must_be("What is the quality of this match? good(e)/okay(o)/poor(p) ", answers = c("e","o","p"))
+      quality = must_be("What is the quality of this match? good(e)/okay(o)/poor(p)/tract-only(t) ", answers = c("e","o","p","t"))
     }else{
       quality = "n"
     }
@@ -265,7 +274,7 @@ hemibrain_matching <- function(ids = NULL,
     gs = gs[!duplicated(gs$bodyid),]
     unsaved = c(unsaved, n)
     message(length(unsaved), " unsaved matches")
-    print(knitr::kable(gs[unsaved,c("bodyid","type",match.field,quality.field)]))
+    print(knitr::kable(gs[unsaved,c("bodyid","cell.type",match.field,quality.field)]))
     p = must_be("Continue (enter) or save (s)? ", answers = c("","s"))
     if(p=="s"){
       plot_inspirobot()
@@ -273,7 +282,7 @@ hemibrain_matching <- function(ids = NULL,
       # Read!
       gs2 = gsheet_manipulation(FUN = googlesheets4::read_sheet,
                                ss = selected_file,
-                               sheet = "lhns",
+                               sheet = "hemibrain",
                                guess_max = 3000,
                                return = TRUE)
       gs2$bodyid = correct_id(gs2$bodyid)
@@ -297,7 +306,7 @@ hemibrain_matching <- function(ids = NULL,
     # Read!
     gs2 = gsheet_manipulation(FUN = googlesheets4::read_sheet,
                               ss = selected_file,
-                              sheet = "lhns",
+                              sheet = "hemibrain",
                               guess_max = 3000,
                               return = TRUE)
     gs2$bodyid = correct_id(gs2$bodyid)
@@ -318,7 +327,7 @@ hemibrain_matching <- function(ids = NULL,
 write_matches <- function(gs,
                        ids = NULL,
                        id.field = "bodyid",
-                       ws = "lhns",
+                       ws = "hemibrain",
                        selected_file = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw",
                        column = colnames(gs)){
   if((!identical(colnames(gs),column) & length(column) > 1)|(sum(column%in%colnames(gs))<1)){
@@ -376,6 +385,7 @@ lm_matching <- function(ids = NULL,
   ## Get NBLAST
   if(is.null(hemibrain.nblast)){
       message("Loading LM-FIB NBLAST from hemibrain Google Team Drive using Google Filestream: ")
+    hemibrain.lhns.mean.compressed = hemibrain.dolan.mean.compressed = hemibrain.dolan.mean.compressed = hemibrain.lhins.mean.compressed = NULL
       load(sprintf("/Volumes/GoogleDrive/Shared\ drives/hemibrain/hemibrain_nblast/%s.rda", "hemibrain.lhns.mean.compressed"))
       load(sprintf("/Volumes/GoogleDrive/Shared\ drives/hemibrain/hemibrain_nblast/%s.rda", "hemibrain.dolan.mean.compressed"))
       load(sprintf("/Volumes/GoogleDrive/Shared\ drives/hemibrain/hemibrain_nblast/%s.rda", "hemibrain.lhins.mean.compressed"))
@@ -434,10 +444,12 @@ lm_matching <- function(ids = NULL,
     ids = intersect(ids,gs$id)
   }
   # Do not do
-  if(!overwrite){
-    donotdo = subset(gs, !is.na(gs[[match.field]]) | !id%in%ids)
+  if(overwrite == "none"){
+    donotdo = subset(gs, !gs[[quality.field]] %in% c("none","n","tract","t") | !gs$id%in%ids)
+  } else if(!overwrite){
+    donotdo = subset(gs, !is.na(gs[[match.field]]) | !gs$id%in%ids)
   }else{
-    donotdo = subset(gs,!id%in%ids)
+    donotdo = subset(gs,!gs$id%in%ids)
   }
   # choose brain
   brain = hemibrainr::hemibrain.surf
@@ -475,7 +487,7 @@ lm_matching <- function(ids = NULL,
     r = r[!is.na(r)]
     # Read hemibrain neurons
     if(is.null(db)){
-      hemi = neuprintr::neuprint_read_neurons((r[1:batch_size]))
+      hemi = neuprintr::neuprint_read_skeletons((r[1:batch_size]),all_segments = TRUE, heal = FALSE)
     } else {
       batch = r[1:batch_size]
       batch.in = intersect(batch, names(db))
@@ -483,9 +495,12 @@ lm_matching <- function(ids = NULL,
       if(is.null(hemi)|length(batch.in)!=length(batch)){
         message("Cannot read neurons from local db; fetching from neuPrint!")
         batch.out = setdiff(batch, names(hemi))
-        hemi = c(hemi,neuprintr::neuprint_read_neurons(batch.out))
+        hemi = c(hemi,tryCatch(neuprintr::neuprint_read_skeletons(batch.out, all_segments = TRUE, heal = FALSE),error=function(e) NULL))
         hemi = hemi[as.character(batch)]
       }
+    }
+    if(is.null(hemi)){
+      next
     }
     sel = c("go","for","it")
     k = 1
@@ -512,11 +527,11 @@ lm_matching <- function(ids = NULL,
             k = j
             j = j + batch_size
             if(is.null(db)){
-              hemi2  = neuprintr::neuprint_read_neurons((r[(k+1):j]))
+              hemi2  = neuprintr::neuprint_read_skeletons((r[(k+1):j]), all_segments = TRUE, heal = FALSE)
             } else {
               hemi2 = tryCatch(db[(names(r)[(k+1):j])], error = function(e) {
                 warning("Cannot read neuron: ", n, " from local db; fetching from neuPrint!")
-                neuprintr::neuprint_read_neurons((r[(k+1):j]))
+                neuprintr::neuprint_read_skeletons((r[(k+1):j]), all_segments = TRUE, heal = FALSE)
               })
             }
             hemi = nat::union(hemi, hemi2)
@@ -539,7 +554,7 @@ lm_matching <- function(ids = NULL,
     gs[n,match.field] = ifelse(length(sel)==0,'none',sel)
     if(length(sel)){
       rgl::plot3d(hemi[sel],col="blue",lwd=2,soma=TRUE)
-      quality = must_be("What is the quality of this match? good(e)/okay(o)/poor(p) ", answers = c("e","o","p"))
+      quality = must_be("What is the quality of this match? good(e)/okay(o)/poor(p)/tract-only(t) ", answers = c("e","o","p","t"))
     }else{
       quality = "n"
     }
@@ -548,7 +563,7 @@ lm_matching <- function(ids = NULL,
     gs = gs[!duplicated(gs$id),]
     unsaved = c(unsaved, n)
     message(length(unsaved), " unsaved matches")
-    print(knitr::kable(gs[unsaved,c("id","type",match.field,quality.field)]))
+    print(knitr::kable(gs[unsaved,c("id","cell.type",match.field,quality.field)]))
     p = must_be("Continue (enter) or save (s)? ", answers = c("","s"))
     if(p=="s"|end){
       plot_inspirobot()
@@ -681,10 +696,12 @@ fafb_matching <- function(ids = NULL,
     ids = intersect(ids,gs$skid)
   }
   # Deselect some IDs
-  if(!overwrite){
-    donotdo = subset(gs, !is.na(gs[[match.field]]) | !skid%in%ids)
+  if(overwrite == "none"){
+    donotdo = subset(gs, !gs[[quality.field]] %in% c("none","n","tract","t") | !gs$skid%in%ids)
+  } else if(!overwrite){
+    donotdo = subset(gs, !is.na(gs[[match.field]]) | !gs$skid%in%ids)
   }else{
-    donotdo = subset(gs, !skid%in%ids)
+    donotdo = subset(gs, !gs$skid%in%ids)
   }
   if(sum(ids%in%donotdo$skid)==length(ids)){
     message("No matches to make for ", initials, " either assign more neurons to your initials, or use overwrite = TRUE to replace matches already made")
@@ -707,7 +724,7 @@ fafb_matching <- function(ids = NULL,
     if(!is.null(query)){
       lhn = query[n]
     }else{
-      lhn = catmaid::read.neurons.catmaid(n)
+      lhn = catmaid::read.neurons.catmaid(n, OmitFailures = TRUE)
     }
     lhn = suppressWarnings(nat.templatebrains::xform_brain(lhn, sample = "FAFB14", reference = "JRCFIB2018F"))
     lhn = scale_neurons(lhn, scaling = (1000/8))
@@ -715,11 +732,15 @@ fafb_matching <- function(ids = NULL,
     message("SKID: ", n)
     message("ItoLee_Hemilineage : ",lhn[n,"ItoLee_Hemilineage"])
     # Read top 10 FIB matches
-    r = sort(hemibrain.nblast[n,],decreasing = TRUE)
+    r = tryCatch(sort(hemibrain.nblast[n,],decreasing = TRUE), error = function(e) NULL)
+    if(is.null(r)){
+      message(n, " not in NBLAST matrix, skipping ...")
+      next
+    }
     message(sprintf("Reading the top %s hemibrain hits",batch_size))
     # Read hemibrain neurons
     if(is.null(db)){
-      hemi  = neuprintr::neuprint_read_neurons((names(r)[1:batch_size]))
+      hemi  = neuprintr::neuprint_read_skeletons((names(r)[1:batch_size]), all_segments = TRUE, heal = FALSE)
     } else {
       batch = names(r)[1:batch_size]
       batch.in = intersect(batch, names(db))
@@ -727,8 +748,11 @@ fafb_matching <- function(ids = NULL,
       if(is.null(hemi)|length(batch.in)!=length(batch)){
         message("Cannot read neurons from local db; fetching from neuPrint!")
         batch.out = setdiff(batch, names(hemi))
-        hemi = c(hemi,neuprintr::neuprint_read_neurons(batch.out))
-        hemi = hemi[as.character(batch)]
+        hemi2 =(tryCatch( nat::as.neuronlist(neuprintr::neuprint_read_skeletons(batch.out, all_segments = TRUE, heal = FALSE)), error=function(e)NULL) )
+        if(!is.null(hemi2)){
+          hemi = nat::union(hemi, hemi2)
+          hemi = hemi[as.character(batch)]
+        }
       }
     }
     sel = c("go","for","it")
@@ -736,7 +760,10 @@ fafb_matching <- function(ids = NULL,
     j = batch_size
     # Cycle through potential matches
     while(length(sel)>1){
-      sel = sel.orig = nat::nlscan(hemi[names(r)[1:j]], col = "red", lwd = 2, soma = TRUE)
+      sel = sel.orig = tryCatch(nat::nlscan(hemi[names(r)[1:j]], col = "red", lwd = 2, soma = TRUE), error = function(e) NULL)
+      if(is.null(sel)){
+        next
+      }
       if(length(sel)>1){
         message("Note: You selected more than one neuron")
       }
@@ -754,11 +781,11 @@ fafb_matching <- function(ids = NULL,
           k = j
           j = j + batch_size
           if(is.null(db)){
-            hemi2  = neuprintr::neuprint_read_neurons((names(r)[(k+1):j]))
+            hemi2  = neuprintr::neuprint_read_skeletons((names(r)[(k+1):j]), all_segments = TRUE, heal = FALSE)
           } else {
             hemi2 = tryCatch(db[(names(r)[(k+1):j])], error = function(e) {
               warning("Cannot read neuron: ", n, " from local db; fetching from neuPrint!")
-              neuprintr::neuprint_read_neurons((names(r)[(k+1):j]))
+              neuprintr::neuprint_read_skeletons((names(r)[(k+1):j]), all_segments = TRUE, heal = FALSE)
             })
           }
           hemi = nat::union(hemi, hemi2)
@@ -781,7 +808,7 @@ fafb_matching <- function(ids = NULL,
     gs[n,match.field] = ifelse(length(sel)==0,'none',sel)
     if(length(sel)){
       rgl::plot3d(hemi[sel],col="blue",lwd=2,soma=TRUE)
-      quality = must_be("What is the quality of this match? good(e)/okay(o)/poor(p) ", answers = c("e","o","p"))
+      quality = must_be("What is the quality of this match? good(e)/okay(o)/poor(p)/tract-only(t) ", answers = c("e","o","p","t"))
     }else{
       quality = "n"
     }
@@ -892,7 +919,7 @@ hemibrain_matches <- function(priority = c("FAFB","hemibrain")){
   selected_file = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw"
   hemibrain.matches = gsheet_manipulation(FUN = googlesheets4::read_sheet,
                                                        ss = selected_file,
-                                                       sheet = "lhns",
+                                                       sheet = "hemibrain",
                                                        return = TRUE)
   hemibrain.matches$bodyid = correct_id(hemibrain.matches$bodyid)
   hemibrain.matches = hemibrain.matches[!duplicated(hemibrain.matches$bodyid),]
@@ -1024,7 +1051,7 @@ lm_matches <- function(priority = c("hemibrain","lm")){
   selected_file = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw"
   hemibrain.matches = gsheet_manipulation(FUN = googlesheets4::read_sheet,
                                           ss = selected_file,
-                                          sheet = "lhns",
+                                          sheet = "hemibrain",
                                           return = TRUE)
   hemibrain.matches$bodyid = correct_id(hemibrain.matches$bodyid)
   hemibrain.matches = hemibrain.matches[!duplicated(hemibrain.matches$bodyid),]
@@ -1187,11 +1214,11 @@ lm_matches <- function(priority = c("hemibrain","lm")){
 #' fafb_matching(ids="16", overwrite = TRUE)
 #'
 #' }}
-#' @rdname hemibrain_add
-#' @export
 #' @seealso \code{\link{hemibrain_matching}}
+#' @rdname hemibrain_add_made_matches
 hemibrain_add_made_matches <- function(df,
                                   direction = c("both","hemibrain-FAFB","FAFB-hemibrain"),
+                                  User = "flyconnectome",
                                   ...){
   direction = match.arg(direction)
   cnames = c("bodyid","skid","quality")
@@ -1203,7 +1230,7 @@ hemibrain_add_made_matches <- function(df,
                 & !is.na(df$bodyid)
                 & df$skid!=""
                 & df$bodyid != ""
-                & quality %in% c("none","good","medium","poor"))
+                & df$quality %in% c("none","good","medium","poor"))
   }
 
   # Update hemibrain sheet
@@ -1231,12 +1258,12 @@ hemibrain_add_made_matches <- function(df,
     message("Adding matches")
     write_matches(gs=gs,
                   ids = as.character(hdf$bodyid),
-                  ws="lhns",
+                  ws="hemibrain",
                   id.field ="bodyid",
                   column = "FAFB.match")
     write_matches(gs=gs,
                   ids = as.character(hdf$bodyid),
-                  ws="lhns",
+                  ws="hemibrain",
                   id.field ="bodyid",
                   column = "FAFB.match.quality")
   }
@@ -1281,15 +1308,15 @@ hemibrain_match_sheet <- function(selected_file = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8
 ){
   # Which sheet
   sheet = match.arg(sheet)
-  sheet[sheet=="hemibrain"] = "lhns"
+  sheet[sheet=="hemibrain"] = "hemibrain"
   # neuron ID name
-  if(sheet=="lhns"){
+  if(sheet=="hemibrain"){
     id.field = "bodyid"
   }else{
     id.field = "skid"
   }
   # Read sheet
-  gs = hemibrainr:::gsheet_manipulation(FUN = googlesheets4::read_sheet,
+  gs = gsheet_manipulation(FUN = googlesheets4::read_sheet,
                                         ss = selected_file,
                                         sheet = sheet,
                                         return = TRUE)
@@ -1299,7 +1326,7 @@ hemibrain_match_sheet <- function(selected_file = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8
 }
 
 
-#' @rdname hemibrain_add
+#' @rdname hemibrain_add_made_matches
 #' @export
 hemibrain_matching_add <- function(ids,
                                    sheet = c("hemibrain","FAFB"),
@@ -1315,7 +1342,7 @@ hemibrain_matching_add <- function(ids,
 
   # Meta information
   if(sheet=="hemibrain"){
-    meta = neuprintr::neuprint_get_meta(add, ...)
+    meta = hemibrain_get_meta(add, ...)
     meta$cell.type = meta$type
   }else{
     meta = elmr::fafb_get_meta(add, ...)
@@ -1326,10 +1353,10 @@ hemibrain_matching_add <- function(ids,
   meta$User = User
 
   # Add new rows
-  sheet[sheet=="hemibrain"] = "lhns"
+  sheet[sheet=="hemibrain"] = "hemibrain"
   batches = split(1:nrow(meta), ceiling(seq_along(1:nrow(meta))/500))
   for(i in batches){
-    hemibrainr:::gsheet_manipulation(FUN = googlesheets4::sheet_append,
+    gsheet_manipulation(FUN = googlesheets4::sheet_append,
                                      data = meta[min(i):max(i),],
                                      ss = selected_file,
                                      sheet = sheet)
@@ -1337,7 +1364,7 @@ hemibrain_matching_add <- function(ids,
 
 }
 
-#' @rdname hemibrain_add
+#' @rdname hemibrain_add_made_matches
 #' @export
 hemibrain_matching_transfers <- function(selected_file = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw"){
   #############
@@ -1365,7 +1392,7 @@ hemibrain_matching_transfers <- function(selected_file = "1OSlDtnR3B1LiB5cwI5x5Q
   # Read the hemibrain Google Sheet
   hg = gsheet_manipulation(FUN = googlesheets4::read_sheet,
                            ss = selected_file,
-                           sheet = "lhns",
+                           sheet = "hemibrain",
                            guess_max = 3000,
                            return = TRUE)
   hg$bodyid = correct_id(hg$bodyid)
@@ -1400,7 +1427,7 @@ hemibrain_matching_transfers <- function(selected_file = "1OSlDtnR3B1LiB5cwI5x5Q
   if(length(sorted)){
     update_gsheet(update = hg[sorted,],
                 gs = hg,
-                tab = "lhns",
+                tab = "hemibrain",
                 match = "LM",
                 id = "bodyid")
   }
@@ -1434,7 +1461,7 @@ hemibrain_matching_transfers <- function(selected_file = "1OSlDtnR3B1LiB5cwI5x5Q
   if(length(sorted)){
     update_gsheet(update = hg[sorted,],
                 gs = hg,
-                tab = "lhns",
+                tab = "hemibrain",
                 match = "FAFB",
                 id = "bodyid")
   }
@@ -1448,11 +1475,13 @@ hemibrain_matching_transfers <- function(selected_file = "1OSlDtnR3B1LiB5cwI5x5Q
   lmg[missing,"hemibrain.match"] = matches
   lmg[missing,"hemibrain.quality"] = quality
   sorted = which(missing)[!is.na(matches)]
-  update_gsheet(update = lmg[sorted,],
+  if(length(sorted)){
+    update_gsheet(update = lmg[sorted,],
                 gs = lmg,
                 tab = "lm",
                 match = "hemibrain",
                 id = "id")
+  }
 
   #####################
   # Hemibrain -> FAFB #
@@ -1463,11 +1492,13 @@ hemibrain_matching_transfers <- function(selected_file = "1OSlDtnR3B1LiB5cwI5x5Q
   fg[missing,"hemibrain.match"] = matches
   fg[missing,"hemibrain.match.quality"] = quality
   sorted = which(missing)[!is.na(matches)]
-  update_gsheet(update = fg[sorted,],
+  if(length(sorted)){
+    update_gsheet(update = fg[sorted,],
                 gs = fg,
                 tab = "fafb",
                 match = "hemibrain",
                 id = "skid")
+  }
 }
 
 
@@ -1481,7 +1512,7 @@ update_gsheet <- function(update,
   for(row in 1:nrow(update)){
     columns = c(paste0(match,".match"), paste0(match,".match.quality"))
     r = match(update[row,id],gs[[id]])+1
-    if(is.na(r)){
+    if(is.issue(r)){
       next
     }
     for(column in columns){
@@ -1498,3 +1529,71 @@ update_gsheet <- function(update,
 
 }
 
+
+#' @rdname hemibrain_add_made_matches
+#' @export
+fafb_matching_rewrite <- function(selected_file  = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw",
+                                   ...){
+  matches = hemibrain_matches()
+  gs = hemibrain_match_sheet(sheet = "fafb", selected_file = selected_file)
+  n1 = elmr::fafb_get_meta("annotation:Lineage_annotated", ...)
+  ids.missing = setdiff(gs$skid,n1$skid)
+  n2 = elmr::fafb_get_meta(unique(ids.missing), ...)
+  n = rbind(n1,n2)
+  n = n[!duplicated(n1),]
+  n = n[,c("skid","ItoLee_Hemilineage", "Hartenstein_Hemilineage", "cellBodyFiber")]
+  n$cell.type = matches[as.character(n$skid),"connectivity.type"]
+  n$hemibrain.match = gs$hemibrain.match[match(n$skid,gs$skid)]
+  n$hemibrain.match.quality = gs$hemibrain.match.quality[match(n$skid,gs$skid)]
+  n$LM.match = gs$LM.match[match(n$skid,gs$skid)]
+  n$LM.match.quality = gs$LM.match.quality[match(n$skid,gs$skid)]
+  lskids = as.character(catmaid::catmaid_skids("annotation:side: left", ...))
+  n$side = "r"
+  n[n$skid%in%lskids,"side"] = "l"
+  n$User = gs$User[match(n$skid,gs$skid)]
+  n = n[order(n$cell.type),]
+  n = n[order(n$ItoLee_Hemilineage),]
+  googlesheets4::write_sheet(n[0,],
+                             ss = selected_file,
+                             sheet = "fafb")
+  batches = split(1:nrow(n), ceiling(seq_along(1:nrow(n))/500))
+  for(i in batches){
+    gsheet_manipulation(FUN = googlesheets4::sheet_append,
+                                     data = n[min(i):max(i),],
+                                     ss = selected_file,
+                                     sheet = "fafb")
+  }
+}
+
+
+#' @rdname hemibrain_add_made_matches
+#' @export
+hemibrain_matching_rewrite <- function(selected_file  = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw",
+                                  ...){
+  gs = hemibrain_match_sheet(sheet = "hemibrain", selected_file = selected_file)
+  all.ids = hemibrain_neuron_bodyids()
+  meta1 = hemibrain_get_meta(unique(all.ids), ...)
+  ids.missing = setdiff(gs$bodyid,meta1$bodyid)
+  meta2 = hemibrain_get_meta(unique(ids.missing), ...)
+  meta = rbind(meta1,meta2)
+  meta$cell.type = meta$type
+  meta = meta[,c("bodyid","ItoLee_Hemilineage","Hartenstein_Hemilineage","cellBodyFiber","cell.type","layer","ct.layer")]
+  meta$FAFB.match = gs$FAFB.match[match(meta$bodyid,gs$bodyid)]
+  meta$FAFB.match.quality = gs$FAFB.match.quality[match(meta$bodyid,gs$bodyid)]
+  meta$LM.match = gs$LM.match[match(meta$bodyid,gs$bodyid)]
+  meta$LM.match.quality = gs$LM.match.quality[match(meta$bodyid,gs$bodyid)]
+  meta$User = gs$User[match(meta$bodyid,gs$bodyid)]
+  meta = meta[order(meta$bodyid),]
+  meta = meta[order(meta$cell.type),]
+  meta = meta[order(meta$ItoLee_Hemilineage),]
+  batches = split(1:nrow(meta), ceiling(seq_along(1:nrow(meta))/500))
+  googlesheets4::write_sheet(meta[0,],
+                             ss = selected_file,
+                             sheet = "hemibrain")
+  for(i in batches){
+    gsheet_manipulation(FUN = googlesheets4::sheet_append,
+                        data = meta[min(i):max(i),],
+                        ss = selected_file,
+                        sheet = "hemibrain")
+  }
+}

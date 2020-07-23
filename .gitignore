@@ -7,7 +7,5 @@ packrat/lib*/
 examples
 .httr-oauth
 .Renviron
-inst/doc
-docs/
 *hemibrain_data/
 data-raw/annotations/

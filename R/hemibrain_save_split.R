@@ -56,15 +56,15 @@ setup_splitcheck_sheet <-function(selected_file = "1YjkVjokXL4p4Q6BR-rGGGKWecXU3
   ### Prioritise the neurons we care about most
   roots$priority = 0
   roots$priority[roots$bodyid%in%hemibrainr::ton.ids] = 2
-  roots$priority[roots$bodyid%in%alln.ids] = 2
-  roots$priority[roots$bodyid%in%dan.ids] = 2
-  roots$priority[roots$bodyid%in%pn.ids] = 2
-  roots$priority[roots$bodyid%in%upn.ids] = 2
-  roots$priority[roots$bodyid%in%mpn.ids] = 2
-  roots$priority[roots$bodyid%in%mbon.ids] = 2
-  roots$priority[roots$bodyid%in%vppn.ids] = 1
-  roots$priority[roots$bodyid%in%orn.ids] = 1
-  roots$priority[roots$bodyid%in%hrn.ids] = 1
+  roots$priority[roots$bodyid%in%hemibrainr::alln.ids] = 2
+  roots$priority[roots$bodyid%in%hemibrainr::dan.ids] = 2
+  roots$priority[roots$bodyid%in%hemibrainr::pn.ids] = 2
+  roots$priority[roots$bodyid%in%hemibrainr::upn.ids] = 2
+  roots$priority[roots$bodyid%in%hemibrainr::mpn.ids] = 2
+  roots$priority[roots$bodyid%in%hemibrainr::mbon.ids] = 2
+  roots$priority[roots$bodyid%in%hemibrainr::vppn.ids] = 1
+  roots$priority[roots$bodyid%in%hemibrainr::orn.ids] = 1
+  roots$priority[roots$bodyid%in%hemibrainr::hrn.ids] = 1
   roots$priority[roots$bodyid%in%lhn.gs$bodyId] = 3
   roots = roots[order(roots$bodyid, decreasing = TRUE),]
   roots = roots[order(roots$priority, decreasing = TRUE),]
@@ -75,7 +75,7 @@ setup_splitcheck_sheet <-function(selected_file = "1YjkVjokXL4p4Q6BR-rGGGKWecXU3
   roots$orig.cut = hemibrainr::hemibrain_metrics[as.character(roots$bodyid),"cropped"]
   ### Assign users
   rownames(roots) = roots$bodyid
-  ton.batches = split(ton.ids, ceiling(seq_along(1:length(ton.ids))/2800))
+  ton.batches = split(hemibrainr::ton.ids, ceiling(seq_along(1:length(hemibrainr::ton.ids))/2800))
   roots[roots$bodyid%in%c(hemibrainr::upn.ids,hemibrainr::mpn.ids, hemibrainr::orn.ids),"user"] = "ND"
   roots[roots$bodyid%in%c(hemibrainr::dan.ids),"user"] = "GD"
   roots[roots$bodyid%in%c(hemibrainr::vppn.ids,hemibrainr::hrn.ids),"user"] = "RT"

@@ -11,7 +11,10 @@ usethis::use_data(lm_matched, overwrite = TRUE)
 hemibrain_hemilineages = read.csv("data-raw/annotations/hemibrain_hemilineages_cbf.csv")
 hemibrain_hemilineages = hemibrain_hemilineages[order(hemibrain_hemilineages$cellBodyFiber),]
 hemibrain_hemilineages$notes = NULL
+hemibrain_hemilineages = hemibrain_hemilineages[hemibrain_hemilineages$cellBodyFiber!="",]
 hemibrain_hemilineages = hemibrain_hemilineages[!duplicated(hemibrain_hemilineages$cellBodyFiber),]
+rownames(hemibrain_hemilineages) = NULL
+hemibrain_hemilineages = as.data.frame(apply(hemibrain_hemilineages,2,function(c) gsub(" ","",c)))
 usethis::use_data(hemibrain_hemilineages, overwrite = TRUE)
 
 ### Olfactory layers ###
@@ -42,6 +45,7 @@ write.csv(manual, file = "data-raw/hemibrain_data/hemibrain_manual/split_pipelin
 ### Somas
 hemibrain_somas = googlesheets4::read_sheet(ss = selected_file, sheet = "somas")
 hemibrain_somas = as.data.frame(hemibrain_somas)
+hemibrain_somas = hemibrain_somas[!is.na(hemibrain_somas$bodyid),]
 rownames(hemibrain_somas) = hemibrain_somas$bodyid
 usethis::use_data(hemibrain_somas, overwrite = TRUE)
 

@@ -241,7 +241,7 @@ xform.mesh3d <- function(mesh3d, reg = reg){
   mesh3d
 }
 xform_brain.mesh3d <- function(mesh3d,
-                               sample = nat.templatebrains::regtemplate(x),
+                               sample = nat.templatebrains::regtemplate(mesh3d),
                                reference){
   points = t(mesh3d$vb)[,1:3]
   nat::xyzmatrix(mesh3d)  = nat.templatebrains::xform_brain(x = points, sample=sample, reference = reference)
@@ -253,7 +253,7 @@ xform.shapelist <- function(shapelist, reg = reg){
   shapelist.transformed
 }
 xform_brain.shapelist <- function(shapelist,
-                                  sample = nat.templatebrains::regtemplate(x),
+                                  sample = nat.templatebrains::regtemplate(shapelist),
                                   reference){
   shapelist.transformed = lapply(shapelist,xform_brain.mesh3d, sample = sample, reference = reference)
   class(shapelist.transformed) = c("shape3d","shapelist3d")

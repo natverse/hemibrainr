@@ -47,9 +47,9 @@ been made already. Else, LM neuron IDs in the tab 'lm' when using \code{lm_match
 NBLAST matrix. By default this is read from the flyconnectome Team Drive.}
 
 \item{selected_file}{the Google Sheet database to read and write from. For
-now, defaults to a
+now, defaults to this
 \href{https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit#gid=0}{Google
- Sheet for lateral horn neurons}. No other databases have been prepared.}
+ Sheet}.}
 
 \item{batch_size}{the number of FAFB top matches to read from CATMAID in one
 go.}
@@ -64,7 +64,8 @@ skeletons  (\code{"LM"}) from Dolan et al. and Frechter et al. 2019 (eLife), sto
 \item{query}{a neuronlist of light level neurons to match against. Should correspond to the given NBLAST matrix.
 Defaults to reading a transformed \code{most.lhns} from the Hemibrain Google Team Drive.}
 
-\item{overwrite}{logical, whether or not to overwrite matches already made.}
+\item{overwrite}{logical, whether or not to overwrite matches already made. However, if set to 'none' then the pipeline will
+include neurons with 'tract' and 'none' values in the match column of our Google sheet, i.e. will help you overwrite non-matches.}
 }
 \description{
 Match up neurons between the hemibrain, FAFB and light level data and save the
@@ -90,7 +91,7 @@ Currently, the
   rule of thumb, a poor match could be a neuron from a very similar same cell
   type or a highly untraced neuron that may be the correct cell type. An okay
   match should be a neuron that looks to be from the same morphological cell
-  type but there may be some discrepancies in its arbour. An exact match is a
+  type but there may be some discrepancies in its arbour. A good match is a
   neuron that corresponds well between FAFB and the hemibrain data.
 }
 \examples{
