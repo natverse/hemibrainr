@@ -20,7 +20,7 @@ knitr::opts_chunk$set(
 
 # Neuron Matching Making
 
-Insect brains seem pretty stereotyped. But just how stereotyped are they? It comes as a suprise to many neuroscientists who work only on vertebrates, to learn that in insects, individual neurons can readily and reliably be re-found and identified across different members of the species. Perhaps even across species. 
+Insect brains seem pretty stereotyped. But just how stereotyped are they? It comes as a surprise to many neuroscientists who work only on vertebrates, to learn that in insects, individual neurons can readily and reliably be re-found and identified across different members of the species. Perhaps even across species. 
 
 <center>
 ![match_examples](https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/slick_matches.png)
@@ -28,7 +28,7 @@ Insect brains seem pretty stereotyped. But just how stereotyped are they? It com
 
 As of 2020, two large data sets for the vinegar fly, D. melanogaster, are available making it possible to look at the full morphology of ~25,000 neurons in two data sets. These data sets are the [hemibrain](https://neuprint.janelia.org/help/videos?dataset=hemibrain%3Av1.0&qt=findneurons&qr%5B0%5D%5Bcode%5D=fn&qr%5B0%5D%5Bds%5D=hemibrain%3Av1.0&qr%5B0%5D%5Bpm%5D%5Bdataset%5D=hemibrain%3Av1.0&qr%5B0%5D%5Bpm%5D%5Binput_ROIs%5D%5B0%5D=ATL%28R%29&qr%5B0%5D%5Bpm%5D%5Boutput_ROIs%5D%5B0%5D=IB&qr%5B0%5D%5BvisProps%5D%5BrowsPerPage%5D=25&tab=0&q=1) and [FAFB](https://neuropil.janelia.org/tracing/fafb/v14/). However, neurons in FAFB have been semi-manually or manually reconstructed, making the automatic assignment of FAFB-hemibrain neuron matches non-trivial. In this R package we have built tools to enable users to record and deploy inter-dataset matches.
 
-What use is this information? Matches could be used to look at morphological stereotypy, help find genetic lines that label neurons, help transer information associated with on reconstructed to the same cell in a different brain, compare neuron connectivity between two brains, etc. 
+What use is this information? Matches could be used to look at morphological stereotypy, help find genetic lines that label neurons, help transfer information associated with on reconstructed to the same cell in a different brain, compare neuron connectivity between two brains, etc. 
 
 For example, by matching neurons up between the hemibrain and FAFB, we see that the numbers of [cell types](https://pubmed.ncbi.nlm.nih.gov/30703584/) within one 'hemilineage' (se set of neurons that are born and develop together) are comparable between these two different flies:
 
@@ -121,7 +121,7 @@ Or:
 ![medium_match_3](https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/medium_match_3.png)
 </center>
 
-Bear in mind that the hemibrain volume only covers ~1/4 of the fly mid-brain, so neurons are trunacted (here hemibrain neuron in black) but we can still make matches for many of them:
+Bear in mind that the hemibrain volume only covers ~1/4 of the fly mid-brain, so neurons are truncated (here hemibrain neuron in black) but we can still make matches for many of them:
 
 
 <center>
@@ -192,7 +192,7 @@ hemibrain_matching_add(ids = "16", sheet = "fafb", User = "ASB")
 
 ### The Match Making Pipeline
 
-You can also use our interactive pipeline to match neurons between hemibrain and FAFB. There are two version of this pipeline. One that takes hemibrain neurons from [neuPrint](https://github.com/natverse/neuprintr), and tries to find the best match for each hemibrain neuron (`hemibrain_matching`) and one that takes FAFB neurons from [CATMAID](https://github.com/natverse/rcatmaid) and tries to find the best heimibrain match for those FAFB neurons (`fafb_matching`). Once matches are made, the result become available with `hemibrain_matches`.
+You can also use our interactive pipeline to match neurons between hemibrain and FAFB. There are two version of this pipeline. One that takes hemibrain neurons from [neuPrint](https://github.com/natverse/neuprintr), and tries to find the best match for each hemibrain neuron (`hemibrain_matching`) and one that takes FAFB neurons from [CATMAID](https://github.com/natverse/rcatmaid) and tries to find the best hemibrain match for those FAFB neurons (`fafb_matching`). Once matches are made, the result become available with `hemibrain_matches`.
 
 The [Google sheet](https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit) is set up with  limited number of users, each of whom have been assigned a number of neurons to match up. In order to add yourself as a user, simply open this Google Sheet in your browser and add your initials to neurons of your choosing on the rightmost column 'Users'.
 

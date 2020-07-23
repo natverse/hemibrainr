@@ -170,7 +170,7 @@
 #' @rdname hemibrain_metrics
 "hemibrain_metrics_polypre_centrifugal_synapses"
 
-#' Hemilineages namdes from T. Lee, K. Ito and V. Hartenstein
+#' Hemilineages names from T. Lee, K. Ito and V. Hartenstein
 #'
 #' Hemilineages names and putative transmitter.
 #' Transmitter guesses are based on observing at least one cell type in the literature from the hemilineage in question, known to express the given transmitter

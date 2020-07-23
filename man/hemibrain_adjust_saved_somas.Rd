@@ -28,13 +28,13 @@ hemibrain_adjust_saved_somas(
 
 \item{db}{Optional. if provided, local directory to read neurons from.}
 
-\item{plot_sample}{Bool. TRUE by default, choose if you wish to plot a random subset of neurons within a DBSCAN cluster}
+\item{plot_sample}{logical. TRUE by default, choose if you wish to plot a random subset of neurons within a DBSCAN cluster}
 
-\item{eps}{the distance in nanometers used by DBSCAN to form clusters. 1500 by default}
+\item{eps}{the distance in nanometres used by DBSCAN to form clusters. 1500 by default}
 
 \item{minPts}{The minimum number of points needed to form a cluster using DBSCAN. 5 by default}
 
-\item{neurons_from_gsheet}{Bool, TRUE by default. If true, will collect neurons based on bodyids in the google sheet,
+\item{neurons_from_gsheet}{logical, TRUE by default. If true, will collect neurons based on bodyids in the google sheet,
 otherwise, will search for them based on CBF data in neuprint.}
 
 \item{for_Imaan}{extra little bit for Imaan... FALSE by default}
@@ -47,7 +47,7 @@ Currently provides three "modes": correct single neurons, correct cell body fibe
   Correct singles will allow you to manually correct each neuron in a provided list of bodyids. If requested, DBSCAN can be used
       to try to predict potential soma positions against already correctly identified somas, based on the provided google sheet.
   Correct cell body fibers(cbf) asks for a cbf to be inputted based on those labeled in the google sheet. DBSCAN is then used to
-      cluster the already annotated soma positions on the google sheet withing the cbf. This will allow you to identify correct
+      cluster the already annotated soma positions on the google sheet within the cbf. This will allow you to identify correct
       soma positions, and then manually fix incorrect somas. for each neuron with an incorrect soma, a potential new soma will be
       suggested based on the DBSCAN clustering result.
   Correct google sheet is useful when screening large numbers of neurons. Once a large group of neurons has been split into

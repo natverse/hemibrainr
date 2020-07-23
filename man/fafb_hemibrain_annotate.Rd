@@ -22,7 +22,7 @@ fafb_set_hemilineage(
 
 \item{find}{an annotation/search term/vector of skids passed to \code{catmaid::catmaid_skids}.}
 
-\item{putative}{if \code{TRUE} the owrd 'putative' is added to all lineage annotations to indicate to users that the labelled neurons may not have been given the correct lineages. More work may need to be done to solidify these assignments.}
+\item{putative}{if \code{TRUE} the word 'putative' is added to all lineage annotations to indicate to users that the labelled neurons may not have been given the correct lineages. More work may need to be done to solidify these assignments.}
 
 \item{ItoLee_Hemilineage}{character, the correct K. Ito / T. Lee hemilineage. Must be an entry in \code{\link{hemibrain_hemilineages}}. If set to 'wipe' all lineage related annotations will be removed.}
 
