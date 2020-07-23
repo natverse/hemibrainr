@@ -183,7 +183,7 @@ glomerulus <- function(bodyids, exclude.multi=FALSE) {
   if(any(is.na(bodyids))) {
     gloms=rep(NA_character_, length(bodyids))
     names(gloms)=bodyids
-    goodbodyids=na.rm(bodyids)
+    goodbodyids=bodyids[!is.na(bodyids)]
     if(length(goodbodyids)>0) {
       goodgloms=glomerulus(goodbodyids, exclude.multi = exclude.multi)
       gloms[!is.na(bodyids)]=goodgloms
