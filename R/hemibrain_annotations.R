@@ -154,8 +154,16 @@ alns <- function(x="RN", possible=TRUE, refresh=FALSE) {
 
 #' Find the antennal lobe glomerulus for hemibrain body ids
 #'
+#' @details Note that this is based on the same hemibrain metadata used by
+#'   \code{\link{class2ids}}. These were curated by Marta Costa, Elizabeth
+#'   Marin, Philipp Schlegel and Greg Jefferis in the Drosophila Connectomics
+#'   Group / MRC LMB in Cambridge.
+#'
+#'   \code{bodyids} may contain duplicates but cannot (at present) contain
+#'   \code{NA} values.
+#'
 #' @param bodyids Vector of bodyids or a search string passed to
-#'   \code{\link{neuprint_ids}}
+#'   \code{\link{neuprint_ids}}. See details.
 #' @param exclude.multi When \code{TRUE} multiglomerular neurons will be
 #'   returned as \code{NA}.
 #'
@@ -168,10 +176,10 @@ alns <- function(x="RN", possible=TRUE, refresh=FALSE) {
 #' table(glomerulus(class2ids('PN'), exclude.multi = TRUE), useNA='ifany')
 #' }
 #' @importFrom neuprintr neuprint_ids
+#' @seealso \code{\link{class2ids}}, \code{\link{pn.ids}},
 glomerulus <- function(bodyids, exclude.multi=FALSE) {
-
   aldf <- aldf()
-  bodyids <- neuprint_ids(bodyids)
+  bodyids <- neuprint_ids(bodyids, unique = FALSE)
 
   res=character(length = length(bodyids))
   names(res)=bodyids
@@ -179,7 +187,7 @@ glomerulus <- function(bodyids, exclude.multi=FALSE) {
   rns=intersect(bodyids, class2ids("RN"))
   if(length(rns)) {
     gloms=sub(".*RN_(.*)","\\1", aldf[['our_type']][match(rns, aldf$bodyid)])
-    res[rns]=gloms
+    res[bodyids%in%rns]=gloms[match(bodyids, rns)]
   }
 
   pns=intersect(bodyids, class2ids("PN"))
@@ -189,7 +197,7 @@ glomerulus <- function(bodyids, exclude.multi=FALSE) {
     if(exclude.multi) {
       gloms[grepl("multi", gloms)]=NA_character_
     }
-    res[pns]=gloms
+    res[bodyids%in%pns]=gloms[match(bodyids, pns)]
   }
   res
 }
