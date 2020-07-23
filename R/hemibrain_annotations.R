@@ -159,15 +159,17 @@ alns <- function(x="RN", possible=TRUE, refresh=FALSE) {
 #'   Marin, Philipp Schlegel and Greg Jefferis in the Drosophila Connectomics
 #'   Group / MRC LMB in Cambridge.
 #'
-#'   \code{bodyids} may contain duplicates but cannot (at present) contain
-#'   \code{NA} values.
+#'   \code{bodyids} may contain duplicates and \code{NA} values (in which case
+#'   \code{NA_character_} will be returned).
 #'
 #' @param bodyids Vector of bodyids or a search string passed to
 #'   \code{\link{neuprint_ids}}. See details.
 #' @param exclude.multi When \code{TRUE} multiglomerular neurons will be
 #'   returned as \code{NA}.
 #'
-#' @return A character vector of glomeruli named with the \code{bodyids}
+#' @return A character vector of glomeruli named with the \code{bodyids}. If no
+#'   glomerulus exists (or the bodyid was NA on input) \code{NA_character_} is
+#'   returned.
 #' @export
 #'
 #' @examples
@@ -178,10 +180,20 @@ alns <- function(x="RN", possible=TRUE, refresh=FALSE) {
 #' @importFrom neuprintr neuprint_ids
 #' @seealso \code{\link{class2ids}}, \code{\link{pn.ids}},
 glomerulus <- function(bodyids, exclude.multi=FALSE) {
+  if(any(is.na(bodyids))) {
+    gloms=rep(NA_character_, length(bodyids))
+    names(gloms)=bodyids
+    goodbodyids=na.rm(bodyids)
+    if(length(goodbodyids)>0) {
+      goodgloms=glomerulus(goodbodyids, exclude.multi = exclude.multi)
+      gloms[!is.na(bodyids)]=goodgloms
+    }
+    return(gloms)
+  }
   aldf <- aldf()
   bodyids <- neuprint_ids(bodyids, unique = FALSE)
 
-  res=character(length = length(bodyids))
+  res=rep(NA_character_, length(bodyids))
   names(res)=bodyids
 
   rns=intersect(bodyids, class2ids("RN"))

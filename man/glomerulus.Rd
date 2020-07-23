@@ -14,7 +14,9 @@ glomerulus(bodyids, exclude.multi = FALSE)
 returned as \code{NA}.}
 }
 \value{
-A character vector of glomeruli named with the \code{bodyids}
+A character vector of glomeruli named with the \code{bodyids}. If no
+  glomerulus exists (or the bodyid was NA on input) \code{NA_character_} is
+  returned.
 }
 \description{
 Find the antennal lobe glomerulus for hemibrain body ids
@@ -24,6 +26,9 @@ Note that this is based on the same hemibrain metadata used by
   \code{\link{class2ids}}. These were curated by Marta Costa, Elizabeth
   Marin, Philipp Schlegel and Greg Jefferis in the Drosophila Connectomics
   Group / MRC LMB in Cambridge.
+
+  \code{bodyids} may contain duplicates and \code{NA} values (in which case
+  \code{NA_character_} will be returned).
 }
 \examples{
 \dontrun{
