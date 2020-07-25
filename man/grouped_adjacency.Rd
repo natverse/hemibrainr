@@ -21,7 +21,11 @@ matrix}
 \item{outputids}{bodyids of the output neurons. Not required if
 \code{inputids} is an adjacency matrix.}
 
-\item{ingroup, outgroup}{grouping variables used to coalesce related neurons}
+\item{ingroup, outgroup}{grouping variables used to coalesce related neurons.
+The default values match against dynamically fetched neuprint metadata
+columns for the neurons specified by \code{inputids,outputids}.You can also
+specify a \code{factor} of the appropriate length or \code{NULL} to
+suppress grouping. See details and examples.}
 
 \item{threshold}{Remove (groups of) neurons that make fewer connections than
 this. If you provide a length two vector the first threshold will be an
@@ -40,15 +44,28 @@ named numeric matrix with rows for input groups and columns for
 }
 \description{
 Create a summary adjacency matrix in which input and/or output neurons are
-coalesced into a smaller number of rows/columns. This can be used as a
-preprocessing step to present a simple representation of the connectivity
-between a larger number of cells in a heatmap.
+coalesced (by summation) into a smaller number of rows/columns. This can be
+used as a preprocessing step to present a simple representation of the
+connectivity between a larger number of cells in a heatmap.
 }
 \details{
 The default value of threshold is \code{c(1, 0)}. When
   \code{scale=F} this will not apply a threshold. When \code{scale=T} this
   will apply a threshold of 1 to the raw counts before scaling to ensure that
   only valid output will be returned.
+
+  Grouping. There are 3 ways to specify \code{ingroup}, \code{outgroup} grouping variable:
+
+  \itemize{
+
+  \item by a string chosen from \code{c("type", "name", "cellBodyFiber")}
+  which specifies a neuprint field; this is retrieved dynamically for the body ids specified by \code{inputids}, \code{outputids}.
+
+  \item by a factor or numeric vector specifying groups. If the elements in this vector are named, then the groups
+
+  \item by a function that maps body ids to numeric/factor groups that are then handled like the previous option.
+
+  }
 }
 \examples{
 \donttest{

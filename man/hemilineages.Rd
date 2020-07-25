@@ -4,7 +4,7 @@
 \name{hemilineages}
 \alias{hemilineages}
 \alias{hemibrain_hemilineages}
-\title{Hemilineages namdes from T. Lee, K. Ito and V. Hartenstein}
+\title{Hemilineages names from T. Lee, K. Ito and V. Hartenstein}
 \format{
 An object of class \code{data.frame} with 197 rows and 8 columns.
 }

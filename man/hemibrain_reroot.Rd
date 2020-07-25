@@ -37,7 +37,7 @@ Re-root neurons by predicting their soma location. Somas have been manually tagg
 However, in some cases the roots are wrong, or somas are outside of the volume. The Fly Connectome team at the University of Cambridge has
 manually tagged better root points for these neurons. Soma locations, updated by this work, as saved as \code{\link{hemibrain_somas}} in this package.
 A user can read somas from here, or get a bleeding edge version from
-the \href{https://docs.google.com/spreadsheets/d/1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E/edit#gid=1524900531}{Google Sheet}. Alternaitvely, they
+the \href{https://docs.google.com/spreadsheets/d/1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E/edit#gid=1524900531}{Google Sheet}. Alternatively, they
 can 'estimated' a good root-point. This works by finding the longest path outside of a given neuropil mesh/meshes, as in insect
 neurons the soma should be located in a cortex outside of the neuropil proper.
 }

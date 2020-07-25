@@ -4,7 +4,7 @@
 #'   Correct singles will allow you to manually correct each neuron in a provided list of bodyids. If requested, DBSCAN can be used
 #'       to try to predict potential soma positions against already correctly identified somas, based on the provided google sheet.
 #'   Correct cell body fibers(cbf) asks for a cbf to be inputted based on those labeled in the google sheet. DBSCAN is then used to
-#'       cluster the already annotated soma positions on the google sheet withing the cbf. This will allow you to identify correct
+#'       cluster the already annotated soma positions on the google sheet within the cbf. This will allow you to identify correct
 #'       soma positions, and then manually fix incorrect somas. for each neuron with an incorrect soma, a potential new soma will be
 #'       suggested based on the DBSCAN clustering result.
 #'   Correct google sheet is useful when screening large numbers of neurons. Once a large group of neurons has been split into
@@ -16,10 +16,10 @@
 #' @param brain Optional. by default will use the hemibrain surface. Other neuropil surfaces can be provided here however
 #' @param selected_file Identifier for gsheet you wish to read from and write to. By default, Curated_splitpoints soma sheet
 #' @param db Optional. if provided, local directory to read neurons from.
-#' @param plot_sample Bool. TRUE by default, choose if you wish to plot a random subset of neurons within a DBSCAN cluster
-#' @param eps the distance in nanometers used by DBSCAN to form clusters. 1500 by default
+#' @param plot_sample logical. TRUE by default, choose if you wish to plot a random subset of neurons within a DBSCAN cluster
+#' @param eps the distance in nanometres used by DBSCAN to form clusters. 1500 by default
 #' @param minPts The minimum number of points needed to form a cluster using DBSCAN. 5 by default
-#' @param neurons_from_gsheet Bool, TRUE by default. If true, will collect neurons based on bodyids in the google sheet,
+#' @param neurons_from_gsheet logical, TRUE by default. If true, will collect neurons based on bodyids in the google sheet,
 #' otherwise, will search for them based on CBF data in neuprint.
 #' @param for_Imaan extra little bit for Imaan... FALSE by default
 #'
@@ -358,7 +358,7 @@ correct_singles <- function(data = NULL,
           ans = must_be(
             prompt = "Is there no soma (n), is the neuron Bilateral (b),
             is this just a fragment(f), maybe it is truncated (t), or is it just weird(w)? ",
-            answers = c("n", "b", "f", "w","t")
+            answers = c("n", "b", "f", "w")
           )
           message("passing neuron, and adding note...")
           if (ans == "n") {
@@ -370,7 +370,7 @@ correct_singles <- function(data = NULL,
           } else if (ans == "w") {
             data$update[which(data$update$bodyid == n$bodyid),]$unfixed = "Weird"
           } else if (ans == "t") {
-              data$update[which(data$update$bodyid == n$bodyid),]$unfixed = "Truncated"
+            data$update[which(data$update$bodyid == n$bodyid),]$unfixed = "Truncated"
           }
           make.selection = FALSE
           next
@@ -1164,8 +1164,7 @@ suggest_soma = function(data = NULL,
          "install.packages('dbscan')")
   }
   # suggest which are part of a cluster
-  predict.dbscan_fast <- utils::getFromNamespace("predict.dbscan_fast", "dbscan")
-  suggest = predict.dbscan_fast(object = data$db,
+  suggest = dbscan::predict.dbscan_fast(object = data$db,
                                          data = data$gs_somas,
                                          newdata = points)
   if ((length(unique(suggest)) == 1) && (unique(suggest) == 0)) {

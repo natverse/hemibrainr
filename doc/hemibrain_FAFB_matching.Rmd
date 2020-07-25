@@ -20,7 +20,7 @@ knitr::opts_chunk$set(
 
 # Neuron Matching Making
 
-Insect brains seem pretty stereotyped. But just how stereotyped are they? It comes as a suprise to many neuroscientists who work only on vertebrates, to learn that in insects, individual neurons can readily and reliably be re-found and identified across different members of the species. Perhaps even across species. 
+Insect brains seem pretty stereotyped. But just how stereotyped are they? It comes as a surprise to many neuroscientists who work only on vertebrates, to learn that in insects, individual neurons can readily and reliably be re-found and identified across different members of the species. Perhaps even across species. 
 
 ![match_examples](https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/slick_matches.png)
 
@@ -77,7 +77,7 @@ Some good matches are striking. For example:
 
 In the above case, the FAFB neuron has been quite extensively manually traced, meaning that these cells look very similar to one another. 
 
-Be aware that while neurons must share the same cel lbody fiber tract, these tracts can be a little off set. For example, this is also a good match:
+Be aware that while neurons must share the same cell body fiber tract, these tracts can be a little offset. For example, this is also a good match:
 
 ![good_match_2](https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/good_match_2.png)
 
@@ -91,7 +91,7 @@ You might also use medium if you have a nice looking match and suspect that ther
 Or:
 
 ![medium_match_3](https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/medium_match_3.png)
-Bear in mind that the hemibrain volume only covers ~1/4 of the fly mid-brain, so neurons are trunacted (here hemibrain neuron in black) but we can still make matches for many of them:
+Bear in mind that the hemibrain volume only covers ~1/4 of the fly mid-brain, so neurons are truncated (here hemibrain neuron in black) but we can still make matches for many of them:
 
 ![medium_match_4](https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/medium_match_4.png)
 
@@ -138,7 +138,7 @@ hemibrain_matching_add(ids = "16", sheet = "fafb", User = "ASB")
 
 ### The Match Making Pipeline
 
-You can also use our interactive pipeline to match neurons between hemibrain and FAFB. There are two version of this pipeline. One that takes hemibrain neurons from neuPrint, and tries to find the best match for each hemibrain neuron (`hemibrain_matching`) and one that takes FAFB neurons from CATMAID and tries to find the best heimibrain match for those FAFB neurons (`fafb_matching`). Once matches are made, the result become available with `hemibrain_matches`.
+You can also use our interactive pipeline to match neurons between hemibrain and FAFB. There are two version of this pipeline. One that takes hemibrain neurons from neuPrint, and tries to find the best match for each hemibrain neuron (`hemibrain_matching`) and one that takes FAFB neurons from CATMAID and tries to find the best hemibrain match for those FAFB neurons (`fafb_matching`). Once matches are made, the result become available with `hemibrain_matches`.
 
 For a video tutorial, see [here](https://drive.google.com/drive/folders/1MOwfPGCPvY8eVLZoOfXOBhVcS6U996g9).
 

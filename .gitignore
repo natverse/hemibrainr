@@ -9,3 +9,4 @@ examples
 .Renviron
 *hemibrain_data/
 data-raw/annotations/
+.DS_Store
