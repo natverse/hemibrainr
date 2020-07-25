@@ -147,6 +147,15 @@ dan.ids = class2ids("DAN")
 mbon.ids = class2ids("MBON")
 dn.ids = class2ids("DN")
 
+# Read in other classes
+## Let's get some other, easy and popular neuron types
+kc.info = neuprint_search("KC.*")
+apl.info = neuprint_search(".*APL.*")
+cent.info = neuprint_search(".*LHCENT.*")
+kc.ids = kc.info$bodyid
+apl.ids = apl.info$bodyid
+cent.ids = cent.info$bodyid
+
 ## Use them bodyids
 usethis::use_data(dn.ids, overwrite = TRUE)
 usethis::use_data(ton.ids, overwrite = TRUE)
@@ -160,6 +169,9 @@ usethis::use_data(vppn.ids, overwrite = TRUE)
 usethis::use_data(alln.ids, overwrite = TRUE)
 usethis::use_data(dan.ids, overwrite = TRUE)
 usethis::use_data(mbon.ids, overwrite = TRUE)
+usethis::use_data(kc.ids, overwrite = TRUE)
+usethis::use_data(apl.ids, overwrite = TRUE)
+usethis::use_data(cent.ids, overwrite = TRUE)
 
 ###################################################################################
 # LHNs are neurons with 1% of their synaptic input / 10 synapses coming from uPNs #

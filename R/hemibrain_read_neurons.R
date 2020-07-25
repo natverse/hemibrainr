@@ -100,7 +100,7 @@ hemibrain_read_neurons<-function(x = NULL,
   }else{
     nat.templatebrains::regtemplate(neurons.flow) = "JRCFIB2018Fraw"
   }
-  #neurons.flow[,] = hemibrain_get_meta(names(neurons.flow))
+  neurons.flow[,] = hemibrain_get_meta(names(neurons.flow))
   neurons.flow = add_field_seq(neurons.flow,neurons.flow[,"bodyid"],field="bodyid")
   neurons.flow = metadata_add_tags(neurons.flow)
   neurons.flow

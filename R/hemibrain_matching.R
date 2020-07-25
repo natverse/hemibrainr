@@ -929,7 +929,7 @@ hemibrain_matches <- function(priority = c("FAFB","hemibrain")){
   hemibrain.matches = subset(hemibrain.matches, !is.na(hemibrain.matches$bodyid))
   hemibrain.matches = hemibrain.matches[!duplicated(hemibrain.matches$bodyid),]
   rownames(hemibrain.matches) = hemibrain.matches$bodyid
-  hemibrain.matches$cell.type = hemibrain.matches$connectivity.type
+  #hemibrain.matches$cell.type = hemibrain.matches$connectivity.type
 
   # Get FAFB matches
   fafb.matches = gsheet_manipulation(FUN = googlesheets4::read_sheet,
@@ -1017,14 +1017,17 @@ hemibrain_matches <- function(priority = c("FAFB","hemibrain")){
     }
   }
 
+  # Add cell body fiber infor for FAFB cells
+  fafb.matches$cellBodyFiber = hemibrain.matches$cellBodyFiber[match(fafb.matches$hemibrain.match,hemibrain.matches$bodyid)]
+
   # Rename cells
   fafb.matches$cell = paste0(fafb.matches$cell.type,"#",ave(fafb.matches$cell.type,fafb.matches$cell.type,FUN= seq.int))
   hemibrain.matches$cell = paste0(hemibrain.matches$cell.type,"#",ave(hemibrain.matches$cell.type,hemibrain.matches$cell.type,FUN= seq.int))
 
   # Make matching data frame
-  matched.h = hemibrain.matches[,c("bodyid", "cell.type", "cell", "ItoLee_Hemilineage",
+  matched.h = hemibrain.matches[,c("bodyid", "cell.type", "cell", "cellBodyFiber", "ItoLee_Hemilineage",
                                    "FAFB.match", "FAFB.match.quality", "LM.match", "LM.match.quality", "dataset")]
-  matched.f = fafb.matches[,c("skid",  "cell.type",  "cell", "ItoLee_Hemilineage",
+  matched.f = fafb.matches[,c("skid",  "cell.type",  "cell", "cellBodyFiber", "ItoLee_Hemilineage",
                               "hemibrain.match", "hemibrain.match.quality", "LM.match", "LM.match.quality","dataset")]
   colnames(matched.h) = colnames(matched.f) = c("id","cell.type", "cell","ItoLee_Hemilineage","match","quality", "LM.match", "LM.match.quality","dataset")
   matched = rbind(matched.h,matched.f)
@@ -1154,10 +1157,13 @@ lm_matches <- function(priority = c("hemibrain","lm")){
   lm.matches$ItoLee_Hemilineage[!is.na(hl)] = hl[!is.na(hl)]
   lm.matches$ItoLee_Lineage[!is.na(l)] = l[!is.na(l)]
 
+  # Add cell body fiber infor for FAFB cells
+  lm.matches$cellBodyFiber = hemibrain.matches$cellBodyFiber[match(lm.matches$hemibrain.match,hemibrain.matches$bodyid)]
+
   # Make matching data frame
-  matched.h = hemibrain.matches[,c("bodyid", "cell.type", "cell", "ItoLee_Hemilineage",
+  matched.h = hemibrain.matches[,c("bodyid", "cell.type", "cell", "cellBodyFiber", "ItoLee_Hemilineage",
                                    "LM.match", "LM.match.quality", "FAFB.match", "FAFB.match.quality", "dataset")]
-  matched.f = lm.matches[,c("id",  "cell.type",  "cell", "ItoLee_Hemilineage",
+  matched.f = lm.matches[,c("id",  "cell.type",  "cell", "cellBodyFiber", "ItoLee_Hemilineage",
                               "hemibrain.match", "hemibrain.match.quality", "FAFB.match", "FAFB.match.quality","dataset")]
   colnames(matched.h) = colnames(matched.f) = c("id","cell.type", "cell","ItoLee_Hemilineage","match","quality", "LM.match", "LM.match.quality","dataset")
   matched = rbind(matched.h,matched.f)
@@ -1536,9 +1542,9 @@ fafb_matching_rewrite <- function(selected_file  = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd
                                    ...){
   matches = hemibrain_matches()
   gs = hemibrain_match_sheet(sheet = "fafb", selected_file = selected_file)
-  n1 = elmr::fafb_get_meta("annotation:Lineage_annotated", ...)
+  n1 = elmr::fafb_get_meta("annotation:Lineage_annotated", batch = TRUE, ...)
   ids.missing = setdiff(gs$skid,n1$skid)
-  n2 = elmr::fafb_get_meta(unique(ids.missing), ...)
+  n2 = elmr::fafb_get_meta(unique(ids.missing), batch = TRUE, ...)
   n = rbind(n1,n2)
   n = n[!duplicated(n1),]
   n = n[,c("skid","ItoLee_Hemilineage", "Hartenstein_Hemilineage", "cellBodyFiber")]
@@ -1553,6 +1559,7 @@ fafb_matching_rewrite <- function(selected_file  = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd
   n$User = gs$User[match(n$skid,gs$skid)]
   n = n[order(n$cell.type),]
   n = n[order(n$ItoLee_Hemilineage),]
+  n = n[,colnames(gs)]
   googlesheets4::write_sheet(n[0,],
                              ss = selected_file,
                              sheet = "fafb")

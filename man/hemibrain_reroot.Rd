@@ -2,13 +2,14 @@
 % Please edit documentation in R/hemibrain_reroot.R
 \name{hemibrain_reroot}
 \alias{hemibrain_reroot}
-\title{Re-root a neuron/neurons}
+\title{Re-root (a) hemibrain neuron/neurons}
 \usage{
 hemibrain_reroot(
   x,
   method = c("manual", "estimated"),
   meshes = NULL,
   googlesheet = FALSE,
+  hemibrain_somas = hemibrainr::hemibrain_somas,
   ...
 )
 }
@@ -22,6 +23,9 @@ If \code{NULL} then \code{hemibrain_roi_meshes} is called.}
 
 \item{googlesheet}{logical, whether to read soma locations from the \href{https://docs.google.com/spreadsheets/d/1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E/edit#gid=1524900531}{Google Sheet}
 if \code{method == "manual"}.}
+
+\item{hemibrain_somas}{a \code{data.frame} that gives soma locations for hemibrain neurons. See the default, \code{\link{hemibrain_somas}}. If \code{googelsheet} is \code{TRUE} this is read fresh
+from the hemibrain Google team drive overseen by the Drosophila Connectomics group.}
 
 \item{...}{methods sent to \code{nat::nlapply}}
 }

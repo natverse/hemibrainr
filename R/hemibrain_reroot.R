@@ -2,7 +2,7 @@
 ################################ Preprocess neurons ##################################
 ######################################################################################
 
-#' Re-root a neuron/neurons
+#' Re-root (a) hemibrain neuron/neurons
 #'
 #' @description Re-root neurons by predicting their soma location. Somas have been manually tagged by the FlyEM project.
 #' However, in some cases the roots are wrong, or somas are outside of the volume. The Fly Connectome team at the University of Cambridge has
@@ -15,6 +15,8 @@
 #' @param method whether to use the manually curated soma list or estimate soma location.
 #' @param googlesheet logical, whether to read soma locations from the \href{https://docs.google.com/spreadsheets/d/1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E/edit#gid=1524900531}{Google Sheet}
 #' if \code{method == "manual"}.
+#' @param hemibrain_somas a \code{data.frame} that gives soma locations for hemibrain neurons. See the default, \code{\link{hemibrain_somas}}. If \code{googelsheet} is \code{TRUE} this is read fresh
+#' from the hemibrain Google team drive overseen by the Drosophila Connectomics group.
 #' @param meshes a list/a single object of class \code{mesh3d} or \code{hxsurf}. Only used for estimation.
 #' If \code{NULL} then \code{hemibrain_roi_meshes} is called.
 #' @param ... methods sent to \code{nat::nlapply}
@@ -50,6 +52,7 @@ hemibrain_reroot <-function(x,
                             method = c("manual","estimated"),
                             meshes = NULL,
                             googlesheet = FALSE,
+                            hemibrain_somas = hemibrainr::hemibrain_somas,
                             ...) UseMethod("hemibrain_reroot")
 
 #' @export
@@ -57,6 +60,7 @@ hemibrain_reroot.neuron <- function(x,
                                     method = c("manual","estimated"),
                                     meshes = NULL,
                                     googlesheet = FALSE,
+                                    hemibrain_somas = hemibrainr::hemibrain_somas,
                                     ...){
   method = match.arg(method)
   # Find out of volume points
@@ -144,13 +148,19 @@ hemibrain_reroot.neuronlist <- function(x,
                                         googlesheet = FALSE,
                                         ...){
   method = match.arg(method)
+  if(googlesheet){
+    selected_file = "1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E"
+    hemibrain_somas = googlesheets4::read_sheet(ss = selected_file, sheet = "somas")
+    hemibrain_somas = as.data.frame(hemibrain_somas)
+    rownames(hemibrain_somas) = hemibrain_somas$bodyid
+  }
   if(method == "estimated"){
     if(is.null(meshes)){
       meshes = hemibrain_roi_meshes()
     }
   }
   x = add_field_seq(x,x[,"bodyid"],field="bodyid")
-  neurons = suppressWarnings(nat::nlapply(x, hemibrain_reroot.neuron, meshes, ...))
+  neurons = suppressWarnings(nat::nlapply(x, hemibrain_reroot.neuron, meshes = meshes, hemibrain_somas = hemibrain_somas, googlesheet = FALSE, ...))
   if(sum(!names(x)%in%names(neurons))>0){
     missed = setdiff(names(x),names(neurons))
     warning("Some neurons could not be rerooted, probably do not have points outside meshes: ", paste(missed, collapse = ", "))

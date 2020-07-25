@@ -34,6 +34,7 @@ all.bodyids = c(all.bodyids,
                 dan.ids,
                 mbon.ids,
                 alln.ids,
+                lhn.ids,
                 ton.ids
                 )
 all.bodyids = unique(all.bodyids)
@@ -61,8 +62,14 @@ hemibrain.rois = hemibrain_roi_meshes()
 message("meshes loaded: ", length(hemibrain.rois))
 
 # Preprocess neurons
-all.neurons.checked = hemibrain_skeleton_check(all.neurons, meshes = hemibrain.rois, OmitFailures = TRUE, .parallel = TRUE)
+all.neurons.checked = hemibrain_skeleton_check(all.neurons, meshes = hemibrain.rois, OmitFailures = TRUE, .parallel = TRUE, googlesheet = TRUE)
 message("Checked ", length(all.neurons.checked), " neurons")
+
+# Get the right meta data
+meta = hemibrain_get_meta(x = names(all.neurons.checked))
+meta = meta[,]
+all.neurons.checked[,] = meta[names(all.neurons.checked),]
+all.neurons.checked = hemibrain_neuron_class(all.neurons.checked)
 
 # Save
 save(all.neurons.checked, file = "/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/hemibrain_all_neurons_flow_checked.rda")

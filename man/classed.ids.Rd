@@ -16,33 +16,42 @@
 \alias{ton.ids}
 \alias{lhn.ids}
 \alias{dn.ids}
+\alias{kc.ids}
+\alias{apl.ids}
+\alias{cent.ids}
 \title{Bodyids for neuron classes}
 \format{
-An object of class \code{character} of length 2545.
+An object of class \code{character} of length 2654.
 
-An object of class \code{character} of length 2469.
+An object of class \code{character} of length 2579.
 
 An object of class \code{character} of length 56.
 
-An object of class \code{character} of length 330.
+An object of class \code{character} of length 338.
 
-An object of class \code{character} of length 137.
+An object of class \code{character} of length 136.
 
-An object of class \code{character} of length 193.
+An object of class \code{character} of length 197.
 
-An object of class \code{character} of length 42.
+An object of class \code{character} of length 56.
 
 An object of class \code{character} of length 318.
 
 An object of class \code{character} of length 67.
 
-An object of class \code{character} of length 231.
+An object of class \code{character} of length 307.
 
 An object of class \code{character} of length 7856.
 
 An object of class \code{numeric} of length 2226.
 
 An object of class \code{character} of length 321.
+
+An object of class \code{numeric} of length 2035.
+
+An object of class \code{numeric} of length 5.
+
+An object of class \code{numeric} of length 23.
 }
 \usage{
 rn.ids
@@ -70,6 +79,12 @@ ton.ids
 lhn.ids
 
 dn.ids
+
+kc.ids
+
+apl.ids
+
+cent.ids
 }
 \description{
 Bodyids for neuron classes. Hard saved equivalent for \code{\link{class2ids}}.

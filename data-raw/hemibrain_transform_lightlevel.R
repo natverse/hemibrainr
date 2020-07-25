@@ -100,14 +100,14 @@ saveRDS(fcs.hemi, file = paste0(flycircuitfolder,"FlyCircuit_all_neurons_JRCFIB2
 ## Save lh files
 lh.files  = list.files(lhfolder,pattern = "rds", full.name = TRUE)
 for(lh.file in lh.files){
-  drive_upload(media = lh.file,
+  drive_put(media = lh.file,
                path = lhns,
                overwrite = TRUE,
                verbose = TRUE)
 }
 fc.files  = list.files(flycircuitfolder,pattern = "rds", full.name = TRUE)
 for(fc.file in fc.files){
-  drive_upload(media = fc.file,
+  drive_put(media = fc.file,
                path = flycircuit,
                overwrite = TRUE,
                verbose = TRUE)

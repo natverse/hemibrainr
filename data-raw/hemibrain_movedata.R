@@ -30,26 +30,26 @@ nblast.folder = subset(drive_hemibrain,name==paste0("nblast_",identifier))
 # Save NBLAST files
 nblast.files  = list.files(paste0("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/NBLAST/",identifier),pattern = "rda", full.name = TRUE)
 for(nblast.file in nblast.files){
-  drive_upload(media = nblast.file,
+  drive_put(media = nblast.file,
                path = nblast.folder,
                overwrite = TRUE,
                verbose = TRUE)
 }
 
 # Save all neuron bodyids
-drive_upload(media = "/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/hemibrain_all_neuron_bodyids.csv",
+drive_put(media = "/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/hemibrain_all_neuron_bodyids.csv",
              path = hemibrain_neurons,
              overwrite = TRUE,
              verbose = TRUE)
 
 # Save raw neurons
-drive_upload(media = "/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/hemibrain_all_neurons.rda",
+drive_put(media = "/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/hemibrain_all_neurons.rda",
              path = hemibrain_neurons,
              overwrite = TRUE,
              verbose = TRUE)
 
 # Save pre-processed neurons
-drive_upload(media = "/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/hemibrain_all_neurons_flow_checked.rda",
+drive_put(media = "/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/hemibrain_all_neurons_flow_checked.rda",
              path = hemibrain_neurons,
              overwrite = TRUE,
              verbose = TRUE)
@@ -76,31 +76,31 @@ split.neuron.fh.data = list.files(split.neuron.fh,pattern = "data", full.name = 
 split.neuron.fh.data.files = list.files(split.neuron.fh.data, full.names = TRUE)
 
 # Save split data
-drive_upload(media = split.neurons,
+drive_put(media = split.neurons,
              path = folder,
              overwrite = TRUE,
              verbose = TRUE)
-drive_upload(media = split.neuron.fh.neuronlist,
+drive_put(media = split.neuron.fh.neuronlist,
              path = folder,
              overwrite = TRUE,
              verbose = TRUE)
-drive_upload(media = split.points,
+drive_put(media = split.points,
              path = folder,
              overwrite = TRUE,
              verbose = TRUE)
-drive_upload(media = split.synapses,
+drive_put(media = split.synapses,
              path = folder,
              overwrite = TRUE,
              verbose = TRUE)
-drive_upload(media = split.connections,
+drive_put(media = split.connections,
              path = folder,
              overwrite = TRUE,
              verbose = TRUE)
-drive_upload(media = split.elist,
+drive_put(media = split.elist,
              path = folder,
              overwrite = TRUE,
              verbose = TRUE)
-drive_upload(media = split.metrics,
+drive_put(media = split.metrics,
              path = folder,
              overwrite = TRUE,
              verbose = TRUE)

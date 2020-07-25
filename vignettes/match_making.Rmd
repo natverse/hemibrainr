@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 ```
 
 > "Oh, but nonsense, she thought; William must marry Lily. They have so many things in common. Lily is so fond of flowers. They are both cold and aloof and rather self-sufficing. She must arrange for them to take a long walk together."
-([Virginia Woolf](https://en.wikipedia.org/wiki/To_the_Lighthouse))
+([Virginia Woolf, To The Lighthouse](https://en.wikipedia.org/wiki/To_the_Lighthouse))
 
 # Neuron Matching Making
 

@@ -51,6 +51,9 @@ hemibrain_get_meta <- function(x, ...){
   nmeta$class[nmeta$bodyid%in%hemibrainr::alln.ids] = "ALLN"
   nmeta$class[nmeta$bodyid%in%hemibrainr::dan.ids] = "DAN"
   nmeta$class[nmeta$bodyid%in%hemibrainr::mbon.ids] = "MBON"
+  nmeta$class[nmeta$bodyid%in%hemibrainr::kc.ids] = "KC"
+  nmeta$class[nmeta$bodyid%in%hemibrainr::apl.ids] = "APL"
+  nmeta$class[nmeta$bodyid%in%hemibrainr::cent.ids] = "CENT"
 
   # Add match information
   nmeta2$FAFB.match = hemibrainr::hemibrain_matched[as.character(nmeta2$bodyid),"match"]
@@ -82,7 +85,9 @@ hemibrain_get_meta <- function(x, ...){
 #'
 #' @param x a vector of FAFB skeleton IDs (skids) that can be read with \code{catmaid::catmaid_skids()}
 #' @param find an annotation/search term/vector of skids passed to \code{catmaid::catmaid_skids}.
+#' @param dataset either FAFB or hemibrain. If hemibrain, then \code{find} must be a vector of valid bodyids. Matches to FAFB neurons will be annootated for these bodyids, using \code{hemibrain_matches}.
 #' @param ItoLee_Hemilineage character, the correct K. Ito / T. Lee hemilineage. Must be an entry in \code{\link{hemibrain_hemilineages}}. If set to 'wipe' all lineage related annotations will be removed.
+#' @param transmitter character, the known or putative transmitter identity of the neurons that will be fetched using \code{find}.
 #' @param delete.find logical, is \code{TRUE} then if \code{find} is an annotation, it will be wiped from the neuron after this function is used (if you have permission to remove it)
 #' @param putative if \code{TRUE} the owrd 'putative' is added to all lineage annotations to indicate to users that the labelled neurons may not have been given the correct lineages. More work may need to be done to solidify these assignments.
 #' @param ... arguments passed to \code{neuprintr::neuprint_get_meta} and \code{catmaid::catmaid_login}.
@@ -96,6 +101,21 @@ hemibrain_get_meta <- function(x, ...){
 #' # Transfer information on the VA6 uPN
 #' fafb_hemibrain_annotate("16")
 #'
+#' # Annotate all GABAergic MBONs in FAFB as GABAergic
+#' bodyids = c(1016835041,
+#'          1048215779,
+#'         1078693835,
+#'          672352543,
+#'          613719036,
+#'          581678043,
+#'          673085197,
+#'          706840303,
+#'          768555687,
+#'          5812982924,
+#'          424767514,
+#'          517518166);
+#'fafb_set_transmitter(find=bodyids,dataset="hemibrain",transmitter="GABA", putative = FALSE)
+#'
 #' }}
 #' @rdname fafb_hemibrain_annotate
 #' @export
@@ -104,15 +124,54 @@ fafb_hemibrain_annotate <- function(x, ...){
 
   # Get matches
   matches = hemibrain_matches()
-  matches = subset(matches, matches$match.quality %in% c("good","medium","poor"))
+  matches = subset(matches,
+                   matches$quality %in% c("good","medium")
+                   & matches$dataset =="FAFB"
+                   & ! matches$match %in% c("none","","NA"," ")) # Exclude poor for now
+  hemi.meta = hemibrain_get_meta(unique(matches$match), OmitFailures = TRUE, ...)
+  matches = subset(matches, matches$match %in% hemi.meta$bodyid)
+  x = intersect(x,rownames(matches))
 
-  # Go by neuron and relay the results
-  amatches = acts = acbfs = c()
   for(i in x){
+
+    # Print neuron under consideration
+    print(knitr::kable(matches[i,c("id", "cell.type", "ItoLee_Hemilineage", "match", "quality")]))
+
     # Get old annotations
     a = catmaid::catmaid_get_annotations_for_skeletons(i, ...)
+    mat = a$annotation[grepl("hemibrain_match: |Hemibrain_match: ",a$annotation)]
     ct = a$annotation[grepl("Cell_type: |cell_type: ",a$annotation)]
     cbf = a$annotation[grepl("cellBodyFiber: |CellBodyFiber: ",a$annotation)]
+
+    # Get meta for matches
+    y = matches[i,"match"]
+    hmeta = subset(hemi.meta, hemi.meta$bodyid == y)
+
+    # Assemble annotations
+    am = paste0('hemibrain_match: ', y)
+    message(am)
+    act = paste0('cell_type: ', hmeta[,"type"])
+    message(act)
+    acbf = paste0('cellBodyFiber: ', hmeta[,"cellBodyFiber"])
+    message(acbf)
+
+    # next
+    if(am%in%mat & act%in%ct & acbf%in%cbf){
+      message("already annotated, skipping ...")
+      next
+    }
+
+    # Set annotations
+    catmaid::catmaid_set_annotations_for_skeletons(skids = i,
+                                                   annotations = c(am,
+                                                                   act,
+                                                                   acbf),
+                                                   force = TRUE, ...)
+
+    # Meta-annotate
+    catmaid::catmaid_set_meta_annotations(meta_annotations = "cell type", annotations = act, ...)
+    catmaid::catmaid_set_meta_annotations(meta_annotations = "cell body fiber", annotations = acbf, ...)
+    catmaid::catmaid_set_meta_annotations(meta_annotations = "hemibrain match", annotations = am, ...)
 
     # remove annotions
     if(length(ct)){
@@ -123,47 +182,35 @@ fafb_hemibrain_annotate <- function(x, ...){
       tryCatch(catmaid::catmaid_remove_annotations_for_skeletons(skids = i, annotations = paste0("annotation:^",cbf,"$"), force = TRUE, ...),
                error = function(e) NULL)
     }
-
-    # Get meta for matches
-    print(x)
-    y = matches[x,"match"]
-    hmeta = hemibrain_get_meta(y, ...)
-
-    # Assemble annotations
-    am = paste0('hemibrain_match: ', y)
-    message(am)
-    act = paste0('cell_type: ', hmeta[,"type"])
-    message(act)
-    acbf = paste0('cellBodyFiber: ', hmeta[,"cellBodyFiber"])
-    message(acbf)
-
-    # Set annotations
-    catmaid::catmaid_set_annotations_for_skeletons(skids = i,
-                                                   annotations = c(am,
-                                                                   act,
-                                                                   acbf),
-                                                   force = TRUE, ...)
-
-    # Collect for meta-annotation
-    amatches = c(amatches, am)
-    acts = c(act, act)
-    acbfs = c(acbfs, acbf)
   }
-
-  # Meta-annotate
-  catmaid::catmaid_set_meta_annotations(meta_annotations = "cell type", annotations = acts, ...)
-  catmaid::catmaid_set_meta_annotations(meta_annotations = "cell body fiber", annotations = acbfs, ...)
-  catmaid::catmaid_set_meta_annotations(meta_annotations = "hemibrain match", annotations = amatches, ...)
 
 }
 
 #' @rdname fafb_hemibrain_annotate
 #' @export
 fafb_set_hemilineage <- function(find,
-                                 putative = TRUE,
                                  ItoLee_Hemilineage,
+                                 dataset = c("fafb","hemibrain"),
+                                 putative = TRUE,
                                  delete.find = FALSE,
                                  ...){
+  dataset = match.arg(dataset)
+  if(dataset=="hemibrain"){
+    matches = hemibrain_matches()
+    matches = subset(matches, matches$quality %in% c("good","medium") & matches$dataset == dataset)
+    find = as.character(find)
+    find = unique(matches[find,"match"])
+    find = find[!is.na(find)]
+    skds = find[!find%in%c("none",""," ")]
+  }else{
+    # Find neurons based on an annotation or as skeleton IDs
+    skds = catmaid::catmaid_skids(x = find, ...)
+    if(grepl("ItoLee|Hartenstein",find)){
+      a = catmaid::catmaid_get_annotations_for_skeletons(find)
+      b = subset(a, a$uid==109 & a$annotation == find) # Just trust annotations from asbates
+      skds = unique(b$skid)
+    }
+  }
   if(ItoLee_Hemilineage!="wipe"){
     # Make sure we have a valid hemilineage
     if(length(ItoLee_Hemilineage)>1|length(ItoLee_Hemilineage)==0){
@@ -172,8 +219,6 @@ fafb_set_hemilineage <- function(find,
     if(!ItoLee_Hemilineage%in%hemibrainr::hemibrain_hemilineages$ItoLee_Hemilineage){
       stop("Please provide a valid ItoLee_Hemilineage. See 'hemibrain_hemilineages'")
     }
-    # Find neurins based on an annotation or as skeleton IDs
-    skds = catmaid::catmaid_skids(x = find, ...)
     # Get meta information
     i = ItoLee_Hemilineage
     ItoLee_Lineage = subset(hemibrainr::hemibrain_hemilineages, hemibrainr::hemibrain_hemilineages$ItoLee_Hemilineage == i)$ItoLee_Lineage[1]
@@ -218,13 +263,13 @@ fafb_set_hemilineage <- function(find,
   }
 
   # Delete old annotations
-  a = catmaid::catmaid_get_annotations_for_skeletons(find)
+  a = catmaid::catmaid_get_annotations_for_skeletons(skds)
   old = unique(a$annotation[grepl("ItoLee_|Hartenstein_|Volker_|volker_|Itolee_|itolee_|itoLee_",a$annotation)])
   old = setdiff(old,lins)
-  message("Removing annotations:   ", paste(old, collapse = "  ", sep = "  "))
-  old = paste0("^",old,"$")
   # Remove
   if(length(old)){
+    message("Removing annotations:   ", paste(old, collapse = "  ", sep = "  "))
+    old = paste0("^",old,"$")
     catmaid::catmaid_remove_annotations_for_skeletons(skids = skds,
                                                       annotations = old,
                                                       force = TRUE, ...)
@@ -237,6 +282,72 @@ fafb_set_hemilineage <- function(find,
 
 }
 
+#' @rdname fafb_hemibrain_annotate
+#' @export
+fafb_set_transmitter <-function(find,
+                                dataset = c("fafb","hemibrain"),
+                                putative = TRUE,
+                                transmitter = c("acetylcholine","GABA","glutamate"),
+                                delete.find = FALSE,
+                                ...){
+  dataset = match.arg(dataset)
+  transmitter = match.arg(transmitter)
+  if(dataset=="hemibrain"){
+    matches = hemibrain_matches()
+    matches = subset(matches, matches$quality %in% c("good","medium") & matches$dataset == dataset)
+    find = as.character(find)
+    find = unique(matches[find,"match"])
+    find = find[!is.na(find)]
+    skds = find[!find%in%c("none",""," ")]
+  }else{
+    skds = catmaid::catmaid_skids(find, ...)
+  }
+  possible.transmitters = c("Vglut","ACh","Ach","acetylcholine","ChAT", "ChA", "GABA","glutamate","Glutamate",
+                            "serotonine","dopamine","octopammine","SIFamide","unknown","NA")
+  if(transmitter!="wipe"){
+    # Set these as putative?
+    if(putative){
+      ann = paste0("putative transmitter: " , transmitter)
+      anns = c(ann,
+               "transmitter_putative")
+      message("Adding annotations:   ", paste(anns, collapse = "  ", sep = "  "))
+      # Set annotations
+      catmaid::catmaid_set_annotations_for_skeletons(skids = skds,
+                                                     annotations = anns, force = TRUE, ...)
+      catmaid::catmaid_set_meta_annotations(meta_annotations = "transmitter", annotations = ann,...)
+    }else{
+      # Set annotations
+      ann = paste0("known transmitter: " , transmitter)
+      anns = c(ann,
+               "transmitter_annotated")
+      message("Adding annotations:   ", paste(anns, collapse = "  ", sep = "  "))
+      catmaid::catmaid_set_annotations_for_skeletons(skids = skds,
+                                                     annotations = anns,
+                                                     force = TRUE, ...)
+      catmaid::catmaid_set_meta_annotations(meta_annotations = "transmitter", annotations = ann,...)
+    }
+  }
+  # Delete old annotations
+  a = catmaid::catmaid_get_annotations_for_skeletons(skds)
+  b = unique(a[grepl("Putative_Neurotransmitter|putative neurotransmitter|known transmitter|putative transmitter|known neurotransmitter",a$annotation),])
+  old = unique(b$annotation[grepl(paste(possible.transmitters,collapse="|"),b$annotation)])
+  old = setdiff(old,anns)
+  if(length(old)){
+    message("Removing annotations:   ", paste(old, collapse = "  ", sep = "  "))
+    old = paste0("^",old,"$")
+    # Remove
+    if(length(old)){
+      catmaid::catmaid_remove_annotations_for_skeletons(skids = skds,
+                                                        annotations = old,
+                                                        force = TRUE, ...)
+    }
+    if(delete.find){
+      catmaid::catmaid_remove_annotations_for_skeletons(skids = skds,
+                                                        annotations = paste0("^",find,"$"),
+                                                        force = TRUE, ...)
+    }
+  }
+}
 
 # Hidden
 ## Don't use unless very necessary
@@ -249,7 +360,7 @@ fafb_lineage_complete_wipe <- function(server = "v14seg-Li-190411.0", ...){
   a = catmaid::catmaid_get_annotationlist(..., conn = conn)
   instance = catmaid::catmaid_login(conn=conn, ...)$server
   message("Looking at ", instance)
-  old = a$annotations$name[grepl("ItoLee_|Hartenstein_|Volker_|volker_|Itolee_|itolee_|itoLee_|Lineage_",a$annotations$name)]
+  old = a$annotations$name[grepl("ItoLee_|Hartenstein_|Volker_|volker_|Itolee_|itolee_|itoLee_|Lineage_",unlist(a$annotations$name))]
   for(ann in old){
     message("Removing all instances of annotation: ", ann)
     ann2 = paste0("annotation:^",ann,"$")

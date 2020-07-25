@@ -3,14 +3,25 @@
 \name{fafb_hemibrain_annotate}
 \alias{fafb_hemibrain_annotate}
 \alias{fafb_set_hemilineage}
+\alias{fafb_set_transmitter}
 \title{Set annotations for FAFB neurons in CATMAID based on hemibrain results}
 \usage{
 fafb_hemibrain_annotate(x, ...)
 
 fafb_set_hemilineage(
   find,
-  putative = TRUE,
   ItoLee_Hemilineage,
+  dataset = c("fafb", "hemibrain"),
+  putative = TRUE,
+  delete.find = FALSE,
+  ...
+)
+
+fafb_set_transmitter(
+  find,
+  dataset = c("fafb", "hemibrain"),
+  putative = TRUE,
+  transmitter = c("acetylcholine", "GABA", "glutamate"),
   delete.find = FALSE,
   ...
 )
@@ -22,11 +33,15 @@ fafb_set_hemilineage(
 
 \item{find}{an annotation/search term/vector of skids passed to \code{catmaid::catmaid_skids}.}
 
-\item{putative}{if \code{TRUE} the owrd 'putative' is added to all lineage annotations to indicate to users that the labelled neurons may not have been given the correct lineages. More work may need to be done to solidify these assignments.}
-
 \item{ItoLee_Hemilineage}{character, the correct K. Ito / T. Lee hemilineage. Must be an entry in \code{\link{hemibrain_hemilineages}}. If set to 'wipe' all lineage related annotations will be removed.}
 
+\item{dataset}{either FAFB or hemibrain. If hemibrain, then \code{find} must be a vector of valid bodyids. Matches to FAFB neurons will be annootated for these bodyids, using \code{hemibrain_matches}.}
+
+\item{putative}{if \code{TRUE} the owrd 'putative' is added to all lineage annotations to indicate to users that the labelled neurons may not have been given the correct lineages. More work may need to be done to solidify these assignments.}
+
 \item{delete.find}{logical, is \code{TRUE} then if \code{find} is an annotation, it will be wiped from the neuron after this function is used (if you have permission to remove it)}
+
+\item{transmitter}{character, the known or putative transmitter identity of the neurons that will be fetched using \code{find}.}
 }
 \value{
 annotations set on CATMAID neurons in specified CATMAID instance, see your \code{catmaid::catmaid_connection()}
@@ -41,6 +56,21 @@ E.g. transfer information on matches and cell body fibers, and also update linea
 
 # Transfer information on the VA6 uPN
 fafb_hemibrain_annotate("16")
+
+# Annotate all GABAergic MBONs in FAFB as GABAergic
+bodyids = c(1016835041,
+         1048215779,
+        1078693835,
+         672352543,
+         613719036,
+         581678043,
+         673085197,
+         706840303,
+         768555687,
+         5812982924,
+         424767514,
+         517518166);
+fafb_set_transmitter(find=bodyids,dataset="hemibrain",transmitter="GABA", putative = FALSE)
 
 }}
 }
