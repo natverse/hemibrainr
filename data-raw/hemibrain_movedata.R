@@ -142,3 +142,57 @@ for(m in missing.files){
     error.files = c(error.files,split.neuron.fh.data.file)
   }
 }
+
+
+## Save transformed neurons
+# make master folder
+transforms = drive_ls(path = folder, type = "folder", team_drive = hemibrain)
+transforms = subset(transforms, name == "transforms")
+if(!nrow(transforms)){
+  drive_mkdir(name = "transforms",
+              path = folder,
+              overwrite = TRUE)
+  transforms = drive_ls(path = folder, type = "folder", team_drive = hemibrain)
+  transforms = subset(transforms, name == "transforms")
+}
+## and sub folder for each transform
+trans = c("JRCFIB2018F","FAFB","JFRC2","JRC2018F","FCWB")
+for(t in trans){
+  transform = drive_ls(path = transforms, type = "folder", team_drive = hemibrain)
+  transform = subset(transform, name == t)
+  if(!nrow(transform)){
+    drive_mkdir(name = t,
+                path = transforms,
+                overwrite = TRUE)
+    transform = drive_ls(path = transforms, type = "folder", team_drive = hemibrain)
+    transform = subset(transform, name == t)
+    drive_mkdir(name = "data",
+                path = transform,
+                overwrite = TRUE)
+    t.folder.data = drive_ls(path = transform, type = "folder", team_drive = hemibrain)
+    t.folder.data = subset(t.folder.data, name == "data")
+  }
+  t.fh = paste0("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/",t)
+  t.list = list.files(t.fh,full.names = TRUE)
+  t.rds = t.list[grepl(".rds",t.list)]
+  for (tr in t.rds){
+    drive_put(media = tr,
+              path = transform[1,],
+              overwrite = TRUE,
+              verbose = TRUE)
+  }
+  t.neuron.fh.data.files = list.files(paste0(t.fh,"/data"), full.names = TRUE)
+  error.files = c()
+  for(t.neuron.fh.data.file in t.neuron.fh.data.files){
+    e = tryCatch(drive_upload(media = t.neuron.fh.data.file,
+                              path = t.folder.data[1,],
+                              overwrite = FALSE,
+                              verbose = TRUE),
+                 error = function(e) t.neuron.fh.data.file)
+    if(is.null(e)){
+      error.files = c(error.files,t.neuron.fh.data.file)
+    }
+  }
+}
+
+

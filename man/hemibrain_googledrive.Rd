@@ -11,22 +11,19 @@
 \alias{hemibrain_lm_lhns}
 \title{Read precomputed information from the hemibrain Google Drive}
 \usage{
-hemibrain_neuron_bodyids(savedir = TRUE, local = FALSE)
+hemibrain_neuron_bodyids(local = FALSE)
 
 hemibrain_elist(
-  savedir = TRUE,
   local = FALSE,
   neuron.split = c("polypre_centrifugal_synapses", "polypre_centrifugal_distance")
 )
 
 hemibrain_synapses(
-  savedir = TRUE,
   local = FALSE,
   neuron.split = c("polypre_centrifugal_synapses", "polypre_centrifugal_distance")
 )
 
 hemibrain_connections(
-  savedir = TRUE,
   local = FALSE,
   neuron.split = c("polypre_centrifugal_synapses", "polypre_centrifugal_distance")
 )
@@ -34,13 +31,11 @@ hemibrain_connections(
 hemibrain_nblast(
   nblast = c("all", "primary.neurites", "primary.dendrites", "axons", "dendrites",
     "spines", "tracts", "arbour", "simplified"),
-  savedir = TRUE,
   local = FALSE,
   neuron.split = c("polypre_centrifugal_synapses", "polypre_centrifugal_distance")
 )
 
 flycircuit_neurons(
-  savedir = TRUE,
   local = FALSE,
   folder = "hemibrain_neurons/light_level/flycircuit",
   cable = c("all", "primary.neurites", "arbour"),
@@ -49,7 +44,6 @@ flycircuit_neurons(
 )
 
 hemibrain_lm_lhns(
-  savedir = TRUE,
   local = FALSE,
   folder = "hemibrain_neurons/light_level/lhns",
   data = c("neuronlist", "nblast", "dps"),
@@ -58,13 +52,10 @@ hemibrain_lm_lhns(
 )
 }
 \arguments{
-\item{savedir}{directory in which neuron data has been deposited. If
-\code{TRUE} your default save directory is used, which is stored as:
-\code{getOption("Gdrive_hemibrain_data")}}
-
 \item{local}{logical, whether to try to read locally saved neurons (by
 default at: \code{getOption("hemibrain_data")}) or neurons from Google
-Drive (\code{getOption("Gdrive_hemibrain_data")}).}
+Drive (\code{getOption("Gdrive_hemibrain_data")}).
+If a character, the path from which to each for hemibrain data.}
 
 \item{neuron.split}{read saved neurons split in which way? Folder names
 indicative of arguments passed to \code{\link{flow_centrality}}. and

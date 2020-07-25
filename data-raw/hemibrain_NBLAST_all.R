@@ -144,6 +144,12 @@ hemibrainr:::save_compressed_nblast_mat(hemibrain.tract.aba.mean,
 # Light level data #
 ####################
 
+# NBLAST against mirrored hemibrain neurons as well
+all.neurons.flow.microns.m = hemibrain_neurons(mirror = TRUE, brain = "JRCFIB2018F")
+hemibrain.dps.m=dotprops(all.neurons.flow.microns.m, k=5, resample=1, .parallel=T, OmitFailures = T)
+names(hemibrain.dps.m) = paste0(names(hemibrain.dps.m),"_m")
+hemibrain.dps = c(hemibrain.dps,hemibrain.dps.m)
+
 # Light level neurons
 lhfolder = paste0("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/light_level/lhns/")
 flycircuitfolder = paste0("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/light_level/flycircuit/")

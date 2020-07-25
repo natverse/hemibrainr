@@ -91,6 +91,8 @@ fcs.dps = flycircuit_neurons(savedir = flycircuitfolder,
                          data = "dps")
 
 # Convert
+fcs = mirror_brain(fcs, brain = FCWB)
+fcs.dps = mirror_brain(fcs.dps, brain = FCWB)
 fcs.hemi.dps = nat.templatebrains::xform_brain(fcs.dps, reference= "JRCFIB2018F", sample="FCWB", .parallel = TRUE, OmitFailures = TRUE)
 fcs.hemi = nat.templatebrains::xform_brain(fcs, reference= "JRCFIB2018F", sample="FCWB", .parallel = TRUE, OmitFailures = TRUE)
 saveRDS(fcs.hemi.dps, file = paste0(flycircuitfolder,"FlyCircuit_all_neurons_dps_JRCFIB2018F.rds"))

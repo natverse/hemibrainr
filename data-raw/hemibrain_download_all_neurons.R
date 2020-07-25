@@ -24,6 +24,8 @@ all.neurons.meta = neuprint_search("Traced",field="status")
 all.neurons.meta = subset(all.neurons.meta, statusLabel!="Leaves")
 all.bodyids = all.neurons.meta$bodyid
 all.bodyids = c(all.bodyids,
+                kc.ids,
+                apl.ids,
                 rn.ids,
                 orn.ids,
                 hrn.ids,

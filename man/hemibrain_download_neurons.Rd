@@ -4,12 +4,9 @@
 \alias{hemibrain_download_neurons}
 \title{Download all automatically split neurons from the hemibrain project}
 \usage{
-hemibrain_download_neurons(savedir = TRUE, overwrite = FALSE, ...)
+hemibrain_download_neurons(overwrite = FALSE, ...)
 }
 \arguments{
-\item{savedir}{where to save the \code{.rds} and meta data files for the
-\code{nat::neuronlistfh} object}
-
 \item{overwrite}{whether or not to overwrite the existing saved files, within
 \code{savedir}.}
 
@@ -24,7 +21,7 @@ Download all the automatically split neurons from the hemibrain
  need to do this if you have your Google Drive mounted on your computer and you
  have access to the Flyconnectome Repository 2020lhfib. In which case, you should
  be able to read neurons directly from the drive whiled you have an Internet connection
- using \code{hemibrain_read_neurons(savedir=TRUE)}.
+ using \code{hemibrain_read_neurons(savedir=TRUE)}. Neurons downloaded into your working directory.
 
  In order to do download all neurons locally, you need to add the following folder to your Google Drive:
  \url{https://drive.google.com/drive/folders/14UPg7CvHDtvzNjvNgAULYnxZ018Xgf5H?usp=sharing}.

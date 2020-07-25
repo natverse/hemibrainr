@@ -216,6 +216,10 @@ save_compressed_nblast_mat <- function(x,
                                        digits=3,
                                        format=c("rda", "rds"),
                                        ...) {
+  colnames(x) = gsub("_m$","",colnames(x)) # factor in mirrored hemibrain neurons
+  rownames(x) = gsub("_m$","",rownames(x))
+  x = apply(x, 2, function(i) tapply(x, rownames(x), sum, na.rm = TRUE))
+  x = t(apply(t(x), 2, function(i) tapply(i, colnames(x), sum, na.rm = TRUE)))
   objname=deparse(substitute(x))
   format=match.arg(format)
   x[x<threshold]=threshold

@@ -8,7 +8,6 @@
 \usage{
 hemibrain_read_neurons(
   x = NULL,
-  savedir = FALSE,
   local = FALSE,
   microns = FALSE,
   reroot = TRUE,
@@ -21,16 +20,14 @@ hemibrain_read_neurons(
 scale_neurons(x, scaling = (8/1000), ...)
 
 hemibrain_neurons(
-  savedir = TRUE,
   local = FALSE,
-  neuron.split = c("polypre_centrifugal_synapses", "polypre_centrifugal_distance")
+  neuron.split = c("polypre_centrifugal_synapses", "polypre_centrifugal_distance"),
+  brain = c("JRCFIB2018Fraw", "JRCFIB2018F", "FAFB", "JFRC2", "JRC2018F", "FCWB"),
+  mirror = FALSE
 )
 }
 \arguments{
 \item{x}{a vector of bodyids that can be read from \url{'https://neuprint.janelia.org/'}.}
-
-\item{savedir}{directory in which \code{nat::neuronlistfh} object as been saved using \code{\link{hemibrain_download_neurons}}. This acts as a database,
-from which hemibrain neurons can be read. If \code{TRUE} your default save directory is used, which is stored as: \code{options()$hemibrain_data}}
 
 \item{local}{logical, whether to try to read locally saved neurons (by default at: \code{options()$hemibrain_data}) or neurons from Google Drive (\code{options()$Gdrive_hemibrain_data}).}
 
@@ -51,6 +48,10 @@ and \code{\link{hemibrain_flow_centrality}}}
 \item{scaling}{the factor by which neuron coordinates in raw voxel space should be multiplied. The default scales to microns.}
 
 \item{neuron.split}{read saved neurons spit in which way? Folder names indicative of arguments passed to \code{\link{flow_centrality}}.}
+
+\item{brain}{the brainspace in which hemibrain neurons have been registered. Defaults to raw voxel space for the hemibrain project.}
+
+\item{mirror}{logical, whether or not to read neurons that have been mirrored (i.e. flipped to the 'other' brain hemisphere).}
 }
 \value{
 the neuron or neuron list object inputted, with centripetal flow

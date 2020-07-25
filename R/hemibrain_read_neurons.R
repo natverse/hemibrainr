@@ -11,8 +11,8 @@
 #' space (as they are stored in neuPrint) to microns.
 #'
 #' @param x a vector of bodyids that can be read from \url{'https://neuprint.janelia.org/'}.
-#' @param savedir directory in which \code{nat::neuronlistfh} object as been saved using \code{\link{hemibrain_download_neurons}}. This acts as a database,
-#' from which hemibrain neurons can be read. If \code{TRUE} your default save directory is used, which is stored as: \code{options()$hemibrain_data}
+#' @param brain the brainspace in which hemibrain neurons have been registered. Defaults to raw voxel space for the hemibrain project.
+#' @param mirror logical, whether or not to read neurons that have been mirrored (i.e. flipped to the 'other' brain hemisphere).
 #' @param microns convert dimensions from raw voxels into microns (template brain: \code{JRCFIB2018F}, else \code{JRCFIB2018Fraw}).
 #' @param remove.bad.synapses whether or not to run \code{\link{hemibrain_remove_bad_synapses}} on neurons pulled from neuPrint.
 #' @param reroot logical, whether or not somas should be re-rooted.
@@ -53,7 +53,6 @@
 #' \code{\link{hemibrain_precomputed_splitpoints}}, \code{\link{hemibrain_metrics}},\code{\link{hemibrain_remove_bad_synapses}}
 #' ,\code{\link{hemibrain_get_meta}}
 hemibrain_read_neurons<-function(x = NULL,
-                                 savedir = FALSE,
                                  local = FALSE,
                                  microns = FALSE,
                                  reroot = TRUE,
@@ -67,7 +66,7 @@ hemibrain_read_neurons<-function(x = NULL,
          ?hemibrain_download_neurons for details on the latter option.")
   }
   if(!isFALSE(savedir)){
-      neurons.flow.fh = hemibrain_neurons(savedir = savedir, local = local)
+      neurons.flow.fh = hemibrain_neurons(local = local)
       if(!is.null(neurons.flow.fh)){
         y = intersect(x,names(neurons.flow.fh))
         z = setdiff(x,names(neurons.flow.fh))
@@ -248,7 +247,7 @@ prune_synapseless_branches <- function(x, neuron = TRUE){
 #'  need to do this if you have your Google Drive mounted on your computer and you
 #'  have access to the Flyconnectome Repository 2020lhfib. In which case, you should
 #'  be able to read neurons directly from the drive whiled you have an Internet connection
-#'  using \code{hemibrain_read_neurons(savedir=TRUE)}.
+#'  using \code{hemibrain_read_neurons(savedir=TRUE)}. Neurons downloaded into your working directory.
 #'
 #'  In order to do download all neurons locally, you need to add the following folder to your Google Drive:
 #'  \url{https://drive.google.com/drive/folders/14UPg7CvHDtvzNjvNgAULYnxZ018Xgf5H?usp=sharing}.
@@ -256,8 +255,6 @@ prune_synapseless_branches <- function(x, neuron = TRUE){
 #'  If this takes to much time, you can also download the relevant Google Drive folder manually. To do so, open this link: %s and then download the folder to this location on your computer: ",
 #'  \url{https://drive.google.com/open?id=1px6o2R_heFLRCtTF4Q2SvJNR9CWFhud0}. Remember to unzip all files.
 #'
-#'@param savedir where to save the \code{.rds} and meta data files for the
-#'  \code{nat::neuronlistfh} object
 #'@param overwrite whether or not to overwrite the existing saved files, within
 #'  \code{savedir}.
 #'@param ... Additional arguments passed to \code{\link{nlapply}} when iterating
@@ -281,12 +278,11 @@ prune_synapseless_branches <- function(x, neuron = TRUE){
 #'@seealso \code{\link{hemibrain_read_neurons}}
 #'@importFrom utils download.file
 #'@importFrom googledrive drive_ls as_id
-hemibrain_download_neurons <- function(savedir = TRUE,
-                                       overwrite = FALSE,
+hemibrain_download_neurons <- function(overwrite = FALSE,
                                        ...
                                        ){
   message("NOTE: This function is experimental. The recommended method of reading all hemibrain neurons quickly is to set up Google Drive using Google Filestream and use the function: hemibrain_neurons. You must have access to the Google Team Drive 'hemibrain', administered by the flyconnectome group at the University of Cambidge, to do this. If in doubt over access, you can contact us.")
-  savedir = good_savedir(savedir=savedir, local = TRUE)
+  savedir = good_savedir(local = TRUE)
   message(sprintf("If this takes too much time, you can also download the relevant Google Drive folder manually. To do so, open this link: %s and then download the folder to this location on your computer: ",
           "https://drive.google.com/open?id=1px6o2R_heFLRCtTF4Q2SvJNR9CWFhud0. Remember to unzip all files.",
           paste0(savedir,"hemibrain_neurons/")))
@@ -341,17 +337,23 @@ googledrive_simpledownload <- function(id, file, overwrite = FALSE){
 
 #' @rdname hemibrain_read_neurons
 #' @export
-hemibrain_neurons <- function(savedir = TRUE,
-                              local = FALSE,
+hemibrain_neurons <- function(local = FALSE,
                               neuron.split = c("polypre_centrifugal_synapses",
-                                                "polypre_centrifugal_distance")){
+                                                "polypre_centrifugal_distance"),
+                              brain = c("JRCFIB2018Fraw","JRCFIB2018F","FAFB","JFRC2","JRC2018F","FCWB"),
+                              mirror = FALSE){
   neuron.split = match.arg(neuron.split)
-  savedir = good_savedir(savedir = savedir,
-                      local = local,
+  savedir = good_savedir(local = local,
                       neuron.split = neuron.split)
   neuronsdir = paste0(savedir,"hemibrain_neurons/")
-  fhdir = paste0(neuronsdir,neuron.split,"/")
+  if(brain == "JRCFIB2018Fraw"){
+    fhdir = paste0(neuronsdir,neuron.split,"/")
+  }else{
+    fhdir = paste0(neuronsdir,neuron.split,"/transforms/",brain,"/")
+  }
   filelist = list.files(path = fhdir, pattern = ".rds", full.names = TRUE)
+  filelist = filelist[grepl("mirror",filelist)==mirror]
+  filelist = sort(filelist,decreasing = TRUE)
   if(length(filelist)){
     fh.file = filelist[1]
     neurons.flow.fh = nat::read.neuronlistfh(fh.file)
@@ -363,8 +365,7 @@ hemibrain_neurons <- function(savedir = TRUE,
 }
 
 # hidden
-good_savedir <- function(savedir = TRUE,
-                         local = FALSE,
+good_savedir <- function(local = FALSE,
                          neuron.split = c("polypre_centrifugal_synapses",
                                           "polypre_centrifugal_distance")
                          ){
@@ -375,13 +376,17 @@ good_savedir <- function(savedir = TRUE,
   if(is.null(options()$Gdrive_hemibrain_data)){
     options(Gdrive_hemibrain_data = "/Volumes/GoogleDrive/Shared\ drives/hemibrain/")
   }
-  if(isTRUE(savedir)){
+  if(isFALSE(local)){
     savedir = options()$hemibrain_data
     if(!is.null(options()$Gdrive_hemibrain_data)){
       if(dir.exists(options()$Gdrive_hemibrain_data) & !local){
         message("Using Google Team Drive: hemibrain")
         savedir = options()$Gdrive_hemibrain_data
       }
+    }
+  }else{
+    if(isTRUE(local)){
+      savedir = '/data-raw/hemibrain_data/'
     }
   }
   if(is.issue(savedir)){
@@ -391,7 +396,7 @@ good_savedir <- function(savedir = TRUE,
   if(!dir.exists(savedir)){
     dir.create(paste0(savedir,"/hemibrain_neurons/",neuron.split,"/data/"), recursive = TRUE)
     dir.create(paste0(savedir,"/hemibrain_annotations/"), recursive = TRUE)
-    warning("Made new hemibrain save directory. It is currently empty:", savedir)
+    warning("Made new hemibrain save directory within the working directory. It is currently empty, please add neuron data:", savedir)
   }
   savedir
 }

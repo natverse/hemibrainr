@@ -11,12 +11,10 @@
 #'   data set are also available, including ones broken down by neuron
 #'   compartment.
 #'
-#' @param savedir directory in which neuron data has been deposited. If
-#'   \code{TRUE} your default save directory is used, which is stored as:
-#'   \code{getOption("Gdrive_hemibrain_data")}
 #' @param local logical, whether to try to read locally saved neurons (by
 #'   default at: \code{getOption("hemibrain_data")}) or neurons from Google
 #'   Drive (\code{getOption("Gdrive_hemibrain_data")}).
+#'   If a character, the path from which to each for hemibrain data.
 #' @param neuron.split read saved neurons split in which way? Folder names
 #'   indicative of arguments passed to \code{\link{flow_centrality}}. and
 #'   \code{\link{hemibrain_flow_centrality}}
@@ -49,9 +47,8 @@
 #' @name hemibrain_googledrive
 #' @aliases hemibrain_neuron_bodyids
 #' @export
-hemibrain_neuron_bodyids <- function(savedir = TRUE,
-                                        local = FALSE){
-  savedir = good_savedir(savedir = savedir,local = local)
+hemibrain_neuron_bodyids <- function(local = FALSE){
+  savedir = good_savedir(local = local)
   gfile = find_gfile(savedir = savedir, file = "hemibrain_all_neuron_bodyids", folder = "hemibrain_neurons/")
   gcsv = utils::read.csv(gfile)
   as.character(gcsv$x)
@@ -59,11 +56,11 @@ hemibrain_neuron_bodyids <- function(savedir = TRUE,
 
 #' @rdname hemibrain_googledrive
 #' @export
-hemibrain_elist <- function(savedir = TRUE, local = FALSE,
+hemibrain_elist <- function(local = FALSE,
                             neuron.split = c("polypre_centrifugal_synapses",
                                              "polypre_centrifugal_distance")){
   neuron.split = match.arg(neuron.split)
-  savedir = good_savedir(savedir = savedir,local = local)
+  savedir = good_savedir(local = local)
   folder = paste0("hemibrain_neurons/",neuron.split,"/")
   gfile = find_gfile(savedir = savedir, file = "hemibrain_all_neurons_edgelist", folder = folder)
   gcsv = utils::read.csv(gfile)
@@ -72,11 +69,11 @@ hemibrain_elist <- function(savedir = TRUE, local = FALSE,
 
 #' @rdname hemibrain_googledrive
 #' @export
-hemibrain_synapses <- function(savedir = TRUE, local = FALSE,
+hemibrain_synapses <- function(local = FALSE,
                             neuron.split = c("polypre_centrifugal_synapses",
                                              "polypre_centrifugal_distance")){
   neuron.split = match.arg(neuron.split)
-  savedir = good_savedir(savedir = savedir,local = local)
+  savedir = good_savedir(local = local)
   folder = paste0("hemibrain_neurons/",neuron.split,"/")
   gfile = find_gfile(savedir = savedir, file = "hemibrain_all_neurons_synapses", folder = folder)
   gcsv = utils::read.csv(gfile)
@@ -85,11 +82,11 @@ hemibrain_synapses <- function(savedir = TRUE, local = FALSE,
 
 #' @rdname hemibrain_googledrive
 #' @export
-hemibrain_connections <- function(savedir = TRUE, local = FALSE,
+hemibrain_connections <- function(local = FALSE,
                                neuron.split = c("polypre_centrifugal_synapses",
                                                 "polypre_centrifugal_distance")){
   neuron.split = match.arg(neuron.split)
-  savedir = good_savedir(savedir = savedir,local = local)
+  savedir = good_savedir(local = local)
   folder = paste0("hemibrain_neurons/",neuron.split,"/")
   gfile = find_gfile(savedir = savedir, file = "hemibrain_all_neurons_connections", folder = folder)
   gcsv = utils::read.csv(gfile)
@@ -107,13 +104,12 @@ hemibrain_nblast <- function(nblast = c("all",
                                         "tracts",
                                         "arbour",
                                         "simplified"),
-                             savedir = TRUE,
                              local = FALSE,
                              neuron.split = c("polypre_centrifugal_synapses",
                                               "polypre_centrifugal_distance")){
   nblast = match.arg(nblast)
   neuron.split = match.arg(neuron.split)
-  savedir = good_savedir(savedir = savedir,local = local)
+  savedir = good_savedir(local = local)
   folder = if(nblast %in% c("all")){
     "hemibrain_nblast"
   }else{
@@ -151,8 +147,7 @@ find_gfile <- function(savedir,
 
 #' @export
 #' @rdname hemibrain_googledrive
-flycircuit_neurons <- function(savedir = TRUE,
-                               local = FALSE,
+flycircuit_neurons <- function(local = FALSE,
                                folder = "hemibrain_neurons/light_level/flycircuit",
                                cable = c("all",
                                           "primary.neurites",
@@ -175,7 +170,7 @@ flycircuit_neurons <- function(savedir = TRUE,
   }else{
     data =  ""
   }
-  savedir = good_savedir(savedir = savedir,local = local)
+  savedir = good_savedir(local = local)
   if(cable=="all"){gfile = find_gfile(savedir = savedir, file = sprintf("FlyCircuit_all_neurons%s%s.rds",data,brainspace), folder = folder)}
   if(cable=="primary.neurites"){gfile = find_gfile(savedir = savedir, file = sprintf("FlyCircuit_all_pnts%s%s.rds",data,brainspace), folder = folder)}
   if(cable=="arbour"){gfile = find_gfile(savedir = savedir, file = sprintf("FlyCircuit_all_arbour%s.rds",data), folder = folder)}
@@ -187,8 +182,7 @@ flycircuit_neurons <- function(savedir = TRUE,
 #' @param brainspace A template brain space for neurons loaded by
 #'   \code{hemibrain_lm_lhns}. Defaults to \code{JRCFIB2018F}.
 #' @importFrom utils installed.packages
-hemibrain_lm_lhns <- function(savedir = TRUE,
-                              local = FALSE,
+hemibrain_lm_lhns <- function(local = FALSE,
                               folder = "hemibrain_neurons/light_level/lhns",
                               data = c("neuronlist",
                                        "nblast",
@@ -217,7 +211,7 @@ hemibrain_lm_lhns <- function(savedir = TRUE,
   if(cable=="lines"){
     data = "_dps"
   }
-  savedir = good_savedir(savedir = savedir,local = local)
+  savedir = good_savedir(local = local)
   gfile = find_gfile(savedir = savedir, file = sprintf("most_%s%s%s.rds",cable,data,brainspace), folder = folder)
   readRDS(gfile)
 }
