@@ -37,7 +37,7 @@ fafb_set_transmitter(
 
 \item{dataset}{either FAFB or hemibrain. If hemibrain, then \code{find} must be a vector of valid bodyids. Matches to FAFB neurons will be annootated for these bodyids, using \code{hemibrain_matches}.}
 
-\item{putative}{if \code{TRUE} the owrd 'putative' is added to all lineage annotations to indicate to users that the labelled neurons may not have been given the correct lineages. More work may need to be done to solidify these assignments.}
+\item{putative}{if \code{TRUE} the word 'putative' is added to all lineage annotations to indicate to users that the labelled neurons may not have been given the correct lineages. More work may need to be done to solidify these assignments.}
 
 \item{delete.find}{logical, is \code{TRUE} then if \code{find} is an annotation, it will be wiped from the neuron after this function is used (if you have permission to remove it)}
 
