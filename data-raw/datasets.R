@@ -204,8 +204,5 @@ ns = neuprint_search(paste(unique(lh.meta$type),collapse="|"),field="type")
 lhn.ids =  unique(c(ns$bodyid,upn.conn$partner))
 usethis::use_data(lhn.ids, overwrite = TRUE)
 
-### Lineage information ###
-
-
 ## Some notes on data
 # Badly skeletonised: "5812986485"
