@@ -77,7 +77,7 @@ hemibrain_matching <- function(ids = NULL,
                          hemibrain.nblast = NULL,
                          selected_file = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw",
                          batch_size = 10,
-                         db=hemibrain_neurons(),
+                         db=hemibrain_neurons(), # brain="FAFB"
                          match.type = c("FAFB", "LM"),
                          query = NULL,
                          overwrite = FALSE){
@@ -200,6 +200,8 @@ hemibrain_matching <- function(ids = NULL,
     # Read hemibrain neuron
     if(is.null(db)){
       lhn  = neuprintr::neuprint_read_neurons(n, all_segments = TRUE, heal = FALSE)
+      lhn = scale_neurons.neuronlist(lhn, scaling = (8/1000))
+      lhn = suppressWarnings(nat.templatebrains::xform_brain(lhn, reference = "FAFB14", sample = "JRCFIB2018F"))
     } else {
       lhn = tryCatch(db[as.character(n)], error = function(e) {
         warning("Cannot read neuron: ", n, " from local db; fetching from neuPrint!")
@@ -207,12 +209,10 @@ hemibrain_matching <- function(ids = NULL,
         })
     }
     # Transform hemibrain neuron to FAFB space
-    lhn = scale_neurons.neuronlist(lhn, scaling = (8/1000))
     message("Hemibrain body ID: ", lhn[n,"bodyid"])
     message("Hemibrain-assigned cell type : ",lhn[n,"type"])
     # Read top 10 FAFB matches
     if(match.type=="FAFB"){
-      lhn = suppressWarnings(nat.templatebrains::xform_brain(lhn, reference = "FAFB14", sample = "JRCFIB2018F"))
       message(sprintf("Reading the top %s FAFB matches",batch_size))
       r = tryCatch(sort(hemibrain.nblast[,as.character(n)],decreasing = TRUE), error = function(e) NULL)
       if(is.null(r)){
@@ -1029,7 +1029,7 @@ hemibrain_matches <- function(priority = c("FAFB","hemibrain")){
                                    "FAFB.match", "FAFB.match.quality", "LM.match", "LM.match.quality", "dataset")]
   matched.f = fafb.matches[,c("skid",  "cell.type",  "cell", "cellBodyFiber", "ItoLee_Hemilineage",
                               "hemibrain.match", "hemibrain.match.quality", "LM.match", "LM.match.quality","dataset")]
-  colnames(matched.h) = colnames(matched.f) = c("id","cell.type", "cell","ItoLee_Hemilineage","match","quality", "LM.match", "LM.match.quality","dataset")
+  colnames(matched.h) = colnames(matched.f) = c("id","cell.type", "cell","cellBodyFiber","ItoLee_Hemilineage","match","quality", "LM.match", "LM.match.quality","dataset")
   matched = rbind(matched.h,matched.f)
   matched$quality[is.na(matched$match)] = "none"
   matched$match[is.na(matched$match)] = "none"
@@ -1165,7 +1165,7 @@ lm_matches <- function(priority = c("hemibrain","lm")){
                                    "LM.match", "LM.match.quality", "FAFB.match", "FAFB.match.quality", "dataset")]
   matched.f = lm.matches[,c("id",  "cell.type",  "cell", "cellBodyFiber", "ItoLee_Hemilineage",
                               "hemibrain.match", "hemibrain.match.quality", "FAFB.match", "FAFB.match.quality","dataset")]
-  colnames(matched.h) = colnames(matched.f) = c("id","cell.type", "cell","ItoLee_Hemilineage","match","quality", "LM.match", "LM.match.quality","dataset")
+  colnames(matched.h) = colnames(matched.f) = c("id","cell.type", "cell","cellBodyFiber","ItoLee_Hemilineage","match","quality", "LM.match", "LM.match.quality","dataset")
   matched = rbind(matched.h,matched.f)
   matched$quality[is.na(matched$match)] = "none"
   matched$match[is.na(matched$match)] = "none"
