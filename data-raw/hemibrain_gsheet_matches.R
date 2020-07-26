@@ -32,6 +32,7 @@ while(length(hls)){
 
 # Add all hemibrain neurons to sheet
 hemibrain_matching_rewrite()
+matches = hemibrain_matches()
 fafb_matching_rewrite()
 hemibrain_matching_transfers()
 
@@ -78,8 +79,8 @@ googlesheets4::write_sheet(seeds,
 # Organise FAFB hemilineage annotations
 a <- catmaid::catmaid_get_annotationlist()
 volker.old <- subset(a$annotations, grepl("Volker_|volker_", name))
-volker <- subset(a$annotations, grepl("Hartenstein", name))
-itolee <- subset(a$annotations, grepl("Ito", name))
+volker <- subset(a$annotations, grepl("Hartenstein_", name))
+itolee <- subset(a$annotations, grepl("ItoLee_", name))
 volker.lineages <-  subset(a$annotations, grepl("Hartenstein_Lineage: ", name))
 volker.hemilineages <-  subset(a$annotations, grepl("Hartenstein_Hemilineage: ", name))
 itolee.lineages <-  subset(a$annotations, grepl("ItoLee_Lineage: ", name))
