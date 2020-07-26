@@ -663,7 +663,7 @@ fafb_matching <- function(ids = NULL,
   # Read the Google Sheet
   gs = gsheet_manipulation(FUN = googlesheets4::read_sheet,
                            ss = selected_file,
-                           sheet = "fafb",
+                           sheet = "FAFB",
                            guess_max = 3000,
                            return = TRUE)
   gs$skid = correct_id(gs$skid)
@@ -825,7 +825,7 @@ fafb_matching <- function(ids = NULL,
       # Read!
       gs2 = gsheet_manipulation(FUN = googlesheets4::read_sheet,
                                 ss = selected_file,
-                                sheet = "fafb",
+                                sheet = "FAFB",
                                 guess_max = 3000,
                                 return = TRUE)
       gs2$skid = correct_id(gs2$skid)
@@ -837,12 +837,12 @@ fafb_matching <- function(ids = NULL,
                     ids = unsaved,
                     id.field = "skid",
                     column = match.field,
-                    ws = "fafb")
+                    ws = "FAFB")
       write_matches(gs=gs,
                     ids = unsaved,
                     id.field = "skid",
                     column = quality.field,
-                    ws = "fafb")
+                    ws = "FAFB")
       unsaved = c()
       gs = gs2
       rgl::bg3d("white")
@@ -854,7 +854,7 @@ fafb_matching <- function(ids = NULL,
     # Read!
     gs2 = gsheet_manipulation(FUN = googlesheets4::read_sheet,
                               ss = selected_file,
-                              sheet = "fafb",
+                              sheet = "FAFB",
                               guess_max = 3000,
                               return = TRUE)
     gs2$skid = correct_id(gs2$skid)
@@ -866,12 +866,12 @@ fafb_matching <- function(ids = NULL,
                   ids = unsaved,
                   id.field = "skid",
                   column = match.field,
-                  ws = "fafb")
+                  ws = "FAFB")
     write_matches(gs=gs,
                   ids = unsaved,
                   id.field = "skid",
                   column = quality.field,
-                  ws = "fafb")
+                  ws = "FAFB")
   }
   say_encouragement(initials)
 }
@@ -934,7 +934,7 @@ hemibrain_matches <- function(priority = c("FAFB","hemibrain")){
   # Get FAFB matches
   fafb.matches = gsheet_manipulation(FUN = googlesheets4::read_sheet,
                                                   ss = selected_file,
-                                                  sheet = "fafb",
+                                                  sheet = "FAFB",
                                                   return = TRUE)
   fafb.matches$skid = correct_id(fafb.matches$skid)
   fafb.matches = subset(fafb.matches, !grepl("l",fafb.matches$side))
@@ -1025,6 +1025,8 @@ hemibrain_matches <- function(priority = c("FAFB","hemibrain")){
   hemibrain.matches$cell = paste0(hemibrain.matches$cell.type,"#",ave(hemibrain.matches$cell.type,hemibrain.matches$cell.type,FUN= seq.int))
 
   # Make matching data frame
+  hemibrain.matches$dataset = "hemibrain"
+  fafb.matches$dataset = "FAFB"
   matched.h = hemibrain.matches[,c("bodyid", "cell.type", "cell", "cellBodyFiber", "ItoLee_Hemilineage",
                                    "FAFB.match", "FAFB.match.quality", "LM.match", "LM.match.quality", "dataset")]
   matched.f = fafb.matches[,c("skid",  "cell.type",  "cell", "cellBodyFiber", "ItoLee_Hemilineage",
@@ -1161,6 +1163,8 @@ lm_matches <- function(priority = c("hemibrain","lm")){
   lm.matches$cellBodyFiber = hemibrain.matches$cellBodyFiber[match(lm.matches$hemibrain.match,hemibrain.matches$bodyid)]
 
   # Make matching data frame
+  hemibrain.matches$dataset = "hemibrain"
+  lm.matches$dataset = "lm"
   matched.h = hemibrain.matches[,c("bodyid", "cell.type", "cell", "cellBodyFiber", "ItoLee_Hemilineage",
                                    "LM.match", "LM.match.quality", "FAFB.match", "FAFB.match.quality", "dataset")]
   matched.f = lm.matches[,c("id",  "cell.type",  "cell", "cellBodyFiber", "ItoLee_Hemilineage",
@@ -1214,7 +1218,7 @@ lm_matches <- function(priority = c("hemibrain","lm")){
 #' \dontrun{
 #'
 #' # Add a mising FAFB projection neuron, so we can match it later:
-#' hemibrain_matching_add(ids = "16", sheet = "fafb", User = "ASB")
+#' hemibrain_matching_add(ids = "16", sheet = "FAFB", User = "ASB")
 #'
 #' # Match interactively!
 #' fafb_matching(ids="16", overwrite = TRUE)
@@ -1275,12 +1279,12 @@ hemibrain_add_made_matches <- function(df,
   }
   if(direction%in%c("both","FAFB-hemibrain")){
     message("Reading FAFB sheet")
-    gs = hemibrain_match_sheet(sheet = "fafb")
+    gs = hemibrain_match_sheet(sheet = "FAFB")
     missing = setdiff(df$skid,gs$skid)
     if(length(missing)){
       message("Adding missing FAFB bodyids")
-      hemibrain_matching_add(ids = missing, sheet = "fafb", User = User)
-      gs = hemibrain_match_sheet(sheet = "fafb")
+      hemibrain_matching_add(ids = missing, sheet = "FAFB", User = User)
+      gs = hemibrain_match_sheet(sheet = "FAFB")
     }
     message("Checking that hemibrain matches exist")
     hdf = subset(df, df$skid %in% gs$skid)
@@ -1297,12 +1301,12 @@ hemibrain_add_made_matches <- function(df,
     message("Adding matches")
     write_matches(gs=gs,
                   ids = as.character(hdf$skid),
-                  ws="fafb",
+                  ws="FAFB",
                   id.field ="skid",
                   column = "hemibrain.match")
     write_matches(gs=gs,
                   ids = as.character(hdf$skid),
-                  ws="fafb",
+                  ws="FAFB",
                   id.field ="skid",
                   column = "hemibrain.match.quality")
   }
@@ -1310,7 +1314,7 @@ hemibrain_add_made_matches <- function(df,
 
 # Get correct GSheet
 hemibrain_match_sheet <- function(selected_file = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw",
-                                  sheet = c("hemibrain","fafb")
+                                  sheet = c("hemibrain","FAFB")
 ){
   # Which sheet
   sheet = match.arg(sheet)
@@ -1389,7 +1393,7 @@ hemibrain_matching_transfers <- function(selected_file = "1OSlDtnR3B1LiB5cwI5x5Q
   # Read the FAFB Google Sheet
   fg = gsheet_manipulation(FUN = googlesheets4::read_sheet,
                            ss = selected_file,
-                           sheet = "fafb",
+                           sheet = "FAFB",
                            guess_max = 3000,
                            return = TRUE)
   fg$skid = correct_id(fg$skid)
@@ -1416,7 +1420,7 @@ hemibrain_matching_transfers <- function(selected_file = "1OSlDtnR3B1LiB5cwI5x5Q
   if(length(sorted)){
     update_gsheet(update = fg[sorted,],
                 gs = fg,
-                tab = "fafb",
+                tab = "FAFB",
                 match = "LM",
                 id = "skid")
   }
@@ -1501,7 +1505,7 @@ hemibrain_matching_transfers <- function(selected_file = "1OSlDtnR3B1LiB5cwI5x5Q
   if(length(sorted)){
     update_gsheet(update = fg[sorted,],
                 gs = fg,
-                tab = "fafb",
+                tab = "FAFB",
                 match = "hemibrain",
                 id = "skid")
   }
@@ -1541,7 +1545,7 @@ update_gsheet <- function(update,
 fafb_matching_rewrite <- function(selected_file  = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw",
                                    ...){
   matches = hemibrain_matches()
-  gs = hemibrain_match_sheet(sheet = "fafb", selected_file = selected_file)
+  gs = hemibrain_match_sheet(sheet = "FAFB", selected_file = selected_file)
   n1 = elmr::fafb_get_meta("annotation:Lineage_annotated", batch = TRUE, ...)
   ids.missing = setdiff(gs$skid,n1$skid)
   n2 = elmr::fafb_get_meta(unique(ids.missing), batch = TRUE, ...)
@@ -1562,14 +1566,17 @@ fafb_matching_rewrite <- function(selected_file  = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd
   n = n[,colnames(gs)]
   googlesheets4::write_sheet(n[0,],
                              ss = selected_file,
-                             sheet = "fafb")
+                             sheet = "FAFB")
   batches = split(1:nrow(n), ceiling(seq_along(1:nrow(n))/500))
   for(i in batches){
     gsheet_manipulation(FUN = googlesheets4::sheet_append,
                                      data = n[min(i):max(i),],
                                      ss = selected_file,
-                                     sheet = "fafb")
+                                     sheet = "FAFB")
   }
+  missing = setdiff(subset(matches,dataset=="hemibrain")$match,subset(matches,dataset=="FAFB")$id)
+  missing = unique(missing[!missing%in%c("none","","NA"," ","good","medium","poor","tract")])
+  hemibrain_matching_add(ids = missing, sheet="FAFB", ...)
 }
 
 
