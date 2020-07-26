@@ -190,7 +190,7 @@ fafb_hemibrain_annotate <- function(x, ...){
 #' @export
 fafb_set_hemilineage <- function(find,
                                  ItoLee_Hemilineage,
-                                 dataset = c("fafb","hemibrain"),
+                                 dataset = c("FAFB","hemibrain"),
                                  putative = TRUE,
                                  delete.find = FALSE,
                                  ...){
@@ -285,7 +285,7 @@ fafb_set_hemilineage <- function(find,
 #' @rdname fafb_hemibrain_annotate
 #' @export
 fafb_set_transmitter <-function(find,
-                                dataset = c("fafb","hemibrain"),
+                                dataset = c("FAFB","hemibrain"),
                                 putative = TRUE,
                                 transmitter = c("acetylcholine","GABA","glutamate"),
                                 delete.find = FALSE,
