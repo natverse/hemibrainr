@@ -106,6 +106,24 @@ for(o in volker.old$name){
 }
 catmaid::catmaid_remove_annotations_for_skeletons(unique(wrongs), volker.old$id, force = TRUE)
 
+# Set transmitters for known matches in FAFB
+lm = lm_matches()
+lm.select = subset(lm, id %in% c(names(subset(lhns::lh.mcfo,classic.transmitter%in%c("acetylcholine","GABA","glutamate"))),
+                          names(subset(lhns::lh.splits.dps,classic.transmitter%in%c("acetylcholine","GABA","glutamate"))))
+                          & quality %in% c("good","medium"))
+hemi = unique(lm.select$match)
+for(h in hemi){
+  match = lm[h,"match"]
+  t = lhns::lh.mcfo[match,"classic.transmitter"]
+  if(is.issue(t)){
+    t = lhns::lh.splits.dps[,"classic.transmitter"]
+  }
+  if(is.issue(t)|t%in%c("none"," ","","NA")){
+    next
+  }
+  fafb_set_transmitter(find = h, dataset = "hemibrain", putative = FALSE, transmitter = t)
+}
+
 # Correct mis-assignment in FAFB. Example:
 # ## Wrong FAFB Ito_Lee Hemilineage: CREa2
 # ## Correct one: CREa2_ventral
