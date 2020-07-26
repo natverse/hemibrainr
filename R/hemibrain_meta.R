@@ -211,6 +211,9 @@ fafb_set_hemilineage <- function(find,
       skds = unique(b$skid)
     }
   }
+  if(!length(skds)){
+    stop("FAFB skeleton IDs could not be found")
+  }
   if(ItoLee_Hemilineage!="wipe"){
     # Make sure we have a valid hemilineage
     if(length(ItoLee_Hemilineage)>1|length(ItoLee_Hemilineage)==0){
@@ -298,9 +301,12 @@ fafb_set_transmitter <-function(find,
     find = as.character(find)
     find = unique(matches[find,"match"])
     find = find[!is.na(find)]
-    skds = find[!find%in%c("none",""," ")]
+    skds = find[!find%in%c("none",""," ","NA","unknown")]
   }else{
     skds = catmaid::catmaid_skids(find, ...)
+  }
+  if(!length(skds)){
+    stop("FAFB skeleton IDs could not be found")
   }
   possible.transmitters = c("Vglut","ACh","Ach","acetylcholine","ChAT", "ChA", "GABA","glutamate","Glutamate",
                             "serotonine","dopamine","octopammine","SIFamide","unknown","NA")
