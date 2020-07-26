@@ -116,12 +116,13 @@ for(h in hemi){
   match = lm[h,"match"]
   t = lhns::lh.mcfo[match,"classic.transmitter"]
   if(is.issue(t)){
-    t = lhns::lh.splits.dps[,"classic.transmitter"]
+    t = lhns::lh.splits.dps[match,"classic.transmitter"]
   }
-  if(is.issue(t)|t%in%c("none"," ","","NA")){
+  if(is.issue(t)|t%in%c("none"," ","","NA","unknown")){
     next
   }
-  fafb_set_transmitter(find = h, dataset = "hemibrain", putative = FALSE, transmitter = t)
+  tryCatch(fafb_set_transmitter(find = h, dataset = "hemibrain", putative = FALSE, transmitter = t),
+           error = function(e) message("Error for: ",h," ", t))
 }
 
 # Correct mis-assignment in FAFB. Example:
