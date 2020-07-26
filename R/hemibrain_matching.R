@@ -1169,7 +1169,7 @@ lm_matches <- function(priority = c("hemibrain","lm")){
                                    "LM.match", "LM.match.quality", "FAFB.match", "FAFB.match.quality", "dataset")]
   matched.f = lm.matches[,c("id",  "cell.type",  "cell", "cellBodyFiber", "ItoLee_Hemilineage",
                               "hemibrain.match", "hemibrain.match.quality", "FAFB.match", "FAFB.match.quality","dataset")]
-  colnames(matched.h) = colnames(matched.f) = c("id","cell.type", "cell","cellBodyFiber","ItoLee_Hemilineage","match","quality", "LM.match", "LM.match.quality","dataset")
+  colnames(matched.h) = colnames(matched.f) = c("id","cell.type", "cell","cellBodyFiber","ItoLee_Hemilineage","match","quality", "FAFB.match", "FAFB.match.quality","dataset")
   matched = rbind(matched.h,matched.f)
   matched$quality[is.na(matched$match)] = "none"
   matched$match[is.na(matched$match)] = "none"
