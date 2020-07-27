@@ -343,6 +343,7 @@ hemibrain_neurons <- function(local = FALSE,
                               brain = c("JRCFIB2018Fraw","JRCFIB2018F","FAFB","JFRC2","JRC2018F","FCWB"),
                               mirror = FALSE){
   neuron.split = match.arg(neuron.split)
+  brain = match.arg(brain)
   savedir = good_savedir(local = local,
                       neuron.split = neuron.split)
   neuronsdir = paste0(savedir,"hemibrain_neurons/")
