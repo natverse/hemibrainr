@@ -159,7 +159,8 @@ hemibrain_reroot.neuronlist <- function(x,
       meshes = hemibrain_roi_meshes()
     }
   }
-  x = add_field_seq(x,x[,"bodyid"],field="bodyid")
+  x = tryCatch(add_field_seq(x,x[,"bodyid"],field="bodyid"),
+               error = function(e) add_field_seq(x,names(x),field="bodyid"))
   neurons = suppressWarnings(nat::nlapply(x, hemibrain_reroot.neuron, meshes = meshes, hemibrain_somas = hemibrain_somas, googlesheet = FALSE, ...))
   if(sum(!names(x)%in%names(neurons))>0){
     missed = setdiff(names(x),names(neurons))
