@@ -60,12 +60,12 @@ hemibrain_read_neurons<-function(x = NULL,
                                  remove.bad.synapses = FALSE,
                                  clean = FALSE,
                                  ...){
-  if(is.null(x) && isFALSE(savedir)){
+  if(is.null(x) && isFALSE(local)){
     stop("You must either supply bodyids to read from neuPrint using x, or
-         specify a location from which to read saved a save neuronlistfh object using savedir. See
+         specify a location from which to read saved a save neuronlistfh object using 'local'. See
          ?hemibrain_download_neurons for details on the latter option.")
   }
-  if(!isFALSE(savedir)){
+  if(!isFALSE(local)){
       neurons.flow.fh = hemibrain_neurons(local = local)
       if(!is.null(neurons.flow.fh)){
         y = intersect(x,names(neurons.flow.fh))
@@ -79,7 +79,7 @@ hemibrain_read_neurons<-function(x = NULL,
   }else{
     neurons.flow.fh = NULL
   }
-  if(is.null(neurons.flow.fh)|isFALSE(savedir)){
+  if(is.null(neurons.flow.fh)|isFALSE(local)){
     neurons = neuprintr::neuprint_read_neurons(x, ...)
     neurons.flow = hemibrain_flow_centrality(neurons, ...)
     if(remove.bad.synapses){
