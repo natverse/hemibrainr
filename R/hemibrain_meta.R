@@ -406,6 +406,9 @@ fafb_hemilineage_contents <- function(hemilineage,
   hl[,]$xyz = xyz
   file = sprintf("%s/%s_Hemilineage: %s.csv",path,nomenclature,hemilineage)
   message("Saving .csv at: ")
+  chosen.cols = c("skid", "name", "ItoLee_Hemilineage",
+                  "Hartenstein_Hemilineage",
+                  "confirmed", "FAFB.url", "FAFB.seg.url", "xyz", "hemibrain_match")
   write.csv(hl[,chosen.cols],file=file)
 }
 
