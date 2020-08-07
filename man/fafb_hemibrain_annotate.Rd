@@ -11,7 +11,7 @@ fafb_hemibrain_annotate(x, ...)
 fafb_set_hemilineage(
   find,
   ItoLee_Hemilineage,
-  dataset = c("fafb", "hemibrain"),
+  dataset = c("FAFB", "hemibrain"),
   putative = TRUE,
   delete.find = FALSE,
   ...
@@ -19,7 +19,7 @@ fafb_set_hemilineage(
 
 fafb_set_transmitter(
   find,
-  dataset = c("fafb", "hemibrain"),
+  dataset = c("FAFB", "hemibrain"),
   putative = TRUE,
   transmitter = c("acetylcholine", "GABA", "glutamate"),
   delete.find = FALSE,

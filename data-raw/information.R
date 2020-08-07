@@ -35,7 +35,7 @@ for(ct in unique(pn.info$cell.type)){
   pn.info$ct.layer[pn.info$cell.type==ct] = layer
 }
 
-# MBON information
+## MBON information
 mbon.info = neuprint_search(".*MBON.*")
 mb_ann = hemibrainr:::gsheet_manipulation(FUN = googlesheets4::read_sheet,
                                           ss = "1NROq0fw-WXGgu_mcWWVW9-l3YOdWHk-nESkI23fz-bo",
@@ -56,6 +56,12 @@ for(ct in unique(mbon.info$cell.type)){
 mbon.info$match = matches[as.character(mbon.info$bodyid),"match"]
 mbon.info$quality = matches[as.character(mbon.info$bodyid),"quality"]
 
+
+### olfactory TON information
+ton.info = lhns::hemibrain_tons
+
+
 # Save information
 usethis::use_data(pn.info, overwrite = TRUE)
 usethis::use_data(mbon.info, overwrite = TRUE)
+usethis::use_data(ton.info, overwrite = TRUE)

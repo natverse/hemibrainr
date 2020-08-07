@@ -5,7 +5,7 @@
 \alias{hemibrain_somas}
 \title{Soma locations for hemibrain neurons}
 \format{
-An object of class \code{data.frame} with 22567 rows and 13 columns.
+An object of class \code{data.frame} with 22560 rows and 13 columns.
 }
 \usage{
 hemibrain_somas

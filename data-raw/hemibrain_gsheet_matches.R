@@ -3,6 +3,10 @@
 ## Code in the package lhns was first used to create these google sheets
 ### And make initial matches.
 
+
+# Update numbers
+
+
 # The google sheet database:
 # https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit#gid=0
 selected_file = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw"
@@ -129,9 +133,9 @@ for(h in hemi){
 # ## Wrong FAFB Ito_Lee Hemilineage: CREa2
 # ## Correct one: CREa2_ventral
 # ## Hemibrain CBF: ADM05
-fafb_set_hemilineage(find = "ItoLee_Hemilineage: VLPl&p2_posterior",
+fafb_set_hemilineage(find = "ItoLee_Hemilineage: LHd2",
                      putative = FALSE,
-                     ItoLee_Hemilineage = "VLPl&p2_posterior")
+                     ItoLee_Hemilineage = "LHd2")
 
 
 

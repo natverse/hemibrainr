@@ -231,6 +231,7 @@
 
 #' Meta information of certain neuron classes
 #'
+#' For olfactory projection neurons (PNS), non-MB third order olfactory neurons (TONs) and MB output neurons (MBONs).
 #' Collated by the Flyconnectome group.
 #'
 #' @name info
@@ -238,3 +239,5 @@
 "pn.info"
 #' @rdname info
 "mbon.info"
+#' @rdname info
+"ton.info"
