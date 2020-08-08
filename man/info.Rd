@@ -12,7 +12,7 @@ An object of class \code{data.frame} with 333 rows and 26 columns.
 
 An object of class \code{data.frame} with 70 rows and 30 columns.
 
-An object of class \code{data.frame} with 4009 rows and 21 columns.
+An object of class \code{data.frame} with 2383 rows and 21 columns.
 }
 \usage{
 pn.info
