@@ -61,3 +61,28 @@ hemibrain_roi_meshes <- function(rois=NULL, microns = FALSE, superLevel=NULL, Om
     }, OmitFailures=OmitFailures, ...)
   hemibrain.rois
 }
+
+#' Orient the hemibrain in an RGL viewer
+#'
+#' @description Get a good, head-on view of the hemibrain.
+#'
+#' @return Repositions an RGL window
+#'
+#' @examples
+#' \dontrun{
+#' ab = neuprint_ROI_mesh(roi="AB(R)")
+#' hemibrain_view()
+#' plot3d(hemibrain.surf,col="grey",alpha=0.1)
+#' plot3d(ab, add = TRUE, col="red",alpha=0.3)
+#' }
+#' @export
+#' @seealso \code{\link{hemibrain_skeleton_check}}, \code{\link{hemibrain.surf}},
+#' \code{neuprintr::\link[neuprintr]{neuprint_ROI_mesh}}
+hemibrain_view <- function(){
+  rgl::rgl.viewpoint(userMatrix = structure(c(0.998991072177887, 0.00531792361289263,
+                                                   0.0445943176746368, 0, -0.0433036014437675, -0.149155631661415,
+                                                   0.987864851951599, 0, 0.0119048282504082, -0.988799571990967,
+                                                   -0.148774951696396, 0, 0, 0, 0, 1), .Dim = c(4L, 4L)), zoom = 0.710681617259979)
+}
+
+
