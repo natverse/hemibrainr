@@ -6,6 +6,7 @@
 \alias{pn.info}
 \alias{mbon.info}
 \alias{ton.info}
+\alias{lc.info}
 \title{Meta information of certain neuron classes}
 \format{
 An object of class \code{data.frame} with 333 rows and 26 columns.
@@ -13,6 +14,8 @@ An object of class \code{data.frame} with 333 rows and 26 columns.
 An object of class \code{data.frame} with 70 rows and 30 columns.
 
 An object of class \code{data.frame} with 2383 rows and 21 columns.
+
+An object of class \code{data.frame} with 2129 rows and 63 columns.
 }
 \usage{
 pn.info
@@ -20,9 +23,11 @@ pn.info
 mbon.info
 
 ton.info
+
+lc.info
 }
 \description{
-For olfactory projection neurons (PNS), non-MB third order olfactory neurons (TONs) and MB output neurons (MBONs).
+For olfactory projection neurons (PNS), non-MB third order olfactory neurons (TONs), lobula connection visual neurons (LC) and MB output neurons (MBONs).
 Collated by the Flyconnectome group.
 }
 \keyword{datasets}

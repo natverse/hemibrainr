@@ -56,12 +56,15 @@ for(ct in unique(mbon.info$cell.type)){
 mbon.info$match = matches[as.character(mbon.info$bodyid),"match"]
 mbon.info$quality = matches[as.character(mbon.info$bodyid),"quality"]
 
-
 ### olfactory TON information
 ton.info = lhns::hemibrain_tons
 
+## Visual projection neuron information
+lc.info = neuprint_search("LC.*",field="type")
+lc.info = hemibrain_get_meta(lc.info$bodyid)
 
 # Save information
 usethis::use_data(pn.info, overwrite = TRUE)
 usethis::use_data(mbon.info, overwrite = TRUE)
 usethis::use_data(ton.info, overwrite = TRUE)
+usethis::use_data(lc.info, overwrite = TRUE)
