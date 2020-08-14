@@ -19,6 +19,7 @@
 \alias{kc.ids}
 \alias{apl.ids}
 \alias{cent.ids}
+\alias{lc.ids}
 \title{Bodyids for neuron classes}
 \format{
 An object of class \code{character} of length 2654.
@@ -52,6 +53,8 @@ An object of class \code{numeric} of length 2035.
 An object of class \code{numeric} of length 5.
 
 An object of class \code{numeric} of length 23.
+
+An object of class \code{character} of length 2129.
 }
 \usage{
 rn.ids
@@ -85,6 +88,8 @@ kc.ids
 apl.ids
 
 cent.ids
+
+lc.ids
 }
 \description{
 Bodyids for neuron classes. Hard saved equivalent for \code{\link{class2ids}}.

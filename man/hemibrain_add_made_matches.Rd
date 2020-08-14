@@ -80,8 +80,6 @@ Currently, information is recorded in a
 # Add a mising FAFB projection neuron, so we can match it later:
 hemibrain_matching_add(ids = "16", sheet = "FAFB", User = "ASB")
 
-# Match interactively!
-fafb_matching(ids="16", overwrite = TRUE)
 
 }}
 }

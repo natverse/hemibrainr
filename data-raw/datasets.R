@@ -136,7 +136,7 @@ usethis::use_data(hemibrain_al.surf, overwrite = TRUE)
 # lhn.ids = read.csv("data-raw/annotations/bodyids_lhns.csv")
 lhn.ids = lhns::hemibrain.lhn.bodyids
 ton.ids = as.character(unique(ton.info$bodyid))
-lc.ids = lc.info$cellBodyFiber
+lc.ids = as.character(unique(lc.info$bodyid))
 rn.ids = class2ids("RN", possible = TRUE)
 orn.ids = class2ids("ORN")
 hrn.ids = class2ids("HRN")
