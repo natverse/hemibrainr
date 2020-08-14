@@ -136,6 +136,7 @@ usethis::use_data(hemibrain_al.surf, overwrite = TRUE)
 # lhn.ids = read.csv("data-raw/annotations/bodyids_lhns.csv")
 lhn.ids = lhns::hemibrain.lhn.bodyids
 ton.ids = as.character(unique(ton.info$bodyid))
+lc.ids = lc.info$cellBodyFiber
 rn.ids = class2ids("RN", possible = TRUE)
 orn.ids = class2ids("ORN")
 hrn.ids = class2ids("HRN")
@@ -174,8 +175,7 @@ usethis::use_data(mbon.ids, overwrite = TRUE)
 usethis::use_data(kc.ids, overwrite = TRUE)
 usethis::use_data(apl.ids, overwrite = TRUE)
 usethis::use_data(cent.ids, overwrite = TRUE)
-
-
+usethis::use_data(lc.ids, overwrite = TRUE)
 
 ## Some notes on data
 # Badly skeletonised: "5812986485"

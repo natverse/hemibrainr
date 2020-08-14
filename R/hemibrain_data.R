@@ -51,6 +51,9 @@
 #' @name classed.ids
 #' @rdname classed.ids
 "cent.ids"
+#' @name classed.ids
+#' @rdname classed.ids
+"lc.ids"
 
 #' The hemibrain mesh
 #'

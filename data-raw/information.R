@@ -24,16 +24,18 @@ pn.info = merge(pn.info,
                 all.x = TRUE, all.y = FALSE)
 pn.info$n.cell.type = sapply(pn.info$type, function(x) nrow(subset(pn.info,type==x)))
 rownames(pn.info) = pn.info$bodyid
-pn.info$class = ifelse(grepl("multi",pn.info$type),"mPN", "uPN")
+pn.info$class = pn.info$PN_type
 pn.info$neurotransmitter = ifelse(pn.info$tract=="mlALT","GABA","acetylcholine")
 pn.info$glomerulus = gsub(" ","",pn.info$glomerulus)
 pn.info$glomerulus[pn.info$class=='mPN'] = "mPN"
 pn.info$layer = hemibrain_olfactory_layers[match(pn.info$bodyid,hemibrain_olfactory_layers$node),"layer_mean"]
+pn.info$cell.type = pn.info$type
 pn.info$ct.layer = NA
 for(ct in unique(pn.info$cell.type)){
   layer = round(mean(subset(pn.info,cell.type==ct)$layer))
   pn.info$ct.layer[pn.info$cell.type==ct] = layer
 }
+pn.info=pn.info[,!colnames(pn.info)%in%c( "X", "PN_type",  "fafb_type", "PN_type_revised")]
 
 ## MBON information
 mbon.info = neuprint_search(".*MBON.*")
@@ -44,7 +46,7 @@ mb_ann = hemibrainr:::gsheet_manipulation(FUN = googlesheets4::read_sheet,
 mbon.info = cbind(mbon.info,mb_ann[match(mbon.info$bodyid,mb_ann$bodyId),])
 mbon.info[is.na(mbon.info)] = "unknown"
 mbon.info = subset(mbon.info, compartments!=""&!is.na(compartments))
-mbon.info$cell.type = paste0("MBON-",mbon.info$compartments)
+mbon.info$cell.type = gsub("_.*","",mbon.info$name)#paste0("MBON-",mbon.info$compartments)
 mbon.info$class = "MBON"
 rownames(mbon.info) = mbon.info$bodyid
 mbon.info$layer = hemibrain_olfactory_layers[match(mbon.info$bodyid,hemibrain_olfactory_layers$node),"layer_mean"]
@@ -62,6 +64,7 @@ ton.info = lhns::hemibrain_tons
 ## Visual projection neuron information
 lc.info = neuprint_search("LC.*",field="type")
 lc.info = hemibrain_get_meta(lc.info$bodyid)
+lc.info$class = "LC"
 
 # Save information
 usethis::use_data(pn.info, overwrite = TRUE)

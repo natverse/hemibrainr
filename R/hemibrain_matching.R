@@ -207,6 +207,8 @@ hemibrain_matching <- function(ids = NULL,
         warning("Cannot read neuron: ", n, " from local db; fetching from neuPrint!")
         nat::as.neuronlist(neuprintr::neuprint_read_neurons(n, all_segments = TRUE, heal = FALSE))
         })
+      lhn = scale_neurons.neuronlist(lhn, scaling = (8/1000))
+      lhn = suppressWarnings(nat.templatebrains::xform_brain(lhn, reference = "FAFB14", sample = "JRCFIB2018F"))
     }
     # Transform hemibrain neuron to FAFB space
     message("Hemibrain body ID: ", lhn[n,"bodyid"])
@@ -1220,8 +1222,6 @@ lm_matches <- function(priority = c("hemibrain","lm")){
 #' # Add a mising FAFB projection neuron, so we can match it later:
 #' hemibrain_matching_add(ids = "16", sheet = "FAFB", User = "ASB")
 #'
-#' # Match interactively!
-#' fafb_matching(ids="16", overwrite = TRUE)
 #'
 #' }}
 #' @seealso \code{\link{hemibrain_matching}}

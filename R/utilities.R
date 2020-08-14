@@ -2,6 +2,14 @@
 ################################ Utilities ##################################
 #############################################################################
 
+# collapse matrix by names
+collapse_matrix_by_names <- function(M, FUN = mean, ...){
+  M = apply(M, 2, function(x) tapply(x, rownames(M), FUN, ...))
+  M = t(apply(t(M), 2, function(x) tapply(x, colnames(M), FUN, ...)))
+  M
+}
+
+
 # Add missing columns to a df
 add_blanks <- function(df, missing, add = ""){
   for(m in missing){
