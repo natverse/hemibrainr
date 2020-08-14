@@ -37,7 +37,8 @@ all.bodyids = c(all.bodyids,
                 mbon.ids,
                 alln.ids,
                 lhn.ids,
-                ton.ids
+                ton.ids,
+                lc.ids
                 )
 all.bodyids = unique(all.bodyids)
 write.csv(all.bodyids, file = "/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/hemibrain_all_neuron_bodyids.csv", row.names=FALSE)
