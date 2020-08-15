@@ -45,15 +45,15 @@ write.csv(all.bodyids, file = "/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/d
 message("Neuron bodyids: ", length(all.bodyids))
 
 # Read all neurons
-all.neurons = neuprint_read_neurons(all.bodyids,.parallel = TRUE, all_segments = TRUE)
+all.neurons = neuprint_read_neurons(all.bodyids,.parallel = TRUE, all_segments = TRUE, OmitFailures = TRUE)
 missing = setdiff(all.bodyids, names(all.neurons))
 if(length(missing)){
-  missing.neurons = neuprint_read_neurons(missing,.parallel = TRUE, all_segments = TRUE, heal = 10000)
+  missing.neurons = neuprint_read_neurons(missing,.parallel = TRUE, all_segments = TRUE, heal = 10000, OmitFailures = TRUE)
   all.neurons = c(all.neurons, missing.neurons)
 }
 missing = setdiff(all.bodyids, names(all.neurons))
 if(length(missing)){
-  missing.neurons = neuprint_read_neurons(missing,.parallel = TRUE, all_segments = TRUE, heal = FALSE)
+  missing.neurons = neuprint_read_neurons(missing,.parallel = TRUE, all_segments = TRUE, heal = FALSE, OmitFailures = TRUE)
   all.neurons = c(all.neurons, missing.neurons)
 }
 all.neurons = add_field_seq(all.neurons,all.neurons[,"bodyid"],field="bodyid")
