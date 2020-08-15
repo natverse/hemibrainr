@@ -60,6 +60,7 @@ mbon.info$quality = matches[as.character(mbon.info$bodyid),"quality"]
 
 ### olfactory TON information
 ton.info = lhns::hemibrain_tons
+ton.info$class[ton.info$bodyid%in%cent.ids] = "CENT"
 
 ## Visual projection neuron information
 lc.info = neuprint_search("LC.*",field="type")
