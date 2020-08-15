@@ -953,11 +953,10 @@ hemibrain_matches <- function(priority = c("FAFB","hemibrain")){
   fafb.matches$hemibrain.match[unmatched] = "none"
 
   # Add in neuprint types
-  ntotype = hemibrain.matches$bodyid[is.na(hemibrain.matches$cell.type)]
-  meta = neuprintr::neuprint_get_meta(ntotype)
+  meta = neuprintr::neuprint_get_meta(hemibrain.matches$bodyid)
   types = meta$type
   names(types) = meta$bodyid
-  hemibrain.matches[names(types),"cell.type"] = types
+  hemibrain.matches[,"cell.type"] = types[as.character(hemibrain.matches$bodyid)]
 
   # Address FAFB cell types
   fafb.matches$cell.type = NA
@@ -1089,11 +1088,10 @@ lm_matches <- function(priority = c("hemibrain","lm")){
   lm.matches$hemibrain.match[unmatched] = "none"
 
   # Add in neuprint types
-  ntotype = hemibrain.matches$bodyid[is.na(hemibrain.matches$cell.type)]
-  meta = neuprintr::neuprint_get_meta(ntotype)
+  meta = neuprintr::neuprint_get_meta(hemibrain.matches$bodyid)
   types = meta$type
   names(types) = meta$bodyid
-  hemibrain.matches[names(types),"cell.type"] = types
+  hemibrain.matches[,"cell.type"] = types[as.character(hemibrain.matches$bodyid)]
 
   # Address lm cell types
   lm.matches$cell.type = NA
