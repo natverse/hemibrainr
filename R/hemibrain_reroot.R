@@ -382,6 +382,6 @@ hemibrain_skeleton_check <- function(x, # as read by neuprint_read_neurons
                                             ...)
 
   # Add new info to meta-data
-  x.goodsyn = metadata_add_tags(x.goodsyn)
+  x.goodsyn = tryCatch(metadata_add_tags(x.goodsyn), error = function(e) x.goodsyn)
   x.goodsyn
 }
