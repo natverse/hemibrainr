@@ -90,7 +90,8 @@
 #' 3D meshes of 51 olfactory + 7 thermosensory antennal lobe glomeruli for the
 #' the hemibrain volume. They are represented as a \code{\link[nat]{hxsurf}}
 #' object, in which 58 'regions' are defined, one for each glomerulus. Meshes
-#' are available both in raw voxels and in microns.
+#' are available both in raw voxels and in microns. You can see which glomeruli are truncated, and by
+#' roughly how much by examining \code{hemibrain_glomeruli_summary}.
 #'
 #' @details note that hemibrain coordinate system does has the
 #'   anterior-posterior axis aligned with the Y axis (rather than the Z axis,
@@ -116,6 +117,8 @@
 "hemibrain_al.surf"
 #' @rdname hemibrain_al.surf
 "hemibrain_al_microns.surf"
+#' @rdname hemibrain_al.surf
+"hemibrain_glomeruli_summary"
 
 #' Axon-dendrite split points calculated for all hemibrain neurons
 #'
