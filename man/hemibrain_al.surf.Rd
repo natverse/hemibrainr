@@ -4,11 +4,14 @@
 \name{hemibrain_al.surf}
 \alias{hemibrain_al.surf}
 \alias{hemibrain_al_microns.surf}
+\alias{hemibrain_glomeruli_summary}
 \title{Meshes for Antennal Lobe (AL) glomeruli}
 \format{
 An object of class \code{hxsurf} of length 4.
 
 An object of class \code{hxsurf} of length 4.
+
+An object of class \code{data.frame} with 58 rows and 6 columns.
 }
 \source{
 \url{https://neuprint.janelia.org/}
@@ -17,12 +20,15 @@ An object of class \code{hxsurf} of length 4.
 hemibrain_al.surf
 
 hemibrain_al_microns.surf
+
+hemibrain_glomeruli_summary
 }
 \description{
 3D meshes of 51 olfactory + 7 thermosensory antennal lobe glomeruli for the
 the hemibrain volume. They are represented as a \code{\link[nat]{hxsurf}}
 object, in which 58 'regions' are defined, one for each glomerulus. Meshes
-are available both in raw voxels and in microns.
+are available both in raw voxels and in microns. You can see which glomeruli are truncated, and by
+roughly how much by examining \code{hemibrain_glomeruli_summary}.
 }
 \details{
 note that hemibrain coordinate system does has the
