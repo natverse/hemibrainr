@@ -96,7 +96,11 @@ lengthnorm <- function(x){
 
 # hidden
 hemibrain_neuron_class <- function (x){
-  class(x) = unique(c(class(x),"neuprintneuron","catmaidneuron","neuron","list"))
+  if(nat::is.neuronlist(x)){
+    x = nat::nlapply(x,hemibrain_neuron_class)
+  }else{
+    class(x) = unique(c(class(x),"neuprintneuron","catmaidneuron","neuron","list"))
+  }
   x
 }
 

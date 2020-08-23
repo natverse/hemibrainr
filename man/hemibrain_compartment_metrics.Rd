@@ -8,7 +8,7 @@ hemibrain_compartment_metrics(
   x,
   resample = 10,
   delta = 62.5,
-  locality = TRUE,
+  locality = FALSE,
   ...
 )
 }

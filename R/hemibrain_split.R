@@ -460,7 +460,9 @@ flow_centrality.neuronlist <- function(x,
 #' @seealso \code{\link{flow_centrality}}, \code{\link{hemibrain_use_splitpoints}}
 #' @export
 hemibrain_splitpoints <- function(x){
-  x = nat::as.neuronlist(x)
+  if(!nat::is.neuronlist(x)){
+    x = nat::as.neuronlist(x)
+  }
   splits = data.frame()
   for(i in 1:length(x)){
     bi = names(x)[i]

@@ -30,7 +30,7 @@ message("Checked ", length(all.neurons.checked), " neurons")
 all.neurons.flow = flow_centrality(all.neurons.checked, mode = mode, polypre = polypre, split = split, .parallel = TRUE, OmitFailures = TRUE)
 missed = setdiff(names(all.neurons.checked),names(all.neurons.flow))
 if(length(missed)){
-  missed.flow = hemibrainr::add_Label(all.neurons.flow[as.character(missed)], Label = 3, internal.assignments = TRUE)
+  missed.flow = hemibrainr::add_Label(all.neurons.checked[as.character(missed)], Label = 3, internal.assignments = TRUE)
   all.neurons.flow[as.character(missed)] = missed.flow
 }
 message("Flow centrality calculated for ", length(all.neurons.flow), " neurons")

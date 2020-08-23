@@ -45,7 +45,7 @@
 #' @return a \code{data.frame} of metrics broken down by putative axon and dendrite, and their overlap_locality scores
 #' @seealso \code{\link{hemibrain_overlap_locality}}
 #' @export
-hemibrain_compartment_metrics <- function(x, resample = 10, delta = 62.5, locality = TRUE, ...){
+hemibrain_compartment_metrics <- function(x, resample = 10, delta = 62.5, locality = FALSE, ...){
   mets = nat::nlapply(x, compartment_metrics, resample = resample, delta = delta, locality = locality, ...)
   mets.df = do.call(rbind, mets)
   if(nrow(mets.df)==length(x)){
@@ -58,7 +58,7 @@ hemibrain_compartment_metrics <- function(x, resample = 10, delta = 62.5, locali
 }
 
 # hidden
-compartment_metrics <- function(x, resample = 10, delta = 62.5, locality = TRUE, ...){
+compartment_metrics <- function(x, resample = 10, delta = 62.5, locality = FALSE, ...){
 
   # Axon-dendrite split?
   if(!(sum(x$d$Label==2)&sum(x$d$Label==3))){

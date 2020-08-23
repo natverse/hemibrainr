@@ -1165,7 +1165,7 @@ suggest_soma = function(data = NULL,
   }
   # suggest which are part of a cluster
   ## dbscan::predict.dbscan_fast
-  suggest = predict(object = data$db,
+  suggest = stats::predict(object = data$db,
                                          data = data$gs_somas,
                                          newdata = points)
   if ((length(unique(suggest)) == 1) && (unique(suggest) == 0)) {

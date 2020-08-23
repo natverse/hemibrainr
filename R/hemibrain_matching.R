@@ -1572,7 +1572,7 @@ fafb_matching_rewrite <- function(selected_file  = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd
                                      ss = selected_file,
                                      sheet = "FAFB")
   }
-  missing = setdiff(subset(matches,dataset=="hemibrain")$match,subset(matches,dataset=="FAFB")$id)
+  missing = setdiff(subset(matches,matches$dataset=="hemibrain")$match,subset(matches,matches$dataset=="FAFB")$id)
   missing = unique(missing[!missing%in%c("none","","NA"," ","good","medium","poor","tract")])
   hemibrain_matching_add(ids = missing, sheet="FAFB", ...)
 }

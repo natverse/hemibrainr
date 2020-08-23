@@ -56,6 +56,8 @@ if(length(missing)){
   missing.neurons = neuprint_read_neurons(missing,.parallel = TRUE, all_segments = TRUE, heal = FALSE, OmitFailures = TRUE)
   all.neurons = c(all.neurons, missing.neurons)
 }
+good = sapply(all.neurons, function(x) nrow(x$d)>2)
+all.neurons = all.neurons[good]
 all.neurons = add_field_seq(all.neurons,all.neurons[,"bodyid"],field="bodyid")
 save(all.neurons, file = "/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/hemibrain_all_neurons.rda")
 message("Neurons read: ", length(all.neurons))
@@ -66,13 +68,14 @@ message("meshes loaded: ", length(hemibrain.rois))
 
 # Preprocess neurons
 all.neurons.checked = hemibrain_skeleton_check(all.neurons, meshes = hemibrain.rois, OmitFailures = TRUE, .parallel = TRUE, googlesheet = TRUE)
+1
 message("Checked ", length(all.neurons.checked), " neurons")
 
 # Get the right meta data
 meta = hemibrain_get_meta(x = names(all.neurons.checked))
 meta = meta[,]
 all.neurons.checked[,] = meta[names(all.neurons.checked),]
-all.neurons.checked = hemibrain_neuron_class(all.neurons.checked)
+all.neurons.checked = hemibrainr:::hemibrain_neuron_class(all.neurons.checked)
 
 # Save
 save(all.neurons.checked, file = "/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/hemibrain_all_neurons_flow_checked.rda")
