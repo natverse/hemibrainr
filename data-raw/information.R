@@ -67,8 +67,28 @@ lc.info = neuprint_search("LC.*",field="type")
 lc.info = hemibrain_get_meta(lc.info$bodyid)
 lc.info$class = "LC"
 
+# AL local neuron informatipn
+al.sheet = hemibrainr:::gsheet_manipulation(FUN = googlesheets4::read_sheet,
+                                            ss = "124eTYqQ8evTGm_z75V8jNVmfBI763_s4h1EAPVMiSvI",
+                                            sheet = "AL",
+                                            return = TRUE)
+alln.info = hemibrain_get_meta(alln.ids)
+alln.info = alln.info[!is.na(alln.info$type),]
+alln.info$class = "ALLN"
+alln.info$class =al.sheet[match(alln.info$bodyid,al.sheet$bodyid),"manual_morph_group"]
+alln.info$class = paste0("ALLN_",alln.info$class)
+rownames(alln.info) = alln.info$bodyid
+
+# See what the status of our FAB matches is. We need presynapses for predictions.
+a = alln.info[,c("bodyid", "cellBodyFiber","type", "ItoLee_Hemilineage", "FAFB.match", "FAFB.match.quality", "class")]
+a = subset(a, FAFB.match!='none' & !is.na(FAFB.match))
+a$catmaid_name = catmaid_get_neuronnames(a$FAFB.match)
+a$pre = sapply(a$FAFB.match,function(s) length(unique(catmaid_get_connector_table(s, direction = "outgoing")$connector_id)))
+catmaid_set_annotations_for_skeletons(a$FAFB.match, annotations = "matched_ALLNs")
+
 # Save information
 usethis::use_data(pn.info, overwrite = TRUE)
 usethis::use_data(mbon.info, overwrite = TRUE)
 usethis::use_data(ton.info, overwrite = TRUE)
 usethis::use_data(lc.info, overwrite = TRUE)
+usethis::use_data(alln.info, overwrite = TRUE)
