@@ -249,3 +249,5 @@
 "ton.info"
 #' @rdname info
 "lc.info"
+#' @rdname info
+"alln.info"
