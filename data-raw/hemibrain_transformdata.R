@@ -13,6 +13,7 @@ message("Start")
 library(nat.jrcbrains)
 library(catmaid)
 library(hemibrainr)
+library(fafbseg)
 message("packages loaded")
 
 # Get functions
@@ -36,11 +37,13 @@ dir.create("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/
 dir.create("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/JFRC2/data/",recursive = TRUE)
 dir.create("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/FCWB/data/",recursive = TRUE)
 dir.create("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/JRCFIB2018F/data/",recursive = TRUE)
+dir.create("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/flywire/data/",recursive = TRUE)
 all.neurons.flow.microns = scale_neurons(all.neurons.flow)
-all.neurons.fafb = xform_brain(all.neurons.flow.microns, reference = "FAFB14", sample = "JRCFIB2018F", .parallel = FALSE, verbose = TRUE)
-all.neurons.jrc2018f = xform_brain(all.neurons.flow.microns, reference = "JRC2018F", sample = "JRCFIB2018F", .parallel = FALSE, verbose = TRUE)
-all.neurons.jfrc2 = xform_brain(all.neurons.fafb, reference = "JFRC2", sample = "FAFB14", .parallel = FALSE, verbose = TRUE)
-all.neurons.fcwb = xform_brain(all.neurons.fafb, reference = "FCWB", sample = "FAFB14", .parallel = FALSE, verbose = TRUE)
+all.neurons.fafb = xform_brain(all.neurons.flow.microns, reference = "FAFB14", sample = "JRCFIB2018F", .parallel = TRUE, verbose = TRUE, OmitFailures = TRUE)
+all.neurons.jrc2018f = xform_brain(all.neurons.flow.microns, reference = "JRC2018F", sample = "JRCFIB2018F", .parallel = FALSE, verbose = TRUE, OmitFailures = TRUE)
+all.neurons.jfrc2 = xform_brain(all.neurons.fafb, reference = "JFRC2", sample = "FAFB14", .parallel = FALSE, verbose = TRUE, OmitFailures = TRUE)
+all.neurons.fcwb = xform_brain(all.neurons.fafb, reference = "FCWB", sample = "FAFB14", .parallel = FALSE, verbose = TRUE, OmitFailures = TRUE)
+all.neurons.flywire = xform_brain(all.neurons.fafb, reference = "FlyWire", sample = "FAFB14", .parallel = TRUE, verbose = TRUE, OmitFailures = TRUE)
 
 # Mirror
 all.neurons.fcwb.m = mirror_brain(all.neurons.fcwb, brain = FCWB)
@@ -49,6 +52,7 @@ all.neurons.jrc2018f.m = xform_brain(all.neurons.jfrc2.m, reference = "JRC2018F"
 all.neurons.fafb.m = xform_brain(all.neurons.jfrc2.m, reference = "FAFB14", sample = "JFRC2", .parallel = FALSE, verbose = TRUE)
 all.neurons.flow.microns.m = xform_brain(all.neurons.jfrc2.m, reference = "JRCFIB2018F", sample = "JFRC2", .parallel = FALSE, verbose = TRUE)
 all.neurons.flow.m = scale_neurons(all.neurons.flow, scaling = (1000/8))
+all.neurons.flywire = xform_brain(all.neurons.fafb.m, reference = "FlyWire", sample = "FAFB14", .parallel = TRUE, verbose = TRUE)
 
 # Save as neuronlistfh objects
 all.neurons.fafb = as.neuronlistfh(all.neurons.fafb, dbdir= "/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/FAFB/data", WriteObjects = "yes")
@@ -61,6 +65,8 @@ all.neurons.fcwb = as.neuronlistfh(all.neurons.fcwb, dbdir= "/net/flystore3/jdat
 write.neuronlistfh(all.neurons.fcwb, file="/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/FCWB/hemibrain_all_neurons_checked_FCWB.rds", overwrite=TRUE)
 all.neurons.flow.microns = as.neuronlistfh(all.neurons.flow.microns, dbdir= "/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/JRCFIB2018F/data", WriteObjects = "yes")
 write.neuronlistfh(all.neurons.flow.microns, file="/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/JRCFIB2018F/hemibrain_all_neurons_checked_microns.rds", overwrite=TRUE)
+all.neurons.fafb = as.neuronlistfh(all.neurons.flywire, dbdir= "/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/flywire/data", WriteObjects = "yes")
+write.neuronlistfh(all.neurons.flywire, file="/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/flywire/hemibrain_all_neurons_checked_FAFB.rds", overwrite=TRUE)
 
 # And mirrored versions
 all.neurons.fafb.m = as.neuronlistfh(all.neurons.fafb.m, dbdir= "/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/FAFB/data", WriteObjects = "yes")

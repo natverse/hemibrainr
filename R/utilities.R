@@ -2,6 +2,70 @@
 ################################ Utilities ##################################
 #############################################################################
 
+# google upload neuronlistfh
+googledrive_upload_neuronlistfh <- function(x,
+                                            team_drive = "hemibrain",
+                                            file_name = "neurons.rds",
+                                            folder = "flywire_neurons",
+                                            subfolder = NULL){
+  # Get drive
+  td = googledrive::team_drive_get(team_drive)
+  drive_td = googledrive::drive_find(type = "folder", team_drive = td)
+  gfolder= subset(drive_td,name==folder)[1,]
+  if(!is.null(subfolder)){
+    sub = googledrive::drive_ls(path = gfolder, type = "folder", team_drive = td)
+    gfolder = subset(sub, name ==subfolder )[1,]
+  }
+
+  # Get data folder
+  t.folder.data = googledrive::drive_ls(path = gfolder, type = "folder", team_drive = td)
+  t.folder.data = subset(t.folder.data, name == "data")[1,]
+  if(is.na(t.folder.data$name)){
+    googledrive::drive_mkdir(name = "data",
+                             path = gfolder,
+                             overwrite = TRUE)
+    t.folder.data = googledrive::drive_ls(path = gfolder, type = "folder", team_drive = td)
+    t.folder.data = subset(t.folder.data, name == "data")[1,]
+  }
+
+  # Save locally
+  temp = tempdir(check=TRUE)
+  on.exit(unlink(temp, recursive=TRUE))
+  temp.data = paste0(temp,"/data")
+  temp.rds = paste0(temp,"/",file_name)
+  nl = nat::as.neuronlistfh(x, dbdir= temp.data, WriteObjects = "yes")
+  nat::write.neuronlistfh(nl, file= temp.rds, overwrite=TRUE)
+
+  # upload
+  t.list = list.files(temp.data,full.names = TRUE)
+  error.files = c()
+  pb <- progress::progress_bar$new(
+    format = "  downloading [:bar] :current/:total eta: :eta",
+    total = length(t.list), clear = FALSE, show_after = 1)
+  for(t.neuron.fh.data.file in t.list){
+    pb$tick()
+    e = tryCatch(googledrive::drive_put(media = t.neuron.fh.data.file,
+                              path = t.folder.data,
+                              overwrite = FALSE,
+                              verbose = FALSE),
+                 error = function(e) NULL)
+    if(is.null(e)){
+      warning(e)
+      error.files = c(error.files,t.neuron.fh.data.file)
+    }
+  }
+  if(length(error.files)){
+    warning("Failed to upload: ", length(error.files)," files")
+  }
+
+  # upload
+  googledrive::drive_put(media = temp.rds,
+            path = gfolder,
+            overwrite = TRUE,
+            verbose = TRUE)
+
+}
+
 # collapse matrix by names
 collapse_matrix_by_names <- function(M, FUN = mean, ...){
   M = apply(M, 2, function(x) tapply(x, rownames(M), FUN, ...))
@@ -284,4 +348,66 @@ scale_points.shapelist <- function(shapelist,
   shapelist.transformed = lapply(shapelist,scale_points, scaling = scaling)
   class(shapelist.transformed) = c("shape3d","shapelist3d")
   shapelist.transformed
+}
+
+# Cut neurons by bounding box
+subbbx <- function(n.dps, min.x, max.x, min.y, max.y, min.z, max.z, ret='inside'){
+  points = nat::xyzmatrix(n.dps)
+  inside = (
+    min.x < points[, "X"] & max.x > points[, "X"]
+    & min.y < points[, "Y"] & max.y > points[, "Y"]
+    & min.z < points[, "Z"] & max.z > points[, "Z"]
+  )
+  # or subset(n.dps, inside, invert=ret != 'inside')
+  if (ret == 'inside') {
+    subset(n.dps, inside)
+  }
+  else {
+    subset(n.dps,!inside)
+  }
+}
+
+# Subset FAFB neurons to FIB bounding box
+fafb_hemibrain_cut <- function(x, ...){
+  x = nat::nlapply(x, subbbx,
+                                min.x=312048/1e3, max.x=601733/1e3,
+                                min.y=71265/1e3, max.y=319018/1e3,
+                                min.z=4315/1e3, max.z=270859/1e3,
+                                ret='inside', ...)
+  # Remove a chunk of left antennal lobe that's missing in hemibrain
+  x = nat::nlapply(x, subbbx,
+                                min.x=519300/1e3, max.x=601733/1e3,
+                                min.y=259570/1e3, max.y=319018/1e3,
+                                min.z=0/1e3, max.z=300000/1e3,
+                                ret='outside', ...)
+  # drop any FAFB neurons that don't have at least 5 vertices left
+  x = x[nat::nvertices(x)>=5]
+  x
+}
+
+# use foreach to process in parallel
+xform_brain_parallel <- function(x,
+                                 no.batches = 10,
+                                 sample = regtemplate(x),
+                                 reference,
+                                 ...){
+  batches = split(x, round(seq(from = 1, to = no.batches, length.out = length(x))))
+  foreach.nl <- foreach::foreach (batch = 1:no.batches) %dopar% {
+    y = batches[[batch]]
+    j = xform_brain(y,
+                    reference =reference, sample = sample,
+                    .parallel = FALSE,...)
+  }
+  neurons = do.call(c, foreach.nl)
+  neurons
+}
+
+# Strip meshes
+strip_meshes<-function(x){
+  strip_mesh.neuron <- function(x){
+    x$mesgh3d = NULL
+    class(x) = setdiff(class(x),"neuronmesh")
+    x
+  }
+  nat::nlapply(x, strip_mesh.neuron)
 }
