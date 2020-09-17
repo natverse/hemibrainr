@@ -86,10 +86,11 @@ foreach.skeletons <- foreach::foreach (batch = 1:numCores) %dopar% {
   })
   j[!is.na(j)]
 }
+isnl = sapply(foreach.skeletons, nat::is.neuronlist)
 fw.neurons = do.call(c, foreach.skeletons)
 
 # Save flywire skeletons
-googledrive_upload_neuronlistfh(fw.neurons,
+hemibrainr:::googledrive_upload_neuronlistfh(fw.neurons,
                                 team_drive = "hemibrain",
                                 file_name = "flywire_neurons_FlyWire.rds",
                                 folder = "flywire_neurons",
