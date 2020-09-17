@@ -16,6 +16,13 @@ googledrive_upload_neuronlistfh <- function(x,
     sub = googledrive::drive_ls(path = gfolder, type = "folder", team_drive = td)
     gfolder = subset(sub, name ==subfolder )[1,]
   }
+  sub = googledrive::drive_ls(path = gfolder, team_drive = td)
+  gfile = subset(sub, name ==file_name )
+  if(nrow(gfile)){
+    save.position = googledrive::as_id(gfile[1,]$id)
+  }else{
+    save.position = gfolder
+  }
 
   # Get data folder
   t.folder.data = googledrive::drive_ls(path = gfolder, type = "folder", team_drive = td)
@@ -42,13 +49,22 @@ googledrive_upload_neuronlistfh <- function(x,
   pb <- progress::progress_bar$new(
     format = "  downloading [:bar] :current/:total eta: :eta",
     total = length(t.list), clear = FALSE, show_after = 1)
+  sub.data = googledrive::drive_ls(path = t.folder.data, team_drive = td)
   for(t.neuron.fh.data.file in t.list){
     pb$tick()
-    e = tryCatch(googledrive::drive_put(media = t.neuron.fh.data.file,
-                              path = t.folder.data,
-                              overwrite = FALSE,
+    t = basename(t.neuron.fh.data.file)
+    if(t%in%sub.data$name){
+      save.data = googledrive::as_id(subset(sub.data, name==t)[1,]$id)
+    }else{
+     save.data =  t.folder.data
+    }
+    e = tryCatch(google_drive_place(media = t.neuron.fh.data.file,
+                              path = save.data,
                               verbose = FALSE),
-                 error = function(e) NULL)
+                 error = function(e){
+                   message(e)
+                   NULL
+                 } )
     if(is.null(e)){
       warning(e)
       error.files = c(error.files,t.neuron.fh.data.file)
@@ -59,12 +75,88 @@ googledrive_upload_neuronlistfh <- function(x,
   }
 
   # upload
-  googledrive::drive_put(media = temp.rds,
-            path = gfolder,
-            overwrite = TRUE,
+  google_drive_place(media = temp.rds,
+            path = save.position,
             verbose = TRUE)
 
 }
+
+# Google drive
+google_drive_place <- function(media,
+                               path,
+                               verbose = TRUE,
+                               ...){
+  if("drive_id"%in%class(path)){
+    googledrive::drive_update(media = media,
+                           file = path,
+                           verbose = verbose,
+                           ...)
+  }else{
+    googledrive::drive_put(media = media,
+                           path = path,
+                           verbose = verbose,
+                           ...)
+  }
+}
+
+# upload nblast matrix
+googledrive_upload_nblast<- function(x,
+                                     team_drive = "hemibrain",
+                                     folder = "hemibrain_nblast",
+                                     subfolder = NULL,
+                                     file = NULL,
+                                     threshold=-0.5,
+                                     digits=3,
+                                     format=c("rda", "rds"),
+                                     ...){
+  format=match.arg(format)
+
+  # Get drive
+  td = googledrive::team_drive_get(team_drive)
+  drive_td = googledrive::drive_find(type = "folder", team_drive = td)
+  gfolder= subset(drive_td,name==folder)[1,]
+  if(!is.null(subfolder)){
+    sub = googledrive::drive_ls(path = gfolder, type = "folder", team_drive = td)
+    gfolder = subset(sub, name ==subfolder )[1,]
+  }
+
+  # Compress
+  objname=deparse(substitute(x))
+  colnames(x) = gsub("_m$","",colnames(x)) # factor in mirrored neurons
+  rownames(x) = gsub("_m$","",rownames(x))
+  x = tryCatch(apply(x, 2, function(i) tapply(x, rownames(x), sum, na.rm = TRUE)), error = function(e) x)
+  x = tryCatch(t(apply(t(x), 2, function(i) tapply(i, colnames(x), sum, na.rm = TRUE))), error = function(e) x)
+  x[x<threshold]=threshold
+  x=round(x, digits=digits)
+
+  # Save in temporary location
+  newobjname <- paste0(objname, ".compressed")
+  temp <- tempdir(check=TRUE)
+  fname <- paste0(temp, "/",paste0(file, newobjname), ".", format)
+  if(format=="rds") {
+    saveRDS(x, file=fname, ...)
+  } else {
+    message(newobjname)
+    assign(newobjname, x)
+    save(list = newobjname, file = fname, ...)
+  }
+
+  # Does the file already exist?
+  file_name = basename(fname)
+  sub = googledrive::drive_ls(path = gfolder, team_drive = td)
+  gfile = subset(sub, name ==file_name)
+  if(nrow(gfile)){
+    save.position = googledrive::as_id(gfile[1,]$id)
+  }else{
+    save.position = gfolder
+  }
+
+  # Upload
+  google_drive_place(media = fname,
+                         path = save.position,
+                         verbose = TRUE)
+}
+
 
 # collapse matrix by names
 collapse_matrix_by_names <- function(M, FUN = mean, ...){
@@ -292,12 +384,12 @@ save_compressed_nblast_mat <- function(x,
                                        digits=3,
                                        format=c("rda", "rds"),
                                        ...) {
+  objname=deparse(substitute(x))
+  format=match.arg(format)
   colnames(x) = gsub("_m$","",colnames(x)) # factor in mirrored hemibrain neurons
   rownames(x) = gsub("_m$","",rownames(x))
   x = apply(x, 2, function(i) tapply(x, rownames(x), sum, na.rm = TRUE))
   x = t(apply(t(x), 2, function(i) tapply(i, colnames(x), sum, na.rm = TRUE)))
-  objname=deparse(substitute(x))
-  format=match.arg(format)
   x[x<threshold]=threshold
   x=round(x, digits=digits)
   newobjname <- paste0(objname, ".compressed")

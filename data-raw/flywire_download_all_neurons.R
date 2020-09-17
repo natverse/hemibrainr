@@ -16,6 +16,15 @@
 # setenv PATH ${PATH}:/public/flybrain/blender-2.90.0-linux64/blender
 ### blender
 
+# Find blender!
+reticulate::py_run_string("import os")
+# Check what's in PATH
+reticulate::py_run_string("print(os.environ['PATH'])")
+# This is how trimesh tries to find Blender (on Linux):
+reticulate::py_run_string("from distutils.spawn import find_executable")
+reticulate::py_run_string("blender_executable = find_executable('blender')")
+reticulate::py_run_string("print('Blender executable:', blender_executable)")
+
 # Code to skeletonise flywire neurons under construction by the Cambridge FlyConnectome group
 library(hemibrainr)
 library(fafbseg)
@@ -45,6 +54,7 @@ for(tab in tabs){
                                           return = TRUE)
   gs = plyr::rbind.fill(gs,gs.t)
 }
+gs = gs[!is.na(gs$fw.x),]
 
 # Get xyz positions for FAFBv14 neurons.
 # positions = gs$FAFB.xyz
@@ -57,7 +67,6 @@ for(tab in tabs){
 
 # Get positions for flywire neurons
 positions = gs[,c("fw.x","fw.y",'fw.z')]
-positions = positions[!is.na(gs$fw.x),]
 positions = apply(positions,2,as.numeric)
 
 # Batch positions for grabbing IDs from flywire
@@ -70,24 +79,50 @@ foreach.ids <- foreach::foreach (batch = 1:numCores) %dopar% {
   if(sum(i==0)>0){
     i[i==0] =  fafbseg::flywire_xyz2id(pos[i==0,], rawcoords = FALSE)
   }
-  i[!is.na(i)]
+  i
 }
+ids = unlist(foreach.ids)
+gs$id = ids
 
 # Batch IDs for grabbing meshes from flywire
-ids = unlist(foreach.ids)
+ids = unique(ids[!is.na(ids)])
 batches = split(ids, round(seq(from = 1, to = numCores, length.out = length(ids))))
 
 # Read neurons
 foreach.skeletons <- foreach::foreach (batch = 1:numCores) %dopar% {
   fw.ids = batches[[batch]]
-  j = tryCatch(fafbseg::skeletor(fw.ids, clean = FALSE), error = function(e){
+  j = tryCatch(fafbseg::skeletor(fw.ids, clean = FALSE, brain = elmr::FAFB14.surf), error = function(e){
     message("Batch failed:", batch)
+    message(e)
     NULL
   })
+  if(is.null(j)){ # may have been a connection issue or something ...
+    j = tryCatch(fafbseg::skeletor(fw.ids, clean = FALSE, brain = elmr::FAFB14.surf), error = function(e){
+      message("Batch failed:", batch)
+      message(e)
+      NULL
+    })
+  }
   j[!is.na(j)]
 }
 isnl = sapply(foreach.skeletons, nat::is.neuronlist)
-fw.neurons = do.call(c, foreach.skeletons)
+fw.neurons = do.call(c, foreach.skeletons[isnl])
+
+# Add metadata
+colnames(fw.neurons[,]) = c("flywire.id")
+coords = gs[match(names(fw.neurons),gs$id),]
+flywire.xyz = apply(coords[,c("fw.x","fw.y",'fw.z')],1,paste,sep=",",collapse=",")
+fw.neurons[,"flywire.xyz"] = flywire.xyz
+fw.neurons[,"FAFB.xyz"] = coords[,"FAFB.xyz"]
+fw.neurons[,"side"] = coords[,"side"]
+fw.neurons[,"ItoLee_Hemilineage"] = coords[,"ItoLee_Hemilineage"]
+fw.neurons[,"Hartenstein_Hemilineage"] = coords[,"Hartenstein_Hemilineage"]
+fw.neurons[,"skid"] = "skid"
+fw.neurons[,"hemibrain_match"] = "hemibrain_match"
+fw.neurons[,"dataset"] = "flywire"
+
+# Save locally just in case
+save(fw.neurons, file = paste0("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/flywire/flywire_neurons.rda"))
 
 # Save flywire skeletons
 hemibrainr:::googledrive_upload_neuronlistfh(fw.neurons,

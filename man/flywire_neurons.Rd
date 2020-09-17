@@ -8,14 +8,35 @@ flywire_neurons(
   local = FALSE,
   brain = c("FlyWire", "JRCFIB2018F", "JRCFIB2018F", "FAFB", "JFRC2", "JRC2018F",
     "FCWB"),
-  mirror = FALSE
+  mirror = FALSE,
+  ...
 )
 }
 \arguments{
+\item{local}{logical, whether to try to read locally saved neurons (by default at: \code{options()$hemibrain_data}) or neurons from Google Drive (\code{options()$Gdrive_hemibrain_data}).}
+
 \item{brain}{the brainspace in which hemibrain neurons have been registered. Defaults to raw voxel space for the FlyWire project.}
 
-\item{...}{Additional arguments passed to \code{\link{nlapply}} when iterating
-over neurons to download.}
+\item{mirror}{logical, whether or not to read neurons that have been mirrored (i.e. flipped to the 'other' brain hemisphere).}
+
+\item{...}{Additional arguments passed to \code{\link{nat::nlapply}}.}
+}
+\value{
+A \code{neuronlist} object containing flywire skeletons. In the meta-data, it might be useful for some users to note that
+you will get:
+
+\itemize{
+ \item{"flywire.id"}{ The ID given to the corresponmding volumetric body in flywire.
+ These are used to do things like fetch volumes and are the input to the \code{skeletor} function. However, they are highly volatile and
+ change a lot with active tracing.}
+ \item{"flywire.xyz"}{ The voxel coordinate of a single point in this neuron, usually a cell body fiber tract position. This is a more accurate way
+ of keeping tract of neuron as it will always correspond to the same 'neuron' even though its related flywire.id will change with merge/split events in flywire.}
+ \item{"hemilineage"}{ An estimated hemilineage identity from both of two naming sysytems, Ito et al. 2013 and Wong et al. 2013}
+ \item{"side"}{ An estimate as to the 'side', i.e. brain hemisphere, in which the neuron lies}
+ \item{"skid"}{ The 'skeleton ID' of this neuron's match in CATMAID for FAFBv14}
+ \item{"FAFB.xyz"}{ The coordinates in nanometers of a point in the neuron, in FAFBv14 space}
+ \item{"hemibrain_match"}{ The bodyid of an estimated hemibrain match}
+}
 }
 \description{
 Get a large number of skeletonised neurons from FlyWire. The neuronlist is saved as a

@@ -95,7 +95,10 @@ hemibrain_connections <- function(local = FALSE,
 
 #' @export
 #' @rdname hemibrain_googledrive
-hemibrain_nblast <- function(nblast = c("all",
+hemibrain_nblast <- function(nblast = c("hemibrain",
+                                        "hemibrain-flywire",
+                                        "hemibrain-flycircuit",
+                                        "flywire-mirror",
                                         "primary.neurites",
                                         "primary.dendrites",
                                         "axons",
@@ -116,7 +119,7 @@ hemibrain_nblast <- function(nblast = c("all",
     paste0("hemibrain_nblast/nblast_", neuron.split)
   }
   file = switch(nblast,
-    all = "hemibrain.aba.mean.compress.rda",
+                hemibrain = "hemibrain.aba.mean.compress.rda",
     spines = "hemibrain.spine.aba.mean.compressed.rda",
     primary.neurites = "hemibrain.pnt.aba.mean.compressed.rda",
     primary.dendrites = "hemibrain.pd.aba.mean.compressed.rda",
@@ -125,6 +128,9 @@ hemibrain_nblast <- function(nblast = c("all",
     arbour = "hemibrain.arbour.aba.mean.compressed.rda",
     tracts = "hemibrain.tract.aba.mean.compressed.rda",
     simplified = "hemibrain.simp.aba.mean.compressed.rda",
+    `hemibrain-flywire` = "hemibrain.flywire.mean.compressed.rda",
+    `hemibrain-flycircuit` = "hemibrain.flycircuit.mean.compressed.rda",
+    `flywire-mirror` = "flywire.mirror.mean.compressed.rda",
     stop("Unrecognised value of nblast argument!")
   )
   gfile = find_gfile(savedir = savedir, file = file, folder = folder)

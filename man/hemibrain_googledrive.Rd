@@ -29,7 +29,8 @@ hemibrain_connections(
 )
 
 hemibrain_nblast(
-  nblast = c("all", "primary.neurites", "primary.dendrites", "axons", "dendrites",
+  nblast = c("hemibrain", "hemibrain-flywire", "hemibrain-flycircuit",
+    "flywire-mirror", "primary.neurites", "primary.dendrites", "axons", "dendrites",
     "spines", "tracts", "arbour", "simplified"),
   local = FALSE,
   neuron.split = c("polypre_centrifugal_synapses", "polypre_centrifugal_distance")
