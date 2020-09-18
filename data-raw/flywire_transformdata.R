@@ -19,7 +19,7 @@ doMC::registerDoMC(numCores)
 message("Using ", numCores, " cores")
 
 # Get flywire neurons from google drive
-fw.neurons = hemibrainr::flywire_neurons()
+# fw.neurons = hemibrainr::flywire_neurons()
 load(file = paste0("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/flywire/flywire_neurons.rda"))
 
 # Strip meshes for transformed neurons
