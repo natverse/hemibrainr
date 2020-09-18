@@ -73,7 +73,7 @@ positions = apply(positions,2,as.numeric)
 batches = split(1:nrow(positions), round(seq(from = 1, to = numCores, length.out = nrow(positions))))
 
 # Find flywire IDs for each specified position
-foreach.ids <- foreach::foreach (batch = 1:numCores) %dopar% {
+foreach.ids <- foreach::foreach (batch = 1:numCores) %do% {
   pos = positions[batches[[batch]],]
   i = fafbseg::flywire_xyz2id(pos, rawcoords = TRUE)
   if(sum(i==0)>0){
@@ -89,7 +89,7 @@ ids = unique(ids[!is.na(ids)])
 batches = split(ids, round(seq(from = 1, to = numCores, length.out = length(ids))))
 
 # Read neurons
-foreach.skeletons <- foreach::foreach (batch = 1:numCores) %dopar% {
+foreach.skeletons <- foreach::foreach (batch = 1:numCores) %do% {
   fw.ids = batches[[batch]]
   j = tryCatch(fafbseg::skeletor(fw.ids, clean = FALSE, brain = elmr::FAFB14.surf), error = function(e){
     message("Batch failed:", batch)
