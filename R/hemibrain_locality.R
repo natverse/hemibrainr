@@ -109,7 +109,7 @@ compartment_metrics <- function(x, resample = 10, delta = 62.5, locality = FALSE
              segregation_index = nullToNA(si),
              overlap_locality = nullToNA(locality)),
              error = function(e) NULL)
-  met
+  t(apply(met, 1, unlist))
 }
 
 
