@@ -1,5 +1,5 @@
 ###### Script to split all neurons in the hemibrain into putative axon / dendrite #######
-######## Originally run from JData5, the Jefferis lab drive on Max at the MRC LMB #######
+######## Originally run from JData5, the Jefferis lab drive on Hal at the MRC LMB #######
 
 # Parameters
 polypre = TRUE
@@ -21,7 +21,7 @@ source("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/R/startup/functions.R")
 message("functions loaded")
 
 # Parallelise
-numCores <- detectCores()
+numCores <- parallel::detectCores()
 doMC::registerDoMC(numCores/2)
 message("Using ", numCores/2, " cores")
 
@@ -38,19 +38,19 @@ dir.create("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/
 dir.create("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/FCWB/data/",recursive = TRUE)
 dir.create("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/JRCFIB2018F/data/",recursive = TRUE)
 dir.create("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/flywire/data/",recursive = TRUE)
-all.neurons.flow.microns = scale_neurons(all.neurons.flow)
+all.neurons.flow.microns = hemibrainr::scale_neurons(all.neurons.flow)
 all.neurons.fafb = xform_brain(all.neurons.flow.microns, reference = "FAFB14", sample = "JRCFIB2018F", .parallel = TRUE, verbose = TRUE, OmitFailures = TRUE)
-all.neurons.jrc2018f = xform_brain(all.neurons.flow.microns, reference = "JRC2018F", sample = "JRCFIB2018F", .parallel = FALSE, verbose = TRUE, OmitFailures = TRUE)
-all.neurons.jfrc2 = xform_brain(all.neurons.fafb, reference = "JFRC2", sample = "FAFB14", .parallel = FALSE, verbose = TRUE, OmitFailures = TRUE)
-all.neurons.fcwb = xform_brain(all.neurons.fafb, reference = "FCWB", sample = "FAFB14", .parallel = FALSE, verbose = TRUE, OmitFailures = TRUE)
+all.neurons.jrc2018f = xform_brain(all.neurons.flow.microns, reference = "JRC2018F", sample = "JRCFIB2018F", .parallel = TRUE, verbose = TRUE, OmitFailures = TRUE)
+all.neurons.jfrc2 = xform_brain(all.neurons.fafb, reference = "JFRC2", sample = "FAFB14", .parallel = TRUE, verbose = TRUE, OmitFailures = TRUE)
+all.neurons.fcwb = xform_brain(all.neurons.fafb, reference = "FCWB", sample = "FAFB14", .parallel = TRUE, verbose = TRUE, OmitFailures = TRUE)
 all.neurons.flywire = xform_brain(all.neurons.fafb, reference = "FlyWire", sample = "FAFB14", .parallel = TRUE, verbose = TRUE, OmitFailures = TRUE)
 
 # Mirror
-all.neurons.fcwb.m = mirror_brain(all.neurons.fcwb, brain = FCWB)
-all.neurons.jfrc2.m = mirror_brain(all.neurons.jfrc2, brain = JFRC2)
-all.neurons.jrc2018f.m = xform_brain(all.neurons.jfrc2.m, reference = "JRC2018F", sample = "JFRC2", .parallel = FALSE, verbose = TRUE)
-all.neurons.fafb.m = xform_brain(all.neurons.jfrc2.m, reference = "FAFB14", sample = "JFRC2", .parallel = FALSE, verbose = TRUE)
-all.neurons.flow.microns.m = xform_brain(all.neurons.jfrc2.m, reference = "JRCFIB2018F", sample = "JFRC2", .parallel = FALSE, verbose = TRUE)
+all.neurons.fcwb.m = mirror_brain(all.neurons.fcwb, brain = FCWB, .parallel = TRUE, verbose = TRUE, OmitFailures = TRUE)
+all.neurons.jfrc2.m = mirror_brain(all.neurons.jfrc2, brain = JFRC2, .parallel = TRUE, verbose = TRUE, OmitFailures = TRUE)
+all.neurons.jrc2018f.m = xform_brain(all.neurons.jfrc2.m, reference = "JRC2018F", sample = "JFRC2", .parallel = TRUE, verbose = TRUE)
+all.neurons.fafb.m = xform_brain(all.neurons.jfrc2.m, reference = "FAFB14", sample = "JFRC2", .parallel = TRUE, verbose = TRUE)
+all.neurons.flow.microns.m = xform_brain(all.neurons.jfrc2.m, reference = "JRCFIB2018F", sample = "JFRC2", .parallel = TRUE, verbose = TRUE)
 all.neurons.flow.m = scale_neurons(all.neurons.flow, scaling = (1000/8))
 all.neurons.flywire = xform_brain(all.neurons.fafb.m, reference = "FlyWire", sample = "FAFB14", .parallel = TRUE, verbose = TRUE)
 
