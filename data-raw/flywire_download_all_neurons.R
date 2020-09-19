@@ -73,7 +73,7 @@ positions = apply(positions,2,as.numeric)
 batches = split(1:nrow(positions), round(seq(from = 1, to = numCores, length.out = nrow(positions))))
 
 # Find flywire IDs for each specified position
-foreach.ids <- foreach::foreach (batch = 1:numCores) %do% {
+foreach.ids <- foreach::foreach (batch = 1:numCores) %dopar% {
   pos = positions[batches[[batch]],]
   i = fafbseg::flywire_xyz2id(pos, rawcoords = TRUE)
   if(sum(i==0)>0){
@@ -86,18 +86,19 @@ gs$id = ids
 
 # Batch IDs for grabbing meshes from flywire
 ids = unique(ids[!is.na(ids)])
+ids = ids[ids!="0"]
 batches = split(ids, round(seq(from = 1, to = numCores, length.out = length(ids))))
 
 # Read neurons
-foreach.skeletons <- foreach::foreach (batch = 1:numCores) %do% {
+foreach.skeletons <- foreach::foreach (batch = 1:numCores) %dopar% {
   fw.ids = batches[[batch]]
-  j = tryCatch(fafbseg::skeletor(fw.ids, clean = FALSE, brain = elmr::FAFB14.surf), error = function(e){
+  j = tryCatch(fafbseg::skeletor(fw.ids, clean = FALSE, brain = elmr::FAFB14.surf, mesh3d = FALSE), error = function(e){
     message("Batch failed:", batch)
     message(e)
     NULL
   })
   if(is.null(j)){ # may have been a connection issue or something ...
-    j = tryCatch(fafbseg::skeletor(fw.ids, clean = FALSE, brain = elmr::FAFB14.surf), error = function(e){
+    j = tryCatch(fafbseg::skeletor(fw.ids, clean = FALSE, brain = elmr::FAFB14.surf, mesh3d = FALSE), error = function(e){
       message("Batch failed:", batch)
       message(e)
       NULL
