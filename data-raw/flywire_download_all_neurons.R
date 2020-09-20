@@ -92,19 +92,7 @@ batches = split(ids, round(seq(from = 1, to = numCores, length.out = length(ids)
 # Read neurons
 foreach.skeletons <- foreach::foreach (batch = 1:numCores) %dopar% {
   fw.ids = batches[[batch]]
-  j = tryCatch(fafbseg::skeletor(fw.ids, clean = FALSE, brain = elmr::FAFB14.surf, mesh3d = FALSE), error = function(e){
-    message("Batch failed:", batch)
-    message(e)
-    NULL
-  })
-  if(is.null(j)){ # may have been a connection issue or something ...
-    j = tryCatch(fafbseg::skeletor(fw.ids, clean = FALSE, brain = elmr::FAFB14.surf, mesh3d = FALSE), error = function(e){
-      message("Batch failed:", batch)
-      message(e)
-      NULL
-    })
-  }
-  j[!is.na(j)]
+  j = fafbseg::skeletor(fw.ids, clean = FALSE, brain = elmr::FAFB14.surf, mesh3d = FALSE)
 }
 isnl = sapply(foreach.skeletons, nat::is.neuronlist)
 fw.neurons = do.call(c, foreach.skeletons[isnl])
