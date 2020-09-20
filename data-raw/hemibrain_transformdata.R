@@ -1,6 +1,10 @@
 ###### Script to split all neurons in the hemibrain into putative axon / dendrite #######
 ######## Originally run from JData5, the Jefferis lab drive on Hal at the MRC LMB #######
 
+# shell::
+# export LD_PRELOAD=/net/nfs1/public/flybrain/R/R-3.5.1/lib64/R/library/hdf5r/libs/hdf5r.so
+# setenv PATH ${PATH}:/net/nfs1/public/flybrain/R/R-3.5.1/lib64/R/library/hdf5r/libs/hdf5r.so
+
 # Parameters
 polypre = TRUE
 split = "synapses"
@@ -10,6 +14,7 @@ message("Splitting with paramaters: ", identifier)
 
 # Set things ups
 message("Start")
+library(hdf5r)
 library(nat.jrcbrains)
 library(catmaid)
 library(hemibrainr)
