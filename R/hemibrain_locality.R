@@ -77,9 +77,9 @@ compartment_metrics <- function(x, resample = 10, delta = 62.5, locality = FALSE
   # Segregation
   si = tryCatch(x$AD.segregation.index, error = function(e) NA)
   if(locality){
-    locality = tryCatch(overlap_locality(x, resample = resample, delta = delta, ...), error = function(e) NA)
+    locality.score = tryCatch(overlap_locality(x, resample = resample, delta = delta, ...), error = function(e) NA)
   }else{
-    locality = NA
+    locality.score = NA
   }
 
   # Cable length
@@ -107,9 +107,12 @@ compartment_metrics <- function(x, resample = 10, delta = 62.5, locality = FALSE
              dend.length= nullToNA(dend.length),
              pd.length= nullToNA(pd.length),
              segregation_index = nullToNA(si),
-             overlap_locality = nullToNA(locality)),
+             overlap_locality = nullToNA(locality.score)),
              error = function(e) NULL)
-  t(apply(met, 1, unlist))
+  if(!locality){
+    met$overlap_locality = NULL
+  }
+  as.data.frame(t(apply(met, 1, unlist)))
 }
 
 
