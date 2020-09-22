@@ -80,7 +80,7 @@ hemibrainr:::google_drive_place(media = split.metrics,
 ## Save transformed neurons
 trans = c("hemibrain_all_neurons_flow_polypre_centrifugal_synapses",
           "hemibrain_all_neurons_flow_polypre_centrifugal_synapses/dotprops",
-          "JRCFIB2018F","FAFB","JFRC2","JRC2018F","FCWB")
+          "JRCFIB2018F","FAFB14","JFRC2","JRC2018F","FCWB")
 for(t in trans){
   if(grepl("hemibrain_all_neurons_flow_polypre_centrifugal_synapses",t)){
     gfolder = "JRCFIB2018Fraw"
