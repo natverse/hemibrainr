@@ -11,29 +11,19 @@
 \alias{hemibrain_lm_lhns}
 \title{Read precomputed information from the hemibrain Google Drive}
 \usage{
-hemibrain_neuron_bodyids(local = FALSE)
+hemibrain_neuron_bodyids(local = FALSE, folder = "hemibrain_neurons/")
 
-hemibrain_elist(
-  local = FALSE,
-  neuron.split = c("polypre_centrifugal_synapses", "polypre_centrifugal_distance")
-)
+hemibrain_elist(local = FALSE, folder = "hemibrain_neurons/")
 
-hemibrain_synapses(
-  local = FALSE,
-  neuron.split = c("polypre_centrifugal_synapses", "polypre_centrifugal_distance")
-)
+hemibrain_synapses(local = FALSE, folder = "hemibrain_neurons/")
 
-hemibrain_connections(
-  local = FALSE,
-  neuron.split = c("polypre_centrifugal_synapses", "polypre_centrifugal_distance")
-)
+hemibrain_connections(local = FALSE, folder = "hemibrain_neurons/")
 
 hemibrain_nblast(
-  nblast = c("hemibrain", "hemibrain-flywire", "hemibrain-flycircuit",
+  nblast = c("hemibrain", "flywire", "hemibrain-flywire", "hemibrain-flycircuit",
     "flywire-mirror", "primary.neurites", "primary.dendrites", "axons", "dendrites",
     "spines", "tracts", "arbour", "simplified"),
-  local = FALSE,
-  neuron.split = c("polypre_centrifugal_synapses", "polypre_centrifugal_distance")
+  local = FALSE
 )
 
 flycircuit_neurons(
@@ -58,15 +48,11 @@ default at: \code{getOption("hemibrain_data")}) or neurons from Google
 Drive (\code{getOption("Gdrive_hemibrain_data")}).
 If a character, the path from which to each for hemibrain data.}
 
-\item{neuron.split}{read saved neurons split in which way? Folder names
-indicative of arguments passed to \code{\link{flow_centrality}}. and
-\code{\link{hemibrain_flow_centrality}}}
+\item{folder}{A subfolder on the Hemibrain team drive or your local data foldercontaining the data object to read.}
 
 \item{nblast}{the NBLAST matrix you would like to retrieve, e.g.
 \code{"arbours"} gives you a normalised all by all NBLAST matrix of all
 branching arbour.}
-
-\item{folder}{A subfolder containing the data object to read.}
 
 \item{cable}{the type of cable we want to read. \code{"all"} indicates full
 neurons.}

@@ -21,9 +21,10 @@ scale_neurons(x, scaling = (8/1000), ...)
 
 hemibrain_neurons(
   local = FALSE,
-  neuron.split = c("polypre_centrifugal_synapses", "polypre_centrifugal_distance"),
-  brain = c("JRCFIB2018Fraw", "JRCFIB2018F", "FAFB", "JFRC2", "JRC2018F", "FCWB"),
-  mirror = FALSE
+  brain = c("JRCFIB2018Fraw", "JRCFIB2018F", "FAFB14", "JFRC2", "JRC2018F", "FCWB"),
+  mirror = FALSE,
+  dotprops = FALSE,
+  folder = "hemibrain_neurons/"
 )
 }
 \arguments{
@@ -46,8 +47,6 @@ Note that if FALSE, re-rooting occurs anyway via \code{hemibrain_flow_centrality
 and \code{\link{hemibrain_flow_centrality}}}
 
 \item{scaling}{the factor by which neuron coordinates in raw voxel space should be multiplied. The default scales to microns.}
-
-\item{neuron.split}{read saved neurons spit in which way? Folder names indicative of arguments passed to \code{\link{flow_centrality}}.}
 
 \item{brain}{the brainspace in which hemibrain neurons have been registered. Defaults to raw voxel space for the hemibrain project.}
 

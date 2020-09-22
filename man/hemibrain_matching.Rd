@@ -29,6 +29,7 @@ lm_matching(
 
 fafb_matching(
   ids = NULL,
+  repository = c("FAFB", "flywire"),
   hemibrain.nblast = NULL,
   selected_file = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw",
   batch_size = 50,

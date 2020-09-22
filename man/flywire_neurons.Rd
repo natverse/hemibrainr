@@ -2,6 +2,8 @@
 % Please edit documentation in R/flywire_googledrive.R
 \name{flywire_neurons}
 \alias{flywire_neurons}
+\alias{flywire_neurons_update}
+\alias{flywire_nblast_update}
 \title{Download a large set of well-traced skeletonised neurons from FlyWire}
 \usage{
 flywire_neurons(
@@ -9,6 +11,20 @@ flywire_neurons(
   brain = c("FlyWire", "JRCFIB2018F", "JRCFIB2018F", "FAFB", "JFRC2", "JRC2018F",
     "FCWB"),
   mirror = FALSE,
+  ...
+)
+
+flywire_neurons_update(
+  x,
+  brain = c("FlyWire", "JRCFIB2018F", "JRCFIB2018F", "FAFB", "JFRC2", "JRC2018F",
+    "FCWB"),
+  mirror = FALSE,
+  ...
+)
+
+flywire_nblast_update(
+  x = NULL,
+  nblast = c("hemibrain-flywire", "flywire", "flywire-mirror"),
   ...
 )
 }
@@ -20,6 +36,10 @@ flywire_neurons(
 \item{mirror}{logical, whether or not to read neurons that have been mirrored (i.e. flipped to the 'other' brain hemisphere).}
 
 \item{...}{Additional arguments passed to \code{\link{nat::nlapply}}.}
+
+\item{x}{flywire IDs to update, for the saved google drive \code{neuronlistfh} objects called with \code{flywire_neurons}.}
+
+\item{nblast}{which flywire nblast to update on google drive.}
 }
 \value{
 A \code{neuronlist} object containing flywire skeletons. In the meta-data, it might be useful for some users to note that
@@ -42,7 +62,7 @@ you will get:
 Get a large number of skeletonised neurons from FlyWire. The neuronlist is saved as a
  \code{nat::neuronlistfh} object so certain neurons may be read from it
  without loading the entire, large neuronlist into memory. You will need access to the hemibrain Google Team Drive and
- have it mounted with Google filestream.
+ have it mounted with Google filestream.The function \code{flywire_neurons_update} can be used to update the available data.
 }
 \examples{
 \donttest{
