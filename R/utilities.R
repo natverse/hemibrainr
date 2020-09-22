@@ -93,8 +93,6 @@ google_drive_place <- function(media,
     p = subset(ls, name == basename(media))$id
     if(length(p)){
       path = googledrive::as_id(p[1])
-    }else{
-      path = googledrive::as_id(path)
     }
   }else{
     path = googledrive::as_id(path)
