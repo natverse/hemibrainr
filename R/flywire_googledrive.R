@@ -216,10 +216,10 @@ flywire_nblast_update <- function(x = NULL,
                                                          target = all.fw.dps,
                                                          .parallel=TRUE,
                                                          normalised = TRUE)
-    flywire.mirror.mean=round(flywire.mirror.mean, digits=3)
-    flywire.mirror.mean[flywire.mirror.mean<-0.5]=-0.5
-    flywire.mirror.mean = merge(flywire.mirror.mean, old.nblast, all.x = TRUE, all.y = TRUE)
-    hemibrainr:::googledrive_upload_nblast(flywire.mirror.mean)
+    flywire.mean=round(flywire.mean, digits=3)
+    flywire.mean[flywire.mean<-0.5]=-0.5
+    flywire.mean = merge(flywire.mean, old.nblast, all.x = TRUE, all.y = TRUE)
+    hemibrainr:::googledrive_upload_nblast(flywire.mean)
   }
 
 }
