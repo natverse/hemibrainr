@@ -1399,7 +1399,7 @@ hemibrain_match_sheet <- function(selected_file = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8
 #' @export
 hemibrain_matching_add <- function(ids,
                                    dataset = c("hemibrain","FAFB","flywire"),
-                                   User = "flyconnectome",
+                                   User = dataset,
                                    selected_file  = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw",
                                    ...){
   # Read
@@ -1422,15 +1422,18 @@ hemibrain_matching_add <- function(ids,
     meta = elmr::fafb_get_meta(add, ...)
   } else if (dataset == "flywire"){
     add = setdiff(ids, gs$flywire.id)
-    meta = flywire_neurons()[add]
-    meeta = flywire_basics(meta)
+    meta = flywire_neurons()[add,]
+    if(!nrow(meta)){
+      stop("Selected IDs could not be added. They must be among the neurons
+         saved on google drive, see flywire_neurons()")
+    }
   }
   if(!length(add)){
     stop("Given IDs already exist in sheet")
   }
   missing = setdiff(colnames(gs),colnames(meta))
   meta = add_blanks(meta, missing)
-  meta = meta[colnames(gs)]
+  meta = meta[,colnames(gs)]
   meta$User = User
 
   # Add new rows
