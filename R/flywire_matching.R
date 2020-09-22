@@ -75,47 +75,30 @@ flywire_matching_rewrite <- function(selected_file  = "1OSlDtnR3B1LiB5cwI5x5Ql6L
 
   # Add flywire match to the hemibrain and LM sheets
   ## Read the FAFB Google Sheet
-  fg = gsheet_manipulation(FUN = googlesheets4::read_sheet,
-                           ss = selected_file,
-                           sheet = "FAFB",
-                           guess_max = 3000,
-                           return = TRUE)
-  fg$skid = correct_id(fg$skid)
-  rownames(fg) = fg$skid
+  fg = hemibrain_match_sheet(sheet = "FAFB", selected_file = selected_file)
 
   ## Read the LM Google Sheet
-  lmg = gsheet_manipulation(FUN = googlesheets4::read_sheet,
-                            ss = selected_file,
-                            sheet = "lm",
-                            guess_max = 3000,
-                            return = TRUE)
-  lmg$id = correct_id(lmg$id)
-  rownames(lmg) = lmg$id
-  hg$flywire.match = fg$flywire.xyz[match(lmg$id,fg$hemibrain.match)]
-  if(length(sorted)){
-    update_gsheet(update = lmg[,"flywire.match"],
+  lmg = hemibrain_match_sheet(sheet = "lm", selected_file = selected_file)
+  orig = lmg$flywire.match
+  lmg$flywire.match = fg$flywire.xyz[match(lmg$bodyid,fg$hemibrain.match)]
+  different = paste(orig)!=paste(lmg$flywire.match)
+  lmg$flywire.match = fg$flywire.xyz[match(lmg$id,fg$LM.match)]
+  update_gsheet(update = lmg[different,],
                   gs = lmg,
                   tab = "LM",
                   match = "flywire",
                   id = "id")
-  }
 
   ## Read the hemibrain Google Sheet
-  hg = gsheet_manipulation(FUN = googlesheets4::read_sheet,
-                           ss = selected_file,
-                           sheet = "hemibrain",
-                           guess_max = 3000,
-                           return = TRUE)
-  hg$bodyid = correct_id(hg$bodyid)
-  rownames(hg) = hg$bodyid
+  hg = hemibrain_match_sheet(sheet = "hemibrain", selected_file = selected_file)
+  orig = hg$flywire.match
   hg$flywire.match = fg$flywire.xyz[match(hg$bodyid,fg$hemibrain.match)]
-  if(length(sorted)){
-    update_gsheet(update = hg[,"flywire.match"],
+  different = paste(orig)!=paste(hg$flywire.match)
+  update_gsheet(update = hg[different,],
                   gs = hg,
                   tab = "hemibrain",
                   match = "flywire",
                   id = "bodyid")
-  }
 
   # Add missing flywire information
   missing = setdiff(fids, all.ids)
