@@ -100,6 +100,15 @@ for(t in trans){
     t.folder.data = drive_ls(path = transform, type = "folder", team_drive = hemibrain)
     t.folder.data = subset(t.folder.data, name == "data")
   }
+  t.folder.data = drive_ls(path = transform, type = "folder", team_drive = hemibrain)
+  t.folder.data = subset(t.folder.data, name == "data")
+  if(!nrow(t.folder.data)){
+    drive_mkdir(name = "data",
+                path = transform,
+                overwrite = TRUE)
+    t.folder.data = drive_ls(path = transform, type = "folder", team_drive = hemibrain)
+    t.folder.data = subset(t.folder.data, name == "data")
+  }
   t.fh = paste0("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/",t)
   t.list = list.files(t.fh,full.names = TRUE)
   t.rds = t.list[grepl(".rds",t.list)]
