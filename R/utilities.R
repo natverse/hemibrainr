@@ -90,9 +90,11 @@ google_drive_place <- function(media,
   f = googledrive::is_folder(path)
   if(f){
     ls = googledrive::drive_ls(path, ...)
-    p = subset(ls, name == basename(media))$id[1]
+    p = subset(ls, name == basename(media))$id
     if(length(p)){
-      path = googledrive::as_id(p)
+      path = googledrive::as_id(p[1])
+    }else{
+      path = googledrive::as_id(path)
     }
   }else{
     path = googledrive::as_id(path)
