@@ -26,7 +26,6 @@ hemibrain_neurons= subset(drive_hemibrain,name=="hemibrain_neurons")
 hemibrain_nblast= subset(drive_hemibrain,name=="hemibrain_nblast")
 flycircuit= subset(drive_hemibrain,name=="flycircuit")
 nblast.folder = subset(drive_hemibrain,name=="hemibrain_nblast")
-nblast.folder.contents = drive_ls(path = nblast.folder,  team_drive = hemibrain)
 
 # Save NBLAST files
 nblast.files  = list.files(paste0("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/NBLAST/",identifier),pattern = "rda", full.name = TRUE)
@@ -91,10 +90,10 @@ for(t in trans){
   transform = subset(transform, name == gfolder)
   if(!nrow(transform)){
     drive_mkdir(name = gfolder,
-                path = transforms,
+                path = hemibrain_neurons,
                 overwrite = TRUE)
-    transform = drive_ls(path = transforms, type = "folder", team_drive = hemibrain)
-    transform = subset(transform, name == t)
+    transform = drive_ls(path = hemibrain_neurons, type = "folder", team_drive = hemibrain)
+    transform = subset(transform, name == gfolder)
     drive_mkdir(name = "data",
                 path = transform,
                 overwrite = TRUE)
