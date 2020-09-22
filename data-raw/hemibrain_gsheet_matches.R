@@ -47,7 +47,7 @@ fafb_lineage_complete_wipe(server = "v14seg-Li-190411.0")
 matches = hemibrain_matches()
 matches = subset(matches, quality %in% c("good","medium") & dataset == "FAFB")
 skds = as.character(rownames(matches))
-fafb_hemibrain_annotate(skds)
+fafb_hemibrain_annotate(skds, flywire = TRUE)
 
 # Flag 5 neurons from each cell body fiber
 ## To match to at least tract level
@@ -133,9 +133,9 @@ for(h in hemi){
 # ## Wrong FAFB Ito_Lee Hemilineage: CREa2
 # ## Correct one: CREa2_ventral
 # ## Hemibrain CBF: ADM05
-fafb_set_hemilineage(find = "ItoLee_Hemilineage: LHd2",
-                     putative = FALSE,
-                     ItoLee_Hemilineage = "LHd2")
+# fafb_set_hemilineage(find = "ItoLee_Hemilineage: LHd2",
+#                      putative = FALSE,
+#                      ItoLee_Hemilineage = "LHd2")
 
 
 

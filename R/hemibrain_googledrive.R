@@ -15,9 +15,6 @@
 #'   default at: \code{getOption("hemibrain_data")}) or neurons from Google
 #'   Drive (\code{getOption("Gdrive_hemibrain_data")}).
 #'   If a character, the path from which to each for hemibrain data.
-#' @param neuron.split read saved neurons split in which way? Folder names
-#'   indicative of arguments passed to \code{\link{flow_centrality}}. and
-#'   \code{\link{hemibrain_flow_centrality}}
 #' @param nblast the NBLAST matrix you would like to retrieve, e.g.
 #'   \code{"arbours"} gives you a normalised all by all NBLAST matrix of all
 #'   branching arbour.
@@ -25,7 +22,7 @@
 #'   neurons.
 #' @param data the type of data to read, i.e. neurons, an NBLAST matrix or a
 #'   \code{\link{dotprops}} object.
-#' @param folder A subfolder containing the data object to read.
+#' @param folder A subfolder on the Hemibrain team drive or your local data foldercontaining the data object to read.
 #'
 #' @return a \code{data.frame} or character vector
 #'
@@ -47,21 +44,18 @@
 #' @name hemibrain_googledrive
 #' @aliases hemibrain_neuron_bodyids
 #' @export
-hemibrain_neuron_bodyids <- function(local = FALSE){
+hemibrain_neuron_bodyids <- function(local = FALSE, folder = "hemibrain_neurons/"){
   savedir = good_savedir(local = local)
-  gfile = find_gfile(savedir = savedir, file = "hemibrain_all_neuron_bodyids", folder = "hemibrain_neurons/")
+  gfile = find_gfile(savedir = savedir, file = "hemibrain_all_neuron_bodyids", folder = folder)
   gcsv = utils::read.csv(gfile)
   as.character(gcsv$x)
 }
 
 #' @rdname hemibrain_googledrive
 #' @export
-hemibrain_elist <- function(local = FALSE,
-                            neuron.split = c("polypre_centrifugal_synapses",
-                                             "polypre_centrifugal_distance")){
-  neuron.split = match.arg(neuron.split)
+hemibrain_elist <- function(local = FALSE, folder = "hemibrain_neurons/"){
   savedir = good_savedir(local = local)
-  folder = paste0("hemibrain_neurons/",neuron.split,"/")
+  folder = "hemibrain_neurons/"
   gfile = find_gfile(savedir = savedir, file = "hemibrain_all_neurons_edgelist", folder = folder)
   gcsv = utils::read.csv(gfile)
   gcsv
@@ -69,12 +63,8 @@ hemibrain_elist <- function(local = FALSE,
 
 #' @rdname hemibrain_googledrive
 #' @export
-hemibrain_synapses <- function(local = FALSE,
-                            neuron.split = c("polypre_centrifugal_synapses",
-                                             "polypre_centrifugal_distance")){
-  neuron.split = match.arg(neuron.split)
+hemibrain_synapses <- function(local = FALSE, folder = "hemibrain_neurons/"){
   savedir = good_savedir(local = local)
-  folder = paste0("hemibrain_neurons/",neuron.split,"/")
   gfile = find_gfile(savedir = savedir, file = "hemibrain_all_neurons_synapses", folder = folder)
   gcsv = utils::read.csv(gfile)
   gcsv
@@ -82,12 +72,8 @@ hemibrain_synapses <- function(local = FALSE,
 
 #' @rdname hemibrain_googledrive
 #' @export
-hemibrain_connections <- function(local = FALSE,
-                               neuron.split = c("polypre_centrifugal_synapses",
-                                                "polypre_centrifugal_distance")){
-  neuron.split = match.arg(neuron.split)
+hemibrain_connections <- function(local = FALSE, folder = "hemibrain_neurons/"){
   savedir = good_savedir(local = local)
-  folder = paste0("hemibrain_neurons/",neuron.split,"/")
   gfile = find_gfile(savedir = savedir, file = "hemibrain_all_neurons_connections", folder = folder)
   gcsv = utils::read.csv(gfile)
   gcsv
@@ -96,6 +82,7 @@ hemibrain_connections <- function(local = FALSE,
 #' @export
 #' @rdname hemibrain_googledrive
 hemibrain_nblast <- function(nblast = c("hemibrain",
+                                        "flywire",
                                         "hemibrain-flywire",
                                         "hemibrain-flycircuit",
                                         "flywire-mirror",
@@ -107,16 +94,16 @@ hemibrain_nblast <- function(nblast = c("hemibrain",
                                         "tracts",
                                         "arbour",
                                         "simplified"),
-                             local = FALSE,
-                             neuron.split = c("polypre_centrifugal_synapses",
-                                              "polypre_centrifugal_distance")){
+                             local = FALSE){
   nblast = match.arg(nblast)
-  neuron.split = match.arg(neuron.split)
   savedir = good_savedir(local = local)
-  folder = if(nblast %in% c("all")){
+  folder = if(nblast %in% c("hemibrain",
+                            "hemibrain-flywire",
+                            "hemibrain-flycircuit",
+                            "flywire-mirror")){
     "hemibrain_nblast"
   }else{
-    paste0("hemibrain_nblast/nblast_", neuron.split)
+    "hemibrain_nblast/nblast_"
   }
   file = switch(nblast,
                 hemibrain = "hemibrain.aba.mean.compress.rda",

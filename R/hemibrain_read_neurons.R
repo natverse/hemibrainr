@@ -20,7 +20,6 @@
 #' @param googlesheet logical, whether or not manually checked somas should be read from the \href{https://docs.google.com/spreadsheets/d/1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E/edit#gid=1524900531}{Google Sheet}
 #' @param clean whether or not to set synapse-less branches to \code{Label = 0}.
 #' @param local logical, whether to try to read locally saved neurons (by default at: \code{options()$hemibrain_data}) or neurons from Google Drive (\code{options()$Gdrive_hemibrain_data}).
-#' @param neuron.split read saved neurons spit in which way? Folder names indicative of arguments passed to \code{\link{flow_centrality}}.
 #' @param scaling the factor by which neuron coordinates in raw voxel space should be multiplied. The default scales to microns.
 #' @param ... arguments passed to \code{neuprintr::neuprint_read_neurons}, \code{\link{hemibrain_remove_bad_synapses}}
 #'  and \code{\link{hemibrain_flow_centrality}}
@@ -341,19 +340,19 @@ googledrive_simpledownload <- function(id, file, overwrite = FALSE){
 #' @rdname hemibrain_read_neurons
 #' @export
 hemibrain_neurons <- function(local = FALSE,
-                              neuron.split = c("polypre_centrifugal_synapses",
-                                                "polypre_centrifugal_distance"),
-                              brain = c("JRCFIB2018Fraw","JRCFIB2018F","FAFB","JFRC2","JRC2018F","FCWB"),
-                              mirror = FALSE){
-  neuron.split = match.arg(neuron.split)
+                              brain = c("JRCFIB2018Fraw","JRCFIB2018F","FAFB14","JFRC2","JRC2018F","FCWB"),
+                              mirror = FALSE,
+                              dotprops = FALSE,
+                              folder = "hemibrain_neurons/"){
   brain = match.arg(brain)
-  savedir = good_savedir(local = local,
-                      neuron.split = neuron.split)
-  neuronsdir = paste0(savedir,"hemibrain_neurons/")
-  if(brain == "JRCFIB2018Fraw"){
-    fhdir = paste0(neuronsdir,neuron.split,"/")
+  savedir = good_savedir(local = local)
+  neuronsdir = paste0(savedir,folder)
+  if(dotprops){
+    message("Vector cloud object only available for JRCFIB2018F")
+    brain = "JRCFIB2018F"
+    fhdir = paste0(neuronsdir,brain,"/dotprops/")
   }else{
-    fhdir = paste0(neuronsdir,neuron.split,"/transforms/",brain,"/")
+    fhdir = paste0(neuronsdir,brain,"/")
   }
   filelist = list.files(path = fhdir, pattern = ".rds", full.names = TRUE)
   filelist = filelist[grepl("mirror",filelist)==mirror]
@@ -369,11 +368,8 @@ hemibrain_neurons <- function(local = FALSE,
 }
 
 # hidden
-good_savedir <- function(local = FALSE,
-                         neuron.split = c("polypre_centrifugal_synapses",
-                                          "polypre_centrifugal_distance")
+good_savedir <- function(local = FALSE
                          ){
-  neuron.split = match.arg(neuron.split)
   if(is.null(options()$hemibrain_data)){
     options(hemibrain_data = paste0(getwd(),"/data-raw/hemibrain_data/"))
   }
@@ -398,7 +394,7 @@ good_savedir <- function(local = FALSE,
     warning("The following option has been set: options(hemibrain_data = paste0(getwd(),'/data-raw/hemibrain_data/')) ")
   }
   if(!dir.exists(savedir)){
-    dir.create(paste0(savedir,"/hemibrain_neurons/",neuron.split,"/data/"), recursive = TRUE)
+    dir.create(paste0(savedir,"/hemibrain_neurons/"), recursive = TRUE)
     dir.create(paste0(savedir,"/hemibrain_annotations/"), recursive = TRUE)
     warning("Made new hemibrain save directory within the working directory. It is currently empty, please add neuron data:", savedir)
   }

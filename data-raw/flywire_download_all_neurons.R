@@ -55,19 +55,27 @@ for(tab in tabs){
   gs = plyr::rbind.fill(gs,gs.t)
 }
 gs = gs[!is.na(gs$fw.x),]
+gs$flywire.xyz = apply(gs[,c("fw.x","fw.y",'fw.z')],1,paste,sep=",",collapse=",")
 
 # Get xyz positions for FAFBv14 neurons.
-# positions = gs$FAFB.xyz
-# positions = positions[!is.na(positions)]
-# positions = sapply(positions,strsplit,",")
-# positions = positions[sapply(positions,function(p) length(p)==3)]
-# positions = do.call(rbind, positions)
-# positions = apply(positions,2,as.numeric)
-# positions = xform_brain(positions, reference = "FlyWire", sample = "FAFB14", .parallel = TRUE, verbose = TRUE)
+fg = hemibrainr:::gsheet_manipulation(FUN = googlesheets4::read_sheet,
+                         ss = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw",
+                         sheet = "FAFB",
+                         guess_max = 3000,
+                         return = TRUE)
+positions.gs = fg[!is.na(fg$flywire.xyz),]
+positions.gs = sapply(positions.gs$flywire.xyz,strsplit,",")
+positions.gs = positions.gs[sapply(positions.gs,function(p) length(p)==3)]
+positions.gs = do.call(rbind, positions.gs)
+positions.gs = apply(positions.gs,2,as.numeric)
 
-# Get positions for flywire neurons
+# Get positions for flywire neurons=
 positions = gs[,c("fw.x","fw.y",'fw.z')]
 positions = apply(positions,2,as.numeric)
+positions = rbind(positions, positions.gs)
+positions = as.data.frame(positions)
+positions$flywire.xyz = apply(positions[,c("fw.x","fw.y",'fw.z')],1,paste,sep=",",collapse=",")
+positions = positions[!duplicated(positions$flywire.xyz),]
 
 # Batch positions for grabbing IDs from flywire
 batches = split(1:nrow(positions), round(seq(from = 1, to = numCores, length.out = nrow(positions))))
@@ -75,39 +83,45 @@ batches = split(1:nrow(positions), round(seq(from = 1, to = numCores, length.out
 # Find flywire IDs for each specified position
 foreach.ids <- foreach::foreach (batch = 1:numCores) %dopar% {
   pos = positions[batches[[batch]],]
-  i = fafbseg::flywire_xyz2id(pos, rawcoords = TRUE)
+  colnames(pos) = c("x","y","z","flywire.xyz")
+  j <- tryCatch({i = fafbseg::flywire_xyz2id(pos[,1:3], rawcoords = TRUE)
+  names(i) = pos$flywire.xyz
   if(sum(i==0)>0){
     i[i==0] =  fafbseg::flywire_xyz2id(pos[i==0,], rawcoords = FALSE)
   }
-  i
+  i}, error = function(e) NULL)
 }
-ids = unlist(foreach.ids)
-gs$id = ids
+fids = unlist(foreach.ids)
+
+# Combine
+master = plyr::rbind.fill(fg,gs)
+master$flywire.id = fids[as.character(master$flywire.xyz)]
+master = master[!duplicated(master$flywire.xyz),]
 
 # Batch IDs for grabbing meshes from flywire
-ids = unique(ids[!is.na(ids)])
+ids = unique(fids[!is.na(fids)])
 ids = ids[ids!="0"]
 batches = split(ids, round(seq(from = 1, to = numCores, length.out = length(ids))))
 
 # Read neurons
 foreach.skeletons <- foreach::foreach (batch = 1:numCores) %dopar% {
   fw.ids = batches[[batch]]
-  j = fafbseg::skeletor(fw.ids, clean = FALSE, brain = elmr::FAFB14.surf, mesh3d = FALSE)
+  j = tryCatch(fafbseg::skeletor(fw.ids, clean = FALSE, brain = elmr::FAFB14.surf, mesh3d = FALSE), error = function(e) NULL)
 }
 isnl = sapply(foreach.skeletons, nat::is.neuronlist)
 fw.neurons = do.call(c, foreach.skeletons[isnl])
 
 # Add metadata
 colnames(fw.neurons[,]) = c("flywire.id")
-coords = gs[match(names(fw.neurons),gs$id),]
+coords = master[match(names(fw.neurons),master$flywire.id),]
 flywire.xyz = apply(coords[,c("fw.x","fw.y",'fw.z')],1,paste,sep=",",collapse=",")
 fw.neurons[,"flywire.xyz"] = flywire.xyz
 fw.neurons[,"FAFB.xyz"] = coords[,"FAFB.xyz"]
 fw.neurons[,"side"] = coords[,"side"]
 fw.neurons[,"ItoLee_Hemilineage"] = coords[,"ItoLee_Hemilineage"]
 fw.neurons[,"Hartenstein_Hemilineage"] = coords[,"Hartenstein_Hemilineage"]
-fw.neurons[,"skid"] = "skid"
-fw.neurons[,"hemibrain_match"] = "hemibrain_match"
+fw.neurons[,"skid"] = coords[,"skid"]
+fw.neurons[,"hemibrain_match"] = coords[,"hemibrain_match"]
 fw.neurons[,"dataset"] = "flywire"
 
 # Save locally just in case

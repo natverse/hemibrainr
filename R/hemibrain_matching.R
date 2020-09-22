@@ -626,12 +626,14 @@ lm_matching <- function(ids = NULL,
 #' @rdname hemibrain_matching
 #' @export
 fafb_matching <- function(ids = NULL,
+                        repository = c("FAFB", "flywire"),
                         hemibrain.nblast = NULL,
                         selected_file = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw",
                         batch_size = 50,
                         db=hemibrain_neurons(),
                         query = NULL,
                         overwrite = FALSE){
+  repository = match.arg(repository)
   # Packages
   if(!requireNamespace("nat.jrcbrains", quietly = TRUE)) {
     stop("Please install nat.jrcbrains using:\n", call. = FALSE,
@@ -647,14 +649,16 @@ fafb_matching <- function(ids = NULL,
   unsaved = c()
   message("
           #######################Colours##########################
-          black = LM neuron,
+          black = FAFB CATMAID neuron,
+          dark grey = flywire neuron,
+          light grey = mirrrored flywire neuron,
           red = potential hemibrain matches based on NBLAST score,
           green = a chosen hemibrain neuron during scanning,
           blue = your selected hemibrain match.
           #######################Colours##########################
           ")
   ## Get NBLAST
-  if(is.null(hemibrain.nblast)){
+  if(is.null(hemibrain.nblast) & repository == "CATMAID"){
     matname="fib.fafb.crossnblast.twigs5.mean.compress"
     message("Loading FAFB-FIB NBLAST ", matname,
             " from flyconnectome Google Team Drive using Google Filestream: ")
@@ -662,14 +666,26 @@ fafb_matching <- function(ids = NULL,
     hemibrain.nblast = get(matname)
     rm("fib.fafb.crossnblast.twigs5.mean.compress")
   }
+  if(is.null(hemibrain.nblast) & repository == "flywire"){
+    hemibrain.nblast = t(hemibrain_nblast("hemibrain-flywire"))
+  }
+  # Flywire or CATMAID?
+  if(repository=="FAFB"){
+    id = "skid"
+  }else{
+    id = "flywire.id"
+  }
   # Read the Google Sheet
   gs = gsheet_manipulation(FUN = googlesheets4::read_sheet,
                            ss = selected_file,
                            sheet = "FAFB",
                            guess_max = 3000,
                            return = TRUE)
-  gs$skid = correct_id(gs$skid)
-  rownames(gs) = gs$skid
+  gs[[id]] = correct_id(gs[[id]])
+  gs = gs[!duplicated(gs[[id]]),]
+  is = gs[[id]]
+  is[is.na(is)] = "0"
+  rownames(gs) = is
   gs$User[is.na(gs$User)] = ""
   # Get hemibrain neurons
   if(missing(db)) {
@@ -692,46 +708,88 @@ fafb_matching <- function(ids = NULL,
   say_hello(initials)
   rgl::bg3d("white")
   # choose ids
-  if(is.null(ids)){
-    ids = gs$skid[gs$User==initials]
+  if(is.null(ids)|!length(ids)){
+    ids = gs[[id]][gs$User==initials]
   }else{
     ids = intersect(ids,gs$skid)
   }
   # Deselect some IDs
   if(overwrite == "none"){
-    donotdo = subset(gs, !gs[[quality.field]] %in% c("none","n","tract","t") | !gs$skid%in%ids)
+    donotdo = subset(gs, !gs[[quality.field]] %in% c("none","n","tract","t") | !gs[[id]]%in%ids)
   } else if(!overwrite){
-    donotdo = subset(gs, !is.na(gs[[match.field]]) | !gs$skid%in%ids)
+    donotdo = subset(gs, !is.na(gs[[match.field]]) | !gs[[id]]%in%ids)
   }else{
-    donotdo = subset(gs, !gs$skid%in%ids)
+    donotdo = subset(gs, !gs[[id]]%in%ids)
   }
-  if(sum(ids%in%donotdo$skid)==length(ids)){
+  if(sum(ids%in%donotdo[[id]])==length(ids)){
     message("No matches to make for ", initials, " either assign more neurons to your initials, or use overwrite = TRUE to replace matches already made")
   }
   # choose brain
   brain = hemibrainr::hemibrain.surf
+  # Load flywire neurons, if needed
+  if(repository == 'flywire'){
+    fw.neurons = flywire_neurons()
+    fw.neurons.m = flywire_neurons(mirror=TRUE)
+    names(fw.neurons.m) = paste0(names(fw.neurons.m),"_m")
+  }
   # Make matches!
-  for(n in gs$skid){
+  for(n in gs[[id]]){
     # Get id
     n = as.character(n)
-    end = n==gs$skid[length(gs$skid)]
+    end = n==gs[[id]][length(gs[[id]])]
     # Remove neurons with matches
-    if(n%in%donotdo$skid){
+    if(n%in%donotdo[[id]]){
       next
     }
     # Plot brain
     rgl::clear3d()
+    hemibrain_view()
     plot3d(brain, alpha = 0.1, col ="grey")
     # Transform hemibrain neuron to FAFB space
     if(!is.null(query)){
       lhn = query[n]
-    }else{
+    }else if(repository == "FAFB"){
       lhn = catmaid::read.neurons.catmaid(n, OmitFailures = TRUE)
+    }else if(repository == "flywire"){
+      sk = gs[n,]$skid[1]
+      if(!is.na(sk)){
+        lhn = tryCatch(catmaid::read.neurons.catmaid(n, OmitFailures = TRUE), error = function(e) NULL)
+      }else{
+        lhn = NULL
+      }
+      fw.n = tryCatch({
+        fw.n = fw.neurons[as.character(n)]
+        fw.n = suppressWarnings(nat.templatebrains::xform_brain(fw.n, sample = "FAFB14", reference = "JRCFIB2018F"))
+        scale_neurons(fw.n, scaling = (1000/8))
+      }, error = function(e) {NULL})
+      if(is.null(fw.n)){
+        fw.n = tryCatch({
+          message("Neuron not found on google drive, attempting to read from flywire ...")
+          if(!requireNamespace("fafbseg", quietly = TRUE)) {
+            stop("Please install fafbseg using:\n", call. = FALSE,
+                 "remotes::install_github('natverse/fafbseg')")
+          }
+          fw.n = fafbseg::skeletor(n)
+          fw.n = suppressWarnings(nat.templatebrains::xform_brain(fw.n, sample = "FAFB14", reference = "JRCFIB2018F"))
+          scale_neurons(fw.n, scaling = (1000/8))
+        }, error = function(e) {NULL})
+      }
+      fw.m = s = tryCatch({
+        fw.m = fw.neurons.m[as.character(n)]
+        fw.m = suppressWarnings(nat.templatebrains::xform_brain(fw.m, sample = "FAFB14", reference = "JRCFIB2018F"))
+        scale_neurons(fw.m, scaling = (1000/8))
+      }, error = function(e) {NULL})
     }
-    lhn = suppressWarnings(nat.templatebrains::xform_brain(lhn, sample = "FAFB14", reference = "JRCFIB2018F"))
-    lhn = scale_neurons(lhn, scaling = (1000/8))
-    plot3d(lhn, lwd = 2, soma = TRUE, col = "black")
-    message("SKID: ", n)
+    if(!is.null(lhn)){
+      lhn = suppressWarnings(nat.templatebrains::xform_brain(lhn, sample = "FAFB14", reference = "JRCFIB2018F"))
+      lhn = scale_neurons(lhn, scaling = (1000/8))
+      plot3d(lhn, lwd = 2, soma = TRUE, col = "black")
+    }
+    if(repository=="flywire"){
+      if(!is.null(fw.n)) {plot3d(fw.n, lwd = 3, soma = TRUE, col = "grey30")}
+      if(!is.null(fw.m)) {plot3d(fw.m, lwd = 3, soma = TRUE, col = "grey70")}
+    }
+    message("ID: ", n)
     message("ItoLee_Hemilineage : ",lhn[n,"ItoLee_Hemilineage"])
     # Read top 10 FIB matches
     r = tryCatch(sort(hemibrain.nblast[n,],decreasing = TRUE), error = function(e) NULL)
@@ -816,7 +874,6 @@ fafb_matching <- function(ids = NULL,
     }
     quality = standardise_quality(quality)
     gs[n,quality.field] = quality
-    gs = gs[!duplicated(gs$skid),]
     unsaved = c(unsaved, n)
     message(length(unsaved), " unsaved matches")
     print(knitr::kable(gs[unsaved,c("skid","ItoLee_Hemilineage",match.field,quality.field)]))
@@ -830,19 +887,20 @@ fafb_matching <- function(ids = NULL,
                                 sheet = "FAFB",
                                 guess_max = 3000,
                                 return = TRUE)
-      gs2$skid = correct_id(gs2$skid)
-      rownames(gs2) = gs2$skid
-      gs = gs[rownames(gs2),]
-      gs = gs[!duplicated(gs$skid),]
+      gs2[[id]] = correct_id(gs2[[id]])
+      is = gs2[[id]]
+      is[is.na(is)] = "0"
+      rownames(gs2) = paste0(is,"#",ave(is,is,FUN= seq.int))
+      gs2[match(gs[[id]],gs2[[id]]),match.field]=gs[[match.field]]
       # Write!
-      write_matches(gs=gs,
+      write_matches(gs=gs2,
                     ids = unsaved,
-                    id.field = "skid",
+                    id.field = id,
                     column = match.field,
                     ws = "FAFB")
-      write_matches(gs=gs,
+      write_matches(gs=gs2,
                     ids = unsaved,
-                    id.field = "skid",
+                    id.field = id,
                     column = quality.field,
                     ws = "FAFB")
       unsaved = c()
@@ -859,19 +917,20 @@ fafb_matching <- function(ids = NULL,
                               sheet = "FAFB",
                               guess_max = 3000,
                               return = TRUE)
-    gs2$skid = correct_id(gs2$skid)
-    rownames(gs2) = gs2$skid
-    gs = gs[rownames(gs2),]
-    gs = gs[!duplicated(gs$skid),]
+    gs2[[id]] = correct_id(gs2[[id]])
+    is = gs2[[id]]
+    is[is.na(is)] = "0"
+    rownames(gs2) = paste0(is,"#",ave(is,is,FUN= seq.int))
+    gs2[match(gs[[id]],gs2[[id]]),match.field]=gs[[match.field]]
     # Write!
-    write_matches(gs=gs,
+    write_matches(gs=gs2,
                   ids = unsaved,
-                  id.field = "skid",
+                  id.field = id,
                   column = match.field,
                   ws = "FAFB")
-    write_matches(gs=gs,
+    write_matches(gs=gs2,
                   ids = unsaved,
-                  id.field = "skid",
+                  id.field = id,
                   column = quality.field,
                   ws = "FAFB")
   }
@@ -1329,7 +1388,9 @@ hemibrain_match_sheet <- function(selected_file = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8
                                         sheet = sheet,
                                         return = TRUE)
   gs[[id.field]] = correct_id(gs[[id.field]])
-  rownames(gs) = gs[[id.field]]
+  ids = gs[[id.field]]
+  ids[is.na(ids)] = paste0("missing_",1:sum(is.na(ids)))
+  rownames(gs) = ids
   gs
 }
 
@@ -1337,23 +1398,35 @@ hemibrain_match_sheet <- function(selected_file = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8
 #' @rdname hemibrain_add_made_matches
 #' @export
 hemibrain_matching_add <- function(ids,
-                                   sheet = c("hemibrain","FAFB"),
+                                   dataset = c("hemibrain","FAFB","flywire"),
                                    User = "flyconnectome",
                                    selected_file  = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw",
                                    ...){
   # Read
-  sheet = match.arg(sheet)
+  dataset = match.arg(dataset)
+  if(dataset =="flywire"){
+    sheet = "FAFB"
+  }else{
+    sheet = dataset
+  }
   gs = hemibrain_match_sheet(sheet = sheet, selected_file = selected_file)
 
   # What are we adding?
   add = setdiff(ids, rownames(gs))
 
   # Meta information
-  if(sheet=="hemibrain"){
+  if(dataset=="hemibrain"){
     meta = hemibrain_get_meta(add, ...)
     meta$cell.type = meta$type
-  }else{
+  }else if (dataset == "FAFB"){
     meta = elmr::fafb_get_meta(add, ...)
+  } else if (dataset == "flywire"){
+    add = setdiff(ids, gs$flywire.id)
+    meta = flywire_neurons()[add]
+    meeta = flywire_basics(meta)
+  }
+  if(!length(add)){
+    stop("Given IDs already exist in sheet")
   }
   missing = setdiff(colnames(gs),colnames(meta))
   meta = add_blanks(meta, missing)

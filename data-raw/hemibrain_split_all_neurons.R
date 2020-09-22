@@ -38,6 +38,8 @@ message("Flow centrality calculated for ", length(all.neurons.flow), " neurons")
 sensories = unique(c(rn.ids,orn.ids,hrn.ids))
 rn.flow = hemibrainr::add_Label(all.neurons.flow[intersect(as.character(sensories),names(all.neurons.flow))], Label = 2, internal.assignments = TRUE)
 all.neurons.flow[names(rn.flow)] = rn.flow
+good = sapply(all.neurons.flow,nat::is.neuron)
+all.neurons.flow = all.neurons.flow[good]
 rm("all.neurons.checked")
 
 # Save
@@ -85,3 +87,5 @@ message("Metrics calculated for neurons: ", nrow(mets))
 # Make a dotprops object
 all.neurons.flow.dps = nat::dotprops(all.neurons.flow, Labels = TRUE, resample = 1, OmitFailures = TRUE, .parallel = TRUE)
 save(all.neurons.flow.dps, file = paste0("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/hemibrain_all_neurons_flow_",identifier,"_dps.rda"))
+all.neurons.flow.dps.fh = as.neuronlistfh(all.neurons.flow, dbdir= "/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/JRC2018F/dotprops/data/", WriteObjects = "yes")
+write.neuronlistfh(all.neurons.flow.dps.fh, file="/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/JRC2018F/dotprops/hemibrain_all_neurons_flow_dotprops.rds", overwrite=TRUE)

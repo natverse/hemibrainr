@@ -37,8 +37,8 @@ googledrive_upload_neuronlistfh <- function(x,
 
   # Save locally
   temp = tempdir(check=TRUE)
-  on.exit(unlink(temp, recursive=TRUE))
   temp.data = paste0(temp,"/data")
+  on.exit(unlink(temp.data, recursive=TRUE))
   temp.rds = paste0(temp,"/",file_name)
   nl = nat::as.neuronlistfh(x, dbdir= temp.data, WriteObjects = "yes")
   nat::write.neuronlistfh(nl, file= temp.rds, overwrite=TRUE)
@@ -86,6 +86,18 @@ google_drive_place <- function(media,
                                path,
                                verbose = TRUE,
                                ...){
+  # If path is folder, check contents to duplicates
+  f = googledrive::is_folder(path)
+  if(f){
+    ls = googledrive::drive_ls(path, ...)
+    p = subset(ls, name == basename(media))$id[1]
+    if(length(p)){
+      path = googledrive::as_id(p)
+    }
+  }else{
+    path = googledrive::as_id(path)
+  }
+
   if("drive_id"%in%class(path)){
     googledrive::drive_update(media = media,
                            file = path,
@@ -502,4 +514,12 @@ strip_meshes<-function(x){
     x
   }
   nat::nlapply(x, strip_mesh.neuron)
+}
+
+# View
+hemibrain_view <- function(){
+  rgl::rgl.viewpoint(userMatrix = structure(c(0.997098863124847, 0.00167237117420882,
+                                              -0.0761013180017471, 0, 0.074764609336853, -0.209322586655617,
+                                              0.974984049797058, 0, -0.0142990946769714, -0.977845013141632,
+                                              -0.208840310573578, 0, 0, 0, 0, 1), .Dim = c(4L, 4L)), zoom = 0.613913536071777)
 }

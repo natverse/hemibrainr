@@ -3,11 +3,13 @@
 #'@description Get a large number of skeletonised neurons from FlyWire. The neuronlist is saved as a
 #'  \code{nat::neuronlistfh} object so certain neurons may be read from it
 #'  without loading the entire, large neuronlist into memory. You will need access to the hemibrain Google Team Drive and
-#'  have it mounted with Google filestream.
+#'  have it mounted with Google filestream.The function \code{flywire_neurons_update} can be used to update the available data.
 #'
 #' @param brain the brainspace in which hemibrain neurons have been registered. Defaults to raw voxel space for the FlyWire project.
 #' @param local logical, whether to try to read locally saved neurons (by default at: \code{options()$hemibrain_data}) or neurons from Google Drive (\code{options()$Gdrive_hemibrain_data}).
 #' @param mirror logical, whether or not to read neurons that have been mirrored (i.e. flipped to the 'other' brain hemisphere).
+#' @param x flywire IDs to update, for the saved google drive \code{neuronlistfh} objects called with \code{flywire_neurons}.
+#' @param nblast which flywire nblast to update on google drive.
 #' @param ... Additional arguments passed to \code{\link{nat::nlapply}}.
 #'
 #' @examples
@@ -72,3 +74,183 @@ flywire_neurons <- function(local = FALSE,
   # Return
   neurons.fh
 }
+
+#' @rdname flywire_neurons
+#' @export
+flywire_neurons_update <- function(x,
+                                brain = c("FlyWire", "JRCFIB2018F","JRCFIB2018F","FAFB","JFRC2","JRC2018F","FCWB"),
+                                mirror = FALSE,
+                                ...){
+  brain = match.arg(brain)
+  if(!requireNamespace("fafbseg", quietly = TRUE)) {
+    stop("Please install fafbseg using:\n", call. = FALSE,
+         "remotes::install_github('natverse/fafbseg')")
+  }
+  if(mirror){
+    flip = "_mirrored"
+  }else{
+    flip = NULL
+  }
+  message("Skeletonising skelected neurons using skeletor ...")
+  y = fafbseg::skeletor(x, brain = elmr::FAFB14.surf, ...)
+  y = flywire_basics(y)
+  f = flywire_neurons(brain = brain, mirror = mirror)
+
+  # Transform
+  if(mirror){
+    message("Mirroring neurons version ...")
+    m = nat.templatebrains::xform_brain(y, reference = "JRC2", sample = "FAFB14", ....)
+    t = nat.templatebrains::mirror_brain(m, brain = "JRC2", ....)
+    if(brain!="FlyWire"){
+      t = nat.templatebrains::xform_brain(t, sample = "JRC2", reference = brain, ....)
+    }
+  }else if (brain!="FlyWire"){
+    message("Transforming skeletons ...")
+    t = nat.templatebrains::xform_brain(y, reference = brain, sample = "FAFB14", ....)
+  }else{
+    t  = y
+  }
+
+  # Add to data
+  message("Making neuronlist object ...")
+  z = union(t, nat::as.neuronlist(f))
+
+  # Save
+  hemibrainr:::googledrive_upload_neuronlistfh(z,
+                                               team_drive = "hemibrain",
+                                               file_name = sprintf("flywire_neurons_%s%s.rds", brain, flip),
+                                               folder = "flywire_neurons",
+                                               subfolder = brain)
+}
+
+#' @rdname flywire_neurons
+#' @export
+flywire_nblast_update <- function(x = NULL,
+                                  nblast = c("hemibrain-flywire",
+                                             "flywire",
+                                             "flywire-mirror"),
+                                  ...){
+  # Get old NBLAST
+  nblast = match.arg(nblast)
+  old.nblast = hemibrain_nblast(nblast)
+
+  # Get neurons to be updated
+  message("Loading flywire neurons ...")
+  old.nblast = old.nblast[,setdiff(colnames(old.nblast),x)]
+  f = flywire_neurons(brain= "JRCFIB2018F")
+  if(is.null(x)){
+    x = setdiff(names(f),colnames(nblast))
+  }
+  f = f[names(f) %in% as.character(x)]
+  f = nat::dotprops(f, ...)
+  m = flywire_neurons(brain= "JRCFIB2018F", mirror = TRUE)
+  m = m[names(m) %in% as.character(x)]
+  m = nat::dotprops(m, ...)
+  names(m) = paste0(names(m),"_m")
+  d = union(f, m)
+
+  ### NBLAST native
+  message("NBLASTing ...")
+  if(nblast=="hemibrain-flywire"){
+    # Get hemibrain neurons
+    message("Loading hemibrain neurons ...")
+    all.neurons.flow = hemibrain_neurons()
+    all.neurons.flow.microns = hemibrainr::scale_neurons.neuronlist(all.neurons.flow, .parallel = TRUE, OmitFailures = TRUE)
+    all.neurons.flow.microns.dps = nat::dotprops(all.neurons.flow.microns, .parallel = TRUE, OmitFailures = TRUE)
+    rm("all.neurons.flow")
+
+    message("NBLASTing hemibrain vs flywire")
+    hemibrain.flywire.mean.1 = nat.nblast::nblast(query = d,
+                                                  target = all.neurons.flow.microns.dps,
+                                                  .parallel=TRUE,
+                                                  normalised = TRUE)
+    hemibrain.flywire.mean.2 = nat.nblast::nblast(query = all.neurons.flow.microns.dps,
+                                                  target = d,
+                                                  .parallel=TRUE,
+                                                  normalised = TRUE)
+    hemibrain.flywire.mean = (hemibrain.flywire.mean.1+t(hemibrain.flywire.mean.2))/2
+
+    ## Average native and mirrored
+    colnames(hemibrain.flywire.mean) = gsub("_m$","",colnames(hemibrain.flywire.mean))
+    rownames(hemibrain.flywire.mean) = gsub("_m$","",rownames(hemibrain.flywire.mean))
+    hemibrain.flywire.mean = hemibrainr:::collapse_matrix_by_names(hemibrain.flywire.mean, FUN = max)
+    hemibrain.flywire.mean[hemibrain.flywire.mean<-0.5]=-0.5
+    hemibrain.flywire.mean=round(hemibrain.flywire.mean, digits=3)
+    hemibrain.flywire.mean = merge(hemibrain.flywire.mean, old.nblast, all.x = TRUE, all.y = TRUE)
+
+    # Save NBLAST on hemibrain googledrive
+    hemibrainr:::googledrive_upload_nblast(hemibrain.flywire.mean)
+
+  }
+
+  # Flywire
+  if(nblast=="flywire-mirror"){
+    # Get hemibrain neurons
+    message("Loading hemibrain neurons ...")
+    all.fw = flywire_neurons()
+    all.fw.dps = nat::dotprops(all.neurons.flow.microns, .parallel = TRUE, OmitFailures = TRUE)
+    rm("all.fw")
+    flywire.mirror.mean.1 = nat.nblast::nblast(query = d,
+                                                         target = all.fw.dps,
+                                                         .parallel=TRUE,
+                                                         normalised = TRUE)
+    flywire.mirror.mean.2 = nat.nblast::nblast(query = all.fw.dps,
+                                                         target = d,
+                                                         .parallel=TRUE,
+                                                         normalised = TRUE)
+    flywire.mirror.mean = (flywire.mirror.mean.1+t(flywire.mirror.mean.2))/2
+    colnames(flywire.mirror.mean) = gsub("_m$","",colnames(flywire.mirror.mean))
+    rownames(flywire.mirror.mean) = gsub("_m$","",rownames(flywire.mirror.mean))
+    flywire.mirror.mean[flywire.mirror.mean<-0.5]=-0.5
+    flywire.mirror.mean=round(flywire.mirror.mean, digits=3)
+    flywire.mirror.mean = merge(flywire.mirror.mean, old.nblast, all.x = TRUE, all.y = TRUE)
+    hemibrainr:::googledrive_upload_nblast(flywire.mirror.mean)
+  }
+
+  # Just Flywire left-right
+  if(nblast=="flywire"){
+    # Get hemibrain neurons
+    message("Loading hemibrain neurons ...")
+    all.fw = flywire_neurons()
+    all.fw.dps = nat::dotprops(all.neurons.flow.microns, .parallel = TRUE, OmitFailures = TRUE)
+    rm("all.fw")
+    flywire.mirror.mean = nat.nblast::nblast(query = f,
+                                                         target = all.fw.dps,
+                                                         .parallel=TRUE,
+                                                         normalised = TRUE)
+    flywire.mirror.mean=round(flywire.mirror.mean, digits=3)
+    flywire.mirror.mean[flywire.mirror.mean<-0.5]=-0.5
+    flywire.mirror.mean = merge(flywire.mirror.mean, old.nblast, all.x = TRUE, all.y = TRUE)
+    hemibrainr:::googledrive_upload_nblast(flywire.mirror.mean)
+  }
+
+}
+
+
+# hidden
+flywire_basics <- function(x){
+  if(!nat::is.neuronlist(x)){
+    stop("x must be a neuronlist")
+  }
+
+  # Get xyz for root points
+  roots = sapply(x, function(y) nat::xyzmatrix(y)[nat::rootpoints(y),])
+  roots = t(roots)
+  flywire.xyz = apply(roots, 1, paste, collapse = ",")
+
+  # Get FAFBv14 nm coordinates
+  roots.flywire.raw = scale(roots, scale = 1/c(4, 4, 40), center = FALSE)
+  #FAFB.xyz = nat.templatebrains::xform_brain(roots.flywire.raw, sample = "FlyWire", reference = "FAFB14")
+  #FAFB.xyz = apply(FAFB.xyz, 1, paste, collapse = ",")
+  FAFB.xyz = ""
+
+  # Add
+  x[,"flywire.id"] =  names(x)
+  x[,"flywire.xyz"] = flywire.xyz
+  x[,"FAFB.xyz"] = FAFB.xyz
+  x[,"dataset"] = "flywire"
+  x[,"id"] = NULL
+  x
+
+}
+

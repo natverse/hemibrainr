@@ -82,6 +82,7 @@ hemibrain_get_meta <- function(x, ...){
 #'
 #' @description Set annotations for FAFB neurons in CATMAID based on matches made to hemibrain neurons.
 #' E.g. transfer information on matches and cell body fibers, and also update lineage related information.
+#' Not that \code{catmaid::flywire_matching_rewrite()} will writ annoptations related to flywire.
 #'
 #' @param x a vector of FAFB skeleton IDs (skids) that can be read with \code{catmaid::catmaid_skids()}
 #' @param find an annotation/search term/vector of skids passed to \code{catmaid::catmaid_skids}.
@@ -90,6 +91,7 @@ hemibrain_get_meta <- function(x, ...){
 #' @param transmitter character, the known or putative transmitter identity of the neurons that will be fetched using \code{find}.
 #' @param delete.find logical, is \code{TRUE} then if \code{find} is an annotation, it will be wiped from the neuron after this function is used (if you have permission to remove it)
 #' @param putative if \code{TRUE} the word 'putative' is added to all lineage annotations to indicate to users that the labelled neurons may not have been given the correct lineages. More work may need to be done to solidify these assignments.
+#' @param flywire logical. Whether or not to add flywire-related annotation information, e.g. a corresponding position in flywire voxel space and a matching, cognate flywire ID.
 #' @param ... arguments passed to \code{neuprintr::neuprint_get_meta} and \code{catmaid::catmaid_login}.
 #'
 #' @return annotations set on CATMAID neurons in specified CATMAID instance, see your \code{catmaid::catmaid_connection()}
@@ -120,7 +122,12 @@ hemibrain_get_meta <- function(x, ...){
 #' @rdname fafb_hemibrain_annotate
 #' @export
 #' @seealso \code{\link{hemibrain_get_meta}}
-fafb_hemibrain_annotate <- function(x, ...){
+fafb_hemibrain_annotate <- function(x,
+                                    flywire = TRUE,
+                                    ...){
+  if(flywire){
+    require(fafbseg)
+  }
 
   # Get matches
   matches = hemibrain_matches()
@@ -143,6 +150,33 @@ fafb_hemibrain_annotate <- function(x, ...){
     ct = a$annotation[grepl("Cell_type: |cell_type: ",a$annotation)]
     cbf = a$annotation[grepl("cellBodyFiber: |CellBodyFiber: ",a$annotation)]
 
+    # Get flywire information
+    if(flywire){
+      fid = a$annotation[grepl("flywire_id: |FlyWire_id: ",a$annotation)]
+      cat = catmaid::read.neurons.catmaid(i, ...)
+      # Get xyz for root points
+      roots = sapply(cat, function(y) nat::xyzmatrix(y)[nat::rootpoints(y),])
+      roots = t(roots)
+      FAFB.xyz = apply(roots, 1, paste, collapse = ",")
+
+      # Get Flywire voxel coordinates
+      roots.flywire = nat.templatebrains::xform_brain(roots, reference = "FlyWire", sample = "FAFB14", .parallel = TRUE, verbose = TRUE)
+      rownames(roots.flywire) = rownames(roots)
+      roots.flywire.raw = scale(roots.flywire, scale = c(4, 4, 40), center = FALSE)
+      fw.ids = fafbseg::flywire_xyz2id(roots.flywire.raw, rawcoords = TRUE)
+      fw.ids[fw.ids=="0"] = NA
+      flywire.xyz = apply(roots.flywire.raw, 1, paste, collapse = ",")
+
+      # Make annotation
+      acbf = paste0('flywire_id: ', fw.ids[1])
+      message(afid)
+      afw = paste0('flywire_xyz: ', flywire.xyz[1])
+      message(afw)
+      afafb = paste0('FAFB_xyz: ', FAFB.xyz[1])
+      message(afafb)
+
+    }
+
     # Get meta for matches
     y = matches[i,"match"]
     hmeta = subset(hemi.meta, hemi.meta$bodyid == y)
@@ -162,6 +196,17 @@ fafb_hemibrain_annotate <- function(x, ...){
     }
 
     # Set annotations
+    annotations = c(am,
+                    act,
+                    acbf)
+    if(flywire){
+      annotations = c(am,
+                      act,
+                      acbf,
+                      afid,
+                      afw,
+                      afafb)
+    }
     catmaid::catmaid_set_annotations_for_skeletons(skids = i,
                                                    annotations = c(am,
                                                                    act,
@@ -172,6 +217,11 @@ fafb_hemibrain_annotate <- function(x, ...){
     catmaid::catmaid_set_meta_annotations(meta_annotations = "cell type", annotations = act, ...)
     catmaid::catmaid_set_meta_annotations(meta_annotations = "cell body fiber", annotations = acbf, ...)
     catmaid::catmaid_set_meta_annotations(meta_annotations = "hemibrain match", annotations = am, ...)
+    if(flywire){
+      catmaid::catmaid_set_meta_annotations(meta_annotations = "flywire id", annotations = afid, ...)
+      catmaid::catmaid_set_meta_annotations(meta_annotations = "flywire xyz", annotations = afw, ...)
+      catmaid::catmaid_set_meta_annotations(meta_annotations = "FAFB xyz", annotations = afafb, ...)
+    }
 
     # remove annotions
     if(length(ct)){
