@@ -1591,10 +1591,16 @@ update_gsheet <- function(update,
                           gs,
                           selected_file = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw",
                           tab,
-                          match,
+                          match = c("hemibrain", "LM", "FAFB", "flywire"),
                           id){
+  match = match.arg(match)
+  if(match=="flywire"){
+    match2 = "FAFB"
+  }else{
+    match2 = match
+  }
   for(row in 1:nrow(update)){
-    columns = c(paste0(match,".match"), paste0(match,".match.quality"))
+    columns = c(paste0(match,".match"), paste0(match2,".match.quality"))
     r = match(update[row,id],gs[[id]])+1
     if(is.issue(r)){
       next
