@@ -41,9 +41,17 @@ doMC::registerDoMC(numCores)
 registerDoParallel(numCores)  # use multicore, set to the number of our cores
 message("Cores recruited: ", foreach::getDoParWorkers())
 
-## Read google sheet
-tabs = googlesheets4::sheet_names("1spGSuhUX6Hhn-8HH0U_ArIWUuPpMBFNjIjeSSh_MFVY")
+# Neuron positions flagged by the community as of interest
+positions.gi = hemibrainr:::gsheet_manipulation(FUN = googlesheets4::read_sheet,
+                                        ss = "1rzG1MuZYacM-vbW7100aK8HeA-BY6dWAVXQ7TB6E2cQ",
+                                        sheet = "flywire",
+                                        guess_max = 1,
+                                        return = TRUE)
 1
+positions.gi$flywire.xyz = apply(positions.gi[,c("fw.x","fw.y",'fw.z')],1,paste,sep=",",collapse=",")
+
+## Read matching google sheet
+tabs = googlesheets4::sheet_names("1spGSuhUX6Hhn-8HH0U_ArIWUuPpMBFNjIjeSSh_MFVY")
 tabs = tabs[grepl("ItoLee",tabs)]
 gs = data.frame()
 for(tab in tabs){
@@ -73,6 +81,7 @@ positions.gs = apply(positions.gs,2,as.numeric)
 positions = gs[,c("fw.x","fw.y",'fw.z')]
 positions = apply(positions,2,as.numeric)
 positions = rbind(positions, positions.gs)
+positions = rbind(positions, positions.gi)
 positions = as.data.frame(positions)
 positions$flywire.xyz = apply(positions[,c("fw.x","fw.y",'fw.z')],1,paste,sep=",",collapse=",")
 positions = positions[!duplicated(positions$flywire.xyz),]

@@ -154,11 +154,9 @@ flywire_nblast_update <- function(x = NULL,
   if(nblast=="hemibrain-flywire"){
     # Get hemibrain neurons
     message("Loading hemibrain neurons ...")
-    all.neurons.flow = hemibrain_neurons()
-    all.neurons.flow.microns = hemibrainr::scale_neurons.neuronlist(all.neurons.flow, .parallel = TRUE, OmitFailures = TRUE)
-    all.neurons.flow.microns.dps = nat::dotprops(all.neurons.flow.microns, .parallel = TRUE, OmitFailures = TRUE)
-    rm("all.neurons.flow")
+    all.neurons.flow.microns.dps = hemibrain_neurons(brain= "JRCFIB2018F", dotprops = TRUE)
 
+    # NBLAST!
     message("NBLASTing hemibrain vs flywire")
     hemibrain.flywire.mean.1 = nat.nblast::nblast(query = d,
                                                   target = all.neurons.flow.microns.dps,
@@ -210,9 +208,9 @@ flywire_nblast_update <- function(x = NULL,
   # Just Flywire left-right
   if(nblast=="flywire"){
     # Get hemibrain neurons
-    message("Loading hemibrain neurons ...")
+    message("Loading flywire neurons ...")
     all.fw = flywire_neurons()
-    all.fw.dps = nat::dotprops(all.neurons.flow.microns, .parallel = TRUE, OmitFailures = TRUE)
+    all.fw.dps = nat::dotprops(all.fw, .parallel = TRUE, OmitFailures = TRUE)
     rm("all.fw")
     flywire.mirror.mean = nat.nblast::nblast(query = f,
                                                          target = all.fw.dps,

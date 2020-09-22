@@ -2,13 +2,9 @@
 
 #' @rdname hemibrain_add_made_matches
 #' @export
-flywire_matching_rewrite <- function(selected_file  = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw",
+flywire_matching_rewrite <- function(flywire.ids = names(flywire_neurons()),
+                                     selected_file  = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw",
                                      ...){
-
-  # Get all the flywire neurons we care about
-  fw.neurons = flywire_neurons()
-  fids = names(fw.neurons)
-
   # Get the FAFB matching google sheet
   gs = gsheet_manipulation(FUN = googlesheets4::read_sheet,
                            ss = selected_file,
@@ -22,11 +18,11 @@ flywire_matching_rewrite <- function(selected_file  = "1OSlDtnR3B1LiB5cwI5x5Ql6L
 
   # Get FAFBv14 coordinates
   cats = nat::neuronlist()
-  batches = split(1:length(skids), round(seq(from = 1, to = 10, length.out = length(skids))))
+  batches = split(1:length(skids), round(seq(from = 1, to = 100, length.out = length(skids))))
   all.ids = c()
   for(i in 1:10){
     # Read CATMAID neurons
-    message("Batch:", i, "/10")
+    message("Batch:", i, "/100")
     cat = catmaid::read.neurons.catmaid(skids[batches[[i]]], OmitFailures = TRUE)
     cats = c(cats,cat)
 
@@ -101,7 +97,7 @@ flywire_matching_rewrite <- function(selected_file  = "1OSlDtnR3B1LiB5cwI5x5Ql6L
                   id = "bodyid")
 
   # Add missing flywire information
-  missing = setdiff(fids, all.ids)
+  missing = setdiff(flywire.ids, all.ids)
   hemibrain_matching_add(ids = missing, dataset="flywire", ...)
 }
 
