@@ -3,7 +3,7 @@
 
 # source /public/gcc/gcc7_1_0.csh
 # In order to then update Rvcg in R if needed
-# setenv PATH ${PATH}:/public/flybrain/hdf5/lib/libhdf5_hl.so.100
+# setenv PATH ${PATH}:/public/flybrain/hdf5/lib/
 
 # At the LMB, this code must be run on Hex/Hal not Max
 Sys.unsetenv("LD_LIBRARY_PATH")
