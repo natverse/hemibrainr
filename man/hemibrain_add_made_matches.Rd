@@ -24,7 +24,7 @@ hemibrain_add_made_matches(
 hemibrain_matching_add(
   ids,
   dataset = c("hemibrain", "FAFB", "flywire"),
-  User = "flyconnectome",
+  User = dataset,
   selected_file = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw",
   ...
 )
