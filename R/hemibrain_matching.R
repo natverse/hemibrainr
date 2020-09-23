@@ -21,6 +21,8 @@
 #'   been made already. Else, LM neuron IDs in the tab 'lm' when using \code{lm_matching}.
 #' @param hemibrain.nblast a FAFB (rows) - hemibrain (columns) normalised
 #'   NBLAST matrix. By default this is read from the flyconnectome Team Drive.
+#' @param mirror.nblast a flywire (rows) - flywire-mirrored (columns) normalised
+#' NBLAST matrix. By default this is read from the hemibrain Team Drive.
 #' @param selected_file the Google Sheet database to read and write from. For
 #'   now, defaults to this
 #'   \href{https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit#gid=0}{Google
@@ -711,7 +713,7 @@ fafb_matching <- function(ids = NULL,
   if(is.null(ids)|!length(ids)){
     ids = gs[[id]][gs$User==initials]
   }else{
-    ids = intersect(ids,gs$skid)
+    ids = intersect(ids,gs[[id]])
   }
   # Deselect some IDs
   if(overwrite == "none"){
@@ -757,7 +759,7 @@ fafb_matching <- function(ids = NULL,
       }else{
         lhn = NULL
       }
-      fw.n = tryCatch({
+      fw.n = tryCatcfh({
         fw.n = fw.neurons[as.character(n)]
         fw.n = suppressWarnings(nat.templatebrains::xform_brain(fw.n, sample = "FAFB14", reference = "JRCFIB2018F"))
         scale_neurons(fw.n, scaling = (1000/8))
@@ -774,7 +776,7 @@ fafb_matching <- function(ids = NULL,
           scale_neurons(fw.n, scaling = (1000/8))
         }, error = function(e) {NULL})
       }
-      fw.m = s = tryCatch({
+      fw.m = tryCatch({
         fw.m = fw.neurons.m[as.character(n)]
         fw.m = suppressWarnings(nat.templatebrains::xform_brain(fw.m, sample = "FAFB14", reference = "JRCFIB2018F"))
         scale_neurons(fw.m, scaling = (1000/8))
@@ -1371,14 +1373,16 @@ hemibrain_add_made_matches <- function(df,
 
 # Get correct GSheet
 hemibrain_match_sheet <- function(selected_file = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw",
-                                  sheet = c("hemibrain","FAFB")
-){
+                                  sheet = c("hemibrain","FAFB","flywire")){
   # Which sheet
   sheet = match.arg(sheet)
   sheet[sheet=="hemibrain"] = "hemibrain"
   # neuron ID name
   if(sheet=="hemibrain"){
     id.field = "bodyid"
+  }else if (sheet == "flywire"){
+    id.field = "flywire.id"
+    sheet = "FAFB"
   }else{
     id.field = "skid"
   }

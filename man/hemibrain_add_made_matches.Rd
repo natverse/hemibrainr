@@ -10,6 +10,7 @@
 \title{Manage hemibrain-FAFB neuron matches}
 \usage{
 flywire_matching_rewrite(
+  flywire.ids = names(flywire_neurons()),
   selected_file = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw",
   ...
 )
