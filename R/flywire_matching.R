@@ -161,6 +161,7 @@ LR_matching <- function(ids = NULL,
   # choose ids
   if(is.null(ids)|!length(ids)){
     ids = gs[[id]][gs$User==initials]
+    ids = ids[!grepl("missing",ids)]
   }else{
     ids = intersect(ids,gs[[id]])
   }
