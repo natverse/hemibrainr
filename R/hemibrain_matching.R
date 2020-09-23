@@ -163,6 +163,7 @@ hemibrain_matching <- function(ids = NULL,
   # choose ids
   if(is.null(ids)){
     ids = gs$bodyid[gs$User==initials]
+    ids = ids[!grepl("missing",ids)]
   }else{
     ids = intersect(ids,gs$bodyid)
   }
@@ -444,6 +445,7 @@ lm_matching <- function(ids = NULL,
   # choose ids
   if(is.null(ids)){
     ids = gs$id[gs$User==initials]
+    ids = ids[!grepl("missing",ids)]
   }else{
     ids = intersect(ids,gs$id)
   }
@@ -712,6 +714,7 @@ fafb_matching <- function(ids = NULL,
   # choose ids
   if(is.null(ids)|!length(ids)){
     ids = gs[[id]][gs$User==initials]
+    ids = ids[!grepl("missing",ids)]
   }else{
     ids = intersect(ids,gs[[id]])
   }
