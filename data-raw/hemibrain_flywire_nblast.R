@@ -90,6 +90,7 @@ hemibrain.flywire.mean = hemibrainr:::collapse_matrix_by_names(hemibrain.flywire
 
 # Save NBLAST on hemibrain googledrive
 hemibrainr:::googledrive_upload_nblast(hemibrain.flywire.mean)
+save(hemibrain.flywire.mean, file = "/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/NBLAST/hemibrain.flywire.mean.rda")
 
 # Just Flywire left-right
 flywire.mirror.mean.1 = nat.nblast::nblast(query = fw.neurons.JRCFIB2018F.dps,
@@ -103,6 +104,7 @@ flywire.mirror.mean.2 = nat.nblast::nblast(query = fw.neurons.JRCFIB2018F.m.dps,
 flywire.mirror.mean = plyr::rbind.fill.matrix(flywire.mirror.mean.1+t(flywire.mirror.mean.2))/2
 flywire.mirror.mean[is.na(flywire.mirror.mean)] = 0
 rownames(flywire.mirror.mean) = colnames(flywire.mirror.mean.2)
+save(flywire.mirror.mean, file = "/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/NBLAST/flywire.mirror.mean.rda")
 hemibrainr:::googledrive_upload_nblast(flywire.mirror.mean)
 
 # Just Flywire left-right
@@ -110,4 +112,5 @@ flywire.mean = nat.nblast::nblast_allbyall(x = fw.neurons.JRCFIB2018F.dps,
                                                               .progress='text',
                                                               .parallel=TRUE,
                                                               normalisation='mean')
+save(flywire.mean, file = "/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/NBLAST/flywire.mean.rda")
 hemibrainr:::googledrive_upload_nblast(flywire.mean)
