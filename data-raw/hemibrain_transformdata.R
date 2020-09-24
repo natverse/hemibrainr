@@ -1,5 +1,6 @@
 ###### Script to split all neurons in the hemibrain into putative axon / dendrite #######
 ######## Originally run from JData5, the Jefferis lab drive on Hal at the MRC LMB #######
+# setenv PATH ${PATH}:/public/flybrain/hdf5/lib
 Sys.unsetenv("LD_LIBRARY_PATH")
 
 # Parameters
@@ -11,15 +12,10 @@ message("Splitting with paramaters: ", identifier)
 
 # Set things ups
 message("Start")
-library(hdf5r)
-library(nat.jrcbrains)
 library(hemibrainr)
-library(fafbseg)
+library(nat.jrcbrains)
+library(doMC)
 message("packages loaded")
-
-# Get functions
-source("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/R/startup/functions.R")
-message("functions loaded")
 
 # Parallelise
 numCores <- parallel::detectCores()
