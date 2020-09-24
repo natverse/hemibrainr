@@ -1,7 +1,7 @@
 ###### Script to split all neurons in the hemibrain into putative axon / dendrite #######
 ######## Originally run from JData5, the Jefferis lab drive on Hal at the MRC LMB #######
 # setenv PATH ${PATH}:/public/flybrain/hdf5/lib
-Sys.unsetenv("LD_LIBRARY_PATH")
+# Sys.unsetenv("LD_LIBRARY_PATH")
 
 # Parameters
 polypre = TRUE
