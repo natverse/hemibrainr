@@ -87,7 +87,7 @@ google_drive_place <- function(media,
                                verbose = TRUE,
                                ...){
   # If path is folder, check contents to duplicates
-  f = googledrive::is_folder(path)
+  f = tryCatch(googledrive::is_folder(path), error = function(e) FALSE)
   if(f){
     ls = googledrive::drive_ls(path, ...)
     p = subset(ls, name == basename(media))$id
