@@ -29,6 +29,7 @@ nblast.folder = subset(drive_hemibrain,name=="hemibrain_nblast")
 
 # Save NBLAST files
 nblast.files  = list.files(paste0("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/NBLAST/",identifier),pattern = "rda", full.name = TRUE)
+nblast.files  = c(nblast.files,list.files("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/NBLAST/",pattern = "rda", full.name = TRUE))
 for(nblast.file in nblast.files){
   hemibrainr:::google_drive_place(media = nblast.file,
                path = nblast.folder,
