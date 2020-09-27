@@ -108,10 +108,22 @@ If you had to go to the hassle of skeletonising some flywire neurons that were n
 
 ```{r flywire_neurons_update, eval = FALSE}
 flywire_neurons_update(x = fw.ids, .parallel = TRUE, OmitFailures = TRUE)
-## This can take a little while
+# This can take a little while
 ```
 
 You can also add flywire neurons to precomputed NBLASTs.
+
+These functions can take a long time to run. For example, if adding to the hemibrain-flywire NBLAST, all ~25k flywire neurons need to be read in order to calculate the NBLAST. You can also request that your flywire neurons are added to the precomputations we try to make en mass periodically for the Google drive, if you do not need your answer ASAP. You can do this as so:
+
+```{r flywire_request, eval  = FALSE}
+flywire_request(request = fw.ids)
+# request can also be a neuronlist in FlyWire space (fastest way)
+# Or a matrix with x,y,z positions to add directly.
+# Otherwise skeletor is called to skeletonsie flywire neurons related
+# to the given IDs, and the position of the root
+# is added.
+```
+
 
 ## Match flywire neurons
 
