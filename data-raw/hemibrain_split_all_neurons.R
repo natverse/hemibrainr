@@ -18,7 +18,7 @@ source("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/R/startup/functions.R")
 message("functions loaded")
 
 # Parallelise
-numCores <- detectCores()
+numCores <- parallel::detectCores()
 doMC::registerDoMC(numCores/2)
 message("Using ", numCores/2, " cores")
 
@@ -78,14 +78,18 @@ write.csv(all.neurons.flow.elist, file = paste0("/net/flystore3/jdata/jdata5/JPe
 message("Saved connections: ", nrow(all.neurons.flow.elist))
 
 # Calculate and save interesting metrics on this split
-all.neurons.flow = all.neurons.flow*(8/1000) # convert to microns
-mets = hemibrain_compartment_metrics(all.neurons.flow, OmitFailures = TRUE, .parallel = TRUE, delta = 5, resample = NULL)
-mets = t(apply(mets, 1, unlist))
-write.csv(mets, file = paste0("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/hemibrain_all_neurons_metrics_",identifier,".csv"), row.names=FALSE)
+all.neurons.flow.microns = all.neurons.flow*(8/1000) # convert to microns
+mets = hemibrain_compartment_metrics(all.neurons.flow.microns, OmitFailures = TRUE, .parallel = TRUE, delta = 5, resample = NULL)
+mets2 = lapply(1:ncol(mets), function(x) unlist(mets[,x]))
+mets2 = as.data.frame(t(do.call(rbind, mets2)))
+dimnames(mets2) = dimnames(mets)
+all.neurons.flow[,] = mets2[names(all.neurons.flow),]
+write.csv(mets2, file = paste0("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/hemibrain_all_neurons_metrics_",identifier,".csv"), row.names=FALSE)
 message("Metrics calculated for neurons: ", nrow(mets))
+save(all.neurons.flow, file = paste0("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/hemibrain_all_neurons_flow_",identifier,".rda"))
 
 # Make a dotprops object
-all.neurons.flow.dps = nat::dotprops(all.neurons.flow, Labels = TRUE, resample = 1, OmitFailures = TRUE, .parallel = TRUE)
+all.neurons.flow.dps = nat::dotprops(all.neurons.flow.microns, Labels = TRUE, resample = 1, OmitFailures = TRUE, .parallel = TRUE)
 save(all.neurons.flow.dps, file = paste0("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/hemibrain_all_neurons_flow_",identifier,"_dps.rda"))
-all.neurons.flow.dps.fh = as.neuronlistfh(all.neurons.flow, dbdir= "/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/JRC2018F/dotprops/data/", WriteObjects = "yes")
+all.neurons.flow.dps.fh = as.neuronlistfh(all.neurons.flow.dps, dbdir= "/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/JRC2018F/dotprops/data/", WriteObjects = "yes")
 write.neuronlistfh(all.neurons.flow.dps.fh, file="/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/JRC2018F/dotprops/hemibrain_all_neurons_flow_dotprops.rds", overwrite=TRUE)
