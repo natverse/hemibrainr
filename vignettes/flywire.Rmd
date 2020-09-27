@@ -113,6 +113,10 @@ flywire_neurons_update(x = fw.ids, .parallel = TRUE, OmitFailures = TRUE)
 
 You can also add flywire neurons to precomputed NBLASTs.
 
+```{r flywire_nblast_update, eval = FALSE}
+flywire_nblast_update(x = neurons, nblast = "hemibrain-flywire")
+```
+
 These functions can take a long time to run. For example, if adding to the hemibrain-flywire NBLAST, all ~25k flywire neurons need to be read in order to calculate the NBLAST. You can also request that your flywire neurons are added to the precomputations we try to make en mass periodically for the Google drive, if you do not need your answer ASAP. You can do this as so:
 
 ```{r flywire_request, eval  = FALSE}
