@@ -4,13 +4,19 @@
 #'  \code{nat::neuronlistfh} object so certain neurons may be read from it
 #'  without loading the entire, large neuronlist into memory. You will need access to the hemibrain Google Team Drive and
 #'  have it mounted with Google filestream.The function \code{flywire_neurons_update} can be used to update the available data.
+#'  If you want to flag flywire neurons that should be added to the Google dirve, without doing this yourself, you can use
+#'  \code{flywire_request}.
 #'
 #' @param brain the brainspace in which hemibrain neurons have been registered. Defaults to raw voxel space for the FlyWire project.
 #' @param local logical, whether to try to read locally saved neurons (by default at: \code{options()$hemibrain_data}) or neurons from Google Drive (\code{options()$Gdrive_hemibrain_data}).
 #' @param mirror logical, whether or not to read neurons that have been mirrored (i.e. flipped to the 'other' brain hemisphere).
 #' @param x flywire IDs to update, for the saved google drive \code{neuronlistfh} objects called with \code{flywire_neurons}.
+#' @param request a neuronlist, matrix of x,y,z position or flywire ID to add to a \href{}{Google sheet} that records flywire positions
+#' flagged to be processed into neuron skeletons that can be called by \code{flywire_neurons}.
 #' @param nblast which flywire nblast to update on google drive.
-#' @param ... Additional arguments passed to \code{\link{nat::nlapply}}.
+#' @param selected_file the Google sheet onto which to add new flywire coordinate. I.e. \href{}{Google sheet}.
+#' @param sheet the tab onto which to add your requests.
+#' @param ... Additional arguments passed to \code{\link{nat::nlapply}}.and/or \code{\link{fafbseg::skeletor}}.
 #'
 #' @examples
 #' \donttest{
@@ -130,6 +136,11 @@ flywire_nblast_update <- function(x = NULL,
                                              "flywire",
                                              "flywire-mirror"),
                                   ...){
+  # neuronlist
+  if(!nat::is.neuronlist(x)){
+    stop("x must be a neuronlist!")
+  }
+
   # Get old NBLAST
   nblast = match.arg(nblast)
   old.nblast = hemibrain_nblast(nblast)
@@ -237,7 +248,7 @@ flywire_basics <- function(x){
   flywire.xyz = apply(roots, 1, paste, collapse = ",")
 
   # Get FAFBv14 nm coordinates
-  roots.flywire.raw = scale(roots, scale = 1/c(4, 4, 40), center = FALSE)
+  # roots.flywire.raw = scale(roots, scale = 1/c(4, 4, 40), center = FALSE)
   #FAFB.xyz = nat.templatebrains::xform_brain(roots.flywire.raw, sample = "FlyWire", reference = "FAFB14")
   #FAFB.xyz = apply(FAFB.xyz, 1, paste, collapse = ",")
   FAFB.xyz = ""
@@ -251,4 +262,52 @@ flywire_basics <- function(x){
   x
 
 }
+
+# Add neuron to request goolge shets
+#' @rdname flywire_neurons
+#' @export
+flywire_request <- function(request,
+                            selected_file = "1rzG1MuZYacM-vbW7100aK8HeA-BY6dWAVXQ7TB6E2cQ",
+                            sheet = "flywire",
+                            ...){
+
+  # What kind of request is it?
+  type = if(nat::is.neuronlist(request)){
+    "neuronlist"
+  }if(is.data.frame(request)|is.matrix(request)){
+    if(nrow(nat::xyzmarix(request))){
+      "xyz"
+    }else{
+      "ids"
+    }
+  }else{
+    "ids"
+  }
+  message("Request is ", type)
+
+  # Get coordinates
+  if(type=='ids'){
+    request = skeletor(request, ...)
+  }
+  if(nat::is.neuronlist()){
+    fb = flywire_basics(request)
+    xyz = do.call(rbind, lapply(fb[,"flywire.xyz"], function(y) strsplit(y,",| ")))
+  }else{
+    xyz = nat::xyzmatrix(request)
+  }
+
+  # Add to google sheet
+  batches = split(1:nrow(xyz), ceiling(seq_along(1:nrow(xyz))/500))
+  for(i in batches){
+    gsheet_manipulation(FUN = googlesheets4::sheet_append,
+                        data = xyz[min(i):max(i),],
+                        ss = selected_file,
+                        sheet = sheet)
+  }
+  message("Flywire positions added")
+}
+
+
+
+
 
