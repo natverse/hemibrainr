@@ -274,7 +274,7 @@ flywire_request <- function(request,
   # What kind of request is it?
   type = if(nat::is.neuronlist(request)){
     "neuronlist"
-  }if(is.data.frame(request)|is.matrix(request)){
+  }else if(is.data.frame(request)|is.matrix(request)){
     if(nrow(nat::xyzmarix(request))){
       "xyz"
     }else{
@@ -289,7 +289,7 @@ flywire_request <- function(request,
   if(type=='ids'){
     request = skeletor(request, ...)
   }
-  if(nat::is.neuronlist()){
+  if(nat::is.neuronlist(request)){
     fb = flywire_basics(request)
     xyz = do.call(rbind, lapply(fb[,"flywire.xyz"], function(y) strsplit(y,",| ")))
   }else{
