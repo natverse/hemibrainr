@@ -1,7 +1,7 @@
--##########################################################################
--################################ meshes ##################################
--##########################################################################
-+# read hemibrain meshes
+##########################################################################
+################################ meshes ##################################
+##########################################################################
+# read hemibrain meshes
 
 #' Get some or all the region of interest meshes in the hemibrain project
 #'
@@ -91,7 +91,6 @@ hemibrain_view <- function(){
 
 # read hemibrain meshes
 hemibrain_read_neuronmesh_single <-function(x){
-  neuron_mesh = read_cloudvolume_meshes(segments = x,
-                                        cloudvolume.url='precomputed://gs://neuroglancer-janelia-flyem-hemibrain/segmentation_52a13')
+  neuron_mesh = read_cloudvolume_meshes(segments = x, cloudvolume.url='precomputed://gs://neuroglancer-janelia-flyem-hemibrain/segmentation_52a13')
   neuron_mesh
 }
