@@ -86,11 +86,9 @@ hemibrain_view <- function(){
                                                          0.987864851951599, 0, 0.0119048282504082, -0.988799571990967,
                                                          0.148774951696396, 0, 0, 0, 0, 1), .Dim = c(4L, 4L)), zoom = 0.710681617259979)
 }
-        -
-
 
 # read hemibrain meshes
-hemibrain_read_neuronmesh_single <-function(x){
-  neuron_mesh = read_cloudvolume_meshes(segments = x, cloudvolume.url='precomputed://gs://neuroglancer-janelia-flyem-hemibrain/segmentation_52a13')
-  neuron_mesh
-}
+# hemibrain_read_neuronmesh_single <-function(x){
+#   neuron_mesh = read_cloudvolume_meshes(segments = x, cloudvolume.url='precomputed://gs://neuroglancer-janelia-flyem-hemibrain/segmentation_52a13')
+#   neuron_mesh
+# }
