@@ -160,15 +160,11 @@ flow_centrality.neuron <- function(x,
   nodes[names(nodes.in), "post"] <- nodes.in
   nodes[names(nodes.out), "pre"] <- nodes.out
   ### How many synapses upstream of each node
-  ins = lapply(segs, function(x) if (!is.null(x)) {
-    rev(cumsum(rev(unlist(lapply(x, function(x) ifelse(x %in% names(nodes.in), nodes[as.character(x), "post"],  0))))))
-  })
-  outs = lapply(segs, function(x) if (!is.null(x)) {
-    rev(cumsum(rev(unlist(lapply(x, function(x) ifelse(x %in% names(nodes.out), nodes[as.character(x), "pre"], 0))))))
-  })
-  ins = unlist(lapply(ins, function(x) x))
-  outs = unlist(lapply(outs, function(x) x))
-  names(ins) = names(outs) = unlist(lapply(segs, function(x) x))
+  ins = lapply(segs, function(x) rev(cumsum(rev(nodes[x,'post']))))
+  outs = lapply(segs, function(x) rev(cumsum(rev(nodes[x,'pre']))))
+  ins = unlist(ins)
+  outs = unlist(outs)
+  names(ins) = names(outs) = unlist(segs)
   ins = tapply(ins, names(ins), FUN=sum)
   outs = tapply(outs, names(outs), FUN=sum)
   nodes[names(ins), "up.syns.in"] = nodes[names(ins), "post"] + ins
@@ -194,13 +190,16 @@ flow_centrality.neuron <- function(x,
     nodes[, "flow.cent"] = nodes[, "flow"]
   }
   ### Bending flow
-  for (bp in bps) {
-    down = unlist(igraph::ego(n, 1, nodes = bp, mode = "in", mindist = 0))[-1]
-    bf = c()
-    for (u in down) {
-      this.seg.posts = nodes[u, ]$up.syns.in
-      other.segs.pre = sum(nodes[down[!down == u], ]$up.syns.out)
-      bf = c(bf, sum(this.seg.posts * other.segs.pre))
+  downs = igraph::ego(n, 1, nodes = bps, mode = "in", mindist = 1)
+  for (i in seq_along(bps)) {
+    bp=bps[i]
+    down=downs[[i]]
+    bf = numeric(length = length(downs))
+    for (j in seq_along(down)) {
+      u=down[j]
+      this.seg.posts = nodes[u, "up.syns.in"]
+      other.segs.pre = sum(nodes[down[down != u], "up.syns.out"])
+      bf[j] = sum(this.seg.posts * other.segs.pre)
     }
     nodes[bp, "flow.cent"] = nodes[bp, "flow.cent"] + sum(bf)
   }
@@ -285,9 +284,11 @@ flow_centrality.neuron <- function(x,
   if (sum(downstream.tract.parent %in% c(p.n,highs,primary.branch.point)) > 0) {
     bps.all = intersect(nat::branchpoints(nodes),main1)
     bps.downstream = bps.all[bps.all %in% downstream.unclassed]
-    runstoprimarybranchpoint = unlist(lapply(bps.downstream,
-                                             function(x) length(unlist(suppressWarnings(igraph::shortest_paths(n,to = as.numeric(downstream.tract.parent), from = x)$vpath)))))
-    downstream.tract.parent = bps.downstream[which.min(runstoprimarybranchpoint)]
+    runstoprimarybranchpoint = igraph::distances(
+      n, to = as.numeric(downstream.tract.parent), v = bps.downstream,
+      mode = 'out', weights = NA
+    )
+    downstream.tract.parent = bps.downstream[which.min(c(runstoprimarybranchpoint))]
   }
   upstream.unclassed = upstream[!upstream %in% c(p.n, highs, root, primary.branch.point)]
   remove = rownames(nodes)[!rownames(nodes) %in% intersect(upstream.unclassed,primary.branch.point.downstream)]
@@ -301,8 +302,13 @@ flow_centrality.neuron <- function(x,
   if (sum(upstream.tract.parent %in% c(p.n,highs,primary.branch.point)) > 0) {
     bps.all = intersect(nat::branchpoints(nodes),main2)
     bps.upstream = bps.all[bps.all %in% upstream.unclassed]
-    runstoprimarybranchpoint = unlist(lapply(bps.upstream,function(x) length(unlist(suppressWarnings(igraph::shortest_paths(n,to = as.numeric(upstream.tract.parent), from = x)$vpath)))))
-    upstream.tract.parent = bps.upstream[which.min(runstoprimarybranchpoint)]
+    # nb weights = NA just consider distance by number of nodes not microns
+    runstoprimarybranchpoint = igraph::distances(
+      n, to = as.numeric(upstream.tract.parent), v = bps.upstream,
+      mode = 'out', weights = NA
+    )
+    # nb c() turns matrix into vector
+    upstream.tract.parent = bps.upstream[which.min(c(runstoprimarybranchpoint))]
   }
   ### Assign axon versus dendrite
   if (grepl("synapses", split)) {

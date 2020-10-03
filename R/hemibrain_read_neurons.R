@@ -187,9 +187,8 @@ hemibrain_clean_skeleton.neuron <- function(x, rval = c("pruned","neuron","point
   if(rval=="pruned"){
     if(length(remove)>0){
       y = nat::prune_vertices(x, verticestoprune = remove, invert = FALSE)
-      y$connectors = x$connectors[x$connectors$treenode_id %in% y$d$PointNo, ]
-      relevant.points = x$d[x$d$PointNo %in% y$d$PointNo,]
-      y$d = relevant.points[match(y$d$PointNo, relevant.points$PointNo), ]
+      y = carryover_tags(x, y)
+      y = carryover_labels(x, y)
     }else{
       y = x
     }
@@ -208,13 +207,17 @@ hemibrain_clean_skeleton.neuronlist <- function(x, rval = c("pruned","neuron","p
 }
 
 # hidden
+# al.local.neurons="1702323386"
+# neurons = neuprintr::neuprint_read_neurons(al.local.neurons)
+# neurons.split = hemibrain_flow_centrality(neurons)
+# neurons.cleaned = hemibrain_clean_skeleton(neurons.split)
 prune_synapseless_branches <- function(x, neuron = TRUE){
   s = x$SubTrees
   prune = c()
   con.pos = unique(x$connectors$treenode_id)
   con.pos = x$d$PointNo[match(con.pos,x$d$PointNo)]
   if(is.null(con.pos)){
-    stop("No connectors in neuron,")
+    stop("No connectors in neuron")
   }
   for(t in 1:x$nTrees){
     ss = unlist(s[[t]])
@@ -236,7 +239,7 @@ prune_synapseless_branches <- function(x, neuron = TRUE){
     y = hemibrain_neuron_class(y)
     y
   }else{
-    x$d$PointNo[prune]
+    x$d$PointNo[x$d$PointNo%in%prune]
   }
 }
 

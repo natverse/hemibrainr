@@ -300,7 +300,9 @@ which.consecutive <- function(Vec,
 change_points <- function(x, v, only.jumps = FALSE, run = "min"){
   eps = nat::endpoints(x)
   segs = x$SegList
-  segs.d = segs[unlist(lapply(segs, function(seg) sum(seg %in% v) >0))]
+  df=data.frame(node=unlist(segs), seg=rep(seq_along(segs), sapply(segs, length)))
+  bb=by(df$node%in%v, df$seg, function(x) any(x))
+  segs.d=segs[bb]
   s.d = unique(unlist(lapply(segs.d, function(seg) seg[which.consecutive(seg %in% v, only.jumps = only.jumps, run = run)])))
   s.d = setdiff(s.d, eps)
 }
@@ -322,6 +324,13 @@ is.issue <- function(x){
 # hidden
 carryover_tags <- function(x, y){
   y$tags = x$tags
+  y
+}
+
+# hidden
+carryover_labels <- function(x, y){
+  y$d$Label = x$d$Label[match(y$d$PointNo,x$d$PointNo)]
+  y$connectors$Label = x$connectors$Label[match(y$connectors$PointNo,x$d$PointNo)]
   y
 }
 
