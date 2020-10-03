@@ -218,7 +218,7 @@
 #'
 #' Manually verified neuron matches between the hemibrain and FAFB dataset, as well as some light level data from the package natverse-compatible \code{lhns}.
 #' The Fly Connectome team at the University of Cambridge has
-#' manually made cell-to-cell matches based on an initual NBLAST calculation, and given matches a qualitative score.
+#' manually made cell-to-cell matches based on an initial NBLAST calculation, and given matches a qualitative score.
 #' There can be no
 #'   match (none), a poor match (poor) an okay match (okay) or an exact match (good). As a
 #'   rule of thumb, a poor match could be a neuron from a very similar same cell

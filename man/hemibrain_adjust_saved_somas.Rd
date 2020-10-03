@@ -46,7 +46,7 @@ Updates Google Sheet with soma information
 Currently provides three "modes": correct single neurons, correct cell body fibers, and correct from google sheet.
   Correct singles will allow you to manually correct each neuron in a provided list of bodyids. If requested, DBSCAN can be used
       to try to predict potential soma positions against already correctly identified somas, based on the provided google sheet.
-  Correct cell body fibers(cbf) asks for a cbf to be inputted based on those labeled in the google sheet. DBSCAN is then used to
+  Correct cell body fibers(cbf) asks for a cbf to be inputted based on those labelled in the google sheet. DBSCAN is then used to
       cluster the already annotated soma positions on the google sheet within the cbf. This will allow you to identify correct
       soma positions, and then manually fix incorrect somas. for each neuron with an incorrect soma, a potential new soma will be
       suggested based on the DBSCAN clustering result.

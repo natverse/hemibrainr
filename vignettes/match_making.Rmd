@@ -226,7 +226,7 @@ When you run these functions you will enter an interactive pipeline in an rgl wi
 </center>
 
 
-## Re-setting and transfering
+## Re-setting and transferring
 
 You can transfer matches between the `hemibrain` and `fafb` tabs, as well as refresh these tabs with the most up-to-dat meta data using the following code. You will be manipulating the Google sheet for all users, so please use with caution. If in doubt, do not use.
 

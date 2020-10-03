@@ -3,7 +3,7 @@
 #' @description Currently provides three "modes": correct single neurons, correct cell body fibers, and correct from google sheet.
 #'   Correct singles will allow you to manually correct each neuron in a provided list of bodyids. If requested, DBSCAN can be used
 #'       to try to predict potential soma positions against already correctly identified somas, based on the provided google sheet.
-#'   Correct cell body fibers(cbf) asks for a cbf to be inputted based on those labeled in the google sheet. DBSCAN is then used to
+#'   Correct cell body fibers(cbf) asks for a cbf to be inputted based on those labelled in the google sheet. DBSCAN is then used to
 #'       cluster the already annotated soma positions on the google sheet within the cbf. This will allow you to identify correct
 #'       soma positions, and then manually fix incorrect somas. for each neuron with an incorrect soma, a potential new soma will be
 #'       suggested based on the DBSCAN clustering result.
@@ -97,7 +97,7 @@ hemibrain_adjust_saved_somas = function(bodyids = NULL,
         "Good day to you Imaan! hope you're having a good day! Todays task,
         should you choose to accept it, will be to start working on a final
         double check of the neurons which have been looked at but have been
-        labeled as unfixed"
+        labelled as unfixed"
       )
       message(c("There are currently ", length(which(
         data$gs$init == ini
@@ -543,7 +543,7 @@ correct_DBSCAN = function(data = NULL) {
     if (unique(data$db$cluster) == 0) {
       message("All",
               length(data$db$cluster),
-              " somas have been labeled as noise")
+              " somas have been labelled as noise")
       # read in neurons
       data$neurons = pipeline_read_neurons(data$update$bodyid)
       # plot and check if cluster is correct
@@ -559,7 +559,7 @@ correct_DBSCAN = function(data = NULL) {
         stop()
       }
     } else if (unique(data$db$cluster) == 1) {
-      message("all neurons seem to have a labeled soma, and form a single cluster. Good times")
+      message("all neurons seem to have a labelled soma, and form a single cluster. Good times")
       # plot and check if cluster is correct
       clear3d()
 
@@ -810,13 +810,13 @@ correct_gsheet = function(data = NULL) {
       message(
         "All",
         length(data$db$cluster),
-        " somas have been labeled as noise, making a note, and move on. It's over for us"
+        " somas have been labelled as noise, making a note, and move on. It's over for us"
       )
       ###
       data$update$unfixed = "TRUE"
       data$update$soma.checked = "TRUE"
     } else if (unique(data$db$cluster) == 1) {
-      message("all neurons seem to have a labeled soma, and form a single cluster. Good times")
+      message("all neurons seem to have a labelled soma, and form a single cluster. Good times")
       # plot and check if cluster is correct
       clear3d()
       # plot subset of neurons

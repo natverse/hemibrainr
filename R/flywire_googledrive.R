@@ -3,7 +3,7 @@
 #'@description Get a large number of skeletonised neurons from FlyWire. The neuronlist is saved as a
 #'  \code{nat::neuronlistfh} object so certain neurons may be read from it
 #'  without loading the entire, large neuronlist into memory. You will need access to the hemibrain Google Team Drive and
-#'  have it mounted with Google filestream.
+#'  have it mounted with Google Filestream.
 #'
 #' @param brain the brainspace in which hemibrain neurons have been registered. Defaults to raw voxel space for the FlyWire project.
 #' @param local logical, whether to try to read locally saved neurons (by default at: \code{options()$hemibrain_data}) or neurons from Google Drive (\code{options()$Gdrive_hemibrain_data}).
@@ -19,15 +19,15 @@
 #'you will get:
 #'
 ##' \itemize{
-##'  \item{"flywire.id"}{ The ID given to the corresponmding volumetric body in flywire.
+##'  \item{"flywire.id"}{ The ID given to the corresponding volumetric body in flywire.
 ##'  These are used to do things like fetch volumes and are the input to the \code{skeletor} function. However, they are highly volatile and
 ##'  change a lot with active tracing.}
 ##'  \item{"flywire.xyz"}{ The voxel coordinate of a single point in this neuron, usually a cell body fiber tract position. This is a more accurate way
 ##'  of keeping tract of neuron as it will always correspond to the same 'neuron' even though its related flywire.id will change with merge/split events in flywire.}
-##'  \item{"hemilineage"}{ An estimated hemilineage identity from both of two naming sysytems, Ito et al. 2013 and Wong et al. 2013}
+##'  \item{"hemilineage"}{ An estimated hemilineage identity from both of two naming systems, Ito et al. 2013 and Wong et al. 2013}
 ##'  \item{"side"}{ An estimate as to the 'side', i.e. brain hemisphere, in which the neuron lies}
 ##'  \item{"skid"}{ The 'skeleton ID' of this neuron's match in CATMAID for FAFBv14}
-##'  \item{"FAFB.xyz"}{ The coordinates in nanometers of a point in the neuron, in FAFBv14 space}
+##'  \item{"FAFB.xyz"}{ The coordinates in nanometres of a point in the neuron, in FAFBv14 space}
 ##'  \item{"hemibrain_match"}{ The bodyid of an estimated hemibrain match}
 ##' }
 #'
