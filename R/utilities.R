@@ -254,8 +254,12 @@ lengthnorm <- function(x){
 hemibrain_neuron_class <- function (x){
   if(nat::is.neuronlist(x)){
     x = nat::nlapply(x,hemibrain_neuron_class)
-  }else{
-    class(x) = unique(c(class(x),"neuprintneuron","catmaidneuron","neuron","list"))
+  } else {
+    our_classes=c("neuprintneuron","catmaidneuron","neuron","list")
+    # we assume that any extra classes besides those 4 should be at the front
+    # of the list
+    extra_classes=setdiff(class(x), our_classes)
+    class(x) = c(extra_classes, our_classes)
   }
   x
 }

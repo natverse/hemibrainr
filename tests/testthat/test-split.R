@@ -7,6 +7,7 @@ test_that("hemibrain_skeleton_check works", {
 
   expect_is(neurons.flow <- hemibrain_flow_centrality(neurons),
             'neuronlist')
-  expect_is(neurons.flow[[1]], 'neuron')
+  expect_equal(class(neurons.flow[[1]]),
+               c("neuprintneuron", "catmaidneuron", "neuron", "list"))
   expect_length(neurons.flow[[1]][['primary.branch.point']], 1L)
 })
