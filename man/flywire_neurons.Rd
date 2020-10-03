@@ -19,7 +19,7 @@ flywire_neurons(
 
 \item{mirror}{logical, whether or not to read neurons that have been mirrored (i.e. flipped to the 'other' brain hemisphere).}
 
-\item{...}{Additional arguments passed to \code{\link{nat::nlapply}}.}
+\item{...}{Additional arguments passed to \code{nat::\link{nlapply}}.}
 }
 \value{
 A \code{neuronlist} object containing flywire skeletons. In the meta-data, it might be useful for some users to note that

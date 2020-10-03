@@ -8,15 +8,15 @@
 #' @param brain the brainspace in which hemibrain neurons have been registered. Defaults to raw voxel space for the FlyWire project.
 #' @param local logical, whether to try to read locally saved neurons (by default at: \code{options()$hemibrain_data}) or neurons from Google Drive (\code{options()$Gdrive_hemibrain_data}).
 #' @param mirror logical, whether or not to read neurons that have been mirrored (i.e. flipped to the 'other' brain hemisphere).
-#' @param ... Additional arguments passed to \code{\link{nat::nlapply}}.
+#' @param ... Additional arguments passed to \code{nat::\link{nlapply}}.
 #'
 #' @examples
 #' \donttest{
 #' \dontrun{
 #' fw.neurons = flywire_neurons()
-#'}}
-#'@return A \code{neuronlist} object containing flywire skeletons. In the meta-data, it might be useful for some users to note that
-#'you will get:
+#' }}
+#' @return A \code{neuronlist} object containing flywire skeletons. In the meta-data, it might be useful for some users to note that
+#' you will get:
 #'
 ##' \itemize{
 ##'  \item{"flywire.id"}{ The ID given to the corresponding volumetric body in flywire.
