@@ -324,6 +324,13 @@ carryover_tags <- function(x, y){
 }
 
 # hidden
+carryover_labels <- function(x, y){
+  y$d$Label = x$d$Label[match(y$d$PointNo,x$d$PointNo)]
+  y$connectors$Label = x$connectors$Label[match(y$connectors$PointNo,x$d$PointNo)]
+  y
+}
+
+# hidden
 purify <- function(x){
   as.character(unname(unlist(nullToNA(c(x)))))
 }
