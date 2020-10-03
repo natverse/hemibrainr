@@ -255,7 +255,7 @@ hemibrain_neuron_class <- function (x){
   if(nat::is.neuronlist(x)){
     x = nat::nlapply(x,hemibrain_neuron_class)
   }else{
-    class(x) = unique(c(class(x),"neuprintneuron","catmaidneuron","neuron","list"))
+    class(x) = unique(c("neuprintneuron","catmaidneuron","neuron","list", class(x)))
   }
   x
 }
