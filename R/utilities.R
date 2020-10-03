@@ -478,6 +478,7 @@ fafb_hemibrain_cut <- function(x, ...){
 }
 
 # use foreach to process in parallel
+#' @importFrom nat.templatebrains regtemplate xform_brain
 xform_brain_parallel <- function(x,
                                  no.batches = 10,
                                  sample = regtemplate(x),
