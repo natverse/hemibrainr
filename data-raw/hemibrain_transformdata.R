@@ -2,6 +2,7 @@
 ######## Originally run from JData5, the Jefferis lab drive on Hal at the MRC LMB #######
 # setenv PATH ${PATH}:/public/flybrain/hdf5/lib
 # Sys.unsetenv("LD_LIBRARY_PATH")
+Sys.setenv(LD_LIBRARY_PATH = paste0(Sys.getenv("LD_LIBRARY_PATH"),":/public/flybrain/R/lib:/public/flybrain/hdf5/lib"))
 
 # Parameters
 polypre = TRUE
@@ -42,9 +43,14 @@ dir.create("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/
 dir.create("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/FlyWire/data/",recursive = TRUE)
 
 # FAFB14
-all.neurons.fafb = xform_brain(all.neurons.flow.microns[1:10], reference = "FAFB14", sample = "JRCFIB2018F", .parallel = TRUE, verbose = TRUE, OmitFailures = TRUE, progress.rjava=TRUE)
+all.neurons.fafb = xform_brain(all.neurons.flow.microns, reference = "FAFB14", sample = "JRCFIB2018F", .parallel = TRUE, verbose = TRUE, OmitFailures = TRUE, progress.rjava=TRUE)
 all.neurons.fafb = as.neuronlistfh(all.neurons.fafb, dbdir= "/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/FAFB14/data", WriteObjects = "yes")
 write.neuronlistfh(all.neurons.fafb, file="/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/FAFB14/hemibrain_all_neurons_checked_FAFB14.rds", overwrite=TRUE)
+
+# Mirror in FAFB14
+all.neurons.fafb.m = mirror_fafb(all.neurons.fafb, .parallel = TRUE, OmitFailures = TRUE)
+all.neurons.fafb.m = as.neuronlistfh(all.neurons.fafb.m, dbdir= "/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/FAFB14/data", WriteObjects = "yes")
+write.neuronlistfh(all.neurons.fafb.m, file="/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/FAFB14/hemibrain_all_neurons_checked_FAFB14_mirrored.rds", overwrite=TRUE)
 
 # JRC2018F
 all.neurons.jrc2018f = xform_brain(all.neurons.flow.microns, reference = "JRC2018F", sample = "JRCFIB2018F", .parallel = TRUE, verbose = TRUE, OmitFailures = TRUE, progress.rjava=TRUE)
@@ -64,7 +70,6 @@ write.neuronlistfh(all.neurons.fcwb, file="/net/flystore3/jdata/jdata5/JPeople/A
 # Mirror
 all.neurons.jfrc2.m = mirror_brain(all.neurons.jfrc2, brain = JFRC2, .parallel = TRUE, verbose = TRUE, OmitFailures = TRUE)
 all.neurons.jrc2018f.m = xform_brain(all.neurons.jfrc2.m, reference = "JRC2018F", sample = "JFRC2", .parallel = TRUE, verbose = TRUE)
-all.neurons.fafb.m = xform_brain(all.neurons.jfrc2.m, reference = "FAFB14", sample = "JFRC2", .parallel = TRUE, verbose = TRUE)
 all.neurons.flow.microns.m = xform_brain(all.neurons.jfrc2.m, reference = "JRCFIB2018F", sample = "JFRC2", .parallel = TRUE, verbose = TRUE)
 all.neurons.flow.m = scale_neurons(all.neurons.flow, scaling = (1000/8))
 all.neurons.fcwb.m = mirror_brain(all.neurons.fcwb, brain = FCWB, .parallel = TRUE, verbose = TRUE, OmitFailures = TRUE)
@@ -78,8 +83,6 @@ all.neurons.flow.microns.m.dps = as.neuronlistfh(all.neurons.flow.microns.m.dps,
 write.neuronlistfh(all.neurons.flow.microns.m.dps, file="/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/JRC2018F/dotprops/hemibrain_all_neurons_flow_dotprops_mirrored.rds", overwrite=TRUE)
 
 # And mirrored versions
-all.neurons.fafb.m = as.neuronlistfh(all.neurons.fafb.m, dbdir= "/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/FAFB14/data", WriteObjects = "yes")
-write.neuronlistfh(all.neurons.fafb.m, file="/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/FAFB14/hemibrain_all_neurons_checked_FAFB14_mirrored.rds", overwrite=TRUE)
 all.neurons.jrc2018f.m = as.neuronlistfh(all.neurons.jrc2018f.m, dbdir= "/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/JRC2018F/data", WriteObjects = "yes")
 write.neuronlistfh(all.neurons.jrc2018f.m, file="/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/JRC2018F/hemibrain_all_neurons_checked_JRC2018F_mirrored.rds", overwrite=TRUE)
 all.neurons.jfrc2.m = as.neuronlistfh(all.neurons.jfrc2.m, dbdir= "/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/JFRC2/data", WriteObjects = "yes")

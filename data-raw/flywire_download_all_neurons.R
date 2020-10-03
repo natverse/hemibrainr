@@ -24,6 +24,8 @@ reticulate::py_run_string("print(os.environ['PATH'])")
 reticulate::py_run_string("from distutils.spawn import find_executable")
 reticulate::py_run_string("blender_executable = find_executable('blender')")
 reticulate::py_run_string("print('Blender executable:', blender_executable)")
+# Update skeletor
+reticulate::py_run_string("pip3 install git+git://github.com/schlegelp/skeletor@master")
 
 # Code to skeletonise flywire neurons under construction by the Cambridge FlyConnectome group
 library(hemibrainr)
@@ -110,15 +112,23 @@ master = master[!duplicated(master$flywire.xyz),]
 # Batch IDs for grabbing meshes from flywire
 ids = unique(fids[!is.na(fids)])
 ids = ids[ids!="0"]
-batches = split(ids, round(seq(from = 1, to = numCores, length.out = length(ids))))
+
+# Load neurons we have previously downloaded
+## Only update the ones that need updating
+save(fw.neurons, file = paste0("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/flywire/flywire_neurons.rda"))
+old.ids = names(fw.neurons)
+fw.neurons.old = fw.neurons[intersect(ids,old.ids)]
+ids = setdiff(ids, old.ids)
 
 # Read neurons
+batches = split(ids, round(seq(from = 1, to = numCores, length.out = length(ids))))
 foreach.skeletons <- foreach::foreach (batch = 1:numCores) %dopar% {
   fw.ids = batches[[batch]]
   j = tryCatch(fafbseg::skeletor(fw.ids, clean = FALSE, brain = elmr::FAFB14.surf, mesh3d = FALSE), error = function(e) NULL)
 }
 isnl = sapply(foreach.skeletons, nat::is.neuronlist)
 fw.neurons = do.call(c, foreach.skeletons[isnl])
+fw.neurons = union(fw.neurons, fw.neurons.old)
 
 # Add metadata
 colnames(fw.neurons[,]) = c("flywire.id")

@@ -4,9 +4,22 @@
 # source /public/gcc/gcc7_1_0.csh
 # In order to then update Rvcg in R if needed or remotes::install_github('natverse/nat.h5reg')
 # setenv PATH ${PATH}:/public/flybrain/hdf5/lib/
-
+# setenv LD_LIBRARY_PATH ${LD_LIBRARY_PATH}:/public/flybrain/hdf5/lib/
 # At the LMB, this code must be run on Hex/Hal not Max
-# Sys.unsetenv("LD_LIBRARY_PATH")
+# source /public/flybrain/flybrain.sh
+
+# Transform example for debugging
+# library(hemibrainr)
+# library(nat.jrcbrains)
+# neurons = neuprint_read_neurons(c("202916528", "203253072", "326530038", "203253253", "5813079341",
+#                                  "1104824699", "1230328538", "1011076931", "1136545839", "5813002500"))
+# neuronts.t = xform_brain(neurons,
+#                         sample = "JRCFIB2018F",
+#                         reference = "FAFB14",
+#                         .parallel = FALSE,
+#                         verbose = TRUE,
+#                         OmitFailures = TRUE,
+#                         progress.rjava=TRUE)
 
 # Code to transform flywire neurons under construction by the Cambridge FlyConnectome group
 library(hemibrainr)
@@ -28,6 +41,15 @@ fw.neurons.skels = hemibrainr:::strip_meshes(fw.neurons)
 good = sapply(fw.neurons.skels,nat::is.neuron)
 fw.neurons.skels = fw.neurons.skels[good]
 
+# Mirror neurons
+fw.neurons.fafb.m = mirror_fafb(fw.neurons.skels, .parallel = TRUE, OmitFailures = TRUE)
+hemibrainr:::googledrive_upload_neuronlistfh(fw.neurons.fafb.m,
+                                             team_drive = "hemibrain",
+                                             file_name = "flywire_neurons_FlyWire_mirrored.rds",
+                                             folder = "flywire_neurons",
+                                             subfolder = "FlyWire")
+1
+
 # Make the transforms that rely in nat.jrcbrains first
 nat.jrcbrains::register_saalfeldlab_registrations()
 fw.neurons.JRCFIB2018F = xform_brain(fw.neurons.skels, reference = "JRCFIB2018F", sample = "FAFB14", .parallel = TRUE, verbose = TRUE, OmitFailures = TRUE, progress.rjava=TRUE)
@@ -37,7 +59,16 @@ hemibrainr:::googledrive_upload_neuronlistfh(fw.neurons.JRCFIB2018F,
                                              file_name = "flywire_neurons_JRCFIB2018F.rds",
                                              folder = "flywire_neurons",
                                              subfolder = "JRCFIB2018F")
-1
+
+# Transform into hemibrain space, mirrored
+nat.jrcbrains::register_saalfeldlab_registrations()
+fw.neurons.JRCFIB2018F.m = xform_brain(fw.neurons.fafb.m, reference = "JRCFIB2018F", sample = "FAFB14", .parallel = TRUE, verbose = TRUE, OmitFailures = TRUE, progress.rjava=TRUE)
+save(fw.neurons.JRCFIB2018F.m, file = paste0("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/flywire/flywire_neurons_JRCFIB2018F_mirrored.rda"))
+hemibrainr:::googledrive_upload_neuronlistfh(fw.neurons.JRCFIB2018F.m,
+                                             team_drive = "hemibrain",
+                                             file_name = "flywire_neurons_JRCFIB2018F_mirrored.rds",
+                                             folder = "flywire_neurons",
+                                             subfolder = "JRCFIB2018F")
 
 # Transform into JFRC2 space
 fw.neurons.JFRC2 = xform_brain(fw.neurons.skels, reference = "JFRC2", sample = "FAFB14", .parallel = TRUE, verbose = TRUE, OmitFailures = TRUE)
@@ -53,22 +84,7 @@ hemibrainr:::googledrive_upload_neuronlistfh(fw.neurons.JFRC2.m,
                                 folder = "flywire_neurons",
                                 subfolder = "JFRC2")
 nat.jrcbrains::register_saalfeldlab_registrations()
-fw.neurons.fafb.m = xform_brain(fw.neurons.JFRC2.m, reference = "FAFB14", sample = "JFRC2", .parallel = TRUE, verbose = TRUE, OmitFailures = TRUE)
-hemibrainr:::googledrive_upload_neuronlistfh(fw.neurons.fafb.m,
-                                team_drive = "hemibrain",
-                                file_name = "flywire_neurons_FlyWire_mirrored.rds",
-                                folder = "flywire_neurons",
-                                subfolder = "FlyWire")
 
-# Transform into hemibrain space, mirrored
-nat.jrcbrains::register_saalfeldlab_registrations()
-fw.neurons.JRCFIB2018F.m = xform_brain(fw.neurons.JFRC2.m, reference = "JRCFIB2018F", sample = "JFRC2", .parallel = TRUE, verbose = TRUE, OmitFailures = TRUE, progress.rjava=TRUE)
-save(fw.neurons.JRCFIB2018F.m, file = paste0("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/flywire/flywire_neurons_JRCFIB2018F_mirrored.rda"))
-hemibrainr:::googledrive_upload_neuronlistfh(fw.neurons.JRCFIB2018F.m,
-                                team_drive = "hemibrain",
-                                file_name = "flywire_neurons_JRCFIB2018F_mirrored.rds",
-                                folder = "flywire_neurons",
-                                subfolder = "JRCFIB2018F")
 
 # Transform into JRC2018F
 nat.jrcbrains::register_saalfeldlab_registrations()
@@ -93,7 +109,7 @@ hemibrainr:::googledrive_upload_neuronlistfh(fw.neurons.FCWB,
                                              file_name = "flywire_neurons_FCWB.rds",
                                              folder = "flywire_neurons",
                                              subfolder = "FCWB")
-fw.neurons.FCWB.m = xform_brain(fw.neurons.JFRC2.m, reference = "FCWB", sample = "JFRC2", .parallel = TRUE, verbose = TRUE, OmitFailures = TRUE)
+fw.neurons.FCWB.m =  nat.templatebrains::mirror_brain(fw.neurons.FCWB, brain = FCWB, .parallel = TRUE, OmitFailures = TRUE)
 hemibrainr:::googledrive_upload_neuronlistfh(fw.neurons.FCWB.m,
                                              team_drive = "hemibrain",
                                              file_name = "flywire_neurons_FCWB_mirrored.rds",

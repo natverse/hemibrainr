@@ -235,7 +235,7 @@ prune_synapseless_branches <- function(x, neuron = TRUE){
     y = hemibrain_neuron_class(y)
     y
   }else{
-    x$d$PointNo[prune]
+    x$d$PointNo[x$d$PointNo%in%prune]
   }
 }
 

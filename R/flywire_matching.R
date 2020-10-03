@@ -6,15 +6,7 @@ flywire_matching_rewrite <- function(flywire.ids = names(flywire_neurons()),
                                      selected_file  = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw",
                                      ...){
   # Get the FAFB matching google sheet
-  gs = gsheet_manipulation(FUN = googlesheets4::read_sheet,
-                           ss = selected_file,
-                           sheet = "FAFB",
-                           guess_max = 3000,
-                           return = TRUE)
-  skids = unique(gs$skid)
-  skids = as.integer(skids)
-  skids = skids[!is.na(skids)]
-  rownames(gs) = correct_id(gs$skid)
+  gs = hemibrain_match_sheet(sheet = "FAFB", selected_file = selected_file)
 
   # Get FAFBv14 coordinates
   cats = nat::neuronlist()
@@ -40,33 +32,23 @@ flywire_matching_rewrite <- function(flywire.ids = names(flywire_neurons()),
     flywire.xyz = apply(roots.flywire.raw, 1, paste, collapse = ",")
 
     # Add
-    g = gs[rownames(roots),c("FAFB.xyz","flywire.xyz","flywire.id","skid")]
-    g[,]$FAFB.xyz = FAFB.xyz
-    g[,]$flywire.xyz = flywire.xyz
-    g[,]$flywire.id = fw.ids
-    rownames(g) = NULL
-
-    # Update
-    if(nrow(g)){
-      for(row in 1:nrow(g)){
-        columns = c("FAFB.xyz","flywire.xyz","flywire.id")
-        r = match(g[row,"skid"],gs[["skid"]])+1
-        if(is.issue(r)){
-          next
-        }
-        for(column in columns){
-          letter = LETTERS[match(column,colnames(gs))]
-          range = paste0(letter,r)
-          gsheet_manipulation(FUN = googlesheets4::range_write,
-                              ss = selected_file,
-                              range = range,
-                              data = as.data.frame(g[row,column]),
-                              sheet = "FAFB",
-                              col_names = FALSE)
-        }
-      }
-    }
+    gs[rownames(roots),]$FAFB.xyz = FAFB.xyz
+    gs[rownames(roots),]$flywire.xyz = flywire.xyz
+    gs[rownames(roots),]$flywire.id = fw.ids
     all.ids=unique(c(all.ids,fw.ids))
+  }
+
+  # Update
+  rownames(gs) = NULL
+  googlesheets4::write_sheet(gs[0,],
+                             ss = selected_file,
+                             sheet = "FAFB")
+  batches = split(1:nrow(gs), ceiling(seq_along(1:nrow(gs))/500))
+  for(i in batches){
+    gsheet_manipulation(FUN = googlesheets4::sheet_append,
+                        data = gs[min(i):max(i),],
+                        ss = selected_file,
+                        sheet = "FAFB")
   }
 
   # Add flywire match to the hemibrain and LM sheets
@@ -192,11 +174,11 @@ LR_matching <- function(ids = NULL,
     hemibrain_view()
     plot3d(brain, alpha = 0.1, col ="grey")
     # Transform hemibrain neuron to FAFB space
-    fw.n = tryCatch(query[n], error = function(e) NULL)
-    fw.m = tryCatch(db[n], error = function(e) NULL)
+    fw.m = tryCatch(query[n], error = function(e) NULL)
+    fw.n = tryCatch(db[n], error = function(e) NULL)
     sk = gs[n,]$skid[1]
     if(!is.na(sk)){
-      lhn = tryCatch(catmaid::read.neurons.catmaid(n, OmitFailures = TRUE), error = function(e) NULL)
+      lhn = tryCatch(catmaid::read.neurons.catmaid(sk, OmitFailures = TRUE), error = function(e) NULL)
     }else{
       lhn = NULL
     }
@@ -232,17 +214,19 @@ LR_matching <- function(ids = NULL,
       batch.in = intersect(batch, names(db))
       mirror = tryCatch(db[match(batch.in,names(db))], error = function(e) NULL)
       if(is.null(mirror)|length(batch.in)!=length(batch)){
-        message("Cannot read neurons from local db; fetching from flywire!")
-        if(!requireNamespace("fafbseg", quietly = TRUE)) {
-          stop("Please install fafbseg using:\n", call. = FALSE,
-               "remotes::install_github('natverse/fafbseg')")
-        }
-        batch.out = setdiff(batch, names(mirror))
-        mirror2 =(tryCatch(fafbseg::skeletor(batch.out, mesh3d = TRUE, clean = FALSE), error=function(e) NULL) )
-        if(!is.null(mirror2)){
-          mirror = nat::union(mirror, mirror2)
-          mirror = mirror[as.character(batch)]
-        }
+        # message("Cannot read neurons from local db; fetching from flywire!")
+        # if(!requireNamespace("fafbseg", quietly = TRUE)) {
+        #   stop("Please install fafbseg using:\n", call. = FALSE,
+        #        "remotes::install_github('natverse/fafbseg')")
+        # }
+        # batch.out = setdiff(batch, names(mirror))
+        # mirror2 =(tryCatch(fafbseg::skeletor(batch.out, mesh3d = TRUE, clean = FALSE), error=function(e) NULL) )
+        # if(!is.null(mirror2)){
+        #   mirror = nat::union(mirror, mirror2)
+        #   mirror = mirror[as.character(batch)]
+        # }
+        message("Dropping ",length(batch)-length(batch.in) ," neuron missing from db" )
+        batch = intersect(batch, batch.in)
       }
     }
     sel = c("go","for","it")
@@ -271,11 +255,11 @@ LR_matching <- function(ids = NULL,
           k = j
           j = j + batch_size
           if(is.null(db)){
-            mirror2  = neuprintr::neuprint_read_skeletons((names(r)[(k+1):j]), all_segments = TRUE, heal = FALSE)
+            mirror2  = fafbseg::skeletor((names(r)[(k+1):j]), mesh3d = TRUE, clean = FALSE)
           } else {
             mirror2 = tryCatch(db[(names(r)[(k+1):j])], error = function(e) {
-              warning("Cannot read neuron: ", n, " from local db; fetching from neuPrint!")
-              neuprintr::neuprint_read_skeletons((names(r)[(k+1):j]), all_segments = TRUE, heal = FALSE)
+              warning("Cannot read neuron: ", n, " from local db; fetching from flywire!")
+              fafbseg::skeletor((names(r)[(k+1):j]), mesh3d = TRUE, clean = FALSE)
             })
           }
           mirror = nat::union(mirror, mirror2)

@@ -3,10 +3,6 @@
 ## Code in the package lhns was first used to create these google sheets
 ### And make initial matches.
 
-
-# Update numbers
-
-
 # The google sheet database:
 # https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit#gid=0
 selected_file = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw"

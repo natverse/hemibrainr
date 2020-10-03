@@ -84,6 +84,7 @@ mets2 = lapply(1:ncol(mets), function(x) unlist(mets[,x]))
 mets2 = as.data.frame(t(do.call(rbind, mets2)))
 dimnames(mets2) = dimnames(mets)
 all.neurons.flow[,] = mets2[names(all.neurons.flow),]
+all.neurons.flow.microns[,] = mets2[names(all.neurons.flow),]
 write.csv(mets2, file = paste0("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/hemibrain_all_neurons_metrics_",identifier,".csv"), row.names=FALSE)
 message("Metrics calculated for neurons: ", nrow(mets))
 save(all.neurons.flow, file = paste0("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/hemibrain_all_neurons_flow_",identifier,".rda"))

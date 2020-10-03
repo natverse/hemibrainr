@@ -735,7 +735,6 @@ fafb_matching <- function(ids = NULL,
   if(repository == 'flywire'){
     fw.neurons = flywire_neurons()
     fw.neurons.m = flywire_neurons(mirror=TRUE)
-    names(fw.neurons.m) = paste0(names(fw.neurons.m),"_m")
   }
   # Make matches!
   for(n in gs[[id]]){
@@ -758,11 +757,11 @@ fafb_matching <- function(ids = NULL,
     }else if(repository == "flywire"){
       sk = gs[n,]$skid[1]
       if(!is.na(sk)){
-        lhn = tryCatch(catmaid::read.neurons.catmaid(n, OmitFailures = TRUE), error = function(e) NULL)
+        lhn = tryCatch(catmaid::read.neurons.catmaid(sk, OmitFailures = TRUE), error = function(e) NULL)
       }else{
         lhn = NULL
       }
-      fw.n = tryCatcfh({
+      fw.n = tryCatch({
         fw.n = fw.neurons[as.character(n)]
         fw.n = suppressWarnings(nat.templatebrains::xform_brain(fw.n, sample = "FAFB14", reference = "JRCFIB2018F"))
         scale_neurons(fw.n, scaling = (1000/8))
@@ -780,7 +779,7 @@ fafb_matching <- function(ids = NULL,
         }, error = function(e) {NULL})
       }
       fw.m = tryCatch({
-        fw.m = fw.neurons.m[as.character(n)]
+        fw.m = fw.neurons.m[names(fw.neurons.m) %in% as.character(n)]
         fw.m = suppressWarnings(nat.templatebrains::xform_brain(fw.m, sample = "FAFB14", reference = "JRCFIB2018F"))
         scale_neurons(fw.m, scaling = (1000/8))
       }, error = function(e) {NULL})
@@ -791,13 +790,13 @@ fafb_matching <- function(ids = NULL,
       plot3d(lhn, lwd = 2, soma = TRUE, col = "black")
     }
     if(repository=="flywire"){
-      if(!is.null(fw.n)) {plot3d(fw.n, lwd = 3, soma = TRUE, col = "grey30")}
-      if(!is.null(fw.m)) {plot3d(fw.m, lwd = 3, soma = TRUE, col = "grey70")}
+      if(!is.null(fw.n)&length(is.null(fw.n))) {plot3d(fw.n, lwd = 3, soma = TRUE, col = "grey30")}
+      if(!is.null(fw.m)&length(fw.m)) {plot3d(fw.m, lwd = 3, soma = TRUE, col = "grey70")}
     }
     message("ID: ", n)
     message("ItoLee_Hemilineage : ",lhn[n,"ItoLee_Hemilineage"])
     # Read top 10 FIB matches
-    r = tryCatch(sort(hemibrain.nblast[n,],decreasing = TRUE), error = function(e) NULL)
+    r = tryCatch(sort(hemibrain.nblast[,n],decreasing = TRUE), error = function(e) NULL)
     if(is.null(r)){
       message(n, " not in NBLAST matrix, skipping ...")
       next
