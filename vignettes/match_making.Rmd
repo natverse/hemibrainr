@@ -91,7 +91,7 @@ Some good matches are striking. For example:
 
 In the above case, the FAFB neuron has been quite extensively manually traced, meaning that these cells look very similar to one another. 
 
-Be aware that while neurons must share the same cel lbody fiber tract, these tracts can be a little off set. For example, this is also a good match:
+Be aware that while neurons must share the same cell body fiber tract, these tracts can be a little off set. For example, this is also a good match:
 
 
 <center>
