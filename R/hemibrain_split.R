@@ -775,7 +775,7 @@ hemibrain_flow_centrality.neuron <- function(x, splitpoints = hemibrainr::hemibr
   if(is.null(x$bodyid)|is.na(x$bodyid)){
     stop("No bodyid given at x$bodyid")
   }
-  df = dplyr ::filter(splitpoints, .data$bodyid == bi)
+  df = dplyr::filter(splitpoints, .data$bodyid == bi)
   if(!nrow(df)){
     warning("bodyid ", bi," not in splitpoints, returning neuron unmodified")
     y = x
