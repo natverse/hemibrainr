@@ -99,7 +99,7 @@ Be aware that while neurons must share the same cell body fiber tract, these tra
 </center>
 
 
-If the some is missing, it might be safer to note a match as 'medium'.
+If the soma is missing, it might be safer to note a match as 'medium'.
 
 
 <center>
@@ -137,7 +137,7 @@ A larger degree of under-tracing may lead you to assign a match as poor. In this
 </center>
 
 
-A poor match may also be made if you think these is a slight offset, possibly due to a registration issue:
+A poor match may also be made if you think there is a slight offset, possibly due to a registration issue:
 
 
 <center>
@@ -145,7 +145,7 @@ A poor match may also be made if you think these is a slight offset, possibly du
 </center>
 
 
-Though in this case, choosing a even lesser-traced FAFB neuron may be better:
+Though in this case, choosing an even lesser-traced FAFB neuron may be better:
 
 
 <center>
