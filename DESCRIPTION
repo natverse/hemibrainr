@@ -50,7 +50,8 @@ Imports:
     googledrive,
     jsonlite,
     plyr,
-    catmaid
+    catmaid,
+    progress
 Remotes: 
     natverse/neuprintr,
     tidyverse/googlesheets4,
