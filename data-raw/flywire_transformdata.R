@@ -7,19 +7,21 @@
 # setenv LD_LIBRARY_PATH ${LD_LIBRARY_PATH}:/public/flybrain/hdf5/lib/
 # At the LMB, this code must be run on Hex/Hal not Max
 # source /public/flybrain/flybrain.sh
+Sys.setenv(LD_LIBRARY_PATH = paste0(Sys.getenv("LD_LIBRARY_PATH"),":/public/flybrain/hdf5/lib"))
 
 # Transform example for debugging
-# library(hemibrainr)
 # library(nat.jrcbrains)
-# neurons = neuprint_read_neurons(c("202916528", "203253072", "326530038", "203253253", "5813079341",
-#                                  "1104824699", "1230328538", "1011076931", "1136545839", "5813002500"))
-# neuronts.t = xform_brain(neurons,
-#                         sample = "JRCFIB2018F",
-#                         reference = "FAFB14",
-#                         .parallel = FALSE,
-#                         verbose = TRUE,
-#                         OmitFailures = TRUE,
-#                         progress.rjava=TRUE)
+# pts=structure(c(20107.5, 20075.3, 20114.8, 20122.4, 20200.8, 12214.9,
+#                 12279.3, 12318.2, 12325, 12394.7, 12058.7, 12198.2, 12244.8,
+#                 12252.4, 12330.8), .Dim = c(5L, 3L), .Dimnames = list(NULL, c("X",
+#                                                                               "Y", "Z")))
+# xform_brain(pts,
+#             sample = "JRCFIB2018F",
+#             reference = "FAFB14",
+#             .parallel = FALSE,
+#             Verbose = TRUE,
+#             OmitFailures = TRUE,
+#             progress.rjava=TRUE)
 
 # Code to transform flywire neurons under construction by the Cambridge FlyConnectome group
 library(hemibrainr)
