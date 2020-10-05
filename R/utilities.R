@@ -538,25 +538,27 @@ googledrive_clean_neuronlistfh <- function(team_drive = "hemibrain"){
   drive_td = googledrive::drive_find(type = "folder", team_drive = td)
   remove = c()
   for(folder in drive_td$id){
-    sub = googledrive::drive_ls(path = googledrive::as_id(folder), team_drive = td)
-    if(sum(grepl("rds$",sub$name))>1 & "data"%in%sub$name){
-      message("Cleaning ", subset(drive_td,id==folder)$name)
-      fsub = subset(sub, grepl("rds$",sub$name))
-      fdata = subset(sub, grepl("data$",sub$name))[1,]
-      all.keys = c()
-      for(file in fsub$id){
-        fnam = subset(fsub, id==file)$name
-        path = paste0(temp.data,fnam)
-        googledrive::drive_download(file = googledrive::as_id(file), path = path, overwrite = TRUE, verbose = FALSE)
-        a = readRDS(path)
-        b = attributes(a)
-        keys = b$keyfilemap
-        all.keys = c(all.keys,keys)
+    sub = googledrive::drive_ls(path = googledrive::as_id(folder), type = "folder", team_drive = td)
+    if("data" %in% sub$name){
+      if(sum(grepl("rds$",sub$name))>1 & "data"%in%sub$name){
+        message("Cleaning ", subset(drive_td,id==folder)$name)
+        fsub = subset(sub, grepl("rds$",sub$name))
+        fdata = subset(sub, grepl("data$",sub$name))[1,]
+        all.keys = c()
+        for(file in fsub$id){
+          fnam = subset(fsub, id==file)$name
+          path = paste0(temp.data,fnam)
+          googledrive::drive_download(file = googledrive::as_id(file), path = path, overwrite = TRUE, verbose = FALSE)
+          a = readRDS(path)
+          b = attributes(a)
+          keys = b$keyfilemap
+          all.keys = c(all.keys,keys)
+        }
+        data = googledrive::drive_ls(path = googledrive::as_id(fdata$id), team_drive = td)
+        delete = setdiff(data$name,all.keys)
+        delete = googledrive::as_id(subset(data, name%in%delete)$id)
+        remove = unique(c(remove, delete))
       }
-      data = googledrive::drive_ls(path = googledrive::as_id(fdata$id), type = "folder", team_drive = td)
-      delete = setdiff(data$name,all.keys)
-      delete = googledrive::as_id(subset(data, name%in%delete)$id)
-      remove = unique(c(remove, delete))
     }
   }
   # rm
