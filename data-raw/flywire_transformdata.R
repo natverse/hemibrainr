@@ -6,8 +6,8 @@
 # setenv PATH ${PATH}:/public/flybrain/hdf5/lib/
 # setenv LD_LIBRARY_PATH ${LD_LIBRARY_PATH}:/public/flybrain/hdf5/lib/
 # At the LMB, this code must be run on Hex/Hal not Max
-# source /public/flybrain/flybrain.sh
-Sys.setenv(LD_LIBRARY_PATH = paste0(Sys.getenv("LD_LIBRARY_PATH"),":/public/flybrain/hdf5/lib"))
+# setenv LD_LIBRARY_PATH /public/flybrain/hdf5/lib
+# source /public/flybrain/flybrain.csh
 
 # Transform example for debugging
 # library(nat.jrcbrains)
