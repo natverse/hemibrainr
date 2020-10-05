@@ -38,6 +38,7 @@ googledrive_upload_neuronlistfh <- function(x,
   # Save locally
   temp = tempdir(check=TRUE)
   temp.data = paste0(temp,"/data")
+  dir.create(temp.data)
   on.exit(unlink(temp.data, recursive=TRUE))
   temp.rds = paste0(temp,"/",file_name)
   nl = nat::as.neuronlistfh(x, dbdir= temp.data, WriteObjects = "yes")
@@ -523,3 +524,44 @@ hemibrain_view <- function(){
                                               0.974984049797058, 0, -0.0142990946769714, -0.977845013141632,
                                               -0.208840310573578, 0, 0, 0, 0, 1), .Dim = c(4L, 4L)), zoom = 0.613913536071777)
 }
+
+# Remove unused filehash files
+googledrive_clean_neuronlistfh <- function(team_drive = "hemibrain"){
+  # Save .rds files locally
+  temp = tempdir(check=TRUE)
+  temp.data = paste0(temp,"/RDS/")
+  dir.create(temp.data)
+  on.exit(unlink(temp.data, recursive=TRUE))
+
+  # Iterate to find .rds files
+  td = googledrive::team_drive_get(team_drive)
+  drive_td = googledrive::drive_find(type = "folder", team_drive = td)
+  remove = c()
+  for(folder in drive_td$id){
+    sub = googledrive::drive_ls(path = googledrive::as_id(folder), team_drive = td)
+    if(sum(grepl("rds$",sub$name))>1 & "data"%in%sub$name){
+      message("Cleaning ", subset(drive_td,id==folder)$name)
+      fsub = subset(sub, grepl("rds$",sub$name))
+      fdata = subset(sub, grepl("data$",sub$name))[1,]
+      all.keys = c()
+      for(file in fsub$id){
+        fnam = subset(fsub, id==file)$name
+        path = paste0(temp.data,fnam)
+        googledrive::drive_download(file = googledrive::as_id(file), path = path, overwrite = TRUE, verbose = FALSE)
+        a = readRDS(path)
+        b = attributes(a)
+        keys = b$keyfilemap
+        all.keys = c(all.keys,keys)
+      }
+      data = googledrive::drive_ls(path = googledrive::as_id(fdata$id), type = "folder", team_drive = td)
+      delete = setdiff(data$name,all.keys)
+      delete = googledrive::as_id(subset(data, name%in%delete)$id)
+      remove = unique(c(remove, delete))
+    }
+  }
+  # rm
+  if(length(remove)){
+    googledrive::drive_rm(remove, verbose = TRUE)
+  }
+}
+
