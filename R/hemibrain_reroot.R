@@ -236,7 +236,7 @@ hemibrain_remove_bad_synapses.neuron <- function(x,
                                                  ...){
   x.safe = x
   if(!is.null(meshes)){
-    x$inside = NA
+    x$connectors$inside = NA
     if(is.hxsurf(meshes)){
       inside = nat::pointsinside(nat::xyzmatrix(x$connectors), surf = meshes)
       x$connectors$inside[inside] = deparse(substitute(meshes))
@@ -266,7 +266,7 @@ hemibrain_remove_bad_synapses.neuron <- function(x,
     names(dists) = syns
     x$connectors = x$connectors[x$connectors$treenode_id %in% names(dists)[dists==0],]
   }
-  removed = nrow(x$connectors) - nrow(x.safe$connectors)
+  removed = nrow(x.safe$connectors) - nrow(x$connectors)
   if(removed>0){
     x$tags$synapses.removed = removed
   }else{
