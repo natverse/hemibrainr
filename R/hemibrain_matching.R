@@ -1396,6 +1396,8 @@ hemibrain_match_sheet <- function(selected_file = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8
   gs[[id.field]] = correct_id(gs[[id.field]])
   ids = gs[[id.field]]
   ids[is.na(ids)] = paste0("missing_",1:sum(is.na(ids)))
+  ids = paste0(ids,"#",ave(ids,ids,FUN= seq.int))
+  ids = gsub("#1$","",ids)
   rownames(gs) = ids
   gs
 }
