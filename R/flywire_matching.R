@@ -107,7 +107,7 @@ LR_matching <- function(ids = NULL,
           #######################Colours##########################
           black = FAFB CATMAID neuron,
           dark grey = flywire neuron,
-          light grey = mirrrored flywire neuron,
+          blue = mirrrored flywire neuron,
           red = potential hemibrain matches based on NBLAST score,
           green = a chosen hemibrain neuron during scanning,
           blue = your selected hemibrain match.
@@ -116,8 +116,8 @@ LR_matching <- function(ids = NULL,
   ## Get NBLAST
   if(is.null(mirror.nblast) & repository == "flywire"){
     message("Loading flywire NBLAST from flyconnectome Google Team Drive using Google Filestream: ")
-    message(paste0(options()$Gdrive_hemibrain_data,"flywire.mirror.mean.rda"))
-    mirror.nblast = t(hemibrain_nblast("flywire-mirror"))
+    message(paste0(options()$Gdrive_hemibrain_data,"hemibrain_nblast/flywire.mirror.mean.rda"))
+    mirror.nblast = hemibrain_nblast("flywire-mirror")
   }
   # Read the Google Sheet
   gs = hemibrain_match_sheet(selected_file = selected_file, sheet = "flywire")
@@ -140,6 +140,11 @@ LR_matching <- function(ids = NULL,
   done = subset(gs, !is.na(gs[[match.field]]))
   message("Neuron matches: ", nrow(done), "/", nrow(gs))
   print(table(gs[[quality.field]]))
+  # choose user
+  message("Users: ", paste(unique(gs$User),collapse = " "))
+  initials = must_be("Choose a user : ", answers = unique(gs$User))
+  say_hello(initials)
+  rgl::bg3d("white")
   # choose ids
   if(is.null(ids)|!length(ids)){
     ids = gs[[id]][gs$User==initials]
@@ -172,6 +177,7 @@ LR_matching <- function(ids = NULL,
     # Plot brain
     rgl::clear3d()
     hemibrain_view()
+    rgl::bg3d("white")
     plot3d(brain, alpha = 0.1, col ="grey")
     # Transform hemibrain neuron to FAFB space
     fw.m = tryCatch(query[n], error = function(e) NULL)
@@ -195,8 +201,8 @@ LR_matching <- function(ids = NULL,
         }, error = function(e) {NULL})
     }
     if(!is.null(lhn)){plot3d(lhn, lwd = 2, soma = TRUE, col = "black")}
-    if(!is.null(fw.n)) {plot3d(fw.n, lwd = 3, soma = TRUE, col = "grey30")}
-    if(!is.null(fw.m)) {plot3d(fw.m, lwd = 3, soma = TRUE, col = "grey70")}
+    if(!is.null(fw.n)) {plot3d(fw.n, lwd = 3, soma = TRUE, col = "grey50")}
+    if(!is.null(fw.m)) {plot3d(fw.m, lwd = 3, soma = TRUE, col = "#1BB6AF")}
     message("ID: ", n)
     message("ItoLee_Hemilineage : ",lhn[n,"ItoLee_Hemilineage"])
     # Read top 10 FIB matches
@@ -205,25 +211,25 @@ LR_matching <- function(ids = NULL,
       message(n, " not in NBLAST matrix, skipping ...")
       next
     }
-    message(sprintf("Reading the top %s mirrored flywire hits",batch_size))
+    message(sprintf("Reading the top %s flywire hits",batch_size))
     # Read hemibrain neurons
     if(is.null(db)){
-      mirror  = fafbseg::skeletor((names(r)[1:batch_size]), mesh3d = FALSE, clean = FALSE)
+      native  = fafbseg::skeletor((names(r)[1:batch_size]), mesh3d = FALSE, clean = FALSE)
     } else {
       batch = names(r)[1:batch_size]
       batch.in = intersect(batch, names(db))
-      mirror = tryCatch(db[match(batch.in,names(db))], error = function(e) NULL)
-      if(is.null(mirror)|length(batch.in)!=length(batch)){
+      native = tryCatch(db[match(batch.in,names(db))], error = function(e) NULL)
+      if(is.null(native)|length(batch.in)!=length(batch)){
         # message("Cannot read neurons from local db; fetching from flywire!")
         # if(!requireNamespace("fafbseg", quietly = TRUE)) {
         #   stop("Please install fafbseg using:\n", call. = FALSE,
         #        "remotes::install_github('natverse/fafbseg')")
         # }
-        # batch.out = setdiff(batch, names(mirror))
-        # mirror2 =(tryCatch(fafbseg::skeletor(batch.out, mesh3d = TRUE, clean = FALSE), error=function(e) NULL) )
-        # if(!is.null(mirror2)){
-        #   mirror = nat::union(mirror, mirror2)
-        #   mirror = mirror[as.character(batch)]
+        # batch.out = setdiff(batch, names(native))
+        # native2 =(tryCatch(fafbseg::skeletor(batch.out, mesh3d = TRUE, clean = FALSE), error=function(e) NULL) )
+        # if(!is.null(native2)){
+        #   native = nat::union(native, native2)
+        #   native = native[as.character(batch)]
         # }
         message("Dropping ",length(batch)-length(batch.in) ," neuron missing from db" )
         batch = intersect(batch, batch.in)
@@ -234,7 +240,8 @@ LR_matching <- function(ids = NULL,
     j = batch_size
     # Cycle through potential matches
     while(length(sel)>1){
-      sel = sel.orig = tryCatch(nat::nlscan(mirror[names(r)[1:j]], col = "red", lwd = 2, soma = TRUE), error = function(e) NULL)
+      sel = sel.orig = tryCatch(nat::nlscan(native[names(r)[1:j]], col = "#EE4244", lwd = 3, soma = TRUE),
+                                error = function(e) NULL)
       if(is.null(sel)){
         next
       }
@@ -242,7 +249,7 @@ LR_matching <- function(ids = NULL,
         message("Note: You selected more than one neuron")
       }
       if(length(sel) > 0){
-        rgl::plot3d(mirror[sel], lwd = 2, soma = TRUE)
+        rgl::plot3d(native[sel], lwd = 2, soma = TRUE)
       }
       prog = hemibrain_choice(sprintf("You selected %s neurons. Are you happy with that? ",length(sel)))
       if(length(sel)>0){
@@ -255,19 +262,19 @@ LR_matching <- function(ids = NULL,
           k = j
           j = j + batch_size
           if(is.null(db)){
-            mirror2  = fafbseg::skeletor((names(r)[(k+1):j]), mesh3d = TRUE, clean = FALSE)
+            native2  = fafbseg::skeletor((names(r)[(k+1):j]), mesh3d = TRUE, clean = FALSE)
           } else {
-            mirror2 = tryCatch(db[(names(r)[(k+1):j])], error = function(e) {
+            native2 = tryCatch(db[(names(r)[(k+1):j])], error = function(e) {
               warning("Cannot read neuron: ", n, " from local db; fetching from flywire!")
               fafbseg::skeletor((names(r)[(k+1):j]), mesh3d = TRUE, clean = FALSE)
             })
           }
-          mirror = nat::union(mirror, mirror2)
+          native = nat::union(native, native2)
         }
       }else{
         while(length(sel)>1){
           message("Choose single best match: ")
-          sel = nat::nlscan(mirror[as.character(sel.orig)], col = "orange", lwd = 2, soma = TRUE)
+          sel = nat::nlscan(native[as.character(sel.orig)], col = "orange", lwd = 2, soma = TRUE)
           message(sprintf("You selected %s neurons", length(sel)))
           if(!length(sel)){
             noselection = hemibrain_choice("You selected no neurons. Are you happy with that? ")
@@ -281,7 +288,7 @@ LR_matching <- function(ids = NULL,
     # Assign match and its quality
     gs[n,match.field] = ifelse(length(sel)==0,'none',sel)
     if(length(sel)){
-      rgl::plot3d(mirror[sel],col="blue",lwd=2,soma=TRUE)
+      rgl::plot3d(native[sel],col="blue",lwd=2,soma=TRUE)
       quality = must_be("What is the quality of this match? good(e)/okay(o)/poor(p)/tract-only(t) ", answers = c("e","o","p","t"))
     }else{
       quality = "n"
