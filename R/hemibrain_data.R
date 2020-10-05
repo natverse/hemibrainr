@@ -57,12 +57,31 @@
 
 #' The hemibrain mesh
 #'
-#' A 3D mesh of the hemibrain volume as a \code{\link[nat]{hxsurf}} object.
-#' Created by Philipp Schlegel from the union of individual ROIs in FlyEM's
-#' hemibrain project. Mesh available both in raw voxels and in microns.
+#' A 3D mesh of the overall neuropil structures in the hemibrain volume as a
+#' \code{\link[nat]{hxsurf}} object. Created by Philipp Schlegel from the union
+#' of individual ROIs in FlyEM's hemibrain project (see details). Mesh available
+#' both in raw voxels and in microns.
 #'
-#' @details note that hemibrain coordinate system does not have the
-#'   anterior-posterior axis aligned with the Z axis.
+#' @details The hemibrain mesh is watertight and contains no internal structure
+#'   or non-manifold vertices. It is the right thing to use if you want to see
+#'   if things are inside the hemibrain neuropil. Philipp Schlegel used the
+#'   following steps to construct the mesh:
+#'
+#'   \enumerate{
+#'
+#'   \item Taking all the individual ROIs
+#'
+#'   \item Voxelizing them
+#'
+#'   \item Combining the voxels into a single image stack
+#'
+#'   \item Filling the gaps in between (binary operations + some manual fixing
+#'   in Fiji) \item Using a marching cubes to generate a mesh from the stack
+#'
+#'   }
+#'
+#'   Note that hemibrain coordinate system does not have the anterior-posterior
+#'   axis aligned with the Z axis.
 #'
 #' @source \url{https://neuprint.janelia.org/}
 #' @seealso \code{\link{hemibrain_roi_meshes}}, \code{\link{hemibrain_al.surf}}
