@@ -155,6 +155,8 @@ scale_neurons.neuronlist = function(x, scaling = (8/1000), ...){
 #' "5813054716", "5813018847", "5813055448", "1763037543", "2101391269",
 #' "1794037618", "5813018729", "2013333009")
 #'
+#' # Only use first three neurons for documentation purposes
+#' al.local.neurons=al.local.neurons[1:3]
 #' # Get neurons
 #' neurons = neuprintr::neuprint_read_neurons(al.local.neurons)
 #'
