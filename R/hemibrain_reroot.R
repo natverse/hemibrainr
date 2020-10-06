@@ -328,11 +328,11 @@ hemibrain_remove_bad_synapses.neuronlist <- function(x,
 #' )
 #'
 #' # just use a subset for documentation purposes
-#' ids=ids[1:5]
+#' ids=ids[1:3]
 #'
 #' # Read in these neurons
 #' neurons = neuprintr::neuprint_read_neurons(ids)
-#'
+#' \dontrun{
 #' # Get all the roi meshes
 #' hemibrain.rois = hemibrain_roi_meshes()
 #' ## Using this as the argument for 'meshes' will also
@@ -340,6 +340,12 @@ hemibrain_remove_bad_synapses.neuronlist <- function(x,
 #'
 #' # Re-root
 #' neurons.checked = hemibrain_skeleton_check(neurons, meshes = hemibrain.rois)
+#' }
+#'
+#' # Alternatively, we can do this faster using a single surface model for the
+#' # whole hemibrain
+#'
+#' neurons.checked = hemibrain_skeleton_check(neurons, meshes = hemibrain.surf)
 #'
 #' \dontrun{
 #' # Let's check that this worked
@@ -357,7 +363,7 @@ hemibrain_remove_bad_synapses.neuronlist <- function(x,
 #' @seealso \code{\link{hemibrain_reroot}}
 #' @importFrom nat as.neuronlist
 hemibrain_skeleton_check <- function(x, # as read by neuprint_read_neurons
-                                     meshes = hemibrain_roi_meshes(),
+                                     meshes = hemibrainr::hemibrain.surf,
                                      min.nodes.from.soma = 100,
                                      min.nodes.from.pnt = 5,
                                      OmitFailures = FALSE,
