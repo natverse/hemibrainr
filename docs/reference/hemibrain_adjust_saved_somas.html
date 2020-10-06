@@ -17,23 +17,27 @@
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png" />
 
 <!-- jquery -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous" />
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
+
+<!-- bootstrap-toc -->
+<link rel="stylesheet" href="../bootstrap-toc.css">
+<script src="../bootstrap-toc.js"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script>
 
 <!-- headroom.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -46,15 +50,14 @@
 <meta property="og:description" content="Currently provides three &quot;modes&quot;: correct single neurons, correct cell body fibers, and correct from google sheet.
   Correct singles will allow you to manually correct each neuron in a provided list of bodyids. If requested, DBSCAN can be used
       to try to predict potential soma positions against already correctly identified somas, based on the provided google sheet.
-  Correct cell body fibers(cbf) asks for a cbf to be inputted based on those labeled in the google sheet. DBSCAN is then used to
-      cluster the already annotated soma positions on the google sheet withing the cbf. This will allow you to identify correct
+  Correct cell body fibers(cbf) asks for a cbf to be inputted based on those labelled in the google sheet. DBSCAN is then used to
+      cluster the already annotated soma positions on the google sheet within the cbf. This will allow you to identify correct
       soma positions, and then manually fix incorrect somas. for each neuron with an incorrect soma, a potential new soma will be
       suggested based on the DBSCAN clustering result.
   Correct google sheet is useful when screening large numbers of neurons. Once a large group of neurons has been split into
       morphological clusters, using NBLAST for example, this mode will request a cluster id and apply DBSCAN to somas within
       the cluster. You can then quickly screen to identify correct soma clusters, and label incorrect somas to be corrected separately." />
-<meta property="og:image" content="/logo.png" />
-<meta name="twitter:card" content="summary" />
+<meta property="og:image" content="/logo.svg" />
 
 
 
@@ -72,7 +75,7 @@
 
   </head>
 
-  <body>
+  <body data-spy="scroll" data-target="#toc">
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -116,7 +119,7 @@
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/flyconnectome/hemibrainr">
+  <a href="https://github.com/flyconnectome/hemibrainr/">
     <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
@@ -143,8 +146,8 @@
     <p>Currently provides three "modes": correct single neurons, correct cell body fibers, and correct from google sheet.
   Correct singles will allow you to manually correct each neuron in a provided list of bodyids. If requested, DBSCAN can be used
       to try to predict potential soma positions against already correctly identified somas, based on the provided google sheet.
-  Correct cell body fibers(cbf) asks for a cbf to be inputted based on those labeled in the google sheet. DBSCAN is then used to
-      cluster the already annotated soma positions on the google sheet withing the cbf. This will allow you to identify correct
+  Correct cell body fibers(cbf) asks for a cbf to be inputted based on those labelled in the google sheet. DBSCAN is then used to
+      cluster the already annotated soma positions on the google sheet within the cbf. This will allow you to identify correct
       soma positions, and then manually fix incorrect somas. for each neuron with an incorrect soma, a potential new soma will be
       suggested based on the DBSCAN clustering result.
   Correct google sheet is useful when screening large numbers of neurons. Once a large group of neurons has been split into
@@ -190,11 +193,11 @@
     </tr>
     <tr>
       <th>plot_sample</th>
-      <td><p>Bool. TRUE by default, choose if you wish to plot a random subset of neurons within a DBSCAN cluster</p></td>
+      <td><p>logical. TRUE by default, choose if you wish to plot a random subset of neurons within a DBSCAN cluster</p></td>
     </tr>
     <tr>
       <th>eps</th>
-      <td><p>the distance in nanometers used by DBSCAN to form clusters. 1500 by default</p></td>
+      <td><p>the distance in nanometres used by DBSCAN to form clusters. 1500 by default</p></td>
     </tr>
     <tr>
       <th>minPts</th>
@@ -202,7 +205,7 @@
     </tr>
     <tr>
       <th>neurons_from_gsheet</th>
-      <td><p>Bool, TRUE by default. If true, will collect neurons based on bodyids in the google sheet,
+      <td><p>logical, TRUE by default. If true, will collect neurons based on bodyids in the google sheet,
 otherwise, will search for them based on CBF data in neuprint.</p></td>
     </tr>
     <tr>
@@ -216,13 +219,10 @@ otherwise, will search for them based on CBF data in neuprint.</p></td>
     <p>Updates Google Sheet with soma information</p>
 
   </div>
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-    <h2>Contents</h2>
-    <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
-      <li><a href="#value">Value</a></li>
-    </ul>
-
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
+    <nav id="toc" data-toggle="toc" class="sticky-top">
+      <h2 data-toc-skip>Contents</h2>
+    </nav>
   </div>
 </div>
 
@@ -233,7 +233,7 @@ otherwise, will search for them based on CBF data in neuprint.</p></td>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
 </div>
 
       </footer>
