@@ -19,16 +19,17 @@ that this neuron has been read in by
 \code{neuprintr::neuprint_read_neurons} or possibly
 \code{catmaid::read.neurons.catmaid}.}
 
-\item{meshes}{a list/a single object of class \code{mesh3d} or \code{hxsurf}.}
+\item{meshes}{a list/a single object of class \code{mesh3d} or \code{hxsurf}.
+Defaults to \code{\link{hemibrain.surf}}. See examples for alternatives.}
 
 \item{min.nodes.from.soma}{the minimum number of nodes (geodesic distance) a
-synapse can be from the soma. Synapses closes than this will be removed. For
-comparable results across neurons, recommended to use \code{nat::resample} on
-your neurons before using.}
+synapse can be from the soma. Synapses closes than this will be removed.
+For comparable results across neurons, recommended to use
+\code{nat::resample} on your neurons before using.}
 
 \item{min.nodes.from.pnt}{the minimum number of nodes (geodesic distance) a
-synapse can be from a point along the primary neurite.
-Synapses closes than this will be removed.}
+synapse can be from a point along the primary neurite. Synapses closes than
+this will be removed.}
 
 \item{OmitFailures}{Whether to omit neurons for which FUN gives an error.
 The default value (NA) will result in nlapply stopping with an error

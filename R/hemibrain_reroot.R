@@ -173,23 +173,25 @@ hemibrain_reroot.neuronlist <- function(x,
 #' Remove incorrectly placed synapses
 #'
 #' @description With the hemibrain projects somas and their tracts were not
-#' separately and explicitly detected. Some false synapse assignment has happened,
-#' adding synapses to soma and primary neurite locations, that should not exist
-#' based on an examination of the greyscale EM data. This function removes 'out-of-mesh'
-#' synapses, you might want to use all ROIs or the hemibrain mesh to remove these 'bad'
-#' synapses. In addition, synapses are removed if they are too near the soma / along the
-#' primary neurite.
+#'   separately and explicitly detected. Some false synapse assignment has
+#'   happened, adding synapses to soma and primary neurite locations, that
+#'   should not exist based on an examination of the greyscale EM data. This
+#'   function removes 'out-of-mesh' synapses, you might want to use all ROIs or
+#'   the hemibrain mesh to remove these 'bad' synapses. In addition, synapses
+#'   are removed if they are too near the soma / along the primary neurite.
 #' @inheritParams flow_centrality
 #' @param meshes a list/a single object of class \code{mesh3d} or \code{hxsurf}.
-#' @param soma logical, if TRUE it is assumed that the neuron being given has the soma
-#' as its route and an intact primary neurite tract. Synapses will then be pruned from both.
+#'   Defaults to \code{\link{hemibrain.surf}}. See examples for alternatives.
+#' @param soma logical, if TRUE it is assumed that the neuron being given has
+#'   the soma as its route and an intact primary neurite tract. Synapses will
+#'   then be pruned from both.
 #' @param min.nodes.from.soma the minimum number of nodes (geodesic distance) a
-#'  synapse can be from the soma. Synapses closes than this will be removed. For
-#'  comparable results across neurons, recommended to use \code{nat::resample} on
-#'  your neurons before using.
+#'   synapse can be from the soma. Synapses closes than this will be removed.
+#'   For comparable results across neurons, recommended to use
+#'   \code{nat::resample} on your neurons before using.
 #' @param min.nodes.from.pnt the minimum number of nodes (geodesic distance) a
-#'  synapse can be from a point along the primary neurite.
-#'  Synapses closes than this will be removed.
+#'   synapse can be from a point along the primary neurite. Synapses closes than
+#'   this will be removed.
 #' @param ... methods sent to \code{nat::nlapply}
 #'
 #' @return a \code{nat::neuronlist} or \code{nat::neuron} object
@@ -205,9 +207,13 @@ hemibrain_reroot.neuronlist <- function(x,
 #' points3d(xyzmatrix(neuron[[1]]$connectors))
 #' }
 #'
-#' # Re-root
-#' neuron.fixed = hemibrain_remove_bad_synapses(neuron)
-#'
+#' # remove any synapses outside of this surface (or on the cell body fibre)
+#' neuron.fixed = hemibrain_remove_bad_synapses(neuron, meshes=hemibrain.surf)
+#' \dontrun{
+#' # previously we used all the individual hemibrain meshes. This may produce
+#' # slightly different results but using *hemibrain.surf* is much faster
+#' neuron.fixed = hemibrain_remove_bad_synapses(neuron, meshes=hemibrain_roi_meshes())
+#' }
 #' \dontrun{
 #' library(nat)
 #' # Let's check that this worked
@@ -218,7 +224,7 @@ hemibrain_reroot.neuronlist <- function(x,
 #' @export
 #' @seealso \code{\link{hemibrain_reroot}}
 hemibrain_remove_bad_synapses <- function(x,
-                                          meshes = hemibrain_roi_meshes(),
+                                          meshes = hemibrainr::hemibrain.surf,
                                           soma = TRUE,
                                           min.nodes.from.soma = 100,
                                           min.nodes.from.pnt = 5,
@@ -228,7 +234,7 @@ hemibrain_remove_bad_synapses <- function(x,
 
 #' @export
 hemibrain_remove_bad_synapses.neuron <- function(x,
-                                                 meshes = hemibrain_roi_meshes(),
+                                                 meshes = hemibrainr::hemibrain.surf,
                                                  soma = TRUE,
                                                  min.nodes.from.soma = 100,
                                                  min.nodes.from.pnt = 5,
@@ -278,7 +284,7 @@ hemibrain_remove_bad_synapses.neuron <- function(x,
 
 #' @export
 hemibrain_remove_bad_synapses.neuronlist <- function(x,
-                                                     meshes = hemibrain_roi_meshes(),
+                                                     meshes = hemibrainr::hemibrain.surf,
                                                      soma = TRUE,
                                                      min.nodes.from.soma = 125,
                                                      min.nodes.from.pnt = 5,
