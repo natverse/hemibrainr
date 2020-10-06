@@ -27,7 +27,7 @@
 #' neurons = neuprint_read_neurons(al.local.neurons)
 #'
 #' # Convert to microns
-#' neurons = hemibrainr:::scale_neurons(neurons)
+#' neurons = hemibrainr::scale_neurons(neurons)
 #'
 #' # Split
 #' neurons = hemibrain_flow_centrality(neurons)

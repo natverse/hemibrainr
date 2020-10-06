@@ -53,7 +53,7 @@ al.local.neurons = c("1702323386", "2068966051", "2069311379", "1702305987", "58
 neurons = neuprint_read_neurons(al.local.neurons)
 
 # Convert to microns
-neurons = hemibrainr:::scale_neurons(neurons)
+neurons = hemibrainr::scale_neurons(neurons)
 
 # Split
 neurons = hemibrain_flow_centrality(neurons)
