@@ -791,7 +791,7 @@ fafb_matching <- function(ids = NULL,
     }
     if(repository=="flywire"){
       if(!is.null(fw.n)&length(is.null(fw.n))) {plot3d(fw.n, lwd = 3, soma = TRUE, col = "grey30")}
-      if(!is.null(fw.m)&length(fw.m)) {plot3d(fw.m, lwd = 3, soma = TRUE, col = "grey70")}
+      if(!is.null(fw.m)&length(fw.m)) {plot3d(fw.m, lwd = 3, soma = TRUE, col = "grey50")}
     }
     message("ID: ", n)
     message("ItoLee_Hemilineage : ",lhn[n,"ItoLee_Hemilineage"])
@@ -886,16 +886,9 @@ fafb_matching <- function(ids = NULL,
       plot_inspirobot()
       say_encouragement(initials)
       # Read!
-      gs2 = gsheet_manipulation(FUN = googlesheets4::read_sheet,
-                                ss = selected_file,
-                                sheet = "FAFB",
-                                guess_max = 3000,
-                                return = TRUE)
-      gs2[[id]] = correct_id(gs2[[id]])
-      is = gs2[[id]]
-      is[is.na(is)] = "0"
-      rownames(gs2) = paste0(is,"#",ave(is,is,FUN= seq.int))
+      gs2 = hemibrain_match_sheet(selected_file = selected_file, sheet = "flywire")
       gs2[match(gs[[id]],gs2[[id]]),match.field]=gs[[match.field]]
+      gs2[match(gs[[id]],gs2[[id]]),quality.field]=gs[[quality.field]]
       # Write!
       write_matches(gs=gs2,
                     ids = unsaved,
@@ -916,16 +909,9 @@ fafb_matching <- function(ids = NULL,
     plot_inspirobot()
     say_encouragement(initials)
     # Read!
-    gs2 = gsheet_manipulation(FUN = googlesheets4::read_sheet,
-                              ss = selected_file,
-                              sheet = "FAFB",
-                              guess_max = 3000,
-                              return = TRUE)
-    gs2[[id]] = correct_id(gs2[[id]])
-    is = gs2[[id]]
-    is[is.na(is)] = "0"
-    rownames(gs2) = paste0(is,"#",ave(is,is,FUN= seq.int))
+    gs2 = hemibrain_match_sheet(selected_file = selected_file, sheet = "flywire")
     gs2[match(gs[[id]],gs2[[id]]),match.field]=gs[[match.field]]
+    gs2[match(gs[[id]],gs2[[id]]),quality.field]=gs[[quality.field]]
     # Write!
     write_matches(gs=gs2,
                   ids = unsaved,
@@ -1649,6 +1635,11 @@ fafb_matching_rewrite <- function(selected_file  = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd
   n$side = "r"
   n[n$skid%in%lskids,"side"] = "l"
   n$User = gs$User[match(n$skid,gs$skid)]
+  nblast.path = "/Volumes/GoogleDrive/Shared drives/flyconnectome/fafbpipeline/fib.fafb.crossnblast.twigs5.mean.compress.rda"
+  if(exists(nblast.path)){
+    load(sprintf("/Volumes/GoogleDrive/Shared drives/flyconnectome/fafbpipeline/fib.fafb.crossnblast.twigs5.mean.compress.rda", "fib.fafb.crossnblast.twigs5.mean.compress"))
+    n$nblast.top =fib.fafb.crossnblast.twigs5.mean.compress[as.character(n$skid),]
+  }
   n = n[order(n$cell.type),]
   n = n[order(n$ItoLee_Hemilineage),]
   n = n[,colnames(gs)]

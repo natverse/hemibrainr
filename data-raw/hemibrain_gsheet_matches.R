@@ -32,9 +32,9 @@ while(length(hls)){
 
 # Add all hemibrain neurons to sheet
 hemibrain_matching_rewrite()
-matches = hemibrain_matches()
 fafb_matching_rewrite()
 hemibrain_matching_transfers()
+flywire_matching_rewrite()+
 
 # Remove confounding annotations in segmentation instances
 fafb_lineage_complete_wipe(server = "v14seg-Li-190411.0")

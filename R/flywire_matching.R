@@ -180,8 +180,14 @@ LR_matching <- function(ids = NULL,
     rgl::bg3d("white")
     plot3d(brain, alpha = 0.1, col ="grey")
     # Transform hemibrain neuron to FAFB space
-    fw.m = tryCatch(query[n], error = function(e) NULL)
-    fw.n = tryCatch(db[n], error = function(e) NULL)
+    fw.m = tryCatch(query[n], error = function(e){
+      message("Could not read mirrored neuron: ", n)
+      NULL
+    })
+    fw.n = tryCatch(db[n], error = function(e){
+      message("Could not read native neuron: ", n)
+      NULL
+    })
     sk = gs[n,]$skid[1]
     if(!is.na(sk)){
       lhn = tryCatch(catmaid::read.neurons.catmaid(sk, OmitFailures = TRUE), error = function(e) NULL)
@@ -305,6 +311,7 @@ LR_matching <- function(ids = NULL,
       # Read!
       gs2 = hemibrain_match_sheet(selected_file = selected_file, sheet = "flywire")
       gs2[match(gs[[id]],gs2[[id]]),match.field]=gs[[match.field]]
+      gs2[match(gs[[id]],gs2[[id]]),quality.field]=gs[[quality.field]]
       # Write!
       write_matches(gs=gs2,
                     ids = unsaved,
@@ -327,6 +334,7 @@ LR_matching <- function(ids = NULL,
     # Read!
     gs2 = hemibrain_match_sheet(selected_file = selected_file, sheet = "flywire")
     gs2[match(gs[[id]],gs2[[id]]),match.field]=gs[[match.field]]
+    gs2[match(gs[[id]],gs2[[id]]),quality.field]=gs[[quality.field]]
     # Write!
     write_matches(gs=gs2,
                   ids = unsaved,

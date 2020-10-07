@@ -13,7 +13,7 @@
 # ssh max
 # unzip /public/flybrain/blender-2.90.0-linux64.zip
 # Add /public/flybrain/Blender.app to your PATH:
-# setenv PATH ${PATH}:/public/flybrain/blender-2.90.0-linux64/blender
+# setenv PATH ${PATH}:/public/flybrain/blender-2.90.0-linux64/
 ### blender
 
 # Find blender!
@@ -102,17 +102,7 @@ foreach.ids <- foreach::foreach (batch = 1:numCores) %dopar% {
   }
   i}, error = function(e) NULL)
 }
-fids = unlist(foreach.ids)
-
-# Combine
-master = plyr::rbind.fill(fg,gs)
-master$flywire.id = fids[as.character(master$flywire.xyz)]
-master = master[!duplicated(master$flywire.xyz),]
-
-# Batch IDs for grabbing meshes from flywire
-ids = unique(fids[!is.na(fids)])
-ids = ids[ids!="0"]
-
+j[]
 # Load neurons we have previously downloaded
 ## Only update the ones that need updating
 save(fw.neurons, file = paste0("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/flywire/flywire_neurons.rda"))

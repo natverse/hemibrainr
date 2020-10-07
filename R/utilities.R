@@ -517,14 +517,6 @@ strip_meshes<-function(x){
   nat::nlapply(x, strip_mesh.neuron)
 }
 
-# View
-hemibrain_view <- function(){
-  rgl::rgl.viewpoint(userMatrix = structure(c(0.997098863124847, 0.00167237117420882,
-                                              -0.0761013180017471, 0, 0.074764609336853, -0.209322586655617,
-                                              0.974984049797058, 0, -0.0142990946769714, -0.977845013141632,
-                                              -0.208840310573578, 0, 0, 0, 0, 1), .Dim = c(4L, 4L)), zoom = 0.613913536071777)
-}
-
 # Remove unused filehash files
 googledrive_clean_neuronlistfh <- function(team_drive = "hemibrain"){
   # Save .rds files locally
@@ -540,7 +532,8 @@ googledrive_clean_neuronlistfh <- function(team_drive = "hemibrain"){
   for(folder in drive_td$id){
     sub = googledrive::drive_ls(path = googledrive::as_id(folder), type = "folder", team_drive = td)
     if("data" %in% sub$name){
-      if(sum(grepl("rds$",sub$name))>1 & "data"%in%sub$name){
+      sub = googledrive::drive_ls(path = googledrive::as_id(folder), team_drive = td)
+      if(sum(grepl("rds$",sub$name))>1){
         message("Cleaning ", subset(drive_td,id==folder)$name)
         fsub = subset(sub, grepl("rds$",sub$name))
         fdata = subset(sub, grepl("data$",sub$name))[1,]
@@ -563,7 +556,107 @@ googledrive_clean_neuronlistfh <- function(team_drive = "hemibrain"){
   }
   # rm
   if(length(remove)){
+    message("Removing files ...")
     googledrive::drive_rm(remove, verbose = TRUE)
   }
 }
+
+# Obtains flywire IDs from flywire posirions on google sheets
+# The sheets must either have columns fw.x, fw.y, fw.z
+# or one column, flywire.xyz with number separated by commas, in the form: x,y,z
+flywire_flagged <- function(selected_sheets = c("1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw",
+                                                "1rzG1MuZYacM-vbW7100aK8HeA-BY6dWAVXQ7TB6E2cQ",
+                                                "1spGSuhUX6Hhn-8HH0U_ArIWUuPpMBFNjIjeSSh_MFVY"
+),
+chosen.columns = c("fw.x","fw.y",'fw.z', 'flywire.xyz',
+                   "flywire.id", "skid",
+                   "FAFB.xyz", "side",
+                   "ItoLee_Hemilineage", "Hartenstein_Hemilineage",
+                   "hemibrain_match"),
+numCores = 1){
+  # Read selected sheets and extract positions for flywire neurons
+  # One xyz position is enough to identify a neuron
+  # We do this because flywire.ids change all of the time
+  gs = data.frame()
+  for(selected_sheet in selected_sheets){
+    ## Read google sheets and extract glywire neuron positions
+    tabs = googlesheets4::sheet_names(selected_sheet)
+    for(tab in tabs){
+      gs.t = hemibrainr:::gsheet_manipulation(FUN = googlesheets4::read_sheet,
+                                              ss = selected_sheet,
+                                              sheet = tab,
+                                              guess_max = 3000,
+                                              return = TRUE)
+      gs.t = gs.t[,colnames(gs.t)%in%chosen.columns]
+      if(ncol(gs.t)&&sum(grepl("fw.x|flywire.xyz",colnames(gs.t)))>0){
+        for(col in chosen.columns){
+          if(is.null(gs.t[[col]])){
+            gs.t[[col]] = NA
+          }
+        }
+        gs = plyr::rbind.fill(gs.t,gs)
+      }
+    }
+    if(is.null(gs$flywire.xyz)){
+      gs$flywire.xyz = apply(gs[,c("fw.x","fw.y",'fw.z')],1,paste,sep=",",collapse=",")
+    }
+  }
+  gs1 = subset(gs, is.na(gs$flywire.xyz) && !is.na(gs$fw.x))
+  gs2= subset(gs, !is.na(gs$flywire.xyz))
+
+  # Separate x,y,z positions
+  gs1$flywire.xyz = apply(gs1[,c("fw.x","fw.y",'fw.z')],1,paste,sep=",",collapse=",")
+  positions.gs = sapply(gs2$flywire.xyz,strsplit,",|/|;")
+  ruleofthree = sapply(positions.gs,function(p) length(p)==3)
+  positions.gs = positions.gs[ruleofthree]
+  positions.gs = do.call(rbind, positions.gs)
+  positions.gs = apply(positions.gs,2,as.numeric)
+  gs2[ruleofthree,c("fw.x","fw.y",'fw.z')] = positions.gs
+  master = rbind(gs2,gs1)
+  master = master[!is.na(master$flywire.xyz),]
+  master = master[!is.na(master$fw.x),]
+  master = master[!is.na(master$fw.y),]
+  master = master[!is.na(master$fw.z),]
+
+  # Make this unique, but keep row with most information
+  master$filled = apply(master, 1, function(r) sum(!is.na(r)))
+  master = master[order(master$filled,decreasing = TRUE),]
+  master = master[!duplicated(master$flywire.xyz),]
+  rownames(master) = master$flywire.xyz
+
+  # Get flywire IDs from these positions
+  ## Batch positions for grabbing IDs from flywire
+  batches = split(1:nrow(master), round(seq(from = 1, to = numCores, length.out = nrow(master))))
+  ## Find flywire IDs for each specified position
+  foreach.ids <- foreach::foreach (batch = 1:numCores) %dopar% {
+    pos = master[batches[[batch]],]
+    j <- tryCatch({i = fafbseg::flywire_xyz2id(pos[,c("fw.x","fw.y",'fw.z')], rawcoords = TRUE)
+    names(i) = pos$flywire.xyz
+    if(sum(i==0)>0){
+      i[i==0] =  fafbseg::flywire_xyz2id(pos[i==0,], rawcoords = FALSE)
+    }
+    i}, error = function(e) NULL)
+  }
+  fids = unlist(foreach.ids)
+  fids = fids[fids!="0"]
+  master[names(fids),"flywire.id"] = fids
+  master = subset(master, !is.na(master$flywire.id))
+  master
+}
+
+
+# Update neurons xyz locations
+java_xform_brain <- function(x,
+                             sample = regtemplate(x),
+                             reference,
+                             method = "rJava",
+                             progress.rjava=TRUE,
+                             ...){
+  points = nat:::xyzmatrix(x)
+  t = xform_brain(x, reference = reference, sample = sample, method = method, progress.rjava=progress.rjava, ...)
+  nat:::xyzmatrix(x) = t
+  x
+}
+
+
 
