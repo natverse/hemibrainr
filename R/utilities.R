@@ -629,8 +629,8 @@ numCores = 1){
                                               return = TRUE)
       if(ncol(gs.t)&&sum(grepl("fw.x|flywire.xyz",colnames(gs.t)))>0){
         # Separate x,y,z positions
-        gs1 = subset(gs.t, (is.na(gs.t$flywire.xyz)||is.null(gs.t$flywire.xyz)) && !is.na(gs.t$fw.x))
-        gs2= subset(gs.t, !is.na(gs.t$flywire.xyz))
+        gs1 = subset(gs.t, is.na(gs.t$flywire.xyz))
+        gs2 = subset(gs.t, !is.na(gs.t$flywire.xyz))
         gs1$flywire.xyz = apply(gs1[,c("fw.x","fw.y",'fw.z')],1,paste,sep=",",collapse=",")
         if(nrow(gs2)){
           positions.gs = sapply(gs2$flywire.xyz,strsplit,",|/|;")
@@ -659,7 +659,7 @@ numCores = 1){
         # Update
         rownames(gs.t) = NULL
         googlesheets4::write_sheet(gs.t[0,],
-                                   ss = selected_file,
+                                   ss = selected_sheet,
                                    sheet = tab)
         batches = split(1:nrow(gs.t), ceiling(seq_along(1:nrow(gs.t))/500))
         for(i in batches){
