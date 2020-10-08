@@ -292,8 +292,12 @@ lengthnorm <- function(x){
 hemibrain_neuron_class <- function (x){
   if(nat::is.neuronlist(x)){
     x = nat::nlapply(x,hemibrain_neuron_class)
-  }else{
-    class(x) = unique(c(class(x),"neuprintneuron","catmaidneuron","neuron","list"))
+  } else {
+    our_classes=c("neuprintneuron","catmaidneuron","neuron","list")
+    # we assume that any extra classes besides those 4 should be at the front
+    # of the list
+    extra_classes=setdiff(class(x), our_classes)
+    class(x) = c(extra_classes, our_classes)
   }
   x
 }
@@ -334,7 +338,9 @@ which.consecutive <- function(Vec,
 change_points <- function(x, v, only.jumps = FALSE, run = "min"){
   eps = nat::endpoints(x)
   segs = x$SegList
-  segs.d = segs[unlist(lapply(segs, function(seg) sum(seg %in% v) >0))]
+  df=data.frame(node=unlist(segs), seg=rep(seq_along(segs), sapply(segs, length)))
+  bb=by(df$node%in%v, df$seg, function(x) any(x))
+  segs.d=segs[bb]
   s.d = unique(unlist(lapply(segs.d, function(seg) seg[which.consecutive(seg %in% v, only.jumps = only.jumps, run = run)])))
   s.d = setdiff(s.d, eps)
 }
@@ -356,6 +362,13 @@ is.issue <- function(x){
 # hidden
 carryover_tags <- function(x, y){
   y$tags = x$tags
+  y
+}
+
+# hidden
+carryover_labels <- function(x, y){
+  y$d$Label = x$d$Label[match(y$d$PointNo,x$d$PointNo)]
+  y$connectors$Label = x$connectors$Label[match(y$connectors$PointNo,x$d$PointNo)]
   y
 }
 
@@ -516,6 +529,7 @@ fafb_hemibrain_cut <- function(x, ...){
 }
 
 # use foreach to process in parallel
+#' @importFrom nat.templatebrains regtemplate xform_brain
 xform_brain_parallel <- function(x,
                                  no.batches = 10,
                                  sample = regtemplate(x),

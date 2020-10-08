@@ -86,7 +86,7 @@ hemibrain_get_meta <- function(x, ...){
 #'
 #' @param x a vector of FAFB skeleton IDs (skids) that can be read with \code{catmaid::catmaid_skids()}
 #' @param find an annotation/search term/vector of skids passed to \code{catmaid::catmaid_skids}.
-#' @param dataset either FAFB or hemibrain. If hemibrain, then \code{find} must be a vector of valid bodyids. Matches to FAFB neurons will be annootated for these bodyids, using \code{hemibrain_matches}.
+#' @param dataset either FAFB or hemibrain. If hemibrain, then \code{find} must be a vector of valid bodyids. Matches to FAFB neurons will be annotated for these bodyids, using \code{hemibrain_matches}.
 #' @param ItoLee_Hemilineage character, the correct K. Ito / T. Lee hemilineage. Must be an entry in \code{\link{hemibrain_hemilineages}}. If set to 'wipe' all lineage related annotations will be removed.
 #' @param transmitter character, the known or putative transmitter identity of the neurons that will be fetched using \code{find}.
 #' @param delete.find logical, is \code{TRUE} then if \code{find} is an annotation, it will be wiped from the neuron after this function is used (if you have permission to remove it)

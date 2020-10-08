@@ -23,11 +23,14 @@
 #' "5813054716", "5813018847", "5813055448", "1763037543", "2101391269",
 #' "1794037618", "5813018729", "2013333009")
 #'
+#' # use a smaller group in examples
+#' al.local.neurons=al.local.neurons[1:5]
+#'
 #' # Get neurons
 #' neurons = neuprint_read_neurons(al.local.neurons)
 #'
 #' # Convert to microns
-#' neurons = hemibrainr:::scale_neurons(neurons)
+#' neurons = hemibrainr::scale_neurons(neurons)
 #'
 #' # Split
 #' neurons = hemibrain_flow_centrality(neurons)
@@ -37,9 +40,6 @@
 #' resample = NULL,
 #' just.leaves = TRUE, # just look how much the leaves of skeletons overlap, quicker (default)
 #' delta = 5)
-#'
-#' # Plot
-#' hist(hcm$overlap_locality, breaks = 100)
 #'
 #'}
 #' @return a \code{data.frame} of metrics broken down by putative axon and dendrite, and their overlap_locality scores

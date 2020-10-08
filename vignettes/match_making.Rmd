@@ -91,7 +91,7 @@ Some good matches are striking. For example:
 
 In the above case, the FAFB neuron has been quite extensively manually traced, meaning that these cells look very similar to one another. 
 
-Be aware that while neurons must share the same cel lbody fiber tract, these tracts can be a little off set. For example, this is also a good match:
+Be aware that while neurons must share the same cell body fiber tract, these tracts can be a little off set. For example, this is also a good match:
 
 
 <center>
@@ -99,7 +99,7 @@ Be aware that while neurons must share the same cel lbody fiber tract, these tra
 </center>
 
 
-If the some is missing, it might be safer to note a match as 'medium'.
+If the soma is missing, it might be safer to note a match as 'medium'.
 
 
 <center>
@@ -137,7 +137,7 @@ A larger degree of under-tracing may lead you to assign a match as poor. In this
 </center>
 
 
-A poor match may also be made if you think these is a slight offset, possibly due to a registration issue:
+A poor match may also be made if you think there is a slight offset, possibly due to a registration issue:
 
 
 <center>
@@ -145,7 +145,7 @@ A poor match may also be made if you think these is a slight offset, possibly du
 </center>
 
 
-Though in this case, choosing a even lesser-traced FAFB neuron may be better:
+Though in this case, choosing an even lesser-traced FAFB neuron may be better:
 
 
 <center>
@@ -226,7 +226,7 @@ When you run these functions you will enter an interactive pipeline in an rgl wi
 </center>
 
 
-## Re-setting and transfering
+## Re-setting and transferring
 
 You can transfer matches between the `hemibrain` and `fafb` tabs, as well as refresh these tabs with the most up-to-dat meta data using the following code. You will be manipulating the Google sheet for all users, so please use with caution. If in doubt, do not use.
 

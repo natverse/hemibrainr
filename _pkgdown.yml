@@ -66,3 +66,18 @@ reference:
     - 'add_Label'
     - 'hemibrain_settags'
     - 'plot_inspirobot'
+  - title: Uncategorised
+    desc: functions that need categorising
+    contents:
+    - 'fafb_hemibrain_annotate'
+    - 'flywire_neurons'
+    - 'hemibrain_add_made_matches'
+    - 'hemibrain_adjust_saved_somas'
+    - 'hemibrain_get_meta'
+    - 'hemibrain_matched'
+    - 'hemibrain_matches'
+    - 'hemibrain_olfactory_layers'
+    - 'hemibrain_somas'
+    - 'hemibrain_view'
+    - 'hemilineages'
+    - 'info'

@@ -359,12 +359,13 @@ internal_assignments <- function(x){
     s.a = NULL
   }
   ## Get cable start points
-  d.starts = tryCatch(sapply(s.d,function(s) igraph::neighbors(n, v=s, mode = c("in"))), error = function(e) NA)
-  d.starts = tryCatch(sapply(d.starts,function(s) !s%in%dendrites), error = function(e) NA)
-  a.starts = tryCatch(sapply(s.a,function(s) igraph::neighbors(n, v=s, mode = c("in"))), error = function(e) NA)
-  a.starts = tryCatch(sapply(a.starts,function(s) !s%in%axon), error = function(e) NA)
-  n.starts = tryCatch(sapply(s.n,function(s) igraph::neighbors(n, v=s, mode = c("in"))), error = function(e) NA)
-  n.starts = tryCatch(sapply(n.starts,function(s) !s%in%nulls), error = function(e) NA)
+  d.starts = tryCatch(igraph::ego(n, nodes=s.d, mode='in', mindist = 1), error = function(e) NA)
+  d.starts = tryCatch(sapply(d.starts,function(s) !any(s%in%dendrites)), error = function(e) NA)
+  a.starts = tryCatch(igraph::ego(n, nodes=s.a, mode='in', mindist = 1), error = function(e) NA)
+  a.starts = tryCatch(sapply(d.starts,function(s) !any(s%in%axon)), error = function(e) NA)
+  n.starts = tryCatch(igraph::ego(n, nodes=s.n, mode='in', mindist = 1), error = function(e) NA)
+  n.starts = tryCatch(sapply(d.starts,function(s) !any(s%in%nulls)), error = function(e) NA)
+
   axon.starts = s.a[unlist(a.starts)]
   dendrites.starts = s.d[unlist(d.starts)]
   nulls.starts = s.n[unlist(n.starts)]
