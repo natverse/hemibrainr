@@ -1,6 +1,7 @@
 ###### Script to split all neurons in the hemibrain into putative axon / dendrite #######
 ######## Originally run from JData5, the Jefferis lab drive on Max at the MRC LMB #######
 
+# setenv LD_LIBRARY_PATH /public/flybrain/R/R-3.5.1/lib64/R/library/rJava/libs/
 # source /public/flybrain/flybrain.csh
 # source /public/gcc/gcc7_1_0.csh
 
