@@ -242,10 +242,12 @@ flywire_basics <- function(x){
     stop("x must be a neuronlist")
   }
 
-  # Get xyz for root points
-  roots = sapply(x, function(y) nat::xyzmatrix(y)[nat::rootpoints(y),])
-  roots = t(roots)
-  flywire.xyz = apply(roots, 1, paste, collapse = ",")
+  # Get xyz for primary branch points
+  simp = nat::nlapply(x,nat::simplify_neuron,n=1)
+  branchpoints = sapply(simp, function(y) nat::xyzmatrix(y)[ifelse(length(nat::branchpoints(y),nat::branchpoints(y),max(nat::endpoints(y)))),])
+  branchpoints = t(branchpoints)
+  flywire.xyz = apply(branchpoints, 1, paste, collapse = ",")
+
 
   # Get FAFBv14 nm coordinates
   # roots.flywire.raw = scale(roots, scale = 1/c(4, 4, 40), center = FALSE)

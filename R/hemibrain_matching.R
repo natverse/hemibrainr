@@ -1398,12 +1398,7 @@ hemibrain_matching_add <- function(ids,
                                    ...){
   # Read
   dataset = match.arg(dataset)
-  if(dataset =="flywire"){
-    sheet = "FAFB"
-  }else{
-    sheet = dataset
-  }
-  gs = hemibrain_match_sheet(sheet = sheet, selected_file = selected_file)
+  gs = hemibrain_match_sheet(sheet = dataset, selected_file = selected_file)
 
   # What are we adding?
   add = setdiff(ids, rownames(gs))
@@ -1619,30 +1614,30 @@ update_gsheet <- function(update,
 fafb_matching_rewrite <- function(selected_file  = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw",
                                    ...){
   matches = hemibrain_matches()
-  gs = hemibrain_match_sheet(sheet = "FAFB", selected_file = selected_file)
+  n = hemibrain_match_sheet(sheet = "FAFB", selected_file = selected_file)
   n1 = elmr::fafb_get_meta("annotation:Lineage_annotated", batch = TRUE, ...)
-  ids.missing = setdiff(gs$skid,n1$skid)
-  n2 = elmr::fafb_get_meta(unique(ids.missing), batch = TRUE, ...)
-  n = rbind(n1,n2)
-  n = n[!duplicated(n1),]
-  n = n[,c("skid","ItoLee_Hemilineage", "Hartenstein_Hemilineage", "cellBodyFiber")]
+  n2 = subset(n1, n1$skid %in% n$skid)
+  n[match(n2$skid,n$skid),c("skid","ItoLee_Hemilineage", "Hartenstein_Hemilineage", "cell_body_fiber")] = n2[,c("skid","ItoLee_Hemilineage", "Hartenstein_Hemilineage", "cell_body_fiber")]
+  ids.missing = setdiff(n1$skid,n$skid)
+  n3 = elmr::fafb_get_meta(unique(ids.missing), batch = TRUE, ...)
+  n = plyr::rbind.fill(n, n3[,c("skid","ItoLee_Hemilineage", "Hartenstein_Hemilineage", "cell_body_fiber")])
+  n = n[!duplicated(n),]
   n$cell.type = matches[as.character(n$skid),"connectivity.type"]
-  n$hemibrain.match = gs$hemibrain.match[match(n$skid,gs$skid)]
-  n$hemibrain.match.quality = gs$hemibrain.match.quality[match(n$skid,gs$skid)]
-  n$LM.match = gs$LM.match[match(n$skid,gs$skid)]
-  n$LM.match.quality = gs$LM.match.quality[match(n$skid,gs$skid)]
   lskids = as.character(catmaid::catmaid_skids("annotation:side: left", ...))
-  n$side = "r"
-  n[n$skid%in%lskids,"side"] = "l"
-  n$User = gs$User[match(n$skid,gs$skid)]
+  n$side = "right"
+  n[n$skid%in%lskids,"side"] = "left"
+  n$User[is.na(n$User)] = "flyconnectome"
   nblast.path = "/Volumes/GoogleDrive/Shared drives/flyconnectome/fafbpipeline/fib.fafb.crossnblast.twigs5.mean.compress.rda"
-  if(exists(nblast.path)){
+  if(file.exists(nblast.path)){
     load(sprintf("/Volumes/GoogleDrive/Shared drives/flyconnectome/fafbpipeline/fib.fafb.crossnblast.twigs5.mean.compress.rda", "fib.fafb.crossnblast.twigs5.mean.compress"))
-    n$nblast.top =fib.fafb.crossnblast.twigs5.mean.compress[as.character(n$skid),]
+    nblast.top =fib.fafb.crossnblast.twigs5.mean.compress[match(n$skid,rownames(fib.fafb.crossnblast.twigs5.mean.compress)),]
+    tops = apply(nblast.top,1,function(r) which.max(r))
+    top = colnames(fib.fafb.crossnblast.twigs5.mean.compress)[unlist(tops)]
+    top[!n$skid%in%rownames(fib.fafb.crossnblast.twigs5.mean.compress)] = NA
+    n$nblast.top = top
   }
   n = n[order(n$cell.type),]
   n = n[order(n$ItoLee_Hemilineage),]
-  n = n[,colnames(gs)]
   googlesheets4::write_sheet(n[0,],
                              ss = selected_file,
                              sheet = "FAFB")

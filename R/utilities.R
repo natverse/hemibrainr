@@ -7,7 +7,8 @@ googledrive_upload_neuronlistfh <- function(x,
                                             team_drive = "hemibrain",
                                             file_name = "neurons.rds",
                                             folder = "flywire_neurons",
-                                            subfolder = NULL){
+                                            subfolder = NULL,
+                                            numCores= 1){
   # Get drive
   td = googledrive::team_drive_get(team_drive)
   drive_td = googledrive::drive_find(type = "folder", team_drive = td)
@@ -45,41 +46,65 @@ googledrive_upload_neuronlistfh <- function(x,
   nat::write.neuronlistfh(nl, file= temp.rds, overwrite=TRUE)
 
   # upload
-  t.list = list.files(temp.data,full.names = TRUE)
+  t.list.master = list.files(temp.data,full.names = TRUE)
   error.files = c()
-  pb <- progress::progress_bar$new(
-    format = "  downloading [:bar] :current/:total eta: :eta",
-    total = length(t.list), clear = FALSE, show_after = 1)
   sub.data = googledrive::drive_ls(path = t.folder.data, team_drive = td)
-  for(t.neuron.fh.data.file in t.list){
-    pb$tick()
-    t = basename(t.neuron.fh.data.file)
-    if(t%in%sub.data$name){
-      save.data = googledrive::as_id(subset(sub.data, name==t)[1,]$id)
-    }else{
-     save.data =  t.folder.data
+  if(numCores>1){
+    batches = split(t.list.master, round(seq(from = 1, to = numCores, length.out = length(t.list.master))))
+    foreach.skeletons <- foreach::foreach (batch = 1:numCores) %dopar% {
+      t.list = batches[[batch]]
+      for(t.neuron.fh.data.file in t.list){
+        t = basename(t.neuron.fh.data.file)
+        if(t%in%sub.data$name){
+          save.data = googledrive::as_id(subset(sub.data, name==t)[1,]$id)
+        }else{
+          save.data =  t.folder.data
+        }
+        e = tryCatch(google_drive_place(media = t.neuron.fh.data.file,
+                                        path = save.data,
+                                        verbose = FALSE),
+                     error = function(e){
+                       message(e)
+                       NULL
+                     } )
+        if(is.null(e)){
+          warning(e)
+          error.files = c(error.files,t.neuron.fh.data.file)
+        }
+      }
     }
-    e = tryCatch(google_drive_place(media = t.neuron.fh.data.file,
-                              path = save.data,
-                              verbose = FALSE),
-                 error = function(e){
-                   message(e)
-                   NULL
-                 } )
-    if(is.null(e)){
-      warning(e)
-      error.files = c(error.files,t.neuron.fh.data.file)
+  }else{
+    pb <- progress::progress_bar$new(
+      format = "  downloading [:bar] :current/:total eta: :eta",
+      total = length(t.list), clear = FALSE, show_after = 1)
+    for(t.neuron.fh.data.file in t.list.master){
+      pb$tick()
+      t = basename(t.neuron.fh.data.file)
+      if(t%in%sub.data$name){
+        save.data = googledrive::as_id(subset(sub.data, name==t)[1,]$id)
+      }else{
+        save.data =  t.folder.data
+      }
+      e = tryCatch(google_drive_place(media = t.neuron.fh.data.file,
+                                      path = save.data,
+                                      verbose = FALSE),
+                   error = function(e){
+                     message(e)
+                     NULL
+                   } )
+      if(is.null(e)){
+        warning(e)
+        error.files = c(error.files,t.neuron.fh.data.file)
+      }
     }
   }
   if(length(error.files)){
     warning("Failed to upload: ", length(error.files)," files")
   }
-
   # upload
   google_drive_place(media = temp.rds,
             path = save.position,
             verbose = TRUE)
-
 }
 
 # Google drive
@@ -641,6 +666,7 @@ numCores = 1){
   fids = fids[fids!="0"]
   master[names(fids),"flywire.id"] = fids
   master = subset(master, !is.na(master$flywire.id))
+  master$filled = NULL
   master
 }
 

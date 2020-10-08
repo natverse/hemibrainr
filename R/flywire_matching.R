@@ -16,25 +16,26 @@ flywire_matching_rewrite <- function(flywire.ids = names(flywire_neurons()),
     # Read CATMAID neurons
     message("Batch:", i, "/100")
     cat = catmaid::read.neurons.catmaid(skids[batches[[i]]], OmitFailures = TRUE)
-    cats = c(cats,cat)
+    cats = union(cats,cat)
 
-    # Get xyz for root points
-    roots = sapply(cats, function(y) nat::xyzmatrix(y)[nat::rootpoints(y),])
-    roots = t(roots)
-    FAFB.xyz = apply(roots, 1, paste, collapse = ",")
+    # Get xyz for primary branch points
+    simp = nat::nlapply(cat,nat::simplify_neuron,n=1, .parallel = TRUE, OmitFailures = TRUE)
+    branchpoints = sapply(simp, function(y) nat::xyzmatrix(y)[ifelse(length(nat::branchpoints(y)),nat::branchpoints(y),max(nat::endpoints(y))),])
+    branchpoints = t(branchpoints)
+    FAFB.xyz = apply(branchpoints, 1, paste, collapse = ",")
 
     # Get Flywire voxel coordinates
-    roots.flywire = nat.templatebrains::xform_brain(roots, reference = "FlyWire", sample = "FAFB14", .parallel = TRUE, verbose = TRUE)
-    rownames(roots.flywire) = rownames(roots)
-    roots.flywire.raw = scale(roots.flywire, scale = c(4, 4, 40), center = FALSE)
-    fw.ids = fafbseg::flywire_xyz2id(roots.flywire.raw, rawcoords = TRUE)
+    branchpoints.flywire = nat.templatebrains::xform_brain(branchpoints, reference = "FlyWire", sample = "FAFB14", .parallel = TRUE, verbose = TRUE)
+    rownames(branchpoints.flywire) = rownames(branchpoints)
+    branchpoints.flywire.raw = scale(branchpoints.flywire, scale = c(4, 4, 40), center = FALSE)
+    fw.ids = fafbseg::flywire_xyz2id(branchpoints.flywire.raw, rawcoords = TRUE)
     fw.ids[fw.ids=="0"] = NA
-    flywire.xyz = apply(roots.flywire.raw, 1, paste, collapse = ",")
+    flywire.xyz = apply(branchpoints.flywire.raw, 1, paste, collapse = ",")
 
     # Add
-    gs[rownames(roots),]$FAFB.xyz = FAFB.xyz
-    gs[rownames(roots),]$flywire.xyz = flywire.xyz
-    gs[rownames(roots),]$flywire.id = fw.ids
+    gs[rownames(branchpoints),]$FAFB.xyz = FAFB.xyz
+    gs[rownames(branchpoints),]$flywire.xyz = flywire.xyz
+    gs[rownames(branchpoints),]$flywire.id = fw.ids
     all.ids=unique(c(all.ids,fw.ids))
   }
 
