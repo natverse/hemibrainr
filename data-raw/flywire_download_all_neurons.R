@@ -27,8 +27,6 @@ reticulate::py_run_string("print(os.environ['PATH'])")
 reticulate::py_run_string("from distutils.spawn import find_executable")
 reticulate::py_run_string("blender_executable = find_executable('blender')")
 reticulate::py_run_string("print('Blender executable:', blender_executable)")
-# Update skeletor
-##reticulate::py_run_string("pip3 install git+git://github.com/schlegelp/skeletor@master")
 
 # Code to skeletonise flywire neurons under construction by the Cambridge FlyConnectome group
 library(hemibrainr)
@@ -65,7 +63,7 @@ ids = setdiff(ids, old.ids)
 batches = split(ids, round(seq(from = 1, to = numCores, length.out = length(ids))))
 foreach.skeletons <- foreach::foreach (batch = 1:numCores) %dopar% {
   fw.ids = batches[[batch]]
-  j = tryCatch(fafbseg::skeletor(fw.ids, clean = FALSE, brain = elmr::FAFB14.surf, mesh3d = FALSE), error = function(e) NULL)
+  j = tryCatch(fafbseg::skeletor(fw.ids, clean = FALSE, brain = elmr::FAFB14.surf, mesh3d = FALSE, SL = 10), error = function(e) NULL)
 }
 isnl = sapply(foreach.skeletons, nat::is.neuronlist)
 fw.neurons = do.call(c, foreach.skeletons[isnl])
@@ -74,14 +72,7 @@ fw.neurons = union(fw.neurons, fw.neurons.old)
 # Add metadata
 colnames(fw.neurons[,]) = c("flywire.id")
 coords = master[match(names(fw.neurons),master$flywire.id),]
-flywire.xyz = apply(coords[,c("fw.x","fw.y",'fw.z')],1,paste,sep=",",collapse=",")
-fw.neurons[,"flywire.xyz"] = flywire.xyz
-fw.neurons[,"FAFB.xyz"] = coords[,"FAFB.xyz"]
-fw.neurons[,"side"] = coords[,"side"]
-fw.neurons[,"ItoLee_Hemilineage"] = coords[,"ItoLee_Hemilineage"]
-fw.neurons[,"Hartenstein_Hemilineage"] = coords[,"Hartenstein_Hemilineage"]
-fw.neurons[,"skid"] = coords[,"skid"]
-fw.neurons[,"hemibrain_match"] = coords[,"hemibrain_match"]
+fw.neurons[,] = coords
 fw.neurons[,"dataset"] = "flywire"
 
 # Save locally just in case
@@ -92,5 +83,6 @@ hemibrainr:::googledrive_upload_neuronlistfh(fw.neurons,
                                 team_drive = "hemibrain",
                                 file_name = "flywire_neurons_FlyWire.rds",
                                 folder = "flywire_neurons",
-                                subfolder = "FlyWire")
+                                subfolder = "FlyWire",
+                                numCores = numCores)
 1

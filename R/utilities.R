@@ -8,7 +8,7 @@ googledrive_upload_neuronlistfh <- function(x,
                                             file_name = "neurons.rds",
                                             folder = "flywire_neurons",
                                             subfolder = NULL,
-                                            numCores= 1){
+                                            numCores = 1){
   # Get drive
   td = googledrive::team_drive_get(team_drive)
   drive_td = googledrive::drive_find(type = "folder", team_drive = td)
@@ -532,15 +532,15 @@ fafb_hemibrain_cut <- function(x, ...){
 # use foreach to process in parallel
 #' @importFrom nat.templatebrains regtemplate xform_brain
 xform_brain_parallel <- function(x,
-                                 no.batches = 10,
+                                 numCores = 2,
                                  sample = regtemplate(x),
                                  reference,
                                  ...){
   batch = 1
-  batches = split(x, round(seq(from = 1, to = no.batches, length.out = length(x))))
-  foreach.nl <- foreach::foreach (batch = 1:no.batches) %dopar% {
+  batches = split(x, round(seq(from = 1, to = numCores, length.out = length(x))))
+  foreach.nl <- foreach::foreach (batch = 1:numCores) %dopar% {
     y = batches[[batch]]
-    j = xform_brain(y,
+    j = java_xform_brain(y,
                     reference =reference, sample = sample,
                     .parallel = FALSE,...)
   }
@@ -627,8 +627,49 @@ numCores = 1){
                                               sheet = tab,
                                               guess_max = 3000,
                                               return = TRUE)
-      gs.t = gs.t[,colnames(gs.t)%in%chosen.columns]
       if(ncol(gs.t)&&sum(grepl("fw.x|flywire.xyz",colnames(gs.t)))>0){
+        # Separate x,y,z positions
+        gs1 = subset(gs.t, (is.na(gs.t$flywire.xyz)||is.null(gs.t$flywire.xyz)) && !is.na(gs.t$fw.x))
+        gs2= subset(gs.t, !is.na(gs.t$flywire.xyz))
+        gs1$flywire.xyz = apply(gs1[,c("fw.x","fw.y",'fw.z')],1,paste,sep=",",collapse=",")
+        if(nrow(gs2)){
+          positions.gs = sapply(gs2$flywire.xyz,strsplit,",|/|;")
+          ruleofthree = sapply(positions.gs,function(p) length(p)==3)
+          positions.gs = positions.gs[ruleofthree]
+          positions.gs = do.call(rbind, positions.gs)
+          positions.gs = apply(positions.gs,2,as.numeric)
+          gs2[ruleofthree,c("fw.x","fw.y",'fw.z')] = positions.gs
+        }
+        gs.t = rbind(gs2,gs1)
+        # Get flywire IDs from these positions
+        batch = 1
+        batches = split(1:nrow(gs.t), round(seq(from = 1, to = numCores, length.out = nrow(gs.t))))
+        foreach.ids <- foreach::foreach (batch = 1:numCores) %dopar% {
+          pos = gs.t[batches[[batch]],]
+          j <- tryCatch({i = fafbseg::flywire_xyz2id(pos[,c("fw.x","fw.y",'fw.z')], rawcoords = TRUE)
+          names(i) = pos$flywire.xyz
+          if(sum(i==0)>0){
+            i[i==0] =  fafbseg::flywire_xyz2id(pos[i==0,], rawcoords = FALSE)
+          }
+          i}, error = function(e) NULL)
+        }
+        fids = unlist(foreach.ids)
+        fids[fids=="0"] = NA
+        gs.t[match(names(fids),gs.t$flywire.xyz),"flywire.id"] = fids
+        # Update
+        rownames(gs.t) = NULL
+        googlesheets4::write_sheet(gs.t[0,],
+                                   ss = selected_file,
+                                   sheet = tab)
+        batches = split(1:nrow(gs.t), ceiling(seq_along(1:nrow(gs.t))/500))
+        for(i in batches){
+          gsheet_manipulation(FUN = googlesheets4::sheet_append,
+                              data = gs.t[min(i):max(i),],
+                              ss = selected_sheet,
+                              sheet = tab)
+        }
+        # Now continue processing
+        gs.t = gs.t[,colnames(gs.t)%in%chosen.columns]
         for(col in chosen.columns){
           if(is.null(gs.t[[col]])){
             gs.t[[col]] = NA
@@ -641,46 +682,15 @@ numCores = 1){
       gs$flywire.xyz = apply(gs[,c("fw.x","fw.y",'fw.z')],1,paste,sep=",",collapse=",")
     }
   }
-  gs1 = subset(gs, is.na(gs$flywire.xyz) && !is.na(gs$fw.x))
-  gs2= subset(gs, !is.na(gs$flywire.xyz))
-
-  # Separate x,y,z positions
-  gs1$flywire.xyz = apply(gs1[,c("fw.x","fw.y",'fw.z')],1,paste,sep=",",collapse=",")
-  positions.gs = sapply(gs2$flywire.xyz,strsplit,",|/|;")
-  ruleofthree = sapply(positions.gs,function(p) length(p)==3)
-  positions.gs = positions.gs[ruleofthree]
-  positions.gs = do.call(rbind, positions.gs)
-  positions.gs = apply(positions.gs,2,as.numeric)
-  gs2[ruleofthree,c("fw.x","fw.y",'fw.z')] = positions.gs
-  master = rbind(gs2,gs1)
-  master = master[!is.na(master$flywire.xyz),]
+  # Make this unique, but keep row with most information
+  master = gs
   master = master[!is.na(master$fw.x),]
   master = master[!is.na(master$fw.y),]
   master = master[!is.na(master$fw.z),]
-
-  # Make this unique, but keep row with most information
   master$filled = apply(master, 1, function(r) sum(!is.na(r)))
   master = master[order(master$filled,decreasing = TRUE),]
   master = master[!duplicated(master$flywire.xyz),]
   rownames(master) = master$flywire.xyz
-
-  # Get flywire IDs from these positions
-  ## Batch positions for grabbing IDs from flywire
-  batch = 1
-  batches = split(1:nrow(master), round(seq(from = 1, to = numCores, length.out = nrow(master))))
-  ## Find flywire IDs for each specified position
-  foreach.ids <- foreach::foreach (batch = 1:numCores) %dopar% {
-    pos = master[batches[[batch]],]
-    j <- tryCatch({i = fafbseg::flywire_xyz2id(pos[,c("fw.x","fw.y",'fw.z')], rawcoords = TRUE)
-    names(i) = pos$flywire.xyz
-    if(sum(i==0)>0){
-      i[i==0] =  fafbseg::flywire_xyz2id(pos[i==0,], rawcoords = FALSE)
-    }
-    i}, error = function(e) NULL)
-  }
-  fids = unlist(foreach.ids)
-  fids = fids[fids!="0"]
-  master[names(fids),"flywire.id"] = fids
   master = subset(master, !is.na(master$flywire.id))
   master$filled = NULL
   master
@@ -694,9 +704,28 @@ java_xform_brain <- function(x,
                              method = "rJava",
                              progress.rjava=TRUE,
                              ...){
+  # Transform treenodes
   points = nat::xyzmatrix(x)
-  t = xform_brain(x, reference = reference, sample = sample, method = method, progress.rjava=progress.rjava, ...)
+  t = xform_brain(points, reference = reference, sample = sample, method = method, progress.rjava=progress.rjava, ...)
   nat::xyzmatrix(x) = t
+  # Transform synapses
+  syns = lapply(names(x), function(n){
+    conn = x[[n]]$connectors
+    conn$id = n
+    conn
+  })
+  conns = do.call(rbind, syns)
+  if(nrow(conns)){
+    conns.t = xform_brain(nat::xyzmatrix(conns), reference = reference, sample = sample, method = method, progress.rjava=progress.rjava, ...)
+    nat::xyzmatrix(conns) = conns.t
+    x = add_field_seq(x,names(x),field="id")
+    x = nat::nlapply(x, function(n){
+      n$connectors = subset(conns, conns$id == n$id)
+      n$id = NULL
+      n$connectors$id = NULL
+      n
+    })
+  }
   x
 }
 
