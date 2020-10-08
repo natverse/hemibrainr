@@ -44,22 +44,21 @@
 # time.taken <- end.time - start.time
 # time.taken
 # ## Time difference of 1.048975 mins
-
-library(nat.jrcbrains)
-library(hemibrainr)
-neurons = neuprint_read_neurons(hemibrainr::pn.ids[1:10])
-testx=function(method='rjava'){
-  xform_brain(neurons,
-                          sample = "JRCFIB2018F",
-                          reference = "FAFB14",
-                          .parallel = FALSE,
-                          Verbose = TRUE,
-                          OmitFailures = TRUE,
-                          method = method)
-  TRUE
-}
-bench::mark(java=testx('java'), rjava=testx('rjava'))
-#
+# library(nat.jrcbrains)
+# library(hemibrainr)
+# neurons = neuprint_read_neurons(hemibrainr::pn.ids[1:10])
+# testx=function(method='rjava'){
+#   xform_brain(neurons,
+#                           sample = "JRCFIB2018F",
+#                           reference = "FAFB14",
+#                           .parallel = FALSE,
+#                           Verbose = TRUE,
+#                           OmitFailures = TRUE,
+#                           method = method)
+#   TRUE
+# }
+# bench::mark(java=testx('java'), rjava=testx('rjava'))
+# #
 
 
 # Code to transform flywire neurons under construction by the Cambridge FlyConnectome group
@@ -70,7 +69,7 @@ library(rJava)
 
 # Parallelise
 numCores <- parallel::detectCores()
-numCores <- numCores/4
+numCores <- numCores/2
 doMC::registerDoMC(numCores)
 message("Using ", numCores, " cores")
 
