@@ -17,27 +17,23 @@
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png" />
 
 <!-- jquery -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
-
-<!-- bootstrap-toc -->
-<link rel="stylesheet" href="../bootstrap-toc.css">
-<script src="../bootstrap-toc.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
 
 <!-- headroom.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -47,7 +43,8 @@
 
 
 <meta property="og:title" content="Function reference" />
-<meta property="og:image" content="/logo.svg" />
+<meta property="og:image" content="/logo.png" />
+<meta name="twitter:card" content="summary" />
 
 
 
@@ -65,7 +62,7 @@
 
   </head>
 
-  <body data-spy="scroll" data-target="#toc">
+  <body>
     <div class="container template-reference-index">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -79,7 +76,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">hemibrainr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.1</span>
       </span>
     </div>
 
@@ -102,6 +99,9 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="../articles/flywire.html">flywire</a>
+    </li>
+    <li>
       <a href="../articles/match_making.html">match_making</a>
     </li>
   </ul>
@@ -109,7 +109,7 @@
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/flyconnectome/hemibrainr/">
+  <a href="https://github.com/flyconnectome/hemibrainr">
     <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
@@ -145,11 +145,6 @@
           <p class="section-desc"><p>Provides an overview of the package</p></p>
         </th>
       </tr>
-      
-      
-    </tbody><tbody>
-      
-      
       <tr>
         
         <td>
@@ -164,11 +159,6 @@
           <p class="section-desc"></p>
         </th>
       </tr>
-      
-      
-    </tbody><tbody>
-      
-      
       <tr>
         
         <td>
@@ -181,12 +171,6 @@
           <p><code><a href="hemibrain_download_neurons.html">hemibrain_download_neurons()</a></code> </p>
         </td>
         <td><p>Download all automatically split neurons from the hemibrain project</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="hemibrain_reroot.html">hemibrain_reroot()</a></code> </p>
-        </td>
-        <td><p>Re-root (a) hemibrain neuron/neurons</p></td>
       </tr><tr>
         
         <td>
@@ -225,11 +209,6 @@
           <p class="section-desc"></p>
         </th>
       </tr>
-      
-      
-    </tbody><tbody>
-      
-      
       <tr>
         
         <td>
@@ -294,15 +273,36 @@
     </tbody><tbody>
       <tr>
         <th colspan="2">
+          <h2 id="section-somas-and-lineages" class="hasAnchor"><a href="#section-somas-and-lineages" class="anchor"></a>Somas and lineages</h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      <tr>
+        
+        <td>
+          <p><code><a href="hemibrain_somas.html">hemibrain_somas</a></code> </p>
+        </td>
+        <td><p>Soma locations for hemibrain neurons</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="hemibrain_reroot.html">hemibrain_reroot()</a></code> </p>
+        </td>
+        <td><p>Re-root (a) hemibrain neuron/neurons</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="hemilineages.html">hemibrain_hemilineages</a></code> </p>
+        </td>
+        <td><p>Hemilineages names from T. Lee, K. Ito and V. Hartenstein</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
           <h2 id="section-synapses-and-meshes" class="hasAnchor"><a href="#section-synapses-and-meshes" class="anchor"></a>Synapses and meshes</h2>
           <p class="section-desc"></p>
         </th>
       </tr>
-      
-      
-    </tbody><tbody>
-      
-      
       <tr>
         
         <td>
@@ -341,11 +341,6 @@
           <p class="section-desc"></p>
         </th>
       </tr>
-      
-      
-    </tbody><tbody>
-      
-      
       <tr>
         
         <td>
@@ -366,12 +361,13 @@
           <p class="section-desc"></p>
         </th>
       </tr>
-      
-      
-    </tbody><tbody>
-      
-      
       <tr>
+        
+        <td>
+          <p><code><a href="hemibrain_get_meta.html">hemibrain_get_meta()</a></code> </p>
+        </td>
+        <td><p>Get meta information for hemibrain neurons</p></td>
+      </tr><tr>
         
         <td>
           <p><code><a href="class2ids.html">class2ids()</a></code> </p>
@@ -401,6 +397,24 @@
           <p><code><a href="hemibrain_cbf.html">hemibrain_cbf()</a></code> </p>
         </td>
         <td><p>Return consistent cell body fiber annotation for neurons</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="fafb_hemibrain_annotate.html">fafb_hemibrain_annotate()</a></code> <code><a href="fafb_hemibrain_annotate.html">fafb_set_hemilineage()</a></code> <code><a href="fafb_hemibrain_annotate.html">fafb_set_transmitter()</a></code> </p>
+        </td>
+        <td><p>Set annotations for FAFB neurons in CATMAID based on hemibrain results</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="hemibrain_olfactory_layers.html">hemibrain_olfactory_layers</a></code> </p>
+        </td>
+        <td><p>Hemibrain neurons in different Olfactory layers</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="info.html">pn.info</a></code> <code><a href="info.html">mbon.info</a></code> <code><a href="info.html">ton.info</a></code> <code><a href="info.html">lc.info</a></code> <code><a href="info.html">alln.info</a></code> </p>
+        </td>
+        <td><p>Meta information of certain neuron classes</p></td>
       </tr>
     </tbody><tbody>
       <tr>
@@ -409,23 +423,18 @@
           <p class="section-desc"><p>Includes functions for loading a range of different neuronal datasets and assigning matches between related neurons.</p></p>
         </th>
       </tr>
-      
-      
-    </tbody><tbody>
-      
-      
       <tr>
         
         <td>
-          <p><code><a href="hemibrain_matching.html">hemibrain_matching()</a></code> <code><a href="hemibrain_matching.html">lm_matching()</a></code> <code><a href="hemibrain_matching.html">fafb_matching()</a></code> </p>
+          <p><code><a href="hemibrain_matches.html">hemibrain_matches()</a></code> <code><a href="hemibrain_matches.html">lm_matches()</a></code> </p>
         </td>
-        <td><p>Match up neurons between the hemibrain and FAFB</p></td>
+        <td><p>Retrieve matched up neurons between the hemibrain and FAFB</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="hemibrain_googledrive.html">hemibrain_neuron_bodyids()</a></code> <code><a href="hemibrain_googledrive.html">hemibrain_elist()</a></code> <code><a href="hemibrain_googledrive.html">hemibrain_synapses()</a></code> <code><a href="hemibrain_googledrive.html">hemibrain_connections()</a></code> <code><a href="hemibrain_googledrive.html">hemibrain_nblast()</a></code> <code><a href="hemibrain_googledrive.html">flycircuit_neurons()</a></code> <code><a href="hemibrain_googledrive.html">hemibrain_lm_lhns()</a></code> </p>
+          <p><code><a href="hemibrain_matched.html">hemibrain_matched</a></code> <code><a href="hemibrain_matched.html">lm_matched</a></code> </p>
         </td>
-        <td><p>Read precomputed information from the hemibrain Google Drive</p></td>
+        <td><p>Manually verified neuron matches between the hemibrain and FAFB dataset</p></td>
       </tr><tr>
         
         <td>
@@ -446,11 +455,6 @@
           <p class="section-desc"></p>
         </th>
       </tr>
-      
-      
-    </tbody><tbody>
-      
-      
       <tr>
         
         <td>
@@ -486,34 +490,11 @@ al. 2020 (in prep)</p></td>
     </tbody><tbody>
       <tr>
         <th colspan="2">
-          <h2 id="section-uncategorised" class="hasAnchor"><a href="#section-uncategorised" class="anchor"></a>Uncategorised</h2>
-          <p class="section-desc"><p>functions that need categorising</p></p>
+          <h2 id="section-r-annotation-pipelines" class="hasAnchor"><a href="#section-r-annotation-pipelines" class="anchor"></a>R annotation pipelines</h2>
+          <p class="section-desc"></p>
         </th>
       </tr>
-      
-      
-    </tbody><tbody>
-      
-      
       <tr>
-        
-        <td>
-          <p><code><a href="fafb_hemibrain_annotate.html">fafb_hemibrain_annotate()</a></code> <code><a href="fafb_hemibrain_annotate.html">fafb_set_hemilineage()</a></code> <code><a href="fafb_hemibrain_annotate.html">fafb_set_transmitter()</a></code> </p>
-        </td>
-        <td><p>Set annotations for FAFB neurons in CATMAID based on hemibrain results</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="flywire_neurons.html">flywire_neurons()</a></code> </p>
-        </td>
-        <td><p>Download a large set of well-traced skeletonised neurons from FlyWire</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="hemibrain_add_made_matches.html">hemibrain_add_made_matches()</a></code> <code><a href="hemibrain_add_made_matches.html">hemibrain_matching_add()</a></code> <code><a href="hemibrain_add_made_matches.html">hemibrain_matching_transfers()</a></code> <code><a href="hemibrain_add_made_matches.html">fafb_matching_rewrite()</a></code> <code><a href="hemibrain_add_made_matches.html">hemibrain_matching_rewrite()</a></code> </p>
-        </td>
-        <td><p>Manage hemibrain-FAFB neuron matches</p></td>
-      </tr><tr>
         
         <td>
           <p><code><a href="hemibrain_adjust_saved_somas.html">hemibrain_adjust_saved_somas()</a></code> </p>
@@ -522,60 +503,88 @@ al. 2020 (in prep)</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="hemibrain_get_meta.html">hemibrain_get_meta()</a></code> </p>
+          <p><code><a href="hemibrain_matching.html">LR_matching()</a></code> <code><a href="hemibrain_matching.html">hemibrain_matching()</a></code> <code><a href="hemibrain_matching.html">lm_matching()</a></code> <code><a href="hemibrain_matching.html">fafb_matching()</a></code> </p>
         </td>
-        <td><p>Get meta information for hemibrain neurons</p></td>
-      </tr><tr>
+        <td><p>Match up neurons between the hemibrain and FAFB</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-access-hemibrain-google-drive-data" class="hasAnchor"><a href="#section-access-hemibrain-google-drive-data" class="anchor"></a>Access hemibrain google drive data</h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      <tr>
         
         <td>
-          <p><code><a href="hemibrain_matched.html">hemibrain_matched</a></code> <code><a href="hemibrain_matched.html">lm_matched</a></code> </p>
+          <p><code><a href="hemibrain_googledrive.html">hemibrain_neuron_bodyids()</a></code> <code><a href="hemibrain_googledrive.html">hemibrain_elist()</a></code> <code><a href="hemibrain_googledrive.html">hemibrain_synapses()</a></code> <code><a href="hemibrain_googledrive.html">hemibrain_connections()</a></code> <code><a href="hemibrain_googledrive.html">hemibrain_nblast()</a></code> <code><a href="hemibrain_googledrive.html">flycircuit_neurons()</a></code> <code><a href="hemibrain_googledrive.html">hemibrain_lm_lhns()</a></code> </p>
         </td>
-        <td><p>Manually verified neuron matches between the hemibrain and FAFB dataset</p></td>
-      </tr><tr>
+        <td><p>Read precomputed information from the hemibrain Google Drive</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-access-flywire-google-drive-data" class="hasAnchor"><a href="#section-access-flywire-google-drive-data" class="anchor"></a>Access flywire google drive data</h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      <tr>
         
         <td>
-          <p><code><a href="hemibrain_matches.html">hemibrain_matches()</a></code> <code><a href="hemibrain_matches.html">lm_matches()</a></code> </p>
+          <p><code><a href="flywire_neurons.html">flywire_neurons()</a></code> <code><a href="flywire_neurons.html">flywire_neurons_update()</a></code> <code><a href="flywire_neurons.html">flywire_nblast_update()</a></code> <code><a href="flywire_neurons.html">flywire_request()</a></code> </p>
         </td>
-        <td><p>Retrieve matched up neurons between the hemibrain and FAFB</p></td>
-      </tr><tr>
+        <td><p>Download a large set of well-traced skeletonised neurons from FlyWire</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-access-flywire-google-drive-data" class="hasAnchor"><a href="#section-access-flywire-google-drive-data" class="anchor"></a>Access flywire google drive data</h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      <tr>
         
         <td>
-          <p><code><a href="hemibrain_olfactory_layers.html">hemibrain_olfactory_layers</a></code> </p>
+          <p><code><a href="hemibrain_add_made_matches.html">flywire_matching_rewrite()</a></code> <code><a href="hemibrain_add_made_matches.html">hemibrain_add_made_matches()</a></code> <code><a href="hemibrain_add_made_matches.html">hemibrain_matching_add()</a></code> <code><a href="hemibrain_add_made_matches.html">hemibrain_matching_transfers()</a></code> <code><a href="hemibrain_add_made_matches.html">fafb_matching_rewrite()</a></code> <code><a href="hemibrain_add_made_matches.html">hemibrain_matching_rewrite()</a></code> </p>
         </td>
-        <td><p>Hemibrain neurons in different Olfactory layers</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="hemibrain_somas.html">hemibrain_somas</a></code> </p>
-        </td>
-        <td><p>Soma locations for hemibrain neurons</p></td>
-      </tr><tr>
+        <td><p>Manage hemibrain-FAFB neuron matches</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-uncategorised" class="hasAnchor"><a href="#section-uncategorised" class="anchor"></a>Uncategorised</h2>
+          <p class="section-desc"><p>functions that need categorising</p></p>
+        </th>
+      </tr>
+      <tr>
         
         <td>
           <p><code><a href="hemibrain_view.html">hemibrain_view()</a></code> </p>
         </td>
         <td><p>Orient the hemibrain in an RGL viewer</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="hemilineages.html">hemibrain_hemilineages</a></code> </p>
-        </td>
-        <td><p>Hemilineages names from T. Lee, K. Ito and V. Hartenstein</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="info.html">pn.info</a></code> <code><a href="info.html">mbon.info</a></code> <code><a href="info.html">ton.info</a></code> <code><a href="info.html">lc.info</a></code> <code><a href="info.html">alln.info</a></code> </p>
-        </td>
-        <td><p>Meta information of certain neuron classes</p></td>
       </tr>
     </tbody>
     </table>
   </div>
 
-  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
-    <nav id="toc" data-toggle="toc" class="sticky-top">
-      <h2 data-toc-skip>Contents</h2>
-    </nav>
+  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
+    <h2>Contents</h2>
+    <ul class="nav nav-pills nav-stacked">
+      <li><a href="#section-package-help">Package Help</a></li>
+      <li><a href="#section-general-skeleton-functions">General skeleton functions</a></li>
+      <li><a href="#section-neuronal-compartments-axons-dendrites-">Neuronal compartments (axons, dendrites)</a></li>
+      <li><a href="#section-somas-and-lineages">Somas and lineages</a></li>
+      <li><a href="#section-synapses-and-meshes">Synapses and meshes</a></li>
+      <li><a href="#section-connectivity">Connectivity</a></li>
+      <li><a href="#section-annotations">Annotations</a></li>
+      <li><a href="#section-neuron-matching-across-datasets">Neuron matching across datasets</a></li>
+      <li><a href="#section-utility">Utility</a></li>
+      <li><a href="#section-r-annotation-pipelines">R annotation pipelines</a></li>
+      <li><a href="#section-access-hemibrain-google-drive-data">Access hemibrain google drive data</a></li>
+      <li><a href="#section-access-flywire-google-drive-data">Access flywire google drive data</a></li>
+      <li><a href="#section-access-flywire-google-drive-data">Access flywire google drive data</a></li>
+      <li><a href="#section-uncategorised">Uncategorised</a></li>
+    </ul>
   </div>
 </div>
 
@@ -586,7 +595,7 @@ al. 2020 (in prep)</p></td>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
 </div>
 
       </footer>
