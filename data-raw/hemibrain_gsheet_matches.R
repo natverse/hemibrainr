@@ -34,7 +34,7 @@ while(length(hls)){
 hemibrain_matching_rewrite()
 fafb_matching_rewrite()
 hemibrain_matching_transfers()
-flywire_matching_rewrite()+
+flywire_matching_rewrite()
 
 # Remove confounding annotations in segmentation instances
 fafb_lineage_complete_wipe(server = "v14seg-Li-190411.0")
