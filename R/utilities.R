@@ -77,7 +77,7 @@ googledrive_upload_neuronlistfh <- function(x,
   }else{
     pb <- progress::progress_bar$new(
       format = "  downloading [:bar] :current/:total eta: :eta",
-      total = length(t.list), clear = FALSE, show_after = 1)
+      total = length(t.list.master), clear = FALSE, show_after = 1)
     for(t.neuron.fh.data.file in t.list.master){
       pb$tick()
       t = basename(t.neuron.fh.data.file)
