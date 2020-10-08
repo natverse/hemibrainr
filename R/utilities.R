@@ -9,6 +9,7 @@ googledrive_upload_neuronlistfh <- function(x,
                                             folder = "flywire_neurons",
                                             subfolder = NULL,
                                             numCores = 1){
+  numCores = ifelse(numCores>10,10,numCores) # don't exhaust rate limit
   # Get drive
   td = googledrive::team_drive_get(team_drive)
   drive_td = googledrive::drive_find(type = "folder", team_drive = td)
