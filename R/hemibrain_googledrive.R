@@ -84,6 +84,7 @@ hemibrain_connections <- function(local = FALSE, folder = "hemibrain_neurons/"){
 hemibrain_nblast <- function(nblast = c("hemibrain",
                                         "flywire",
                                         "hemibrain-flywire",
+                                        "hemibrain-fafb14",
                                         "hemibrain-flycircuit",
                                         "flywire-mirror",
                                         "primary.neurites",
@@ -100,13 +101,14 @@ hemibrain_nblast <- function(nblast = c("hemibrain",
   folder = if(nblast %in% c("hemibrain",
                             "hemibrain-flywire",
                             "hemibrain-flycircuit",
+                            "hemibrain-fafb14",
                             "flywire-mirror")){
     "hemibrain_nblast"
   }else{
     "hemibrain_nblast/nblast_"
   }
   file = switch(nblast,
-                hemibrain = "hemibrain.aba.mean.compress.rda",
+    hemibrain = "hemibrain.aba.mean.compress.rda",
     spines = "hemibrain.spine.aba.mean.compressed.rda",
     primary.neurites = "hemibrain.pnt.aba.mean.compressed.rda",
     primary.dendrites = "hemibrain.pd.aba.mean.compressed.rda",
@@ -117,10 +119,15 @@ hemibrain_nblast <- function(nblast = c("hemibrain",
     simplified = "hemibrain.simp.aba.mean.compressed.rda",
     `hemibrain-flywire` = "hemibrain.flywire.mean.compressed.rda",
     `hemibrain-flycircuit` = "hemibrain.flycircuit.mean.compressed.rda",
+    `hemibrain-fafb14` = "hemibrain.fafb14.mean.compressed.rda",
     `flywire-mirror` = "flywire.mirror.mean.compressed.rda",
     stop("Unrecognised value of nblast argument!")
   )
-  gfile = find_gfile(savedir = savedir, file = file, folder = folder)
+  if(nblast=="hemibrain-fafb14" && file.exists("/Volumes/GoogleDrive/Shared drives/flyconnectome/fafbpipeline/fib.fafb.crossnblast.twigs5.mean.compress.rda")){
+    gfile = "/Volumes/GoogleDrive/Shared drives/flyconnectome/fafbpipeline/fib.fafb.crossnblast.twigs5.mean.compress.rda"
+  }else{
+    gfile = find_gfile(savedir = savedir, file = file, folder = folder)
+  }
   message("Loading NBLAST matrix from ", gfile)
   env <- new.env(parent = parent.frame())
   assign(nblast, get(load(gfile, env), envir = env), envir = env)

@@ -12,13 +12,13 @@ googledrive_upload_neuronlistfh <- function(x,
   # Get drive
   td = googledrive::team_drive_get(team_drive)
   drive_td = googledrive::drive_find(type = "folder", team_drive = td)
-  gfolder= subset(drive_td,name==folder)[1,]
+  gfolder= subset(drive_td,drive_td$name==folder)[1,]
   if(!is.null(subfolder)){
     sub = googledrive::drive_ls(path = gfolder, type = "folder", team_drive = td)
-    gfolder = subset(sub, name ==subfolder )[1,]
+    gfolder = subset(sub, sub$name ==subfolder )[1,]
   }
   sub = googledrive::drive_ls(path = gfolder, team_drive = td)
-  gfile = subset(sub, name ==file_name )
+  gfile = subset(sub, sub$name ==file_name )
   if(nrow(gfile)){
     save.position = googledrive::as_id(gfile[1,]$id)
   }else{
@@ -27,13 +27,13 @@ googledrive_upload_neuronlistfh <- function(x,
 
   # Get data folder
   t.folder.data = googledrive::drive_ls(path = gfolder, type = "folder", team_drive = td)
-  t.folder.data = subset(t.folder.data, name == "data")[1,]
+  t.folder.data = subset(t.folder.data, t.folder.data$name == "data")[1,]
   if(is.na(t.folder.data$name)){
     googledrive::drive_mkdir(name = "data",
                              path = gfolder,
                              overwrite = TRUE)
     t.folder.data = googledrive::drive_ls(path = gfolder, type = "folder", team_drive = td)
-    t.folder.data = subset(t.folder.data, name == "data")[1,]
+    t.folder.data = subset(t.folder.data, t.folder.data$name == "data")[1,]
   }
 
   # Save locally
@@ -50,13 +50,14 @@ googledrive_upload_neuronlistfh <- function(x,
   error.files = c()
   sub.data = googledrive::drive_ls(path = t.folder.data, team_drive = td)
   if(numCores>1){
+    batch = 1
     batches = split(t.list.master, round(seq(from = 1, to = numCores, length.out = length(t.list.master))))
     foreach.skeletons <- foreach::foreach (batch = 1:numCores) %dopar% {
       t.list = batches[[batch]]
       for(t.neuron.fh.data.file in t.list){
         t = basename(t.neuron.fh.data.file)
         if(t%in%sub.data$name){
-          save.data = googledrive::as_id(subset(sub.data, name==t)[1,]$id)
+          save.data = googledrive::as_id(subset(sub.data, sub.data$name==t)[1,]$id)
         }else{
           save.data =  t.folder.data
         }
@@ -81,7 +82,7 @@ googledrive_upload_neuronlistfh <- function(x,
       pb$tick()
       t = basename(t.neuron.fh.data.file)
       if(t%in%sub.data$name){
-        save.data = googledrive::as_id(subset(sub.data, name==t)[1,]$id)
+        save.data = googledrive::as_id(subset(sub.data, sub.data$name==t)[1,]$id)
       }else{
         save.data =  t.folder.data
       }
@@ -116,7 +117,7 @@ google_drive_place <- function(media,
   f = tryCatch(googledrive::is_folder(path), error = function(e) FALSE)
   if(f){
     ls = googledrive::drive_ls(path, ...)
-    p = subset(ls, name == basename(media))$id
+    p = subset(ls, ls$name == basename(media))$id
     if(length(p)){
       path = googledrive::as_id(p[1])
     }
@@ -152,10 +153,10 @@ googledrive_upload_nblast<- function(x,
   # Get drive
   td = googledrive::team_drive_get(team_drive)
   drive_td = googledrive::drive_find(type = "folder", team_drive = td)
-  gfolder= subset(drive_td,name==folder)[1,]
+  gfolder= subset(drive_td,drive_td$name==folder)[1,]
   if(!is.null(subfolder)){
     sub = googledrive::drive_ls(path = gfolder, type = "folder", team_drive = td)
-    gfolder = subset(sub, name ==subfolder )[1,]
+    gfolder = subset(sub, sub$name ==subfolder )[1,]
   }
 
   # Compress
@@ -182,7 +183,7 @@ googledrive_upload_nblast<- function(x,
   # Does the file already exist?
   file_name = basename(fname)
   sub = googledrive::drive_ls(path = gfolder, team_drive = td)
-  gfile = subset(sub, name ==file_name)
+  gfile = subset(sub, sub$name ==file_name)
   if(nrow(gfile)){
     save.position = googledrive::as_id(gfile[1,]$id)
   }else{
@@ -535,6 +536,7 @@ xform_brain_parallel <- function(x,
                                  sample = regtemplate(x),
                                  reference,
                                  ...){
+  batch = 1
   batches = split(x, round(seq(from = 1, to = no.batches, length.out = length(x))))
   foreach.nl <- foreach::foreach (batch = 1:no.batches) %dopar% {
     y = batches[[batch]]
@@ -573,12 +575,12 @@ googledrive_clean_neuronlistfh <- function(team_drive = "hemibrain"){
     if("data" %in% sub$name){
       sub = googledrive::drive_ls(path = googledrive::as_id(folder), team_drive = td)
       if(sum(grepl("rds$",sub$name))>1){
-        message("Cleaning ", subset(drive_td,id==folder)$name)
+        message("Cleaning ", subset(drive_td,drive_td$id==folder)$name)
         fsub = subset(sub, grepl("rds$",sub$name))
         fdata = subset(sub, grepl("data$",sub$name))[1,]
         all.keys = c()
         for(file in fsub$id){
-          fnam = subset(fsub, id==file)$name
+          fnam = subset(fsub, fsub$id==file)$name
           path = paste0(temp.data,fnam)
           googledrive::drive_download(file = googledrive::as_id(file), path = path, overwrite = TRUE, verbose = FALSE)
           a = readRDS(path)
@@ -588,7 +590,7 @@ googledrive_clean_neuronlistfh <- function(team_drive = "hemibrain"){
         }
         data = googledrive::drive_ls(path = googledrive::as_id(fdata$id), team_drive = td)
         delete = setdiff(data$name,all.keys)
-        delete = googledrive::as_id(subset(data, name%in%delete)$id)
+        delete = googledrive::as_id(subset(data, data$name%in%delete)$id)
         remove = unique(c(remove, delete))
       }
     }
@@ -605,8 +607,7 @@ googledrive_clean_neuronlistfh <- function(team_drive = "hemibrain"){
 # or one column, flywire.xyz with number separated by commas, in the form: x,y,z
 flywire_flagged <- function(selected_sheets = c("1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw",
                                                 "1rzG1MuZYacM-vbW7100aK8HeA-BY6dWAVXQ7TB6E2cQ",
-                                                "1spGSuhUX6Hhn-8HH0U_ArIWUuPpMBFNjIjeSSh_MFVY"
-),
+                                                "1spGSuhUX6Hhn-8HH0U_ArIWUuPpMBFNjIjeSSh_MFVY"),
 chosen.columns = c("fw.x","fw.y",'fw.z', 'flywire.xyz',
                    "flywire.id", "skid",
                    "FAFB.xyz", "side",
@@ -621,7 +622,7 @@ numCores = 1){
     ## Read google sheets and extract glywire neuron positions
     tabs = googlesheets4::sheet_names(selected_sheet)
     for(tab in tabs){
-      gs.t = hemibrainr:::gsheet_manipulation(FUN = googlesheets4::read_sheet,
+      gs.t = gsheet_manipulation(FUN = googlesheets4::read_sheet,
                                               ss = selected_sheet,
                                               sheet = tab,
                                               guess_max = 3000,
@@ -665,6 +666,7 @@ numCores = 1){
 
   # Get flywire IDs from these positions
   ## Batch positions for grabbing IDs from flywire
+  batch = 1
   batches = split(1:nrow(master), round(seq(from = 1, to = numCores, length.out = nrow(master))))
   ## Find flywire IDs for each specified position
   foreach.ids <- foreach::foreach (batch = 1:numCores) %dopar% {
@@ -692,9 +694,9 @@ java_xform_brain <- function(x,
                              method = "rJava",
                              progress.rjava=TRUE,
                              ...){
-  points = nat:::xyzmatrix(x)
+  points = nat::xyzmatrix(x)
   t = xform_brain(x, reference = reference, sample = sample, method = method, progress.rjava=progress.rjava, ...)
-  nat:::xyzmatrix(x) = t
+  nat::xyzmatrix(x) = t
   x
 }
 

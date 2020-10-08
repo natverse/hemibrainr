@@ -45,6 +45,8 @@ hemibrain_matching_rewrite(
 )
 }
 \arguments{
+\item{flywire.ids}{flywire IDs to add to google sheet if not already present.}
+
 \item{selected_file}{Specifies which Google Sheet to use. Unless you are using a personal Google Sheet, this should be \code{"1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw"}.}
 
 \item{...}{arguments passed to methods for, for example, \code{neuprintr::neuprint_get_meta} and \code{elmr::fafb_get_meta}.}
@@ -56,12 +58,13 @@ must have columns: bodyid (i.e. the hemibrain neuron), skid (i.e. the FAFB neuro
 \item{direction}{the match direction, i.e. hemibrain->FAFB (hemibrain tab) or FAFB->hemibrain (fafb tab). Defaults to updating both.}
 
 \item{User}{your initials, so updates can be linked to you. There is a limited number of users, each of whom have been
-assigned a number of neurons to match up. In order to add yourself as a user, simply open this Google Sheet in your browser and add your initials to neurons of your choosing on the rightmost column 'Users'.}
+assigned a number of neurons to match up. In order to add yourself as a user,
+simply open this Google Sheet in your browser and add your initials to neurons of your choosing on the rightmost column 'Users'.}
 
 \item{ids}{either hemibrain bodyids or FAFB skids to add to a Google Sheet. You will want to add IDs where they do not already exist, so that
 you can use, for example, \code{\link{hemibrain_matching}}.}
 
-\item{sheet}{the tab to which to add your new information. You are either adding to information related ot hemibrain neurons, or FAFB neurons.}
+\item{dataset}{the tab to which to add your new information. You are either adding to information related ot hemibrain neurons, or FAFB neurons.}
 }
 \value{
 \code{NULL}. Updates the master Google sheet.
@@ -73,7 +76,8 @@ FAFB neurons have been matched with their hemibrain counterparts (FAFB->hemibrai
   Sheet} on our hemibrain Google Team Drive, to which you will need access
 through an authenticated account to view and use this function. We can use these function to manipulate the Google Sheet.
 This include adding new IDs for matching (\code{hemibrain_matching_add}), transfer matches between the sheet's hemibrain and FAFB tabs (\code{hemibrain_matching_transfers})
-and add pre-made matches (\code{hemibrain_add_matches}).
+and add pre-made matches (\code{hemibrain_add_matches}).The function \code{lywire_matching_rewrite} updates a google sheet with correct flywire IDs and stable
+locations in flywire space, based on CATMAID skids.
 }
 \details{
 Currently, information is recorded in a

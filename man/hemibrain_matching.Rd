@@ -81,6 +81,8 @@ NBLAST matrix. By default this is read from the flyconnectome Team Drive.}
 \item{match.type}{whether to match up FAFB skeletons (\code{"EM"}) or light level
 skeletons  (\code{"LM"}) from Dolan et al. and Frechter et al. 2019 (eLife), stored in the package \code{lhns} as
 \code{most.lhns}.}
+
+\item{repository}{whether to read CATMAID (using \code{catmaid::read.neurons.catmaid}) or flywire neurons (using \code{flywire_neurons}) for matching.}
 }
 \description{
 Match up neurons between the hemibrain, FAFB and light level data and save the

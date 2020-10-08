@@ -21,6 +21,11 @@
 #' @param clean whether or not to set synapse-less branches to \code{Label = 0}.
 #' @param local logical, whether to try to read locally saved neurons (by default at: \code{options()$hemibrain_data}) or neurons from Google Drive (\code{options()$Gdrive_hemibrain_data}).
 #' @param scaling the factor by which neuron coordinates in raw voxel space should be multiplied. The default scales to microns.
+#' @param dotprops logical. Whether or not to retreive a \code{nat::dotprops} object, i.e. vector cloud representations of neurons for NBLASTing.
+#' The dotprops object will be in JRC2018FIBF micron space.
+#' @param folder the sub-folder in which to look for a \code{nat::neuronlistfh} .rds file and its data, representing hemibrain neurons. The function will look forthis
+#' folder in the location: \code{hemibrainr:::good_savedir(local=local)},
+#' by default the mounted Goolge drive (\code{options()$Gdrive_hemibrain_data}) or locally ((\code{options()$hemibrain_data}))
 #' @param ... arguments passed to \code{neuprintr::neuprint_read_neurons}, \code{\link{hemibrain_remove_bad_synapses}}
 #'  and \code{\link{hemibrain_flow_centrality}}
 #'
@@ -50,7 +55,7 @@
 #' @export
 #' @seealso \code{\link{hemibrain_splitpoints}}, \code{\link{hemibrain_flow_centrality}}, \code{\link{hemibrain_somas}},
 #' \code{\link{hemibrain_precomputed_splitpoints}}, \code{\link{hemibrain_metrics}},\code{\link{hemibrain_remove_bad_synapses}}
-#' ,\code{\link{hemibrain_get_meta}}
+#' ,\code{\link{hemibrain_get_meta}},\code{\link{flywire_neurons}}
 hemibrain_read_neurons<-function(x = NULL,
                                  local = FALSE,
                                  microns = FALSE,

@@ -126,7 +126,10 @@ fafb_hemibrain_annotate <- function(x,
                                     flywire = TRUE,
                                     ...){
   if(flywire){
-    require(fafbseg)
+    if(!requireNamespace("fafbseg", quietly = TRUE)) {
+      stop("Please install fafbseg using:\n", call. = FALSE,
+           "remotes::install_github('natverse/fafbseg')")
+    }
   }
 
   # Get matches
@@ -168,7 +171,7 @@ fafb_hemibrain_annotate <- function(x,
       flywire.xyz = apply(roots.flywire.raw, 1, paste, collapse = ",")
 
       # Make annotation
-      acbf = paste0('flywire_id: ', fw.ids[1])
+      afid = paste0('flywire_id: ', fw.ids[1])
       message(afid)
       afw = paste0('flywire_xyz: ', flywire.xyz[1])
       message(afw)

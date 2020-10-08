@@ -51,6 +51,13 @@ and \code{\link{hemibrain_flow_centrality}}}
 \item{brain}{the brainspace in which hemibrain neurons have been registered. Defaults to raw voxel space for the hemibrain project.}
 
 \item{mirror}{logical, whether or not to read neurons that have been mirrored (i.e. flipped to the 'other' brain hemisphere).}
+
+\item{dotprops}{logical. Whether or not to retreive a \code{nat::dotprops} object, i.e. vector cloud representations of neurons for NBLASTing.
+The dotprops object will be in JRC2018FIBF micron space.}
+
+\item{folder}{the sub-folder in which to look for a \code{nat::neuronlistfh} .rds file and its data, representing hemibrain neurons. The function will look forthis
+folder in the location: \code{hemibrainr:::good_savedir(local=local)},
+by default the mounted Goolge drive (\code{options()$Gdrive_hemibrain_data}) or locally ((\code{options()$hemibrain_data}))}
 }
 \value{
 the neuron or neuron list object inputted, with centripetal flow
@@ -90,5 +97,5 @@ nlscan_split(neurons, WithConnectors = TRUE)
 \seealso{
 \code{\link{hemibrain_splitpoints}}, \code{\link{hemibrain_flow_centrality}}, \code{\link{hemibrain_somas}},
 \code{\link{hemibrain_precomputed_splitpoints}}, \code{\link{hemibrain_metrics}},\code{\link{hemibrain_remove_bad_synapses}}
-,\code{\link{hemibrain_get_meta}}
+,\code{\link{hemibrain_get_meta}},\code{\link{flywire_neurons}}
 }

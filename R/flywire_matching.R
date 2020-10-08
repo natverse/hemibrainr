@@ -7,6 +7,7 @@ flywire_matching_rewrite <- function(flywire.ids = names(flywire_neurons()),
                                      ...){
   # Get the FAFB matching google sheet
   gs = hemibrain_match_sheet(sheet = "FAFB", selected_file = selected_file)
+  skids = unique(gs$skid)
 
   # Get FAFBv14 coordinates
   cats = nat::neuronlist()
@@ -100,6 +101,10 @@ LR_matching <- function(ids = NULL,
     stop("Please install elmr using:\n", call. = FALSE,
          "remotes::install_github('natverse/elmr')")
   }
+  if(!requireNamespace("fafbseg", quietly = TRUE)) {
+    stop("Please install fafbseg using:\n", call. = FALSE,
+         "remotes::install_github('natverse/fafbseg')")
+  }
   # Motivate!
   nat::nopen3d()
   plot_inspirobot()
@@ -115,13 +120,14 @@ LR_matching <- function(ids = NULL,
           #######################Colours##########################
           ")
   ## Get NBLAST
-  if(is.null(mirror.nblast) & repository == "flywire"){
+  if(is.null(mirror.nblast)){
     message("Loading flywire NBLAST from flyconnectome Google Team Drive using Google Filestream: ")
     message(paste0(options()$Gdrive_hemibrain_data,"hemibrain_nblast/flywire.mirror.mean.rda"))
     mirror.nblast = hemibrain_nblast("flywire-mirror")
   }
   # Read the Google Sheet
   gs = hemibrain_match_sheet(selected_file = selected_file, sheet = "flywire")
+  id = "flywire.id"
   # Get neuron data repo
   if(missing(db)) {
     db=tryCatch(force(db), error=function(e) {

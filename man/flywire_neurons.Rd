@@ -43,16 +43,17 @@ flywire_request(
 
 \item{mirror}{logical, whether or not to read neurons that have been mirrored (i.e. flipped to the 'other' brain hemisphere).}
 
-\item{...}{Additional arguments passed to \code{\link{nat::nlapply}}.and/or \code{\link{fafbseg::skeletor}}.}
+\item{...}{Additional arguments passed to \code{nat::nlapply}.and/or \code{fafbseg::skeletor}.}
 
 \item{x}{flywire IDs to update, for the saved google drive \code{neuronlistfh} objects called with \code{flywire_neurons}.}
 
 \item{nblast}{which flywire nblast to update on google drive.}
 
-\item{request}{a neuronlist, matrix of x,y,z position or flywire ID to add to a \href{}{Google sheet} that records flywire positions
+\item{request}{a neuronlist, matrix of x,y,z position or flywire ID to add to a
+\href{https://docs.google.com/spreadsheets/d/1rzG1MuZYacM-vbW7100aK8HeA-BY6dWAVXQ7TB6E2cQ/edit#gid=0}{Google sheet} that records flywire positions
 flagged to be processed into neuron skeletons that can be called by \code{flywire_neurons}.}
 
-\item{selected_file}{the Google sheet onto which to add new flywire coordinate. I.e. \href{}{Google sheet}.}
+\item{selected_file}{the Google sheet onto which to add new flywire coordinate. I.e. \href{https://docs.google.com/spreadsheets/d/1rzG1MuZYacM-vbW7100aK8HeA-BY6dWAVXQ7TB6E2cQ/edit#gid=0}{Google sheet}.}
 
 \item{sheet}{the tab onto which to add your requests.}
 }

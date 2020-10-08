@@ -20,9 +20,9 @@ hemibrain_synapses(local = FALSE, folder = "hemibrain_neurons/")
 hemibrain_connections(local = FALSE, folder = "hemibrain_neurons/")
 
 hemibrain_nblast(
-  nblast = c("hemibrain", "flywire", "hemibrain-flywire", "hemibrain-flycircuit",
-    "flywire-mirror", "primary.neurites", "primary.dendrites", "axons", "dendrites",
-    "spines", "tracts", "arbour", "simplified"),
+  nblast = c("hemibrain", "flywire", "hemibrain-flywire", "hemibrain-fafb14",
+    "hemibrain-flycircuit", "flywire-mirror", "primary.neurites", "primary.dendrites",
+    "axons", "dendrites", "spines", "tracts", "arbour", "simplified"),
   local = FALSE
 )
 

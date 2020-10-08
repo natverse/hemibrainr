@@ -11,12 +11,13 @@
 #' @param local logical, whether to try to read locally saved neurons (by default at: \code{options()$hemibrain_data}) or neurons from Google Drive (\code{options()$Gdrive_hemibrain_data}).
 #' @param mirror logical, whether or not to read neurons that have been mirrored (i.e. flipped to the 'other' brain hemisphere).
 #' @param x flywire IDs to update, for the saved google drive \code{neuronlistfh} objects called with \code{flywire_neurons}.
-#' @param request a neuronlist, matrix of x,y,z position or flywire ID to add to a \href{}{Google sheet} that records flywire positions
+#' @param request a neuronlist, matrix of x,y,z position or flywire ID to add to a
+#' \href{https://docs.google.com/spreadsheets/d/1rzG1MuZYacM-vbW7100aK8HeA-BY6dWAVXQ7TB6E2cQ/edit#gid=0}{Google sheet} that records flywire positions
 #' flagged to be processed into neuron skeletons that can be called by \code{flywire_neurons}.
 #' @param nblast which flywire nblast to update on google drive.
-#' @param selected_file the Google sheet onto which to add new flywire coordinate. I.e. \href{}{Google sheet}.
+#' @param selected_file the Google sheet onto which to add new flywire coordinate. I.e. \href{https://docs.google.com/spreadsheets/d/1rzG1MuZYacM-vbW7100aK8HeA-BY6dWAVXQ7TB6E2cQ/edit#gid=0}{Google sheet}.
 #' @param sheet the tab onto which to add your requests.
-#' @param ... Additional arguments passed to \code{\link{nat::nlapply}}.and/or \code{\link{fafbseg::skeletor}}.
+#' @param ... Additional arguments passed to \code{nat::nlapply}.and/or \code{fafbseg::skeletor}.
 #'
 #' @examples
 #' \donttest{
@@ -87,6 +88,10 @@ flywire_neurons_update <- function(x,
                                 brain = c("FlyWire", "JRCFIB2018F","JRCFIB2018F","FAFB","JFRC2","JRC2018F","FCWB"),
                                 mirror = FALSE,
                                 ...){
+  if(!requireNamespace("fafbseg", quietly = TRUE)) {
+    stop("Please install fafbseg using:\n", call. = FALSE,
+         "remotes::install_github('natverse/fafbseg')")
+  }
   brain = match.arg(brain)
   if(!requireNamespace("fafbseg", quietly = TRUE)) {
     stop("Please install fafbseg using:\n", call. = FALSE,
@@ -105,14 +110,14 @@ flywire_neurons_update <- function(x,
   # Transform
   if(mirror){
     message("Mirroring neurons version ...")
-    m = nat.templatebrains::xform_brain(y, reference = "JRC2", sample = "FAFB14", ....)
-    t = nat.templatebrains::mirror_brain(m, brain = "JRC2", ....)
+    m = nat.templatebrains::xform_brain(y, reference = "JRC2", sample = "FAFB14", ...)
+    t = nat.templatebrains::mirror_brain(m, brain = "JRC2", ...)
     if(brain!="FlyWire"){
-      t = nat.templatebrains::xform_brain(t, sample = "JRC2", reference = brain, ....)
+      t = nat.templatebrains::xform_brain(t, sample = "JRC2", reference = brain, ...)
     }
   }else if (brain!="FlyWire"){
     message("Transforming skeletons ...")
-    t = nat.templatebrains::xform_brain(y, reference = brain, sample = "FAFB14", ....)
+    t = nat.templatebrains::xform_brain(y, reference = brain, sample = "FAFB14", ...)
   }else{
     t  = y
   }
@@ -122,7 +127,7 @@ flywire_neurons_update <- function(x,
   z = union(t, nat::as.neuronlist(f))
 
   # Save
-  hemibrainr:::googledrive_upload_neuronlistfh(z,
+  googledrive_upload_neuronlistfh(z,
                                                team_drive = "hemibrain",
                                                file_name = sprintf("flywire_neurons_%s%s.rds", brain, flip),
                                                folder = "flywire_neurons",
@@ -182,13 +187,13 @@ flywire_nblast_update <- function(x = NULL,
     ## Average native and mirrored
     colnames(hemibrain.flywire.mean) = gsub("_m$","",colnames(hemibrain.flywire.mean))
     rownames(hemibrain.flywire.mean) = gsub("_m$","",rownames(hemibrain.flywire.mean))
-    hemibrain.flywire.mean = hemibrainr:::collapse_matrix_by_names(hemibrain.flywire.mean, FUN = max)
+    hemibrain.flywire.mean = collapse_matrix_by_names(hemibrain.flywire.mean, FUN = max)
     hemibrain.flywire.mean[hemibrain.flywire.mean<-0.5]=-0.5
     hemibrain.flywire.mean=round(hemibrain.flywire.mean, digits=3)
     hemibrain.flywire.mean = merge(hemibrain.flywire.mean, old.nblast, all.x = TRUE, all.y = TRUE)
 
     # Save NBLAST on hemibrain googledrive
-    hemibrainr:::googledrive_upload_nblast(hemibrain.flywire.mean)
+    googledrive_upload_nblast(hemibrain.flywire.mean)
 
   }
 
@@ -197,7 +202,7 @@ flywire_nblast_update <- function(x = NULL,
     # Get hemibrain neurons
     message("Loading hemibrain neurons ...")
     all.fw = flywire_neurons()
-    all.fw.dps = nat::dotprops(all.neurons.flow.microns, .parallel = TRUE, OmitFailures = TRUE)
+    all.fw.dps = nat::dotprops(all.fw, .parallel = TRUE, OmitFailures = TRUE)
     rm("all.fw")
     flywire.mirror.mean.1 = nat.nblast::nblast(query = d,
                                                          target = all.fw.dps,
@@ -213,7 +218,7 @@ flywire_nblast_update <- function(x = NULL,
     flywire.mirror.mean[flywire.mirror.mean<-0.5]=-0.5
     flywire.mirror.mean=round(flywire.mirror.mean, digits=3)
     flywire.mirror.mean = merge(flywire.mirror.mean, old.nblast, all.x = TRUE, all.y = TRUE)
-    hemibrainr:::googledrive_upload_nblast(flywire.mirror.mean)
+    googledrive_upload_nblast(flywire.mirror.mean)
   }
 
   # Just Flywire left-right
@@ -230,7 +235,7 @@ flywire_nblast_update <- function(x = NULL,
     flywire.mean=round(flywire.mean, digits=3)
     flywire.mean[flywire.mean<-0.5]=-0.5
     flywire.mean = merge(flywire.mean, old.nblast, all.x = TRUE, all.y = TRUE)
-    hemibrainr:::googledrive_upload_nblast(flywire.mean)
+    googledrive_upload_nblast(flywire.mean)
   }
 
 }
@@ -244,7 +249,7 @@ flywire_basics <- function(x){
 
   # Get xyz for primary branch points
   simp = nat::nlapply(x,nat::simplify_neuron,n=1)
-  branchpoints = sapply(simp, function(y) nat::xyzmatrix(y)[ifelse(length(nat::branchpoints(y),nat::branchpoints(y),max(nat::endpoints(y)))),])
+  branchpoints = sapply(simp, function(y) nat::xyzmatrix(y)[ifelse(length(nat::branchpoints(y)),nat::branchpoints(y),max(nat::endpoints(y))),])
   branchpoints = t(branchpoints)
   flywire.xyz = apply(branchpoints, 1, paste, collapse = ",")
 
@@ -272,12 +277,15 @@ flywire_request <- function(request,
                             selected_file = "1rzG1MuZYacM-vbW7100aK8HeA-BY6dWAVXQ7TB6E2cQ",
                             sheet = "flywire",
                             ...){
-
+  if(!requireNamespace("fafbseg", quietly = TRUE)) {
+    stop("Please install fafbseg using:\n", call. = FALSE,
+         "remotes::install_github('natverse/fafbseg')")
+  }
   # What kind of request is it?
   type = if(nat::is.neuronlist(request)){
     "neuronlist"
   }else if(is.data.frame(request)|is.matrix(request)){
-    if(nrow(nat::xyzmarix(request))){
+    if(nrow(nat::xyzmatrix(request))){
       "xyz"
     }else{
       "ids"
@@ -289,7 +297,7 @@ flywire_request <- function(request,
 
   # Get coordinates
   if(type=='ids'){
-    request = skeletor(request, ...)
+    request = fafbseg::skeletor(request, ...)
   }
   if(nat::is.neuronlist(request)){
     fb = flywire_basics(request)

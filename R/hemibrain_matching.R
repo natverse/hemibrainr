@@ -38,6 +38,7 @@
 #' Defaults to reading a transformed \code{most.lhns} from the Hemibrain Google Team Drive.
 #' @param overwrite logical, whether or not to overwrite matches already made. However, if set to 'none' then the pipeline will
 #' include neurons with 'tract' and 'none' values in the match column of our Google sheet, i.e. will help you overwrite non-matches.
+#' @param repository whether to read CATMAID (using \code{catmaid::read.neurons.catmaid}) or flywire neurons (using \code{flywire_neurons}) for matching.
 #'
 #' @details Currently, the
 #'   \href{https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit#gid=0}{Google
@@ -106,13 +107,7 @@ hemibrain_matching <- function(ids = NULL,
           ")
   ## Get NBLAST
   if(is.null(hemibrain.nblast) & match.type =="FAFB"){
-    fib.fafb.crossnblast.twigs5.mean.compress = NULL
-    matname="fib.fafb.crossnblast.twigs5.mean.compress"
-      message("Loading FAFB-FIB NBLAST ", matname,
-              " from flyconnectome Google Team Drive using Google Filestream: ")
-      load(sprintf("/Volumes/GoogleDrive/Shared drives/flyconnectome/fafbpipeline/%s.rda", matname))
-      hemibrain.nblast = get(matname)
-      rm("fib.fafb.crossnblast.twigs5.mean.compress")
+      hemibrain.nblast  = hemibrain_nblast('hemibrain-fafb14')
   }
   if(is.null(hemibrain.nblast) & match.type =="LM"){
     hemibrain.lhns.mean.compressed=NULL
@@ -663,12 +658,7 @@ fafb_matching <- function(ids = NULL,
           ")
   ## Get NBLAST
   if(is.null(hemibrain.nblast) & repository == "CATMAID"){
-    matname="fib.fafb.crossnblast.twigs5.mean.compress"
-    message("Loading FAFB-FIB NBLAST ", matname,
-            " from flyconnectome Google Team Drive using Google Filestream: ")
-    load(sprintf("/Volumes/GoogleDrive/Shared drives/flyconnectome/fafbpipeline/%s.rda", matname))
-    hemibrain.nblast = get(matname)
-    rm("fib.fafb.crossnblast.twigs5.mean.compress")
+    hemibrain.nblast = hemibrain_nblast("hemibrain-fafb14")
   }
   if(is.null(hemibrain.nblast) & repository == "flywire"){
     hemibrain.nblast = t(hemibrain_nblast("hemibrain-flywire"))
@@ -1243,18 +1233,22 @@ lm_matches <- function(priority = c("hemibrain","lm")){
 #'   Sheet} on our hemibrain Google Team Drive, to which you will need access
 #' through an authenticated account to view and use this function. We can use these function to manipulate the Google Sheet.
 #' This include adding new IDs for matching (\code{hemibrain_matching_add}), transfer matches between the sheet's hemibrain and FAFB tabs (\code{hemibrain_matching_transfers})
-#' and add pre-made matches (\code{hemibrain_add_matches}).
+#' and add pre-made matches (\code{hemibrain_add_matches}).The function \code{lywire_matching_rewrite} updates a google sheet with correct flywire IDs and stable
+#' locations in flywire space, based on CATMAID skids.
 #'
 #' @param df a \code{data.frame} of pre-made matches that the user wants to transfer onto the Google Sheet. This will erase any extant matches for the specified neurons. This data frame
 #' must have columns: bodyid (i.e. the hemibrain neuron), skid (i.e. the FAFB neuron) and quality (i.e. match quality). Matches have three levels of 'quality', largely dependent on the degree of manual tracing for FAFB neurons
 #'  - good (could be the same cell), medium (same cell type) and poor (could be the same or similar cell type).
 #' @param ids either hemibrain bodyids or FAFB skids to add to a Google Sheet. You will want to add IDs where they do not already exist, so that
 #'  you can use, for example, \code{\link{hemibrain_matching}}.
-#' @param sheet the tab to which to add your new information. You are either adding to information related ot hemibrain neurons, or FAFB neurons.
+#' @param dataset the tab to which to add your new information. You are either adding to information related ot hemibrain neurons, or FAFB neurons.
 #' @param direction the match direction, i.e. hemibrain->FAFB (hemibrain tab) or FAFB->hemibrain (fafb tab). Defaults to updating both.
 #' @param selected_file Specifies which Google Sheet to use. Unless you are using a personal Google Sheet, this should be \code{"1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw"}.
 #' @param User your initials, so updates can be linked to you. There is a limited number of users, each of whom have been
-#'   assigned a number of neurons to match up. In order to add yourself as a user, simply open this Google Sheet in your browser and add your initials to neurons of your choosing on the rightmost column 'Users'.
+#'   assigned a number of neurons to match up. In order to add yourself as a user,
+#'   simply open this Google Sheet in your browser and add your initials to neurons of your choosing on the rightmost column 'Users'.
+#' @param flywire.ids flywire IDs to add to google sheet if not already present.
+#'
 #' @param ... arguments passed to methods for, for example, \code{neuprintr::neuprint_get_meta} and \code{elmr::fafb_get_meta}.
 #'
 #' @return  \code{NULL}. Updates the master Google sheet.
@@ -1627,13 +1621,13 @@ fafb_matching_rewrite <- function(selected_file  = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd
   n$side = "right"
   n[n$skid%in%lskids,"side"] = "left"
   n$User[is.na(n$User)] = "flyconnectome"
-  nblast.path = "/Volumes/GoogleDrive/Shared drives/flyconnectome/fafbpipeline/fib.fafb.crossnblast.twigs5.mean.compress.rda"
-  if(file.exists(nblast.path)){
-    load(sprintf("/Volumes/GoogleDrive/Shared drives/flyconnectome/fafbpipeline/fib.fafb.crossnblast.twigs5.mean.compress.rda", "fib.fafb.crossnblast.twigs5.mean.compress"))
-    nblast.top =fib.fafb.crossnblast.twigs5.mean.compress[match(n$skid,rownames(fib.fafb.crossnblast.twigs5.mean.compress)),]
+  nblast = tryCatch(hemibrain_nblast('hemibrain-fafb14'), error = function(e) NULL)
+  if(!is.null(nblast)){
+    nblast = hemibrain_nblast('hemibrain-fafb14')
+    nblast.top =nblast[match(n$skid,rownames(nblast)),]
     tops = apply(nblast.top,1,function(r) which.max(r))
-    top = colnames(fib.fafb.crossnblast.twigs5.mean.compress)[unlist(tops)]
-    top[!n$skid%in%rownames(fib.fafb.crossnblast.twigs5.mean.compress)] = NA
+    top = colnames(nblast)[unlist(tops)]
+    top[!n$skid%in%rownames(nblast)] = NA
     n$nblast.top = top
   }
   n = n[order(n$cell.type),]
