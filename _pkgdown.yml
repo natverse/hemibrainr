@@ -9,7 +9,6 @@ reference:
     contents:
     - '`hemibrain_read_neurons`'
     - '`hemibrain_download_neurons`'
-    - '`hemibrain_reroot`'
     - '`primary_neurite`'
     - '`hemibrain_skeleton_check`'
     - '`hemibrain_overlap_locality`'
@@ -28,6 +27,12 @@ reference:
     - '`hemibrain_metrics`'
     - '`hemibrain_precomputed_splitpoints`'
     - '`manually_assign_labels`'
+  - title: Somas and lineages
+    desc: ~
+    contents:
+    - 'hemibrain_somas'
+    - '`hemibrain_reroot`'
+    - 'hemilineages'
   - title: Synapses and meshes
     desc: ~
     contents:
@@ -44,20 +49,24 @@ reference:
   - title: Annotations
     desc: ~
     contents:
+    - 'hemibrain_get_meta'
     - '`class2ids`'
     - '`classed.ids`'
     - '`glomerulus`'
     - '`standard_transmitters`'
     - 'hemibrain_cbf'
+    - 'fafb_hemibrain_annotate'
+    - 'hemibrain_olfactory_layers'
+    - 'info'
   - title: Neuron matching across datasets
     desc: >
       Includes functions for loading a range of different neuronal datasets and
       assigning matches between related neurons.
     contents:
-    - hemibrain_matching
-    - hemibrain_googledrive
-    - hemibrain_task_update
-    - hemibrain_type_plot
+    - 'hemibrain_matches'
+    - 'hemibrain_matched'
+    - 'hemibrain_task_update'
+    - 'hemibrain_type_plot'
   - title: Utility
     desc: ~
     contents:
@@ -66,18 +75,26 @@ reference:
     - 'add_Label'
     - 'hemibrain_settags'
     - 'plot_inspirobot'
+  - title: R annotation pipelines
+    desc: ~
+    contents:
+    - 'hemibrain_adjust_saved_somas'
+    - 'hemibrain_matching'
+    - 'fafb_matching'
+    - 'LR_matching'
+  - title: Access hemibrain google drive data
+    desc: ~
+    contents:
+    - 'hemibrain_googledrive'
+  - title: Access flywire google drive data
+    desc: ~
+    contents:
+    - 'flywire_neurons'
+  - title: Access flywire google drive data
+    desc: ~
+    contents:
+    - 'hemibrain_add_made_matches'
   - title: Uncategorised
     desc: functions that need categorising
     contents:
-    - 'fafb_hemibrain_annotate'
-    - 'flywire_neurons'
-    - 'hemibrain_add_made_matches'
-    - 'hemibrain_adjust_saved_somas'
-    - 'hemibrain_get_meta'
-    - 'hemibrain_matched'
-    - 'hemibrain_matches'
-    - 'hemibrain_olfactory_layers'
-    - 'hemibrain_somas'
     - 'hemibrain_view'
-    - 'hemilineages'
-    - 'info'
