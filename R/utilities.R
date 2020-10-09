@@ -38,10 +38,10 @@ googledrive_upload_neuronlistfh <- function(x,
   }
 
   # Save locally
-  temp = tempdir(check=TRUE)
+  temp = tempfile()
   temp.data = paste0(temp,"/data")
   dir.create(temp.data)
-  on.exit(unlink(temp.data, recursive=TRUE))
+  on.exit(unlink(temp, recursive=TRUE))
   temp.rds = paste0(temp,"/",file_name)
   nl = nat::as.neuronlistfh(x, dbdir= temp.data, WriteObjects = "yes")
   nat::write.neuronlistfh(nl, file= temp.rds, overwrite=TRUE)
@@ -171,7 +171,8 @@ googledrive_upload_nblast<- function(x,
 
   # Save in temporary location
   newobjname <- paste0(objname, ".compressed")
-  temp <- tempdir(check=TRUE)
+  temp <- tempfile()
+  on.exit(unlink(temp, recursive=TRUE))
   fname <- paste0(temp, "/",paste0(file, newobjname), ".", format)
   if(format=="rds") {
     saveRDS(x, file=fname, ...)
@@ -562,10 +563,10 @@ strip_meshes<-function(x){
 # Remove unused filehash files
 googledrive_clean_neuronlistfh <- function(team_drive = "hemibrain"){
   # Save .rds files locally
-  temp = tempdir(check=TRUE)
+  temp = tempfile()
   temp.data = paste0(temp,"/RDS/")
   dir.create(temp.data)
-  on.exit(unlink(temp.data, recursive=TRUE))
+  on.exit(unlink(temp, recursive=TRUE))
 
   # Iterate to find .rds files
   td = googledrive::team_drive_get(team_drive)
