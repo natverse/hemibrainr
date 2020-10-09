@@ -381,7 +381,7 @@ hemibrain_neurons <- function(local = FALSE,
 good_savedir <- function(local = FALSE
                          ){
   if(is.null(options()$hemibrain_data)){
-    options(hemibrain_data = paste0(getwd(),"/data-raw/hemibrain_data/"))
+    options(hemibrain_data = paste0(getwd(),options()$hemibrain_data))
   }
   if(is.null(options()$Gdrive_hemibrain_data)){
     options(Gdrive_hemibrain_data = "/Volumes/GoogleDrive/Shared\ drives/hemibrain/")
@@ -396,16 +396,11 @@ good_savedir <- function(local = FALSE
     }
   }else{
     if(isTRUE(local)){
-      savedir = '/data-raw/hemibrain_data/'
+      savedir = options()$hemibrain_data
     }
   }
-  if(is.issue(savedir)){
-    options(hemibrain_data = paste0(getwd(),"/data-raw/hemibrain_data/"))
-    warning("The following option has been set: options(hemibrain_data = paste0(getwd(),'/data-raw/hemibrain_data/')) ")
-  }
-  if(!dir.exists(savedir)){
-    dir.create(paste0(savedir,"/hemibrain_neurons/"), recursive = TRUE)
-    dir.create(paste0(savedir,"/hemibrain_annotations/"), recursive = TRUE)
+  if(!dir.exists(savedir) & local){
+    hemibrainr_folder_structure(savedir)
     warning("Made new hemibrain save directory within the working directory. It is currently empty, please add neuron data:", savedir)
   }
   savedir

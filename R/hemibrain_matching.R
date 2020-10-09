@@ -78,7 +78,7 @@
 #' @seealso \code{\link{hemibrain_adjust_saved_split}}
 hemibrain_matching <- function(ids = NULL,
                          hemibrain.nblast = NULL,
-                         selected_file = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw",
+                         selected_file = options()$hemibrainr_matching_gsheet,
                          batch_size = 10,
                          db=hemibrain_neurons(), # brain="FAFB"
                          match.type = c("FAFB", "LM"),
@@ -328,7 +328,7 @@ write_matches <- function(gs,
                        ids = NULL,
                        id.field = "bodyid",
                        ws = "hemibrain",
-                       selected_file = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw",
+                       selected_file = options()$hemibrainr_matching_gsheet,
                        column = colnames(gs)){
   if((!identical(colnames(gs),column) & length(column) > 1)|(sum(column%in%colnames(gs))<1)){
     stop("Column must be one column of the google sheet, or all the columns")
@@ -366,7 +366,7 @@ correct_id <-function(v){
 #' @export
 lm_matching <- function(ids = NULL,
                         hemibrain.nblast = NULL,
-                        selected_file = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw",
+                        selected_file = options()$hemibrainr_matching_gsheet,
                         batch_size = 50,
                         db=hemibrain_neurons(),
                         query = NULL,
@@ -627,7 +627,7 @@ lm_matching <- function(ids = NULL,
 fafb_matching <- function(ids = NULL,
                         repository = c("FAFB", "flywire"),
                         hemibrain.nblast = NULL,
-                        selected_file = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw",
+                        selected_file = options()$hemibrainr_matching_gsheet,
                         batch_size = 50,
                         db=hemibrain_neurons(),
                         query = NULL,
@@ -957,7 +957,7 @@ hemibrain_matches <- function(priority = c("FAFB","hemibrain")){
   priority = match.arg(priority)
 
   # Get matches
-  selected_file = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw"
+  selected_file = options()$hemibrainr_matching_gsheet
   hemibrain.matches = gsheet_manipulation(FUN = googlesheets4::read_sheet,
                                                        ss = selected_file,
                                                        sheet = "hemibrain",
@@ -1093,7 +1093,7 @@ lm_matches <- function(priority = c("hemibrain","lm")){
   priority = match.arg(priority)
 
   # Get matches
-  selected_file = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw"
+  selected_file = options()$hemibrainr_matching_gsheet
   hemibrain.matches = gsheet_manipulation(FUN = googlesheets4::read_sheet,
                                           ss = selected_file,
                                           sheet = "hemibrain",
@@ -1243,7 +1243,7 @@ lm_matches <- function(priority = c("hemibrain","lm")){
 #'  you can use, for example, \code{\link{hemibrain_matching}}.
 #' @param dataset the tab to which to add your new information. You are either adding to information related ot hemibrain neurons, or FAFB neurons.
 #' @param direction the match direction, i.e. hemibrain->FAFB (hemibrain tab) or FAFB->hemibrain (fafb tab). Defaults to updating both.
-#' @param selected_file Specifies which Google Sheet to use. Unless you are using a personal Google Sheet, this should be \code{"1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw"}.
+#' @param selected_file Specifies which Google Sheet to use. Unless you are using a personal Google Sheet, this should be \code{options()$hemibrainr_matching_gsheet}.
 #' @param User your initials, so updates can be linked to you. There is a limited number of users, each of whom have been
 #'   assigned a number of neurons to match up. In order to add yourself as a user,
 #'   simply open this Google Sheet in your browser and add your initials to neurons of your choosing on the rightmost column 'Users'.
@@ -1354,7 +1354,7 @@ hemibrain_add_made_matches <- function(df,
 }
 
 # Get correct GSheet
-hemibrain_match_sheet <- function(selected_file = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw",
+hemibrain_match_sheet <- function(selected_file = options()$hemibrainr_matching_gsheet,
                                   sheet = c("hemibrain","FAFB","flywire")){
   # Which sheet
   sheet = match.arg(sheet)
@@ -1388,7 +1388,7 @@ hemibrain_match_sheet <- function(selected_file = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8
 hemibrain_matching_add <- function(ids,
                                    dataset = c("hemibrain","FAFB","flywire"),
                                    User = dataset,
-                                   selected_file  = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw",
+                                   selected_file  = options()$hemibrainr_matching_gsheet,
                                    ...){
   # Read
   dataset = match.arg(dataset)
@@ -1433,7 +1433,7 @@ hemibrain_matching_add <- function(ids,
 
 #' @rdname hemibrain_add_made_matches
 #' @export
-hemibrain_matching_transfers <- function(selected_file = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw"){
+hemibrain_matching_transfers <- function(selected_file = options()$hemibrainr_matching_gsheet){
   #############
   # Transfers #
   #############
@@ -1572,7 +1572,7 @@ hemibrain_matching_transfers <- function(selected_file = "1OSlDtnR3B1LiB5cwI5x5Q
 # Udate function
 update_gsheet <- function(update,
                           gs,
-                          selected_file = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw",
+                          selected_file = options()$hemibrainr_matching_gsheet,
                           tab,
                           match = c("hemibrain", "LM", "FAFB", "flywire"),
                           id){
@@ -1605,7 +1605,7 @@ update_gsheet <- function(update,
 
 #' @rdname hemibrain_add_made_matches
 #' @export
-fafb_matching_rewrite <- function(selected_file  = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw",
+fafb_matching_rewrite <- function(selected_file  = options()$hemibrainr_matching_gsheet,
                                    ...){
   matches = hemibrain_matches()
   n = hemibrain_match_sheet(sheet = "FAFB", selected_file = selected_file)
@@ -1650,7 +1650,7 @@ fafb_matching_rewrite <- function(selected_file  = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd
 
 #' @rdname hemibrain_add_made_matches
 #' @export
-hemibrain_matching_rewrite <- function(selected_file  = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw",
+hemibrain_matching_rewrite <- function(selected_file  = options()$hemibrainr_matching_gsheet,
                                   ...){
   gs = hemibrain_match_sheet(sheet = "hemibrain", selected_file = selected_file)
   all.ids = hemibrain_neuron_bodyids()

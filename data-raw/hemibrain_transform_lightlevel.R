@@ -32,7 +32,7 @@ message("Using ", numCores/8, " cores")
 
 # Get some stuff I have already put on google drive
 # Google drive location:
-hemibrain = team_drive_get("hemibrain")
+hemibrain = team_drive_get(hemibrainr_team_drive())
 drive_hemibrain = drive_find(type = "folder", team_drive = hemibrain)
 light_level= subset(drive_hemibrain,name=="light_level")
 lhns = subset(drive_hemibrain,name=="lhns")

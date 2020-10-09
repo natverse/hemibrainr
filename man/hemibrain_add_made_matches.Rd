@@ -11,7 +11,7 @@
 \usage{
 flywire_matching_rewrite(
   flywire.ids = names(flywire_neurons()),
-  selected_file = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw",
+  selected_file = options()$hemibrainr_matching_gsheet,
   ...
 )
 
@@ -26,28 +26,28 @@ hemibrain_matching_add(
   ids,
   dataset = c("hemibrain", "FAFB", "flywire"),
   User = dataset,
-  selected_file = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw",
+  selected_file = options()$hemibrainr_matching_gsheet,
   ...
 )
 
 hemibrain_matching_transfers(
-  selected_file = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw"
+  selected_file = options()$hemibrainr_matching_gsheet
 )
 
 fafb_matching_rewrite(
-  selected_file = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw",
+  selected_file = options()$hemibrainr_matching_gsheet,
   ...
 )
 
 hemibrain_matching_rewrite(
-  selected_file = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw",
+  selected_file = options()$hemibrainr_matching_gsheet,
   ...
 )
 }
 \arguments{
 \item{flywire.ids}{flywire IDs to add to google sheet if not already present.}
 
-\item{selected_file}{Specifies which Google Sheet to use. Unless you are using a personal Google Sheet, this should be \code{"1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw"}.}
+\item{selected_file}{Specifies which Google Sheet to use. Unless you are using a personal Google Sheet, this should be \code{options()$hemibrainr_matching_gsheet}.}
 
 \item{...}{arguments passed to methods for, for example, \code{neuprintr::neuprint_get_meta} and \code{elmr::fafb_get_meta}.}
 

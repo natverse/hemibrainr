@@ -31,7 +31,7 @@ flywire_nblast_update(
 
 flywire_request(
   request,
-  selected_file = "1rzG1MuZYacM-vbW7100aK8HeA-BY6dWAVXQ7TB6E2cQ",
+  selected_file = options()$flywire_flagged_gsheet,
   sheet = "flywire",
   ...
 )

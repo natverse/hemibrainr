@@ -3,7 +3,7 @@
 #' @rdname hemibrain_add_made_matches
 #' @export
 flywire_matching_rewrite <- function(flywire.ids = names(flywire_neurons()),
-                                     selected_file  = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw",
+                                     selected_file  = options()$hemibrainr_matching_gsheet,
                                      ...){
   # Get the FAFB matching google sheet
   gs = hemibrain_match_sheet(sheet = "FAFB", selected_file = selected_file)
@@ -91,7 +91,7 @@ flywire_matching_rewrite <- function(flywire.ids = names(flywire_neurons()),
 #' @export
 LR_matching <- function(ids = NULL,
                         mirror.nblast = NULL,
-                        selected_file = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw",
+                        selected_file = options()$hemibrainr_matching_gsheet,
                         batch_size = 50,
                         db = flywire_neurons(),
                         query = flywire_neurons(mirror=TRUE),

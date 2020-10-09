@@ -45,10 +45,7 @@ registerDoParallel(numCores)  # use multicore, set to the number of our cores
 message("Cores recruited: ", foreach::getDoParWorkers())
 
 # Neuron positions flagged by the community as of interest
-master = hemibrainr:::flywire_flagged(selected_sheets = c("1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw",
-                                                          "1rzG1MuZYacM-vbW7100aK8HeA-BY6dWAVXQ7TB6E2cQ",
-                                                          "1spGSuhUX6Hhn-8HH0U_ArIWUuPpMBFNjIjeSSh_MFVY"),
-                                      numCores=numCores)
+master = hemibrainr:::flywire_ids_update(numCores=numCores)
 1
 ids = unique(master$flywire.id)
 
@@ -80,7 +77,7 @@ save(fw.neurons, file = paste0("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/
 
 # Save flywire skeletons
 hemibrainr:::googledrive_upload_neuronlistfh(fw.neurons,
-                                team_drive = "hemibrain",
+                                team_drive = hemibrainr_team_drive(),
                                 file_name = "flywire_neurons_FlyWire.rds",
                                 folder = "flywire_neurons",
                                 subfolder = "FlyWire",

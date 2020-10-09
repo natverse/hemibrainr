@@ -19,7 +19,7 @@ message("packages loaded")
 library(googledrive)
 
 # Google drive location:
-hemibrain = team_drive_get("hemibrain")
+hemibrain = team_drive_get(hemibrainr_team_drive())
 1
 drive_hemibrain = drive_find(type = "folder", team_drive = hemibrain)
 hemibrain_neurons= subset(drive_hemibrain,name=="hemibrain_neurons")

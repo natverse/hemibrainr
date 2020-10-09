@@ -2,9 +2,15 @@
 % Please edit documentation in R/hemibrain_googledrive.R
 \name{hemibrainr_set_drive}
 \alias{hemibrainr_set_drive}
+\alias{hemibrainr_team_drive}
 \title{Set data source for precomputed information}
 \usage{
-hemibrainr_set_drive(Gdrive = "hemibrain", local = "/data-raw/hemibrain_data/")
+hemibrainr_set_drive(
+  Gdrive = "hemibrain",
+  local = "/data-raw/hemibrainr_data/"
+)
+
+hemibrainr_team_drive()
 }
 \arguments{
 \item{Gdrive}{path to filestream mounted google drive. Can just be the name of a team
@@ -32,7 +38,7 @@ One can read precomputed data available on the hemibrain Google Team
 # You could also set up your own drive with saved data.
 hemibrainr_set_drive("hemibrainr")
 
-#  All neuprint IDs for neurons that have a split precomputed
+# All neuprint IDs for neurons that have a split precomputed
 ids = hemibrain_neuron_bodyids()
 
 # Connectivity edgelist, broken down by axon/dendrite

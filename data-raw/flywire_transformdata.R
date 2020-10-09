@@ -85,7 +85,7 @@ fw.neurons.skels = fw.neurons.skels[good]
 # Mirror neurons
 fw.neurons.fafb.m = mirror_fafb(fw.neurons.skels, .parallel = FALSE, OmitFailures = TRUE)
 hemibrainr:::googledrive_upload_neuronlistfh(fw.neurons.fafb.m,
-                                             team_drive = "hemibrain",
+                                             hemibrainr_team_drive(),
                                              file_name = "flywire_neurons_FlyWire_mirrored.rds",
                                              folder = "flywire_neurons",
                                              subfolder = "FlyWire")
@@ -95,7 +95,7 @@ hemibrainr:::googledrive_upload_neuronlistfh(fw.neurons.fafb.m,
 fw.neurons.JRCFIB2018F = hemibrainr:::xform_brain_parallel(fw.neurons.skels, reference = "JRCFIB2018F", sample = "FAFB14", .parallel = FALSE, verbose = TRUE, OmitFailures = TRUE, progress.rjava=TRUE, numCores = numCores)
 save(fw.neurons.JRCFIB2018F, file = paste0("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/flywire/flywire_neurons_JRCFIB2018F.rda"))
 hemibrainr:::googledrive_upload_neuronlistfh(fw.neurons.JRCFIB2018F,
-                                             team_drive = "hemibrain",
+                                             hemibrainr_team_drive(),
                                              file_name = "flywire_neurons_JRCFIB2018F.rds",
                                              folder = "flywire_neurons",
                                              subfolder = "JRCFIB2018F")
@@ -104,7 +104,7 @@ hemibrainr:::googledrive_upload_neuronlistfh(fw.neurons.JRCFIB2018F,
 fw.neurons.JRCFIB2018F.m = hemibrainr:::xform_brain_parallel(fw.neurons.fafb.m, reference = "JRCFIB2018F", sample = "FAFB14", .parallel = FALSE, verbose = TRUE, OmitFailures = TRUE, progress.rjava=TRUE, numCores = numCores)
 save(fw.neurons.JRCFIB2018F.m, file = paste0("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/flywire/flywire_neurons_JRCFIB2018F_mirrored.rda"))
 hemibrainr:::googledrive_upload_neuronlistfh(fw.neurons.JRCFIB2018F.m,
-                                             team_drive = "hemibrain",
+                                             hemibrainr_team_drive(),
                                              file_name = "flywire_neurons_JRCFIB2018F_mirrored.rds",
                                              folder = "flywire_neurons",
                                              subfolder = "JRCFIB2018F")
@@ -112,13 +112,13 @@ hemibrainr:::googledrive_upload_neuronlistfh(fw.neurons.JRCFIB2018F.m,
 # Transform into JFRC2 space
 fw.neurons.JFRC2 = xform_brain(fw.neurons.skels, reference = "JFRC2", sample = "FAFB14", .parallel = FALSE, verbose = TRUE, OmitFailures = TRUE)
 hemibrainr:::googledrive_upload_neuronlistfh(fw.neurons.JFRC2,
-                                team_drive = "hemibrain",
+                                hemibrainr_team_drive(),
                                 file_name = "flywire_neurons_JFRC2.rds",
                                 folder = "flywire_neurons",
                                 subfolder = "JFRC2")
 fw.neurons.JFRC2.m = nat.templatebrains::mirror_brain(fw.neurons.JFRC2, brain = JFRC2, .parallel = FALSE, OmitFailures = TRUE)
 hemibrainr:::googledrive_upload_neuronlistfh(fw.neurons.JFRC2.m,
-                                team_drive = "hemibrain",
+                                hemibrainr_team_drive(),
                                 file_name = "flywire_neurons_JFRC2_mirrored.rds",
                                 folder = "flywire_neurons",
                                 subfolder = "JFRC2")
@@ -126,14 +126,14 @@ hemibrainr:::googledrive_upload_neuronlistfh(fw.neurons.JFRC2.m,
 # Transform into JRC2018F
 fw.neurons.JRC2018F = hemibrainr:::xform_brain_parallel(fw.neurons.skels, reference = "JRC2018F", sample = "FAFB14", .parallel = FALSE, verbose = TRUE, OmitFailures = TRUE, progress.rjava=TRUE, numCores = numCores)
 hemibrainr:::googledrive_upload_neuronlistfh(fw.neurons.JRC2018F,
-                                             team_drive = "hemibrain",
+                                             hemibrainr_team_drive(),
                                              file_name = "flywire_neurons_JRC2018F.rds",
                                              folder = "flywire_neurons",
                                              subfolder = "JRC2018F")
 # fw.neurons.JRC2018F.m = mirror_brain(fw.neurons.JRC2018F, brain = JRC2018F, .parallel = FALSE, OmitFailures = TRUE)
 fw.neurons.JRC2018F.m = xform_brain(fw.neurons.JFRC2.m, reference = "JRC2018F", sample = "JFRC2", .parallel = FALSE, verbose = TRUE, OmitFailures = TRUE, progress.rjava=TRUE)
 hemibrainr:::googledrive_upload_neuronlistfh(fw.neurons.JRC2018F.m,
-                                             team_drive = "hemibrain",
+                                             hemibrainr_team_drive(),
                                              file_name = "flywire_neurons_JRC2018F_mirrored.rds",
                                              folder = "flywire_neurons",
                                              subfolder = "JRC2018F")
@@ -141,13 +141,13 @@ hemibrainr:::googledrive_upload_neuronlistfh(fw.neurons.JRC2018F.m,
 # Transform into FCWB space
 fw.neurons.FCWB = xform_brain(fw.neurons.skels, reference = "FCWB", sample = "FAFB14", .parallel = FALSE, verbose = TRUE, OmitFailures = TRUE)
 hemibrainr:::googledrive_upload_neuronlistfh(fw.neurons.FCWB,
-                                             team_drive = "hemibrain",
+                                             hemibrainr_team_drive(),
                                              file_name = "flywire_neurons_FCWB.rds",
                                              folder = "flywire_neurons",
                                              subfolder = "FCWB")
 fw.neurons.FCWB.m =  nat.templatebrains::mirror_brain(fw.neurons.FCWB, brain = FCWB, .parallel = FALSE, OmitFailures = TRUE)
 hemibrainr:::googledrive_upload_neuronlistfh(fw.neurons.FCWB.m,
-                                             team_drive = "hemibrain",
+                                             hemibrainr_team_drive(),
                                              file_name = "flywire_neurons_FCWB_mirrored.rds",
                                              folder = "flywire_neurons",
                                              subfolder = "FCWB")

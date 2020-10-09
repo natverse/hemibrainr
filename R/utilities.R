@@ -607,10 +607,8 @@ googledrive_clean_neuronlistfh <- function(team_drive = "hemibrain"){
 # Obtains flywire IDs from flywire posirions on google sheets
 # The sheets must either have columns fw.x, fw.y, fw.z
 # or one column, flywire.xyz with number separated by commas, in the form: x,y,z
-flywire_flagged <- function(selected_sheets = c("1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw",
-                                                "1rzG1MuZYacM-vbW7100aK8HeA-BY6dWAVXQ7TB6E2cQ",
-                                                "1spGSuhUX6Hhn-8HH0U_ArIWUuPpMBFNjIjeSSh_MFVY"),
-chosen.columns = c("fw.x","fw.y",'fw.z', 'flywire.xyz',
+flywire_ids_update <- function(selected_sheets = options()$hemibrainr_gsheets,
+                  chosen.columns = c("fw.x","fw.y",'fw.z', 'flywire.xyz',
                    "flywire.id", "skid",
                    "FAFB.xyz", "side",
                    "ItoLee_Hemilineage", "Hartenstein_Hemilineage",

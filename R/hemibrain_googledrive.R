@@ -26,7 +26,7 @@
 #' # You could also set up your own drive with saved data.
 #' hemibrainr_set_drive("hemibrainr")
 #'
-#' #  All neuprint IDs for neurons that have a split precomputed
+#' # All neuprint IDs for neurons that have a split precomputed
 #' ids = hemibrain_neuron_bodyids()
 #'
 #' # Connectivity edgelist, broken down by axon/dendrite
@@ -37,7 +37,7 @@
 #' @name hemibrainr_set_drive
 #' @export
 hemibrainr_set_drive <- function(Gdrive = "hemibrain",
-                                 local = "/data-raw/hemibrain_data/"){
+                                 local = "/data-raw/hemibrainr_data/"){
   if(!grepl("/",Gdrive)){
     Gdrive = sprintf("/Volumes/GoogleDrive/Shared\ drives/%s/", Gdrive)
   }
@@ -50,6 +50,12 @@ hemibrainr_set_drive <- function(Gdrive = "hemibrain",
   }else{
     message("Google not found")
   }
+}
+
+#' @name hemibrainr_set_drive
+#' @export
+hemibrainr_team_drive <- function(){
+  basename(options()$Gdrive_hemibrain_data)
 }
 
 #' Read precomputed information from the hemibrain Google Drive
@@ -137,14 +143,14 @@ hemibrain_nblast <- function(nblast = c("hemibrain",
                                         "hemibrain-fafb14",
                                         "hemibrain-flycircuit",
                                         "flywire-mirror",
-                                        "primary.neurites",
-                                        "primary.dendrites",
-                                        "axons",
-                                        "dendrites",
-                                        "spines",
-                                        "tracts",
-                                        "arbour",
-                                        "simplified"),
+                                        "hemibrain-primary.neurites",
+                                        "hemibrain-primary.dendrites",
+                                        "hemibrain-axons",
+                                        "hemibrain-dendrites",
+                                        "hemibrain-spines",
+                                        "hemibrain-tracts",
+                                        "hemibrain-arbour",
+                                        "hemibrain-simplified"),
                              local = FALSE){
   nblast = match.arg(nblast)
   savedir = good_savedir(local = local)
@@ -159,14 +165,14 @@ hemibrain_nblast <- function(nblast = c("hemibrain",
   }
   file = switch(nblast,
     hemibrain = "hemibrain.aba.mean.compress.rda",
-    spines = "hemibrain.spine.aba.mean.compressed.rda",
-    primary.neurites = "hemibrain.pnt.aba.mean.compressed.rda",
-    primary.dendrites = "hemibrain.pd.aba.mean.compressed.rda",
-    axons = "hemibrain.axon.aba.mean.compressed.rda",
-    dendrites = "hemibrain.dendrite.aba.mean.compressed.rda",
-    arbour = "hemibrain.arbour.aba.mean.compressed.rda",
-    tracts = "hemibrain.tract.aba.mean.compressed.rda",
-    simplified = "hemibrain.simp.aba.mean.compressed.rda",
+    `hemibrain-spines` = "hemibrain.spine.aba.mean.compressed.rda",
+    `hemibrain-primary.neurites` = "hemibrain.pnt.aba.mean.compressed.rda",
+    `hemibrain-primary.dendrites` = "hemibrain.pd.aba.mean.compressed.rda",
+    `hemibrain-axons` = "hemibrain.axon.aba.mean.compressed.rda",
+    `hemibrain-dendrites` = "hemibrain.dendrite.aba.mean.compressed.rda",
+    `hemibrain-arbour` = "hemibrain.arbour.aba.mean.compressed.rda",
+    `hemibrain-tracts` = "hemibrain.tract.aba.mean.compressed.rda",
+    `hemibrain-simplified` = "hemibrain.simp.aba.mean.compressed.rda",
     `hemibrain-flywire` = "hemibrain.flywire.mean.compressed.rda",
     `hemibrain-flycircuit` = "hemibrain.flycircuit.mean.compressed.rda",
     `hemibrain-fafb14` = "hemibrain.fafb14.mean.compressed.rda",

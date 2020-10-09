@@ -128,7 +128,7 @@ flywire_neurons_update <- function(x,
 
   # Save
   googledrive_upload_neuronlistfh(z,
-                                               team_drive = "hemibrain",
+                                               team_drive = hemibrainr_team_drive(),
                                                file_name = sprintf("flywire_neurons_%s%s.rds", brain, flip),
                                                folder = "flywire_neurons",
                                                subfolder = brain)
@@ -274,7 +274,7 @@ flywire_basics <- function(x){
 #' @rdname flywire_neurons
 #' @export
 flywire_request <- function(request,
-                            selected_file = "1rzG1MuZYacM-vbW7100aK8HeA-BY6dWAVXQ7TB6E2cQ",
+                            selected_file = options()$flywire_flagged_gsheet,
                             sheet = "flywire",
                             ...){
   if(!requireNamespace("fafbseg", quietly = TRUE)) {

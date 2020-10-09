@@ -22,7 +22,7 @@ hemibrain_olfactory_layers= read.csv("data-raw/annotations/hemibrain_olfactory_l
 usethis::use_data(hemibrain_olfactory_layers, overwrite = TRUE)
 
 ### Access Team Drive
-hemibrain = googledrive::team_drive_get("hemibrain")
+hemibrain = googledrive::team_drive_get(hemibrainr_team_drive())
 drive_hemibrain = googledrive::drive_find(type = "folder", team_drive = hemibrain)
 hemibrain_drive_csvs = drive_find(type = "csv", team_drive = hemibrain)
 hemibrain_drive_data = subset(hemibrain_drive_csvs,grepl("splitpoints|metrics",name))

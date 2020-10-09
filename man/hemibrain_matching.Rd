@@ -10,7 +10,7 @@
 LR_matching(
   ids = NULL,
   mirror.nblast = NULL,
-  selected_file = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw",
+  selected_file = options()$hemibrainr_matching_gsheet,
   batch_size = 50,
   db = flywire_neurons(),
   query = flywire_neurons(mirror = TRUE),
@@ -20,7 +20,7 @@ LR_matching(
 hemibrain_matching(
   ids = NULL,
   hemibrain.nblast = NULL,
-  selected_file = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw",
+  selected_file = options()$hemibrainr_matching_gsheet,
   batch_size = 10,
   db = hemibrain_neurons(),
   match.type = c("FAFB", "LM"),
@@ -31,7 +31,7 @@ hemibrain_matching(
 lm_matching(
   ids = NULL,
   hemibrain.nblast = NULL,
-  selected_file = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw",
+  selected_file = options()$hemibrainr_matching_gsheet,
   batch_size = 50,
   db = hemibrain_neurons(),
   query = NULL,
@@ -42,7 +42,7 @@ fafb_matching(
   ids = NULL,
   repository = c("FAFB", "flywire"),
   hemibrain.nblast = NULL,
-  selected_file = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw",
+  selected_file = options()$hemibrainr_matching_gsheet,
   batch_size = 50,
   db = hemibrain_neurons(),
   query = NULL,
