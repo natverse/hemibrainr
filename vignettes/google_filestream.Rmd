@@ -1,0 +1,72 @@
+---
+title: "hemibrainr and google filestream"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{flywire}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+> "We’re Building Something, Here, Detective, We’re Building It From Scratch. All The Pieces Matter."
+([Lester, The Wire](https://en.wikipedia.org/wiki/The_Wire))
+
+# Google drive, hemibrainr and R
+
+[Google drive](https://en.wikipedia.org/wiki/Google_Drive) is a data storage and synchonisation system. A Google team drive (shared drive) is a Google drive that is shared by a team of people, you can find them on your 'shared drives' in your Google authenticated account. Sharing and file ownership are managed for the entire team rather than one individual. Google Drive is a key component of [Google Workspace](https://workspace.google.com/pricing.html), Google's monthly subscription offering for businesses and organizations. As part of select Google Workspace plans, Drive offers unlimited storage, advanced file audit reporting, enhanced administration controls, and greater collaboration tools for teams.
+[Google filestream](https://support.google.com/drive/answer/7329379?authuser=2) allows users with access to a Google Workspace to mount their Google Drives like a hard-drive, to their local machines. It is this feature that the package `hemibrain` capitalises upon in order to store large amounts of fly connectomics related data, and enable users to quickly access it.
+
+On the hemibrain [Google team drive](https://support.google.com/a/users/answer/9310156?hl=en) for the [Drosphila Connctomcis Group](https://www.zoo.cam.ac.uk/research/groups/connectomics). If you do not have access to this team drive and would like to use it, to make the most our of `hemibrainr`, please get in contact. You will need top to have access to the drive and have [Google filestream](https://support.google.com/a/answer/7491144?hl=en) mounted. Then you will be able to:
+
+* Read thousands of pre-skeletonised flywire/hemibrain neurons from Google Drive
+* Read flywire/hemibrain NBLASTs and NLBLASTs to hemibrain neurons
+* Read flywire/hemibrain neurons that are pre-transformed into a variety of brainspaces
+* Get processed hemibrain connectivity data, synapse positions
+* Get meta data for all flywire and hemibrain neurons
+* Get information on flywire/FAFB/hemibrain neuron-neuron matches between data sets and hemispheres.
+
+You can also set uo your own Google team drive in which to deposit data. We can help you get started, so get in contact. A starting point for creating thge data are the .R scripts in /data-raw/ of the `hemibrainr` Github repository. You will need the file structure from `hemibrainr:::hemibrainr_gdrive_structure`.
+
+## Get your drive location
+
+Let us have a look at the default `hemibrainr` settings, letting it to know where to find google drive data:
+
+```{r see.paths, eval = FALSE}
+# Load package
+library(hemibrainr)
+
+# This is where hemibrainr expects to find data, if not on google drive 
+# or when you use the argument local = TRUE
+options()$hemibrain_data
+
+# Else, it wants to see it on the mounted team drive, here
+options()$Gdrive_hemibrain_data
+
+# Get hemibrain skeletons
+db <- hemibrain_neurons(local=FALSE) 
+## Will not work without google filestream
+
+# You can also specify certain google sheets
+## Used for neuron-neuron matching
+options()$hemibrainr_matching_gsheet
+```
+
+## Set your drive location
+
+If you need to set `hemibrainr` to look at a new drive, use:
+
+```{r new.drive, eval = FALSE}
+# Set a new google drive, can be the team drive name or a path to the correct drive
+hemibrainr_set_drive("hemibrainr")
+
+# Now just get the name of your default team drive.
+## This will be used to locate your team drive using the R package googledrive
+hemibrainr_team_drive()
+```
+
