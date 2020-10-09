@@ -2,6 +2,56 @@
 ################################ Access Data on GoogleDrive ##################################
 ##############################################################################################
 
+#' Set data source for precomputed information
+#'
+#' @description One can read precomputed data available on the hemibrain Google Team
+#'   Drive, and other supported team drives. This includes all synapses, neuron-neuron connections and an
+#'   edgelist for all hemibrain neurons, broken down by axon and dendrite
+#'   assignments. NBLAST matrices for all neurons against all neurons in the
+#'   data set are also available, including ones broken down by neuron
+#'   compartment.
+#'
+#' @param Gdrive path to filestream mounted google drive. Can just be the name of a team
+#' drive to be found in the standard location: \code{"/Volumes/GoogleDrive/Shared\ drives/"}.
+#' @param local path to local folder in which data is / is to be stored.
+#'
+#' @return Sets options \code{Gdrive_hemibrain_data} and \code{hemibrain_data}
+#'
+#' @examples
+#' \donttest{
+#' \dontrun{
+#'
+#' # The default drive is named 'hemibrain'
+#' # The Wilson lab at HMS uses a drive called 'hemibrainr'.
+#' # You could also set up your own drive with saved data.
+#' hemibrainr_set_drive("hemibrainr")
+#'
+#' #  All neuprint IDs for neurons that have a split precomputed
+#' ids = hemibrain_neuron_bodyids()
+#'
+#' # Connectivity edgelist, broken down by axon/dendrite
+#' elist = hemibrain_elist()
+#'
+#' }}
+#' @seealso \code{\link{hemibrain_googledrive}}
+#' @name hemibrainr_set_drive
+#' @export
+hemibrainr_set_drive <- function(Gdrive = "hemibrain",
+                                 local = "/data-raw/hemibrain_data/"){
+  if(!grepl("/",Gdrive)){
+    Gdrive = sprintf("/Volumes/GoogleDrive/Shared\ drives/%s/", Gdrive)
+  }
+  options(hemibrain_data = paste0(getwd(), local))
+  message("Local data path set to: ", options()$hemibrain_data)
+  options(Gdrive_hemibrain_data = Gdrive)
+  message("Google drive path set to: ", options()$Gdrive_hemibrain_data)
+  if(file.exists(options()$Gdrive_hemibrain_data)){
+    message("Google drive found")
+  }else{
+    message("Google not found")
+  }
+}
+
 #' Read precomputed information from the hemibrain Google Drive
 #'
 #' @description Read precomputed data available on the hemibrain Google Team
