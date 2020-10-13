@@ -540,11 +540,13 @@ xform_brain_parallel <- function(x,
                                  ...){
   batch = 1
   batches = split(x, round(seq(from = 1, to = numCores, length.out = length(x))))
-  foreach.nl <- foreach::foreach (batch = 1:numCores) %dopar% {
+  foreach.nl <- foreach::foreach (batch = 1:length(batches)) %dopar% {
     y = batches[[batch]]
     j = java_xform_brain(y,
-                    reference =reference, sample = sample,
-                    .parallel = FALSE,...)
+                    reference =reference,
+                    sample = sample,
+                    .parallel = FALSE,
+                    ...)
   }
   neurons = do.call(c, foreach.nl)
   neurons
@@ -646,7 +648,7 @@ flywire_ids_update <- function(selected_sheets = options()$hemibrainr_gsheets,
         # Get flywire IDs from these positions
         # batch = 1
         # batches = split(1:nrow(gs.t), round(seq(from = 1, to = numCores, length.out = nrow(gs.t))))
-        # foreach.ids <- foreach::foreach (batch = 1:numCores) %dopar% {
+        # foreach.ids <- foreach::foreach (batch = 1:length(batches)) %dopar% {
         #   pos = gs.t[batches[[batch]],]
         #   j <- tryCatch({i = fafbseg::flywire_xyz2id(pos[,c("fw.x","fw.y",'fw.z')], rawcoords = TRUE)
         #   i[is.na(i)|is.nan(i)] = 0
@@ -720,7 +722,8 @@ java_xform_brain <- function(x,
     conn
   })
   conns = do.call(rbind, syns)
-  if(nrow(conns)){
+  xyz.good = tryCatch(nat::xyzmatrix(conns), error = function(e) NULL)
+  if(!is.null(xyz.good)){
     conns.t = xform_brain(nat::xyzmatrix(conns), reference = reference, sample = sample, method = method, progress.rjava=progress.rjava, ...)
     nat::xyzmatrix(conns) = conns.t
     x = add_field_seq(x,names(x),field="id")
