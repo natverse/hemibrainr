@@ -31,7 +31,7 @@ message("Using ", numCores/2, " cores")
 ## "/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/hemibrain_all_neurons_flow_polypre_centrifugal_synapses.rda"
 load(paste0("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/hemibrain_all_neurons_flow_",identifier,".rda"))
 message("Checked ", length(all.neurons.flow), " neurons")
-all.neurons.flow.microns = hemibrainr::scale_neurons(all.neurons.flow[1:10])
+all.neurons.flow.microns = hemibrainr::scale_neurons(all.neurons.flow)
 good = sapply(all.neurons.flow.microns,nat::is.neuron)
 all.neurons.flow.microns = all.neurons.flow.microns[good]
 
