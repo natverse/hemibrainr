@@ -251,13 +251,13 @@ flywire_basics <- function(x){
   simp = nat::nlapply(x,nat::simplify_neuron,n=1)
   branchpoints = sapply(simp, function(y) nat::xyzmatrix(y)[ifelse(length(nat::branchpoints(y)),nat::branchpoints(y),max(nat::endpoints(y))),])
   branchpoints = t(branchpoints)
-  flywire.xyz = apply(branchpoints, 1, paste, collapse = ",")
+  flywire.xyz = apply(branchpoints, 1, paste, collapse = ";")
 
 
   # Get FAFBv14 nm coordinates
   # roots.flywire.raw = scale(roots, scale = 1/c(4, 4, 40), center = FALSE)
   #FAFB.xyz = nat.templatebrains::xform_brain(roots.flywire.raw, sample = "FlyWire", reference = "FAFB14")
-  #FAFB.xyz = apply(FAFB.xyz, 1, paste, collapse = ",")
+  #FAFB.xyz = apply(FAFB.xyz, 1, paste, collapse = ";")
   FAFB.xyz = ""
 
   # Add
@@ -301,7 +301,7 @@ flywire_request <- function(request,
   }
   if(nat::is.neuronlist(request)){
     fb = flywire_basics(request)
-    xyz = do.call(rbind, lapply(fb[,"flywire.xyz"], function(y) strsplit(y,",| ")))
+    xyz = do.call(rbind, lapply(fb[,"flywire.xyz"], function(y) strsplit(y,",| |;|:")))
   }else{
     xyz = nat::xyzmatrix(request)
   }
