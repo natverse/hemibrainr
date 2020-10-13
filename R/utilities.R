@@ -4,7 +4,7 @@
 
 # google upload neuronlistfh
 googledrive_upload_neuronlistfh <- function(x,
-                                            team_drive = "hemibrain",
+                                            team_drive = hemibrainr_gdrive(),
                                             file_name = "neurons.rds",
                                             folder = "flywire_neurons",
                                             subfolder = NULL,
@@ -141,7 +141,7 @@ google_drive_place <- function(media,
 
 # upload nblast matrix
 googledrive_upload_nblast<- function(x,
-                                     team_drive = "hemibrain",
+                                     team_drive = hemibrainr_gdrive(),
                                      folder = "hemibrain_nblast",
                                      subfolder = NULL,
                                      file = NULL,
@@ -561,7 +561,7 @@ strip_meshes<-function(x){
 }
 
 # Remove unused filehash files
-googledrive_clean_neuronlistfh <- function(team_drive = "hemibrain"){
+googledrive_clean_neuronlistfh <- function(team_drive = hemibrainr_gdrive()){
   # Save .rds files locally
   temp = tempfile()
   temp.data = paste0(temp,"/RDS/")
@@ -613,14 +613,16 @@ flywire_ids_update <- function(selected_sheets = options()$hemibrainr_gsheets,
                    "FAFB.xyz", "side",
                    "ItoLee_Hemilineage", "Hartenstein_Hemilineage",
                    "hemibrain_match"),
-numCores = 1){
+                  numCores = 1){
   # Read selected sheets and extract positions for flywire neurons
   # One xyz position is enough to identify a neuron
   # We do this because flywire.ids change all of the time
   gs = data.frame()
   for(selected_sheet in selected_sheets){
     ## Read google sheets and extract glywire neuron positions
-    tabs = googlesheets4::sheet_names(selected_sheet)
+    tabs = gsheet_manipulation(FUN = googlesheets4::sheet_names,
+                               ss = selected_sheet,
+                               return = TRUE)
     for(tab in tabs){
       gs.t = gsheet_manipulation(FUN = googlesheets4::read_sheet,
                                               ss = selected_sheet,
@@ -642,19 +644,22 @@ numCores = 1){
         }
         gs.t = rbind(gs2,gs1)
         # Get flywire IDs from these positions
-        batch = 1
-        batches = split(1:nrow(gs.t), round(seq(from = 1, to = numCores, length.out = nrow(gs.t))))
-        foreach.ids <- foreach::foreach (batch = 1:numCores) %dopar% {
-          pos = gs.t[batches[[batch]],]
-          j <- tryCatch({i = fafbseg::flywire_xyz2id(pos[,c("fw.x","fw.y",'fw.z')], rawcoords = TRUE)
-          names(i) = pos$flywire.xyz
-          if(sum(i==0)>0){
-            i[i==0] =  fafbseg::flywire_xyz2id(pos[i==0,], rawcoords = FALSE)
-          }
-          i}, error = function(e) NULL)
-        }
+        # batch = 1
+        # batches = split(1:nrow(gs.t), round(seq(from = 1, to = numCores, length.out = nrow(gs.t))))
+        # foreach.ids <- foreach::foreach (batch = 1:numCores) %dopar% {
+        #   pos = gs.t[batches[[batch]],]
+        #   j <- tryCatch({i = fafbseg::flywire_xyz2id(pos[,c("fw.x","fw.y",'fw.z')], rawcoords = TRUE)
+        #   i[is.na(i)|is.nan(i)] = 0
+        #   names(i) = pos$flywire.xyz
+        #   # if(sum(i==0)>0){
+        #   #   i[i==0] =  fafbseg::flywire_xyz2id(pos[i==0,c("fw.x","fw.y",'fw.z')], rawcoords = FALSE)
+        #   # }
+        #   i}, error = function(e) NULL)
+        # }
+        foreach.ids = fafbseg::flywire_xyz2id(gs.t[,c("fw.x","fw.y",'fw.z')], rawcoords = TRUE)
+        names(foreach.ids) = gs.t[,"flywire.xyz"]
         fids = unlist(foreach.ids)
-        fids[fids=="0"] = NA
+        fids[is.na(fids)|is.nan(fids)] = "0"
         gs.t[match(names(fids),gs.t$flywire.xyz),"flywire.id"] = fids
         # Update
         rownames(gs.t) = NULL
