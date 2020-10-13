@@ -31,7 +31,7 @@ flywire_matching_rewrite <- function(flywire.ids = names(flywire_neurons()),
     branchpoints.flywire.raw = scale(branchpoints.flywire, scale = c(4, 4, 40), center = FALSE)
     fw.ids = fafbseg::flywire_xyz2id(branchpoints.flywire.raw, rawcoords = TRUE)
     fw.ids[fw.ids=="0"] = NA
-    flywire.xyz = apply(branchpoints.flywire.raw, 1, paste, collapse = ",")
+    flywire.xyz = apply(branchpoints.flywire.raw, 1, paste, collapse = ";")
 
     # Add
     gs[rownames(branchpoints),]$FAFB.xyz = FAFB.xyz
