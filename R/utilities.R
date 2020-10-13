@@ -442,7 +442,7 @@ save_compressed_nblast_mat <- function(x,
   format=match.arg(format)
   colnames(x) = gsub("_m$","",colnames(x)) # factor in mirrored hemibrain neurons
   rownames(x) = gsub("_m$","",rownames(x))
-  x = apply(x, 2, function(i) tapply(x, rownames(x), sum, na.rm = TRUE))
+  x = apply(x, 2, function(i) tapply(i, rownames(x), sum, na.rm = TRUE))
   x = t(apply(t(x), 2, function(i) tapply(i, colnames(x), sum, na.rm = TRUE)))
   x[x<threshold]=threshold
   x=round(x, digits=digits)
@@ -635,7 +635,7 @@ flywire_ids_update <- function(selected_sheets = options()$hemibrainr_gsheets,
         # Separate x,y,z positions
         gs1 = subset(gs.t, is.na(gs.t$flywire.xyz))
         gs2 = subset(gs.t, !is.na(gs.t$flywire.xyz))
-        gs1$flywire.xyz = apply(gs1[,c("fw.x","fw.y",'fw.z')],1,paste,sep=",",collapse=",")
+        gs1$flywire.xyz = apply(gs1[,c("fw.x","fw.y",'fw.z')],1,paste,sep=";",collapse=";")
         if(nrow(gs2)){
           positions.gs = sapply(gs2$flywire.xyz,strsplit,",|/|;")
           ruleofthree = sapply(positions.gs,function(p) length(p)==3)
@@ -686,7 +686,7 @@ flywire_ids_update <- function(selected_sheets = options()$hemibrainr_gsheets,
       }
     }
     if(is.null(gs$flywire.xyz)){
-      gs$flywire.xyz = apply(gs[,c("fw.x","fw.y",'fw.z')],1,paste,sep=",",collapse=",")
+      gs$flywire.xyz = apply(gs[,c("fw.x","fw.y",'fw.z')],1,paste,sep=";",collapse=";")
     }
   }
   # Make this unique, but keep row with most information
@@ -724,7 +724,7 @@ java_xform_brain <- function(x,
   conns = do.call(rbind, syns)
   xyz.good = tryCatch(nat::xyzmatrix(conns), error = function(e) NULL)
   if(!is.null(xyz.good)){
-    conns.t = xform_brain(nat::xyzmatrix(conns), reference = reference, sample = sample, method = method, progress.rjava=progress.rjava, ...)
+    conns.t = nat.templatebrains::xform_brain(nat::xyzmatrix(conns), reference = reference, sample = sample, method = method, progress.rjava=progress.rjava, ...)
     nat::xyzmatrix(conns) = conns.t
     x = add_field_seq(x,names(x),field="id")
     x = nat::nlapply(x, function(n){
@@ -737,5 +737,10 @@ java_xform_brain <- function(x,
   x
 }
 
-
+# hidden
+## Save with given name
+saveit <- function(..., file) {
+  x <- list(...)
+  save(list=names(x), file=file, envir=list2env(x))
+}
 
