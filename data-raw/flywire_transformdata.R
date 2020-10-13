@@ -92,7 +92,7 @@ hemibrainr:::googledrive_upload_neuronlistfh(fw.neurons.fafb.m,
 1
 
 # Make the transforms that rely on nat.jrcbrains first
-fw.neurons.JRCFIB2018F = hemibrainr:::xform_brain_parallel(fw.neurons.skels, reference = "JRCFIB2018F", sample = "FAFB14", .parallel = FALSE, verbose = TRUE, OmitFailures = TRUE, progress.rjava=TRUE, numCores = numCores)
+fw.neurons.JRCFIB2018F = hemibrainr:::java_xform_brain(fw.neurons.skels, reference = "JRCFIB2018F", sample = "FAFB14", .parallel = FALSE, verbose = TRUE, OmitFailures = TRUE, progress.rjava=TRUE)
 save(fw.neurons.JRCFIB2018F, file = paste0("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/flywire/flywire_neurons_JRCFIB2018F.rda"))
 hemibrainr:::googledrive_upload_neuronlistfh(fw.neurons.JRCFIB2018F,
                                              hemibrainr_team_drive(),
@@ -101,7 +101,7 @@ hemibrainr:::googledrive_upload_neuronlistfh(fw.neurons.JRCFIB2018F,
                                              subfolder = "JRCFIB2018F")
 
 # Transform into hemibrain space, mirrored
-fw.neurons.JRCFIB2018F.m = hemibrainr:::xform_brain_parallel(fw.neurons.fafb.m, reference = "JRCFIB2018F", sample = "FAFB14", .parallel = FALSE, verbose = TRUE, OmitFailures = TRUE, progress.rjava=TRUE, numCores = numCores)
+fw.neurons.JRCFIB2018F.m = hemibrainr:::java_xform_brain(fw.neurons.fafb.m, reference = "JRCFIB2018F", sample = "FAFB14", .parallel = FALSE, verbose = TRUE, OmitFailures = TRUE, progress.rjava=TRUE)
 save(fw.neurons.JRCFIB2018F.m, file = paste0("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/flywire/flywire_neurons_JRCFIB2018F_mirrored.rda"))
 hemibrainr:::googledrive_upload_neuronlistfh(fw.neurons.JRCFIB2018F.m,
                                              hemibrainr_team_drive(),
@@ -124,7 +124,7 @@ hemibrainr:::googledrive_upload_neuronlistfh(fw.neurons.JFRC2.m,
                                 subfolder = "JFRC2")
 
 # Transform into JRC2018F
-fw.neurons.JRC2018F = hemibrainr:::xform_brain_parallel(fw.neurons.skels, reference = "JRC2018F", sample = "FAFB14", .parallel = FALSE, verbose = TRUE, OmitFailures = TRUE, progress.rjava=TRUE, numCores = numCores)
+fw.neurons.JRC2018F = hemibrainr:::java_xform_brain(fw.neurons.skels, reference = "JRC2018F", sample = "FAFB14", .parallel = FALSE, verbose = TRUE, OmitFailures = TRUE, progress.rjava=TRUE)
 hemibrainr:::googledrive_upload_neuronlistfh(fw.neurons.JRC2018F,
                                              hemibrainr_team_drive(),
                                              file_name = "flywire_neurons_JRC2018F.rds",
