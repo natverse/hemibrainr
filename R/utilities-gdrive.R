@@ -64,19 +64,20 @@ googledrive_upload_neuronlistfh <- function(x,
         t = basename(t.neuron.fh.data.file)
         if(t%in%sub.data$name){
           save.data = googledrive::as_id(subset(sub.data, sub.data$name==t)[1,]$id)
+          # If exists, do not replace
         }else{
           save.data =  t.folder.data
-        }
-        upload = tryCatch(google_drive_place(media = t.neuron.fh.data.file,
-                                        path = save.data,
-                                        verbose = FALSE,
-                                        check = FALSE),
-                     error = function(e){
-                       message(e)
-                       NA
-                     } )
-        if(is.na(upload)){
-          error.files = c(error.files,t.neuron.fh.data.file)
+          upload = tryCatch(google_drive_place(media = t.neuron.fh.data.file,
+                                               path = save.data,
+                                               verbose = FALSE,
+                                               check = FALSE),
+                            error = function(e){
+                              message(e)
+                              NA
+                            } )
+          if(is.na(upload)){
+            error.files = c(error.files,t.neuron.fh.data.file)
+          }
         }
       }
     }
@@ -103,6 +104,7 @@ googledrive_upload_neuronlistfh <- function(x,
         if(is.na(upload)){
           error.files = c(error.files,t.neuron.fh.data.file)
         }
+      }
     }
   }
   if(length(error.files)){
