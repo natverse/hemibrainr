@@ -69,7 +69,8 @@ googledrive_upload_neuronlistfh <- function(x,
         }
         e = tryCatch(google_drive_place(media = t.neuron.fh.data.file,
                                         path = save.data,
-                                        verbose = FALSE),
+                                        verbose = FALSE,
+                                        check = FALSE),
                      error = function(e){
                        message(e)
                        NULL
@@ -94,7 +95,8 @@ googledrive_upload_neuronlistfh <- function(x,
       }
       e = tryCatch(google_drive_place(media = t.neuron.fh.data.file,
                                       path = save.data,
-                                      verbose = FALSE),
+                                      verbose = FALSE,
+                                      check = FALSE),
                    error = function(e){
                      message(e)
                      NULL
@@ -125,7 +127,8 @@ googledrive_upload_neuronlistfh <- function(x,
 
   # Clean
   if(clean){
-    googledrive_clean_neuronlistfh(local.path = local.path,
+    message("Deleting unused file hash files for neurons ...")
+    hemibrainr:::googledrive_clean_neuronlistfh(local.path = local.path,
                                    team_drive = hemibrainr_team_drive(),
                                    folder = folder,
                                    subfolder = subfolder,
@@ -137,17 +140,20 @@ googledrive_upload_neuronlistfh <- function(x,
 google_drive_place <- function(media,
                                path,
                                verbose = TRUE,
+                               check = TRUE,
                                ...){
   # If path is folder, check contents to duplicates
-  f = tryCatch(googledrive::is_folder(path), error = function(e) FALSE)
-  if(f){
-    ls = googledrive::drive_ls(path, ...)
-    p = subset(ls, ls$name == basename(media))$id
-    if(length(p)){
-      path = googledrive::as_id(p[1])
+  if(check){
+    f = tryCatch(googledrive::is_folder(path), error = function(e) FALSE)
+    if(f){
+      ls = googledrive::drive_ls(path, ...)
+      p = subset(ls, ls$name == basename(media))$id
+      if(length(p)){
+        path = googledrive::as_id(p[1])
+      }
+    }else{
+      path = googledrive::as_id(path)
     }
-  }else{
-    path = googledrive::as_id(path)
   }
 
   if("drive_id"%in%class(path)){
@@ -176,9 +182,16 @@ googledrive_clean_neuronlistfh <- function(team_drive = hemibrainr_team_drive(),
          which matches the given local path, or set loca.path to NULL
          and attemot to clean the whole drive/folder on drive')
   }
+  if(!is.null(local.path)&is.null(folder)&is.null(subfolder)){
+    stop("A folder (e.g. flywire_neurons) and a
+         subfolder (for brainspace, e.g. FCWB) must be given
+         that match your local.path: ", local.path)
+  }
 
   # Save .rds files locally, and find excess filehash
-  find_excess <- function(sub, local.path = NULL){
+  find_excess <- function(sub,
+                          local.path = NULL,
+                          team_drive = NULL){
     temp = tempfile()
     temp.data = paste0(temp,"/RDS/")
     dir.create(temp.data, recursive = TRUE)
@@ -193,7 +206,10 @@ googledrive_clean_neuronlistfh <- function(team_drive = hemibrainr_team_drive(),
         for(file in fsub$id){
           fnam = subset(fsub, fsub$id==file)$name
           path = paste0(temp.data,fnam)
-          googledrive::drive_download(file = googledrive::as_id(file), path = path, overwrite = TRUE, verbose = TRUE)
+          googledrive::drive_download(file = googledrive::as_id(file),
+                                      path = path,
+                                      overwrite = TRUE,
+                                      verbose = FALSE)
           a = readRDS(path)
           b = attributes(a)
           keys = b$keyfilemap
@@ -208,37 +224,45 @@ googledrive_clean_neuronlistfh <- function(team_drive = hemibrainr_team_drive(),
           all.keys = c(all.keys,keys)
         }
       }
-      data = googledrive::drive_ls(path = googledrive::as_id(fdata$id), team_drive = td)
+      data = googledrive::drive_ls(path = googledrive::as_id(fdata$id), team_drive = team_drive)
+      data = data[!grepl("\\.",data$name),]
       delete = data[!data$name%in%all.keys,]
       remove = rbind(remove, delete)
     }
-    remove = remove[unique(remove$id),]
+    remove = remove[!duplicated(remove$id),]
     remove
   }
 
   # Get drive
+  td = googledrive::team_drive_get(team_drive)
+  drive_td = googledrive::drive_find(type = "folder", team_drive = td)
   if(!is.null(folder)){
-    td = googledrive::team_drive_get(team_drive)
-    drive_td = googledrive::drive_find(type = "folder", team_drive = td)
     gfolder= subset(drive_td,drive_td$name==folder)[1,]
     if(!is.null(subfolder)){
       sub = googledrive::drive_ls(path = gfolder, type = "folder", team_drive = td)
       gfolder = subset(sub, sub$name ==subfolder )[1,]
     }
     drive_td = googledrive::drive_ls(path = gfolder, team_drive = td)
+  }
+
+  # Find files to delete
+  message("Searching for files we might want to remove ...")
+  if(is.null(local.path)&is.null(subfolder)){
     # Iterate to find .rds files
-    remove = c()
+    remove = googledrive::as_dribble()
     for(folder in drive_td$id){
       sub = googledrive::drive_ls(path = googledrive::as_id(folder), type = "folder", team_drive = td)
       if("data" %in% sub$name){
         sub = googledrive::drive_ls(path = googledrive::as_id(folder), team_drive = td)
-        remove = c(remove, find_excess(sub))
+        remove = rbind(remove, find_excess(sub,
+                                           local.path = NULL,
+                                           team_drive = td))
       }
     }
   }else{
-    td = googledrive::team_drive_get(team_drive)
-    drive_td = googledrive::drive_find(type = "folder", team_drive = td)
-    remove = find_excess(sub)
+    remove = find_excess(drive_td,
+                         ocal.path = local.path,
+                         team_drive = td)
   }
 
   # rm
