@@ -425,6 +425,7 @@ flywire_ids_update <- function(selected_sheets = options()$hemibrainr_gsheets,
         gs.t[match(names(fids),gs.t$flywire.xyz),"flywire.id"] = fids
         # Update
         rownames(gs.t) = NULL
+        gs.t$flywire.xyz = apply(gs.t[,c("fw.x","fw.y",'fw.z')],1,paste,sep=";",collapse=";")
         googlesheets4::write_sheet(gs.t[0,],
                                    ss = selected_sheet,
                                    sheet = tab)
