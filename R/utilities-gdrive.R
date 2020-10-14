@@ -196,7 +196,6 @@ googledrive_clean_neuronlistfh <- function(team_drive = hemibrainr_team_drive(),
     on.exit(unlink(temp, recursive=TRUE))
     remove = googledrive::as_dribble()
     if(sum(grepl("rds$",sub$name))>1){
-      message("Cleaning ", subset(drive_td,drive_td$id==folder)$name)
       fsub = subset(sub, grepl("rds$",sub$name))
       fdata = subset(sub, grepl("data$",sub$name))[1,]
       all.keys = c()
@@ -226,6 +225,7 @@ googledrive_clean_neuronlistfh <- function(team_drive = hemibrainr_team_drive(),
       data = data[!grepl("\\.",data$name),]
       delete = data[!data$name%in%all.keys,]
       remove = rbind(remove, delete)
+      message("Cleaning out ", nrow(remove), " files")
     }
     remove = remove[!duplicated(remove$id),]
     remove
@@ -267,7 +267,7 @@ googledrive_clean_neuronlistfh <- function(team_drive = hemibrainr_team_drive(),
   if(nrow(remove)){
     pb <- progress::progress_bar$new(
         format = "  deleting [:bar] :current/:total eta: :eta",
-        total = length(rid), clear = FALSE, show_after = 1)
+        total = length(remove$id), clear = FALSE, show_after = 1)
     for(r in remove$id){
         pb$tick()
         e = tryCatch(googledrive::drive_rm(googledrive::as_id(r), verbose = FALSE),
