@@ -58,7 +58,7 @@ googledrive_upload_neuronlistfh <- function(x,
   if(numCores>1){
     batch = 1
     batches = split(t.list.master, round(seq(from = 1, to = numCores, length.out = length(t.list.master))))
-    foreach.skeletons <- foreach::foreach (batch = 1:numCores) %dopar% {
+    foreach.upload <- foreach::foreach (batch = 1:length(batches)) %dopar% {
       t.list = batches[[batch]]
       for(t.neuron.fh.data.file in t.list){
         t = basename(t.neuron.fh.data.file)
@@ -83,24 +83,25 @@ googledrive_upload_neuronlistfh <- function(x,
     }
   }else{
     pb <- progress::progress_bar$new(
-      format = "  downloading [:bar] :current/:total eta: :eta",
+      format = "  uploading [:bar] :current/:total eta: :eta",
       total = length(t.list.master), clear = FALSE, show_after = 1)
     for(t.neuron.fh.data.file in t.list.master){
       pb$tick()
       t = basename(t.neuron.fh.data.file)
       if(t%in%sub.data$name){
         save.data = googledrive::as_id(subset(sub.data, sub.data$name==t)[1,]$id)
+        # If exists, do not replace
       }else{
         save.data =  t.folder.data
+        e = tryCatch(google_drive_place(media = t.neuron.fh.data.file,
+                                        path = save.data,
+                                        verbose = FALSE,
+                                        check = FALSE),
+                     error = function(e){
+                       message(e)
+                       NULL
+                     } )
       }
-      e = tryCatch(google_drive_place(media = t.neuron.fh.data.file,
-                                      path = save.data,
-                                      verbose = FALSE,
-                                      check = FALSE),
-                   error = function(e){
-                     message(e)
-                     NULL
-                   } )
       if(is.null(e)){
         warning(e)
         error.files = c(error.files,t.neuron.fh.data.file)
@@ -264,9 +265,18 @@ googledrive_clean_neuronlistfh <- function(team_drive = hemibrainr_team_drive(),
   }
 
   # rm
-  if(length(remove)){
-    message("Removing files ...")
-    googledrive::drive_rm(remove, verbose = TRUE)
+  if(nrow(remove)){
+    pb <- progress::progress_bar$new(
+        format = "  deleting [:bar] :current/:total eta: :eta",
+        total = length(rid), clear = FALSE, show_after = 1)
+    for(r in remove$id){
+        pb$tick()
+        e = tryCatch(googledrive::drive_rm(googledrive::as_id(r), verbose = FALSE),
+                     error = function(e){
+                       message(e)
+                       NULL
+                     } )
+    }
   }
 }
 
