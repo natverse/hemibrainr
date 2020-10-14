@@ -1,5 +1,5 @@
 ---
-title: "hemibrainr and google filestream"
+title: "Reading hemibrainr data from google drive"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{flywire}
@@ -17,7 +17,19 @@ knitr::opts_chunk$set(
 > "We’re Building Something, Here, Detective, We’re Building It From Scratch. All The Pieces Matter."
 ([Lester, The Wire](https://en.wikipedia.org/wiki/The_Wire))
 
-# Google drive, hemibrainr and R
+# Reading lots of data with hemibrainr
+
+In order to use this package to its fullest, you need to get `hemibrainr` to read large amounts of data stored on a google drive. To do this, you have three options:
+
+1. Mount your google drive usin [Google filestream](https://support.google.com/drive/answer/7329379?authuser=2)
+2. Mount your google drive using [rclone](https://rclone.org/drive/)
+3. Download the google drive and save locally
+
+The best option is to use google filestream. By default, this is what `hemibrainr` expects. However, ou need a [Google Workspace](https://workspace.google.com/pricing.html) account (formerly G-Suite), which is a paid-for service. Without this, the best option is to use [rclone](https://rclone.org/drive/). You can also download to an external hard drive and use that.
+
+We have two [Google team drives](https://support.google.com/a/users/answer/9310156?hl=en) available for you to use, which contain similar data. One ("hemibrain") is for internal use by the [Drosphila Connctomcis Group](https://www.zoo.cam.ac.uk/research/groups/connectomics). The other one ("hemibrainr") is shared with those who would like access. Contact us by email to request access.
+
+# Option 1: Google workspace, hemibrainr and R
 
 [Google drive](https://en.wikipedia.org/wiki/Google_Drive) is a data storage and synchonisation system. A Google team drive (shared drive) is a Google drive that is shared by a team of people, you can find them on your 'shared drives' in your Google authenticated account. Sharing and file ownership are managed for the entire team rather than one individual. Google Drive is a key component of [Google Workspace](https://workspace.google.com/pricing.html), Google's monthly subscription offering for businesses and organizations. As part of select Google Workspace plans, Drive offers unlimited storage, advanced file audit reporting, enhanced administration controls, and greater collaboration tools for teams.
 [Google filestream](https://support.google.com/drive/answer/7329379?authuser=2) allows users with access to a Google Workspace to mount their Google Drives like a hard-drive, to their local machines. It is this feature that the package `hemibrain` capitalises upon in order to store large amounts of fly connectomics related data, and enable users to quickly access it.
@@ -70,3 +82,4 @@ hemibrainr_set_drive("hemibrainr")
 hemibrainr_team_drive()
 ```
 
+# Option 2: rclone, hemibrainr and R
