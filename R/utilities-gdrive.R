@@ -364,11 +364,15 @@ flywire_ids_update <- function(selected_sheets = options()$hemibrainr_gsheets,
                                  sheet = tab,
                                  guess_max = 3000,
                                  return = TRUE)
+      used.cols = colnames(gs.t)
       if(ncol(gs.t)&&sum(grepl("fw.x|flywire.xyz",colnames(gs.t)))>0){
         # Separate x,y,z positions
-        gs1 = subset(gs.t, is.na(gs.t$flywire.xyz))
+        gs1 = subset(gs.t, is.na(gs.t$flywire.xyz) & !is.na(gs.t$fw.x))
         gs2 = subset(gs.t, !is.na(gs.t$flywire.xyz))
-        gs1$flywire.xyz = apply(gs1[,c("fw.x","fw.y",'fw.z')],1,paste,sep=";",collapse=";")
+        gs0 = gs.t[setdiff(rownames(gs.t),c(rownames(gs1),rownames(gs2))),]
+        if(nrow(gs1)){
+          gs1$flywire.xyz = apply(gs1[,c("fw.x","fw.y",'fw.z')],1,paste,sep=";",collapse=";")
+        }
         if(nrow(gs2)){
           positions.gs = sapply(gs2$flywire.xyz,strsplit,",|/|;")
           ruleofthree = sapply(positions.gs,function(p) length(p)==3)
@@ -396,16 +400,17 @@ flywire_ids_update <- function(selected_sheets = options()$hemibrainr_gsheets,
         fids = unlist(foreach.ids)
         fids[is.na(fids)|is.nan(fids)] = "0"
         gs.t[match(names(fids),gs.t$flywire.xyz),"flywire.id"] = fids
-        # Update
-        rownames(gs.t) = NULL
         gs.t$flywire.xyz = apply(gs.t[,c("fw.x","fw.y",'fw.z')],1,paste,sep=";",collapse=";")
-        googlesheets4::write_sheet(gs.t[0,],
+        # Update
+        update = rbind(gs2[,used.cols],gs1[,used.cols],gs0[,used.cols])
+        rownames(update) = NULL
+        googlesheets4::write_sheet(update[0,],
                                    ss = selected_sheet,
                                    sheet = tab)
-        batches = split(1:nrow(gs.t), ceiling(seq_along(1:nrow(gs.t))/500))
+        batches = split(1:nrow(update), ceiling(seq_along(1:nrow(update))/500))
         for(i in batches){
           gsheet_manipulation(FUN = googlesheets4::sheet_append,
-                              data = gs.t[min(i):max(i),],
+                              data = update[min(i):max(i),],
                               ss = selected_sheet,
                               sheet = tab)
         }
