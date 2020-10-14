@@ -53,7 +53,7 @@ googledrive_upload_neuronlistfh <- function(x,
 
   # upload
   t.list.master = list.files(temp.data,full.names = TRUE)
-  error.files = c()
+  error.files = upload = c()
   sub.data = googledrive::drive_ls(path = t.folder.data, team_drive = td)
   if(numCores>1){
     batch = 1
@@ -67,16 +67,15 @@ googledrive_upload_neuronlistfh <- function(x,
         }else{
           save.data =  t.folder.data
         }
-        e = tryCatch(google_drive_place(media = t.neuron.fh.data.file,
+        upload = tryCatch(google_drive_place(media = t.neuron.fh.data.file,
                                         path = save.data,
                                         verbose = FALSE,
                                         check = FALSE),
                      error = function(e){
                        message(e)
-                       NULL
+                       NA
                      } )
-        if(is.null(e)){
-          warning(e)
+        if(is.na(upload)){
           error.files = c(error.files,t.neuron.fh.data.file)
         }
       }
@@ -93,19 +92,17 @@ googledrive_upload_neuronlistfh <- function(x,
         # If exists, do not replace
       }else{
         save.data =  t.folder.data
-        e = tryCatch(google_drive_place(media = t.neuron.fh.data.file,
-                                        path = save.data,
-                                        verbose = FALSE,
-                                        check = FALSE),
-                     error = function(e){
-                       message(e)
-                       NULL
-                     } )
-      }
-      if(is.null(e)){
-        warning(e)
-        error.files = c(error.files,t.neuron.fh.data.file)
-      }
+        upload = tryCatch(google_drive_place(media = t.neuron.fh.data.file,
+                                             path = save.data,
+                                             verbose = FALSE,
+                                             check = FALSE),
+                          error = function(e){
+                            message(e)
+                            NA
+                          } )
+        if(is.na(upload)){
+          error.files = c(error.files,t.neuron.fh.data.file)
+        }
     }
   }
   if(length(error.files)){
