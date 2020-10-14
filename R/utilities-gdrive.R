@@ -131,8 +131,7 @@ googledrive_upload_neuronlistfh <- function(x,
     hemibrainr:::googledrive_clean_neuronlistfh(local.path = local.path,
                                    team_drive = hemibrainr_team_drive(),
                                    folder = folder,
-                                   subfolder = subfolder,
-                                   numCores = numCores)
+                                   subfolder = subfolder)
   }
 }
 
@@ -173,8 +172,7 @@ google_drive_place <- function(media,
 googledrive_clean_neuronlistfh <- function(team_drive = hemibrainr_team_drive(),
                                            local.path = NULL,
                                            folder = NULL,
-                                           subfolder = NULL,
-                                           numCores = 1){
+                                           subfolder = NULL){
   # don't exhaust rate limit
   numCores = ifelse(numCores>10,10,numCores)
   if(!is.null(local.path)&is.null(subfolder)){
@@ -261,7 +259,7 @@ googledrive_clean_neuronlistfh <- function(team_drive = hemibrainr_team_drive(),
     }
   }else{
     remove = find_excess(drive_td,
-                         ocal.path = local.path,
+                         local.path = local.path,
                          team_drive = td)
   }
 
