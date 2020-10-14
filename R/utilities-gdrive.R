@@ -383,26 +383,28 @@ flywire_ids_update <- function(selected_sheets = options()$hemibrainr_gsheets,
         }
         gs.t = rbind(gs2,gs1)
         # Get flywire IDs from these positions
-        # batch = 1
-        # batches = split(1:nrow(gs.t), round(seq(from = 1, to = numCores, length.out = nrow(gs.t))))
-        # foreach.ids <- foreach::foreach (batch = 1:length(batches)) %dopar% {
-        #   pos = gs.t[batches[[batch]],]
-        #   j <- tryCatch({i = fafbseg::flywire_xyz2id(pos[,c("fw.x","fw.y",'fw.z')], rawcoords = TRUE)
-        #   i[is.na(i)|is.nan(i)] = 0
-        #   names(i) = pos$flywire.xyz
-        #   # if(sum(i==0)>0){
-        #   #   i[i==0] =  fafbseg::flywire_xyz2id(pos[i==0,c("fw.x","fw.y",'fw.z')], rawcoords = FALSE)
-        #   # }
-        #   i}, error = function(e) NULL)
-        # }
-        foreach.ids = fafbseg::flywire_xyz2id(gs.t[,c("fw.x","fw.y",'fw.z')], rawcoords = TRUE)
-        names(foreach.ids) = gs.t[,"flywire.xyz"]
+        bbx = matrix(c(5100, 1440, 16, 59200, 29600, 7062),ncol=3,byrow = TRUE)
+        bbx = nat::boundingbox(scale(bbx, scale = 1/c(4, 4, 40), center = FALSE))
+        batch = 1
+        batches = split(1:nrow(gs.t), round(seq(from = 1, to = numCores, length.out = nrow(gs.t))))
+        foreach.ids <- foreach::foreach (batch = 1:length(batches)) %dopar% {
+          pos = gs.t[batches[[batch]],]
+          pos = pos[apply(pos, 1, function(row) sum(is.na(row[c("fw.x","fw.y",'fw.z')]))==0),]
+          p = nat::pointsinside(pos[,c("fw.x","fw.y",'fw.z')],bbx)
+          pos = pos[p,]
+          i <- try({fafbseg::flywire_xyz2id(pos[,c("fw.x","fw.y",'fw.z')], rawcoords = TRUE)})
+          names(i) = pos$flywire.xyz
+          i[is.na(i)|is.nan(i)] = 0
+          i
+        }
+        #foreach.ids = fafbseg::flywire_xyz2id(gs.t[,c("fw.x","fw.y",'fw.z')], rawcoords = TRUE)
+        #names(foreach.ids) = gs.t[,"flywire.xyz"]
         fids = unlist(foreach.ids)
         fids[is.na(fids)|is.nan(fids)] = "0"
         gs.t[match(names(fids),gs.t$flywire.xyz),"flywire.id"] = fids
         gs.t$flywire.xyz = apply(gs.t[,c("fw.x","fw.y",'fw.z')],1,paste,sep=";",collapse=";")
         # Update
-        update = rbind(gs2[,used.cols],gs1[,used.cols],gs0[,used.cols])
+        update = rbind(gs.t[,used.cols],gs0[,used.cols])
         rownames(update) = NULL
         googlesheets4::write_sheet(update[0,],
                                    ss = selected_sheet,
