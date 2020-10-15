@@ -17,10 +17,11 @@ message("Start")
 source("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/R/startup/packages.R")
 message("packages loaded")
 library(googledrive)
+options(gargle_oauth_email = "ab2248@cam.ac.uk")
+options(Gdrive_hemibrain_data = "hemibrain")
 
 # Google drive location:
 hemibrain = team_drive_get(hemibrainr_team_drive())
-1
 drive_hemibrain = drive_find(type = "folder", team_drive = hemibrain)
 hemibrain_neurons= subset(drive_hemibrain,name=="hemibrain_neurons")
 hemibrain_nblast= subset(drive_hemibrain,name=="hemibrain_nblast")
@@ -77,58 +78,26 @@ hemibrainr:::google_drive_place(media = split.metrics,
              path = hemibrain_neurons,
              verbose = TRUE)
 
+# Save neuronlistfh objects
 ## Save transformed neurons
-trans = c("hemibrain_all_neurons_flow_polypre_centrifugal_synapses",
-          "hemibrain_all_neurons_flow_polypre_centrifugal_synapses/dotprops",
-          "JRCFIB2018F","FAFB14","JFRC2","JRC2018F","FCWB")
-for(t in trans){
-  if(grepl("hemibrain_all_neurons_flow_polypre_centrifugal_synapses",t)){
-    gfolder = "JRCFIB2018Fraw"
-  }else{
-    gfolder = t
-  }
+brains = c("JRCFIB2018Fraw","JRCFIB2018F","FAFB14","JFRC2","JRC2018F","FCWB")
+for(brain in brains){
   transform = drive_ls(path = hemibrain_neurons, type = "folder", team_drive = hemibrain)
-  transform = subset(transform, name == gfolder)
+  transform = subset(transform, name == brain)
   if(!nrow(transform)){
-    drive_mkdir(name = gfolder,
+    drive_mkdir(name = brain,
                 path = hemibrain_neurons,
                 overwrite = TRUE)
     transform = drive_ls(path = hemibrain_neurons, type = "folder", team_drive = hemibrain)
-    transform = subset(transform, name == gfolder)
+    transform = subset(transform, name == brain)
     drive_mkdir(name = "data",
                 path = transform,
                 overwrite = TRUE)
-    t.folder.data = drive_ls(path = transform, type = "folder", team_drive = hemibrain)
-    t.folder.data = subset(t.folder.data, name == "data")
   }
-  t.folder.data = drive_ls(path = transform, type = "folder", team_drive = hemibrain)
-  t.folder.data = subset(t.folder.data, name == "data")
-  if(!nrow(t.folder.data)){
-    drive_mkdir(name = "data",
-                path = transform,
-                overwrite = TRUE)
-    t.folder.data = drive_ls(path = transform, type = "folder", team_drive = hemibrain)
-    t.folder.data = subset(t.folder.data, name == "data")
-  }
-  t.fh = paste0("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/",t)
-  t.list = list.files(t.fh,full.names = TRUE)
-  t.rds = t.list[grepl(".rds",t.list)]
-  for (tr in t.rds){
-    hemibrainr:::google_drive_place(media = tr,
-              path = transform[1,],
-              verbose = TRUE)
-  }
-  t.neuron.fh.data.files = list.files(paste0(t.fh,"/data"), full.names = TRUE)
-  error.files = c()
-  for(t.neuron.fh.data.file in t.neuron.fh.data.files){
-    e = tryCatch(hemibrainr:::google_drive_place(media = t.neuron.fh.data.file,
-                              path = t.folder.data[1,],
-                              verbose = TRUE),
-                 error = function(e) t.neuron.fh.data.file)
-    if(is.null(e)){
-      error.files = c(error.files,t.neuron.fh.data.file)
-    }
-  }
+  hemibrainr:::googledrive_upload_neuronlistfh(x = paste0("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/",brain,"/"),
+                                               clean = TRUE,
+                                               team_drive = hemibrainr_team_drive(),
+                                               folder = "hemibrain_neurons",
+                                               subfolder = brain)
 }
-
 
