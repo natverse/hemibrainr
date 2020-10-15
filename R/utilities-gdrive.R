@@ -128,7 +128,7 @@ googledrive_upload_neuronlistfh <- function(x,
   # Clean
   if(clean){
     message("Deleting unused file hash files for neurons ...")
-    hemibrainr:::googledrive_clean_neuronlistfh(local.path = local.path,
+    googledrive_clean_neuronlistfh(local.path = local.path,
                                    team_drive = hemibrainr_team_drive(),
                                    folder = folder,
                                    subfolder = subfolder)
