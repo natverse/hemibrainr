@@ -37,7 +37,7 @@ flywire_request(
 )
 }
 \arguments{
-\item{local}{logical, whether to try to read locally saved neurons (by default at: \code{options()$hemibrain_data}) or neurons from Google Drive (\code{options()$Gdrive_hemibrain_data}).}
+\item{local}{\code{FALSE} or path. By default (\code{FALSE}) data is read from \code{options()$Drive_hemibrain_data}), but the user can specit and alternative path.}
 
 \item{brain}{the brainspace in which hemibrain neurons have been registered. Defaults to raw voxel space for the FlyWire project.}
 

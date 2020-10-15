@@ -8,7 +8,7 @@
 #'  \code{flywire_request}.
 #'
 #' @param brain the brainspace in which hemibrain neurons have been registered. Defaults to raw voxel space for the FlyWire project.
-#' @param local logical, whether to try to read locally saved neurons (by default at: \code{options()$hemibrain_data}) or neurons from Google Drive (\code{options()$Gdrive_hemibrain_data}).
+#' @param local \code{FALSE} or path. By default (\code{FALSE}) data is read from \code{options()$Drive_hemibrain_data}), but the user can specit and alternative path.
 #' @param mirror logical, whether or not to read neurons that have been mirrored (i.e. flipped to the 'other' brain hemisphere).
 #' @param x flywire IDs to update, for the saved google drive \code{neuronlistfh} objects called with \code{flywire_neurons}.
 #' @param request a neuronlist, matrix of x,y,z position or flywire ID to add to a

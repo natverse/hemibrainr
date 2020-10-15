@@ -44,10 +44,8 @@ hemibrain_lm_lhns(
 )
 }
 \arguments{
-\item{local}{logical, whether to try to read locally saved neurons (by
-default at: \code{getOption("hemibrain_data")}) or neurons from Google
-Drive (\code{getOption("Gdrive_hemibrain_data")}).
-If a character, the path from which to each for hemibrain data.}
+\item{local}{\code{FALSE} or path. By default (\code{FALSE}) data is read from \code{options()$Drive_hemibrain_data}),
+but the user can specit and alternative path.}
 
 \item{folder}{A subfolder on the Hemibrain team drive or your local data foldercontaining the data object to read.}
 

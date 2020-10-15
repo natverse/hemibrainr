@@ -19,7 +19,7 @@
 #' Note that if FALSE, re-rooting occurs anyway via \code{hemibrain_flow_centrality}. However, setting this argument to \code{TRUE}
 #' @param googlesheet logical, whether or not manually checked somas should be read from the \href{https://docs.google.com/spreadsheets/d/1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E/edit#gid=1524900531}{Google Sheet}
 #' @param clean whether or not to set synapse-less branches to \code{Label = 0}.
-#' @param local logical, whether to try to read locally saved neurons (by default at: \code{options()$hemibrain_data}) or neurons from Google Drive (\code{options()$Gdrive_hemibrain_data}).
+#' @param local \code{FALSE} or path. By default (\code{FALSE}) data is read from \code{options()$Drive_hemibrain_data}), but the user can specit and alternative path.
 #' @param scaling the factor by which neuron coordinates in raw voxel space should be multiplied. The default scales to microns.
 #' @param dotprops logical. Whether or not to retreive a \code{nat::dotprops} object, i.e. vector cloud representations of neurons for NBLASTing.
 #' The dotprops object will be in JRC2018FIBF micron space.
@@ -378,30 +378,19 @@ hemibrain_neurons <- function(local = FALSE,
 }
 
 # hidden
-good_savedir <- function(local = FALSE
-                         ){
-  if(is.null(options()$hemibrain_data)){
-    options(hemibrain_data = paste0(getwd(),options()$hemibrain_data))
-  }
-  if(is.null(options()$Gdrive_hemibrain_data)){
-    options(Gdrive_hemibrain_data = "/Volumes/GoogleDrive/Shared\ drives/hemibrain/")
-  }
+good_savedir <- function(local=FALSE){
   if(isFALSE(local)){
+    if(is.null(options()$Gdrive_hemibrain_data)){
+      options(Gdrive_hemibrain_data = "/Volumes/GoogleDrive/Shared\ drives/hemibrain/")
+    }
     savedir = options()$hemibrain_data
-    if(!is.null(options()$Gdrive_hemibrain_data)){
-      if(dir.exists(options()$Gdrive_hemibrain_data) & !local){
-        message("Using Google Team Drive: hemibrain")
-        savedir = options()$Gdrive_hemibrain_data
-      }
+    if(dir.exists(options()$Gdrive_hemibrain_data) & !local){
+      message("Using Google Team Drive: ", hemibrainr_team_drive())
+      savedir = options()$Gdrive_hemibrain_data
     }
   }else{
-    if(isTRUE(local)){
-      savedir = options()$hemibrain_data
-    }
-  }
-  if(!dir.exists(savedir) & local){
-    hemibrainr_folder_structure(savedir)
-    warning("Made new hemibrain save directory within the working directory. It is currently empty, please add neuron data:", savedir)
+    message("Looking for data in ", local)
+    savedir = local
   }
   savedir
 }

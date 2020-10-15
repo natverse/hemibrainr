@@ -1,6 +1,8 @@
 # Use hemibrainr with rclone
 
-hemibrainr_rclone <- function(remote = "hemibrainr", path=paste0(getwd(),"hemibrainr_rclone/")){
+#' @name hemibrainr_set_drive
+#' @export
+hemibrainr_rclone <- function(Gdrive = "hemibrainr", path=paste0(getwd(),"hemibrainr_rclone/")){
   os = get_os()
   if(!dir.exists(path)){
     dir.create(path)
@@ -13,15 +15,17 @@ hemibrainr_rclone <- function(remote = "hemibrainr", path=paste0(getwd(),"hemibr
          path)
   }
   if(os=="osx"){
-    command = sprintf("rclone cmount %s: %s", remote, path)
+    command = sprintf("rclone cmount %s: %s", Gdrive, path)
   }else{
-    command = sprintf("rclone mount %s: %", remote, path)
+    command = sprintf("rclone mount %s: %", Gdrive, path)
   }
   options(Gdrive_hemibrain_data = path)
-  message("option Gdrive_hemibrain_data set to ", path)
+  message("Google drive path set to: ", options()$Gdrive_hemibrain_data)
   system(command, wait = FALSE)
 }
 
+#' @name hemibrainr_set_drive
+#' @export
 hemibrainr_rclone_unmount <- function(path=paste0(getwd(),"hemibrainr_rclone/")){
   os = get_os()
   if(os=="osx"){

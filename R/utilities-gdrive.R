@@ -45,7 +45,7 @@ googledrive_upload_neuronlistfh <- function(x,
     local.path = NULL
   }else{
     temp.data = paste0(x,"data")
-    temp.rds = list.files(x, pattern = ".rds$", full.name =TRUE)
+    temp.rds = list.files(x, pattern = ".rds$", full.names =TRUE)
     message("data folder: ", temp.data)
     message(".rds files: ", paste(temp.rds,collapse=", "))
     local.path = x

@@ -1,8 +1,8 @@
 ---
-title: "Reading hemibrainr data from google drive"
+title: "read data from google drive"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{flywire}
+  %\VignetteIndexEntry{read data from google drive}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -25,7 +25,7 @@ In order to use this package to its fullest, you need to get `hemibrainr` to rea
 2. Mount your google drive using [rclone](https://rclone.org/drive/)
 3. Download the google drive and save locally
 
-The best option is to use google filestream. By default, this is what `hemibrainr` expects. However, ou need a [Google Workspace](https://workspace.google.com/pricing.html) account (formerly G-Suite), which is a paid-for service. Without this, the best option is to use [rclone](https://rclone.org/drive/). You can also download to an external hard drive and use that.
+The best option is to use google filestream. By default, this is what `hemibrainr` expects. However, you need a [Google Workspace](https://workspace.google.com/pricing.html) account (formerly G-Suite), which is a paid-for service. Without this, the best option is to use [rclone](https://rclone.org/drive/). You can also download to an external hard drive and use that.
 
 We have two [Google team drives](https://support.google.com/a/users/answer/9310156?hl=en) available for you to use, which contain similar data. One ("hemibrain") is for internal use by the [Drosphila Connctomcis Group](https://www.zoo.cam.ac.uk/research/groups/connectomics). The other one ("hemibrainr") is shared with those who would like access. Contact us by email to request access.
 
@@ -53,10 +53,6 @@ Let us have a look at the default `hemibrainr` settings, letting it to know wher
 # Load package
 library(hemibrainr)
 
-# This is where hemibrainr expects to find data, if not on google drive 
-# or when you use the argument local = TRUE
-options()$hemibrain_data
-
 # Else, it wants to see it on the mounted team drive, here
 options()$Gdrive_hemibrain_data
 
@@ -83,3 +79,143 @@ hemibrainr_team_drive()
 ```
 
 # Option 2: rclone, hemibrainr and R
+
+You can also use the freeware [rclone](https://rclone.org/) to mount any google drive, including your own or a shared/team drive. This does not depend on you have a paid-for Google workspace authorised account. Again, for this to work, you must have access to an appropriate google team drive for `hemibrainr`. Get in contact if you would like access, but lack it. One you have used rclone to mount your google drive, you can interact with it like a normal file system.
+
+Please do not delete anything on the google drive! Or add anything to it unless you are sure.
+
+## Download rclone 
+
+First, [download](https://rclone.org/downloads/) rclone for your operating system. You can also download from your system's command line (e.g. from terminal):
+
+```{r rclone_download, engine = 'bash', eval = FALSE}
+# unix/macosx
+curl https://rclone.org/install.sh | sudo bash
+```
+
+
+# Configure rclone with hemibrainr google drive
+
+Once you have rclone installed, you will need to follow [these instructions](https://rclone.org/drive/) to configure rclone with a google drive: this should either be the team drive 'hemibrain' or the team drive 'hemibrainr'. For the defaults in this package to work, please name your remote drive 'hemibrainr'. 
+
+Whilst configuring, you will be asked to supply some google credentials - you can proceed without doing this. However, I highly recommend obtaining your own google client id and client secret from the [developer console](https://console.developers.google.com/apis/) associated with your prefered google account. To do this, [follow these detailed instructions]( https://rclone.org/drive/#making-your-own-client-id). This allows you to operate with a higher API rate limit - if you proceed without you will be using the rclone credentials, which many users as operating with, and this might be slower.
+
+In short, the configuration process in terminal is:
+
+```{r rclone_config, engine = 'bash', eval = FALSE}
+rclone config
+# you will now be guided through the config on the command line:
+No remotes found - make a new one
+n) New remote
+r) Rename remote
+c) Copy remote
+s) Set configuration password
+q) Quit config
+n/r/c/s/q> n
+name> hemibrainr
+Type of storage to configure.
+Choose a number from below, or type in your own value
+[snip]
+XX / Google Drive
+   \ "drive"
+[snip]
+Storage> drive
+Google Application Client Id - leave blank normally.
+client_id> 4246767787-52r215n6e0h9k0qpta8f4o6jkr7dgfha3.apps.googleusercontent.com #dummy example
+Google Application Client Secret - leave blank normally.
+client_secret> yiedGkPA-KLO_dqehctghgh #dummy example
+Scope that rclone should use when requesting access from drive.
+Choose a number from below, or type in your own value
+ 1 / Full access all files, excluding Application Data Folder.
+   \ "drive"
+ 2 / Read-only access to file metadata and file contents.
+   \ "drive.readonly"
+   / Access to files created by rclone only.
+ 3 | These are visible in the drive website.
+   | File authorization is revoked when the user deauthorizes the app.
+   \ "drive.file"
+   / Allows read and write access to the Application Data folder.
+ 4 | This is not visible in the drive website.
+   \ "drive.appfolder"
+   / Allows read-only access to file metadata but
+ 5 | does not allow any access to read or download file content.
+   \ "drive.metadata.readonly"
+scope> 1
+ID of the root folder - leave blank normally.  Fill in to access "Computers" folders. (see docs).
+root_folder_id> 
+Service Account Credentials JSON file path - needed only if you want use SA instead of interactive login.
+service_account_file>
+Remote config
+Use auto config?
+ * Say Y if not sure
+ * Say N if you are working on a remote or headless machine or Y didn't work
+y) Yes
+n) No
+y/n> y
+If your browser doesn't open automatically go to the following link: http://127.0.0.1:53682/auth
+Log in and authorize rclone for access
+Waiting for code...
+Got code
+Configure this as a team drive?
+y) Yes
+n) No
+y/n> y
+--------------------
+[remote] # these are the specific details of your chosen drive
+client_id = 
+client_secret = 
+scope = drive
+root_folder_id = 
+service_account_file =
+token = {"access_token":"XXX","token_type":"Bearer","refresh_token":"XXX","expiry":"2014-03-16T13:57:58.955387075Z"}
+--------------------
+y) Yes this is OK
+e) Edit this remote
+d) Delete this remote
+y/e/d> y
+```
+
+Once you have done this, you can check it works using:
+
+## Use rclone-mounted google drive with hemibrainr
+
+Once you have installed and configured rclone, you can use it to [mount](https://rclone.org/commands/rclone_mount/) the google team drive. To do this, you create an empty directory wherever you want, named whatever you like, and then rclone 'turns' this directory into your mounted google drive.
+
+You can mount with rclone from your system's command line:
+
+```{r rclone_mount, engine = 'bash', eval = FALSE}
+# unix/macosx
+rclone cmount hemibrainr: /path/to/local/mount
+```
+
+Try it somewhere like `/Documents` to see how it works. For `hemibrainr` there is an R function that will do the mounting for you in your working directory. So within R:
+
+```{r rclone_hemibrainr_mount, eval = FALSE}
+# mounts in working directory
+hemibrainr_rclone()
+
+# Now hemibrain neurins are read from this mount
+db = hemibrain_neurons()
+length(db)
+
+# Specifically, from here
+options()$Gdrive_hemibrain_data
+
+# unmounts
+hemibrainr_rclone_unmount()
+
+# And now we are back to:
+options()$Gdrive_hemibrain_data
+```
+
+# Option 3: local data and hemibrainr
+
+You can also download the contents of the drive and store it locally or on an external hard drive, and use that.
+
+To get the folder structure `hemibrainr` expects, you can use:
+
+```{r folders, eval = FALSE}
+hemibrainr:::hemibrainr_folder_structure()
+```
+
+

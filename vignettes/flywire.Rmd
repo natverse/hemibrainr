@@ -46,10 +46,6 @@ And now, let's test by looking at some few information available through `hemibr
 # Load package
 library(hemibrainr)
 
-# This is where hemibrainr expects to find data, if not on google drive 
-# or when you use the argument local = TRUE
-options()$hemibrain_data
-
 # Else, it wants to see it on the mounted team drive, here
 options()$Gdrive_hemibrain_data
 

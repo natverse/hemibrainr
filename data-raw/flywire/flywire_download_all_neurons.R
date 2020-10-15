@@ -41,7 +41,6 @@ numCores <- detectCores()
 numCores <- numCores/2
 registerDoParallel(numCores)  # use multicore, set to the number of our cores
 doMC::registerDoMC(numCores)
-registerDoParallel(numCores)  # use multicore, set to the number of our cores
 message("Cores recruited: ", foreach::getDoParWorkers())
 
 # Neuron positions flagged by the community as of interest
