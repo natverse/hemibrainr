@@ -3,5 +3,6 @@ pkgdown: 1.4.1
 pkgdown_sha: ~
 articles:
   flywire: flywire.html
+  google_filestream: google_filestream.html
   match_making: match_making.html
 

@@ -86,7 +86,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">hemibrainr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
       </span>
     </div>
 
@@ -112,7 +112,10 @@
       <a href="../articles/flywire.html">flywire</a>
     </li>
     <li>
-      <a href="../articles/match_making.html">match_making</a>
+      <a href="../articles/google_filestream.html">read data from google drive</a>
+    </li>
+    <li>
+      <a href="../articles/match_making.html">neuron match making</a>
     </li>
   </ul>
 </li>
@@ -158,7 +161,7 @@
     <pre class="usage"><span class='fu'>LR_matching</span>(
   <span class='kw'>ids</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>mirror.nblast</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>selected_file</span> <span class='kw'>=</span> <span class='st'>"1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw"</span>,
+  <span class='kw'>selected_file</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>options</a></span>()$<span class='no'>hemibrainr_matching_gsheet</span>,
   <span class='kw'>batch_size</span> <span class='kw'>=</span> <span class='fl'>50</span>,
   <span class='kw'>db</span> <span class='kw'>=</span> <span class='fu'><a href='flywire_neurons.html'>flywire_neurons</a></span>(),
   <span class='kw'>query</span> <span class='kw'>=</span> <span class='fu'><a href='flywire_neurons.html'>flywire_neurons</a></span>(<span class='kw'>mirror</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>),
@@ -168,7 +171,7 @@
 <span class='fu'>hemibrain_matching</span>(
   <span class='kw'>ids</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>hemibrain.nblast</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>selected_file</span> <span class='kw'>=</span> <span class='st'>"1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw"</span>,
+  <span class='kw'>selected_file</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>options</a></span>()$<span class='no'>hemibrainr_matching_gsheet</span>,
   <span class='kw'>batch_size</span> <span class='kw'>=</span> <span class='fl'>10</span>,
   <span class='kw'>db</span> <span class='kw'>=</span> <span class='fu'><a href='hemibrain_read_neurons.html'>hemibrain_neurons</a></span>(),
   <span class='kw'>match.type</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"FAFB"</span>, <span class='st'>"LM"</span>),
@@ -179,7 +182,7 @@
 <span class='fu'>lm_matching</span>(
   <span class='kw'>ids</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>hemibrain.nblast</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>selected_file</span> <span class='kw'>=</span> <span class='st'>"1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw"</span>,
+  <span class='kw'>selected_file</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>options</a></span>()$<span class='no'>hemibrainr_matching_gsheet</span>,
   <span class='kw'>batch_size</span> <span class='kw'>=</span> <span class='fl'>50</span>,
   <span class='kw'>db</span> <span class='kw'>=</span> <span class='fu'><a href='hemibrain_read_neurons.html'>hemibrain_neurons</a></span>(),
   <span class='kw'>query</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
@@ -190,7 +193,7 @@
   <span class='kw'>ids</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>repository</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"FAFB"</span>, <span class='st'>"flywire"</span>),
   <span class='kw'>hemibrain.nblast</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>selected_file</span> <span class='kw'>=</span> <span class='st'>"1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw"</span>,
+  <span class='kw'>selected_file</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>options</a></span>()$<span class='no'>hemibrainr_matching_gsheet</span>,
   <span class='kw'>batch_size</span> <span class='kw'>=</span> <span class='fl'>50</span>,
   <span class='kw'>db</span> <span class='kw'>=</span> <span class='fu'><a href='hemibrain_read_neurons.html'>hemibrain_neurons</a></span>(),
   <span class='kw'>query</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,

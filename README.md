@@ -1,6 +1,5 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 <!-- badges: start -->
-
 <img src="man/figures/logo.svg" align="right" height="139" /> [![Travis
 build
 status](https://travis-ci.org/flyconnectome/hemibrainr.svg?branch=master)](https://travis-ci.org/flyconnectome/hemibrainr)
@@ -26,16 +25,6 @@ Using this R package in concert with the
 [natverse](https://github.com/natverse/natverse) ecosystem is highly
 recommended.
 
-Tutorial
---------
-
-To help you get to grips with `neuprintr`, we have made a tutorial in
-classic presentation form. This tutorial uses data from the [Janelia Fly
-EM](https://www.janelia.org/project-team/flyem) team’s
-[hemibrain](https://www.biorxiv.org/content/10.1101/2020.01.21.911859v1)
-project. You can also see the vignettes in this package for the same
-examples and more.
-
 Installation
 ------------
 
@@ -46,6 +35,59 @@ remotes::install_github("flyconnectome/hemibrainr")
 
 # use 
 library(hemibrainr)
+```
+
+Using hemibrainr
+----------------
+
+*hemibrainr* contains tools with which to quickly work with
+[hemibrain](https://neuprint.janelia.org/help/videos?dataset=hemibrain)
+and
+[Flywire](https://ngl.flywire.ai/?local_id=c8c06ea181ad5447b04beacfc4cb1b66)
+neurons, and match up neurons within and between data sets.
+
+IIf you can connect to the *hemibrainr* google shared drive, this
+package puts thousands of hemibrain and flywire neurons at your
+fingertips, as well as information on their compartments (e.g. axons
+versus dendites), synapses and connectivity and between data set
+neuron-neuron matches. You can:
+
+-   Read thousands of pre-skeletonised flywire/hemibrain neurons from
+    Google Drive
+-   Read flywire/hemibrain NBLASTs and NLBLASTs to hemibrain neurons
+-   Read flywire/hemibrain neurons that are pre-transformed into a
+    variety of brainspaces
+
+Which is all useful stuff. You can explore our articles for more
+detailed information on what the package can do, and howto set it up
+with the data stored on google drive - but can take a quick tour here:
+
+``` r
+# Load package
+library(hemibrainr)
+
+# Else, it wants to see it on the mounted team drive, here
+options()$Gdrive_hemibrain_data
+
+# We can load meta data for all neurons in hemibrain
+db = hemibrain_neurons()
+
+# And quickly read them from the drive, when we try to plot/analyse them!
+hemibrain_view()
+plot3d(hemibrain.surf, col = "grey", alpha = 0.1)
+plot3d(db[1:10])
+```
+
+See which neurons have been matched up:
+
+``` r
+# See matches, you can do this without hemibrain Google Team Drive access
+View(hemibrain_matched)
+
+# Get fresh matches, you cannot do this without access
+## You will be prompted to log-in through your browser
+hemibrain_matched_new <- hemibrain_matches() 
+## NOTE: includes hemibrain<->flywire matches!
 ```
 
 Authentication

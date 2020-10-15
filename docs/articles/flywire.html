@@ -38,7 +38,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">hemibrainr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
       </span>
     </div>
 
@@ -64,7 +64,10 @@
       <a href="../articles/flywire.html">flywire</a>
     </li>
     <li>
-      <a href="../articles/match_making.html">match_making</a>
+      <a href="../articles/google_filestream.html">read data from google drive</a>
+    </li>
+    <li>
+      <a href="../articles/match_making.html">neuron match making</a>
     </li>
   </ul>
 </li>
@@ -105,7 +108,7 @@
 <div id="flywire-and-r" class="section level1">
 <h1 class="hasAnchor">
 <a href="#flywire-and-r" class="anchor"></a>Flywire and R</h1>
-<p><a href="https://ngl.flywire.ai/?local_id=c8c06ea181ad5447b04beacfc4cb1b66">Flywire</a> is an open neuron reconstruction environment for the full adult fly brain ( <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6063995/">FAFB</a> ) EM data set. Unlike this CATMAID, users concatenate volumetric segmentations to build neurons as 3D meshes. The segmentation was produced by the <a href="https://seunglab.org/">Seung group</a>. With the package <code>hemibrainr</code> we can read flywire neurons as both meshes and skeletons. Meshes can be read directly from flywire, but skeletons need to be built from these meshes. Our pakackage <code>fafbseg</code> can enable users to skeletonise neurons in R (e.g. <code><a href="https://rdrr.io/pkg/fafbseg/man/skeletor.html">fafbseg::skeletor</a></code>), wherease <code>hemibrainr</code> exists to help users get hold of neuron data and match flywire neurons to <a href="https://neuprint.janelia.org/help/videos?dataset=hemibrain">hemibrain</a> neurons.</p>
+<p><a href="https://ngl.flywire.ai/?local_id=c8c06ea181ad5447b04beacfc4cb1b66">Flywire</a> is an open neuron reconstruction environment for the full adult fly brain ( <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6063995/">FAFB</a> ) EM data set. Unlike this CATMAID, users concatenate volumetric segmentations to build neurons as 3D meshes. The segmentation was produced by the <a href="https://seunglab.org/">Seung group</a>. With the package <code>hemibrainr</code> we can read flywire neurons as both meshes and skeletons. Meshes can be read directly from flywire, but skeletons need to be built from these meshes. Our pakackage <code>fafbseg</code> can enable users to skeletonise neurons in R (e.g. <code><a href="https://rdrr.io/pkg/fafbseg/man/skeletor.html">fafbseg::skeletor</a></code>), whereas <code>hemibrainr</code> exists to help users get hold of neuron data and match flywire neurons to <a href="https://neuprint.janelia.org/help/videos?dataset=hemibrain">hemibrain</a> neurons.</p>
 <p>On the hemibrain <a href="https://support.google.com/a/users/answer/9310156?hl=en">Google team drive</a> for the <a href="https://www.zoo.cam.ac.uk/research/groups/connectomics">Drosphila Connctomcis Group</a>. If you do not have access to this team drive and would like to use it, to make the most our of <code>hemibrainr</code>, please get in contact. You will need top to have access to the drive and have <a href="https://support.google.com/a/answer/7491144?hl=en">Google filestream</a> mounted. Then you will be able to:</p>
 <ul>
 <li>Read thousands of pre-skeletonised flywire neurons from Google Drive</li>
@@ -124,20 +127,16 @@
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="co"># Load package</span></a>
 <a class="sourceLine" id="cb2-2" data-line-number="2"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(hemibrainr)</a>
 <a class="sourceLine" id="cb2-3" data-line-number="3"></a>
-<a class="sourceLine" id="cb2-4" data-line-number="4"><span class="co"># This is where hemibrainr expects to find data, if not on google drive </span></a>
-<a class="sourceLine" id="cb2-5" data-line-number="5"><span class="co"># or when you use the argument local = TRUE</span></a>
-<a class="sourceLine" id="cb2-6" data-line-number="6"><span class="kw"><a href="https://rdrr.io/r/base/options.html">options</a></span>()<span class="op">$</span>hemibrain_data</a>
-<a class="sourceLine" id="cb2-7" data-line-number="7"></a>
-<a class="sourceLine" id="cb2-8" data-line-number="8"><span class="co"># Else, it wants to see it on the mounted team drive, here</span></a>
-<a class="sourceLine" id="cb2-9" data-line-number="9"><span class="kw"><a href="https://rdrr.io/r/base/options.html">options</a></span>()<span class="op">$</span>Gdrive_hemibrain_data</a>
-<a class="sourceLine" id="cb2-10" data-line-number="10"></a>
-<a class="sourceLine" id="cb2-11" data-line-number="11"><span class="co"># See matches, you can do this without hemibrain Google Team Drive access</span></a>
-<a class="sourceLine" id="cb2-12" data-line-number="12"><span class="kw"><a href="https://rdrr.io/r/utils/View.html">View</a></span>(hemibrain_matched)</a>
-<a class="sourceLine" id="cb2-13" data-line-number="13"></a>
-<a class="sourceLine" id="cb2-14" data-line-number="14"><span class="co"># Get fresh matches, you cannot do this without access</span></a>
-<a class="sourceLine" id="cb2-15" data-line-number="15"><span class="co">## You will be prompted to log-in through your browser</span></a>
-<a class="sourceLine" id="cb2-16" data-line-number="16">hemibrain_matched_new &lt;-<span class="st"> </span><span class="kw"><a href="../reference/hemibrain_matches.html">hemibrain_matches</a></span>() </a>
-<a class="sourceLine" id="cb2-17" data-line-number="17"><span class="co">## </span><span class="al">NOTE</span><span class="co">: includes hemibrain&lt;-&gt;flywire matches!</span></a></code></pre></div>
+<a class="sourceLine" id="cb2-4" data-line-number="4"><span class="co"># Else, it wants to see it on the mounted team drive, here</span></a>
+<a class="sourceLine" id="cb2-5" data-line-number="5"><span class="kw"><a href="https://rdrr.io/r/base/options.html">options</a></span>()<span class="op">$</span>Gdrive_hemibrain_data</a>
+<a class="sourceLine" id="cb2-6" data-line-number="6"></a>
+<a class="sourceLine" id="cb2-7" data-line-number="7"><span class="co"># See matches, you can do this without hemibrain Google Team Drive access</span></a>
+<a class="sourceLine" id="cb2-8" data-line-number="8"><span class="kw"><a href="https://rdrr.io/r/utils/View.html">View</a></span>(hemibrain_matched)</a>
+<a class="sourceLine" id="cb2-9" data-line-number="9"></a>
+<a class="sourceLine" id="cb2-10" data-line-number="10"><span class="co"># Get fresh matches, you cannot do this without access</span></a>
+<a class="sourceLine" id="cb2-11" data-line-number="11"><span class="co">## You will be prompted to log-in through your browser</span></a>
+<a class="sourceLine" id="cb2-12" data-line-number="12">hemibrain_matched_new &lt;-<span class="st"> </span><span class="kw"><a href="../reference/hemibrain_matches.html">hemibrain_matches</a></span>() </a>
+<a class="sourceLine" id="cb2-13" data-line-number="13"><span class="co">## </span><span class="al">NOTE</span><span class="co">: includes hemibrain&lt;-&gt;flywire matches!</span></a></code></pre></div>
 </div>
 <div id="get-flywire-neurons" class="section level2">
 <h2 class="hasAnchor">

@@ -82,7 +82,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">hemibrainr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
       </span>
     </div>
 
@@ -108,7 +108,10 @@
       <a href="../articles/flywire.html">flywire</a>
     </li>
     <li>
-      <a href="../articles/match_making.html">match_making</a>
+      <a href="../articles/google_filestream.html">read data from google drive</a>
+    </li>
+    <li>
+      <a href="../articles/match_making.html">neuron match making</a>
     </li>
   </ul>
 </li>
@@ -157,8 +160,9 @@
 
 <span class='fu'>hemibrain_nblast</span>(
   <span class='kw'>nblast</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"hemibrain"</span>, <span class='st'>"flywire"</span>, <span class='st'>"hemibrain-flywire"</span>, <span class='st'>"hemibrain-fafb14"</span>,
-    <span class='st'>"hemibrain-flycircuit"</span>, <span class='st'>"flywire-mirror"</span>, <span class='st'>"primary.neurites"</span>, <span class='st'>"primary.dendrites"</span>,
-    <span class='st'>"axons"</span>, <span class='st'>"dendrites"</span>, <span class='st'>"spines"</span>, <span class='st'>"tracts"</span>, <span class='st'>"arbour"</span>, <span class='st'>"simplified"</span>),
+    <span class='st'>"hemibrain-flycircuit"</span>, <span class='st'>"flywire-mirror"</span>, <span class='st'>"hemibrain-primary.neurites"</span>,
+    <span class='st'>"hemibrain-primary.dendrites"</span>, <span class='st'>"hemibrain-axons"</span>, <span class='st'>"hemibrain-dendrites"</span>,
+    <span class='st'>"hemibrain-spines"</span>, <span class='st'>"hemibrain-tracts"</span>, <span class='st'>"hemibrain-arbour"</span>, <span class='st'>"hemibrain-simplified"</span>),
   <span class='kw'>local</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
 )
 
@@ -183,10 +187,8 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>local</th>
-      <td><p>logical, whether to try to read locally saved neurons (by
-default at: <code><a href='https://rdrr.io/r/base/options.html'>getOption("hemibrain_data")</a></code>) or neurons from Google
-Drive (<code><a href='https://rdrr.io/r/base/options.html'>getOption("Gdrive_hemibrain_data")</a></code>).
-If a character, the path from which to each for hemibrain data.</p></td>
+      <td><p><code>FALSE</code> or path. By default (<code>FALSE</code>) data is read from <code>options()$Drive_hemibrain_data</code>),
+but the user can specit and alternative path.</p></td>
     </tr>
     <tr>
       <th>folder</th>

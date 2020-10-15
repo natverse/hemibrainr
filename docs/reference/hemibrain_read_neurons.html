@@ -81,7 +81,7 @@ space (as they are stored in neuPrint) to microns." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">hemibrainr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
       </span>
     </div>
 
@@ -107,7 +107,10 @@ space (as they are stored in neuPrint) to microns." />
       <a href="../articles/flywire.html">flywire</a>
     </li>
     <li>
-      <a href="../articles/match_making.html">match_making</a>
+      <a href="../articles/google_filestream.html">read data from google drive</a>
+    </li>
+    <li>
+      <a href="../articles/match_making.html">neuron match making</a>
     </li>
   </ul>
 </li>
@@ -175,7 +178,7 @@ space (as they are stored in neuPrint) to microns.</p>
     </tr>
     <tr>
       <th>local</th>
-      <td><p>logical, whether to try to read locally saved neurons (by default at: <code>options()$hemibrain_data</code>) or neurons from Google Drive (<code>options()$Gdrive_hemibrain_data</code>).</p></td>
+      <td><p><code>FALSE</code> or path. By default (<code>FALSE</code>) data is read from <code>options()$Drive_hemibrain_data</code>), but the user can specit and alternative path.</p></td>
     </tr>
     <tr>
       <th>microns</th>

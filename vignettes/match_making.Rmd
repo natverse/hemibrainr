@@ -1,8 +1,8 @@
 ---
-title: "match_making"
+title: "neuron match making"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{match_making}
+  %\VignetteIndexEntry{neuron match making}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

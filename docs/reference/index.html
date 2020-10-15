@@ -76,7 +76,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">hemibrainr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
       </span>
     </div>
 
@@ -102,7 +102,10 @@
       <a href="../articles/flywire.html">flywire</a>
     </li>
     <li>
-      <a href="../articles/match_making.html">match_making</a>
+      <a href="../articles/google_filestream.html">read data from google drive</a>
+    </li>
+    <li>
+      <a href="../articles/match_making.html">neuron match making</a>
     </li>
   </ul>
 </li>
@@ -486,6 +489,12 @@ al. 2020 (in prep)</p></td>
           <p><code><a href="plot_inspirobot.html">plot_inspirobot()</a></code> </p>
         </td>
         <td><p>Plot motivations from InspiroBot</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="hemibrain_view.html">hemibrain_view()</a></code> </p>
+        </td>
+        <td><p>Orient the hemibrain in an RGL viewer</p></td>
       </tr>
     </tbody><tbody>
       <tr>
@@ -506,6 +515,20 @@ al. 2020 (in prep)</p></td>
           <p><code><a href="hemibrain_matching.html">LR_matching()</a></code> <code><a href="hemibrain_matching.html">hemibrain_matching()</a></code> <code><a href="hemibrain_matching.html">lm_matching()</a></code> <code><a href="hemibrain_matching.html">fafb_matching()</a></code> </p>
         </td>
         <td><p>Match up neurons between the hemibrain and FAFB</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-set-hemibrainr-to-work-with-google-drive" class="hasAnchor"><a href="#section-set-hemibrainr-to-work-with-google-drive" class="anchor"></a>Set hemibrainr to work with google drive</h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      <tr>
+        
+        <td>
+          <p><code><a href="hemibrainr_set_drive.html">hemibrainr_set_drive()</a></code> <code><a href="hemibrainr_set_drive.html">hemibrainr_team_drive()</a></code> <code><a href="hemibrainr_set_drive.html">hemibrainr_rclone()</a></code> <code><a href="hemibrainr_set_drive.html">hemibrainr_rclone_unmount()</a></code> </p>
+        </td>
+        <td><p>Set data source for precomputed information</p></td>
       </tr>
     </tbody><tbody>
       <tr>
@@ -538,7 +561,7 @@ al. 2020 (in prep)</p></td>
     </tbody><tbody>
       <tr>
         <th colspan="2">
-          <h2 id="section-access-flywire-google-drive-data" class="hasAnchor"><a href="#section-access-flywire-google-drive-data" class="anchor"></a>Access flywire google drive data</h2>
+          <h2 id="section-manipulate-googlesheets-for-neuron-matching" class="hasAnchor"><a href="#section-manipulate-googlesheets-for-neuron-matching" class="anchor"></a>Manipulate googlesheets for neuron matching</h2>
           <p class="section-desc"></p>
         </th>
       </tr>
@@ -548,20 +571,6 @@ al. 2020 (in prep)</p></td>
           <p><code><a href="hemibrain_add_made_matches.html">flywire_matching_rewrite()</a></code> <code><a href="hemibrain_add_made_matches.html">hemibrain_add_made_matches()</a></code> <code><a href="hemibrain_add_made_matches.html">hemibrain_matching_add()</a></code> <code><a href="hemibrain_add_made_matches.html">hemibrain_matching_transfers()</a></code> <code><a href="hemibrain_add_made_matches.html">fafb_matching_rewrite()</a></code> <code><a href="hemibrain_add_made_matches.html">hemibrain_matching_rewrite()</a></code> </p>
         </td>
         <td><p>Manage hemibrain-FAFB neuron matches</p></td>
-      </tr>
-    </tbody><tbody>
-      <tr>
-        <th colspan="2">
-          <h2 id="section-uncategorised" class="hasAnchor"><a href="#section-uncategorised" class="anchor"></a>Uncategorised</h2>
-          <p class="section-desc"><p>functions that need categorising</p></p>
-        </th>
-      </tr>
-      <tr>
-        
-        <td>
-          <p><code><a href="hemibrain_view.html">hemibrain_view()</a></code> </p>
-        </td>
-        <td><p>Orient the hemibrain in an RGL viewer</p></td>
       </tr>
     </tbody>
     </table>
@@ -580,10 +589,10 @@ al. 2020 (in prep)</p></td>
       <li><a href="#section-neuron-matching-across-datasets">Neuron matching across datasets</a></li>
       <li><a href="#section-utility">Utility</a></li>
       <li><a href="#section-r-annotation-pipelines">R annotation pipelines</a></li>
+      <li><a href="#section-set-hemibrainr-to-work-with-google-drive">Set hemibrainr to work with google drive</a></li>
       <li><a href="#section-access-hemibrain-google-drive-data">Access hemibrain google drive data</a></li>
       <li><a href="#section-access-flywire-google-drive-data">Access flywire google drive data</a></li>
-      <li><a href="#section-access-flywire-google-drive-data">Access flywire google drive data</a></li>
-      <li><a href="#section-uncategorised">Uncategorised</a></li>
+      <li><a href="#section-manipulate-googlesheets-for-neuron-matching">Manipulate googlesheets for neuron matching</a></li>
     </ul>
   </div>
 </div>

@@ -11,11 +11,11 @@
 \format{
 An object of class \code{data.frame} with 792075 rows and 6 columns.
 
-An object of class \code{data.frame} with 794165 rows and 6 columns.
+An object of class \code{data.frame} with 794165 rows and 7 columns.
 
 An object of class \code{data.frame} with 505094 rows and 6 columns.
 
-An object of class \code{data.frame} with 794164 rows and 6 columns.
+An object of class \code{data.frame} with 794164 rows and 7 columns.
 }
 \source{
 \url{https://www.biorxiv.org/content/10.1101/2020.01.19.911453v1}

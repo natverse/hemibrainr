@@ -84,7 +84,7 @@ locations in flywire space, based on CATMAID skids." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">hemibrainr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
       </span>
     </div>
 
@@ -110,7 +110,10 @@ locations in flywire space, based on CATMAID skids." />
       <a href="../articles/flywire.html">flywire</a>
     </li>
     <li>
-      <a href="../articles/match_making.html">match_making</a>
+      <a href="../articles/google_filestream.html">read data from google drive</a>
+    </li>
+    <li>
+      <a href="../articles/match_making.html">neuron match making</a>
     </li>
   </ul>
 </li>
@@ -153,7 +156,7 @@ locations in flywire space, based on CATMAID skids.</p>
 
     <pre class="usage"><span class='fu'>flywire_matching_rewrite</span>(
   <span class='kw'>flywire.ids</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span>(<span class='fu'><a href='flywire_neurons.html'>flywire_neurons</a></span>()),
-  <span class='kw'>selected_file</span> <span class='kw'>=</span> <span class='st'>"1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw"</span>,
+  <span class='kw'>selected_file</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>options</a></span>()$<span class='no'>hemibrainr_matching_gsheet</span>,
   <span class='no'>...</span>
 )
 
@@ -168,21 +171,21 @@ locations in flywire space, based on CATMAID skids.</p>
   <span class='no'>ids</span>,
   <span class='kw'>dataset</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"hemibrain"</span>, <span class='st'>"FAFB"</span>, <span class='st'>"flywire"</span>),
   <span class='kw'>User</span> <span class='kw'>=</span> <span class='no'>dataset</span>,
-  <span class='kw'>selected_file</span> <span class='kw'>=</span> <span class='st'>"1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw"</span>,
+  <span class='kw'>selected_file</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>options</a></span>()$<span class='no'>hemibrainr_matching_gsheet</span>,
   <span class='no'>...</span>
 )
 
 <span class='fu'>hemibrain_matching_transfers</span>(
-  <span class='kw'>selected_file</span> <span class='kw'>=</span> <span class='st'>"1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw"</span>
+  <span class='kw'>selected_file</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>options</a></span>()$<span class='no'>hemibrainr_matching_gsheet</span>
 )
 
 <span class='fu'>fafb_matching_rewrite</span>(
-  <span class='kw'>selected_file</span> <span class='kw'>=</span> <span class='st'>"1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw"</span>,
+  <span class='kw'>selected_file</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>options</a></span>()$<span class='no'>hemibrainr_matching_gsheet</span>,
   <span class='no'>...</span>
 )
 
 <span class='fu'>hemibrain_matching_rewrite</span>(
-  <span class='kw'>selected_file</span> <span class='kw'>=</span> <span class='st'>"1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw"</span>,
+  <span class='kw'>selected_file</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>options</a></span>()$<span class='no'>hemibrainr_matching_gsheet</span>,
   <span class='no'>...</span>
 )</pre>
 
@@ -195,7 +198,7 @@ locations in flywire space, based on CATMAID skids.</p>
     </tr>
     <tr>
       <th>selected_file</th>
-      <td><p>Specifies which Google Sheet to use. Unless you are using a personal Google Sheet, this should be <code>"1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw"</code>.</p></td>
+      <td><p>Specifies which Google Sheet to use. Unless you are using a personal Google Sheet, this should be <code>options()$hemibrainr_matching_gsheet</code>.</p></td>
     </tr>
     <tr>
       <th>...</th>

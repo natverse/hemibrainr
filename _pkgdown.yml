@@ -75,6 +75,7 @@ reference:
     - 'add_Label'
     - 'hemibrain_settags'
     - 'plot_inspirobot'
+    - 'hemibrain_view'
   - title: R annotation pipelines
     desc: ~
     contents:
@@ -82,6 +83,10 @@ reference:
     - 'hemibrain_matching'
     - 'fafb_matching'
     - 'LR_matching'
+  - title: Set hemibrainr to work with google drive
+    desc: ~
+    contents:
+    - 'hemibrainr_set_drive'
   - title: Access hemibrain google drive data
     desc: ~
     contents:
@@ -90,11 +95,8 @@ reference:
     desc: ~
     contents:
     - 'flywire_neurons'
-  - title: Access flywire google drive data
+  - title: Manipulate googlesheets for neuron matching
     desc: ~
     contents:
     - 'hemibrain_add_made_matches'
-  - title: Uncategorised
-    desc: functions that need categorising
-    contents:
-    - 'hemibrain_view'
+

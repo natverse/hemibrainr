@@ -21,7 +21,7 @@ knitr::opts_chunk$set(
 
 In order to use this package to its fullest, you need to get `hemibrainr` to read large amounts of data stored on a google drive. To do this, you have three options:
 
-1. Mount your google drive usin [Google filestream](https://support.google.com/drive/answer/7329379?authuser=2)
+1. Mount your google drive using [Google filestream](https://support.google.com/drive/answer/7329379?authuser=2)
 2. Mount your google drive using [rclone](https://rclone.org/drive/)
 3. Download the google drive and save locally
 
