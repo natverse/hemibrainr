@@ -2,162 +2,6 @@
 ################################ Utilities ##################################
 #############################################################################
 
-# google upload neuronlistfh
-googledrive_upload_neuronlistfh <- function(x,
-                                            team_drive = "hemibrain",
-                                            file_name = "neurons.rds",
-                                            folder = "flywire_neurons",
-                                            subfolder = NULL){
-  # Get drive
-  td = googledrive::team_drive_get(team_drive)
-  drive_td = googledrive::drive_find(type = "folder", team_drive = td)
-  gfolder= subset(drive_td,name==folder)[1,]
-  if(!is.null(subfolder)){
-    sub = googledrive::drive_ls(path = gfolder, type = "folder", team_drive = td)
-    gfolder = subset(sub, name ==subfolder )[1,]
-  }
-  sub = googledrive::drive_ls(path = gfolder, team_drive = td)
-  gfile = subset(sub, name ==file_name )
-  if(nrow(gfile)){
-    save.position = googledrive::as_id(gfile[1,]$id)
-  }else{
-    save.position = gfolder
-  }
-
-  # Get data folder
-  t.folder.data = googledrive::drive_ls(path = gfolder, type = "folder", team_drive = td)
-  t.folder.data = subset(t.folder.data, name == "data")[1,]
-  if(is.na(t.folder.data$name)){
-    googledrive::drive_mkdir(name = "data",
-                             path = gfolder,
-                             overwrite = TRUE)
-    t.folder.data = googledrive::drive_ls(path = gfolder, type = "folder", team_drive = td)
-    t.folder.data = subset(t.folder.data, name == "data")[1,]
-  }
-
-  # Save locally
-  temp = tempdir(check=TRUE)
-  on.exit(unlink(temp, recursive=TRUE))
-  temp.data = paste0(temp,"/data")
-  temp.rds = paste0(temp,"/",file_name)
-  nl = nat::as.neuronlistfh(x, dbdir= temp.data, WriteObjects = "yes")
-  nat::write.neuronlistfh(nl, file= temp.rds, overwrite=TRUE)
-
-  # upload
-  t.list = list.files(temp.data,full.names = TRUE)
-  error.files = c()
-  pb <- progress::progress_bar$new(
-    format = "  downloading [:bar] :current/:total eta: :eta",
-    total = length(t.list), clear = FALSE, show_after = 1)
-  sub.data = googledrive::drive_ls(path = t.folder.data, team_drive = td)
-  for(t.neuron.fh.data.file in t.list){
-    pb$tick()
-    t = basename(t.neuron.fh.data.file)
-    if(t%in%sub.data$name){
-      save.data = googledrive::as_id(subset(sub.data, name==t)[1,]$id)
-    }else{
-     save.data =  t.folder.data
-    }
-    e = tryCatch(google_drive_place(media = t.neuron.fh.data.file,
-                              path = save.data,
-                              verbose = FALSE),
-                 error = function(e){
-                   message(e)
-                   NULL
-                 } )
-    if(is.null(e)){
-      warning(e)
-      error.files = c(error.files,t.neuron.fh.data.file)
-    }
-  }
-  if(length(error.files)){
-    warning("Failed to upload: ", length(error.files)," files")
-  }
-
-  # upload
-  google_drive_place(media = temp.rds,
-            path = save.position,
-            verbose = TRUE)
-
-}
-
-# Google drive
-google_drive_place <- function(media,
-                               path,
-                               verbose = TRUE,
-                               ...){
-  if("drive_id"%in%class(path)){
-    googledrive::drive_update(media = media,
-                           file = path,
-                           verbose = verbose,
-                           ...)
-  }else{
-    googledrive::drive_put(media = media,
-                           path = path,
-                           verbose = verbose,
-                           ...)
-  }
-}
-
-# upload nblast matrix
-googledrive_upload_nblast<- function(x,
-                                     team_drive = "hemibrain",
-                                     folder = "hemibrain_nblast",
-                                     subfolder = NULL,
-                                     file = NULL,
-                                     threshold=-0.5,
-                                     digits=3,
-                                     format=c("rda", "rds"),
-                                     ...){
-  format=match.arg(format)
-
-  # Get drive
-  td = googledrive::team_drive_get(team_drive)
-  drive_td = googledrive::drive_find(type = "folder", team_drive = td)
-  gfolder= subset(drive_td,name==folder)[1,]
-  if(!is.null(subfolder)){
-    sub = googledrive::drive_ls(path = gfolder, type = "folder", team_drive = td)
-    gfolder = subset(sub, name ==subfolder )[1,]
-  }
-
-  # Compress
-  objname=deparse(substitute(x))
-  colnames(x) = gsub("_m$","",colnames(x)) # factor in mirrored neurons
-  rownames(x) = gsub("_m$","",rownames(x))
-  x = tryCatch(apply(x, 2, function(i) tapply(x, rownames(x), sum, na.rm = TRUE)), error = function(e) x)
-  x = tryCatch(t(apply(t(x), 2, function(i) tapply(i, colnames(x), sum, na.rm = TRUE))), error = function(e) x)
-  x[x<threshold]=threshold
-  x=round(x, digits=digits)
-
-  # Save in temporary location
-  newobjname <- paste0(objname, ".compressed")
-  temp <- tempdir(check=TRUE)
-  fname <- paste0(temp, "/",paste0(file, newobjname), ".", format)
-  if(format=="rds") {
-    saveRDS(x, file=fname, ...)
-  } else {
-    message(newobjname)
-    assign(newobjname, x)
-    save(list = newobjname, file = fname, ...)
-  }
-
-  # Does the file already exist?
-  file_name = basename(fname)
-  sub = googledrive::drive_ls(path = gfolder, team_drive = td)
-  gfile = subset(sub, name ==file_name)
-  if(nrow(gfile)){
-    save.position = googledrive::as_id(gfile[1,]$id)
-  }else{
-    save.position = gfolder
-  }
-
-  # Upload
-  google_drive_place(media = fname,
-                         path = save.position,
-                         verbose = TRUE)
-}
-
-
 # collapse matrix by names
 collapse_matrix_by_names <- function(M, FUN = mean, ...){
   M = apply(M, 2, function(x) tapply(x, rownames(M), FUN, ...))
@@ -401,7 +245,7 @@ save_compressed_nblast_mat <- function(x,
   format=match.arg(format)
   colnames(x) = gsub("_m$","",colnames(x)) # factor in mirrored hemibrain neurons
   rownames(x) = gsub("_m$","",rownames(x))
-  x = apply(x, 2, function(i) tapply(x, rownames(x), sum, na.rm = TRUE))
+  x = apply(x, 2, function(i) tapply(i, rownames(x), sum, na.rm = TRUE))
   x = t(apply(t(x), 2, function(i) tapply(i, colnames(x), sum, na.rm = TRUE)))
   x[x<threshold]=threshold
   x=round(x, digits=digits)
@@ -493,16 +337,19 @@ fafb_hemibrain_cut <- function(x, ...){
 # use foreach to process in parallel
 #' @importFrom nat.templatebrains regtemplate xform_brain
 xform_brain_parallel <- function(x,
-                                 no.batches = 10,
+                                 numCores = 2,
                                  sample = regtemplate(x),
                                  reference,
                                  ...){
-  batches = split(x, round(seq(from = 1, to = no.batches, length.out = length(x))))
-  foreach.nl <- foreach::foreach (batch = 1:no.batches) %dopar% {
+  batch = 1
+  batches = split(x, round(seq(from = 1, to = numCores, length.out = length(x))))
+  foreach.nl <- foreach::foreach (batch = 1:length(batches)) %dopar% {
     y = batches[[batch]]
-    j = xform_brain(y,
-                    reference =reference, sample = sample,
-                    .parallel = FALSE,...)
+    j = java_xform_brain(y,
+                    reference =reference,
+                    sample = sample,
+                    .parallel = FALSE,
+                    ...)
   }
   neurons = do.call(c, foreach.nl)
   neurons
@@ -517,3 +364,44 @@ strip_meshes<-function(x){
   }
   nat::nlapply(x, strip_mesh.neuron)
 }
+
+# Update neurons xyz locations
+java_xform_brain <- function(x,
+                             sample = regtemplate(x),
+                             reference,
+                             method = "rJava",
+                             progress.rjava=TRUE,
+                             ...){
+  # Transform treenodes
+  points = nat::xyzmatrix(x)
+  t = xform_brain(points, reference = reference, sample = sample, method = method, progress.rjava=progress.rjava, ...)
+  nat::xyzmatrix(x) = t
+  # Transform synapses
+  syns = lapply(names(x), function(n){
+    conn = x[[n]]$connectors
+    conn$id = n
+    conn
+  })
+  conns = do.call(rbind, syns)
+  xyz.good = tryCatch(nat::xyzmatrix(conns), error = function(e) NULL)
+  if(!is.null(xyz.good)){
+    conns.t = nat.templatebrains::xform_brain(nat::xyzmatrix(conns), reference = reference, sample = sample, method = method, progress.rjava=progress.rjava, ...)
+    nat::xyzmatrix(conns) = conns.t
+    x = add_field_seq(x,names(x),field="id")
+    x = nat::nlapply(x, function(n){
+      n$connectors = subset(conns, conns$id == n$id)
+      n$id = NULL
+      n$connectors$id = NULL
+      n
+    })
+  }
+  x
+}
+
+# hidden
+## Save with given name
+saveit <- function(..., file) {
+  x <- list(...)
+  save(list=names(x), file=file, envir=list2env(x))
+}
+

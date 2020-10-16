@@ -44,15 +44,15 @@ An object of class \code{character} of length 307.
 
 An object of class \code{character} of length 2383.
 
-An object of class \code{numeric} of length 1428.
+An object of class \code{character} of length 1428.
 
-An object of class \code{character} of length 321.
+An object of class \code{character} of length 417.
 
-An object of class \code{numeric} of length 2035.
+An object of class \code{character} of length 2035.
 
-An object of class \code{numeric} of length 5.
+An object of class \code{character} of length 5.
 
-An object of class \code{numeric} of length 23.
+An object of class \code{character} of length 24.
 
 An object of class \code{character} of length 2129.
 }

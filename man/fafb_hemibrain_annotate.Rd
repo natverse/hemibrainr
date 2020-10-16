@@ -6,7 +6,7 @@
 \alias{fafb_set_transmitter}
 \title{Set annotations for FAFB neurons in CATMAID based on hemibrain results}
 \usage{
-fafb_hemibrain_annotate(x, ...)
+fafb_hemibrain_annotate(x, flywire = TRUE, ...)
 
 fafb_set_hemilineage(
   find,
@@ -29,6 +29,8 @@ fafb_set_transmitter(
 \arguments{
 \item{x}{a vector of FAFB skeleton IDs (skids) that can be read with \code{catmaid::catmaid_skids()}}
 
+\item{flywire}{logical. Whether or not to add flywire-related annotation information, e.g. a corresponding position in flywire voxel space and a matching, cognate flywire ID.}
+
 \item{...}{arguments passed to \code{neuprintr::neuprint_get_meta} and \code{catmaid::catmaid_login}.}
 
 \item{find}{an annotation/search term/vector of skids passed to \code{catmaid::catmaid_skids}.}
@@ -49,6 +51,7 @@ annotations set on CATMAID neurons in specified CATMAID instance, see your \code
 \description{
 Set annotations for FAFB neurons in CATMAID based on matches made to hemibrain neurons.
 E.g. transfer information on matches and cell body fibers, and also update lineage related information.
+Not that \code{catmaid::flywire_matching_rewrite()} will writ annoptations related to flywire.
 }
 \examples{
 \donttest{

@@ -511,7 +511,9 @@ gsheet_manipulation <- function(FUN, ..., return = FALSE){
     }
   }
   if(return){
-    g = unlist_df(g)
+    if(is.data.frame(g)){
+      g = unlist_df(g)
+    }
     return(g)
   }
 }

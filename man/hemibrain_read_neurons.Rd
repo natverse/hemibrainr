@@ -21,15 +21,16 @@ scale_neurons(x, scaling = (8/1000), ...)
 
 hemibrain_neurons(
   local = FALSE,
-  neuron.split = c("polypre_centrifugal_synapses", "polypre_centrifugal_distance"),
-  brain = c("JRCFIB2018Fraw", "JRCFIB2018F", "FAFB", "JFRC2", "JRC2018F", "FCWB"),
-  mirror = FALSE
+  brain = c("JRCFIB2018Fraw", "JRCFIB2018F", "FAFB14", "JFRC2", "JRC2018F", "FCWB"),
+  mirror = FALSE,
+  dotprops = FALSE,
+  folder = "hemibrain_neurons/"
 )
 }
 \arguments{
 \item{x}{a vector of bodyids that can be read from \url{'https://neuprint.janelia.org/'}.}
 
-\item{local}{logical, whether to try to read locally saved neurons (by default at: \code{options()$hemibrain_data}) or neurons from Google Drive (\code{options()$Gdrive_hemibrain_data}).}
+\item{local}{\code{FALSE} or path. By default (\code{FALSE}) data is read from \code{options()$Drive_hemibrain_data}), but the user can specit and alternative path.}
 
 \item{microns}{convert dimensions from raw voxels into microns (template brain: \code{JRCFIB2018F}, else \code{JRCFIB2018Fraw}).}
 
@@ -47,11 +48,16 @@ and \code{\link{hemibrain_flow_centrality}}}
 
 \item{scaling}{the factor by which neuron coordinates in raw voxel space should be multiplied. The default scales to microns.}
 
-\item{neuron.split}{read saved neurons spit in which way? Folder names indicative of arguments passed to \code{\link{flow_centrality}}.}
-
 \item{brain}{the brainspace in which hemibrain neurons have been registered. Defaults to raw voxel space for the hemibrain project.}
 
 \item{mirror}{logical, whether or not to read neurons that have been mirrored (i.e. flipped to the 'other' brain hemisphere).}
+
+\item{dotprops}{logical. Whether or not to retreive a \code{nat::dotprops} object, i.e. vector cloud representations of neurons for NBLASTing.
+The dotprops object will be in JRC2018FIBF micron space.}
+
+\item{folder}{the sub-folder in which to look for a \code{nat::neuronlistfh} .rds file and its data, representing hemibrain neurons. The function will look forthis
+folder in the location: \code{hemibrainr:::good_savedir(local=local)},
+by default the mounted Goolge drive (\code{options()$Gdrive_hemibrain_data}) or locally ((\code{options()$hemibrain_data}))}
 }
 \value{
 the neuron or neuron list object inputted, with centripetal flow
@@ -91,5 +97,5 @@ nlscan_split(neurons, WithConnectors = TRUE)
 \seealso{
 \code{\link{hemibrain_splitpoints}}, \code{\link{hemibrain_flow_centrality}}, \code{\link{hemibrain_somas}},
 \code{\link{hemibrain_precomputed_splitpoints}}, \code{\link{hemibrain_metrics}},\code{\link{hemibrain_remove_bad_synapses}}
-,\code{\link{hemibrain_get_meta}}
+,\code{\link{hemibrain_get_meta}},\code{\link{flywire_neurons}}
 }

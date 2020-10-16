@@ -2,6 +2,9 @@
 % Please edit documentation in R/flywire_googledrive.R
 \name{flywire_neurons}
 \alias{flywire_neurons}
+\alias{flywire_neurons_update}
+\alias{flywire_nblast_update}
+\alias{flywire_request}
 \title{Download a large set of well-traced skeletonised neurons from FlyWire}
 \usage{
 flywire_neurons(
@@ -11,30 +14,63 @@ flywire_neurons(
   mirror = FALSE,
   ...
 )
+
+flywire_neurons_update(
+  x,
+  brain = c("FlyWire", "JRCFIB2018F", "JRCFIB2018F", "FAFB", "JFRC2", "JRC2018F",
+    "FCWB"),
+  mirror = FALSE,
+  ...
+)
+
+flywire_nblast_update(
+  x = NULL,
+  nblast = c("hemibrain-flywire", "flywire", "flywire-mirror"),
+  ...
+)
+
+flywire_request(
+  request,
+  selected_file = options()$flywire_flagged_gsheet,
+  sheet = "flywire",
+  ...
+)
 }
 \arguments{
-\item{local}{logical, whether to try to read locally saved neurons (by default at: \code{options()$hemibrain_data}) or neurons from Google Drive (\code{options()$Gdrive_hemibrain_data}).}
+\item{local}{\code{FALSE} or path. By default (\code{FALSE}) data is read from \code{options()$Drive_hemibrain_data}), but the user can specit and alternative path.}
 
 \item{brain}{the brainspace in which hemibrain neurons have been registered. Defaults to raw voxel space for the FlyWire project.}
 
 \item{mirror}{logical, whether or not to read neurons that have been mirrored (i.e. flipped to the 'other' brain hemisphere).}
 
-\item{...}{Additional arguments passed to \code{nat::\link{nlapply}}.}
+\item{...}{Additional arguments passed to \code{nat::nlapply}.and/or \code{fafbseg::skeletor}.}
+
+\item{x}{flywire IDs to update, for the saved google drive \code{neuronlistfh} objects called with \code{flywire_neurons}.}
+
+\item{nblast}{which flywire nblast to update on google drive.}
+
+\item{request}{a neuronlist, matrix of x,y,z position or flywire ID to add to a
+\href{https://docs.google.com/spreadsheets/d/1rzG1MuZYacM-vbW7100aK8HeA-BY6dWAVXQ7TB6E2cQ/edit#gid=0}{Google sheet} that records flywire positions
+flagged to be processed into neuron skeletons that can be called by \code{flywire_neurons}.}
+
+\item{selected_file}{the Google sheet onto which to add new flywire coordinate. I.e. \href{https://docs.google.com/spreadsheets/d/1rzG1MuZYacM-vbW7100aK8HeA-BY6dWAVXQ7TB6E2cQ/edit#gid=0}{Google sheet}.}
+
+\item{sheet}{the tab onto which to add your requests.}
 }
 \value{
 A \code{neuronlist} object containing flywire skeletons. In the meta-data, it might be useful for some users to note that
 you will get:
 
 \itemize{
- \item{"flywire.id"}{ The ID given to the corresponding volumetric body in flywire.
+ \item{"flywire.id"}{ The ID given to the corresponmding volumetric body in flywire.
  These are used to do things like fetch volumes and are the input to the \code{skeletor} function. However, they are highly volatile and
  change a lot with active tracing.}
  \item{"flywire.xyz"}{ The voxel coordinate of a single point in this neuron, usually a cell body fiber tract position. This is a more accurate way
  of keeping tract of neuron as it will always correspond to the same 'neuron' even though its related flywire.id will change with merge/split events in flywire.}
- \item{"hemilineage"}{ An estimated hemilineage identity from both of two naming systems, Ito et al. 2013 and Wong et al. 2013}
+ \item{"hemilineage"}{ An estimated hemilineage identity from both of two naming sysytems, Ito et al. 2013 and Wong et al. 2013}
  \item{"side"}{ An estimate as to the 'side', i.e. brain hemisphere, in which the neuron lies}
  \item{"skid"}{ The 'skeleton ID' of this neuron's match in CATMAID for FAFBv14}
- \item{"FAFB.xyz"}{ The coordinates in nanometres of a point in the neuron, in FAFBv14 space}
+ \item{"FAFB.xyz"}{ The coordinates in nanometers of a point in the neuron, in FAFBv14 space}
  \item{"hemibrain_match"}{ The bodyid of an estimated hemibrain match}
 }
 }
@@ -42,7 +78,9 @@ you will get:
 Get a large number of skeletonised neurons from FlyWire. The neuronlist is saved as a
  \code{nat::neuronlistfh} object so certain neurons may be read from it
  without loading the entire, large neuronlist into memory. You will need access to the hemibrain Google Team Drive and
- have it mounted with Google Filestream.
+ have it mounted with Google filestream.The function \code{flywire_neurons_update} can be used to update the available data.
+ If you want to flag flywire neurons that should be added to the Google dirve, without doing this yourself, you can use
+ \code{flywire_request}.
 }
 \examples{
 \donttest{

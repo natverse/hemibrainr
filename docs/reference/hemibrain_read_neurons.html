@@ -17,27 +17,23 @@
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png" />
 
 <!-- jquery -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
-
-<!-- bootstrap-toc -->
-<link rel="stylesheet" href="../bootstrap-toc.css">
-<script src="../bootstrap-toc.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
 
 <!-- headroom.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -52,7 +48,8 @@ uses the package neuprintr to read neurons. It then uses
 hemibrain_flow_centrality to re-root and split neurons into putative
 axons and dendrites. Optionally, it may also convert neurons from their raw voxel
 space (as they are stored in neuPrint) to microns." />
-<meta property="og:image" content="/logo.svg" />
+<meta property="og:image" content="/logo.png" />
+<meta name="twitter:card" content="summary" />
 
 
 
@@ -70,7 +67,7 @@ space (as they are stored in neuPrint) to microns." />
 
   </head>
 
-  <body data-spy="scroll" data-target="#toc">
+  <body>
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -84,7 +81,7 @@ space (as they are stored in neuPrint) to microns." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">hemibrainr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
       </span>
     </div>
 
@@ -107,14 +104,20 @@ space (as they are stored in neuPrint) to microns." />
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/match_making.html">match_making</a>
+      <a href="../articles/flywire.html">flywire</a>
+    </li>
+    <li>
+      <a href="../articles/google_filestream.html">read data from google drive</a>
+    </li>
+    <li>
+      <a href="../articles/match_making.html">neuron match making</a>
     </li>
   </ul>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/flyconnectome/hemibrainr/">
+  <a href="https://github.com/flyconnectome/hemibrainr">
     <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
@@ -160,9 +163,10 @@ space (as they are stored in neuPrint) to microns.</p>
 
 <span class='fu'>hemibrain_neurons</span>(
   <span class='kw'>local</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>neuron.split</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"polypre_centrifugal_synapses"</span>, <span class='st'>"polypre_centrifugal_distance"</span>),
-  <span class='kw'>brain</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"JRCFIB2018Fraw"</span>, <span class='st'>"JRCFIB2018F"</span>, <span class='st'>"FAFB"</span>, <span class='st'>"JFRC2"</span>, <span class='st'>"JRC2018F"</span>, <span class='st'>"FCWB"</span>),
-  <span class='kw'>mirror</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
+  <span class='kw'>brain</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"JRCFIB2018Fraw"</span>, <span class='st'>"JRCFIB2018F"</span>, <span class='st'>"FAFB14"</span>, <span class='st'>"JFRC2"</span>, <span class='st'>"JRC2018F"</span>, <span class='st'>"FCWB"</span>),
+  <span class='kw'>mirror</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>dotprops</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>folder</span> <span class='kw'>=</span> <span class='st'>"hemibrain_neurons/"</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -174,7 +178,7 @@ space (as they are stored in neuPrint) to microns.</p>
     </tr>
     <tr>
       <th>local</th>
-      <td><p>logical, whether to try to read locally saved neurons (by default at: <code>options()$hemibrain_data</code>) or neurons from Google Drive (<code>options()$Gdrive_hemibrain_data</code>).</p></td>
+      <td><p><code>FALSE</code> or path. By default (<code>FALSE</code>) data is read from <code>options()$Drive_hemibrain_data</code>), but the user can specit and alternative path.</p></td>
     </tr>
     <tr>
       <th>microns</th>
@@ -207,16 +211,23 @@ and <code><a href='hemibrain_flow_centrality.html'>hemibrain_flow_centrality</a>
       <td><p>the factor by which neuron coordinates in raw voxel space should be multiplied. The default scales to microns.</p></td>
     </tr>
     <tr>
-      <th>neuron.split</th>
-      <td><p>read saved neurons spit in which way? Folder names indicative of arguments passed to <code><a href='flow_centrality.html'>flow_centrality</a></code>.</p></td>
-    </tr>
-    <tr>
       <th>brain</th>
       <td><p>the brainspace in which hemibrain neurons have been registered. Defaults to raw voxel space for the hemibrain project.</p></td>
     </tr>
     <tr>
       <th>mirror</th>
       <td><p>logical, whether or not to read neurons that have been mirrored (i.e. flipped to the 'other' brain hemisphere).</p></td>
+    </tr>
+    <tr>
+      <th>dotprops</th>
+      <td><p>logical. Whether or not to retreive a <code><a href='https://rdrr.io/pkg/nat/man/dotprops.html'>nat::dotprops</a></code> object, i.e. vector cloud representations of neurons for NBLASTing.
+The dotprops object will be in JRC2018FIBF micron space.</p></td>
+    </tr>
+    <tr>
+      <th>folder</th>
+      <td><p>the sub-folder in which to look for a <code><a href='https://rdrr.io/pkg/nat/man/neuronlistfh.html'>nat::neuronlistfh</a></code> .rds file and its data, representing hemibrain neurons. The function will look forthis
+folder in the location: <code>hemibrainr:::good_savedir(local=local)</code>,
+by default the mounted Goolge drive (<code>options()$Gdrive_hemibrain_data</code>) or locally ((<code>options()$hemibrain_data</code>))</p></td>
     </tr>
     </table>
 
@@ -231,7 +242,7 @@ and <code><a href='hemibrain_flow_centrality.html'>hemibrain_flow_centrality</a>
 
     <div class='dont-index'><p><code><a href='hemibrain_splitpoints.html'>hemibrain_splitpoints</a></code>, <code><a href='hemibrain_flow_centrality.html'>hemibrain_flow_centrality</a></code>, <code><a href='hemibrain_somas.html'>hemibrain_somas</a></code>,
 <code><a href='hemibrain_precomputed_splitpoints.html'>hemibrain_precomputed_splitpoints</a></code>, <code><a href='hemibrain_metrics.html'>hemibrain_metrics</a></code>,<code><a href='hemibrain_remove_bad_synapses.html'>hemibrain_remove_bad_synapses</a></code>
-,<code><a href='hemibrain_get_meta.html'>hemibrain_get_meta</a></code></p></div>
+,<code><a href='hemibrain_get_meta.html'>hemibrain_get_meta</a></code>,<code><a href='flywire_neurons.html'>flywire_neurons</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
@@ -254,10 +265,15 @@ and <code><a href='hemibrain_flow_centrality.html'>hemibrain_flow_centrality</a>
 <span class='fu'><a href='plot3d_split.html'>nlscan_split</a></span>(<span class='no'>neurons</span>, <span class='kw'>WithConnectors</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
 }<span class='co'># }</span></div></pre>
   </div>
-  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
-    <nav id="toc" data-toggle="toc" class="sticky-top">
-      <h2 data-toc-skip>Contents</h2>
-    </nav>
+  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
+    <h2>Contents</h2>
+    <ul class="nav nav-pills nav-stacked">
+      <li><a href="#arguments">Arguments</a></li>
+      <li><a href="#value">Value</a></li>
+      <li><a href="#see-also">See also</a></li>
+      <li><a href="#examples">Examples</a></li>
+    </ul>
+
   </div>
 </div>
 
@@ -268,7 +284,7 @@ and <code><a href='hemibrain_flow_centrality.html'>hemibrain_flow_centrality</a>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
 </div>
 
       </footer>

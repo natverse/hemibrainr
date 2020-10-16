@@ -1,7 +1,8 @@
-pandoc: 2.7.3
-pkgdown: 1.5.1
+pandoc: 2.3.1
+pkgdown: 1.4.1
 pkgdown_sha: ~
 articles:
+  flywire: flywire.html
+  google_filestream: google_filestream.html
   match_making: match_making.html
-last_built: 2020-10-06T20:02Z
 

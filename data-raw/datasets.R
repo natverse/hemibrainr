@@ -22,7 +22,7 @@ hemibrain_olfactory_layers= read.csv("data-raw/annotations/hemibrain_olfactory_l
 usethis::use_data(hemibrain_olfactory_layers, overwrite = TRUE)
 
 ### Access Team Drive
-hemibrain = googledrive::team_drive_get("hemibrain")
+hemibrain = googledrive::team_drive_get(hemibrainr_team_drive())
 drive_hemibrain = googledrive::drive_find(type = "folder", team_drive = hemibrain)
 hemibrain_drive_csvs = drive_find(type = "csv", team_drive = hemibrain)
 hemibrain_drive_data = subset(hemibrain_drive_csvs,grepl("splitpoints|metrics",name))
@@ -50,13 +50,13 @@ rownames(hemibrain_somas) = hemibrain_somas$bodyid
 usethis::use_data(hemibrain_somas, overwrite = TRUE)
 
 ### Split points
-hemibrain_splitpoints_polypre_centrifugal_distance <- read.csv("data-raw/hemibrain_all_neurons_splitpoints_polypre_centrifugal_distance.csv")
-hemibrain_splitpoints_pre_centrifugal_distance <- read.csv("data-raw/hemibrain_all_neurons_splitpoints_pre_centrifugal_distance.csv")
-hemibrain_splitpoints_polypre_centrifugal_synapses <- read.csv("data-raw/hemibrain_all_neurons_splitpoints_polypre_centrifugal_synapses.csv")
+hemibrain_splitpoints_polypre_centrifugal_distance <- read.csv("data-raw/metrics/hemibrain_all_neurons_splitpoints_polypre_centrifugal_distance.csv")
+hemibrain_splitpoints_pre_centrifugal_distance <- read.csv("data-raw/metrics/hemibrain_all_neurons_splitpoints_pre_centrifugal_distance.csv")
+hemibrain_splitpoints_polypre_centrifugal_synapses <- read.csv("data-raw/metrics/hemibrain_all_neurons_splitpoints_polypre_centrifugal_synapses.csv")
 
 ### Metrics
-hemibrain_metrics_polypre_centrifugal_distance <- read.csv("data-raw/hemibrain_all_neurons_metrics_polypre_centrifugal_distance.csv")
-hemibrain_metrics_polypre_centrifugal_synapses <- read.csv("data-raw/hemibrain_all_neurons_metrics_polypre_centrifugal_synapses.csv")
+hemibrain_metrics_polypre_centrifugal_distance <- read.csv("data-raw/metrics/hemibrain_all_neurons_metrics_polypre_centrifugal_distance.csv")
+hemibrain_metrics_polypre_centrifugal_synapses <- read.csv("data-raw/metrics/hemibrain_all_neurons_metrics_polypre_centrifugal_synapses.csv")
 rownames(hemibrain_metrics_polypre_centrifugal_distance) <- hemibrain_metrics_polypre_centrifugal_distance$bodyid
 rownames(hemibrain_metrics_polypre_centrifugal_synapses) <- hemibrain_metrics_polypre_centrifugal_synapses$bodyid
 
@@ -134,7 +134,7 @@ usethis::use_data(hemibrain_al.surf, overwrite = TRUE)
 # Just save the ORN and HRN bodyids
 # ton.ids = read.csv("data-raw/annotations/bodyids_thirdorder.csv")
 # lhn.ids = read.csv("data-raw/annotations/bodyids_lhns.csv")
-lhn.ids = lhns::hemibrain.lhn.bodyids
+lhn.ids = as.character(lhns::hemibrain.lhn.bodyids)
 ton.ids = as.character(unique(ton.info$bodyid))
 lc.ids = as.character(unique(lc.info$bodyid))
 rn.ids = class2ids("RN", possible = TRUE)
@@ -153,10 +153,10 @@ dn.ids = class2ids("DN")
 ## Let's get some other, easy and popular neuron types
 kc.info = neuprint_search("KC.*")
 apl.info = neuprint_search(".*APL.*")
-cent.info = neuprint_search(".*LHCENT.*")
-kc.ids = kc.info$bodyid
-apl.ids = apl.info$bodyid
-cent.ids = cent.info$bodyid
+cent.info = neuprint_search(".*LHCENT.*|.*PPL201_.*")
+kc.ids = as.character(kc.info$bodyid)
+apl.ids = as.character(apl.info$bodyid)
+cent.ids = as.character(cent.info$bodyid)
 
 ## Use them bodyids
 usethis::use_data(lhn.ids, overwrite = TRUE)
@@ -181,7 +181,6 @@ usethis::use_data(lc.ids, overwrite = TRUE)
 hemibrain_glomeruli_summary <- read.csv("data-raw/annotations/AL_gloms_RNs.csv")
 hemibrain_glomeruli_summary = hemibrain_glomeruli_summary[,c("glomerulus",  "RN", "laterality", "missing","rn.vol.um", "fafb.vol.um")]
 usethis::use_data(hemibrain_glomeruli_summary, overwrite = TRUE)
-
 
 ## Some notes on data
 # Badly skeletonised: "5812986485"

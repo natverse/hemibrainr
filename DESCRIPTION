@@ -1,7 +1,7 @@
 Package: hemibrainr
 Type: Package
 Title: Code for working with data from Janelia FlyEM's hemibrain project
-Version: 0.1.0
+Version: 0.2.0
 Authors@R: c(
     person("Alexander", "Bates", email = "alexander.shakeel.bates@gmail.com", 
       role = c("aut", "cre"), comment = c(ORCID = "0000-0002-1195-0445")),
@@ -51,14 +51,18 @@ Imports:
     jsonlite,
     plyr,
     catmaid,
-    progress
+    progress,
+    nat.nblast,
+    fafbseg
 Remotes: 
     natverse/neuprintr,
     tidyverse/googlesheets4,
     natverse/rcatmaid,
     natverse/nat.templatebrains,
     natverse/nat.jrcbrains,
-    natverse/elmr
+    natverse/elmr,
+    natverse/fafbseg,
+    natverse/nat.nblast
 Language: en-GB
 RoxygenNote: 7.1.1
 URL: https://github.com/flyconnectome/hemibrainr, https://flyconnectome.github.io/hemibrainr
