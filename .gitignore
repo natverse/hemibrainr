@@ -12,3 +12,4 @@ data-raw/annotations/
 .DS_Store
 vignettes/future/*
 data-raw/metrics/
+doc/
