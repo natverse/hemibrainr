@@ -86,20 +86,32 @@ dependent on the degree of manual tracing for FAFB neurons - good (could be the 
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">hemibrainr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Articles
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/flywire.html">flywire</a>
+    </li>
+    <li>
+      <a href="../articles/google_filestream.html">read data from google drive</a>
+    </li>
+    <li>
+      <a href="../articles/match_making.html">neuron match making</a>
+    </li>
+  </ul>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -137,9 +149,9 @@ through an authenticated account to view and use this function. Matches have thr
 dependent on the degree of manual tracing for FAFB neurons - good (could be the same cell), medium (same cell type) and poor (could be the same or similar cell type).</p>
     </div>
 
-    <pre class="usage"><span class='fu'>hemibrain_matches</span>(<span class='kw'>priority</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"FAFB"</span>, <span class='st'>"hemibrain"</span>))
+    <pre class="usage"><span class='fu'>hemibrain_matches</span><span class='op'>(</span>priority <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"FAFB"</span>, <span class='st'>"hemibrain"</span><span class='op'>)</span><span class='op'>)</span>
 
-<span class='fu'>lm_matches</span>(<span class='kw'>priority</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"hemibrain"</span>, <span class='st'>"lm"</span>))</pre>
+<span class='fu'>lm_matches</span><span class='op'>(</span>priority <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"hemibrain"</span>, <span class='st'>"lm"</span><span class='op'>)</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -165,16 +177,17 @@ its putative cell type and connectivity type, and its match in the other dataset
   to neurons of your choosing on the rightmost column 'Users'.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='hemibrain_matching.html'>hemibrain_matching</a></code></p></div>
+    <div class='dont-index'><p><code><a href='LR_matching.html'>hemibrain_matching</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
-<span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
+<span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
 
 <span class='co'># Get matches</span>
-<span class='no'>matched</span> <span class='kw'>=</span> <span class='fu'>hemibrain.matches</span>()
+<span class='va'>matched</span> <span class='op'>=</span> <span class='fu'>hemibrain.matches</span><span class='op'>(</span><span class='op'>)</span>
 
-}<span class='co'># }</span></div></pre>
+<span class='op'>}</span><span class='co'># }</span>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -190,7 +203,7 @@ its putative cell type and connectivity type, and its match in the other dataset
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

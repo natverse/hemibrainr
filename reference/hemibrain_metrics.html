@@ -87,20 +87,32 @@ a neuron's axon and dendrite." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">hemibrainr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Articles
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/flywire.html">flywire</a>
+    </li>
+    <li>
+      <a href="../articles/google_filestream.html">read data from google drive</a>
+    </li>
+    <li>
+      <a href="../articles/match_making.html">neuron match making</a>
+    </li>
+  </ul>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -139,18 +151,18 @@ have been removed by <code><a href='hemibrain_skeleton_check.html'>hemibrain_ske
 a neuron's axon and dendrite.</p>
     </div>
 
-    <pre class="usage"><span class='no'>hemibrain_metrics</span>
+    <pre class="usage"><span class='va'>hemibrain_metrics</span>
 
-<span class='no'>hemibrain_metrics_polypre_centrifugal_distance</span>
+<span class='va'>hemibrain_metrics_polypre_centrifugal_distance</span>
 
-<span class='no'>hemibrain_metrics_polypre_centrifugal_synapses</span></pre>
+<span class='va'>hemibrain_metrics_polypre_centrifugal_synapses</span></pre>
 
 
     <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
 
-    <p>An object of class <code>data.frame</code> with 22567 rows and 29 columns.</p>
-<p>An object of class <code>data.frame</code> with 22567 rows and 29 columns.</p>
-<p>An object of class <code>data.frame</code> with 22567 rows and 29 columns.</p>
+    <p>An object of class <code>data.frame</code> with 22571 rows and 50 columns.</p>
+<p>An object of class <code>data.frame</code> with 22567 rows and 30 columns.</p>
+<p>An object of class <code>data.frame</code> with 22584 rows and 29 columns.</p>
     <h2 class="hasAnchor" id="source"><a class="anchor" href="#source"></a>Source</h2>
 
     <p><a href='https://elifesciences.org/articles/44590'>https://elifesciences.org/articles/44590</a></p>
@@ -160,24 +172,25 @@ a neuron's axon and dendrite.</p>
 “Functional and Anatomical Specificity in a Higher Olfactory Centre.” eLife 8 (May). https://doi.org/10.7554/eLife.44590.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='hemibrain_flow_centrality.html'>hemibrain_flow_centrality</a></code>, <code><a href='hemibrain_precomputed_splitpoints.html'>hemibrain_precomputed_splitpoints</a></code>, <code><a href='extract_cable.html'>axonic_cable</a></code>, <code><a href='extract_cable.html'>dendritic_cable</a></code></p></div>
+    <div class='dont-index'><p><code><a href='hemibrain_flow_centrality.html'>hemibrain_flow_centrality</a></code>, <code><a href='hemibrain_precomputed_splitpoints.html'>hemibrain_precomputed_splitpoints</a></code>, <code><a href='axonic_points.html'>axonic_cable</a></code>, <code><a href='axonic_points.html'>dendritic_cable</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='no'>hemibrain_metrics</span>)</div><div class='output co'>#&gt;                bodyid pre post status    statusLabel cropped
+<span class='fu'><a href='https://rdrr.io/pkg/nat/man/neuronlist-dataframe-methods.html'>head</a></span><span class='op'>(</span><span class='va'>hemibrain_metrics</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;                bodyid pre post status    statusLabel cropped
 #&gt; 202916528   202916528  95  422 Traced Roughly traced   FALSE
 #&gt; 1279775082 1279775082  24  140 Traced Roughly traced   FALSE
 #&gt; 203253072   203253072  62  352 Traced Roughly traced   FALSE
 #&gt; 326530038   326530038 383 3030 Traced Roughly traced   FALSE
 #&gt; 203253253   203253253 402 2675 Traced Roughly traced   FALSE
 #&gt; 5813079341 5813079341  37  260 Traced Roughly traced   FALSE
-#&gt;                           name       type cellBodyFiber     voxels soma
-#&gt; 202916528          FQ12_b_C4_R     FQ12_b         PDM03  235510665 TRUE
-#&gt; 1279775082     FQ12_a(AB)_C1_R     FQ12_a         PDM04  123003453 TRUE
-#&gt; 203253072          FQ12_a_C3_R     FQ12_a         PDM03  153162662 TRUE
-#&gt; 326530038  PDM22c_pct(PDM22)_R PDM22c_pct          iPB7 1683764851 TRUE
-#&gt; 203253253            (PDM09)_L       &lt;NA&gt;          &lt;NA&gt; 1735663327 TRUE
-#&gt; 5813079341         FQ12_a_C7_R     FQ12_a         PDM01  157723613 TRUE
+#&gt;                           name              type cellBodyFiber     voxels soma
+#&gt; 202916528          FQ12_b_C4_R            FQ12_b         PDM03  235510665 TRUE
+#&gt; 1279775082     FQ12_a(AB)_C1_R            FQ12_a         PDM04  123003453 TRUE
+#&gt; 203253072          FQ12_a_C3_R            FQ12_a         PDM03  153162662 TRUE
+#&gt; 326530038  PDM22c_pct(PDM22)_R        PDM22c_pct          iPB7 1683764851 TRUE
+#&gt; 203253253            (PDM09)_L unknown_203253253          &lt;NA&gt; 1735663327 TRUE
+#&gt; 5813079341         FQ12_a_C7_R            FQ12_a         PDM01  157723613 TRUE
 #&gt;            total.outputs total.inputs axon.outputs dend.outputs axon.inputs
 #&gt; 202916528              0            0            0            0           0
 #&gt; 1279775082             0            0            0            0           0
@@ -206,13 +219,36 @@ a neuron's axon and dendrite.</p>
 #&gt; 326530038                    0    5862.5848   2405.8263   3137.6304  181.9760
 #&gt; 203253253                    0    5446.3040   2032.0275   3135.4174  141.6915
 #&gt; 5813079341                   0     858.6868    199.9989    380.2688  117.9344
-#&gt;            segregation_index overlap_locality
-#&gt; 202916528         0.76090559               NA
-#&gt; 1279775082        0.59005623               NA
-#&gt; 203253072         0.45279400               NA
-#&gt; 326530038         0.08404521               NA
-#&gt; 203253253         0.19753908     3.104936e-01
-#&gt; 5813079341        0.61201577     1.020000e-10</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/hist.html'>hist</a></span>(<span class='no'>hemibrain_metrics</span>$<span class='no'>overlap_locality</span>,<span class='kw'>breaks</span> <span class='kw'>=</span> <span class='fl'>1000</span>)</div><div class='img'><img src='hemibrain_metrics-1.png' alt='' width='700' height='433' /></div><div class='input'><span class='co'># }</span></div></pre>
+#&gt;            segregation_index overlap_locality position point     X     Y     Z
+#&gt; 202916528         0.76090559               NA        2  root 20075 12279 12198
+#&gt; 1279775082        0.59005623               NA      872  root 16943  9152 18425
+#&gt; 203253072         0.45279400               NA      802  root 17776 10196 14204
+#&gt; 326530038         0.08404521               NA    12181  root 19205 12326 13177
+#&gt; 203253253         0.19753908     3.104936e-01     5768  root 32091 13789 13339
+#&gt; 5813079341        0.61201577     1.020000e-10      761  root 22754 17806  7185
+#&gt;            soma.edit   cut truncated manual_edit splittable skeletonization
+#&gt; 202916528      FALSE FALSE     FALSE       FALSE       TRUE            good
+#&gt; 1279775082     FALSE FALSE     FALSE       FALSE       TRUE            good
+#&gt; 203253072      FALSE FALSE     FALSE       FALSE       TRUE            good
+#&gt; 326530038      FALSE FALSE     FALSE       FALSE       TRUE            good
+#&gt; 203253253      FALSE FALSE     FALSE       FALSE       TRUE            good
+#&gt; 5813079341     FALSE FALSE     FALSE       FALSE       TRUE            good
+#&gt;            checked          user             time note priority edited.cable
+#&gt; 202916528        0 flyconnectome 1587120331.87611 none        0            0
+#&gt; 1279775082       0 flyconnectome 1587120331.87611 none        0            0
+#&gt; 203253072        0 flyconnectome 1587120331.87611 none        0            0
+#&gt; 326530038        0 flyconnectome 1587120331.87611 none        0            0
+#&gt; 203253253        0 flyconnectome 1587120331.87611 none        0            0
+#&gt; 5813079341       0 flyconnectome 1587120331.87611 none        0            0
+#&gt;            orig.soma orig.cut soma.checked   cbf
+#&gt; 202916528       TRUE    FALSE         TRUE PDM03
+#&gt; 1279775082      TRUE    FALSE         TRUE PDM04
+#&gt; 203253072       TRUE    FALSE         TRUE PDM03
+#&gt; 326530038       TRUE    FALSE         TRUE PDM22
+#&gt; 203253253       TRUE    FALSE         TRUE PDM09
+#&gt; 5813079341      TRUE    FALSE         TRUE PDM01</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/hist.html'>hist</a></span><span class='op'>(</span><span class='va'>hemibrain_metrics</span><span class='op'>$</span><span class='va'>overlap_locality</span>,breaks <span class='op'>=</span> <span class='fl'>1000</span><span class='op'>)</span>
+</div><div class='img'><img src='hemibrain_metrics-1.png' alt='' width='700' height='433' /></div><div class='input'><span class='co'># }</span>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -228,7 +264,7 @@ a neuron's axon and dendrite.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

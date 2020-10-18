@@ -39,20 +39,32 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">hemibrainr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
 <li>
-  <a href="index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="reference/index.html">Reference</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Articles
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+<li>
+      <a href="articles/flywire.html">flywire</a>
+    </li>
+    <li>
+      <a href="articles/google_filestream.html">read data from google drive</a>
+    </li>
+    <li>
+      <a href="articles/match_making.html">neuron match making</a>
+    </li>
+  </ul>
 </li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
@@ -80,20 +92,51 @@
 <div class="page-header"><h1 class="hasAnchor">
 <a href="#hemibrainr" class="anchor"></a>hemibrainr</h1></div>
 <p>The goal of <em>hemibrainr</em> is to provide useful code for preprocessing and analysing data from the <a href="https://www.janelia.org/project-team/flyem">Janelia FlyEM hemibrain</a> project. It makes use of the <a href="https://github.com/natverse">natverse</a> R package, <a href="https://github.com/natverse/neuprintr">neuprintr</a> to get hemibrain data from their connectome analysis and data hosting service <a href="https://github.com/connectome-neuprint/neuPrint">neuprint</a>. The dataset has been described <a href="(https://www.biorxiv.org/content/10.1101/2020.01.21.911859v1)">here</a>. Using this R package in concert with the <a href="https://github.com/natverse/natverse">natverse</a> ecosystem is highly recommended.</p>
-<div id="tutorial" class="section level2">
-<h2 class="hasAnchor">
-<a href="#tutorial" class="anchor"></a>Tutorial</h2>
-<p>To help you get to grips with <code>neuprintr</code>, we have made a tutorial in classic presentation form. This tutorial uses data from the <a href="https://www.janelia.org/project-team/flyem">Janelia Fly EM</a> team’s <a href="https://www.biorxiv.org/content/10.1101/2020.01.21.911859v1">hemibrain</a> project. You can also see the vignettes in this package for the same examples and more.</p>
-</div>
 <div id="installation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h2>
-<div class="sourceCode" id="cb1"><pre class="r"><span class="co"># install</span>
-<span class="kw">if</span> (!<span class="fu"><a href="https://rdrr.io/r/base/library.html">require</a></span>(<span class="st">"remotes"</span>)) <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"remotes"</span>)
-<span class="kw pkg">remotes</span><span class="kw ns">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span>(<span class="st">"flyconnectome/hemibrainr"</span>)
+<div class="sourceCode" id="cb1"><pre class="downlit">
+<span class="co"># install</span>
+<span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="st"><a href="https://remotes.r-lib.org">"remotes"</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span>
+<span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span><span class="op">(</span><span class="st">"flyconnectome/hemibrainr"</span><span class="op">)</span>
 
 <span class="co"># use </span>
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">hemibrainr</span>)</pre></div>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/flyconnectome/hemibrainr">hemibrainr</a></span><span class="op">)</span></pre></div>
+</div>
+<div id="using-hemibrainr" class="section level2">
+<h2 class="hasAnchor">
+<a href="#using-hemibrainr" class="anchor"></a>Using hemibrainr</h2>
+<p><em>hemibrainr</em> contains tools with which to quickly work with <a href="https://neuprint.janelia.org/help/videos?dataset=hemibrain">hemibrain</a> and <a href="https://ngl.flywire.ai/?local_id=c8c06ea181ad5447b04beacfc4cb1b66">Flywire</a> neurons, and match up neurons within and between data sets.</p>
+<p>IIf you can connect to the <em>hemibrainr</em> google shared drive, this package puts thousands of hemibrain and flywire neurons at your fingertips, as well as information on their compartments (e.g. axons versus dendites), synapses and connectivity and between data set neuron-neuron matches. You can:</p>
+<ul>
+<li>Read thousands of pre-skeletonised flywire/hemibrain neurons from Google Drive</li>
+<li>Read flywire/hemibrain NBLASTs and NLBLASTs to hemibrain neurons</li>
+<li>Read flywire/hemibrain neurons that are pre-transformed into a variety of brainspaces</li>
+</ul>
+<p>Which is all useful stuff. You can explore our articles for more detailed information on what the package can do, and howto set it up with the data stored on google drive - but can take a quick tour here:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit">
+<span class="co"># Load package</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/flyconnectome/hemibrainr">hemibrainr</a></span><span class="op">)</span>
+
+<span class="co"># Else, it wants to see it on the mounted team drive, here</span>
+<span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">Gdrive_hemibrain_data</span>
+
+<span class="co"># We can load meta data for all neurons in hemibrain</span>
+<span class="va">db</span> <span class="op">=</span> <span class="fu"><a href="reference/hemibrain_read_neurons.html">hemibrain_neurons</a></span><span class="op">(</span><span class="op">)</span>
+
+<span class="co"># And quickly read them from the drive, when we try to plot/analyse them!</span>
+<span class="fu"><a href="reference/hemibrain_view.html">hemibrain_view</a></span><span class="op">(</span><span class="op">)</span>
+<span class="fu">plot3d</span><span class="op">(</span><span class="va">hemibrain.surf</span>, col <span class="op">=</span> <span class="st">"grey"</span>, alpha <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span>
+<span class="fu">plot3d</span><span class="op">(</span><span class="va">db</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span><span class="op">)</span></pre></div>
+<p>See which neurons have been matched up:</p>
+<div class="sourceCode" id="cb3"><pre class="downlit">
+<span class="co"># See matches, you can do this without hemibrain Google Team Drive access</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/View.html">View</a></span><span class="op">(</span><span class="va">hemibrain_matched</span><span class="op">)</span>
+
+<span class="co"># Get fresh matches, you cannot do this without access</span>
+<span class="co">## You will be prompted to log-in through your browser</span>
+<span class="va">hemibrain_matched_new</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/hemibrain_matches.html">hemibrain_matches</a></span><span class="op">(</span><span class="op">)</span> 
+<span class="co">## NOTE: includes hemibrain&lt;-&gt;flywire matches!</span></pre></div>
 </div>
 <div id="authentication" class="section level2">
 <h2 class="hasAnchor">
@@ -102,48 +145,52 @@
 <p>You may need an authenticated accounted, or you may be able to register your <code>@gmail</code> address without an authentication process. Navigate to a neuPrint website, e.g. <a href="https://neuprint.janelia.org" class="uri">https://neuprint.janelia.org</a>, and hit ‘login’. Sign in using an <code>@gmail</code> account. If you have authentication/the server is public, you will now be able to see your access token by going to ‘Account’:</p>
 <p><img src="https://raw.githubusercontent.com/natverse/neuprintr/master/inst/images/bearertoken.png" alt="access your bearer token"></p>
 <p>To make life easier, you can then edit your <code>.Renviron</code> file to contain information about the neuPrint server you want to speak with, your token and the dataset hosted by that server, that you want to read. A convenient way to do this is to do</p>
-<div class="sourceCode" id="cb2"><pre class="r"><span class="kw pkg">usethis</span><span class="kw ns">::</span><span class="fu">edit_r_environ</span>()</pre></div>
+<div class="sourceCode" id="cb4"><pre class="downlit">
+<span class="fu">usethis</span><span class="fu">::</span><span class="fu">edit_r_environ</span><span class="op">(</span><span class="op">)</span></pre></div>
 <p>and then edit the file that pops up, adding a section like</p>
-<div class="sourceCode" id="cb3"><pre class="r"><span class="no">neuprint_server</span><span class="kw">=</span><span class="st">"https://neuprint.janelia.org"</span>
+<div class="sourceCode" id="cb5"><pre class="downlit">
+<span class="va">neuprint_server</span><span class="op">=</span><span class="st">"https://neuprint.janelia.org"</span>
 <span class="co"># nb this token is a dummy</span>
-<span class="no">neuprint_token</span><span class="kw">=</span><span class="st">"asBatEsiOIJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImIsImxldmVsIjoicmVhZHdyaXRlIiwiaW1hZ2UtdXJsIjoiaHR0cHM7Ly9saDQuZ29vZ2xldXNlcmNvbnRlbnQuY29tLy1QeFVrTFZtbHdmcy9BQUFBQUFBQUFBDD9BQUFBQUFBQUFBQS9BQ0hpM3JleFZMeEI4Nl9FT1asb0dyMnV0QjJBcFJSZlI6MTczMjc1MjU2HH0.jhh1nMDBPl5A1HYKcszXM518NZeAhZG9jKy3hzVOWEU"</span></pre></div>
+<span class="va">neuprint_token</span><span class="op">=</span><span class="st">"asBatEsiOIJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImIsImxldmVsIjoicmVhZHdyaXRlIiwiaW1hZ2UtdXJsIjoiaHR0cHM7Ly9saDQuZ29vZ2xldXNlcmNvbnRlbnQuY29tLy1QeFVrTFZtbHdmcy9BQUFBQUFBQUFBDD9BQUFBQUFBQUFBQS9BQ0hpM3JleFZMeEI4Nl9FT1asb0dyMnV0QjJBcFJSZlI6MTczMjc1MjU2HH0.jhh1nMDBPl5A1HYKcszXM518NZeAhZG9jKy3hzVOWEU"</span></pre></div>
 <p>Make sure you have a blank line at the end of your <code>.Renviron</code> file. For further information try about neuprintr login, see the help for <code>neuprint_login()</code>.</p>
 <p>Finally you can also login on the command line once per session, like so:</p>
-<div class="sourceCode" id="cb4"><pre class="r"><span class="no">conn</span> <span class="kw">=</span> <span class="kw pkg">neuprintr</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/neuprintr/man/neuprint_login.html">neuprint_login</a></span>(<span class="kw">server</span><span class="kw">=</span> <span class="st">"https://neuprint.janelia.org/"</span>,
-   <span class="kw">token</span><span class="kw">=</span> <span class="st">"asBatEsiOIJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImIsImxldmVsIjoicmVhZHdyaXRlIiwiaW1hZ2UtdXJsIjoiaHR0cHM7Ly9saDQuZ29vZ2xldXNlcmNvbnRlbnQuY29tLy1QeFVrTFZtbHdmcy9BQUFBQUFBQUFBDD9BQUFBQUFBQUFBQS9BQ0hpM3JleFZMeEI4Nl9FT1asb0dyMnV0QjJBcFJSZlI6MTczMjc1MjU2HH0.jhh1nMDBPl5A1HYKcszXM518NZeAhZG9jKy3hzVOWEU"</span>)</pre></div>
+<div class="sourceCode" id="cb6"><pre class="downlit">
+<span class="va">conn</span> <span class="op">=</span> <span class="fu">neuprintr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/neuprintr/man/neuprint_login.html">neuprint_login</a></span><span class="op">(</span>server<span class="op">=</span> <span class="st">"https://neuprint.janelia.org/"</span>,
+   token<span class="op">=</span> <span class="st">"asBatEsiOIJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImIsImxldmVsIjoicmVhZHdyaXRlIiwiaW1hZ2UtdXJsIjoiaHR0cHM7Ly9saDQuZ29vZ2xldXNlcmNvbnRlbnQuY29tLy1QeFVrTFZtbHdmcy9BQUFBQUFBQUFBDD9BQUFBQUFBQUFBQS9BQ0hpM3JleFZMeEI4Nl9FT1asb0dyMnV0QjJBcFJSZlI6MTczMjc1MjU2HH0.jhh1nMDBPl5A1HYKcszXM518NZeAhZG9jKy3hzVOWEU"</span><span class="op">)</span></pre></div>
 <p>This is also the approach that you would take if you were working with more than two neuPrint servers.</p>
 </div>
 <div id="example" class="section level2">
 <h2 class="hasAnchor">
 <a href="#example" class="anchor"></a>Example</h2>
 <p>Let’s get started with a useful function for splitting a neuron into its axon and dendrite:</p>
-<div class="sourceCode" id="cb5"><pre class="r"><span class="co"># Choose neurons</span>
+<div class="sourceCode" id="cb7"><pre class="downlit">
+<span class="co"># Choose neurons</span>
 <span class="co">## These neurons are some 'tough' examples from the hemibrain:v1.0.1</span>
 <span class="co">### They will split differently depending on the parameters you use.</span>
-<span class="no">tough</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"5813056323"</span>, <span class="st">"579912201"</span>, <span class="st">"5813015982"</span>, <span class="st">"973765182"</span>, <span class="st">"885788485"</span>,
+<span class="va">tough</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"5813056323"</span>, <span class="st">"579912201"</span>, <span class="st">"5813015982"</span>, <span class="st">"973765182"</span>, <span class="st">"885788485"</span>,
 <span class="st">"915451074"</span>, <span class="st">"5813032740"</span>, <span class="st">"1006854683"</span>, <span class="st">"5813013913"</span>, <span class="st">"5813020138"</span>,
 <span class="st">"853726809"</span>, <span class="st">"916828438"</span>, <span class="st">"5813078494"</span>, <span class="st">"420956527"</span>, <span class="st">"486116439"</span>,
 <span class="st">"573329873"</span>, <span class="st">"5813010494"</span>, <span class="st">"5813040095"</span>, <span class="st">"514396940"</span>, <span class="st">"665747387"</span>,
 <span class="st">"793702856"</span>, <span class="st">"451644891"</span>, <span class="st">"482002701"</span>, <span class="st">"391631218"</span>, <span class="st">"390948259"</span>,
 <span class="st">"390948580"</span>, <span class="st">"452677169"</span>, <span class="st">"511262901"</span>, <span class="st">"422311625"</span>, <span class="st">"451987038"</span>
-)
+<span class="op">)</span>
 
 <span class="co"># Get neurons</span>
-<span class="no">neurons</span> <span class="kw">=</span> <span class="fu">neuprint_read_neurons</span>(<span class="no">tough</span>)
+<span class="va">neurons</span> <span class="op">=</span> <span class="fu">neuprint_read_neurons</span><span class="op">(</span><span class="va">tough</span><span class="op">)</span>
 
 <span class="co"># Now make sure the neurons have a soma marked</span>
 <span class="co">## Some hemibrain neurons do not, as the soma was chopped off</span>
-<span class="no">neurons.checked</span> <span class="kw">=</span> <span class="fu"><a href="reference/hemibrain_skeleton_check.html">hemibrain_skeleton_check</a></span>(<span class="no">neurons</span>, <span class="kw">meshes</span> <span class="kw">=</span> <span class="no">hemibrain.rois</span>)
+<span class="va">neurons.checked</span> <span class="op">=</span> <span class="fu"><a href="reference/hemibrain_skeleton_check.html">hemibrain_skeleton_check</a></span><span class="op">(</span><span class="va">neurons</span>, meshes <span class="op">=</span> <span class="va">hemibrain.rois</span><span class="op">)</span>
 
 <span class="co"># Split neuron</span>
 <span class="co">## These are the recommended parameters for hemibrain neurons</span>
-<span class="no">neurons.flow</span> <span class="kw">=</span> <span class="fu"><a href="reference/flow_centrality.html">flow_centrality</a></span>(<span class="no">neurons.checked</span>, <span class="kw">polypre</span> <span class="kw">=</span> <span class="fl">TRUE</span>,
-<span class="kw">mode</span> <span class="kw">=</span> <span class="st">"centrifugal"</span>,
-<span class="kw">split</span> <span class="kw">=</span> <span class="st">"distance"</span>)
+<span class="va">neurons.flow</span> <span class="op">=</span> <span class="fu"><a href="reference/flow_centrality.html">flow_centrality</a></span><span class="op">(</span><span class="va">neurons.checked</span>, polypre <span class="op">=</span> <span class="cn">TRUE</span>,
+mode <span class="op">=</span> <span class="st">"centrifugal"</span>,
+split <span class="op">=</span> <span class="st">"distance"</span><span class="op">)</span>
 
 <span class="co"># Plot the split to check it</span>
-<span class="kw pkg">nat</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/nat/man/nopen3d.html">nopen3d</a></span>()
-<span class="fu"><a href="reference/plot3d_split.html">nlscan_split</a></span>(<span class="no">neurons.flow</span>, <span class="kw">WithConnectors</span> <span class="kw">=</span> <span class="fl">TRUE</span>)</pre></div>
+<span class="fu">nat</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/nat/man/nopen3d.html">nopen3d</a></span><span class="op">(</span><span class="op">)</span>
+<span class="fu"><a href="reference/plot3d_split.html">nlscan_split</a></span><span class="op">(</span><span class="va">neurons.flow</span>, WithConnectors <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></pre></div>
 </div>
 <div id="data" class="section level2">
 <h2 class="hasAnchor">
@@ -157,7 +204,8 @@
 <a href="#acknowledging-the-tools" class="anchor"></a>Acknowledging the tools</h2>
 <p>neuPrint comprises a set of tools for loading and analyzing connectome data into a Neo4j database. Analyze and explore connectome data stored in Neo4j using the neuPrint ecosystem: <a href="https://github.com/connectome-neuprint/neuPrintHTTP">neuPrintHTTP</a>, <a href="https://github.com/connectome-neuprint/neuPrintExplorer">neuPrintExplorer</a>, <a href="https://github.com/connectome-neuprint/neuprint-python">Python API</a>.</p>
 <p>This package was created by <a href="https://scholar.google.com/citations?user=BOVTiXIAAAAJ&amp;hl=en">Alexander Shakeel Bates</a> and <a href="https://en.wikipedia.org/wiki/Gregory_Jefferis">Gregory Jefferis</a>. You can cite this package as:</p>
-<div class="sourceCode" id="cb6"><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/citation.html">citation</a></span>(<span class="kw">package</span> <span class="kw">=</span> <span class="st">"hemibrainr"</span>)</pre></div>
+<div class="sourceCode" id="cb8"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/utils/citation.html">citation</a></span><span class="op">(</span>package <span class="op">=</span> <span class="st">"hemibrainr"</span><span class="op">)</span></pre></div>
 <p><strong>Bates AS, Jefferis GSXE</strong> (2020). <em>hemibrainr: Code for working with data from Janelia FlyEM’s hemibrain project.</em> <strong>R package</strong> version 0.1.0. <a href="https://github.com/flyconnectome/hemibrainr" class="uri">https://github.com/flyconnectome/hemibrainr</a></p>
 </div>
 </div>
@@ -205,7 +253,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

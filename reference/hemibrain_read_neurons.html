@@ -84,20 +84,32 @@ space (as they are stored in neuPrint) to microns." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">hemibrainr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Articles
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/flywire.html">flywire</a>
+    </li>
+    <li>
+      <a href="../articles/google_filestream.html">read data from google drive</a>
+    </li>
+    <li>
+      <a href="../articles/match_making.html">neuron match making</a>
+    </li>
+  </ul>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -133,25 +145,26 @@ axons and dendrites. Optionally, it may also convert neurons from their raw voxe
 space (as they are stored in neuPrint) to microns.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>hemibrain_read_neurons</span>(
-  <span class='kw'>x</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>savedir</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>local</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>microns</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>reroot</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>googlesheet</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>remove.bad.synapses</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>clean</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='no'>...</span>
-)
+    <pre class="usage"><span class='fu'>hemibrain_read_neurons</span><span class='op'>(</span>
+  x <span class='op'>=</span> <span class='cn'>NULL</span>,
+  local <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  microns <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  reroot <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  googlesheet <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  remove.bad.synapses <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  clean <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span>
 
-<span class='fu'>scale_neurons</span>(<span class='no'>x</span>, <span class='kw'>scaling</span> <span class='kw'>=</span> (<span class='fl'>8</span>/<span class='fl'>1000</span>), <span class='no'>...</span>)
+<span class='fu'>scale_neurons</span><span class='op'>(</span><span class='va'>x</span>, scaling <span class='op'>=</span> <span class='op'>(</span><span class='fl'>8</span><span class='op'>/</span><span class='fl'>1000</span><span class='op'>)</span>, <span class='va'>...</span><span class='op'>)</span>
 
-<span class='fu'>hemibrain_neurons</span>(
-  <span class='kw'>savedir</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>local</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>neuron.split</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"polypre_centrifugal_synapses"</span>, <span class='st'>"polypre_centrifugal_distance"</span>)
-)</pre>
+<span class='fu'>hemibrain_neurons</span><span class='op'>(</span>
+  local <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  brain <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"JRCFIB2018Fraw"</span>, <span class='st'>"JRCFIB2018F"</span>, <span class='st'>"FAFB14"</span>, <span class='st'>"JFRC2"</span>, <span class='st'>"JRC2018F"</span>, <span class='st'>"FCWB"</span><span class='op'>)</span>,
+  mirror <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  dotprops <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  folder <span class='op'>=</span> <span class='st'>"hemibrain_neurons/"</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -161,13 +174,8 @@ space (as they are stored in neuPrint) to microns.</p>
       <td><p>a vector of bodyids that can be read from <a href=''https://neuprint.janelia.org/''>'https://neuprint.janelia.org/'</a>.</p></td>
     </tr>
     <tr>
-      <th>savedir</th>
-      <td><p>directory in which <code><a href='https://rdrr.io/pkg/nat/man/neuronlistfh.html'>nat::neuronlistfh</a></code> object as been saved using <code><a href='hemibrain_download_neurons.html'>hemibrain_download_neurons</a></code>. This acts as a database,
-from which hemibrain neurons can be read. If <code>TRUE</code> your default save directory is used, which is stored as: <code>options()$hemibrain_data</code></p></td>
-    </tr>
-    <tr>
       <th>local</th>
-      <td><p>logical, whether to try to read locally saved neurons (by default at: <code>options()$hemibrain_data</code>) or neurons from Google Drive (<code>options()$Gdrive_hemibrain_data</code>).</p></td>
+      <td><p><code>FALSE</code> or path. By default (<code>FALSE</code>) data is read from <code>options()$Drive_hemibrain_data</code>), but the user can specit and alternative path.</p></td>
     </tr>
     <tr>
       <th>microns</th>
@@ -200,8 +208,23 @@ and <code><a href='hemibrain_flow_centrality.html'>hemibrain_flow_centrality</a>
       <td><p>the factor by which neuron coordinates in raw voxel space should be multiplied. The default scales to microns.</p></td>
     </tr>
     <tr>
-      <th>neuron.split</th>
-      <td><p>read saved neurons spit in which way? Folder names indicative of arguments passed to <code><a href='flow_centrality.html'>flow_centrality</a></code>.</p></td>
+      <th>brain</th>
+      <td><p>the brainspace in which hemibrain neurons have been registered. Defaults to raw voxel space for the hemibrain project.</p></td>
+    </tr>
+    <tr>
+      <th>mirror</th>
+      <td><p>logical, whether or not to read neurons that have been mirrored (i.e. flipped to the 'other' brain hemisphere).</p></td>
+    </tr>
+    <tr>
+      <th>dotprops</th>
+      <td><p>logical. Whether or not to retreive a <code><a href='https://rdrr.io/pkg/nat/man/dotprops.html'>nat::dotprops</a></code> object, i.e. vector cloud representations of neurons for NBLASTing.
+The dotprops object will be in JRC2018FIBF micron space.</p></td>
+    </tr>
+    <tr>
+      <th>folder</th>
+      <td><p>the sub-folder in which to look for a <code><a href='https://rdrr.io/pkg/nat/man/neuronlistfh.html'>nat::neuronlistfh</a></code> .rds file and its data, representing hemibrain neurons. The function will look forthis
+folder in the location: <code>hemibrainr:::good_savedir(local=local)</code>,
+by default the mounted Goolge drive (<code>options()$Gdrive_hemibrain_data</code>) or locally ((<code>options()$hemibrain_data</code>))</p></td>
     </tr>
     </table>
 
@@ -215,28 +238,30 @@ and <code><a href='hemibrain_flow_centrality.html'>hemibrain_flow_centrality</a>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p><code><a href='hemibrain_splitpoints.html'>hemibrain_splitpoints</a></code>, <code><a href='hemibrain_flow_centrality.html'>hemibrain_flow_centrality</a></code>, <code><a href='hemibrain_somas.html'>hemibrain_somas</a></code>,
-<code><a href='hemibrain_precomputed_splitpoints.html'>hemibrain_precomputed_splitpoints</a></code>, <code><a href='hemibrain_metrics.html'>hemibrain_metrics</a></code>,<code><a href='hemibrain_remove_bad_synapses.html'>hemibrain_remove_bad_synapses</a></code></p></div>
+<code><a href='hemibrain_precomputed_splitpoints.html'>hemibrain_precomputed_splitpoints</a></code>, <code><a href='hemibrain_metrics.html'>hemibrain_metrics</a></code>,<code><a href='hemibrain_remove_bad_synapses.html'>hemibrain_remove_bad_synapses</a></code>
+,<code><a href='hemibrain_get_meta.html'>hemibrain_get_meta</a></code>,<code><a href='flywire_neurons.html'>flywire_neurons</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
-<span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
+<span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
 
 <span class='co'># Choose neurons</span>
 <span class='co'>## In this case some antennal lobe local neurons</span>
-<span class='no'>al.local.neurons</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"1702323386"</span>, <span class='st'>"2068966051"</span>, <span class='st'>"2069311379"</span>, <span class='st'>"1702305987"</span>, <span class='st'>"5812996027"</span>,
+<span class='va'>al.local.neurons</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"1702323386"</span>, <span class='st'>"2068966051"</span>, <span class='st'>"2069311379"</span>, <span class='st'>"1702305987"</span>, <span class='st'>"5812996027"</span>,
 <span class='st'>"1702336197"</span>, <span class='st'>"1793744512"</span>, <span class='st'>"1976565858"</span>, <span class='st'>"2007578510"</span>, <span class='st'>"2101339904"</span>,
 <span class='st'>"5813003258"</span>, <span class='st'>"2069647778"</span>, <span class='st'>"1947192569"</span>, <span class='st'>"1883788812"</span>, <span class='st'>"1916485259"</span>,
 <span class='st'>"1887177026"</span>, <span class='st'>"2101348562"</span>, <span class='st'>"2132375072"</span>, <span class='st'>"2256863785"</span>, <span class='st'>"5813002313"</span>,
 <span class='st'>"5813054716"</span>, <span class='st'>"5813018847"</span>, <span class='st'>"5813055448"</span>, <span class='st'>"1763037543"</span>, <span class='st'>"2101391269"</span>,
-<span class='st'>"1794037618"</span>, <span class='st'>"5813018729"</span>, <span class='st'>"2013333009"</span>)
+<span class='st'>"1794037618"</span>, <span class='st'>"5813018729"</span>, <span class='st'>"2013333009"</span><span class='op'>)</span>
 
 <span class='co'># Get neurons</span>
-<span class='no'>neurons</span> <span class='kw'>=</span> <span class='fu'>hemibrain_read_neurons</span>(<span class='no'>al.local.neurons</span>)
+<span class='va'>neurons</span> <span class='op'>=</span> <span class='fu'>hemibrain_read_neurons</span><span class='op'>(</span><span class='va'>al.local.neurons</span><span class='op'>)</span>
 
 <span class='co'># Plot the split to check it</span>
-<span class='kw pkg'>nat</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/nat/man/nopen3d.html'>nopen3d</a></span>()
-<span class='fu'><a href='plot3d_split.html'>nlscan_split</a></span>(<span class='no'>neurons</span>, <span class='kw'>WithConnectors</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
-}<span class='co'># }</span></div></pre>
+<span class='fu'>nat</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/nat/man/nopen3d.html'>nopen3d</a></span><span class='op'>(</span><span class='op'>)</span>
+<span class='fu'><a href='plot3d_split.html'>nlscan_split</a></span><span class='op'>(</span><span class='va'>neurons</span>, WithConnectors <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+<span class='op'>}</span><span class='co'># }</span>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -252,7 +277,7 @@ and <code><a href='hemibrain_flow_centrality.html'>hemibrain_flow_centrality</a>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

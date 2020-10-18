@@ -48,12 +48,12 @@
 
 <meta property="og:title" content="Remove incorrectly placed synapses — hemibrain_remove_bad_synapses" />
 <meta property="og:description" content="With the hemibrain projects somas and their tracts were not
-separately and explicitly detected. Some false synapse assignment has happened,
-adding synapses to soma and primary neurite locations, that should not exist
-based on an examination of the greyscale EM data. This function removes 'out-of-mesh'
-synapses, you might want to use all ROIs or the hemibrain mesh to remove these 'bad'
-synapses. In addition, synapses are removed if they are too near the soma / along the
-primary neurite." />
+  separately and explicitly detected. Some false synapse assignment has
+  happened, adding synapses to soma and primary neurite locations, that
+  should not exist based on an examination of the greyscale EM data. This
+  function removes 'out-of-mesh' synapses, you might want to use all ROIs or
+  the hemibrain mesh to remove these 'bad' synapses. In addition, synapses
+  are removed if they are too near the soma / along the primary neurite." />
 <meta property="og:image" content="/logo.svg" />
 
 
@@ -86,20 +86,32 @@ primary neurite." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">hemibrainr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Articles
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/flywire.html">flywire</a>
+    </li>
+    <li>
+      <a href="../articles/google_filestream.html">read data from google drive</a>
+    </li>
+    <li>
+      <a href="../articles/match_making.html">neuron match making</a>
+    </li>
+  </ul>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -129,23 +141,23 @@ primary neurite." />
 
     <div class="ref-description">
     <p>With the hemibrain projects somas and their tracts were not
-separately and explicitly detected. Some false synapse assignment has happened,
-adding synapses to soma and primary neurite locations, that should not exist
-based on an examination of the greyscale EM data. This function removes 'out-of-mesh'
-synapses, you might want to use all ROIs or the hemibrain mesh to remove these 'bad'
-synapses. In addition, synapses are removed if they are too near the soma / along the
-primary neurite.</p>
+  separately and explicitly detected. Some false synapse assignment has
+  happened, adding synapses to soma and primary neurite locations, that
+  should not exist based on an examination of the greyscale EM data. This
+  function removes 'out-of-mesh' synapses, you might want to use all ROIs or
+  the hemibrain mesh to remove these 'bad' synapses. In addition, synapses
+  are removed if they are too near the soma / along the primary neurite.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>hemibrain_remove_bad_synapses</span>(
-  <span class='no'>x</span>,
-  <span class='kw'>meshes</span> <span class='kw'>=</span> <span class='fu'><a href='hemibrain_roi_meshes.html'>hemibrain_roi_meshes</a></span>(),
-  <span class='kw'>soma</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>min.nodes.from.soma</span> <span class='kw'>=</span> <span class='fl'>100</span>,
-  <span class='kw'>min.nodes.from.pnt</span> <span class='kw'>=</span> <span class='fl'>5</span>,
-  <span class='kw'>primary.branchpoint</span> <span class='kw'>=</span> <span class='fl'>0.25</span>,
-  <span class='no'>...</span>
-)</pre>
+    <pre class="usage"><span class='fu'>hemibrain_remove_bad_synapses</span><span class='op'>(</span>
+  <span class='va'>x</span>,
+  meshes <span class='op'>=</span> <span class='fu'>hemibrainr</span><span class='fu'>::</span><span class='va'><a href='hemibrain.surf.html'>hemibrain.surf</a></span>,
+  soma <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  min.nodes.from.soma <span class='op'>=</span> <span class='fl'>100</span>,
+  min.nodes.from.pnt <span class='op'>=</span> <span class='fl'>5</span>,
+  primary.branchpoint <span class='op'>=</span> <span class='fl'>0.25</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -159,25 +171,27 @@ that this neuron has been read in by
     </tr>
     <tr>
       <th>meshes</th>
-      <td><p>a list/a single object of class <code>mesh3d</code> or <code>hxsurf</code>.</p></td>
+      <td><p>a list/a single object of class <code>mesh3d</code> or <code>hxsurf</code>.
+Defaults to <code><a href='hemibrain.surf.html'>hemibrain.surf</a></code>. See examples for alternatives.</p></td>
     </tr>
     <tr>
       <th>soma</th>
-      <td><p>logical, if TRUE it is assumed that the neuron being given has the soma
-as its route and an intact primary neurite tract. Synapses will then be pruned from both.</p></td>
+      <td><p>logical, if TRUE it is assumed that the neuron being given has
+the soma as its route and an intact primary neurite tract. Synapses will
+then be pruned from both.</p></td>
     </tr>
     <tr>
       <th>min.nodes.from.soma</th>
       <td><p>the minimum number of nodes (geodesic distance) a
-synapse can be from the soma. Synapses closes than this will be removed. For
-comparable results across neurons, recommended to use <code><a href='https://rdrr.io/pkg/nat/man/resample.html'>nat::resample</a></code> on
-your neurons before using.</p></td>
+synapse can be from the soma. Synapses closes than this will be removed.
+For comparable results across neurons, recommended to use
+<code><a href='https://rdrr.io/pkg/nat/man/resample.html'>nat::resample</a></code> on your neurons before using.</p></td>
     </tr>
     <tr>
       <th>min.nodes.from.pnt</th>
       <td><p>the minimum number of nodes (geodesic distance) a
-synapse can be from a point along the primary neurite.
-Synapses closes than this will be removed.</p></td>
+synapse can be from a point along the primary neurite. Synapses closes than
+this will be removed.</p></td>
     </tr>
     <tr>
       <th>primary.branchpoint</th>
@@ -202,24 +216,29 @@ when <code>soma = TRUE</code>. See the <code>first</code> argument in
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
 <span class='co'># Read in a problematic neuron</span>
-<span class='no'>neuron</span> <span class='kw'>=</span> <span class='fu'>neuprint_read_neurons</span>(<span class='fl'>5813020793</span>)
+<span class='va'>neuron</span> <span class='op'>=</span> <span class='fu'>neuprint_read_neurons</span><span class='op'>(</span><span class='fl'>5813020793</span><span class='op'>)</span>
 
-<span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
-<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>nat</span>)
-<span class='fu'><a href='https://rdrr.io/pkg/nat/man/plot3d.html'>plot3d</a></span>(<span class='no'>neuron</span>)
-<span class='fu'>points3d</span>(<span class='fu'><a href='https://rdrr.io/pkg/nat/man/xyzmatrix.html'>xyzmatrix</a></span>(<span class='no'>neuron</span><span class='kw'>[[</span><span class='fl'>1</span>]]$<span class='no'>connectors</span>))
-}
+<span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
+<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://github.com/natverse/nat'>nat</a></span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/pkg/nat/man/plot3d.html'>plot3d</a></span><span class='op'>(</span><span class='va'>neuron</span><span class='op'>)</span>
+<span class='fu'>points3d</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/pkg/nat/man/xyzmatrix.html'>xyzmatrix</a></span><span class='op'>(</span><span class='va'>neuron</span><span class='op'>[[</span><span class='fl'>1</span><span class='op'>]</span><span class='op'>]</span><span class='op'>$</span><span class='va'>connectors</span><span class='op'>)</span><span class='op'>)</span>
+<span class='op'>}</span>
 
-<span class='co'># Re-root</span>
-<span class='no'>neuron.fixed</span> <span class='kw'>=</span> <span class='fu'>hemibrain_remove_bad_synapses</span>(<span class='no'>neuron</span>)
-
-<span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
-<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>nat</span>)
+<span class='co'># remove any synapses outside of this surface (or on the cell body fibre)</span>
+<span class='va'>neuron.fixed</span> <span class='op'>=</span> <span class='fu'>hemibrain_remove_bad_synapses</span><span class='op'>(</span><span class='va'>neuron</span>, meshes<span class='op'>=</span><span class='va'>hemibrain.surf</span><span class='op'>)</span>
+<span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
+<span class='co'># previously we used all the individual hemibrain meshes. This may produce</span>
+<span class='co'># slightly different results but using *hemibrain.surf* is much faster</span>
+<span class='va'>neuron.fixed</span> <span class='op'>=</span> <span class='fu'>hemibrain_remove_bad_synapses</span><span class='op'>(</span><span class='va'>neuron</span>, meshes<span class='op'>=</span><span class='fu'><a href='hemibrain_roi_meshes.html'>hemibrain_roi_meshes</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
+<span class='op'>}</span>
+<span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
+<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://github.com/natverse/nat'>nat</a></span><span class='op'>)</span>
 <span class='co'># Let's check that this worked</span>
-<span class='fu'><a href='https://rdrr.io/pkg/nat/man/plot3d.html'>plot3d</a></span>(<span class='no'>neuron.fixed</span>)
-<span class='fu'>points3d</span>(<span class='fu'><a href='https://rdrr.io/pkg/nat/man/xyzmatrix.html'>xyzmatrix</a></span>(<span class='no'>neuron.fixed</span><span class='kw'>[[</span><span class='fl'>1</span>]]$<span class='no'>connectors</span>), <span class='kw'>size</span> <span class='kw'>=</span> <span class='fl'>5</span>, <span class='kw'>col</span> <span class='kw'>=</span> <span class='st'>"green"</span>)
+<span class='fu'><a href='https://rdrr.io/pkg/nat/man/plot3d.html'>plot3d</a></span><span class='op'>(</span><span class='va'>neuron.fixed</span><span class='op'>)</span>
+<span class='fu'>points3d</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/pkg/nat/man/xyzmatrix.html'>xyzmatrix</a></span><span class='op'>(</span><span class='va'>neuron.fixed</span><span class='op'>[[</span><span class='fl'>1</span><span class='op'>]</span><span class='op'>]</span><span class='op'>$</span><span class='va'>connectors</span><span class='op'>)</span>, size <span class='op'>=</span> <span class='fl'>5</span>, col <span class='op'>=</span> <span class='st'>"green"</span><span class='op'>)</span>
 
-}<span class='co'># }</span></div></pre>
+<span class='op'>}</span><span class='co'># }</span>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -235,7 +254,7 @@ when <code>soma = TRUE</code>. See the <code>first</code> argument in
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

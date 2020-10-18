@@ -54,7 +54,7 @@
  need to do this if you have your Google Drive mounted on your computer and you
  have access to the Flyconnectome Repository 2020lhfib. In which case, you should
  be able to read neurons directly from the drive whiled you have an Internet connection
- using hemibrain_read_neurons(savedir=TRUE).
+ using hemibrain_read_neurons(savedir=TRUE). Neurons downloaded into your working directory.
 In order to do download all neurons locally, you need to add the following folder to your Google Drive:
  https://drive.google.com/drive/folders/14UPg7CvHDtvzNjvNgAULYnxZ018Xgf5H?usp=sharing.
  Contact us if you do not have, but would like, permission.
@@ -92,20 +92,32 @@ In order to do download all neurons locally, you need to add the following folde
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">hemibrainr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Articles
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/flywire.html">flywire</a>
+    </li>
+    <li>
+      <a href="../articles/google_filestream.html">read data from google drive</a>
+    </li>
+    <li>
+      <a href="../articles/match_making.html">neuron match making</a>
+    </li>
+  </ul>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -141,7 +153,7 @@ In order to do download all neurons locally, you need to add the following folde
  need to do this if you have your Google Drive mounted on your computer and you
  have access to the Flyconnectome Repository 2020lhfib. In which case, you should
  be able to read neurons directly from the drive whiled you have an Internet connection
- using <code><a href='hemibrain_read_neurons.html'>hemibrain_read_neurons(savedir=TRUE)</a></code>.</p>
+ using <code><a href='hemibrain_read_neurons.html'>hemibrain_read_neurons(savedir=TRUE)</a></code>. Neurons downloaded into your working directory.</p>
 <p>In order to do download all neurons locally, you need to add the following folder to your Google Drive:
  <a href='https://drive.google.com/drive/folders/14UPg7CvHDtvzNjvNgAULYnxZ018Xgf5H?usp=sharing'>https://drive.google.com/drive/folders/14UPg7CvHDtvzNjvNgAULYnxZ018Xgf5H?usp=sharing</a>.
  Contact us if you do not have, but would like, permission.
@@ -149,16 +161,11 @@ In order to do download all neurons locally, you need to add the following folde
  <a href='https://drive.google.com/open?id=1px6o2R_heFLRCtTF4Q2SvJNR9CWFhud0'>https://drive.google.com/open?id=1px6o2R_heFLRCtTF4Q2SvJNR9CWFhud0</a>. Remember to unzip all files.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>hemibrain_download_neurons</span>(<span class='kw'>savedir</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>overwrite</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>hemibrain_download_neurons</span><span class='op'>(</span>overwrite <span class='op'>=</span> <span class='cn'>FALSE</span>, <span class='va'>...</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
-    <tr>
-      <th>savedir</th>
-      <td><p>where to save the <code>.rds</code> and meta data files for the
-<code><a href='https://rdrr.io/pkg/nat/man/neuronlistfh.html'>nat::neuronlistfh</a></code> object</p></td>
-    </tr>
     <tr>
       <th>overwrite</th>
       <td><p>whether or not to overwrite the existing saved files, within
@@ -166,7 +173,7 @@ In order to do download all neurons locally, you need to add the following folde
     </tr>
     <tr>
       <th>...</th>
-      <td><p>Additional arguments passed to <code>nlapply</code> when iterating
+      <td><p>Additional arguments passed to <code><a href='https://rdrr.io/pkg/nat/man/nlapply.html'>nlapply</a></code> when iterating
 over neurons to download.</p></td>
     </tr>
     </table>
@@ -177,18 +184,19 @@ over neurons to download.</p></td>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
-<span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
+<span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
 <span class='co'># Parallelise</span>
-<span class='no'>numCores</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>parallel</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/r/parallel/detectCores.html'>detectCores</a></span>()
-<span class='kw pkg'>doMC</span><span class='kw ns'>::</span><span class='fu'>registerDoMC</span>(<span class='no'>numCores</span>/<span class='fl'>2</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/message.html'>message</a></span>(<span class='st'>"Using "</span>, <span class='no'>numCores</span>/<span class='fl'>2</span>, <span class='st'>" cores"</span>)
+<span class='va'>numCores</span> <span class='op'>&lt;-</span> <span class='fu'>parallel</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/r/parallel/detectCores.html'>detectCores</a></span><span class='op'>(</span><span class='op'>)</span>
+<span class='fu'>doMC</span><span class='fu'>::</span><span class='fu'>registerDoMC</span><span class='op'>(</span><span class='va'>numCores</span><span class='op'>/</span><span class='fl'>2</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/message.html'>message</a></span><span class='op'>(</span><span class='st'>"Using "</span>, <span class='va'>numCores</span><span class='op'>/</span><span class='fl'>2</span>, <span class='st'>" cores"</span><span class='op'>)</span>
 
 <span class='co'># Download neurons</span>
-<span class='fu'>hemibrain_download_neurons</span>(<span class='kw'>.parallel</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>overwrite</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
+<span class='fu'>hemibrain_download_neurons</span><span class='op'>(</span>.parallel <span class='op'>=</span> <span class='cn'>TRUE</span>, overwrite <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
 
 <span class='co'># Get specific neurons</span>
-<span class='no'>neurons</span> <span class='kw'>=</span> <span class='fu'><a href='hemibrain_read_neurons.html'>hemibrain_read_neurons</a></span>(<span class='st'>"1702323386"</span>, <span class='kw'>savedir</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>local</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
-}<span class='co'># }</span></div></pre>
+<span class='va'>neurons</span> <span class='op'>=</span> <span class='fu'><a href='hemibrain_read_neurons.html'>hemibrain_read_neurons</a></span><span class='op'>(</span><span class='st'>"1702323386"</span>, savedir <span class='op'>=</span> <span class='cn'>TRUE</span>, local <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+<span class='op'>}</span><span class='co'># }</span>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -204,7 +212,7 @@ over neurons to download.</p></td>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

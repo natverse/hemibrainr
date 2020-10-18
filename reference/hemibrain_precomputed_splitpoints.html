@@ -86,20 +86,32 @@ closest to a neuron's primary branch point (data frames with 'distance' in their
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">hemibrainr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Articles
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/flywire.html">flywire</a>
+    </li>
+    <li>
+      <a href="../articles/google_filestream.html">read data from google drive</a>
+    </li>
+    <li>
+      <a href="../articles/match_making.html">neuron match making</a>
+    </li>
+  </ul>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -137,21 +149,21 @@ regions, after compartment detection, sometimes the dendrite was chosen as the n
 closest to a neuron's primary branch point (data frames with 'distance' in their name), see reference.</p>
     </div>
 
-    <pre class="usage"><span class='no'>hemibrain_all_splitpoints</span>
+    <pre class="usage"><span class='va'>hemibrain_all_splitpoints</span>
 
-<span class='no'>hemibrain_splitpoints_polypre_centrifugal_distance</span>
+<span class='va'>hemibrain_splitpoints_polypre_centrifugal_distance</span>
 
-<span class='no'>hemibrain_splitpoints_pre_centrifugal_distance</span>
+<span class='va'>hemibrain_splitpoints_pre_centrifugal_distance</span>
 
-<span class='no'>hemibrain_splitpoints_polypre_centrifugal_synapses</span></pre>
+<span class='va'>hemibrain_splitpoints_polypre_centrifugal_synapses</span></pre>
 
 
     <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
 
-    <p>An object of class <code>data.frame</code> with 794164 rows and 6 columns.</p>
-<p>An object of class <code>data.frame</code> with 794165 rows and 6 columns.</p>
+    <p>An object of class <code>data.frame</code> with 792075 rows and 6 columns.</p>
+<p>An object of class <code>data.frame</code> with 794165 rows and 7 columns.</p>
 <p>An object of class <code>data.frame</code> with 505094 rows and 6 columns.</p>
-<p>An object of class <code>data.frame</code> with 794164 rows and 6 columns.</p>
+<p>An object of class <code>data.frame</code> with 794164 rows and 7 columns.</p>
     <h2 class="hasAnchor" id="source"><a class="anchor" href="#source"></a>Source</h2>
 
     <p><a href='https://www.biorxiv.org/content/10.1101/2020.01.19.911453v1'>https://www.biorxiv.org/content/10.1101/2020.01.19.911453v1</a></p>
@@ -169,16 +181,18 @@ closest to a neuron's primary branch point (data frames with 'distance' in their
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='no'>hemibrain_splitpoints_polypre_centrifugal_distance</span>)</div><div class='output co'>#&gt;      bodyid position                point       X       Y       Z
-#&gt; 1 202916528        2                 root 20075.3 12279.3 12198.2
-#&gt; 2 202916528      299 primary.branch.point 22493.3 19472.5 17848.7
-#&gt; 3 202916528      545         axon.primary 31914.0 24874.0 12060.0
-#&gt; 4 202916528      311     dendrite.primary 22930.9 20018.9 17567.6
-#&gt; 5 202916528      499          axon.start1 31066.0 25818.0 14524.0
-#&gt; 6 202916528     1240          axon.start2 31162.0 25802.0 14588.0</div><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
-<span class='fu'><a href='https://rdrr.io/r/utils/View.html'>View</a></span>(<span class='no'>hemibrain_splitpoints_polypre_centrifugal_distance</span>)
-}
-<span class='co'># }</span></div></pre>
+<span class='fu'><a href='https://rdrr.io/pkg/nat/man/neuronlist-dataframe-methods.html'>head</a></span><span class='op'>(</span><span class='va'>hemibrain_splitpoints_polypre_centrifugal_distance</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;    X.1    bodyid position                point       X       Y       Z
+#&gt; 1    2 202916528        2                 root 20075.3 12279.3 12198.2
+#&gt; 2  299 202916528      299 primary.branch.point 22493.3 19472.5 17848.7
+#&gt; 3  545 202916528      545         axon.primary 31914.0 24874.0 12060.0
+#&gt; 4  311 202916528      311     dendrite.primary 22930.9 20018.9 17567.6
+#&gt; 5  499 202916528      499          axon.start1 31066.0 25818.0 14524.0
+#&gt; 6 1240 202916528     1240          axon.start2 31162.0 25802.0 14588.0</div><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/View.html'>View</a></span><span class='op'>(</span><span class='va'>hemibrain_splitpoints_polypre_centrifugal_distance</span><span class='op'>)</span>
+<span class='op'>}</span>
+<span class='co'># }</span>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -194,7 +208,7 @@ closest to a neuron's primary branch point (data frames with 'distance' in their
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

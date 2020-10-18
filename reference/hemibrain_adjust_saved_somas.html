@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Adjust saved somas manually — hemibrain_adjust_saved_somas • hemibrainr</title>
+<title>Adjust and correct hemibrain neurons somas. — hemibrain_adjust_saved_somas • hemibrainr</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,8 +46,17 @@
 
 
 
-<meta property="og:title" content="Adjust saved somas manually — hemibrain_adjust_saved_somas" />
-<meta property="og:description" content="Adjust saved somas manually" />
+<meta property="og:title" content="Adjust and correct hemibrain neurons somas. — hemibrain_adjust_saved_somas" />
+<meta property="og:description" content="Currently provides three &quot;modes&quot;: correct single neurons, correct cell body fibers, and correct from google sheet.
+  Correct singles will allow you to manually correct each neuron in a provided list of bodyids. If requested, DBSCAN can be used
+      to try to predict potential soma positions against already correctly identified somas, based on the provided google sheet.
+  Correct cell body fibers(cbf) asks for a cbf to be inputted based on those labelled in the google sheet. DBSCAN is then used to
+      cluster the already annotated soma positions on the google sheet within the cbf. This will allow you to identify correct
+      soma positions, and then manually fix incorrect somas. for each neuron with an incorrect soma, a potential new soma will be
+      suggested based on the DBSCAN clustering result.
+  Correct google sheet is useful when screening large numbers of neurons. Once a large group of neurons has been split into
+      morphological clusters, using NBLAST for example, this mode will request a cluster id and apply DBSCAN to somas within
+      the cluster. You can then quickly screen to identify correct soma clusters, and label incorrect somas to be corrected separately." />
 <meta property="og:image" content="/logo.svg" />
 
 
@@ -80,20 +89,32 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">hemibrainr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Articles
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/flywire.html">flywire</a>
+    </li>
+    <li>
+      <a href="../articles/google_filestream.html">read data from google drive</a>
+    </li>
+    <li>
+      <a href="../articles/match_making.html">neuron match making</a>
+    </li>
+  </ul>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -116,23 +137,36 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Adjust saved somas manually</h1>
+    <h1>Adjust and correct hemibrain neurons somas.</h1>
     <small class="dont-index">Source: <a href='https://github.com/flyconnectome/hemibrainr/blob/master/R/hemibrain_fix_soma.R'><code>R/hemibrain_fix_soma.R</code></a></small>
     <div class="hidden name"><code>hemibrain_adjust_saved_somas.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Adjust saved somas manually</p>
+    <p>Currently provides three "modes": correct single neurons, correct cell body fibers, and correct from google sheet.
+  Correct singles will allow you to manually correct each neuron in a provided list of bodyids. If requested, DBSCAN can be used
+      to try to predict potential soma positions against already correctly identified somas, based on the provided google sheet.
+  Correct cell body fibers(cbf) asks for a cbf to be inputted based on those labelled in the google sheet. DBSCAN is then used to
+      cluster the already annotated soma positions on the google sheet within the cbf. This will allow you to identify correct
+      soma positions, and then manually fix incorrect somas. for each neuron with an incorrect soma, a potential new soma will be
+      suggested based on the DBSCAN clustering result.
+  Correct google sheet is useful when screening large numbers of neurons. Once a large group of neurons has been split into
+      morphological clusters, using NBLAST for example, this mode will request a cluster id and apply DBSCAN to somas within
+      the cluster. You can then quickly screen to identify correct soma clusters, and label incorrect somas to be corrected separately.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>hemibrain_adjust_saved_somas</span>(
-  <span class='kw'>bodyids</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>c</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>brain</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>selected_file</span> <span class='kw'>=</span> <span class='st'>"1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E"</span>,
-  <span class='kw'>db</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>plot_sample</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>
-)</pre>
+    <pre class="usage"><span class='fu'>hemibrain_adjust_saved_somas</span><span class='op'>(</span>
+  bodyids <span class='op'>=</span> <span class='cn'>NULL</span>,
+  c <span class='op'>=</span> <span class='cn'>NULL</span>,
+  brain <span class='op'>=</span> <span class='cn'>NULL</span>,
+  selected_file <span class='op'>=</span> <span class='st'>"1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E"</span>,
+  db <span class='op'>=</span> <span class='cn'>NULL</span>,
+  plot_sample <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  eps <span class='op'>=</span> <span class='cn'>NULL</span>,
+  minPts <span class='op'>=</span> <span class='cn'>NULL</span>,
+  neurons_from_gsheet <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  for_Imaan <span class='op'>=</span> <span class='cn'>FALSE</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -143,7 +177,7 @@
     </tr>
     <tr>
       <th>c</th>
-      <td><p>Optional. For use when correcting Cell body fibres. If not input, function will ask you to enter one later</p></td>
+      <td><p>Optional. For use when correcting Cell body fibers. If not input, function will ask you to enter one later</p></td>
     </tr>
     <tr>
       <th>brain</th>
@@ -159,15 +193,30 @@
     </tr>
     <tr>
       <th>plot_sample</th>
-      <td><p>plot a sample of the neurons to be examined</p></td>
+      <td><p>logical. TRUE by default, choose if you wish to plot a random subset of neurons within a DBSCAN cluster</p></td>
+    </tr>
+    <tr>
+      <th>eps</th>
+      <td><p>the distance in nanometres used by DBSCAN to form clusters. 1500 by default</p></td>
+    </tr>
+    <tr>
+      <th>minPts</th>
+      <td><p>The minimum number of points needed to form a cluster using DBSCAN. 5 by default</p></td>
+    </tr>
+    <tr>
+      <th>neurons_from_gsheet</th>
+      <td><p>logical, TRUE by default. If true, will collect neurons based on bodyids in the google sheet,
+otherwise, will search for them based on CBF data in neuprint.</p></td>
+    </tr>
+    <tr>
+      <th>for_Imaan</th>
+      <td><p>extra little bit for Imaan... FALSE by default</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    
-
-
+    <p>Updates Google Sheet with soma information</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -184,7 +233,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>
