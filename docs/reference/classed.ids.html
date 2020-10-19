@@ -17,23 +17,27 @@
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png" />
 
 <!-- jquery -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous" />
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
+
+<!-- bootstrap-toc -->
+<link rel="stylesheet" href="../bootstrap-toc.css">
+<script src="../bootstrap-toc.js"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script>
 
 <!-- headroom.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -45,8 +49,7 @@
 <meta property="og:title" content="Bodyids for neuron classes — classed.ids" />
 <meta property="og:description" content="Bodyids for neuron classes. Hard saved equivalent for class2ids.
 However, you should use class2ids for the most up-to-date information." />
-<meta property="og:image" content="/logo.png" />
-<meta name="twitter:card" content="summary" />
+<meta property="og:image" content="/logo.svg" />
 
 
 
@@ -64,7 +67,7 @@ However, you should use class2ids for the most up-to-date information." />
 
   </head>
 
-  <body>
+  <body data-spy="scroll" data-target="#toc">
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -104,7 +107,7 @@ However, you should use class2ids for the most up-to-date information." />
       <a href="../articles/flywire.html">flywire</a>
     </li>
     <li>
-      <a href="../articles/google_filestream.html">read data from google drive</a>
+      <a href="../articles/google_filestream.html">read data from Google drive</a>
     </li>
     <li>
       <a href="../articles/match_making.html">neuron match making</a>
@@ -114,7 +117,7 @@ However, you should use class2ids for the most up-to-date information." />
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/flyconnectome/hemibrainr">
+  <a href="https://github.com/flyconnectome/hemibrainr/">
     <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
@@ -142,39 +145,39 @@ However, you should use class2ids for the most up-to-date information." />
 However, you should use <code><a href='class2ids.html'>class2ids</a></code> for the most up-to-date information.</p>
     </div>
 
-    <pre class="usage"><span class='no'>rn.ids</span>
+    <pre class="usage"><span class='va'>rn.ids</span>
 
-<span class='no'>orn.ids</span>
+<span class='va'>orn.ids</span>
 
-<span class='no'>hrn.ids</span>
+<span class='va'>hrn.ids</span>
 
-<span class='no'>pn.ids</span>
+<span class='va'>pn.ids</span>
 
-<span class='no'>upn.ids</span>
+<span class='va'>upn.ids</span>
 
-<span class='no'>mpn.ids</span>
+<span class='va'>mpn.ids</span>
 
-<span class='no'>vppn.ids</span>
+<span class='va'>vppn.ids</span>
 
-<span class='no'>dan.ids</span>
+<span class='va'>dan.ids</span>
 
-<span class='no'>mbon.ids</span>
+<span class='va'>mbon.ids</span>
 
-<span class='no'>alln.ids</span>
+<span class='va'>alln.ids</span>
 
-<span class='no'>ton.ids</span>
+<span class='va'>ton.ids</span>
 
-<span class='no'>lhn.ids</span>
+<span class='va'>lhn.ids</span>
 
-<span class='no'>dn.ids</span>
+<span class='va'>dn.ids</span>
 
-<span class='no'>kc.ids</span>
+<span class='va'>kc.ids</span>
 
-<span class='no'>apl.ids</span>
+<span class='va'>apl.ids</span>
 
-<span class='no'>cent.ids</span>
+<span class='va'>cent.ids</span>
 
-<span class='no'>lc.ids</span></pre>
+<span class='va'>lc.ids</span></pre>
 
 
     <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
@@ -206,20 +209,16 @@ have determined to fall into different classes.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='no'>rn.ids</span>)</div><div class='output co'>#&gt; [1] "1884138473" "1888183031" "1888183512" "1888528200" "1918885778"
-#&gt; [6] "1918889952"</div><div class='input'># }
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>rn.ids</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] "1884138473" "1888183031" "1888183512" "1888528200" "1918885778"
+#&gt; [6] "1918889952"</div><div class='input'><span class='co'># }</span>
 
 </div></pre>
   </div>
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-    <h2>Contents</h2>
-    <ul class="nav nav-pills nav-stacked">
-      <li><a href="#format">Format</a></li>
-      <li><a href="#details">Details</a></li>
-      <li><a href="#see-also">See also</a></li>
-      <li><a href="#examples">Examples</a></li>
-    </ul>
-
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
+    <nav id="toc" data-toggle="toc" class="sticky-top">
+      <h2 data-toc-skip>Contents</h2>
+    </nav>
   </div>
 </div>
 
@@ -230,7 +229,7 @@ have determined to fall into different classes.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

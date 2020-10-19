@@ -17,23 +17,27 @@
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png" />
 
 <!-- jquery -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous" />
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
+
+<!-- bootstrap-toc -->
+<link rel="stylesheet" href="../bootstrap-toc.css">
+<script src="../bootstrap-toc.js"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script>
 
 <!-- headroom.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -48,8 +52,7 @@ the hemibrain neuprintr project, that have no marked soma, and
 hemibrain_remove_bad_synapses on all neurons. Does not prune synapses
 from soma positions / along the primary neurite, but does remove synapses outside
 of the hemibrain volume." />
-<meta property="og:image" content="/logo.png" />
-<meta name="twitter:card" content="summary" />
+<meta property="og:image" content="/logo.svg" />
 
 
 
@@ -67,7 +70,7 @@ of the hemibrain volume." />
 
   </head>
 
-  <body>
+  <body data-spy="scroll" data-target="#toc">
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -107,7 +110,7 @@ of the hemibrain volume." />
       <a href="../articles/flywire.html">flywire</a>
     </li>
     <li>
-      <a href="../articles/google_filestream.html">read data from google drive</a>
+      <a href="../articles/google_filestream.html">read data from Google drive</a>
     </li>
     <li>
       <a href="../articles/match_making.html">neuron match making</a>
@@ -117,7 +120,7 @@ of the hemibrain volume." />
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/flyconnectome/hemibrainr">
+  <a href="https://github.com/flyconnectome/hemibrainr/">
     <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
@@ -148,14 +151,14 @@ from soma positions / along the primary neurite, but does remove synapses outsid
 of the hemibrain volume.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>hemibrain_skeleton_check</span>(
-  <span class='no'>x</span>,
-  <span class='kw'>meshes</span> <span class='kw'>=</span> <span class='kw pkg'>hemibrainr</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/hemibrainr/man/hemibrain.surf.html'>hemibrain.surf</a></span>,
-  <span class='kw'>min.nodes.from.soma</span> <span class='kw'>=</span> <span class='fl'>100</span>,
-  <span class='kw'>min.nodes.from.pnt</span> <span class='kw'>=</span> <span class='fl'>5</span>,
-  <span class='kw'>OmitFailures</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='no'>...</span>
-)</pre>
+    <pre class="usage"><span class='fu'>hemibrain_skeleton_check</span><span class='op'>(</span>
+  <span class='va'>x</span>,
+  meshes <span class='op'>=</span> <span class='fu'>hemibrainr</span><span class='fu'>::</span><span class='va'><a href='hemibrain.surf.html'>hemibrain.surf</a></span>,
+  min.nodes.from.soma <span class='op'>=</span> <span class='fl'>100</span>,
+  min.nodes.from.pnt <span class='op'>=</span> <span class='fl'>5</span>,
+  OmitFailures <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -207,55 +210,52 @@ message the moment there is an error.</p></td>
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
 <span class='co'># Choose some known trouble makers</span>
-<span class='no'>ids</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"5813056323"</span>, <span class='st'>"579912201"</span>, <span class='st'>"5813015982"</span>, <span class='st'>"973765182"</span>, <span class='st'>"885788485"</span>,
+<span class='va'>ids</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"5813056323"</span>, <span class='st'>"579912201"</span>, <span class='st'>"5813015982"</span>, <span class='st'>"973765182"</span>, <span class='st'>"885788485"</span>,
 <span class='st'>"915451074"</span>, <span class='st'>"5813032740"</span>, <span class='st'>"1006854683"</span>, <span class='st'>"5813013913"</span>, <span class='st'>"5813020138"</span>,
 <span class='st'>"853726809"</span>, <span class='st'>"916828438"</span>, <span class='st'>"5813078494"</span>, <span class='st'>"420956527"</span>, <span class='st'>"486116439"</span>,
 <span class='st'>"573329873"</span>, <span class='st'>"5813010494"</span>, <span class='st'>"5813040095"</span>, <span class='st'>"514396940"</span>, <span class='st'>"665747387"</span>,
 <span class='st'>"793702856"</span>, <span class='st'>"451644891"</span>, <span class='st'>"482002701"</span>, <span class='st'>"391631218"</span>, <span class='st'>"390948259"</span>,
 <span class='st'>"390948580"</span>, <span class='st'>"452677169"</span>, <span class='st'>"511262901"</span>, <span class='st'>"422311625"</span>, <span class='st'>"451987038"</span>
-)
+<span class='op'>)</span>
 
 <span class='co'># just use a subset for documentation purposes</span>
-<span class='no'>ids</span><span class='kw'>=</span><span class='no'>ids</span>[<span class='fl'>1</span>:<span class='fl'>3</span>]
+<span class='va'>ids</span><span class='op'>=</span><span class='va'>ids</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span><span class='op'>]</span>
 
 <span class='co'># Read in these neurons</span>
-<span class='no'>neurons</span> <span class='kw'>=</span> <span class='kw pkg'>neuprintr</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/neuprintr/man/neuprint_read_neurons.html'>neuprint_read_neurons</a></span>(<span class='no'>ids</span>)
-<span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
+<span class='va'>neurons</span> <span class='op'>=</span> <span class='fu'>neuprintr</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/neuprintr/man/neuprint_read_neurons.html'>neuprint_read_neurons</a></span><span class='op'>(</span><span class='va'>ids</span><span class='op'>)</span>
+<span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
 <span class='co'># Get all the roi meshes</span>
-<span class='no'>hemibrain.rois</span> <span class='kw'>=</span> <span class='fu'><a href='hemibrain_roi_meshes.html'>hemibrain_roi_meshes</a></span>()
+<span class='va'>hemibrain.rois</span> <span class='op'>=</span> <span class='fu'><a href='hemibrain_roi_meshes.html'>hemibrain_roi_meshes</a></span><span class='op'>(</span><span class='op'>)</span>
 <span class='co'>## Using this as the argument for 'meshes' will also</span>
 <span class='co'>## give you the ROI for each point and synapse in a neuron's skeleton!!</span>
 
 <span class='co'># Re-root</span>
-<span class='no'>neurons.checked</span> <span class='kw'>=</span> <span class='fu'>hemibrain_skeleton_check</span>(<span class='no'>neurons</span>, <span class='kw'>meshes</span> <span class='kw'>=</span> <span class='no'>hemibrain.rois</span>)
-}
+<span class='va'>neurons.checked</span> <span class='op'>=</span> <span class='fu'>hemibrain_skeleton_check</span><span class='op'>(</span><span class='va'>neurons</span>, meshes <span class='op'>=</span> <span class='va'>hemibrain.rois</span><span class='op'>)</span>
+<span class='op'>}</span>
 
 <span class='co'># Alternatively, we can do this faster using a single surface model for the</span>
 <span class='co'># whole hemibrain</span>
 
-<span class='no'>neurons.checked</span> <span class='kw'>=</span> <span class='fu'>hemibrain_skeleton_check</span>(<span class='no'>neurons</span>, <span class='kw'>meshes</span> <span class='kw'>=</span> <span class='no'>hemibrain.surf</span>)</div><div class='output co'>#&gt; <span class='message'>Re-rooting 1 neurons without a soma</span></div><div class='output co'>#&gt; <span class='message'>Removing synapses outside the hemibrain neuropil volume for 3 neurons</span></div><div class='output co'>#&gt; <span class='warning'>Warning: invalid factor level, NA generated</span></div><div class='output co'>#&gt; <span class='warning'>Warning: invalid factor level, NA generated</span></div><div class='output co'>#&gt; <span class='warning'>Warning: invalid factor level, NA generated</span></div><div class='output co'>#&gt; <span class='warning'>Warning: invalid factor level, NA generated</span></div><div class='input'>
-<span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
+<span class='va'>neurons.checked</span> <span class='op'>=</span> <span class='fu'>hemibrain_skeleton_check</span><span class='op'>(</span><span class='va'>neurons</span>, meshes <span class='op'>=</span> <span class='va'>hemibrain.surf</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='message'>Re-rooting 1 neurons without a soma</span></div><div class='output co'>#&gt; <span class='message'>Removing synapses outside the hemibrain neuropil volume for 3 neurons</span></div><div class='input'>
+<span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
 <span class='co'># Let's check that this worked</span>
-<span class='kw pkg'>nat</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/nat/man/nopen3d.html'>nopen3d</a></span>()
-<span class='kw'>for</span>(<span class='no'>n</span> <span class='kw'>in</span> <span class='no'>neurons.checked</span>){
-     <span class='fu'>clear3d</span>();
-     <span class='fu'><a href='https://rdrr.io/r/base/message.html'>message</a></span>(<span class='no'>n</span>$<span class='no'>bodyid</span>)
-     <span class='fu'>plot3d</span>(<span class='no'>n</span>,<span class='kw'>col</span><span class='kw'>=</span><span class='st'>"brown"</span>,<span class='kw'>lwd</span><span class='kw'>=</span><span class='fl'>2</span>)
-     <span class='fu'>points3d</span>(<span class='kw pkg'>nat</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/nat/man/xyzmatrix.html'>xyzmatrix</a></span>(<span class='no'>n</span>$<span class='no'>connectors</span>),<span class='kw'>col</span><span class='kw'>=</span><span class='st'>"black"</span>)
-     <span class='fu'>spheres3d</span>(<span class='kw pkg'>nat</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/nat/man/xyzmatrix.html'>xyzmatrix</a></span>(<span class='no'>n</span>)[<span class='kw pkg'>nat</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/nat/man/rootpoints.html'>rootpoints</a></span>(<span class='no'>n</span>),],<span class='kw'>radius</span><span class='kw'>=</span><span class='fl'>500</span>, <span class='kw'>alpha</span><span class='kw'>=</span><span class='fl'>0.5</span>)
-     <span class='no'>p</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/readline.html'>readline</a></span>(<span class='st'>"Done? "</span>)
-}
-}<span class='co'># }</span></div></pre>
+<span class='fu'>nat</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/nat/man/nopen3d.html'>nopen3d</a></span><span class='op'>(</span><span class='op'>)</span>
+<span class='kw'>for</span><span class='op'>(</span><span class='va'>n</span> <span class='kw'>in</span> <span class='va'>neurons.checked</span><span class='op'>)</span><span class='op'>{</span>
+     <span class='fu'>clear3d</span><span class='op'>(</span><span class='op'>)</span>;
+     <span class='fu'><a href='https://rdrr.io/r/base/message.html'>message</a></span><span class='op'>(</span><span class='va'>n</span><span class='op'>$</span><span class='va'>bodyid</span><span class='op'>)</span>
+     <span class='fu'><a href='https://rdrr.io/pkg/nat/man/plot3d.html'>plot3d</a></span><span class='op'>(</span><span class='va'>n</span>,col<span class='op'>=</span><span class='st'>"brown"</span>,lwd<span class='op'>=</span><span class='fl'>2</span><span class='op'>)</span>
+     <span class='fu'>points3d</span><span class='op'>(</span><span class='fu'>nat</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/nat/man/xyzmatrix.html'>xyzmatrix</a></span><span class='op'>(</span><span class='va'>n</span><span class='op'>$</span><span class='va'>connectors</span><span class='op'>)</span>,col<span class='op'>=</span><span class='st'>"black"</span><span class='op'>)</span>
+     <span class='fu'>spheres3d</span><span class='op'>(</span><span class='fu'>nat</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/nat/man/xyzmatrix.html'>xyzmatrix</a></span><span class='op'>(</span><span class='va'>n</span><span class='op'>)</span><span class='op'>[</span><span class='fu'>nat</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/nat/man/rootpoints.html'>rootpoints</a></span><span class='op'>(</span><span class='va'>n</span><span class='op'>)</span>,<span class='op'>]</span>,radius<span class='op'>=</span><span class='fl'>500</span>, alpha<span class='op'>=</span><span class='fl'>0.5</span><span class='op'>)</span>
+     <span class='va'>p</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/readline.html'>readline</a></span><span class='op'>(</span><span class='st'>"Done? "</span><span class='op'>)</span>
+<span class='op'>}</span>
+<span class='op'>}</span><span class='co'># }</span>
+</div></pre>
   </div>
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-    <h2>Contents</h2>
-    <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
-      <li><a href="#value">Value</a></li>
-      <li><a href="#see-also">See also</a></li>
-      <li><a href="#examples">Examples</a></li>
-    </ul>
-
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
+    <nav id="toc" data-toggle="toc" class="sticky-top">
+      <h2 data-toc-skip>Contents</h2>
+    </nav>
   </div>
 </div>
 
@@ -266,7 +266,7 @@ message the moment there is an error.</p></td>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>
