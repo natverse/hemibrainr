@@ -391,23 +391,33 @@ flywire_ids_update <- function(selected_sheets = NULL,
           # Get flywire IDs from these positions
           bbx = matrix(c(5100, 1440, 16, 59200, 29600, 7062),ncol=3,byrow = TRUE)
           bbx = nat::boundingbox(scale(bbx, scale = 1/c(4, 4, 40), center = FALSE))
-          batch = 1
-          batches = split(1:nrow(gs.t), round(seq(from = 1, to = numCores, length.out = nrow(gs.t))))
-          foreach.ids <- foreach::foreach (batch = 1:length(batches)) %dopar% {
-            pos = gs.t[batches[[batch]],]
-            pos = pos[apply(pos, 1, function(row) sum(is.na(row[c("fw.x","fw.y",'fw.z')]))==0),]
+          if(numCores>1){
+            batch = 1
+            batches = split(1:nrow(gs.t), round(seq(from = 1, to = numCores, length.out = nrow(gs.t))))
+            foreach.ids <- foreach::foreach (batch = 1:length(batches)) %dopar% {
+              pos = gs.t[batches[[batch]],]
+              pos = pos[apply(pos, 1, function(row) sum(is.na(row[c("fw.x","fw.y",'fw.z')]))==0),]
+              p = nat::pointsinside(pos[,c("fw.x","fw.y",'fw.z')],bbx)
+              pos = pos[p,]
+              if(nrow(pos)){
+                i <- tryCatch(fafbseg::flywire_xyz2id(pos[,c("fw.x","fw.y",'fw.z')], rawcoords = TRUE),
+                              error = function(e){warning(e);rep(NA,nrow(pos))})
+                names(i) = pos$flywire.xyz
+                i[is.na(i)|is.nan(i)] = 0
+                i
+              }
+            }
+          }else{
+            pos = gs.t[apply(gs.t, 1, function(row) sum(is.na(row[c("fw.x","fw.y",'fw.z')]))==0),]
             p = nat::pointsinside(pos[,c("fw.x","fw.y",'fw.z')],bbx)
             pos = pos[p,]
             if(nrow(pos)){
-              i <- tryCatch(fafbseg::flywire_xyz2id(pos[,c("fw.x","fw.y",'fw.z')], rawcoords = TRUE),
-                            error = function(e){warning(e);rep(NA,nrow(pos))})
-              names(i) = pos$flywire.xyz
-              i[is.na(i)|is.nan(i)] = 0
-              i
+              foreach.ids = fafbseg::flywire_xyz2id(pos[,c("fw.x","fw.y",'fw.z')], rawcoords = TRUE)
+              names(foreach.ids) = pos[,"flywire.xyz"]
+            }else{
+              foreach.ids = NULL
             }
           }
-          #foreach.ids = fafbseg::flywire_xyz2id(gs.t[,c("fw.x","fw.y",'fw.z')], rawcoords = TRUE)
-          #names(foreach.ids) = gs.t[,"flywire.xyz"]
           fids = unlist(foreach.ids)
           fids[is.na(fids)|is.nan(fids)] = "0"
           if(length(fids)){
