@@ -105,7 +105,7 @@
       <a href="../articles/flywire.html">flywire</a>
     </li>
     <li>
-      <a href="../articles/google_filestream.html">read data from google drive</a>
+      <a href="../articles/google_filestream.html">read data from Google drive</a>
     </li>
     <li>
       <a href="../articles/match_making.html">neuron match making</a>
@@ -166,12 +166,12 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>Gdrive</th>
-      <td><p>name of the mounted google drive. Can just be the name of a team
+      <td><p>name of the mounted Google drive. Can just be the name of a team
 drive to be found in the standard location: <code>"/Volumes/GoogleDrive/Shared\ drives/"</code>.</p></td>
     </tr>
     <tr>
       <th>path</th>
-      <td><p>path to your 'hemibrainr google drive', either a mounted remote or a local copy.
+      <td><p>path to your 'hemibrainr Google drive', either a mounted remote or a local copy.
 For example on a Mac, <a href='https://support.google.com/drive/answer/7329379?authuser=2'>Google filestream</a> mounts it at: <code>/Volumes/GoogleDrive/Shared\ drives/</code>.
 With <a href='https://rclone.org/drive/'>rclone sheet</a> you can mount it wherever you like, by default hemibrainr expects it at:
 <code><a href='https://rdrr.io/r/base/paste.html'>paste0(getwd(),"hemibrainr_rclone/")</a></code></p></td>
@@ -184,22 +184,22 @@ With <a href='https://rclone.org/drive/'>rclone sheet</a> you can mount it where
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>In order to use this package to its fullest,
-you need to get <code>hemibrainr</code> to read large amounts of data stored on a google drive.
+you need to get <code>hemibrainr</code> to read large amounts of data stored on a Google drive.
 To do this, you have three options:</p>
-<p>1. Mount your google drive usin <a href='https://support.google.com/drive/answer/7329379?authuser=2'>Google filestream</a>
-2. Mount your google drive using <a href='https://rclone.org/drive/'>rclone</a>
-3. Download the google drive and save locally</p>
-<p>The best option is to use google filestream.
+<p>1. Mount your Google drive using <a href='https://support.google.com/drive/answer/7329379?authuser=2'>Google filestream</a>
+2. Mount your Google drive using <a href='https://rclone.org/drive/'>rclone</a>
+3. Download the Google drive and save locally</p>
+<p>The best option is to use Google filestream.
 By default, this is what <code>hemibrainr</code> expects.
 However, you need a <a href='https://workspace.google.com/pricing.html'>Google Workspace</a>
 account (formerly G-Suite), which is a paid-for service.
-Without this, the best option is to use hrefhttps://rclone.org/drive/rclone. For detailed
-instructions on how to confiure rclone, please see your article in this package:
-Reading hemibrainr data from google drive.
+Without this, the best option is to use <a href='https://rclone.org/drive/'>rclone</a>. For detailed
+instructions on how to configure rclone, please see your article in this package:
+Reading hemibrainr data from Google drive.
 You can also download to an external hard drive and use that.</p>
 <p>We have two <a href='https://support.google.com/a/users/answer/9310156?hl=en'>Google team drives</a>
  available for you to use, which contain similar data. One ("hemibrain")
- is for internal use by the <a href='https://www.zoo.cam.ac.uk/research/groups/connectomics'>Drosphila Connctomcis Group</a>.
+ is for internal use by the <a href='https://www.zoo.cam.ac.uk/research/groups/connectomics'>Drosophila Connectomics Group</a>.
  The other one (<code>"hemibrainr"</code>) is shared with those who would like access. Contact us by email to request access.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
@@ -213,8 +213,8 @@ You can also download to an external hard drive and use that.</p>
 <span class='co'># You could also set up your own drive with saved data.</span>
 <span class='fu'>hemibrainr_set_drive</span><span class='op'>(</span><span class='st'>"hemibrainr"</span><span class='op'>)</span>
 
-<span class='co'># Ah but what it you do not have the dirve loaded</span>
-<span class='co'># With google filestream say, as a network drive?</span>
+<span class='co'># Ah but what it you do not have the drive loaded</span>
+<span class='co'># With Google filestream say, as a network drive?</span>
 <span class='co'># In this case, you can use the free-service rclone instead</span>
 <span class='co'># However, you will need to install and configure it:https://rclone.org/drive/</span>
 <span class='fu'>hemibrainr_rclone</span><span class='op'>(</span>Gdrive <span class='op'>=</span> <span class='st'>"hemibrainr"</span><span class='op'>)</span>

@@ -58,7 +58,7 @@
       <a href="../articles/flywire.html">flywire</a>
     </li>
     <li>
-      <a href="../articles/google_filestream.html">read data from google drive</a>
+      <a href="../articles/google_filestream.html">read data from Google drive</a>
     </li>
     <li>
       <a href="../articles/match_making.html">neuron match making</a>
@@ -101,23 +101,23 @@
 </blockquote>
 <div id="flywire-and-r" class="section level1">
 <h1 class="hasAnchor">
-<a href="#flywire-and-r" class="anchor"></a>Flywire and R</h1>
-<p><a href="https://ngl.flywire.ai/?local_id=c8c06ea181ad5447b04beacfc4cb1b66">Flywire</a> is an open neuron reconstruction environment for the full adult fly brain ( <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6063995/">FAFB</a> ) EM data set. Unlike this CATMAID, users concatenate volumetric segmentations to build neurons as 3D meshes. The segmentation was produced by the <a href="https://seunglab.org/">Seung group</a>. With the package <code>hemibrainr</code> we can read flywire neurons as both meshes and skeletons. Meshes can be read directly from flywire, but skeletons need to be built from these meshes. Our pakackage <code>fafbseg</code> can enable users to skeletonise neurons in R (e.g. <code><a href="https://rdrr.io/pkg/fafbseg/man/skeletor.html">fafbseg::skeletor</a></code>), whereas <code>hemibrainr</code> exists to help users get hold of neuron data and match flywire neurons to <a href="https://neuprint.janelia.org/help/videos?dataset=hemibrain">hemibrain</a> neurons.</p>
-<p>On the hemibrain <a href="https://support.google.com/a/users/answer/9310156?hl=en">Google team drive</a> for the <a href="https://www.zoo.cam.ac.uk/research/groups/connectomics">Drosphila Connctomcis Group</a>. If you do not have access to this team drive and would like to use it, to make the most our of <code>hemibrainr</code>, please get in contact. You will need top to have access to the drive and have <a href="https://support.google.com/a/answer/7491144?hl=en">Google filestream</a> mounted. Then you will be able to:</p>
+<a href="#flywire-and-r" class="anchor"></a>FlyWire and R</h1>
+<p><a href="https://ngl.flywire.ai/?local_id=c8c06ea181ad5447b04beacfc4cb1b66">FlyWire</a> is an open neuron reconstruction environment for the full adult fly brain ( <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6063995/">FAFB</a> ) EM data set. Unlike this CATMAID, users concatenate volumetric segmentations to build neurons as 3D meshes. The segmentation was produced by the <a href="https://seunglab.org/">Seung group</a>. With the package <code>hemibrainr</code> we can read flywire neurons as both meshes and skeletons. Meshes can be read directly from flywire, but skeletons need to be built from these meshes. Our package <code>fafbseg</code> can enable users to skeletonise neurons in R (e.g. <code><a href="https://rdrr.io/pkg/fafbseg/man/skeletor.html">fafbseg::skeletor</a></code>), whereas <code>hemibrainr</code> exists to help users get hold of neuron data and match flywire neurons to <a href="https://neuprint.janelia.org/help/videos?dataset=hemibrain">hemibrain</a> neurons.</p>
+<p>On the hemibrain <a href="https://support.google.com/a/users/answer/9310156?hl=en">Google team drive</a> for the <a href="https://www.zoo.cam.ac.uk/research/groups/connectomics">Drosophila Connectomics Group</a>. If you do not have access to this team drive and would like to use it, to make the most our of <code>hemibrainr</code>, please get in contact. You will need top to have access to the drive and have <a href="https://support.google.com/a/answer/7491144?hl=en">Google filestream</a> mounted. Then you will be able to:</p>
 <ul>
 <li>Read thousands of pre-skeletonised flywire neurons from Google Drive</li>
-<li>Read flywire NBLASTs and NLBLASTs to hemibrain neurons</li>
+<li>Read flywire NBLASTs and NBLASTs to hemibrain neurons</li>
 <li>Read flywire neurons that are pre-transformed into a variety of brainspaces</li>
 </ul>
 <p>Which is all useful stuff.</p>
 <div id="authorisation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#authorisation" class="anchor"></a>Authorisation</h2>
-<p>To access flywire data directly from <a href="https://ngl.flywire.ai/?local_id=c8c06ea181ad5447b04beacfc4cb1b66">Flywire</a>, you will need to have an account with them and you will need to use your ‘secret’ associated with that account. Visit <a href="https://globalv1.flywire-daf.com/auth/api/v1/refresh_token" class="uri">https://globalv1.flywire-daf.com/auth/api/v1/refresh_token</a> to get your token. Note that it changes each time you visit this link. Copy it and then:</p>
+<p>To access flywire data directly from <a href="https://ngl.flywire.ai/?local_id=c8c06ea181ad5447b04beacfc4cb1b66">FlyWire</a>, you will need to have an account with them and you will need to use your ‘secret’ associated with that account. Visit <a href="https://globalv1.flywire-daf.com/auth/api/v1/refresh_token" class="uri">https://globalv1.flywire-daf.com/auth/api/v1/refresh_token</a> to get your token. Note that it changes each time you visit this link. Copy it and then:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit">
 <span class="co"># remotes::install_github("natverse/fafbseg"), if you don't have the package</span>
 <span class="fu">fafbseg</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/fafbseg/man/flywire_set_token.html">flywire_set_token</a></span><span class="op">(</span><span class="st">"PASTE_TOKEN_HERE"</span><span class="op">)</span></pre></div>
-<p>It is best if you have access to the flywire productio node. Otherwise, you can look at just the base segmentation (useful but a lot less useful).</p>
+<p>It is best if you have access to the flywire production node. Otherwise, you can look at just the base segmentation (useful but a lot less useful).</p>
 <p>And now, let’s test by looking at some few information available through <code>hemibrainr</code>:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit">
 <span class="co"># Load package</span>
@@ -160,8 +160,8 @@
 <div id="skeletonise-flywire-neurons-yourself" class="section level2">
 <h2 class="hasAnchor">
 <a href="#skeletonise-flywire-neurons-yourself" class="anchor"></a>Skeletonise flywire neurons yourself</h2>
-<p>We can also skeletonise neurons ourselvesu using <a href="https://github.com/natverse/fafbseg">skeletor pipeline in R</a>. This pipeline reads meshes from flywire, contracts them for accurate skeletonisation, and produces a skeletonised mesh. In R, we also try to re-root the neuron at it’s estimated soma location.</p>
-<p>You will need to install the python modules releate to skeletor to get it to work. Please follow the instructions <a href="https://github.com/schlegelp/skeletor">here</a> for the python version. <a href="">Here</a>, we provide a guide to get everthing working in R (in short <code>reticulate</code> is used to run python code in a specific, stable conda environment we make for R to use).</p>
+<p>We can also skeletonise neurons ourselves using <a href="https://github.com/natverse/fafbseg">skeletor pipeline in R</a>. This pipeline reads meshes from flywire, contracts them for accurate skeletonisation, and produces a skeletonised mesh. In R, we also try to re-root the neuron at it’s estimated soma location.</p>
+<p>You will need to install the python modules related to skeletor to get it to work. Please follow the instructions <a href="https://github.com/schlegelp/skeletor">here</a> for the python version. <a href="">Here</a>, we provide a guide to get everything working in R (in short <code>reticulate</code> is used to run python code in a specific, stable conda environment we make for R to use).</p>
 <p>Once everything is installed, this ought to work:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit">
 <span class="va">neurons</span> <span class="op">=</span> <span class="fu">fafbseg</span><span class="fu">:::</span><span class="fu"><a href="https://rdrr.io/pkg/fafbseg/man/skeletor.html">skeletor</a></span><span class="op">(</span><span class="va">ids</span>, brain <span class="op">=</span> <span class="fu">elmr</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/elmr/man/FAFB.surf.html">FAFB14.surf</a></span><span class="op">)</span> <span class="co"># The brain arguments helps</span>
@@ -172,7 +172,7 @@
 <div id="add-flywire-neurons-to-the-google-drive" class="section level2">
 <h2 class="hasAnchor">
 <a href="#add-flywire-neurons-to-the-google-drive" class="anchor"></a>Add flywire neurons to the Google Drive</h2>
-<p>If you had to go to the hassle of skeletonising some flywire neurons that were not on the Google Drive, you don’t want to have to do this again. To that end, you can add them to the Goolge Drive as so:</p>
+<p>If you had to go to the hassle of skeletonising some flywire neurons that were not on the Google Drive, you don’t want to have to do this again. To that end, you can add them to the Google Drive as so:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit">
 <span class="fu"><a href="../reference/flywire_neurons.html">flywire_neurons_update</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">fw.ids</span>, .parallel <span class="op">=</span> <span class="cn">TRUE</span>, OmitFailures <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="co"># This can take a little while</span></pre></div>
@@ -191,7 +191,7 @@
 <div id="match-flywire-neurons" class="section level2">
 <h2 class="hasAnchor">
 <a href="#match-flywire-neurons" class="anchor"></a>Match flywire neurons</h2>
-<p>The neuron matching pipeline reads neuron skeletons from Google Drive and and displays them. Flywire skeletons are shown in dark grey (their mirrored equivalents in light grey) and potential hemibrain matches in red. This depends also on the precomputed NBLASTs on the hemibrain team drive. For full details, see our <code>match_making</code> vignette.</p>
+<p>The neuron matching pipeline reads neuron skeletons from Google Drive and and displays them. FlyWire skeletons are shown in dark grey (their mirrored equivalents in light grey) and potential hemibrain matches in red. This depends also on the precomputed NBLASTs on the hemibrain team drive. For full details, see our <code>match_making</code> vignette.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit">
 <span class="co"># As simple as:</span>
 <span class="fu"><a href="../reference/LR_matching.html">fafb_matching</a></span><span class="op">(</span><span class="va">ids</span>, repository <span class="op">=</span> <span class="st">"fylwire"</span><span class="op">)</span>
@@ -202,7 +202,7 @@
 <span class="co"># See the results of matching</span>
 <span class="va">hemibrain_matched_new</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/hemibrain_matches.html">hemibrain_matches</a></span><span class="op">(</span><span class="op">)</span> </pre></div>
 <p>What if the flywire neuron you want, is not available to match?</p>
-<p>For it to be matchable, we need to add the skeleton to google drive and then add this entry into the NBLAST computation. Those steps were covered above. Because there are a lot of flywire neurons and hemibrain neurons, they are rather slow and cumbersome. For this reason, we also run a ~daily compute of skeletons and NBLASTs and put them on our Google drive. In order to flag a neuron in flywire for skeletonisation and NBLASTing, its coordinates need to be either in the FAFB tab of <a href="https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit">em_matching</a> or <a href="https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit">flywire_interest</a>. We use XYZ coordinates in flywire raw voxel space, rather than flywire IDs, because the latter frequently change as a consequence of merging and splitting neurons. Flywire is, at the time of writing (pandemic 2020), an active tracing project.</p>
+<p>For it to be matchable, we need to add the skeleton to Google drive and then add this entry into the NBLAST computation. Those steps were covered above. Because there are a lot of flywire neurons and hemibrain neurons, they are rather slow and cumbersome. For this reason, we also run a ~daily compute of skeletons and NBLASTs and put them on our Google drive. In order to flag a neuron in flywire for skeletonisation and NBLASTing, its coordinates need to be either in the FAFB tab of <a href="https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit">em_matching</a> or <a href="https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit">flywire_interest</a>. We use XYZ coordinates in flywire raw voxel space, rather than flywire IDs, because the latter frequently change as a consequence of merging and splitting neurons. FlyWire is, at the time of writing (pandemic 2020), an active tracing project.</p>
 </div>
 <div id="manage-the-google-sheet" class="section level2">
 <h2 class="hasAnchor">

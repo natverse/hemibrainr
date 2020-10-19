@@ -59,7 +59,7 @@
       <a href="articles/flywire.html">flywire</a>
     </li>
     <li>
-      <a href="articles/google_filestream.html">read data from google drive</a>
+      <a href="articles/google_filestream.html">read data from Google drive</a>
     </li>
     <li>
       <a href="articles/match_making.html">neuron match making</a>
@@ -106,14 +106,14 @@
 <div id="using-hemibrainr" class="section level2">
 <h2 class="hasAnchor">
 <a href="#using-hemibrainr" class="anchor"></a>Using hemibrainr</h2>
-<p><em>hemibrainr</em> contains tools with which to quickly work with <a href="https://neuprint.janelia.org/help/videos?dataset=hemibrain">hemibrain</a> and <a href="https://ngl.flywire.ai/?local_id=c8c06ea181ad5447b04beacfc4cb1b66">Flywire</a> neurons, and match up neurons within and between data sets.</p>
-<p>IIf you can connect to the <em>hemibrainr</em> google shared drive, this package puts thousands of hemibrain and flywire neurons at your fingertips, as well as information on their compartments (e.g. axons versus dendites), synapses and connectivity and between data set neuron-neuron matches. You can:</p>
+<p><em>hemibrainr</em> contains tools with which to quickly work with <a href="https://neuprint.janelia.org/help/videos?dataset=hemibrain">hemibrain</a> and <a href="https://ngl.flywire.ai/?local_id=c8c06ea181ad5447b04beacfc4cb1b66">FlyWire</a> neurons, and match up neurons within and between data sets.</p>
+<p>If you can connect to the <em>hemibrainr</em> google shared drive, this package puts thousands of hemibrain and FlyWire neurons at your fingertips, as well as information on their compartments (e.g. axons versus dendrites), synapses and connectivity and between data set neuron-neuron matches. You can:</p>
 <ul>
-<li>Read thousands of pre-skeletonised flywire/hemibrain neurons from Google Drive</li>
-<li>Read flywire/hemibrain NBLASTs and NLBLASTs to hemibrain neurons</li>
-<li>Read flywire/hemibrain neurons that are pre-transformed into a variety of brainspaces</li>
+<li>Read thousands of pre-skeletonised FlyWire/hemibrain neurons from Google Drive</li>
+<li>Read FlyWire/hemibrain NBLASTs and NBLASTs to hemibrain neurons</li>
+<li>Read FlyWire/hemibrain neurons that are pre-transformed into a variety of brainspaces</li>
 </ul>
-<p>Which is all useful stuff. You can explore our articles for more detailed information on what the package can do, and howto set it up with the data stored on google drive - but can take a quick tour here:</p>
+<p>Which is all useful stuff. You can explore our articles for more detailed information on what the package can do, and how to set it up with the data stored on Google drive - but can take a quick tour here:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit">
 <span class="co"># Load package</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/flyconnectome/hemibrainr">hemibrainr</a></span><span class="op">)</span>
@@ -136,7 +136,7 @@
 <span class="co"># Get fresh matches, you cannot do this without access</span>
 <span class="co">## You will be prompted to log-in through your browser</span>
 <span class="va">hemibrain_matched_new</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/hemibrain_matches.html">hemibrain_matches</a></span><span class="op">(</span><span class="op">)</span> 
-<span class="co">## NOTE: includes hemibrain&lt;-&gt;flywire matches!</span></pre></div>
+<span class="co">## NOTE: includes hemibrain&lt;-&gt;FlyWire matches!</span></pre></div>
 </div>
 <div id="authentication" class="section level2">
 <h2 class="hasAnchor">

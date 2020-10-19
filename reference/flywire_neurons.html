@@ -51,7 +51,7 @@
  nat::neuronlistfh object so certain neurons may be read from it
  without loading the entire, large neuronlist into memory. You will need access to the hemibrain Google Team Drive and
  have it mounted with Google filestream.The function flywire_neurons_update can be used to update the available data.
- If you want to flag flywire neurons that should be added to the Google dirve, without doing this yourself, you can use
+ If you want to flag flywire neurons that should be added to the Google drive, without doing this yourself, you can use
  flywire_request." />
 <meta property="og:image" content="/logo.svg" />
 
@@ -105,7 +105,7 @@
       <a href="../articles/flywire.html">flywire</a>
     </li>
     <li>
-      <a href="../articles/google_filestream.html">read data from google drive</a>
+      <a href="../articles/google_filestream.html">read data from Google drive</a>
     </li>
     <li>
       <a href="../articles/match_making.html">neuron match making</a>
@@ -141,9 +141,9 @@
     <div class="ref-description">
     <p>Get a large number of skeletonised neurons from FlyWire. The neuronlist is saved as a
  <code><a href='https://rdrr.io/pkg/nat/man/neuronlistfh.html'>nat::neuronlistfh</a></code> object so certain neurons may be read from it
- without loading the entire, large neuronlist into memory. You will need access to the hemibrain Google Team Drive and
+ without loading the entire, large <code>neuronlist</code> into memory. You will need access to the hemibrain Google Team Drive and
  have it mounted with Google filestream.The function <code>flywire_neurons_update</code> can be used to update the available data.
- If you want to flag flywire neurons that should be added to the Google dirve, without doing this yourself, you can use
+ If you want to flag flywire neurons that should be added to the Google drive, without doing this yourself, you can use
  <code>flywire_request</code>.</p>
     </div>
 
@@ -181,7 +181,7 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>local</th>
-      <td><p><code>FALSE</code> or path. By default (<code>FALSE</code>) data is read from <code>options()$Drive_hemibrain_data</code>), but the user can specit and alternative path.</p></td>
+      <td><p><code>FALSE</code> or path. By default (<code>FALSE</code>) data is read from <code>options()$Drive_hemibrain_data</code>), but the user can specify an alternative path.</p></td>
     </tr>
     <tr>
       <th>brain</th>
@@ -197,11 +197,11 @@
     </tr>
     <tr>
       <th>x</th>
-      <td><p>flywire IDs to update, for the saved google drive <code>neuronlistfh</code> objects called with <code>flywire_neurons</code>.</p></td>
+      <td><p>flywire IDs to update, for the saved Google drive <code>neuronlistfh</code> objects called with <code>flywire_neurons</code>.</p></td>
     </tr>
     <tr>
       <th>nblast</th>
-      <td><p>which flywire nblast to update on google drive.</p></td>
+      <td><p>which flywire NBLAST to update on Google drive.</p></td>
     </tr>
     <tr>
       <th>request</th>
@@ -224,12 +224,12 @@ flagged to be processed into neuron skeletons that can be called by <code>flywir
     <p>A <code>neuronlist</code> object containing flywire skeletons. In the meta-data, it might be useful for some users to note that
 you will get:</p>
 <ul>
-<li><p>"flywire.id" The ID given to the corresponmding volumetric body in flywire.
+<li><p>"flywire.id" The ID given to the corresponding volumetric body in flywire.
  These are used to do things like fetch volumes and are the input to the <code>skeletor</code> function. However, they are highly volatile and
  change a lot with active tracing.</p></li>
 <li><p>"flywire.xyz" The voxel coordinate of a single point in this neuron, usually a cell body fiber tract position. This is a more accurate way
  of keeping tract of neuron as it will always correspond to the same 'neuron' even though its related flywire.id will change with merge/split events in flywire.</p></li>
-<li><p>"hemilineage" An estimated hemilineage identity from both of two naming sysytems, Ito et al. 2013 and Wong et al. 2013</p></li>
+<li><p>"hemilineage" An estimated hemilineage identity from both of two naming systems, Ito et al. 2013 and Wong et al. 2013</p></li>
 <li><p>"side" An estimate as to the 'side', i.e. brain hemisphere, in which the neuron lies</p></li>
 <li><p>"skid" The 'skeleton ID' of this neuron's match in CATMAID for FAFBv14</p></li>
 <li><p>"FAFB.xyz" The coordinates in nanometers of a point in the neuron, in FAFBv14 space</p></li>

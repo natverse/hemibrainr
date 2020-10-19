@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>read data from google drive • hemibrainr</title>
+<title>read data from Google drive • hemibrainr</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
 <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png">
@@ -17,7 +17,7 @@
 <script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../pkgdown.js"></script><meta property="og:title" content="read data from google drive">
+<script src="../pkgdown.js"></script><meta property="og:title" content="read data from Google drive">
 <meta property="og:description" content="hemibrainr">
 <meta property="og:image" content="/logo.svg">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
@@ -58,7 +58,7 @@
       <a href="../articles/flywire.html">flywire</a>
     </li>
     <li>
-      <a href="../articles/google_filestream.html">read data from google drive</a>
+      <a href="../articles/google_filestream.html">read data from Google drive</a>
     </li>
     <li>
       <a href="../articles/match_making.html">neuron match making</a>
@@ -86,7 +86,7 @@
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1 data-toc-skip>read data from google drive</h1>
+      <h1 data-toc-skip>read data from Google drive</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/flyconnectome/hemibrainr/blob/master/vignettes/google_filestream.Rmd"><code>vignettes/google_filestream.Rmd</code></a></small>
@@ -102,35 +102,35 @@
 <div id="reading-lots-of-data-with-hemibrainr" class="section level1">
 <h1 class="hasAnchor">
 <a href="#reading-lots-of-data-with-hemibrainr" class="anchor"></a>Reading lots of data with hemibrainr</h1>
-<p>In order to use this package to its fullest, you need to get <code>hemibrainr</code> to read large amounts of data stored on a google drive. To do this, you have three options:</p>
+<p>In order to use this package to its fullest, you need to get <code>hemibrainr</code> to read large amounts of data stored on a Google drive. To do this, you have three options:</p>
 <ol style="list-style-type: decimal">
-<li>Mount your google drive using <a href="https://support.google.com/drive/answer/7329379?authuser=2">Google filestream</a>
+<li>Mount your Google drive using <a href="https://support.google.com/drive/answer/7329379?authuser=2">Google filestream</a>
 </li>
-<li>Mount your google drive using <a href="https://rclone.org/drive/">rclone</a>
+<li>Mount your Google drive using <a href="https://rclone.org/drive/">rclone</a>
 </li>
-<li>Download the google drive and save locally</li>
+<li>Download the Google drive and save locally</li>
 </ol>
 <p>The best option is to use google filestream. By default, this is what <code>hemibrainr</code> expects. However, you need a <a href="https://workspace.google.com/pricing.html">Google Workspace</a> account (formerly G-Suite), which is a paid-for service. Without this, the best option is to use <a href="https://rclone.org/drive/">rclone</a>. You can also download to an external hard drive and use that.</p>
-<p>We have two <a href="https://support.google.com/a/users/answer/9310156?hl=en">Google team drives</a> available for you to use, which contain similar data. One (“hemibrain”) is for internal use by the <a href="https://www.zoo.cam.ac.uk/research/groups/connectomics">Drosphila Connctomcis Group</a>. The other one (“hemibrainr”) is shared with those who would like access. Contact us by email to request access.</p>
+<p>We have two <a href="https://support.google.com/a/users/answer/9310156?hl=en">Google team drives</a> available for you to use, which contain similar data. One (“hemibrain”) is for internal use by the <a href="https://www.zoo.cam.ac.uk/research/groups/connectomics">Drosophila Connectomics Group</a>. The other one (“hemibrainr”) is shared with those who would like access. Contact us by email to request access.</p>
 </div>
 <div id="option-1-google-workspace-hemibrainr-and-r" class="section level1">
 <h1 class="hasAnchor">
 <a href="#option-1-google-workspace-hemibrainr-and-r" class="anchor"></a>Option 1: Google workspace, hemibrainr and R</h1>
-<p><a href="https://en.wikipedia.org/wiki/Google_Drive">Google drive</a> is a data storage and synchonisation system. A Google team drive (shared drive) is a Google drive that is shared by a team of people, you can find them on your ‘shared drives’ in your Google authenticated account. Sharing and file ownership are managed for the entire team rather than one individual. Google Drive is a key component of <a href="https://workspace.google.com/pricing.html">Google Workspace</a>, Google’s monthly subscription offering for businesses and organizations. As part of select Google Workspace plans, Drive offers unlimited storage, advanced file audit reporting, enhanced administration controls, and greater collaboration tools for teams. <a href="https://support.google.com/drive/answer/7329379?authuser=2">Google filestream</a> allows users with access to a Google Workspace to mount their Google Drives like a hard-drive, to their local machines. It is this feature that the package <code>hemibrain</code> capitalises upon in order to store large amounts of fly connectomics related data, and enable users to quickly access it.</p>
-<p>On the hemibrain <a href="https://support.google.com/a/users/answer/9310156?hl=en">Google team drive</a> for the <a href="https://www.zoo.cam.ac.uk/research/groups/connectomics">Drosphila Connctomcis Group</a>. If you do not have access to this team drive and would like to use it, to make the most our of <code>hemibrainr</code>, please get in contact. You will need top to have access to the drive and have <a href="https://support.google.com/a/answer/7491144?hl=en">Google filestream</a> mounted. Then you will be able to:</p>
+<p><a href="https://en.wikipedia.org/wiki/Google_Drive">Google drive</a> is a data storage and synchronisation system. A Google team drive (shared drive) is a Google drive that is shared by a team of people, you can find them on your ‘shared drives’ in your Google authenticated account. Sharing and file ownership are managed for the entire team rather than one individual. Google Drive is a key component of <a href="https://workspace.google.com/pricing.html">Google Workspace</a>, Google’s monthly subscription offering for businesses and organizations. As part of select Google Workspace plans, Drive offers unlimited storage, advanced file audit reporting, enhanced administration controls, and greater collaboration tools for teams. <a href="https://support.google.com/drive/answer/7329379?authuser=2">Google filestream</a> allows users with access to a Google Workspace to mount their Google Drives like a hard-drive, to their local machines. It is this feature that the package <code>hemibrain</code> capitalises upon in order to store large amounts of fly connectomics related data, and enable users to quickly access it.</p>
+<p>On the hemibrain <a href="https://support.google.com/a/users/answer/9310156?hl=en">Google team drive</a> for the <a href="https://www.zoo.cam.ac.uk/research/groups/connectomics">Drosophila Connectomics Group</a>. If you do not have access to this team drive and would like to use it, to make the most our of <code>hemibrainr</code>, please get in contact. You will need top to have access to the drive and have <a href="https://support.google.com/a/answer/7491144?hl=en">Google filestream</a> mounted. Then you will be able to:</p>
 <ul>
 <li>Read thousands of pre-skeletonised flywire/hemibrain neurons from Google Drive</li>
-<li>Read flywire/hemibrain NBLASTs and NLBLASTs to hemibrain neurons</li>
+<li>Read flywire/hemibrain NBLASTs and NBLASTs to hemibrain neurons</li>
 <li>Read flywire/hemibrain neurons that are pre-transformed into a variety of brainspaces</li>
 <li>Get processed hemibrain connectivity data, synapse positions</li>
 <li>Get meta data for all flywire and hemibrain neurons</li>
 <li>Get information on flywire/FAFB/hemibrain neuron-neuron matches between data sets and hemispheres.</li>
 </ul>
-<p>You can also set uo your own Google team drive in which to deposit data. We can help you get started, so get in contact. A starting point for creating thge data are the .R scripts in /data-raw/ of the <code>hemibrainr</code> Github repository. You will need the file structure from <code>hemibrainr:::hemibrainr_gdrive_structure</code>.</p>
+<p>You can also set up your own Google team drive in which to deposit data. We can help you get started, so get in contact. A starting point for creating the data are the .R scripts in /data-raw/ of the <code>hemibrainr</code> Github repository. You will need the file structure from <code>hemibrainr:::hemibrainr_gdrive_structure</code>.</p>
 <div id="get-your-drive-location" class="section level2">
 <h2 class="hasAnchor">
 <a href="#get-your-drive-location" class="anchor"></a>Get your drive location</h2>
-<p>Let us have a look at the default <code>hemibrainr</code> settings, letting it to know where to find google drive data:</p>
+<p>Let us have a look at the default <code>hemibrainr</code> settings, letting it to know where to find Google drive data:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit">
 <span class="co"># Load package</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/flyconnectome/hemibrainr">hemibrainr</a></span><span class="op">)</span>
@@ -142,7 +142,7 @@
 <span class="va">db</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/hemibrain_read_neurons.html">hemibrain_neurons</a></span><span class="op">(</span>local<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span> 
 <span class="co">## Will not work without google filestream</span>
 
-<span class="co"># You can also specify certain google sheets</span>
+<span class="co"># You can also specify certain Google sheets</span>
 <span class="co">## Used for neuron-neuron matching</span>
 <span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">hemibrainr_matching_gsheet</span></pre></div>
 </div>
@@ -151,7 +151,7 @@
 <a href="#set-your-drive-location" class="anchor"></a>Set your drive location</h2>
 <p>If you need to set <code>hemibrainr</code> to look at a new drive, use:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit">
-<span class="co"># Set a new google drive, can be the team drive name or a path to the correct drive</span>
+<span class="co"># Set a new Google drive, can be the team drive name or a path to the correct drive</span>
 <span class="fu"><a href="../reference/hemibrainr_set_drive.html">hemibrainr_set_drive</a></span><span class="op">(</span><span class="st">"hemibrainr"</span><span class="op">)</span>
 
 <span class="co"># Now just get the name of your default team drive.</span>
@@ -162,8 +162,8 @@
 <div id="option-2-rclone-hemibrainr-and-r" class="section level1">
 <h1 class="hasAnchor">
 <a href="#option-2-rclone-hemibrainr-and-r" class="anchor"></a>Option 2: rclone, hemibrainr and R</h1>
-<p>You can also use the freeware <a href="https://rclone.org/">rclone</a> to mount any google drive, including your own or a shared/team drive. This does not depend on you have a paid-for Google workspace authorised account. Again, for this to work, you must have access to an appropriate google team drive for <code>hemibrainr</code>. Get in contact if you would like access, but lack it. One you have used rclone to mount your google drive, you can interact with it like a normal file system.</p>
-<p>Please do not delete anything on the google drive! Or add anything to it unless you are sure.</p>
+<p>You can also use the freeware <a href="https://rclone.org/">rclone</a> to mount any Google drive, including your own or a shared/team drive. This does not depend on you have a paid-for Google workspace authorised account. Again, for this to work, you must have access to an appropriate google team drive for <code>hemibrainr</code>. Get in contact if you would like access, but lack it. One you have used rclone to mount your Google drive, you can interact with it like a normal file system.</p>
+<p>Please do not delete anything on the Google drive! Or add anything to it unless you are sure.</p>
 <div id="download-rclone" class="section level2">
 <h2 class="hasAnchor">
 <a href="#download-rclone" class="anchor"></a>Download rclone</h2>
@@ -174,9 +174,9 @@
 </div>
 <div id="configure-rclone-with-hemibrainr-google-drive" class="section level1">
 <h1 class="hasAnchor">
-<a href="#configure-rclone-with-hemibrainr-google-drive" class="anchor"></a>Configure rclone with hemibrainr google drive</h1>
-<p>Once you have rclone installed, you will need to follow <a href="https://rclone.org/drive/">these instructions</a> to configure rclone with a google drive: this should either be the team drive ‘hemibrain’ or the team drive ‘hemibrainr’. For the defaults in this package to work, please name your remote drive ‘hemibrainr’.</p>
-<p>Whilst configuring, you will be asked to supply some google credentials - you can proceed without doing this. However, I highly recommend obtaining your own google client id and client secret from the <a href="https://console.developers.google.com/apis/">developer console</a> associated with your prefered google account. To do this, <a href="https://rclone.org/drive/#making-your-own-client-id">follow these detailed instructions</a>. This allows you to operate with a higher API rate limit - if you proceed without you will be using the rclone credentials, which many users as operating with, and this might be slower.</p>
+<a href="#configure-rclone-with-hemibrainr-google-drive" class="anchor"></a>Configure rclone with hemibrainr Google drive</h1>
+<p>Once you have rclone installed, you will need to follow <a href="https://rclone.org/drive/">these instructions</a> to configure rclone with a Google drive: this should either be the team drive ‘hemibrain’ or the team drive ‘hemibrainr’. For the defaults in this package to work, please name your remote drive ‘hemibrainr’.</p>
+<p>Whilst configuring, you will be asked to supply some google credentials - you can proceed without doing this. However, I highly recommend obtaining your own google client id and client secret from the <a href="https://console.developers.google.com/apis/">developer console</a> associated with your preferred Google account. To do this, <a href="https://rclone.org/drive/#making-your-own-client-id">follow these detailed instructions</a>. This allows you to operate with a higher API rate limit - if you proceed without you will be using the rclone credentials, which many users as operating with, and this might be slower.</p>
 <p>In short, the configuration process in terminal is:</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="ex">rclone</span> config</a>
 <a class="sourceLine" id="cb4-2" data-line-number="2"><span class="co"># you will now be guided through the config on the command line:</span></a>
@@ -251,8 +251,8 @@
 <p>Once you have done this, you can check it works using:</p>
 <div id="use-rclone-mounted-google-drive-with-hemibrainr" class="section level2">
 <h2 class="hasAnchor">
-<a href="#use-rclone-mounted-google-drive-with-hemibrainr" class="anchor"></a>Use rclone-mounted google drive with hemibrainr</h2>
-<p>Once you have installed and configured rclone, you can use it to <a href="https://rclone.org/commands/rclone_mount/">mount</a> the google team drive. To do this, you create an empty directory wherever you want, named whatever you like, and then rclone ‘turns’ this directory into your mounted google drive.</p>
+<a href="#use-rclone-mounted-google-drive-with-hemibrainr" class="anchor"></a>Use rclone-mounted Google drive with hemibrainr</h2>
+<p>Once you have installed and configured rclone, you can use it to <a href="https://rclone.org/commands/rclone_mount/">mount</a> the google team drive. To do this, you create an empty directory wherever you want, named whatever you like, and then rclone ‘turns’ this directory into your mounted Google drive.</p>
 <p>You can mount with rclone from your system’s command line:</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="co"># unix/macosx</span></a>
 <a class="sourceLine" id="cb5-2" data-line-number="2"><span class="ex">rclone</span> cmount hemibrainr: /path/to/local/mount</a></code></pre></div>

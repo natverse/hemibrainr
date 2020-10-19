@@ -58,7 +58,7 @@
       <a href="../articles/flywire.html">flywire</a>
     </li>
     <li>
-      <a href="../articles/google_filestream.html">read data from google drive</a>
+      <a href="../articles/google_filestream.html">read data from Google drive</a>
     </li>
     <li>
       <a href="../articles/match_making.html">neuron match making</a>
@@ -108,7 +108,7 @@
 </center>
 <p>As of 2020, two large data sets for the vinegar fly, D. melanogaster, are available making it possible to look at the full morphology of ~25,000 neurons in two data sets. These data sets are the <a href="https://neuprint.janelia.org/help/videos?dataset=hemibrain%3Av1.0&amp;qt=findneurons&amp;qr%5B0%5D%5Bcode%5D=fn&amp;qr%5B0%5D%5Bds%5D=hemibrain%3Av1.0&amp;qr%5B0%5D%5Bpm%5D%5Bdataset%5D=hemibrain%3Av1.0&amp;qr%5B0%5D%5Bpm%5D%5Binput_ROIs%5D%5B0%5D=ATL%28R%29&amp;qr%5B0%5D%5Bpm%5D%5Boutput_ROIs%5D%5B0%5D=IB&amp;qr%5B0%5D%5BvisProps%5D%5BrowsPerPage%5D=25&amp;tab=0&amp;q=1">hemibrain</a> and <a href="https://neuropil.janelia.org/tracing/fafb/v14/">FAFB</a>. However, neurons in FAFB have been semi-manually or manually reconstructed, making the automatic assignment of FAFB-hemibrain neuron matches non-trivial. In this R package we have built tools to enable users to record and deploy inter-dataset matches.</p>
 <p>What use is this information? Matches could be used to look at morphological stereotypy, help find genetic lines that label neurons, help transfer information associated with on reconstructed to the same cell in a different brain, compare neuron connectivity between two brains, etc.</p>
-<p>For example, by matching neurons up between the hemibrain and FAFB, we see that the numbers of <a href="https://pubmed.ncbi.nlm.nih.gov/30703584/">cell types</a> within one ‘hemilineage’ (se set of neurons that are born and develop together) are comparable between these two different flies:</p>
+<p>For example, by matching neurons up between the hemibrain and FAFB, we see that the numbers of <a href="https://pubmed.ncbi.nlm.nih.gov/30703584/">cell types</a> within one ‘hemilineage’ (a set of neurons that are born and develop together) are comparable between these two different flies:</p>
 <center>
 <img src="https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/hemilineage_example.png" alt="hemilineage_example">
 </center>
@@ -242,7 +242,7 @@
 <div id="re-setting-and-transferring" class="section level2">
 <h2 class="hasAnchor">
 <a href="#re-setting-and-transferring" class="anchor"></a>Re-setting and transferring</h2>
-<p>You can transfer matches between the <code>hemibrain</code> and <code>fafb</code> tabs, as well as refresh these tabs with the most up-to-dat meta data using the following code. You will be manipulating the Google sheet for all users, so please use with caution. If in doubt, do not use.</p>
+<p>You can transfer matches between the <code>hemibrain</code> and <code>fafb</code> tabs, as well as refresh these tabs with the most up-to-date meta data using the following code. You will be manipulating the Google sheet for all users, so please use with caution. If in doubt, do not use.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit">
 <span class="co"># Add all hemibrain neurons to sheet</span>
 <span class="fu"><a href="../reference/flywire_matching_rewrite.html">hemibrain_matching_rewrite</a></span><span class="op">(</span><span class="op">)</span>
