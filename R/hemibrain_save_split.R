@@ -490,35 +490,6 @@ must_be <- function(prompt, answers){
 }
 
 # hidden
-gsheet_manipulation <- function(FUN, ..., return = FALSE){
-  sleep = 10
-  success = FALSE
-  while(!success){
-    g = tryCatch(FUN(...),
-                 error = function(e){
-                   message(e)
-                   return(NULL)
-                 })
-    if(!is.null(g)){
-      success = TRUE
-    }else{
-      Sys.sleep(sleep)
-      message("Google sheet read/write failure(s), re-trying in ", sleep," seconds ...")
-      sleep = sleep + 10
-      if(sleep > 600){
-        slep <- 600
-      }
-    }
-  }
-  if(return){
-    if(is.data.frame(g)){
-      g = unlist_df(g)
-    }
-    return(g)
-  }
-}
-
-# hidden
 splitcheck_phaseI <- function(someneuronlist,
                               brain = hemibrainr::hemibrain.surf,
                               selected_col = "#fadadd"){
