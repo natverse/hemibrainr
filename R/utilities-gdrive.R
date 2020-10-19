@@ -363,6 +363,7 @@ flywire_ids_update <- function(selected_sheets = NULL,
                                return = TRUE)
     for(tab in tabs){
       gs.t = gsheet_manipulation(FUN = googlesheets4::read_sheet,
+                                 wait = 20,
                                  ss = selected_sheet,
                                  sheet = tab,
                                  guess_max = 3000,
@@ -397,10 +398,13 @@ flywire_ids_update <- function(selected_sheets = NULL,
             pos = pos[apply(pos, 1, function(row) sum(is.na(row[c("fw.x","fw.y",'fw.z')]))==0),]
             p = nat::pointsinside(pos[,c("fw.x","fw.y",'fw.z')],bbx)
             pos = pos[p,]
-            i <- try({fafbseg::flywire_xyz2id(pos[,c("fw.x","fw.y",'fw.z')], rawcoords = TRUE)})
-            names(i) = pos$flywire.xyz
-            i[is.na(i)|is.nan(i)] = 0
-            i
+            if(nrow(pos)){
+              i <- tryCatch(fafbseg::flywire_xyz2id(pos[,c("fw.x","fw.y",'fw.z')], rawcoords = TRUE),
+                            error = function(e){warning(e);rep(NA,nrow(pos))})
+              names(i) = pos$flywire.xyz
+              i[is.na(i)|is.nan(i)] = 0
+              i
+            }
           }
           #foreach.ids = fafbseg::flywire_xyz2id(gs.t[,c("fw.x","fw.y",'fw.z')], rawcoords = TRUE)
           #names(foreach.ids) = gs.t[,"flywire.xyz"]
@@ -412,15 +416,24 @@ flywire_ids_update <- function(selected_sheets = NULL,
             # Update
             update = rbind(gs.t[,used.cols],gs0[,used.cols])
             rownames(update) = NULL
-            googlesheets4::write_sheet(update[0,],
-                                       ss = selected_sheet,
-                                       sheet = tab)
-            batches = split(1:nrow(update), ceiling(seq_along(1:nrow(update))/500))
-            for(i in batches){
-              gsheet_manipulation(FUN = googlesheets4::sheet_append,
-                                  data = update[min(i):max(i),],
+            continue =  TRUE
+            while (continue) {
+              gsheet_manipulation(FUN = googlesheets4::write_sheet,
+                                  wait = 20,
+                                  update[0,],
                                   ss = selected_sheet,
                                   sheet = tab)
+              batches = split(1:nrow(update), ceiling(seq_along(1:nrow(update))/500))
+              errors = c()
+              for(i in batches){
+                tryCatch(gsheet_manipulation(FUN = googlesheets4::sheet_append,
+                                    wait = 20,
+                                    data = update[min(i):max(i),],
+                                    ss = selected_sheet,
+                                    sheet = tab),
+                         errors = function(e) errors <<- c(errors, i))
+              }
+              continue = ifelse(length(errors),TRUE,FALSE)
             }
             # Now continue processing
             gs.t = gs.t[,colnames(gs.t)%in%chosen.columns]
@@ -452,3 +465,35 @@ flywire_ids_update <- function(selected_sheets = NULL,
   master
 }
 
+
+# hidden
+gsheet_manipulation <- function(FUN,
+                                wait = 10,
+                                ...,
+                                return = FALSE){
+  sleep = wait
+  success = FALSE
+  while(!success){
+    g = tryCatch(FUN(...),
+                 error = function(e){
+                   message(e)
+                   return(NULL)
+                 })
+    if(!is.null(g)){
+      success = TRUE
+    }else{
+      message("Google sheet read/write failure(s), re-trying in ", sleep," seconds ...")
+      Sys.sleep(sleep)
+      sleep = sleep + wait
+      if(sleep > 600){
+        slep <- 600
+      }
+    }
+  }
+  if(return){
+    if(is.data.frame(g)){
+      g = unlist_df(g)
+    }
+    return(g)
+  }
+}
