@@ -2,19 +2,19 @@
 #'
 #'@description Get a large number of skeletonised neurons from FlyWire. The neuronlist is saved as a
 #'  \code{nat::neuronlistfh} object so certain neurons may be read from it
-#'  without loading the entire, large neuronlist into memory. You will need access to the hemibrain Google Team Drive and
+#'  without loading the entire, large \code{neuronlist} into memory. You will need access to the hemibrain Google Team Drive and
 #'  have it mounted with Google filestream.The function \code{flywire_neurons_update} can be used to update the available data.
-#'  If you want to flag flywire neurons that should be added to the Google dirve, without doing this yourself, you can use
+#'  If you want to flag flywire neurons that should be added to the Google drive, without doing this yourself, you can use
 #'  \code{flywire_request}.
 #'
 #' @param brain the brainspace in which hemibrain neurons have been registered. Defaults to raw voxel space for the FlyWire project.
-#' @param local \code{FALSE} or path. By default (\code{FALSE}) data is read from \code{options()$Drive_hemibrain_data}), but the user can specit and alternative path.
+#' @param local \code{FALSE} or path. By default (\code{FALSE}) data is read from \code{options()$Drive_hemibrain_data}), but the user can specify an alternative path.
 #' @param mirror logical, whether or not to read neurons that have been mirrored (i.e. flipped to the 'other' brain hemisphere).
-#' @param x flywire IDs to update, for the saved google drive \code{neuronlistfh} objects called with \code{flywire_neurons}.
+#' @param x flywire IDs to update, for the saved Google drive \code{neuronlistfh} objects called with \code{flywire_neurons}.
 #' @param request a neuronlist, matrix of x,y,z position or flywire ID to add to a
 #' \href{https://docs.google.com/spreadsheets/d/1rzG1MuZYacM-vbW7100aK8HeA-BY6dWAVXQ7TB6E2cQ/edit#gid=0}{Google sheet} that records flywire positions
 #' flagged to be processed into neuron skeletons that can be called by \code{flywire_neurons}.
-#' @param nblast which flywire nblast to update on google drive.
+#' @param nblast which flywire NBLAST to update on Google drive.
 #' @param selected_file the Google sheet onto which to add new flywire coordinate. I.e. \href{https://docs.google.com/spreadsheets/d/1rzG1MuZYacM-vbW7100aK8HeA-BY6dWAVXQ7TB6E2cQ/edit#gid=0}{Google sheet}.
 #' @param sheet the tab onto which to add your requests.
 #' @param ... Additional arguments passed to \code{nat::nlapply}.and/or \code{fafbseg::skeletor}.
@@ -28,12 +28,12 @@
 #'you will get:
 #'
 ##' \itemize{
-##'  \item{"flywire.id"}{ The ID given to the corresponmding volumetric body in flywire.
+##'  \item{"flywire.id"}{ The ID given to the corresponding volumetric body in flywire.
 ##'  These are used to do things like fetch volumes and are the input to the \code{skeletor} function. However, they are highly volatile and
 ##'  change a lot with active tracing.}
 ##'  \item{"flywire.xyz"}{ The voxel coordinate of a single point in this neuron, usually a cell body fiber tract position. This is a more accurate way
 ##'  of keeping tract of neuron as it will always correspond to the same 'neuron' even though its related flywire.id will change with merge/split events in flywire.}
-##'  \item{"hemilineage"}{ An estimated hemilineage identity from both of two naming sysytems, Ito et al. 2013 and Wong et al. 2013}
+##'  \item{"hemilineage"}{ An estimated hemilineage identity from both of two naming systems, Ito et al. 2013 and Wong et al. 2013}
 ##'  \item{"side"}{ An estimate as to the 'side', i.e. brain hemisphere, in which the neuron lies}
 ##'  \item{"skid"}{ The 'skeleton ID' of this neuron's match in CATMAID for FAFBv14}
 ##'  \item{"FAFB.xyz"}{ The coordinates in nanometers of a point in the neuron, in FAFBv14 space}
@@ -55,7 +55,7 @@ flywire_neurons <- function(local = FALSE,
     scale = FALSE
   }
 
-  # Get google drive folder
+  # Get Google drive folder
   savedir = good_savedir(local = local)
   neuronsdir = paste0(savedir,"flywire_neurons/")
   fhdir = paste0(neuronsdir,brain,"/")
@@ -197,7 +197,7 @@ flywire_nblast_update <- function(x = NULL,
 
   }
 
-  # Flywire
+  # FlyWire
   if(nblast=="flywire-mirror"){
     # Get hemibrain neurons
     message("Loading hemibrain neurons ...")
@@ -221,7 +221,7 @@ flywire_nblast_update <- function(x = NULL,
     googledrive_upload_nblast(flywire.mirror.mean)
   }
 
-  # Just Flywire left-right
+  # Just FlyWire left-right
   if(nblast=="flywire"){
     # Get hemibrain neurons
     message("Loading flywire neurons ...")
@@ -270,7 +270,7 @@ flywire_basics <- function(x){
 
 }
 
-# Add neuron to request goolge shets
+# Add neuron to request Google sheets
 #' @rdname flywire_neurons
 #' @export
 flywire_request <- function(request,
@@ -306,7 +306,7 @@ flywire_request <- function(request,
     xyz = nat::xyzmatrix(request)
   }
 
-  # Add to google sheet
+  # Add to Google sheet
   batches = split(1:nrow(xyz), ceiling(seq_along(1:nrow(xyz))/500))
   for(i in batches){
     gsheet_manipulation(FUN = googlesheets4::sheet_append,
@@ -314,7 +314,7 @@ flywire_request <- function(request,
                         ss = selected_file,
                         sheet = sheet)
   }
-  message("Flywire positions added")
+  message("FlyWire positions added")
 }
 
 

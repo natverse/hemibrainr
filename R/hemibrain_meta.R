@@ -82,7 +82,7 @@ hemibrain_get_meta <- function(x, ...){
 #'
 #' @description Set annotations for FAFB neurons in CATMAID based on matches made to hemibrain neurons.
 #' E.g. transfer information on matches and cell body fibers, and also update lineage related information.
-#' Not that \code{catmaid::flywire_matching_rewrite()} will writ annoptations related to flywire.
+#' Not that \code{catmaid::flywire_matching_rewrite()} will writ annotations related to flywire.
 #'
 #' @param x a vector of FAFB skeleton IDs (skids) that can be read with \code{catmaid::catmaid_skids()}
 #' @param find an annotation/search term/vector of skids passed to \code{catmaid::catmaid_skids}.
@@ -162,7 +162,7 @@ fafb_hemibrain_annotate <- function(x,
       roots = t(roots)
       FAFB.xyz = apply(roots, 1, paste, collapse = ",")
 
-      # Get Flywire voxel coordinates
+      # Get FlyWire voxel coordinates
       roots.flywire = nat.templatebrains::xform_brain(roots, reference = "FlyWire", sample = "FAFB14", .parallel = TRUE, verbose = TRUE)
       rownames(roots.flywire) = rownames(roots)
       roots.flywire.raw = scale(roots.flywire, scale = c(4, 4, 40), center = FALSE)

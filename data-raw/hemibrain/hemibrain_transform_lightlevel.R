@@ -30,7 +30,7 @@ numCores <- detectCores()
 doMC::registerDoMC(numCores/8)
 message("Using ", numCores/8, " cores")
 
-# Get some stuff I have already put on google drive
+# Get some stuff I have already put on Google drive
 # Google drive location:
 hemibrain = team_drive_get(hemibrainr_team_drive())
 drive_hemibrain = drive_find(type = "folder", team_drive = hemibrain)
@@ -98,7 +98,7 @@ fcs.hemi = nat.templatebrains::xform_brain(fcs, reference= "JRCFIB2018F", sample
 saveRDS(fcs.hemi.dps, file = paste0(flycircuitfolder,"FlyCircuit_all_neurons_dps_JRCFIB2018F.rds"))
 saveRDS(fcs.hemi, file = paste0(flycircuitfolder,"FlyCircuit_all_neurons_JRCFIB2018F.rds"))
 
-# Save to google drive
+# Save to Google drive
 ## Save lh files
 lh.files  = list.files(lhfolder,pattern = "rds", full.name = TRUE)
 for(lh.file in lh.files){

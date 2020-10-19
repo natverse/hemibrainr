@@ -34,7 +34,7 @@ hemibrain_adjust_saved_somas(
 
 \item{minPts}{The minimum number of points needed to form a cluster using DBSCAN. 5 by default}
 
-\item{neurons_from_gsheet}{logical, TRUE by default. If true, will collect neurons based on bodyids in the google sheet,
+\item{neurons_from_gsheet}{logical, TRUE by default. If true, will collect neurons based on bodyids in the Google sheet,
 otherwise, will search for them based on CBF data in neuprint.}
 
 \item{for_Imaan}{extra little bit for Imaan... FALSE by default}
@@ -43,14 +43,14 @@ otherwise, will search for them based on CBF data in neuprint.}
 Updates Google Sheet with soma information
 }
 \description{
-Currently provides three "modes": correct single neurons, correct cell body fibers, and correct from google sheet.
+Currently provides three "modes": correct single neurons, correct cell body fibers, and correct from Google sheet.
   Correct singles will allow you to manually correct each neuron in a provided list of bodyids. If requested, DBSCAN can be used
-      to try to predict potential soma positions against already correctly identified somas, based on the provided google sheet.
-  Correct cell body fibers(cbf) asks for a cbf to be inputted based on those labelled in the google sheet. DBSCAN is then used to
-      cluster the already annotated soma positions on the google sheet within the cbf. This will allow you to identify correct
+      to try to predict potential soma positions against already correctly identified somas, based on the provided Google sheet.
+  Correct cell body fibers(cbf) asks for a cbf to be inputted based on those labelled in the Google sheet. DBSCAN is then used to
+      cluster the already annotated soma positions on the Google sheet within the cbf. This will allow you to identify correct
       soma positions, and then manually fix incorrect somas. for each neuron with an incorrect soma, a potential new soma will be
       suggested based on the DBSCAN clustering result.
-  Correct google sheet is useful when screening large numbers of neurons. Once a large group of neurons has been split into
+  Correct Google sheet is useful when screening large numbers of neurons. Once a large group of neurons has been split into
       morphological clusters, using NBLAST for example, this mode will request a cluster id and apply DBSCAN to somas within
       the cluster. You can then quickly screen to identify correct soma clusters, and label incorrect somas to be corrected separately.
 }

@@ -1,5 +1,6 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 <!-- badges: start -->
+
 <img src="man/figures/logo.svg" align="right" height="139" /> [![Travis
 build
 status](https://travis-ci.org/flyconnectome/hemibrainr.svg?branch=master)](https://travis-ci.org/flyconnectome/hemibrainr)
@@ -43,24 +44,24 @@ Using hemibrainr
 *hemibrainr* contains tools with which to quickly work with
 [hemibrain](https://neuprint.janelia.org/help/videos?dataset=hemibrain)
 and
-[Flywire](https://ngl.flywire.ai/?local_id=c8c06ea181ad5447b04beacfc4cb1b66)
+[FlyWire](https://ngl.flywire.ai/?local_id=c8c06ea181ad5447b04beacfc4cb1b66)
 neurons, and match up neurons within and between data sets.
 
-IIf you can connect to the *hemibrainr* google shared drive, this
-package puts thousands of hemibrain and flywire neurons at your
-fingertips, as well as information on their compartments (e.g. axons
-versus dendites), synapses and connectivity and between data set
-neuron-neuron matches. You can:
+If you can connect to the *hemibrainr* google shared drive, this package
+puts thousands of hemibrain and FlyWire neurons at your fingertips, as
+well as information on their compartments (e.g. axons versus dendrites),
+synapses and connectivity and between data set neuron-neuron matches.
+You can:
 
--   Read thousands of pre-skeletonised flywire/hemibrain neurons from
+-   Read thousands of pre-skeletonised FlyWire/hemibrain neurons from
     Google Drive
--   Read flywire/hemibrain NBLASTs and NLBLASTs to hemibrain neurons
--   Read flywire/hemibrain neurons that are pre-transformed into a
+-   Read FlyWire/hemibrain NBLASTs and NBLASTs to hemibrain neurons
+-   Read FlyWire/hemibrain neurons that are pre-transformed into a
     variety of brainspaces
 
 Which is all useful stuff. You can explore our articles for more
-detailed information on what the package can do, and howto set it up
-with the data stored on google drive - but can take a quick tour here:
+detailed information on what the package can do, and how to set it up
+with the data stored on Google drive - but can take a quick tour here:
 
 ``` r
 # Load package
@@ -87,7 +88,7 @@ View(hemibrain_matched)
 # Get fresh matches, you cannot do this without access
 ## You will be prompted to log-in through your browser
 hemibrain_matched_new <- hemibrain_matches() 
-## NOTE: includes hemibrain<->flywire matches!
+## NOTE: includes hemibrain<->FlyWire matches!
 ```
 
 Authentication

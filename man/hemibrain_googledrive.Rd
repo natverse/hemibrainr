@@ -45,9 +45,10 @@ hemibrain_lm_lhns(
 }
 \arguments{
 \item{local}{\code{FALSE} or path. By default (\code{FALSE}) data is read from \code{options()$Drive_hemibrain_data}),
-but the user can specit and alternative path.}
+but the user can specify an alternative path.}
 
-\item{folder}{A subfolder on the Hemibrain team drive or your local data foldercontaining the data object to read.}
+\item{folder}{A subfolder on the hemibrain team drive or your local data folder
+containing the data object to read.}
 
 \item{nblast}{the NBLAST matrix you would like to retrieve, e.g.
 \code{"arbours"} gives you a normalised all by all NBLAST matrix of all

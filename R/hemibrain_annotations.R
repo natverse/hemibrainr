@@ -40,7 +40,7 @@ hemibrain_cbf <- function(x, ..., meta=FALSE) {
 
 #' Return body ids for large classes of neurons
 #'
-#' Will use our google sheet annotation spreadsheets or neuPrint queries as
+#' Will use our Google sheet annotation spreadsheets or neuPrint queries as
 #' appropriate
 #'
 #' @param x A class of neuron (e.g. ORN, PN, DAN, MBON LHON, TOON, TOLN, HRN
@@ -60,7 +60,7 @@ hemibrain_cbf <- function(x, ..., meta=FALSE) {
 #'
 #' @examples
 #' # NB these examples will not be run by default as they currently depend on
-#' # access to some private google sheets
+#' # access to some private Google sheets
 #' \dontrun{
 #' class2ids("uPN")
 #' length(class2ids("ORN", possible = FALSE))

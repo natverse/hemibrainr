@@ -45,7 +45,7 @@ hemibrain_matching_rewrite(
 )
 }
 \arguments{
-\item{flywire.ids}{flywire IDs to add to google sheet if not already present.}
+\item{flywire.ids}{flywire IDs to add to Google sheet if not already present.}
 
 \item{selected_file}{Specifies which Google Sheet to use. Unless you are using a personal Google Sheet, this should be \code{options()$hemibrainr_matching_gsheet}.}
 
@@ -64,7 +64,7 @@ simply open this Google Sheet in your browser and add your initials to neurons o
 \item{ids}{either hemibrain bodyids or FAFB skids to add to a Google Sheet. You will want to add IDs where they do not already exist, so that
 you can use, for example, \code{\link{hemibrain_matching}}.}
 
-\item{dataset}{the tab to which to add your new information. You are either adding to information related ot hemibrain neurons, or FAFB neurons.}
+\item{dataset}{the tab to which to add your new information. You are either adding to information related to hemibrain neurons, or FAFB neurons.}
 }
 \value{
 \code{NULL}. Updates the master Google sheet.
@@ -76,7 +76,7 @@ FAFB neurons have been matched with their hemibrain counterparts (FAFB->hemibrai
   Sheet} on our hemibrain Google Team Drive, to which you will need access
 through an authenticated account to view and use this function. We can use these function to manipulate the Google Sheet.
 This include adding new IDs for matching (\code{hemibrain_matching_add}), transfer matches between the sheet's hemibrain and FAFB tabs (\code{hemibrain_matching_transfers})
-and add pre-made matches (\code{hemibrain_add_matches}).The function \code{lywire_matching_rewrite} updates a google sheet with correct flywire IDs and stable
+and add pre-made matches (\code{hemibrain_add_matches}).The function \code{lywire_matching_rewrite} updates a Google sheet with correct flywire IDs and stable
 locations in flywire space, based on CATMAID skids.
 }
 \details{

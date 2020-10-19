@@ -1,8 +1,8 @@
 ---
-title: "read data from google drive"
+title: "read data from Google drive"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{read data from google drive}
+  %\VignetteIndexEntry{read data from Google drive}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -19,35 +19,35 @@ knitr::opts_chunk$set(
 
 # Reading lots of data with hemibrainr
 
-In order to use this package to its fullest, you need to get `hemibrainr` to read large amounts of data stored on a google drive. To do this, you have three options:
+In order to use this package to its fullest, you need to get `hemibrainr` to read large amounts of data stored on a Google drive. To do this, you have three options:
 
-1. Mount your google drive using [Google filestream](https://support.google.com/drive/answer/7329379?authuser=2)
-2. Mount your google drive using [rclone](https://rclone.org/drive/)
-3. Download the google drive and save locally
+1. Mount your Google drive using [Google filestream](https://support.google.com/drive/answer/7329379?authuser=2)
+2. Mount your Google drive using [rclone](https://rclone.org/drive/)
+3. Download the Google drive and save locally
 
 The best option is to use google filestream. By default, this is what `hemibrainr` expects. However, you need a [Google Workspace](https://workspace.google.com/pricing.html) account (formerly G-Suite), which is a paid-for service. Without this, the best option is to use [rclone](https://rclone.org/drive/). You can also download to an external hard drive and use that.
 
-We have two [Google team drives](https://support.google.com/a/users/answer/9310156?hl=en) available for you to use, which contain similar data. One ("hemibrain") is for internal use by the [Drosphila Connctomcis Group](https://www.zoo.cam.ac.uk/research/groups/connectomics). The other one ("hemibrainr") is shared with those who would like access. Contact us by email to request access.
+We have two [Google team drives](https://support.google.com/a/users/answer/9310156?hl=en) available for you to use, which contain similar data. One ("hemibrain") is for internal use by the [Drosophila Connectomics Group](https://www.zoo.cam.ac.uk/research/groups/connectomics). The other one ("hemibrainr") is shared with those who would like access. Contact us by email to request access.
 
 # Option 1: Google workspace, hemibrainr and R
 
-[Google drive](https://en.wikipedia.org/wiki/Google_Drive) is a data storage and synchonisation system. A Google team drive (shared drive) is a Google drive that is shared by a team of people, you can find them on your 'shared drives' in your Google authenticated account. Sharing and file ownership are managed for the entire team rather than one individual. Google Drive is a key component of [Google Workspace](https://workspace.google.com/pricing.html), Google's monthly subscription offering for businesses and organizations. As part of select Google Workspace plans, Drive offers unlimited storage, advanced file audit reporting, enhanced administration controls, and greater collaboration tools for teams.
+[Google drive](https://en.wikipedia.org/wiki/Google_Drive) is a data storage and synchronisation system. A Google team drive (shared drive) is a Google drive that is shared by a team of people, you can find them on your 'shared drives' in your Google authenticated account. Sharing and file ownership are managed for the entire team rather than one individual. Google Drive is a key component of [Google Workspace](https://workspace.google.com/pricing.html), Google's monthly subscription offering for businesses and organizations. As part of select Google Workspace plans, Drive offers unlimited storage, advanced file audit reporting, enhanced administration controls, and greater collaboration tools for teams.
 [Google filestream](https://support.google.com/drive/answer/7329379?authuser=2) allows users with access to a Google Workspace to mount their Google Drives like a hard-drive, to their local machines. It is this feature that the package `hemibrain` capitalises upon in order to store large amounts of fly connectomics related data, and enable users to quickly access it.
 
-On the hemibrain [Google team drive](https://support.google.com/a/users/answer/9310156?hl=en) for the [Drosphila Connctomcis Group](https://www.zoo.cam.ac.uk/research/groups/connectomics). If you do not have access to this team drive and would like to use it, to make the most our of `hemibrainr`, please get in contact. You will need top to have access to the drive and have [Google filestream](https://support.google.com/a/answer/7491144?hl=en) mounted. Then you will be able to:
+On the hemibrain [Google team drive](https://support.google.com/a/users/answer/9310156?hl=en) for the [Drosophila Connectomics Group](https://www.zoo.cam.ac.uk/research/groups/connectomics). If you do not have access to this team drive and would like to use it, to make the most our of `hemibrainr`, please get in contact. You will need top to have access to the drive and have [Google filestream](https://support.google.com/a/answer/7491144?hl=en) mounted. Then you will be able to:
 
 * Read thousands of pre-skeletonised flywire/hemibrain neurons from Google Drive
-* Read flywire/hemibrain NBLASTs and NLBLASTs to hemibrain neurons
+* Read flywire/hemibrain NBLASTs and NBLASTs to hemibrain neurons
 * Read flywire/hemibrain neurons that are pre-transformed into a variety of brainspaces
 * Get processed hemibrain connectivity data, synapse positions
 * Get meta data for all flywire and hemibrain neurons
 * Get information on flywire/FAFB/hemibrain neuron-neuron matches between data sets and hemispheres.
 
-You can also set uo your own Google team drive in which to deposit data. We can help you get started, so get in contact. A starting point for creating thge data are the .R scripts in /data-raw/ of the `hemibrainr` Github repository. You will need the file structure from `hemibrainr:::hemibrainr_gdrive_structure`.
+You can also set up your own Google team drive in which to deposit data. We can help you get started, so get in contact. A starting point for creating the data are the .R scripts in /data-raw/ of the `hemibrainr` Github repository. You will need the file structure from `hemibrainr:::hemibrainr_gdrive_structure`.
 
 ## Get your drive location
 
-Let us have a look at the default `hemibrainr` settings, letting it to know where to find google drive data:
+Let us have a look at the default `hemibrainr` settings, letting it to know where to find Google drive data:
 
 ```{r see.paths, eval = FALSE}
 # Load package
@@ -60,7 +60,7 @@ options()$Gdrive_hemibrain_data
 db <- hemibrain_neurons(local=FALSE) 
 ## Will not work without google filestream
 
-# You can also specify certain google sheets
+# You can also specify certain Google sheets
 ## Used for neuron-neuron matching
 options()$hemibrainr_matching_gsheet
 ```
@@ -70,7 +70,7 @@ options()$hemibrainr_matching_gsheet
 If you need to set `hemibrainr` to look at a new drive, use:
 
 ```{r new.drive, eval = FALSE}
-# Set a new google drive, can be the team drive name or a path to the correct drive
+# Set a new Google drive, can be the team drive name or a path to the correct drive
 hemibrainr_set_drive("hemibrainr")
 
 # Now just get the name of your default team drive.
@@ -80,9 +80,9 @@ hemibrainr_team_drive()
 
 # Option 2: rclone, hemibrainr and R
 
-You can also use the freeware [rclone](https://rclone.org/) to mount any google drive, including your own or a shared/team drive. This does not depend on you have a paid-for Google workspace authorised account. Again, for this to work, you must have access to an appropriate google team drive for `hemibrainr`. Get in contact if you would like access, but lack it. One you have used rclone to mount your google drive, you can interact with it like a normal file system.
+You can also use the freeware [rclone](https://rclone.org/) to mount any Google drive, including your own or a shared/team drive. This does not depend on you have a paid-for Google workspace authorised account. Again, for this to work, you must have access to an appropriate google team drive for `hemibrainr`. Get in contact if you would like access, but lack it. One you have used rclone to mount your Google drive, you can interact with it like a normal file system.
 
-Please do not delete anything on the google drive! Or add anything to it unless you are sure.
+Please do not delete anything on the Google drive! Or add anything to it unless you are sure.
 
 ## Download rclone 
 
@@ -94,11 +94,11 @@ curl https://rclone.org/install.sh | sudo bash
 ```
 
 
-# Configure rclone with hemibrainr google drive
+# Configure rclone with hemibrainr Google drive
 
-Once you have rclone installed, you will need to follow [these instructions](https://rclone.org/drive/) to configure rclone with a google drive: this should either be the team drive 'hemibrain' or the team drive 'hemibrainr'. For the defaults in this package to work, please name your remote drive 'hemibrainr'. 
+Once you have rclone installed, you will need to follow [these instructions](https://rclone.org/drive/) to configure rclone with a Google drive: this should either be the team drive 'hemibrain' or the team drive 'hemibrainr'. For the defaults in this package to work, please name your remote drive 'hemibrainr'. 
 
-Whilst configuring, you will be asked to supply some google credentials - you can proceed without doing this. However, I highly recommend obtaining your own google client id and client secret from the [developer console](https://console.developers.google.com/apis/) associated with your prefered google account. To do this, [follow these detailed instructions]( https://rclone.org/drive/#making-your-own-client-id). This allows you to operate with a higher API rate limit - if you proceed without you will be using the rclone credentials, which many users as operating with, and this might be slower.
+Whilst configuring, you will be asked to supply some google credentials - you can proceed without doing this. However, I highly recommend obtaining your own google client id and client secret from the [developer console](https://console.developers.google.com/apis/) associated with your preferred Google account. To do this, [follow these detailed instructions]( https://rclone.org/drive/#making-your-own-client-id). This allows you to operate with a higher API rate limit - if you proceed without you will be using the rclone credentials, which many users as operating with, and this might be slower.
 
 In short, the configuration process in terminal is:
 
@@ -177,9 +177,9 @@ y/e/d> y
 
 Once you have done this, you can check it works using:
 
-## Use rclone-mounted google drive with hemibrainr
+## Use rclone-mounted Google drive with hemibrainr
 
-Once you have installed and configured rclone, you can use it to [mount](https://rclone.org/commands/rclone_mount/) the google team drive. To do this, you create an empty directory wherever you want, named whatever you like, and then rclone 'turns' this directory into your mounted google drive.
+Once you have installed and configured rclone, you can use it to [mount](https://rclone.org/commands/rclone_mount/) the google team drive. To do this, you create an empty directory wherever you want, named whatever you like, and then rclone 'turns' this directory into your mounted Google drive.
 
 You can mount with rclone from your system's command line:
 

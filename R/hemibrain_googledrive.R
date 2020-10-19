@@ -11,33 +11,33 @@
 #'   data set are also available, including ones broken down by neuron
 #'   compartment.
 #'
-#' @param Gdrive name of the mounted google drive. Can just be the name of a team
+#' @param Gdrive name of the mounted Google drive. Can just be the name of a team
 #' drive to be found in the standard location: \code{"/Volumes/GoogleDrive/Shared\ drives/"}.
-#' @param path path to your 'hemibrainr google drive', either a mounted remote or a local copy.
+#' @param path path to your 'hemibrainr Google drive', either a mounted remote or a local copy.
 #' For example on a Mac, \href{https://support.google.com/drive/answer/7329379?authuser=2}{Google filestream} mounts it at: \code{/Volumes/GoogleDrive/Shared\ drives/}.
 #' With \href{https://rclone.org/drive/}{rclone sheet} you can mount it wherever you like, by default hemibrainr expects it at:
 #' \code{paste0(getwd(),"hemibrainr_rclone/")}
 #'
 #' @details In order to use this package to its fullest,
-#' you need to get \code{hemibrainr} to read large amounts of data stored on a google drive.
+#' you need to get \code{hemibrainr} to read large amounts of data stored on a Google drive.
 #' To do this, you have three options:
 #'
-#' 1. Mount your google drive usin \href{https://support.google.com/drive/answer/7329379?authuser=2}{Google filestream}
-#' 2. Mount your google drive using \href{https://rclone.org/drive/}{rclone}
-#' 3. Download the google drive and save locally
+#' 1. Mount your Google drive using \href{https://support.google.com/drive/answer/7329379?authuser=2}{Google filestream}
+#' 2. Mount your Google drive using \href{https://rclone.org/drive/}{rclone}
+#' 3. Download the Google drive and save locally
 #'
-#' The best option is to use google filestream.
+#' The best option is to use Google filestream.
 #' By default, this is what \code{hemibrainr} expects.
 #' However, you need a \href{https://workspace.google.com/pricing.html}{Google Workspace}
 #' account (formerly G-Suite), which is a paid-for service.
-#' Without this, the best option is to use href{https://rclone.org/drive/}{rclone}. For detailed
-#' instructions on how to confiure rclone, please see your article in this package:
-#' Reading hemibrainr data from google drive.
+#' Without this, the best option is to use \href{https://rclone.org/drive/}{rclone}. For detailed
+#' instructions on how to configure rclone, please see your article in this package:
+#' Reading hemibrainr data from Google drive.
 #' You can also download to an external hard drive and use that.
 #'
 #' We have two \href{https://support.google.com/a/users/answer/9310156?hl=en}{Google team drives}
 #'  available for you to use, which contain similar data. One ("hemibrain")
-#'  is for internal use by the \href{https://www.zoo.cam.ac.uk/research/groups/connectomics}{Drosphila Connctomcis Group}.
+#'  is for internal use by the \href{https://www.zoo.cam.ac.uk/research/groups/connectomics}{Drosophila Connectomics Group}.
 #'  The other one (\code{"hemibrainr"}) is shared with those who would like access. Contact us by email to request access.
 #'
 #' @return Sets options \code{Gdrive_hemibrain_data}
@@ -50,8 +50,8 @@
 #' # You could also set up your own drive with saved data.
 #' hemibrainr_set_drive("hemibrainr")
 #'
-#' # Ah but what it you do not have the dirve loaded
-#' # With google filestream say, as a network drive?
+#' # Ah but what it you do not have the drive loaded
+#' # With Google filestream say, as a network drive?
 #' # In this case, you can use the free-service rclone instead
 #' # However, you will need to install and configure it:https://rclone.org/drive/
 #' hemibrainr_rclone(Gdrive = "hemibrainr")
@@ -100,7 +100,7 @@ hemibrainr_team_drive <- function(){
 #'   compartment.
 #'
 #' @param local \code{FALSE} or path. By default (\code{FALSE}) data is read from \code{options()$Drive_hemibrain_data}),
-#' but the user can specit and alternative path.
+#' but the user can specify an alternative path.
 #' @param nblast the NBLAST matrix you would like to retrieve, e.g.
 #'   \code{"arbours"} gives you a normalised all by all NBLAST matrix of all
 #'   branching arbour.
@@ -108,7 +108,8 @@ hemibrainr_team_drive <- function(){
 #'   neurons.
 #' @param data the type of data to read, i.e. neurons, an NBLAST matrix or a
 #'   \code{\link{dotprops}} object.
-#' @param folder A subfolder on the Hemibrain team drive or your local data foldercontaining the data object to read.
+#' @param folder A subfolder on the hemibrain team drive or your local data folder
+#'   containing the data object to read.
 #'
 #' @return a \code{data.frame} or character vector
 #'

@@ -30,7 +30,7 @@ hemibrain_neurons(
 \arguments{
 \item{x}{a vector of bodyids that can be read from \url{'https://neuprint.janelia.org/'}.}
 
-\item{local}{\code{FALSE} or path. By default (\code{FALSE}) data is read from \code{options()$Drive_hemibrain_data}), but the user can specit and alternative path.}
+\item{local}{\code{FALSE} or path. By default (\code{FALSE}) data is read from \code{options()$Drive_hemibrain_data}), but the user can specify an alternative path.}
 
 \item{microns}{convert dimensions from raw voxels into microns (template brain: \code{JRCFIB2018F}, else \code{JRCFIB2018Fraw}).}
 
@@ -52,12 +52,12 @@ and \code{\link{hemibrain_flow_centrality}}}
 
 \item{mirror}{logical, whether or not to read neurons that have been mirrored (i.e. flipped to the 'other' brain hemisphere).}
 
-\item{dotprops}{logical. Whether or not to retreive a \code{nat::dotprops} object, i.e. vector cloud representations of neurons for NBLASTing.
+\item{dotprops}{logical. Whether or not to retrieve a \code{nat::dotprops} object, i.e. vector cloud representations of neurons for NBLASTing.
 The dotprops object will be in JRC2018FIBF micron space.}
 
-\item{folder}{the sub-folder in which to look for a \code{nat::neuronlistfh} .rds file and its data, representing hemibrain neurons. The function will look forthis
+\item{folder}{the sub-folder in which to look for a \code{nat::neuronlistfh} .rds file and its data, representing hemibrain neurons. The function will look for this
 folder in the location: \code{hemibrainr:::good_savedir(local=local)},
-by default the mounted Goolge drive (\code{options()$Gdrive_hemibrain_data}) or locally ((\code{options()$hemibrain_data}))}
+by default the mounted Google drive (\code{options()$Gdrive_hemibrain_data}) or locally ((\code{options()$hemibrain_data}))}
 }
 \value{
 the neuron or neuron list object inputted, with centripetal flow

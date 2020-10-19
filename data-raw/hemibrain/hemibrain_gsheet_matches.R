@@ -1,9 +1,9 @@
 ###### Manipulate GoogleSheets for recording matches #######
 
-## Code in the package lhns was first used to create these google sheets
+## Code in the package lhns was first used to create these Google sheets
 ### And make initial matches.
 
-# The google sheet database:
+# The Google sheet database:
 # https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit#gid=0
 selected_file = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw"
 

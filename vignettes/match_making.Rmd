@@ -30,7 +30,7 @@ As of 2020, two large data sets for the vinegar fly, D. melanogaster, are availa
 
 What use is this information? Matches could be used to look at morphological stereotypy, help find genetic lines that label neurons, help transfer information associated with on reconstructed to the same cell in a different brain, compare neuron connectivity between two brains, etc. 
 
-For example, by matching neurons up between the hemibrain and FAFB, we see that the numbers of [cell types](https://pubmed.ncbi.nlm.nih.gov/30703584/) within one 'hemilineage' (se set of neurons that are born and develop together) are comparable between these two different flies:
+For example, by matching neurons up between the hemibrain and FAFB, we see that the numbers of [cell types](https://pubmed.ncbi.nlm.nih.gov/30703584/) within one 'hemilineage' (a set of neurons that are born and develop together) are comparable between these two different flies:
 
 
 <center>
@@ -228,7 +228,7 @@ When you run these functions you will enter an interactive pipeline in an rgl wi
 
 ## Re-setting and transferring
 
-You can transfer matches between the `hemibrain` and `fafb` tabs, as well as refresh these tabs with the most up-to-dat meta data using the following code. You will be manipulating the Google sheet for all users, so please use with caution. If in doubt, do not use.
+You can transfer matches between the `hemibrain` and `fafb` tabs, as well as refresh these tabs with the most up-to-date meta data using the following code. You will be manipulating the Google sheet for all users, so please use with caution. If in doubt, do not use.
 
 ```{r transfer, eval = FALSE}
 # Add all hemibrain neurons to sheet

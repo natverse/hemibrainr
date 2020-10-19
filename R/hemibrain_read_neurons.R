@@ -19,13 +19,13 @@
 #' Note that if FALSE, re-rooting occurs anyway via \code{hemibrain_flow_centrality}. However, setting this argument to \code{TRUE}
 #' @param googlesheet logical, whether or not manually checked somas should be read from the \href{https://docs.google.com/spreadsheets/d/1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E/edit#gid=1524900531}{Google Sheet}
 #' @param clean whether or not to set synapse-less branches to \code{Label = 0}.
-#' @param local \code{FALSE} or path. By default (\code{FALSE}) data is read from \code{options()$Drive_hemibrain_data}), but the user can specit and alternative path.
+#' @param local \code{FALSE} or path. By default (\code{FALSE}) data is read from \code{options()$Drive_hemibrain_data}), but the user can specify an alternative path.
 #' @param scaling the factor by which neuron coordinates in raw voxel space should be multiplied. The default scales to microns.
-#' @param dotprops logical. Whether or not to retreive a \code{nat::dotprops} object, i.e. vector cloud representations of neurons for NBLASTing.
+#' @param dotprops logical. Whether or not to retrieve a \code{nat::dotprops} object, i.e. vector cloud representations of neurons for NBLASTing.
 #' The dotprops object will be in JRC2018FIBF micron space.
-#' @param folder the sub-folder in which to look for a \code{nat::neuronlistfh} .rds file and its data, representing hemibrain neurons. The function will look forthis
+#' @param folder the sub-folder in which to look for a \code{nat::neuronlistfh} .rds file and its data, representing hemibrain neurons. The function will look for this
 #' folder in the location: \code{hemibrainr:::good_savedir(local=local)},
-#' by default the mounted Goolge drive (\code{options()$Gdrive_hemibrain_data}) or locally ((\code{options()$hemibrain_data}))
+#' by default the mounted Google drive (\code{options()$Gdrive_hemibrain_data}) or locally ((\code{options()$hemibrain_data}))
 #' @param ... arguments passed to \code{neuprintr::neuprint_read_neurons}, \code{\link{hemibrain_remove_bad_synapses}}
 #'  and \code{\link{hemibrain_flow_centrality}}
 #'
@@ -324,7 +324,7 @@ hemibrain_download_neurons <- function(overwrite = FALSE,
 }
 
 # hidden
-## download many google drive files
+## download many Google drive files
 googledrive_downloadmany <- function(ls, dir, overwrite = FALSE, ...){
   nat::nlapply(1:nrow(ls),
                function(i) googledrive_simpledownload(id=ls$id[i],

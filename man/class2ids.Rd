@@ -27,12 +27,12 @@ When \code{unlist=FALSE} a list with elements named by the elements
   names of all bodyids.
 }
 \description{
-Will use our google sheet annotation spreadsheets or neuPrint queries as
+Will use our Google sheet annotation spreadsheets or neuPrint queries as
 appropriate
 }
 \examples{
 # NB these examples will not be run by default as they currently depend on
-# access to some private google sheets
+# access to some private Google sheets
 \dontrun{
 class2ids("uPN")
 length(class2ids("ORN", possible = FALSE))

@@ -331,7 +331,7 @@ write_matches <- function(gs,
                        selected_file = options()$hemibrainr_matching_gsheet,
                        column = colnames(gs)){
   if((!identical(colnames(gs),column) & length(column) > 1)|(sum(column%in%colnames(gs))<1)){
-    stop("Column must be one column of the google sheet, or all the columns")
+    stop("Column must be one column of the Google sheet, or all the columns")
   }
   rows = (1:nrow(gs))+1
   rownames(gs) = rows
@@ -663,7 +663,7 @@ fafb_matching <- function(ids = NULL,
   if(is.null(hemibrain.nblast) & repository == "flywire"){
     hemibrain.nblast = t(hemibrain_nblast("hemibrain-flywire"))
   }
-  # Flywire or CATMAID?
+  # FlyWire or CATMAID?
   if(repository=="FAFB"){
     id = "skid"
   }else{
@@ -758,7 +758,7 @@ fafb_matching <- function(ids = NULL,
       }, error = function(e) {NULL})
       if(is.null(fw.n)){
         fw.n = tryCatch({
-          message("Neuron not found on google drive, attempting to read from flywire ...")
+          message("Neuron not found on Google drive, attempting to read from flywire ...")
           if(!requireNamespace("fafbseg", quietly = TRUE)) {
             stop("Please install fafbseg using:\n", call. = FALSE,
                  "remotes::install_github('natverse/fafbseg')")
@@ -1233,7 +1233,7 @@ lm_matches <- function(priority = c("hemibrain","lm")){
 #'   Sheet} on our hemibrain Google Team Drive, to which you will need access
 #' through an authenticated account to view and use this function. We can use these function to manipulate the Google Sheet.
 #' This include adding new IDs for matching (\code{hemibrain_matching_add}), transfer matches between the sheet's hemibrain and FAFB tabs (\code{hemibrain_matching_transfers})
-#' and add pre-made matches (\code{hemibrain_add_matches}).The function \code{lywire_matching_rewrite} updates a google sheet with correct flywire IDs and stable
+#' and add pre-made matches (\code{hemibrain_add_matches}).The function \code{lywire_matching_rewrite} updates a Google sheet with correct flywire IDs and stable
 #' locations in flywire space, based on CATMAID skids.
 #'
 #' @param df a \code{data.frame} of pre-made matches that the user wants to transfer onto the Google Sheet. This will erase any extant matches for the specified neurons. This data frame
@@ -1241,13 +1241,13 @@ lm_matches <- function(priority = c("hemibrain","lm")){
 #'  - good (could be the same cell), medium (same cell type) and poor (could be the same or similar cell type).
 #' @param ids either hemibrain bodyids or FAFB skids to add to a Google Sheet. You will want to add IDs where they do not already exist, so that
 #'  you can use, for example, \code{\link{hemibrain_matching}}.
-#' @param dataset the tab to which to add your new information. You are either adding to information related ot hemibrain neurons, or FAFB neurons.
+#' @param dataset the tab to which to add your new information. You are either adding to information related to hemibrain neurons, or FAFB neurons.
 #' @param direction the match direction, i.e. hemibrain->FAFB (hemibrain tab) or FAFB->hemibrain (fafb tab). Defaults to updating both.
 #' @param selected_file Specifies which Google Sheet to use. Unless you are using a personal Google Sheet, this should be \code{options()$hemibrainr_matching_gsheet}.
 #' @param User your initials, so updates can be linked to you. There is a limited number of users, each of whom have been
 #'   assigned a number of neurons to match up. In order to add yourself as a user,
 #'   simply open this Google Sheet in your browser and add your initials to neurons of your choosing on the rightmost column 'Users'.
-#' @param flywire.ids flywire IDs to add to google sheet if not already present.
+#' @param flywire.ids flywire IDs to add to Google sheet if not already present.
 #'
 #' @param ... arguments passed to methods for, for example, \code{neuprintr::neuprint_get_meta} and \code{elmr::fafb_get_meta}.
 #'
@@ -1408,7 +1408,7 @@ hemibrain_matching_add <- function(ids,
     meta = flywire_neurons()[add,]
     if(!nrow(meta)){
       stop("Selected IDs could not be added. They must be among the neurons
-         saved on google drive, see flywire_neurons()")
+         saved on Google drive, see flywire_neurons()")
     }
   }
   if(!length(add)){

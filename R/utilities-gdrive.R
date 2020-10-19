@@ -339,7 +339,7 @@ googledrive_upload_nblast<- function(x,
 }
 
 
-# Obtains flywire IDs from flywire posirions on google sheets
+# Obtains flywire IDs from flywire posirions on Google sheets
 # The sheets must either have columns fw.x, fw.y, fw.z
 # or one column, flywire.xyz with number separated by commas, in the form: x,y,z
 flywire_ids_update <- function(selected_sheets = options()$hemibrainr_gsheets,
@@ -354,7 +354,7 @@ flywire_ids_update <- function(selected_sheets = options()$hemibrainr_gsheets,
   # We do this because flywire.ids change all of the time
   gs = data.frame()
   for(selected_sheet in selected_sheets){
-    ## Read google sheets and extract glywire neuron positions
+    ## Read Google sheets and extract glywire neuron positions
     tabs = gsheet_manipulation(FUN = googlesheets4::sheet_names,
                                ss = selected_sheet,
                                return = TRUE)

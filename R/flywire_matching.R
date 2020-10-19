@@ -1,11 +1,11 @@
-# Flywire neuron matching
+# FlyWire neuron matching
 
 #' @rdname hemibrain_add_made_matches
 #' @export
 flywire_matching_rewrite <- function(flywire.ids = names(flywire_neurons()),
                                      selected_file  = options()$hemibrainr_matching_gsheet,
                                      ...){
-  # Get the FAFB matching google sheet
+  # Get the FAFB matching Google sheet
   gs = hemibrain_match_sheet(sheet = "FAFB", selected_file = selected_file)
   skids = unique(gs$skid)
 
@@ -25,7 +25,7 @@ flywire_matching_rewrite <- function(flywire.ids = names(flywire_neurons()),
     branchpoints = t(branchpoints)
     FAFB.xyz = apply(branchpoints, 1, paste, collapse = ",")
 
-    # Get Flywire voxel coordinates
+    # Get FlyWire voxel coordinates
     branchpoints.flywire = nat.templatebrains::xform_brain(branchpoints, reference = "FlyWire", sample = "FAFB14", .parallel = TRUE, verbose = TRUE)
     rownames(branchpoints.flywire) = rownames(branchpoints)
     branchpoints.flywire.raw = scale(branchpoints.flywire, scale = c(4, 4, 40), center = FALSE)
@@ -203,7 +203,7 @@ LR_matching <- function(ids = NULL,
     }
     if(is.null(fw.n)){
         fw.n = tryCatch({
-          message("Neuron not found on google drive, attempting to read from flywire ...")
+          message("Neuron not found on Google drive, attempting to read from flywire ...")
           if(!requireNamespace("fafbseg", quietly = TRUE)) {
             stop("Please install fafbseg using:\n", call. = FALSE,
                  "remotes::install_github('natverse/fafbseg')")

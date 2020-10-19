@@ -73,7 +73,7 @@ numCores <- numCores/2
 doMC::registerDoMC(numCores)
 message("Using ", numCores, " cores")
 
-# Get flywire neurons from google drive
+# Get flywire neurons from Google drive
 # fw.neurons = hemibrainr::flywire_neurons()
 load(file = paste0("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/flywire/flywire_neurons.rda"))
 

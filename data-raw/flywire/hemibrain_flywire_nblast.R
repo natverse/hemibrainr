@@ -29,7 +29,7 @@ numCores <- numCores/4
 doMC::registerDoMC(numCores)
 message("Using ", numCores, " cores")
 
-# Get flywire neurons from google drive
+# Get flywire neurons from Google drive
 # fw.neurons.JRCFIB2018F = flywire_neurons(brain= "JRCFIB2018F")
 # fw.neurons.JRCFIB2018F.m = flywire_neurons(brain= "JRCFIB2018F", mirror = TRUE)
 load("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/flywire/flywire_neurons_JRCFIB2018F.rda")
@@ -92,7 +92,7 @@ hemibrain.flywire.mean = hemibrainr:::collapse_matrix_by_names(hemibrain.flywire
 hemibrainr:::googledrive_upload_nblast(hemibrain.flywire.mean)
 save(hemibrain.flywire.mean, file = "/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/NBLAST/hemibrain.flywire.mean.rda")
 
-# Just Flywire left-right
+# Just FlyWire left-right
 flywire.mirror.mean.1 = nat.nblast::nblast(query = fw.neurons.JRCFIB2018F.dps,
                                               target = fw.neurons.JRCFIB2018F.m.dps,
                                               .parallel=TRUE,
@@ -107,7 +107,7 @@ rownames(flywire.mirror.mean) = colnames(flywire.mirror.mean.2)
 save(flywire.mirror.mean, file = "/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/NBLAST/flywire.mirror.mean.rda")
 hemibrainr:::googledrive_upload_nblast(flywire.mirror.mean)
 
-# Just Flywire left-right
+# Just FlyWire left-right
 flywire.mean = nat.nblast::nblast_allbyall(x = fw.neurons.JRCFIB2018F.dps,
                                                               .progress='text',
                                                               .parallel=TRUE,
