@@ -401,7 +401,7 @@ flywire_ids_update <- function(selected_sheets = NULL,
               pos = pos[p,]
               if(nrow(pos)){
                 i <- tryCatch(fafbseg::flywire_xyz2id(pos[,c("fw.x","fw.y",'fw.z')], rawcoords = TRUE),
-                              error = function(e){warning(e);rep(NA,nrow(pos))})
+                              error = function(e){warning(e);rep("0",nrow(pos))})
                 names(i) = pos$flywire.xyz
                 i[is.na(i)|is.nan(i)] = 0
                 i
