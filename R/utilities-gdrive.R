@@ -342,7 +342,7 @@ googledrive_upload_nblast<- function(x,
 # Obtains flywire IDs from flywire posirions on google sheets
 # The sheets must either have columns fw.x, fw.y, fw.z
 # or one column, flywire.xyz with number separated by commas, in the form: x,y,z
-flywire_ids_update <- function(selected_sheets = options()$hemibrainr_gsheets,
+flywire_ids_update <- function(selected_sheets = NULL,
                                chosen.columns = c("fw.x","fw.y",'fw.z', 'flywire.xyz',
                                                   "flywire.id", "skid",
                                                   "FAFB.xyz", "side",
@@ -352,6 +352,9 @@ flywire_ids_update <- function(selected_sheets = options()$hemibrainr_gsheets,
   # Read selected sheets and extract positions for flywire neurons
   # One xyz position is enough to identify a neuron
   # We do this because flywire.ids change all of the time
+  if(is.null(selected_sheets)){
+    selected_sheets = getOption("hemibrainr_gsheets", stop("Please set option('hemibrainr_gsheets')"))
+  }
   gs = data.frame()
   for(selected_sheet in selected_sheets){
     ## Read google sheets and extract glywire neuron positions
@@ -371,7 +374,8 @@ flywire_ids_update <- function(selected_sheets = options()$hemibrainr_gsheets,
         gs1 = subset(gs.t[setdiff(rownames(gs.t),rownames(gs2)),], !is.na(gs.t$fw.x))
         gs0 = gs.t[setdiff(rownames(gs.t),c(rownames(gs1),rownames(gs2))),]
         if(nrow(gs1)){
-          gs1$flywire.xyz = apply(gs1[,c("fw.x","fw.y",'fw.z')],1,paste,sep=";",collapse=";")
+          gs1$flywire.xyz = tryCatch(apply(gs1[,c("fw.x","fw.y",'fw.z')],1,paste,sep=";",collapse=";"),
+                                     error = function(e) NA)
         }
         if(nrow(gs2)){
           positions.gs = sapply(gs2$flywire.xyz,strsplit,",|/|;")
@@ -402,29 +406,31 @@ flywire_ids_update <- function(selected_sheets = options()$hemibrainr_gsheets,
           #names(foreach.ids) = gs.t[,"flywire.xyz"]
           fids = unlist(foreach.ids)
           fids[is.na(fids)|is.nan(fids)] = "0"
-          gs.t[match(names(fids),gs.t$flywire.xyz),"flywire.id"] = fids
-          gs.t$flywire.xyz = apply(gs.t[,c("fw.x","fw.y",'fw.z')],1,paste,sep=";",collapse=";")
-          # Update
-          update = rbind(gs.t[,used.cols],gs0[,used.cols])
-          rownames(update) = NULL
-          googlesheets4::write_sheet(update[0,],
-                                     ss = selected_sheet,
-                                     sheet = tab)
-          batches = split(1:nrow(update), ceiling(seq_along(1:nrow(update))/500))
-          for(i in batches){
-            gsheet_manipulation(FUN = googlesheets4::sheet_append,
-                                data = update[min(i):max(i),],
-                                ss = selected_sheet,
-                                sheet = tab)
-          }
-          # Now continue processing
-          gs.t = gs.t[,colnames(gs.t)%in%chosen.columns]
-          for(col in chosen.columns){
-            if(is.null(gs.t[[col]])){
-              gs.t[[col]] = NA
+          if(length(fids)){
+            gs.t[match(names(fids),gs.t$flywire.xyz),"flywire.id"] = fids
+            gs.t$flywire.xyz = apply(gs.t[,c("fw.x","fw.y",'fw.z')],1,paste,sep=";",collapse=";")
+            # Update
+            update = rbind(gs.t[,used.cols],gs0[,used.cols])
+            rownames(update) = NULL
+            googlesheets4::write_sheet(update[0,],
+                                       ss = selected_sheet,
+                                       sheet = tab)
+            batches = split(1:nrow(update), ceiling(seq_along(1:nrow(update))/500))
+            for(i in batches){
+              gsheet_manipulation(FUN = googlesheets4::sheet_append,
+                                  data = update[min(i):max(i),],
+                                  ss = selected_sheet,
+                                  sheet = tab)
             }
+            # Now continue processing
+            gs.t = gs.t[,colnames(gs.t)%in%chosen.columns]
+            for(col in chosen.columns){
+              if(is.null(gs.t[[col]])){
+                gs.t[[col]] = NA
+              }
+            }
+            gs = plyr::rbind.fill(gs.t,gs)
           }
-          gs = plyr::rbind.fill(gs.t,gs)
         }
       }
     }
