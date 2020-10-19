@@ -34,8 +34,8 @@ message("Checked ", length(all.neurons.flow), " neurons")
 all.neurons.flow.microns = hemibrainr::scale_neurons(all.neurons.flow)
 good = sapply(all.neurons.flow.microns,nat::is.neuron)
 all.neurons.flow.microns = all.neurons.flow.microns[good]
-
-### Checked neurons ###
+good.syn = sapply(all.neurons.flow.microns,function(x) nrow(x$connectors)>1)
+all.neurons.flow.microns = all.neurons.flow.microns[good.syn]
 
 # Move neurons into different spaces
 dir.create("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/FAFB14/data/",recursive = TRUE)
@@ -48,7 +48,7 @@ dir.create("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/
 
 # FAFB14
 all.neurons.fafb = hemibrainr:::java_xform_brain(all.neurons.flow.microns, reference = "FAFB14", sample = "JRCFIB2018F", .parallel = FALSE, verbose = TRUE, OmitFailures = TRUE, method = "rjava", progress.rjava=TRUE)
-if(length(all.neurons.fafb)<length(all.neurons.flow.microns)){
+if(!exists("all.neurons.fafb")){
   all.neurons.fafb = xform_brain(all.neurons.flow.microns, reference = "FAFB14", sample = "JRCFIB2018F", .parallel = FALSE, verbose = TRUE, OmitFailures = TRUE, method = "rjava", progress.rjava=TRUE)
 }
 all.neurons.fafb = as.neuronlistfh(all.neurons.fafb, dbdir= "/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/FAFB14/data", WriteObjects = "yes")
