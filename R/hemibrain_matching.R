@@ -1632,9 +1632,9 @@ fafb_matching_rewrite <- function(selected_file  = options()$hemibrainr_matching
   }
   n = n[order(n$cell.type),]
   n = n[order(n$ItoLee_Hemilineage),]
-  googlesheets4::write_sheet(n[0,],
-                             ss = selected_file,
-                             sheet = "FAFB")
+  gsheet_manipulation(data = n[0,],
+                      ss = selected_file,
+                      sheet = "FAFB")
   batches = split(1:nrow(n), ceiling(seq_along(1:nrow(n))/500))
   for(i in batches){
     gsheet_manipulation(FUN = googlesheets4::sheet_append,
@@ -1650,11 +1650,14 @@ fafb_matching_rewrite <- function(selected_file  = options()$hemibrainr_matching
 
 #' @rdname hemibrain_add_made_matches
 #' @export
-hemibrain_matching_rewrite <- function(selected_file  = options()$hemibrainr_matching_gsheet,
+hemibrain_matching_rewrite <- function(ids = NULL,
+                                       selected_file  = options()$hemibrainr_matching_gsheet,
                                   ...){
   gs = hemibrain_match_sheet(sheet = "hemibrain", selected_file = selected_file)
-  all.ids = hemibrain_neuron_bodyids()
-  meta1 = hemibrain_get_meta(unique(all.ids), ...)
+  if(is.null(ids)){
+    ids = hemibrain_neuron_bodyids()
+  }
+  meta1 = hemibrain_get_meta(unique(ids), ...)
   ids.missing = setdiff(gs$bodyid,meta1$bodyid)
   meta2 = hemibrain_get_meta(unique(ids.missing), ...)
   meta = rbind(meta1,meta2)
@@ -1669,9 +1672,10 @@ hemibrain_matching_rewrite <- function(selected_file  = options()$hemibrainr_mat
   meta = meta[order(meta$cell.type),]
   meta = meta[order(meta$ItoLee_Hemilineage),]
   batches = split(1:nrow(meta), ceiling(seq_along(1:nrow(meta))/500))
-  googlesheets4::write_sheet(meta[0,],
-                             ss = selected_file,
-                             sheet = "hemibrain")
+  gsheet_manipulation(FUN = googlesheets4::write_sheet,
+                      data = meta[0,],
+                      ss = selected_file,
+                      sheet = "hemibrain")
   for(i in batches){
     gsheet_manipulation(FUN = googlesheets4::sheet_append,
                         data = meta[min(i):max(i),],
