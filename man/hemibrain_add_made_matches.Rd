@@ -40,6 +40,7 @@ fafb_matching_rewrite(
 )
 
 hemibrain_matching_rewrite(
+  ids = NULL,
   selected_file = options()$hemibrainr_matching_gsheet,
   ...
 )
