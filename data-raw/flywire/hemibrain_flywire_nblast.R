@@ -43,6 +43,8 @@ fw.neurons.JRCFIB2018F.m=nat::nlapply(fw.neurons.JRCFIB2018F.m, nat::prune_twigs
 fw.neurons.JRCFIB2018F.dps = nat::dotprops(fw.neurons.JRCFIB2018F, .parallel = TRUE, OmitFailures = TRUE)
 fw.neurons.JRCFIB2018F.m.dps = nat::dotprops(fw.neurons.JRCFIB2018F.m, .parallel = TRUE, OmitFailures = TRUE)
 
+# Cut to fit hemibrain bounding box
+
 # Load split neurons
 polypre = TRUE
 split = "synapses"

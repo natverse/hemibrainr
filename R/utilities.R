@@ -300,13 +300,10 @@ scale_points.shapelist <- function(shapelist,
 }
 
 # Cut neurons by bounding box
-subbbx <- function(n.dps, min.x, max.x, min.y, max.y, min.z, max.z, ret='inside'){
+subbbx <- function(n.dps, bbx, scale, ret='inside'){
   points = nat::xyzmatrix(n.dps)
-  inside = (
-    min.x < points[, "X"] & max.x > points[, "X"]
-    & min.y < points[, "Y"] & max.y > points[, "Y"]
-    & min.z < points[, "Z"] & max.z > points[, "Z"]
-  )
+  bbx = nat::boundingbox(scale(bbx, scale = rep(scale,3), center = FALSE))
+  inside = nat::pointsinside(points,bbx)
   # or subset(n.dps, inside, invert=ret != 'inside')
   if (ret == 'inside') {
     subset(n.dps, inside)
@@ -317,21 +314,39 @@ subbbx <- function(n.dps, min.x, max.x, min.y, max.y, min.z, max.z, ret='inside'
 }
 
 # Subset FAFB neurons to FIB bounding box
-fafb_hemibrain_cut <- function(x, ...){
-  x = nat::nlapply(x, subbbx,
-                                min.x=312048/1e3, max.x=601733/1e3,
-                                min.y=71265/1e3, max.y=319018/1e3,
-                                min.z=4315/1e3, max.z=270859/1e3,
-                                ret='inside', ...)
+## This works only when in FAFB space, then /1000
+## Essentially for pruning dotprops objects
+hemibrain_cut <- function(x,
+                          scale = 1,
+                          brain = "FAFB14",
+                          mirror = TRUE,
+                          ...){
+  fafb.cut.1 = structure(c(312048, 601733, 71265, 319018, 4315, 270859), .Dim = c(2L, 3L))
+  fafb.cut.2 = structure(c(519300, 601733, 259570, 319018, 0, 300000), .Dim = c(2L, 3L))
+  if(brain!="FAFB14"){
+    if(mirror){
+      fafb.cut.1 = nat.jrcbrains::mirror_fafb(fafb.cut.1)
+      fafb.cut.2 = nat.jrcbrains::mirror_fafb(fafb.cut.2)
+    }
+    fafb.cut.1 = nat.templatebrains::xform_brain(fafb.cut.1, sample = "FAFB14", reference = brain)
+    fafb.cut.2 = nat.templatebrains::xform_brain(fafb.cut.2, sample = "FAFB14", reference = brain)
+  }
+  y = nat::nlapply(x,
+                   subbbx,
+                   bbx = fafb.cut.1,
+                   scale = scale,
+                   ret='inside',
+                   ...)
   # Remove a chunk of left antennal lobe that's missing in hemibrain
-  x = nat::nlapply(x, subbbx,
-                                min.x=519300/1e3, max.x=601733/1e3,
-                                min.y=259570/1e3, max.y=319018/1e3,
-                                min.z=0/1e3, max.z=300000/1e3,
-                                ret='outside', ...)
+  z = nat::nlapply(y,
+                  subbbx,
+                  bbx = fafb.cut.2,
+                  scale = scale,
+                  ret='outside',
+                   ...)
   # drop any FAFB neurons that don't have at least 5 vertices left
-  x = x[nat::nvertices(x)>=5]
-  x
+  z = z[nat::nvertices(z)>=5]
+  z
 }
 
 # use foreach to process in parallel

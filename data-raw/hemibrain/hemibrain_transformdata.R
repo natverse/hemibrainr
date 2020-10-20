@@ -6,6 +6,8 @@
 # R CMD javareconf
 # setenv PATH ${PATH}:/public/flybrain/hdf5/lib
 # setenv LD_LIBRARY_PATH /public/flybrain/hdf5/lib
+# setenv LD_LIBRARY_PATH /public/flybrain/R/R-3.5.1/lib64/R/library/rJava/libs
+# setenv PATH ${PATH}:/public/flybrain/R/R-3.5.1/lib64/R/library/rJava/libs
 # source /public/flybrain/flybrain.csh
 
 # Parameters
