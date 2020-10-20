@@ -389,24 +389,35 @@ java_xform_brain <- function(x,
                              ...){
   # Transform treenodes
   points = nat::xyzmatrix(x)
-  t = xform_brain(points, reference = reference, sample = sample, method = method, progress.rjava=progress.rjava, ...)
+  t = xform_brain(points,
+                  reference = reference,
+                  sample = sample,
+                  method = method,
+                  progress.rjava=progress.rjava,
+                  ...)
   nat::xyzmatrix(x) = t
   # Transform synapses
   syns = lapply(names(x), function(n){
     conn = x[[n]]$connectors
-    conn$id = n
+    if(nrow(conn)){
+      conn$id = n
+    }
     conn
   })
   conns = do.call(rbind, syns)
   xyz.good = tryCatch(nat::xyzmatrix(conns), error = function(e) NULL)
-  if(!is.null(xyz.good)){
-    conns.t = nat.templatebrains::xform_brain(nat::xyzmatrix(conns), reference = reference, sample = sample, method = method, progress.rjava=progress.rjava, ...)
+  if(nrow(xyz.good)){
+    conns.t = nat.templatebrains::xform_brain(xyz.good, reference = reference, sample = sample, method = method, progress.rjava=progress.rjava, ...)
     nat::xyzmatrix(conns) = conns.t
     x = add_field_seq(x,names(x),field="id")
     x = nat::nlapply(x, function(n){
-      n$connectors = subset(conns, conns$id == n$id)
-      n$id = NULL
-      n$connectors$id = NULL
+      if(!is.null( n$id)){
+        n$connectors = subset(conns, conns$id == n$id)
+        if(!is.null(n$connectors)){
+          n$id = NULL
+          n$connectors$id = NULL
+        }
+      }
       n
     })
   }
