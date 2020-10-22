@@ -62,10 +62,7 @@ googledrive_upload_neuronlistfh <- function(x,
       t.list = batches[[batch]]
       for(t.neuron.fh.data.file in t.list){
         t = basename(t.neuron.fh.data.file)
-        if(t%in%sub.data$name){
-          save.data = googledrive::as_id(subset(sub.data, sub.data$name==t)[1,]$id)
-          # If exists, do not replace
-        }else{
+        if(!t%in%sub.data$name){
           save.data =  t.folder.data
           upload = tryCatch(google_drive_place(media = t.neuron.fh.data.file,
                                                path = save.data,
@@ -154,7 +151,6 @@ google_drive_place <- function(media,
       path = googledrive::as_id(path)
     }
   }
-
   if("drive_id"%in%class(path)){
     googledrive::drive_update(media = media,
                               file = path,
