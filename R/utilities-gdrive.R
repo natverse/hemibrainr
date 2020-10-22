@@ -69,7 +69,7 @@ googledrive_upload_neuronlistfh <- function(x,
                                                verbose = FALSE,
                                                check = FALSE),
                             error = function(e){
-                              message(e)
+                              cat(as.character(e))
                               NA
                             } )
           if(is.na(upload)){
@@ -95,7 +95,7 @@ googledrive_upload_neuronlistfh <- function(x,
                                              verbose = FALSE,
                                              check = FALSE),
                           error = function(e){
-                            message(e)
+                            cat(as.character(e))
                             NA
                           } )
         if(is.na(upload)){
@@ -268,7 +268,7 @@ googledrive_clean_neuronlistfh <- function(team_drive = hemibrainr_team_drive(),
         pb$tick()
         e = tryCatch(googledrive::drive_rm(googledrive::as_id(r), verbose = FALSE),
                      error = function(e){
-                       message(e)
+                       cat(as.character(e))
                        NULL
                      } )
     }
@@ -397,7 +397,7 @@ flywire_ids_update <- function(selected_sheets = NULL,
               pos = pos[p,]
               if(nrow(pos)){
                 i <- tryCatch(fafbseg::flywire_xyz2id(pos[,c("fw.x","fw.y",'fw.z')], rawcoords = TRUE),
-                              error = function(e){warning(e);rep("0",nrow(pos))})
+                              error = function(e){cat(as.character(e));rep("0",nrow(pos))})
                 names(i) = pos$flywire.xyz
                 i[is.na(i)|is.nan(i)] = 0
                 i
@@ -482,7 +482,7 @@ gsheet_manipulation <- function(FUN,
   while(!success){
     g = tryCatch(FUN(...),
                  error = function(e){
-                   message(e)
+                   cat(as.character(e))
                    return(NULL)
                  })
     if(!is.null(g)){
