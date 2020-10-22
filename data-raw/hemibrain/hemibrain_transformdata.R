@@ -101,7 +101,9 @@ write.neuronlistfh(all.neurons.fcwb.m, file="/net/flystore3/jdata/jdata5/JPeople
 all.neurons.flow.m = as.neuronlistfh(all.neurons.flow.m, dbdir= "/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/JRC2018raw/data", WriteObjects = "yes")
 write.neuronlistfh(all.neurons.flow.m, file="/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/JRC2018raw/hemibrain_all_neurons_flow_microns.rds", overwrite=TRUE)
 
-
+# Remove old filehash files
+brains = c("JRC2018F","FCWB","JFRC2","JRCFIB2018F","FAFB14","FlyWire")
+hemibrainr:::remove_unused_filehash(sprintf("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/%s/",brains))
 
 
 
