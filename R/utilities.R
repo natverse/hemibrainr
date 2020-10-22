@@ -389,7 +389,7 @@ java_xform_brain <- function(x,
                              ...){
   # Transform treenodes
   points = nat::xyzmatrix(x)
-  t = xform_brain(points,
+  t = nat.templatebrains::xform_brain(points,
                   reference = reference,
                   sample = sample,
                   method = method,
@@ -404,7 +404,7 @@ java_xform_brain <- function(x,
     }
     conn
   })
-  conns = do.call(rbind, syns)
+  conns = do.call(plyr::rbind.fill, syns)
   xyz.good = tryCatch(nat::xyzmatrix(conns), error = function(e) NULL)
   if(nrow(xyz.good)){
     conns.t = nat.templatebrains::xform_brain(xyz.good, reference = reference, sample = sample, method = method, progress.rjava=progress.rjava, ...)
@@ -431,3 +431,25 @@ saveit <- function(..., file) {
   save(list=names(x), file=file, envir=list2env(x))
 }
 
+# remove filehash files
+remove_unused_filehash <- function(path){
+  for(p in path){
+    data = filepath(p,"data")
+    if(!dir.exists(data)){
+      stop("data folder for neuronlistfh object does not exit at: ", data)
+    }
+    files = list.files(path, pattern = ".rds$", full.names = TRUE)
+    all.keys = c()
+    for(f in files){
+      a = readRDS(paste0("inst/extdata/",f))
+      b = attributes(a)
+      keys = b$keyfilemap
+      all.keys = c(all.keys,keys)
+    }
+    all.fh = list.files(data)
+    delete = setdiff(all.files,all.keys)
+    message("Deleting ", length(delete), " files")
+    delete = paste0(data,delete)
+    file.remove(delete)
+  }
+}
