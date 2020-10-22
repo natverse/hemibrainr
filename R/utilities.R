@@ -436,20 +436,21 @@ remove_unused_filehash <- function(path){
   for(p in path){
     data = filepath(p,"data")
     if(!dir.exists(data)){
-      stop("data folder for neuronlistfh object does not exit at: ", data)
+      warning("data folder for neuronlistfh object does not exit at: ", data)
+    }else{
+      files = list.files(path, pattern = ".rds$", full.names = TRUE)
+      all.keys = c()
+      for(f in files){
+        a = readRDS(paste0("inst/extdata/",f))
+        b = attributes(a)
+        keys = b$keyfilemap
+        all.keys = c(all.keys,keys)
+      }
+      all.fh = list.files(data)
+      delete = setdiff(all.fh,all.keys)
+      message("Deleting ", length(delete), " files")
+      delete = paste0(data,delete)
+      file.remove(delete)
     }
-    files = list.files(path, pattern = ".rds$", full.names = TRUE)
-    all.keys = c()
-    for(f in files){
-      a = readRDS(paste0("inst/extdata/",f))
-      b = attributes(a)
-      keys = b$keyfilemap
-      all.keys = c(all.keys,keys)
-    }
-    all.fh = list.files(data)
-    delete = setdiff(all.files,all.keys)
-    message("Deleting ", length(delete), " files")
-    delete = paste0(data,delete)
-    file.remove(delete)
   }
 }
