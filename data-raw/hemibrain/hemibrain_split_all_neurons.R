@@ -53,7 +53,7 @@ savedirfh = paste0("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons
 unlink(paste0(savedirfh,"data/"))
 dir.create = dir.create(paste0(savedirfh,"data/"),recursive = TRUE)
 all.neurons.flow.fh = as.neuronlistfh(all.neurons.flow, dbdir= "/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/JRCFIB2018Fraw/data/", WriteObjects = "yes")
-write.neuronlistfh(all.neurons.flow.fh, file="/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/JRCFIB2018Fraw/data/hemibrain_all_neurons_flow_JRCFIB2018Fraw.rds", overwrite=TRUE)
+write.neuronlistfh(all.neurons.flow.fh, file="/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/JRCFIB2018Fraw/hemibrain_all_neurons_flow_JRCFIB2018Fraw.rds", overwrite=TRUE)
 hemibrainr:::remove_unused_filehash("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/JRCFIB2018Fraw/")
 
 # Save key points
