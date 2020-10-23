@@ -55,6 +55,7 @@ googledrive_upload_neuronlistfh <- function(x,
   t.list.master = list.files(temp.data,full.names = TRUE)
   error.files = upload = c()
   sub.data = googledrive::drive_ls(path = t.folder.data, team_drive = td)
+  t.list.master = t.list.master[basename(t.list.master) %in% sub.data$name]
   if(numCores>1){
     batch = 1
     batches = split(t.list.master, round(seq(from = 1, to = numCores, length.out = length(t.list.master))))
@@ -62,12 +63,10 @@ googledrive_upload_neuronlistfh <- function(x,
       t.list = batches[[batch]]
       for(t.neuron.fh.data.file in t.list){
         t = basename(t.neuron.fh.data.file)
-        t = setdiff(t, sub.data$name)
         save.data =  t.folder.data
-        upload = tryCatch(google_drive_place(media = t.neuron.fh.data.file,
+        upload = tryCatch(googledrive::drive_upload(media = t.neuron.fh.data.file,
                                                path = save.data,
-                                               verbose = FALSE,
-                                               check = FALSE),
+                                               verbose = FALSE),
                             error = function(e){
                               cat(as.character(e))
                               NA
@@ -84,9 +83,8 @@ googledrive_upload_neuronlistfh <- function(x,
     for(t.neuron.fh.data.file in t.list.master){
       pb$tick()
       t = basename(t.neuron.fh.data.file)
-      t = setdiff(t, sub.data$name)
       save.data =  t.folder.data
-      upload = tryCatch(google_drive_place(media = t.neuron.fh.data.file,
+      upload = tryCatch(googledrive::drive_upload(media = t.neuron.fh.data.file,
                                              path = save.data,
                                              verbose = FALSE,
                                              check = FALSE),
