@@ -42,6 +42,9 @@ good = sapply(all.neurons.flow,nat::is.neuron)
 all.neurons.flow = all.neurons.flow[good]
 rm("all.neurons.checked")
 
+# Make sure connectors also have labels
+all.neurons.flow = nat::nlapply(all.neurons.flow, hemibrainr:::carryover_labels, .parallel = TRUE)
+
 # Save
 save(all.neurons.flow, file = paste0("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/hemibrain_all_neurons_flow_",identifier,".rda"))
 
@@ -51,6 +54,7 @@ unlink(paste0(savedirfh,"data/"))
 dir.create = dir.create(paste0(savedirfh,"data/"),recursive = TRUE)
 all.neurons.flow.fh = as.neuronlistfh(all.neurons.flow, dbdir= "/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/JRCFIB2018Fraw/data/", WriteObjects = "yes")
 write.neuronlistfh(all.neurons.flow.fh, file="/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/JRCFIB2018Fraw/data/hemibrain_all_neurons_flow_JRCFIB2018Fraw.rds", overwrite=TRUE)
+hemibrainr:::remove_unused_filehash("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/JRCFIB2018Fraw/")
 
 # Save key points
 all.neurons.points = hemibrain_splitpoints(all.neurons.flow)

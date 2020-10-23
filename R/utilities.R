@@ -172,10 +172,20 @@ carryover_tags <- function(x, y){
 }
 
 # hidden
-carryover_labels <- function(x, y){
-  y$d$Label = x$d$Label[match(y$d$PointNo,x$d$PointNo)]
-  y$connectors$Label = x$connectors$Label[match(y$connectors$PointNo,x$d$PointNo)]
-  y
+carryover_labels <- function(x, y = NULL){
+  if(is.null(y)){
+    if(nrow(x$connectors)){
+      tid = ifelse("PointNo"%in%colnames(x$connectors),"PointNo","treenode_id")
+      x$connectors$Label = x$d$Label[match(x$connectors[[tid]],x$d$PointNo)]
+    }
+    x
+  }else{
+    tidx = ifelse("PointNo"%in%colnames(x$connectors),"PointNo","treenode_id")
+    tidy = ifelse("PointNo"%in%colnames(x$connectors),"PointNo","treenode_id")
+    y$d$Label = x$d$Label[match(y$d$PointNo,x$d$PointNo)]
+    y$connectors$Label = x$d$Label[match(y$connectors[[tidy]],x$d$PointNo)]
+    y
+  }
 }
 
 # hidden
