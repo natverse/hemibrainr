@@ -64,12 +64,13 @@ googledrive_upload_neuronlistfh <- function(x,
       for(t.neuron.fh.data.file in t.list){
         t = basename(t.neuron.fh.data.file)
         save.data =  t.folder.data
-        upload = tryCatch(googledrive::drive_upload(media = t.neuron.fh.data.file,
-                                               path = save.data,
-                                               verbose = FALSE),
+        upload = tryCatch(gsheet_manipulation(googledrive::drive_upload,
+                                              media = t.neuron.fh.data.file,
+                                              path = save.data,
+                                              verbose = FALSE),
                             error = function(e){
-                              cat(as.character(e))
-                              NA
+                            cat(as.character(e))
+                            NA
                             } )
         if(is.na(upload)){
           error.files = c(error.files,t.neuron.fh.data.file)
@@ -84,10 +85,10 @@ googledrive_upload_neuronlistfh <- function(x,
       pb$tick()
       t = basename(t.neuron.fh.data.file)
       save.data =  t.folder.data
-      upload = tryCatch(googledrive::drive_upload(media = t.neuron.fh.data.file,
-                                             path = save.data,
-                                             verbose = FALSE,
-                                             check = FALSE),
+      upload = tryCatch(gsheet_manipulation(googledrive::drive_upload,
+                                            media = t.neuron.fh.data.file,
+                                            path = save.data,
+                                            verbose = FALSE),
                           error = function(e){
                             cat(as.character(e))
                             NA
@@ -481,7 +482,7 @@ gsheet_manipulation <- function(FUN,
     if(!is.null(g)){
       success = TRUE
     }else{
-      message("Google sheet read/write failure(s), re-trying in ", sleep," seconds ...")
+      message("Google read/write failure(s), re-trying in ", sleep," seconds ...")
       Sys.sleep(sleep)
       sleep = sleep + wait
       if(sleep > 600){
