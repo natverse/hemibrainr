@@ -416,7 +416,7 @@ java_xform_brain <- function(x,
   })
   conns = do.call(plyr::rbind.fill, syns)
   xyz.good = tryCatch(nat::xyzmatrix(conns), error = function(e) NULL)
-  if(nrow(xyz.good)){
+  if(!is.null(xyz.good)|length(xyz.good)){
     conns.t = nat.templatebrains::xform_brain(xyz.good, reference = reference, sample = sample, method = method, progress.rjava=progress.rjava, ...)
     nat::xyzmatrix(conns) = conns.t
     x = add_field_seq(x,names(x),field="id")
