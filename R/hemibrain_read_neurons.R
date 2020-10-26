@@ -69,21 +69,17 @@ hemibrain_read_neurons<-function(x = NULL,
          specify a location from which to read saved a save neuronlistfh object using 'local'. See
          ?hemibrain_download_neurons for details on the latter option.")
   }
-  if(!isFALSE(local)){
-      neurons.flow.fh = hemibrain_neurons(local = local)
-      if(!is.null(neurons.flow.fh)){
-        y = intersect(x,names(neurons.flow.fh))
-        z = setdiff(x,names(neurons.flow.fh))
-        if(length(z)>0){
-          warning("The following bodyids could not be read from your saved neuronlistfh object. If they exist, you may need to read them from neuPrint by changing the savedir argument of this function to FALSE: ",
-                  paste(z,collapse=", "))
-        }
-        neurons.flow = neurons.flow.fh[as.character(y)]
-      }
-  }else{
-    neurons.flow.fh = NULL
+  neurons.flow.fh = tryCatch(hemibrain_neurons(local = local), function(e) NULL)
+  if(!is.null(neurons.flow.fh)){
+    y = intersect(x,names(neurons.flow.fh))
+    z = setdiff(x,names(neurons.flow.fh))
+    if(length(z)>0){
+      warning("The following bodyids could not be read from your saved neuronlistfh object. If they exist, you may need to read them from neuPrint by changing the savedir argument of this function to FALSE: ",
+              paste(z,collapse=", "))
+    }
+    neurons.flow = neurons.flow.fh[as.character(y)]
   }
-  if(is.null(neurons.flow.fh)|isFALSE(local)){
+  if(is.null(neurons.flow.fh)){
     neurons = neuprintr::neuprint_read_neurons(x, ...)
     if(reroot){
       neurons.flow = hemibrain_reroot(neurons, method = "manual", googlesheet = googlesheet, ...)
@@ -96,9 +92,6 @@ hemibrain_read_neurons<-function(x = NULL,
   }
   if(clean){
     neurons.flow = hemibrain_clean_skeleton(neurons.flow, rval = "neuron", ...)
-  }
-  if(reroot){
-    neurons.flow = hemibrain_reroot(neurons.flow, method = "manual", googlesheet = googlesheet, ...)
   }
   if(microns){
     neurons.flow = scale_neurons(neurons.flow, scaling = (8/1000))
