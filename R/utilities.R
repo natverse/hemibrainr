@@ -409,7 +409,7 @@ java_xform_brain <- function(x,
   # Transform synapses
   syns = lapply(names(x), function(n){
     conn = x[[n]]$connectors
-    if(nrow(conn)){
+    if(!is.null(conn)|length(conn)){
       conn$id = n
     }
     conn
