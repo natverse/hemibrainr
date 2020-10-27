@@ -444,7 +444,7 @@ saveit <- function(..., file) {
 # remove filehash files
 remove_unused_filehash <- function(path){
   for(p in path){
-    data = filepath(p,"data")
+    data = file.path(p,"data")
     if(!dir.exists(data)){
       warning("data folder for neuronlistfh object does not exit at: ", data)
     }else{
