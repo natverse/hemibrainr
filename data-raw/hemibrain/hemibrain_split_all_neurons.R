@@ -96,8 +96,9 @@ save(all.neurons.flow, file = paste0("/net/flystore3/jdata/jdata5/JPeople/Alex/F
 # Make a dotprops object
 all.neurons.flow.dps = nat::dotprops(all.neurons.flow.microns, Labels = TRUE, resample = 1, OmitFailures = TRUE, .parallel = TRUE)
 save(all.neurons.flow.dps, file = paste0("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/hemibrain_all_neurons_flow_",identifier,"_dps.rda"))
-all.neurons.flow.dps.fh = as.neuronlistfh(all.neurons.flow.dps, dbdir= "/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/JRC2018F/data/", WriteObjects = "yes")
-write.neuronlistfh(all.neurons.flow.dps.fh, file="/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/JRC2018F/hemibrain_all_neurons_flow_dotprops.rds", overwrite=TRUE)
+all.neurons.flow.dps.fh = as.neuronlistfh(all.neurons.flow.dps, dbdir= "/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/JRCFIB2018F/data/", WriteObjects = "yes")
+write.neuronlistfh(all.neurons.flow.dps.fh, file="/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/JRCFIB2018F/hemibrain_all_neurons_flow_JRCFIB2018F_dotprops.rds", overwrite=TRUE)
+hemibrainr:::remove_unused_filehash("/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/JRCFIB2018F/")
 
 
 
