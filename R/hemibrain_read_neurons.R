@@ -78,11 +78,10 @@ hemibrain_read_neurons<-function(x = NULL,
               paste(z,collapse=", "))
     }
     neurons.flow = neurons.flow.fh[as.character(y)]
-  }
-  if(is.null(neurons.flow.fh)){
+  }else{
     neurons = neuprintr::neuprint_read_neurons(x, ...)
     if(reroot){
-      neurons.flow = hemibrain_reroot(neurons, method = "manual", googlesheet = googlesheet, ...)
+      neurons = hemibrain_reroot(neurons, method = "manual", googlesheet = googlesheet, ...)
     }
     neurons.flow = hemibrain_flow_centrality(neurons, ...)
     if(remove.bad.synapses){
