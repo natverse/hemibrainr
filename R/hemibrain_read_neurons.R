@@ -69,7 +69,7 @@ hemibrain_read_neurons<-function(x = NULL,
          specify a location from which to read saved a save neuronlistfh object using 'local'. See
          ?hemibrain_download_neurons for details on the latter option.")
   }
-  neurons.flow.fh = tryCatch(hemibrain_neurons(local = local), function(e) NULL)
+  neurons.flow.fh = tryCatch(hemibrain_neurons(local = local), error = function(e) NULL)
   if(!is.null(neurons.flow.fh)){
     y = intersect(x,names(neurons.flow.fh))
     z = setdiff(x,names(neurons.flow.fh))
@@ -79,7 +79,7 @@ hemibrain_read_neurons<-function(x = NULL,
     }
     neurons.flow = neurons.flow.fh[as.character(y)]
   }else{
-    neurons = neuprintr::neuprint_read_neurons(x, ...)
+    , ...)
     if(reroot){
       neurons = hemibrain_reroot(neurons, method = "manual", googlesheet = googlesheet, ...)
     }
