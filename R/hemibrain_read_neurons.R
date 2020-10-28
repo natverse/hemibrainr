@@ -71,6 +71,10 @@ hemibrain_read_neurons<-function(x = NULL,
          specify a location from which to read saved a save neuronlistfh object using 'local'. See
          ?hemibrain_download_neurons for details on the latter option.")
   }
+  if(isFALSE(dir.exists(options()$Gdrive_hemibrain_data))){
+    remote = FALSE
+    warning("Cannnot find mounted drive for hemibrainr, from which to read preprocessed neurons. See ?hemibrainr_set_drive ")
+  }
   if(remote){
     neurons.flow.fh = tryCatch(hemibrain_neurons(local = local), error = function(e) NULL)
   }else{
