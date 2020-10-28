@@ -539,5 +539,13 @@ download_neuron_obj_batch <- function(ids, numCores = 1, ratio = 1, save.obj = "
     }
 }
 
+# hidden
+update.neuronlistfh <- function(x, rds, ...){
+  data = file.path(dirname(rds),"data")
+  old.neurons = nat::read.neuronlistfh(rds)
+  combined.neurons = union(old.neurons, x)
+  given.neurons = nat::as.neuronlistfh(combined.neurons, dbdir= data, WriteObjects = "missing", ...)
+  nat::write.neuronlistfh(given.neurons, file=rds, overwrite=TRUE, ...)
+}
 
 
