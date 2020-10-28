@@ -11,6 +11,7 @@ hemibrain_read_neurons(
   local = FALSE,
   microns = FALSE,
   reroot = TRUE,
+  remote = TRUE,
   googlesheet = FALSE,
   remove.bad.synapses = FALSE,
   clean = FALSE,
@@ -36,6 +37,8 @@ hemibrain_neurons(
 
 \item{reroot}{logical, whether or not somas should be re-rooted.
 Note that if FALSE, re-rooting occurs anyway via \code{hemibrain_flow_centrality}. However, setting this argument to \code{TRUE}}
+
+\item{remote}{logical. Whether not to use \code{hemibrain_neurons} to try  to read neurons stored on the hemibrainr google drive, and mounted with either rclone or google filestream.}
 
 \item{googlesheet}{logical, whether or not manually checked somas should be read from the \href{https://docs.google.com/spreadsheets/d/1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E/edit#gid=1524900531}{Google Sheet}}
 
