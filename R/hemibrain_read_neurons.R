@@ -87,8 +87,10 @@ hemibrain_read_neurons<-function(x = NULL,
                                   remote = FALSE,
                                   googlesheet = remove.bad.synapses,
                                   clean = FALSE)
+      neurons.flow = union(neurons.flow.fh[as.character(y)], nz)
+    }else{
+      neurons.flow = neurons.flow.fh
     }
-    neurons.flow = union(neurons.flow.fh[as.character(y)], nz)
   }else{
     neurons = neuprintr::neuprint_read_neurons(x, ...)
     if(reroot){
