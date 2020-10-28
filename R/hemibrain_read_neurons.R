@@ -18,6 +18,7 @@
 #' @param reroot logical, whether or not somas should be re-rooted.
 #' Note that if FALSE, re-rooting occurs anyway via \code{hemibrain_flow_centrality}. However, setting this argument to \code{TRUE}
 #' @param googlesheet logical, whether or not manually checked somas should be read from the \href{https://docs.google.com/spreadsheets/d/1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E/edit#gid=1524900531}{Google Sheet}
+#' @param remote logical. Whether not to use \code{hemibrain_neurons} to try  to read neurons stored on the hemibrainr google drive, and mounted with either rclone or google filestream.
 #' @param clean whether or not to set synapse-less branches to \code{Label = 0}.
 #' @param local \code{FALSE} or path. By default (\code{FALSE}) data is read from \code{options()$Drive_hemibrain_data}), but the user can specify an alternative path.
 #' @param scaling the factor by which neuron coordinates in raw voxel space should be multiplied. The default scales to microns.
@@ -60,6 +61,7 @@ hemibrain_read_neurons<-function(x = NULL,
                                  local = FALSE,
                                  microns = FALSE,
                                  reroot = TRUE,
+                                 remote = TRUE,
                                  googlesheet = FALSE,
                                  remove.bad.synapses = FALSE,
                                  clean = FALSE,
@@ -69,17 +71,26 @@ hemibrain_read_neurons<-function(x = NULL,
          specify a location from which to read saved a save neuronlistfh object using 'local'. See
          ?hemibrain_download_neurons for details on the latter option.")
   }
-  neurons.flow.fh = tryCatch(hemibrain_neurons(local = local), error = function(e) NULL)
+  if(remote){
+    neurons.flow.fh = tryCatch(hemibrain_neurons(local = local), error = function(e) NULL)
+  }else{
+    neurons.flow.fh = NULL
+  }
   if(!is.null(neurons.flow.fh)){
     y = intersect(x,names(neurons.flow.fh))
     z = setdiff(x,names(neurons.flow.fh))
     if(length(z)>0){
-      warning("The following bodyids could not be read from your saved neuronlistfh object. If they exist, you may need to read them from neuPrint by changing the savedir argument of this function to FALSE: ",
-              paste(z,collapse=", "))
+      nz = hemibrain_read_neurons(x=z,
+                                  local = local,
+                                  microns = FALSE,
+                                  reroot = reroot,
+                                  remote = FALSE,
+                                  googlesheet = remove.bad.synapses,
+                                  clean = FALSE)
     }
-    neurons.flow = neurons.flow.fh[as.character(y)]
+    neurons.flow = union(neurons.flow.fh[as.character(y)], nz)
   }else{
-    , ...)
+    neurons = neuprintr::neuprint_read_neurons(x, ...)
     if(reroot){
       neurons = hemibrain_reroot(neurons, method = "manual", googlesheet = googlesheet, ...)
     }
