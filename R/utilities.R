@@ -472,7 +472,11 @@ remove_unused_filehash <- function(path){
 
 # Skeletonise neurons in parallel from a folder of obj files
 skeletor_batch <- function(obj, swc, numCores = 1, max.file.size = 1000000000, ...){
-  obj.files = list.files(obj, pattern = "obj$", full.names = TRUE)
+  if(dir.exists(obj)){
+    obj.files = list.files(obj, pattern = "obj$", full.names = TRUE)
+  }else{
+    obj.files = obj
+  }
   ids = obj.files[sapply(obj.files, file.size) < max.file.size]
   big = setdiff(obj.files,ids)
   if(length(big)){
