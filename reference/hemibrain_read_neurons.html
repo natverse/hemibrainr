@@ -150,6 +150,7 @@ space (as they are stored in neuPrint) to microns.</p>
   local <span class='op'>=</span> <span class='cn'>FALSE</span>,
   microns <span class='op'>=</span> <span class='cn'>FALSE</span>,
   reroot <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  remote <span class='op'>=</span> <span class='cn'>TRUE</span>,
   googlesheet <span class='op'>=</span> <span class='cn'>FALSE</span>,
   remove.bad.synapses <span class='op'>=</span> <span class='cn'>FALSE</span>,
   clean <span class='op'>=</span> <span class='cn'>FALSE</span>,
@@ -185,6 +186,10 @@ space (as they are stored in neuPrint) to microns.</p>
       <th>reroot</th>
       <td><p>logical, whether or not somas should be re-rooted.
 Note that if FALSE, re-rooting occurs anyway via <code>hemibrain_flow_centrality</code>. However, setting this argument to <code>TRUE</code></p></td>
+    </tr>
+    <tr>
+      <th>remote</th>
+      <td><p>logical. Whether not to use <code>hemibrain_neurons</code> to try  to read neurons stored on the hemibrainr google drive, and mounted with either rclone or google filestream.</p></td>
     </tr>
     <tr>
       <th>googlesheet</th>

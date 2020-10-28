@@ -193,7 +193,7 @@ If x is a <code>neuronlist</code> then tags may be supplied of <code><a href='ht
 
 <span class='co'># Get neurons</span>
 <span class='va'>neurons</span> <span class='op'>=</span> <span class='fu'><a href='hemibrain_read_neurons.html'>hemibrain_read_neurons</a></span><span class='op'>(</span><span class='va'>al.local.neurons</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='warning'>Warning: 1 neurons cropped, split likely to be inaccurate for: 2068966051</span></div><div class='output co'>#&gt; <span class='warning'>Warning: 2 neurons have no soma tagged, split could be inaccurate for: 1702323386, 2068966051</span></div><div class='input'>
+</div><div class='output co'>#&gt; <span class='warning'>Warning: Cannnot find mounted drive for hemibrainr, from which to read preprocessed neurons. See ?hemibrainr_set_drive </span></div><div class='output co'>#&gt; <span class='warning'>Warning: 1 neurons cropped, split likely to be inaccurate for: 2068966051</span></div><div class='output co'>#&gt; <span class='warning'>Warning: 2 neurons have no soma tagged, split could be inaccurate for: 1702323386, 2068966051</span></div><div class='input'>
 <span class='co'># Tag</span>
 <span class='va'>neurons</span> <span class='op'>=</span> <span class='fu'>hemibrain_settags</span><span class='op'>(</span><span class='va'>neurons</span>, antennal.lobe <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
 
