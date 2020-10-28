@@ -745,6 +745,8 @@ hemibrain_use_splitpoints.neuronlist <-function(x, df, knn = FALSE, ...){
 #' between \code{splitpoints} and \code{x$d} using a nearest neighbour search in 3D
 #' space (TRUE) or just use the given point IDs in \code{splitpoints} (i.e. if neurons
 #' have not been resampled or their skeletons otherwise modified).
+#' @param calculate logical. If \code{TRUE} then \code{flow_centrality} is called on any given neurons missing from the precomputed \code{splitpoints}.
+#' @param ... methods sent to  \code{flow_centrality}.
 #'
 #' @inherit flow_centrality return details references
 #'
@@ -773,6 +775,7 @@ hemibrain_use_splitpoints.neuronlist <-function(x, df, knn = FALSE, ...){
 hemibrain_flow_centrality <-function(x,
                                      splitpoints = hemibrainr::hemibrain_all_splitpoints,
                                      knn = FALSE,
+                                     calculate = TRUE,
                                      ...) UseMethod("hemibrain_flow_centrality")
 
 #' @export
@@ -783,8 +786,12 @@ hemibrain_flow_centrality.neuron <- function(x, splitpoints = hemibrainr::hemibr
   }
   df = dplyr::filter(splitpoints, .data$bodyid == bi)
   if(!nrow(df)){
-    warning("bodyid ", bi," not in splitpoints, returning neuron unmodified")
-    y = x
+    if(calculate){
+      warning("bodyid ", bi," not in splitpoints, returning neuron unmodified")
+      y = x
+    }else{
+      y = flow_centrality(x, ...)
+    }
   }else{
     y = hemibrain_use_splitpoints(x, df, knn = knn, ...)
   }

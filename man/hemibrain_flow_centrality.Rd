@@ -8,6 +8,7 @@ hemibrain_flow_centrality(
   x,
   splitpoints = hemibrainr::hemibrain_all_splitpoints,
   knn = FALSE,
+  calculate = TRUE,
   ...
 )
 }
@@ -29,8 +30,9 @@ between \code{splitpoints} and \code{x$d} using a nearest neighbour search in 3D
 space (TRUE) or just use the given point IDs in \code{splitpoints} (i.e. if neurons
 have not been resampled or their skeletons otherwise modified).}
 
-\item{...}{Additional arguments passed to methods or eventually to
-\code{nat::\link{nlapply}}}
+\item{calculate}{logical. If \code{TRUE} then \code{flow_centrality} is called on any given neurons missing from the precomputed \code{splitpoints}.}
+
+\item{...}{methods sent to  \code{flow_centrality}.}
 }
 \value{
 a \code{neuronlist}

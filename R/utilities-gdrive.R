@@ -497,3 +497,47 @@ gsheet_manipulation <- function(FUN,
     return(g)
   }
 }
+
+
+# Skeletonise neurons in parallel from a folder of obj files
+skeletor_batch <- function(obj, swc, numCores = 1, max.file.size = 1000000000, ...){
+  obj.files = list.files(obj, pattern = "obj$", full.names = TRUE)
+  ids = obj.files[sapply(obj.files, file.size) < max.file.size]
+  big = setdiff(obj.files,ids)
+  if(length(big)){
+    warning("Dropping ", length(big), " .obj files larger than ", max.file.size, " bytes")
+  }
+  batches = split(ids, round(seq(from = 1, to = numCores, length.out = length(ids))))
+    foreach.skeletons <- foreach::foreach (batch = seq_along(batches)) %dopar% {
+      neuron.ids = batches[[batch]]
+      j = tryCatch({
+        skels = fafbseg::skeletor(neuron.ids, ...)
+        nat::write.neurons(skels, dir=swc, format='swc', Force = FALSE)
+        skels},
+                   error = function(e){
+                     cat(as.character(e))
+                     message(paste(fw.ids,collapse=","))
+                     NULL
+                   })
+    }
+    isnl = sapply(foreach.skeletons, nat::is.neuronlist)
+    do.call(c, foreach.skeletons[isnl])
+}
+
+# hidden
+download_neuron_obj_batch <- function(ids, numCores = 1, ratio = 1, save.obj = "obj"){
+    batches = split(ids, round(seq(from = 1, to = numCores, length.out = length(ids))))
+    foreach.skeletons <- foreach::foreach (batch = seq_along(batches)) %dopar% {
+      neuron.ids = batches[[batch]]
+      j = tryCatch(fafbseg::download_neuron_obj(segments = neuron.ids,
+                                                ratio = ratio,
+                                                save.obj = save.obj),
+                   error = function(e){
+                     cat(as.character(e))
+                     NULL
+                   })
+    }
+}
+
+
+

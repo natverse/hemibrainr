@@ -9,7 +9,6 @@ collapse_matrix_by_names <- function(M, FUN = mean, ...){
   M
 }
 
-
 # Add missing columns to a df
 add_blanks <- function(df, missing, add = ""){
   for(m in missing){
