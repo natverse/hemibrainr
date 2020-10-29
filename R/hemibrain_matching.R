@@ -120,13 +120,7 @@ hemibrain_matching <- function(ids = NULL,
       rm("hemibrain.lhns.mean.compressed")
   }
   # Read the Google Sheet
-  gs = gsheet_manipulation(FUN = googlesheets4::read_sheet,
-                           ss = selected_file,
-                           sheet = "hemibrain",
-                           guess_max = 3000,
-                           return = TRUE)
-  gs$bodyid = correct_id(gs$bodyid)
-  rownames(gs) = gs$bodyid
+  gs = hemibrain_match_sheet(sheet = "hemibrain", selected_file = selected_file)
   gs$User[is.na(gs$User)] = ""
   # Get hemibrain neurons
   if(missing(db)) {
