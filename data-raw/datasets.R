@@ -78,7 +78,7 @@ manual = googlesheets4::read_sheet(ss = selected_file, sheet = "manual")
 manual = as.data.frame(manual)
 manual = remove_duplicates(manual)
 hemibrain_all_splitpoints = subset(hemibrain_all_splitpoints, !bodyid%in%manual$bodyid)
-hemibrain_all_splitpoints = rbind(hemibrain_all_splitpoints,manual)
+hemibrain_all_splitpoints = plyr::rbind.fill(hemibrain_all_splitpoints,manual)
 hemibrain_metrics[as.character(gs$bodyid),colnames(gs)] = gs
 
 ### Further update metrics based on manual splits
