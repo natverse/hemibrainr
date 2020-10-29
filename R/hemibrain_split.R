@@ -787,10 +787,10 @@ hemibrain_flow_centrality.neuron <- function(x, splitpoints = hemibrainr::hemibr
   df = dplyr::filter(splitpoints, .data$bodyid == bi)
   if(!nrow(df)){
     if(calculate){
+      y = flow_centrality(x, ...)
+    }else{
       warning("bodyid ", bi," not in splitpoints, returning neuron unmodified")
       y = x
-    }else{
-      y = flow_centrality(x, ...)
     }
   }else{
     y = hemibrain_use_splitpoints(x, df, knn = knn, ...)
