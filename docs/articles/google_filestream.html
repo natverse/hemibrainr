@@ -176,6 +176,8 @@
 <p>First, <a href="https://rclone.org/downloads/">download</a> rclone for your operating system. You can also download from your system’s command line (e.g. from terminal):</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1"></a><span class="co"># unix/macosx</span></span>
 <span id="cb3-2"><a href="#cb3-2"></a><span class="ex">curl</span> https://rclone.org/install.sh <span class="kw">|</span> <span class="fu">sudo</span> bash</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1"></a><span class="co"># linux</span></span>
+<span id="cb3-2"><a href="#cb3-2"></a><span class="ex">sudo apt-get install rclone 
 </div>
 </div>
 <div id="configure-rclone-with-hemibrainr-google-drive" class="section level1">
@@ -262,6 +264,8 @@
 <p>You can mount with rclone from your system’s command line:</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1"></a><span class="co"># unix/macosx</span></span>
 <span id="cb5-2"><a href="#cb5-2"></a><span class="ex">rclone</span> cmount hemibrainr: /path/to/local/mount</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1"></a><span class="co"># linux</span></span>
+<span id="cb5-2"><a href="#cb5-2"></a><span class="ex">rclone</span> mount hemibrainr: /path/to/local/mount</span></code></pre></div>
 <p>Try it somewhere like <code>/Documents</code> to see how it works. For <code>hemibrainr</code> there is an R function that will do the mounting for you in your working directory. So within R:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit">
 <span class="co"># mounts in working directory</span>
