@@ -472,7 +472,7 @@ remove_unused_filehash <- function(path){
 
 # Skeletonise neurons in parallel from a folder of obj files
 skeletor_batch <- function(obj, swc, numCores = 1, max.file.size = 1000000000, ...){
-  if(dir.exists(obj)){
+  if(dir.exists(obj[1])){
     obj.files = list.files(obj, pattern = "obj$", full.names = TRUE)
   }else{
     obj.files = obj
@@ -486,7 +486,7 @@ skeletor_batch <- function(obj, swc, numCores = 1, max.file.size = 1000000000, .
   foreach.skeletons <- foreach::foreach (batch = seq_along(batches)) %dopar% {
     neuron.ids = batches[[batch]]
     j = tryCatch({
-      skels = fafbseg::skeletor(neuron.ids, ...)
+      skels = fafbseg::skeletor(neuron.ids, save.obj = NULL, mesh3d = FALSE, ...)
       nat::write.neurons(skels, dir=swc, format='swc', Force = FALSE)
       skels},
       error = function(e){
