@@ -520,6 +520,7 @@ update.neuronlistfh <- function(x, rds, ...){
   if(file.exists(rds)){
     old.neurons = nat::read.neuronlistfh(rds)
     x = union(old.neurons, x)
+    x = nat::as.neuronlist(x)
   }
   given.neurons = nat::as.neuronlistfh(x, dbdir= data, WriteObjects = "missing", ...)
   nat::write.neuronlistfh(given.neurons, file=rds, overwrite=TRUE, ...)
