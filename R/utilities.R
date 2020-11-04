@@ -485,6 +485,7 @@ skeletor_batch <- function(obj, swc, numCores = 1, max.file.size = 1000000000, .
     neuron.ids = batches[[batch]]
     j = tryCatch({
       skels = fafbseg::skeletor(neuron.ids, save.obj = NULL, mesh3d = FALSE, ...)
+      skels[,"id"] = names(skels) = basename(gsub("\\.obj","",names(skels)))
       nat::write.neurons(skels, dir=swc, format='swc', Force = FALSE)
       skels},
       error = function(e){
