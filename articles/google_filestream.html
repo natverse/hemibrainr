@@ -83,8 +83,7 @@
 
       
 
-      </header><link href="google_filestream_files/anchor-sections-1.0/anchor-sections.css" rel="stylesheet">
-<script src="google_filestream_files/anchor-sections-1.0/anchor-sections.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>read data from Google drive</h1>
@@ -132,8 +131,8 @@
 <h2 class="hasAnchor">
 <a href="#get-your-drive-location" class="anchor"></a>Get your drive location</h2>
 <p>Let us have a look at the default <code>hemibrainr</code> settings, letting it to know where to find Google drive data:</p>
-<div class="sourceCode" id="cb1"><pre class="downlit">
-<span class="co"># Load package</span>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Load package</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/flyconnectome/hemibrainr">hemibrainr</a></span><span class="op">)</span>
 
 <span class="co"># Else, it wants to see it on the mounted team drive, here</span>
@@ -145,19 +144,19 @@
 
 <span class="co"># You can also specify certain Google sheets</span>
 <span class="co">## Used for neuron-neuron matching</span>
-<span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">hemibrainr_matching_gsheet</span></pre></div>
+<span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">hemibrainr_matching_gsheet</span></code></pre></div>
 </div>
 <div id="set-your-drive-location" class="section level2">
 <h2 class="hasAnchor">
 <a href="#set-your-drive-location" class="anchor"></a>Set your drive location</h2>
 <p>If you need to set <code>hemibrainr</code> to look at a new drive, use:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit">
-<span class="co"># Set a new Google drive, can be the team drive name or a path to the correct drive</span>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Set a new Google drive, can be the team drive name or a path to the correct drive</span>
 <span class="fu"><a href="../reference/hemibrainr_set_drive.html">hemibrainr_set_drive</a></span><span class="op">(</span><span class="st">"hemibrainr"</span><span class="op">)</span>
 
 <span class="co"># Now just get the name of your default team drive.</span>
 <span class="co">## This will be used to locate your team drive using the R package googledrive</span>
-<span class="fu"><a href="../reference/hemibrainr_set_drive.html">hemibrainr_team_drive</a></span><span class="op">(</span><span class="op">)</span></pre></div>
+<span class="fu"><a href="../reference/hemibrainr_set_drive.html">hemibrainr_team_drive</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 </div>
 </div>
 <div id="option-2-rclone-hemibrainr-and-r" class="section level1">
@@ -258,8 +257,8 @@
 <div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="co"># unix/macosx</span></a>
 <a class="sourceLine" id="cb5-2" data-line-number="2"><span class="ex">rclone</span> cmount hemibrainr: /path/to/local/mount</a></code></pre></div>
 <p>Try it somewhere like <code>/Documents</code> to see how it works. For <code>hemibrainr</code> there is an R function that will do the mounting for you in your working directory. So within R:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit">
-<span class="co"># mounts in working directory</span>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># mounts in working directory</span>
 <span class="fu"><a href="../reference/hemibrainr_set_drive.html">hemibrainr_rclone</a></span><span class="op">(</span><span class="op">)</span>
 
 <span class="co"># Now hemibrain neurins are read from this mount</span>
@@ -273,7 +272,7 @@
 <span class="fu"><a href="../reference/hemibrainr_set_drive.html">hemibrainr_rclone_unmount</a></span><span class="op">(</span><span class="op">)</span>
 
 <span class="co"># And now we are back to:</span>
-<span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">Gdrive_hemibrain_data</span></pre></div>
+<span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">Gdrive_hemibrain_data</span></code></pre></div>
 </div>
 </div>
 <div id="option-3-local-data-and-hemibrainr" class="section level1">
@@ -281,8 +280,8 @@
 <a href="#option-3-local-data-and-hemibrainr" class="anchor"></a>Option 3: local data and hemibrainr</h1>
 <p>You can also download the contents of the drive and store it locally or on an external hard drive, and use that.</p>
 <p>To get the folder structure <code>hemibrainr</code> expects, you can use:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit">
-<span class="fu">hemibrainr</span><span class="fu">:::</span><span class="fu">hemibrainr_folder_structure</span><span class="op">(</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">hemibrainr</span><span class="fu">:::</span><span class="fu">hemibrainr_folder_structure</span><span class="op">(</span><span class="op">)</span></code></pre></div>
 </div>
   </div>
 

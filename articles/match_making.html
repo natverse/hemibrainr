@@ -83,8 +83,7 @@
 
       
 
-      </header><link href="match_making_files/anchor-sections-1.0/anchor-sections.css" rel="stylesheet">
-<script src="match_making_files/anchor-sections-1.0/anchor-sections.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>neuron match making</h1>
@@ -123,11 +122,11 @@
 <a href="#authorisation" class="anchor"></a>Authorisation</h2>
 <p>In order to write neuron matches to the project you must have access to the <code>hemibrain</code> Google Drive or the match making Google sheet (see below) owned by the <a href="https://www.zoo.cam.ac.uk/research/cell-and-developmental-biology/drosophila-connectomics#:~:text=The%20project%20aims%20to%20reconstruct,Research%20Campus%20in%20the%20US.">Drosophila Connectomics Group</a>. If you do not have access but would like to help or use this information, get in contact! You do not need programming skills to to help us match make neurons, as we have written an interactive pipeline in R which does most of the work for you (see below).</p>
 <p>We regularly also up-date a data frame saved in this package, as a snapshot of matches that have been made. Without authorisation you can access these matches but they may not be the most up-to-date:</p>
-<div class="sourceCode" id="cb1"><pre class="downlit">
-<span class="co"># Load package</span>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Load package</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/flyconnectome/hemibrainr">hemibrainr</a></span><span class="op">)</span>
 <span class="co"># See matches</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/View.html">View</a></span><span class="op">(</span><span class="va">hemibrain_matched</span><span class="op">)</span></pre></div>
+<span class="fu"><a href="https://rdrr.io/r/utils/View.html">View</a></span><span class="op">(</span><span class="va">hemibrain_matched</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="the-google-sheet" class="section level2">
 <h2 class="hasAnchor">
@@ -137,9 +136,9 @@
 <img src="https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/google_sheet.png" alt="google_sheet">
 </center>
 <p>If you have authorisation, you can see the most up-to-date matches as so:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit">
-<span class="va">matches</span> <span class="op">=</span> <span class="fu"><a href="../reference/hemibrain_matches.html">hemibrain_matches</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># You will be asked to log-in through a Google-enabled email address.</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/View.html">View</a></span><span class="op">(</span><span class="fu">matches</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">matches</span> <span class="op">=</span> <span class="fu"><a href="../reference/hemibrain_matches.html">hemibrain_matches</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># You will be asked to log-in through a Google-enabled email address.</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/View.html">View</a></span><span class="op">(</span><span class="fu">matches</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p>As you can see, other meta information is present in the data frame <code>matches</code>. The function <code>hemibrain_matches</code> has an argument called <code>priority</code>. This specifies whether to use FAFB-&gt;hemibrain matches (FAFB) or hemibrain-&gt;FAFB matches (hemibrain) in order to ascribe cell type names to FAFB neurons. In both cases, cell type names are attached to hemibrain bodyids, and propagated to their FAFB matches.</p>
 </div>
 <div id="match-quality" class="section level2">
@@ -201,14 +200,14 @@
 <h3 class="hasAnchor">
 <a href="#adding-ready-made-matches" class="anchor"></a>Adding Ready-Made Matches</h3>
 <p>You can add matches you have already made by your own means. For this, you will need to get a data frame into R (e.g. reading from a <code>.csv</code> file) that has three columns: <code>bodyid</code>, which contains the hemibrain neurons’ unique Body IDs, <code>skid</code> which has the skeleton IDs for FAFB CATMAID neurons, and <code>quality</code> which gives a qualitative assessment of match quality (see above). If in doubt, put poor.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit">
-<span class="va">made.matches</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.csv</a></span><span class="op">(</span><span class="st">"my_matches.csv"</span><span class="op">)</span> <span class="co"># Must have the named columns: bodyid, skid, quality</span>
-<span class="fu"><a href="../reference/hemibrain_matches.html">hemibrain_matches</a></span><span class="op">(</span>df <span class="op">=</span> <span class="va">made.matches</span>, direction <span class="op">=</span> <span class="st">"both"</span><span class="op">)</span> <span class="co"># direction controls which tabs matches get written to</span></pre></div>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">made.matches</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.csv</a></span><span class="op">(</span><span class="st">"my_matches.csv"</span><span class="op">)</span> <span class="co"># Must have the named columns: bodyid, skid, quality</span>
+<span class="fu"><a href="../reference/hemibrain_matches.html">hemibrain_matches</a></span><span class="op">(</span>df <span class="op">=</span> <span class="va">made.matches</span>, direction <span class="op">=</span> <span class="st">"both"</span><span class="op">)</span> <span class="co"># direction controls which tabs matches get written to</span></code></pre></div>
 <p>Sometimes you cannot add a match, as your neuron either does not exist in the first column of the <code>hemibrain</code> tab of our Google sheet or of the <code>fafb</code> sheet. In these cases, if you have a valid ID, you can either add it to the sheet manually, or programmatically so that all the right meta data is easily included:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit">
-<span class="co"># Add a mising FAFB projection neuron, so we can match it later:</span>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Add a mising FAFB projection neuron, so we can match it later:</span>
 <span class="fu"><a href="../reference/flywire_matching_rewrite.html">hemibrain_matching_add</a></span><span class="op">(</span>ids <span class="op">=</span> <span class="st">"16"</span>, sheet <span class="op">=</span> <span class="st">"fafb"</span>, User <span class="op">=</span> <span class="st">"ASB"</span><span class="op">)</span>
-<span class="co">## the sheet argument specifies the worksheet or 'tab' on the Google sheet we want to add to</span></pre></div>
+<span class="co">## the sheet argument specifies the worksheet or 'tab' on the Google sheet we want to add to</span></code></pre></div>
 </div>
 <div id="the-match-making-pipeline" class="section level3">
 <h3 class="hasAnchor">
@@ -216,8 +215,8 @@
 <p>You can also use our interactive pipeline to match neurons between hemibrain and FAFB. There are two version of this pipeline. One that takes hemibrain neurons from <a href="https://github.com/natverse/neuprintr">neuPrint</a>, and tries to find the best match for each hemibrain neuron (<code>hemibrain_matching</code>) and one that takes FAFB neurons from <a href="https://github.com/natverse/rcatmaid">CATMAID</a> and tries to find the best hemibrain match for those FAFB neurons (<code>fafb_matching</code>). Once matches are made, the result become available with <code>hemibrain_matches</code>.</p>
 <p>The <a href="https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit">Google sheet</a> is set up with limited number of users, each of whom have been assigned a number of neurons to match up. In order to add yourself as a user, simply open this Google Sheet in your browser and add your initials to neurons of your choosing on the rightmost column ‘Users’.</p>
 <p>For a video tutorial, see <a href="https://drive.google.com/drive/folders/1MOwfPGCPvY8eVLZoOfXOBhVcS6U996g9">here</a>.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit">
-<span class="co"># install package to bridge neurons between FAFB14 and hemibrain space</span>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># install package to bridge neurons between FAFB14 and hemibrain space</span>
 <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html">requireNamespace</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span>
 <span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span><span class="op">(</span><span class="st">'natverse/nat.jrcbrains'</span><span class="op">)</span>
 <span class="fu">nat.jrcbrains</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/nat.jrcbrains/man/download_saalfeldlab_registrations.html">download_saalfeldlab_registrations</a></span><span class="op">(</span><span class="op">)</span>
@@ -233,7 +232,7 @@
 <span class="fu"><a href="../reference/LR_matching.html">fafb_matching</a></span><span class="op">(</span><span class="op">)</span>
 <span class="fu"><a href="../reference/LR_matching.html">fafb_matching</a></span><span class="op">(</span>ids <span class="op">=</span> <span class="st">"16"</span><span class="op">)</span> <span class="co"># Specify IDs</span>
 <span class="fu"><a href="../reference/LR_matching.html">fafb_matching</a></span><span class="op">(</span>ids <span class="op">=</span> <span class="st">"16"</span>, overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="co"># Overwrite</span>
-<span class="fu"><a href="../reference/LR_matching.html">fafb_matching</a></span><span class="op">(</span>ids <span class="op">=</span> <span class="st">"16"</span>, overwrite <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span> <span class="co"># Re-look only if no proper match, or just a tract-only match, was found before.</span></pre></div>
+<span class="fu"><a href="../reference/LR_matching.html">fafb_matching</a></span><span class="op">(</span>ids <span class="op">=</span> <span class="st">"16"</span>, overwrite <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span> <span class="co"># Re-look only if no proper match, or just a tract-only match, was found before.</span></code></pre></div>
 <p>When you run these functions you will enter an interactive pipeline in an rgl window. Prompts will be given to you in your R console and you can rotate and pan in the window to see neurons. The neuron selected for-matching is shown in black (i.e. if using <code>hemibrain_matching</code> this will be a hemibrain neuron), and potential matches in colour (i.e. if using <code>hemibrain_matching</code> these will be FAFB neurons). Potential matches are shown by NBLAST score (a measure of morphological similarity). Usually, for reasonably traced FAFB neurons, a good match appears in the top 10 hits.</p>
 <center>
 <img src="https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/pipeline_console.png" alt="pipeline_console">
@@ -244,8 +243,8 @@
 <h2 class="hasAnchor">
 <a href="#re-setting-and-transferring" class="anchor"></a>Re-setting and transferring</h2>
 <p>You can transfer matches between the <code>hemibrain</code> and <code>fafb</code> tabs, as well as refresh these tabs with the most up-to-date meta data using the following code. You will be manipulating the Google sheet for all users, so please use with caution. If in doubt, do not use.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit">
-<span class="co"># Add all hemibrain neurons to sheet</span>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Add all hemibrain neurons to sheet</span>
 <span class="fu"><a href="../reference/flywire_matching_rewrite.html">hemibrain_matching_rewrite</a></span><span class="op">(</span><span class="op">)</span>
 
 <span class="co"># Add all FAFB neurons with lineage annotations to sheet</span>
@@ -258,7 +257,7 @@
 <span class="va">matches</span> <span class="op">=</span> <span class="fu"><a href="../reference/hemibrain_matches.html">hemibrain_matches</a></span><span class="op">(</span><span class="op">)</span>
 <span class="va">matches</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/nat/man/subset.html">subset</a></span><span class="op">(</span><span class="va">matches</span>, <span class="va">match.quality</span> <span class="op">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"good"</span>,<span class="st">"medium"</span>,<span class="st">"poor"</span><span class="op">)</span> <span class="op">&amp;</span> <span class="va">dataset</span> <span class="op">==</span> <span class="st">"FAFB"</span><span class="op">)</span>
 <span class="va">skds</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="va">matches</span><span class="op">)</span>
-<span class="fu"><a href="../reference/fafb_hemibrain_annotate.html">fafb_hemibrain_annotate</a></span><span class="op">(</span><span class="va">skds</span><span class="op">)</span></pre></div>
+<span class="fu"><a href="../reference/fafb_hemibrain_annotate.html">fafb_hemibrain_annotate</a></span><span class="op">(</span><span class="va">skds</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="uses" class="section level2">
 <h2 class="hasAnchor">

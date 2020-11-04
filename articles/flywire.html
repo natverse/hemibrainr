@@ -83,8 +83,7 @@
 
       
 
-      </header><link href="flywire_files/anchor-sections-1.0/anchor-sections.css" rel="stylesheet">
-<script src="flywire_files/anchor-sections-1.0/anchor-sections.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>flywire</h1>
@@ -115,13 +114,13 @@
 <h2 class="hasAnchor">
 <a href="#authorisation" class="anchor"></a>Authorisation</h2>
 <p>To access flywire data directly from <a href="https://ngl.flywire.ai/?local_id=c8c06ea181ad5447b04beacfc4cb1b66">FlyWire</a>, you will need to have an account with them and you will need to use your ‘secret’ associated with that account. Visit <a href="https://globalv1.flywire-daf.com/auth/api/v1/refresh_token" class="uri">https://globalv1.flywire-daf.com/auth/api/v1/refresh_token</a> to get your token. Note that it changes each time you visit this link. Copy it and then:</p>
-<div class="sourceCode" id="cb1"><pre class="downlit">
-<span class="co"># remotes::install_github("natverse/fafbseg"), if you don't have the package</span>
-<span class="fu">fafbseg</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/fafbseg/man/flywire_set_token.html">flywire_set_token</a></span><span class="op">(</span><span class="st">"PASTE_TOKEN_HERE"</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># remotes::install_github("natverse/fafbseg"), if you don't have the package</span>
+<span class="fu">fafbseg</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/fafbseg/man/flywire_set_token.html">flywire_set_token</a></span><span class="op">(</span><span class="st">"PASTE_TOKEN_HERE"</span><span class="op">)</span></code></pre></div>
 <p>It is best if you have access to the flywire production node. Otherwise, you can look at just the base segmentation (useful but a lot less useful).</p>
 <p>And now, let’s test by looking at some few information available through <code>hemibrainr</code>:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit">
-<span class="co"># Load package</span>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Load package</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/flyconnectome/hemibrainr">hemibrainr</a></span><span class="op">)</span>
 
 <span class="co"># Else, it wants to see it on the mounted team drive, here</span>
@@ -133,15 +132,15 @@
 <span class="co"># Get fresh matches, you cannot do this without access</span>
 <span class="co">## You will be prompted to log-in through your browser</span>
 <span class="va">hemibrain_matched_new</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/hemibrain_matches.html">hemibrain_matches</a></span><span class="op">(</span><span class="op">)</span> 
-<span class="co">## NOTE: includes hemibrain&lt;-&gt;flywire matches!</span></pre></div>
+<span class="co">## NOTE: includes hemibrain&lt;-&gt;flywire matches!</span></code></pre></div>
 </div>
 <div id="get-flywire-neurons" class="section level2">
 <h2 class="hasAnchor">
 <a href="#get-flywire-neurons" class="anchor"></a>Get flywire neurons</h2>
 <p>With <code>hemibrainr</code> you can easily get thousands of skeletons for flywire neurons. These skeletons have been built using <a href="https://github.com/schlegelp/skeletor">skeletor</a>, which is a python module. You can also use it <a href="https://github.com/natverse/fafbseg">directly in R</a> with <code><a href="https://rdrr.io/pkg/fafbseg/man/skeletor.html">fafbseg::skeletor</a></code>. It has been run on thousands of neurons, which have then been stored on Google Drive, at: <code>hemibrain/flywire_neurons/</code> as <code><a href="https://rdrr.io/pkg/nat/man/neuronlistfh.html">nat::neuronlistfh</a></code> objects. This means that you can. Let’s demonstrate:</p>
 <p>You might want to look at specific flywire neurons. You could choose them based on the meta data that you can see with <code>flywire.neurons[,]</code>. However, you may also want to choose neurons based on a specific location in the data set. You can do this by giving locations to functions in <code>fafbseg</code> and turning them into coordinates. You can either give points in nanometers or raw voxel space. Note that the flywire dataset has a different registration than FAFB14 (used in CATMAID and also some other published data sources).</p>
-<div class="sourceCode" id="cb3"><pre class="downlit">
-<span class="co"># Let's say we want the ID for a neuron at these voxel coordinates:</span>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Let's say we want the ID for a neuron at these voxel coordinates:</span>
 <span class="va">pos</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">165630</span>,<span class="fl">24412</span>,<span class="fl">3765</span><span class="op">)</span>,ncol<span class="op">=</span><span class="fl">3</span><span class="op">)</span> <span class="co"># Can be copied</span>
 <span class="co"># from the button at the top of flywire https://ngl.flywire.ai/</span>
 <span class="va">pos.nm</span> <span class="op">=</span> <span class="va">pos</span><span class="op">*</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">4</span>,<span class="fl">4</span>,<span class="fl">40</span><span class="op">)</span> <span class="co"># this is what it would be in nanometers</span>
@@ -156,7 +155,7 @@
 <span class="co"># OR: choose_segmentation("flywire-sandbox") for the base segmentation</span>
 <span class="va">nx</span> <span class="op">=</span> <span class="fu">nat.templatebrains</span><span class="fu">::</span><span class="fu"><a href="http://natverse.org/nat.templatebrains/reference/xform_brain.html">xform_brain</a></span><span class="op">(</span><span class="fu">elmr</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/elmr/man/dense_core_neurons.html">dense_core_neurons</a></span>, ref<span class="op">=</span><span class="st">"FlyWire"</span>, sample<span class="op">=</span><span class="st">"FAFB14"</span><span class="op">)</span>
 <span class="va">xyz</span> <span class="op">=</span> <span class="fu">nat</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/nat/man/xyzmatrix.html">xyzmatrix</a></span><span class="op">(</span><span class="va">nx</span><span class="op">)</span>
-<span class="va">ids</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span><span class="op">(</span><span class="fu">fafbseg</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/fafbseg/man/flywire_xyz2id.html">flywire_xyz2id</a></span><span class="op">(</span><span class="va">xyz</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">xyz</span><span class="op">)</span>,<span class="fl">100</span><span class="op">)</span>,<span class="op">]</span><span class="op">)</span><span class="op">)</span></pre></div>
+<span class="va">ids</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span><span class="op">(</span><span class="fu">fafbseg</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/fafbseg/man/flywire_xyz2id.html">flywire_xyz2id</a></span><span class="op">(</span><span class="va">xyz</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">xyz</span><span class="op">)</span>,<span class="fl">100</span><span class="op">)</span>,<span class="op">]</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="skeletonise-flywire-neurons-yourself" class="section level2">
 <h2 class="hasAnchor">
@@ -164,44 +163,44 @@
 <p>We can also skeletonise neurons ourselves using <a href="https://github.com/natverse/fafbseg">skeletor pipeline in R</a>. This pipeline reads meshes from flywire, contracts them for accurate skeletonisation, and produces a skeletonised mesh. In R, we also try to re-root the neuron at it’s estimated soma location.</p>
 <p>You will need to install the python modules related to skeletor to get it to work. Please follow the instructions <a href="https://github.com/schlegelp/skeletor">here</a> for the python version. <a href="">Here</a>, we provide a guide to get everything working in R (in short <code>reticulate</code> is used to run python code in a specific, stable conda environment we make for R to use).</p>
 <p>Once everything is installed, this ought to work:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit">
-<span class="va">neurons</span> <span class="op">=</span> <span class="fu">fafbseg</span><span class="fu">:::</span><span class="fu"><a href="https://rdrr.io/pkg/fafbseg/man/skeletor.html">skeletor</a></span><span class="op">(</span><span class="va">ids</span>, brain <span class="op">=</span> <span class="fu">elmr</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/elmr/man/FAFB.surf.html">FAFB14.surf</a></span><span class="op">)</span> <span class="co"># The brain arguments helps</span>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">neurons</span> <span class="op">=</span> <span class="fu">fafbseg</span><span class="fu">:::</span><span class="fu"><a href="https://rdrr.io/pkg/fafbseg/man/skeletor.html">skeletor</a></span><span class="op">(</span><span class="va">ids</span>, brain <span class="op">=</span> <span class="fu">elmr</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/elmr/man/FAFB.surf.html">FAFB14.surf</a></span><span class="op">)</span> <span class="co"># The brain arguments helps</span>
 <span class="co"># to re-root the soma</span>
 <span class="fu"><a href="https://rdrr.io/pkg/nat/man/plot3d.html">plot3d</a></span><span class="op">(</span><span class="va">neurons</span><span class="op">)</span> <span class="co"># note, in flywire space</span>
-<span class="fu"><a href="https://rdrr.io/pkg/nat/man/plot3d.html">plot3d</a></span><span class="op">(</span><span class="va">nx</span>, col<span class="op">=</span><span class="st">"black"</span>, lwd  <span class="op">=</span><span class="fl">2</span><span class="op">)</span> <span class="co"># note, in flywire space</span></pre></div>
+<span class="fu"><a href="https://rdrr.io/pkg/nat/man/plot3d.html">plot3d</a></span><span class="op">(</span><span class="va">nx</span>, col<span class="op">=</span><span class="st">"black"</span>, lwd  <span class="op">=</span><span class="fl">2</span><span class="op">)</span> <span class="co"># note, in flywire space</span></code></pre></div>
 </div>
 <div id="add-flywire-neurons-to-the-google-drive" class="section level2">
 <h2 class="hasAnchor">
 <a href="#add-flywire-neurons-to-the-google-drive" class="anchor"></a>Add flywire neurons to the Google Drive</h2>
 <p>If you had to go to the hassle of skeletonising some flywire neurons that were not on the Google Drive, you don’t want to have to do this again. To that end, you can add them to the Google Drive as so:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit">
-<span class="fu"><a href="../reference/flywire_neurons.html">flywire_neurons_update</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">fw.ids</span>, .parallel <span class="op">=</span> <span class="cn">TRUE</span>, OmitFailures <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="co"># This can take a little while</span></pre></div>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/flywire_neurons.html">flywire_neurons_update</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">fw.ids</span>, .parallel <span class="op">=</span> <span class="cn">TRUE</span>, OmitFailures <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="co"># This can take a little while</span></code></pre></div>
 <p>You can also add flywire neurons to precomputed NBLASTs.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit">
-<span class="fu"><a href="../reference/flywire_neurons.html">flywire_nblast_update</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">neurons</span>, nblast <span class="op">=</span> <span class="st">"hemibrain-flywire"</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/flywire_neurons.html">flywire_nblast_update</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">neurons</span>, nblast <span class="op">=</span> <span class="st">"hemibrain-flywire"</span><span class="op">)</span></code></pre></div>
 <p>These functions can take a long time to run. For example, if adding to the hemibrain-flywire NBLAST, all ~25k flywire neurons need to be read in order to calculate the NBLAST. You can also request that your flywire neurons are added to the precomputations we try to make en mass periodically for the Google drive, if you do not need your answer ASAP. You can do this as so:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit">
-<span class="fu"><a href="../reference/flywire_neurons.html">flywire_request</a></span><span class="op">(</span>request <span class="op">=</span> <span class="va">fw.ids</span><span class="op">)</span>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/flywire_neurons.html">flywire_request</a></span><span class="op">(</span>request <span class="op">=</span> <span class="va">fw.ids</span><span class="op">)</span>
 <span class="co"># request can also be a neuronlist in FlyWire space (fastest way)</span>
 <span class="co"># Or a matrix with x,y,z positions to add directly.</span>
 <span class="co"># Otherwise skeletor is called to skeletonsie flywire neurons related</span>
 <span class="co"># to the given IDs, and the position of the root</span>
-<span class="co"># is added.</span></pre></div>
+<span class="co"># is added.</span></code></pre></div>
 </div>
 <div id="match-flywire-neurons" class="section level2">
 <h2 class="hasAnchor">
 <a href="#match-flywire-neurons" class="anchor"></a>Match flywire neurons</h2>
 <p>The neuron matching pipeline reads neuron skeletons from Google Drive and and displays them. FlyWire skeletons are shown in dark grey (their mirrored equivalents in light grey) and potential hemibrain matches in red. This depends also on the precomputed NBLASTs on the hemibrain team drive. For full details, see our <code>match_making</code> vignette.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit">
-<span class="co"># As simple as:</span>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># As simple as:</span>
 <span class="fu"><a href="../reference/LR_matching.html">fafb_matching</a></span><span class="op">(</span><span class="va">ids</span>, repository <span class="op">=</span> <span class="st">"fylwire"</span><span class="op">)</span>
 
 <span class="co"># Or if you just want to go after entries flagegd for your User:</span>
 <span class="fu"><a href="../reference/LR_matching.html">fafb_matching</a></span><span class="op">(</span>repository <span class="op">=</span> <span class="st">"fylwire"</span><span class="op">)</span>
 
 <span class="co"># See the results of matching</span>
-<span class="va">hemibrain_matched_new</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/hemibrain_matches.html">hemibrain_matches</a></span><span class="op">(</span><span class="op">)</span> </pre></div>
+<span class="va">hemibrain_matched_new</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/hemibrain_matches.html">hemibrain_matches</a></span><span class="op">(</span><span class="op">)</span> </code></pre></div>
 <p>What if the flywire neuron you want, is not available to match?</p>
 <p>For it to be matchable, we need to add the skeleton to Google drive and then add this entry into the NBLAST computation. Those steps were covered above. Because there are a lot of flywire neurons and hemibrain neurons, they are rather slow and cumbersome. For this reason, we also run a ~daily compute of skeletons and NBLASTs and put them on our Google drive. In order to flag a neuron in flywire for skeletonisation and NBLASTing, its coordinates need to be either in the FAFB tab of <a href="https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit">em_matching</a> or <a href="https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit">flywire_interest</a>. We use XYZ coordinates in flywire raw voxel space, rather than flywire IDs, because the latter frequently change as a consequence of merging and splitting neurons. FlyWire is, at the time of writing (pandemic 2020), an active tracing project.</p>
 </div>
@@ -209,8 +208,8 @@
 <h2 class="hasAnchor">
 <a href="#manage-the-google-sheet" class="anchor"></a>Manage the Google sheet</h2>
 <p>Matches between FAFB neurons (both from FAFBv14 CATMAID and flywire) are recorded on our master Google sheet for matching, <a href="https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit">em_matching</a>. See the <code>match_making</code> vignette for details. Because flywire IDs change frequently as a consequence of tracing, and because we keep adding new skeletons to our Google drive dump, it is nice to update the master Google sheet for matching every now and then. We also want to make sure that FAFBv14-&gt;flywire matches are recapitulated on the ‘hemibrain’ matches sheet. This can be done as follows, but can take a long time to run to best to leave it over night:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit">
-<span class="fu"><a href="../reference/flywire_matching_rewrite.html">flywire_matching_rewrite</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># bring all the flywire information up to date</span></pre></div>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/flywire_matching_rewrite.html">flywire_matching_rewrite</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># bring all the flywire information up to date</span></code></pre></div>
 </div>
 </div>
   </div>

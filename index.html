@@ -95,13 +95,13 @@
 <div id="installation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h2>
-<div class="sourceCode" id="cb1"><pre class="downlit">
-<span class="co"># install</span>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># install</span>
 <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="st"><a href="https://remotes.r-lib.org">"remotes"</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span>
 <span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span><span class="op">(</span><span class="st">"flyconnectome/hemibrainr"</span><span class="op">)</span>
 
 <span class="co"># use </span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/flyconnectome/hemibrainr">hemibrainr</a></span><span class="op">)</span></pre></div>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/flyconnectome/hemibrainr">hemibrainr</a></span><span class="op">)</span></code></pre></div>
 </div>
 <div id="using-hemibrainr" class="section level2">
 <h2 class="hasAnchor">
@@ -114,8 +114,8 @@
 <li>Read FlyWire/hemibrain neurons that are pre-transformed into a variety of brainspaces</li>
 </ul>
 <p>Which is all useful stuff. You can explore our articles for more detailed information on what the package can do, and how to set it up with the data stored on Google drive - but can take a quick tour here:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit">
-<span class="co"># Load package</span>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Load package</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/flyconnectome/hemibrainr">hemibrainr</a></span><span class="op">)</span>
 
 <span class="co"># Else, it wants to see it on the mounted team drive, here</span>
@@ -127,16 +127,16 @@
 <span class="co"># And quickly read them from the drive, when we try to plot/analyse them!</span>
 <span class="fu"><a href="reference/hemibrain_view.html">hemibrain_view</a></span><span class="op">(</span><span class="op">)</span>
 <span class="fu">plot3d</span><span class="op">(</span><span class="va">hemibrain.surf</span>, col <span class="op">=</span> <span class="st">"grey"</span>, alpha <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span>
-<span class="fu">plot3d</span><span class="op">(</span><span class="va">db</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span><span class="op">)</span></pre></div>
+<span class="fu">plot3d</span><span class="op">(</span><span class="va">db</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span><span class="op">)</span></code></pre></div>
 <p>See which neurons have been matched up:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit">
-<span class="co"># See matches, you can do this without hemibrain Google Team Drive access</span>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># See matches, you can do this without hemibrain Google Team Drive access</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/View.html">View</a></span><span class="op">(</span><span class="va">hemibrain_matched</span><span class="op">)</span>
 
 <span class="co"># Get fresh matches, you cannot do this without access</span>
 <span class="co">## You will be prompted to log-in through your browser</span>
 <span class="va">hemibrain_matched_new</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/hemibrain_matches.html">hemibrain_matches</a></span><span class="op">(</span><span class="op">)</span> 
-<span class="co">## NOTE: includes hemibrain&lt;-&gt;FlyWire matches!</span></pre></div>
+<span class="co">## NOTE: includes hemibrain&lt;-&gt;FlyWire matches!</span></code></pre></div>
 </div>
 <div id="authentication" class="section level2">
 <h2 class="hasAnchor">
@@ -145,26 +145,26 @@
 <p>You may need an authenticated accounted, or you may be able to register your <code>@gmail</code> address without an authentication process. Navigate to a neuPrint website, e.g. <a href="https://neuprint.janelia.org" class="uri">https://neuprint.janelia.org</a>, and hit ‘login’. Sign in using an <code>@gmail</code> account. If you have authentication/the server is public, you will now be able to see your access token by going to ‘Account’:</p>
 <p><img src="https://raw.githubusercontent.com/natverse/neuprintr/master/inst/images/bearertoken.png" alt="access your bearer token"></p>
 <p>To make life easier, you can then edit your <code>.Renviron</code> file to contain information about the neuPrint server you want to speak with, your token and the dataset hosted by that server, that you want to read. A convenient way to do this is to do</p>
-<div class="sourceCode" id="cb4"><pre class="downlit">
-<span class="fu">usethis</span><span class="fu">::</span><span class="fu"><a href="https://usethis.r-lib.org/reference/edit.html">edit_r_environ</a></span><span class="op">(</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">usethis</span><span class="fu">::</span><span class="fu"><a href="https://usethis.r-lib.org/reference/edit.html">edit_r_environ</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <p>and then edit the file that pops up, adding a section like</p>
-<div class="sourceCode" id="cb5"><pre class="downlit">
-<span class="va">neuprint_server</span><span class="op">=</span><span class="st">"https://neuprint.janelia.org"</span>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">neuprint_server</span><span class="op">=</span><span class="st">"https://neuprint.janelia.org"</span>
 <span class="co"># nb this token is a dummy</span>
-<span class="va">neuprint_token</span><span class="op">=</span><span class="st">"asBatEsiOIJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImIsImxldmVsIjoicmVhZHdyaXRlIiwiaW1hZ2UtdXJsIjoiaHR0cHM7Ly9saDQuZ29vZ2xldXNlcmNvbnRlbnQuY29tLy1QeFVrTFZtbHdmcy9BQUFBQUFBQUFBDD9BQUFBQUFBQUFBQS9BQ0hpM3JleFZMeEI4Nl9FT1asb0dyMnV0QjJBcFJSZlI6MTczMjc1MjU2HH0.jhh1nMDBPl5A1HYKcszXM518NZeAhZG9jKy3hzVOWEU"</span></pre></div>
+<span class="va">neuprint_token</span><span class="op">=</span><span class="st">"asBatEsiOIJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImIsImxldmVsIjoicmVhZHdyaXRlIiwiaW1hZ2UtdXJsIjoiaHR0cHM7Ly9saDQuZ29vZ2xldXNlcmNvbnRlbnQuY29tLy1QeFVrTFZtbHdmcy9BQUFBQUFBQUFBDD9BQUFBQUFBQUFBQS9BQ0hpM3JleFZMeEI4Nl9FT1asb0dyMnV0QjJBcFJSZlI6MTczMjc1MjU2HH0.jhh1nMDBPl5A1HYKcszXM518NZeAhZG9jKy3hzVOWEU"</span></code></pre></div>
 <p>Make sure you have a blank line at the end of your <code>.Renviron</code> file. For further information try about neuprintr login, see the help for <code>neuprint_login()</code>.</p>
 <p>Finally you can also login on the command line once per session, like so:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit">
-<span class="va">conn</span> <span class="op">=</span> <span class="fu">neuprintr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/neuprintr/man/neuprint_login.html">neuprint_login</a></span><span class="op">(</span>server<span class="op">=</span> <span class="st">"https://neuprint.janelia.org/"</span>,
-   token<span class="op">=</span> <span class="st">"asBatEsiOIJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImIsImxldmVsIjoicmVhZHdyaXRlIiwiaW1hZ2UtdXJsIjoiaHR0cHM7Ly9saDQuZ29vZ2xldXNlcmNvbnRlbnQuY29tLy1QeFVrTFZtbHdmcy9BQUFBQUFBQUFBDD9BQUFBQUFBQUFBQS9BQ0hpM3JleFZMeEI4Nl9FT1asb0dyMnV0QjJBcFJSZlI6MTczMjc1MjU2HH0.jhh1nMDBPl5A1HYKcszXM518NZeAhZG9jKy3hzVOWEU"</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">conn</span> <span class="op">=</span> <span class="fu">neuprintr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/neuprintr/man/neuprint_login.html">neuprint_login</a></span><span class="op">(</span>server<span class="op">=</span> <span class="st">"https://neuprint.janelia.org/"</span>,
+   token<span class="op">=</span> <span class="st">"asBatEsiOIJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImIsImxldmVsIjoicmVhZHdyaXRlIiwiaW1hZ2UtdXJsIjoiaHR0cHM7Ly9saDQuZ29vZ2xldXNlcmNvbnRlbnQuY29tLy1QeFVrTFZtbHdmcy9BQUFBQUFBQUFBDD9BQUFBQUFBQUFBQS9BQ0hpM3JleFZMeEI4Nl9FT1asb0dyMnV0QjJBcFJSZlI6MTczMjc1MjU2HH0.jhh1nMDBPl5A1HYKcszXM518NZeAhZG9jKy3hzVOWEU"</span><span class="op">)</span></code></pre></div>
 <p>This is also the approach that you would take if you were working with more than two neuPrint servers.</p>
 </div>
 <div id="example" class="section level2">
 <h2 class="hasAnchor">
 <a href="#example" class="anchor"></a>Example</h2>
 <p>Let’s get started with a useful function for splitting a neuron into its axon and dendrite:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit">
-<span class="co"># Choose neurons</span>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Choose neurons</span>
 <span class="co">## These neurons are some 'tough' examples from the hemibrain:v1.0.1</span>
 <span class="co">### They will split differently depending on the parameters you use.</span>
 <span class="va">tough</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"5813056323"</span>, <span class="st">"579912201"</span>, <span class="st">"5813015982"</span>, <span class="st">"973765182"</span>, <span class="st">"885788485"</span>,
@@ -190,7 +190,7 @@ split <span class="op">=</span> <span class="st">"distance"</span><span class="o
 
 <span class="co"># Plot the split to check it</span>
 <span class="fu">nat</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/nat/man/nopen3d.html">nopen3d</a></span><span class="op">(</span><span class="op">)</span>
-<span class="fu"><a href="reference/plot3d_split.html">nlscan_split</a></span><span class="op">(</span><span class="va">neurons.flow</span>, WithConnectors <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></pre></div>
+<span class="fu"><a href="reference/plot3d_split.html">nlscan_split</a></span><span class="op">(</span><span class="va">neurons.flow</span>, WithConnectors <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="data" class="section level2">
 <h2 class="hasAnchor">
@@ -204,8 +204,8 @@ split <span class="op">=</span> <span class="st">"distance"</span><span class="o
 <a href="#acknowledging-the-tools" class="anchor"></a>Acknowledging the tools</h2>
 <p>neuPrint comprises a set of tools for loading and analyzing connectome data into a Neo4j database. Analyze and explore connectome data stored in Neo4j using the neuPrint ecosystem: <a href="https://github.com/connectome-neuprint/neuPrintHTTP">neuPrintHTTP</a>, <a href="https://github.com/connectome-neuprint/neuPrintExplorer">neuPrintExplorer</a>, <a href="https://github.com/connectome-neuprint/neuprint-python">Python API</a>.</p>
 <p>This package was created by <a href="https://scholar.google.com/citations?user=BOVTiXIAAAAJ&amp;hl=en">Alexander Shakeel Bates</a> and <a href="https://en.wikipedia.org/wiki/Gregory_Jefferis">Gregory Jefferis</a>. You can cite this package as:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/utils/citation.html">citation</a></span><span class="op">(</span>package <span class="op">=</span> <span class="st">"hemibrainr"</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/citation.html">citation</a></span><span class="op">(</span>package <span class="op">=</span> <span class="st">"hemibrainr"</span><span class="op">)</span></code></pre></div>
 <p><strong>Bates AS, Jefferis GSXE</strong> (2020). <em>hemibrainr: Code for working with data from Janelia FlyEM’s hemibrain project.</em> <strong>R package</strong> version 0.1.0. <a href="https://github.com/flyconnectome/hemibrainr" class="uri">https://github.com/flyconnectome/hemibrainr</a></p>
 </div>
 </div>
