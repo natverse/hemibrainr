@@ -195,10 +195,10 @@ generate_update = function(data = NULL,
   if (typeof(data$update$Z) == "character") {
     data$update$Z = as.integer(data$update$Z)
   }
-  data$update$soma.checked = FALSE
-  data$update$unfixed = FALSE
-  data$update$wrong.cbf = FALSE
-  data$update$soma.edit = FALSE
+#  data$update$soma.checked = FALSE
+#  data$update$unfixed = FALSE
+#  data$update$wrong.cbf = FALSE
+#  data$update$soma.edit = FALSE
   # fix data types
   data$update$position = as.integer(data$update$position)
   data$update$X = as.integer(data$update$X)
@@ -335,7 +335,7 @@ correct_singles <- function(data = NULL,
         WithNodes = FALSE
       )
       plot3d(data$brain, col = "grey70", alpha = 0.1)
-      plot3d_somas(n)
+      spheres3d(data$gs[data$gs$bodyid == n$bodyid,c('X','Y','Z')], radius = 300, col = 'green')
       fix = hemibrain_choice(prompt = "Does the soma need fixing? Current possition in Green, if present. yes|no ")
       if (isTRUE(fix)) {
         make.selection = TRUE
@@ -434,14 +434,14 @@ correct_singles <- function(data = NULL,
             sug_correct = hemibrain_choice(prompt = "Is the sugested soma possition correct? yes|no ")
             if (isTRUE(sug_correct)) {
               # reroot neuron
-              y = reroot_from_suggestion(n, sugestion)
+              # y = reroot_from_suggestion(n, sugestion)
 
-              N_all[[toString(n$bodyid)]] = y
+              # N_all[[toString(n$bodyid)]] = y
               # update the values in update with the ones from the neuron list
-              data$update[which(data$update$bodyid == n$bodyid),]$position = n$soma
-              data$update[which(data$update$bodyid == n$bodyid),]$X = n$d[n$soma,]$X
-              data$update[which(data$update$bodyid == n$bodyid),]$Y = n$d[n$soma,]$Y
-              data$update[which(data$update$bodyid == n$bodyid),]$Z = n$d[n$soma,]$Z
+              data$update[which(data$update$bodyid == n$bodyid),]$position = sugestion$ind
+              data$update[which(data$update$bodyid == n$bodyid),]$X = sugestion$X
+              data$update[which(data$update$bodyid == n$bodyid),]$Y = sugestion$Y
+              data$update[which(data$update$bodyid == n$bodyid),]$Z = sugestion$Z
               data$update[which(data$update$bodyid == n$bodyid),]$soma.edit = "TRUE"
 
               make.selection = FALSE
@@ -494,19 +494,19 @@ correct_singles <- function(data = NULL,
             spheres3d(selected.point,
                       radius = 300,
                       col = 'blue')
-            plot3d_somas(n)
+            spheres3d(data$gs[data$gs$bodyid == n$bodyid,c('X','Y','Z')], radius = 300, col = 'green')
             make.selection = !hemibrain_choice(prompt = c(
               "Happy with selection? (old soma in Green, new soma in Blue) yes/no "
             ))
             # reroot neuron
-            y = reroot_from_selection(n, selection)
-            N_all[[toString(n$bodyid)]] = y
+            # y = reroot_from_selection(n, selection)
+            # N_all[[toString(n$bodyid)]] = y
 
             # update the values in update with the ones from the neuron list
-            data$update[which(data$update$bodyid == n$bodyid),]$position = n$soma
-            data$update[which(data$update$bodyid == n$bodyid),]$X = n$d[n$soma,]$X
-            data$update[which(data$update$bodyid == n$bodyid),]$Y = n$d[n$soma,]$Y
-            data$update[which(data$update$bodyid == n$bodyid),]$Z = n$d[n$soma,]$Z
+            data$update[which(data$update$bodyid == n$bodyid),]$position = which(selected == TRUE)
+            data$update[which(data$update$bodyid == n$bodyid),]$X = selected.point["X"]
+            data$update[which(data$update$bodyid == n$bodyid),]$Y = selected.point["Y"]
+            data$update[which(data$update$bodyid == n$bodyid),]$Z = selected.point["Z"]
             data$update[which(data$update$bodyid == n$bodyid),]$soma.edit = "TRUE"
 
           }
@@ -515,7 +515,9 @@ correct_singles <- function(data = NULL,
     }
     clear3d()
     plot3d(N_all, WithConnectors = FALSE, WithNodes = FALSE)
-    plot3d_somas(N_all)
+
+    spheres3d(data$update[,c('X','Y','Z')], radius = 300, col = 'green')
+
     correcting = !hemibrain_choice(prompt = c(
       "Final check, are you happy with the new soma possitions? yes/no "
     ))
@@ -630,8 +632,8 @@ correct_DBSCAN = function(data = NULL) {
       somas = data$gs_somas
 
       #
-      noise = as.data.frame(somas[which(data$db$cluster == 0), ])
-      if (length(ncol(noise)) == 1) {
+      noise = somas[which(data$db$cluster == 0), ]
+      if (ncol(noise) == 1) {
         noise = t(noise)
       }
       somas = as.data.frame(somas[which(data$db$cluster == 1), ])
@@ -915,7 +917,8 @@ correct_gsheet = function(data = NULL) {
         clear3d()
         plot3d(data$brain, col = "grey70", alpha = 0.1)
         plot3d(data$neurons, col = "grey70")
-        spheres3d(data$gs_somas, radius = 300, col = 'blue')
+        spheres3d(somas, radius = 300, col = 'blue')
+        spheres3d(noise, radius = 300, col = 'red')
         cluster_correct = hemibrain_choice(
           prompt = c(
             "Double check: Has dbscan identified the correct soma cluster (in blue) yes|no "
