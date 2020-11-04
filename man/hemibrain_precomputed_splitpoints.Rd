@@ -9,7 +9,7 @@
 \alias{hemibrain_splitpoints_polypre_centrifugal_synapses}
 \title{Axon-dendrite split points calculated for all hemibrain neurons}
 \format{
-An object of class \code{data.frame} with 792075 rows and 6 columns.
+An object of class \code{data.frame} with 793749 rows and 18 columns.
 
 An object of class \code{data.frame} with 794165 rows and 7 columns.
 
