@@ -468,8 +468,6 @@ remove_unused_filehash <- function(path){
   }
 }
 
-
-
 # Skeletonise neurons in parallel from a folder of obj files
 skeletor_batch <- function(obj, swc, numCores = 1, max.file.size = 1000000000, ...){
   if(dir.exists(obj[1])){
@@ -491,7 +489,7 @@ skeletor_batch <- function(obj, swc, numCores = 1, max.file.size = 1000000000, .
       skels},
       error = function(e){
         cat(as.character(e))
-        message(paste(fw.ids,collapse=","))
+        message(paste(neuron.ids,collapse=","))
         NULL
       })
   }
