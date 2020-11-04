@@ -518,11 +518,18 @@ update.neuronlistfh <- function(x, rds, ...){
   data = file.path(dirname(rds),"data")
   if(file.exists(rds)){
     old.neurons = nat::read.neuronlistfh(rds)
-    x = union(old.neurons, x)
-    x = nat::as.neuronlist(x)
+    if(!is.null(attr(old.neurons,"df"))){
+      old.neurons = old.neurons[!sapply(old.neurons, function(x) isFALSE(x))]
+      old.neurons = old.neurons[setdiff(names(old.neurons),names(x))]
+      x = nat:::union.neuronlist(old.neurons, x)
+    }
   }
-  given.neurons = nat::as.neuronlistfh(x, dbdir= data, WriteObjects = "missing", ...)
-  nat::write.neuronlistfh(given.neurons, file=rds, overwrite=TRUE, ...)
+  if(nat::is.neuronlist(x)){
+    given.neurons = nat::as.neuronlistfh(x, dbdir= data, WriteObjects = "missing", ...)
+    nat::write.neuronlistfh(given.neurons, file=rds, overwrite=TRUE, ...)
+  }else{
+    warning("Could not create neuronlistfh object")
+  }
 }
 
 
