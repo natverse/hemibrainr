@@ -65,7 +65,7 @@ hemibrain_adjust_saved_somas = function(bodyids = NULL,
   gs[which(gs$cbf == "unknown"),]$clusters = as.integer(gs[which(gs$cbf == "unknown"),]$clusters)
   # sometimes bodyids are a character with a psace in front, so fix
   gs$bodyid = trimws(gs$bodyid)
-  gs$unfixed = trimws(gs$unfixed)
+  gs$fixed = trimws(gs$fixed)
   gs$position = as.integer(gs$position)
   gs$X = as.integer(gs$X)
   gs$Y = as.integer(gs$Y)
@@ -105,7 +105,7 @@ hemibrain_adjust_saved_somas = function(bodyids = NULL,
       batch_size =
         must_be(prompt =  "How many of these would you like to have a look at? ",
                 answers = c(1:length(
-                  which(data$gs$unfixed == TRUE & data$gs$soma.checked == TRUE)
+                  which(data$gs$fixed == FALSE & data$gs$soma.checked == TRUE)
                 )))
       data$bodyids = gs[which(data$gs$init == ini),]$bodyid[1:as.integer(batch_size)]
     }
@@ -362,22 +362,22 @@ correct_singles <- function(data = NULL,
           )
           message("passing neuron, and adding note...")
           if (ans == "n") {
-            data$update[which(data$update$bodyid == n$bodyid),]$unfixed = "No Soma"
+            data$update[which(data$update$bodyid == n$bodyid),]$fixed = "No Soma"
           } else if (ans == "b") {
-            data$update[which(data$update$bodyid == n$bodyid),]$unfixed = "Bilateral"
+            data$update[which(data$update$bodyid == n$bodyid),]$fixed = "Bilateral"
           } else if (ans == "f") {
-            data$update[which(data$update$bodyid == n$bodyid),]$unfixed = "Fragment"
+            data$update[which(data$update$bodyid == n$bodyid),]$fixed = "Fragment"
           } else if (ans == "w") {
-            data$update[which(data$update$bodyid == n$bodyid),]$unfixed = "Weird"
+            data$update[which(data$update$bodyid == n$bodyid),]$fixed = "Weird"
           } else if (ans == "t") {
-            data$update[which(data$update$bodyid == n$bodyid),]$unfixed = "Truncated"
+            data$update[which(data$update$bodyid == n$bodyid),]$fixed = "Truncated"
           }
           make.selection = FALSE
           next
         } else {
           soma = hemibrain_choice(prompt = "Is only a tract to the soma visible? yes|no")
           if (isTRUE(soma)) {
-            data$update[which(data$update$bodyid == n$bodyid),]$unfixed = "Tract"
+            data$update[which(data$update$bodyid == n$bodyid),]$fixed = "Tract"
           }
         }
 
@@ -386,7 +386,7 @@ correct_singles <- function(data = NULL,
         if (is.null(data$db)) {
           message("creating a global DBSCAN clustering...")
           data$db = dbscan::dbscan(x = data$gs[which(data$gs$soma.checked == TRUE &
-                                                       data$gs$unfixed == FALSE), c("X", "Y", "Z")],
+                                                       data$gs$fixed == TRUE), c("X", "Y", "Z")],
                                    eps = data$eps,
                                    minPts = 3)
         }
@@ -815,7 +815,7 @@ correct_gsheet = function(data = NULL) {
         " somas have been labelled as noise, making a note, and move on. It's over for us"
       )
       ###
-      data$update$unfixed = "TRUE"
+      data$update$fixed = "FALSE"
       data$update$soma.checked = "TRUE"
     } else if (unique(data$db$cluster) == 1) {
       message("all neurons seem to have a labelled soma, and form a single cluster. Good times")
@@ -858,7 +858,7 @@ correct_gsheet = function(data = NULL) {
       }
       if (!isTRUE(cluster_correct)) {
         ### note that the cluster is "wrong" - label all as noise
-        data$update$unfixed = "TRUE"
+        data$update$fixed = "FALSE"
         data$update$soma.checked = "TRUE"
       } else {
         data$update$soma.checked = "TRUE"
@@ -930,7 +930,7 @@ correct_gsheet = function(data = NULL) {
       if (isTRUE(cluster_correct)) {
         if (length(nrow(noise)) > 0) {
           ### mark relevant somas as noise
-          data$update$unfixed[data$db$cluster == 0] = "TRUE"
+          data$update$fixed[data$db$cluster == 0] = "FALSE"
         }
         data$update$soma.checked = "TRUE"
       }
@@ -1021,7 +1021,7 @@ correct_gsheet = function(data = NULL) {
       if ("n" %in% clusters) {
         # if no single cluster contains just somas
         data$update$soma.checked = "TRUE"
-        data$update$unfixed = "TRUE"
+        data$update$fixed = "FALSE"
         # note all as noise
       } else {
         # note the remainder as noise
@@ -1030,7 +1030,7 @@ correct_gsheet = function(data = NULL) {
                     !(data$db$cluster %in% clusters)
                   ),
                   " as unfixed.")))
-        data$update$unfixed[!(data$db$cluster %in% clusters)] = "TRUE"
+        data$update$fixed[!(data$db$cluster %in% clusters)] = "FALSE"
         data$update$soma.checked = "TRUE"
       }
     }
@@ -1068,7 +1068,7 @@ check_coord_nans = function(gs = NULL, selected_file = NULL) {
       curr$soma.edit = as.logical(curr$soma.edit)
       curr$soma.checked = as.logical(curr$soma.checked)
       curr$wrong.cbf = as.logical(curr$wrong.cbf)
-      curr$unfixed = as.logical(curr$unfixed)
+      curr$fixed = as.logical(curr$fixed)
       # update gs
       gs[i, ] = curr
       # write to gs
