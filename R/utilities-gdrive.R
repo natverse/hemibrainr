@@ -1,15 +1,17 @@
 # Gooogle drive based utilities
 
 # google upload neuronlistfh
-## x is a neuronlist of a path to folder with saved neuronlistfh
+## x is a neuronlist or a path to folder with saved neuronlistfh
 googledrive_upload_neuronlistfh <- function(x,
                                             clean = FALSE,
                                             team_drive = hemibrainr_team_drive(),
                                             file_name = "neurons.rds",
                                             folder = "flywire_neurons",
                                             subfolder = NULL,
+                                            WriteObjects = c("missing","yes"),
                                             numCores = 1){
   # don't exhaust rate limit
+  WriteObjects = match.arg(WriteObjects)
   numCores = ifelse(numCores>10,10,numCores)
 
   # Get drive
@@ -36,7 +38,7 @@ googledrive_upload_neuronlistfh <- function(x,
   # Save locally
   if(nat::is.neuronlist(x)){
     temp = tempfile()
-    temp.data = paste0(temp,"/data")
+    temp.data = file.path(temp,"data")
     dir.create(temp.data)
     on.exit(unlink(temp, recursive=TRUE))
     temp.rds = paste0(temp,"/",file_name)
@@ -44,7 +46,7 @@ googledrive_upload_neuronlistfh <- function(x,
     nat::write.neuronlistfh(nl, file= temp.rds, overwrite=TRUE)
     local.path = NULL
   }else{
-    temp.data = paste0(x,"data")
+    temp.data = file.path(x,"data")
     temp.rds = list.files(x, pattern = ".rds$", full.names =TRUE)
     message("data folder: ", temp.data)
     message(".rds files: ", paste(temp.rds,collapse=", "))
@@ -54,8 +56,10 @@ googledrive_upload_neuronlistfh <- function(x,
   # upload
   t.list.master = list.files(temp.data,full.names = TRUE)
   error.files = upload = c()
-  sub.data = googledrive::drive_ls(path = t.folder.data, team_drive = td)
-  t.list.master = t.list.master[basename(t.list.master) %in% sub.data$name]
+  if(WriteObjects=="missing"){
+    sub.data = googledrive::drive_ls(path = t.folder.data, team_drive = td)
+    t.list.master = t.list.master[! basename(t.list.master) %in% sub.data$name]
+  }
   if(numCores>1){
     batch = 1
     batches = split(t.list.master, round(seq(from = 1, to = numCores, length.out = length(t.list.master))))
@@ -64,17 +68,15 @@ googledrive_upload_neuronlistfh <- function(x,
       for(t.neuron.fh.data.file in t.list){
         t = basename(t.neuron.fh.data.file)
         save.data =  t.folder.data
-        upload = tryCatch(gsheet_manipulation(googledrive::drive_upload,
+        upload = tryCatch({gsheet_manipulation(googledrive::drive_upload,
                                               media = t.neuron.fh.data.file,
                                               path = save.data,
-                                              verbose = FALSE),
+                                              verbose = FALSE)},
                             error = function(e){
                             cat(as.character(e))
+                            error.files <<- c(error.files,t.neuron.fh.data.file)
                             NA
                             } )
-        if(is.na(upload)){
-          error.files = c(error.files,t.neuron.fh.data.file)
-        }
       }
     }
   }else{
@@ -85,17 +87,15 @@ googledrive_upload_neuronlistfh <- function(x,
       pb$tick()
       t = basename(t.neuron.fh.data.file)
       save.data =  t.folder.data
-      upload = tryCatch(gsheet_manipulation(googledrive::drive_upload,
-                                            media = t.neuron.fh.data.file,
-                                            path = save.data,
-                                            verbose = FALSE),
-                          error = function(e){
-                            cat(as.character(e))
-                            NA
-                          } )
-      if(is.na(upload)){
-        error.files = c(error.files,t.neuron.fh.data.file)
-      }
+      upload = tryCatch({gsheet_manipulation(googledrive::drive_upload,
+                                             media = t.neuron.fh.data.file,
+                                             path = save.data,
+                                             verbose = FALSE)},
+                        error = function(e){
+                          cat(as.character(e))
+                          error.files <<- c(error.files,t.neuron.fh.data.file)
+                          NA
+                        } )
     }
   }
   if(length(error.files)){

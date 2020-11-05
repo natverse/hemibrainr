@@ -23,7 +23,7 @@ hemibrain_matching(
   selected_file = options()$hemibrainr_matching_gsheet,
   batch_size = 10,
   db = hemibrain_neurons(),
-  match.type = c("FAFB", "LM"),
+  repository = c("CATMAID", "flywire", "LM"),
   query = NULL,
   overwrite = FALSE
 )
@@ -78,11 +78,10 @@ include neurons with 'tract' and 'none' values in the match column of our Google
 \item{hemibrain.nblast}{a FAFB (rows) - hemibrain (columns) normalised
 NBLAST matrix. By default this is read from the flyconnectome Team Drive.}
 
-\item{match.type}{whether to match up FAFB skeletons (\code{"EM"}) or light level
+\item{repository}{whether to match up FAFB skeletons from
+CATMAID (using \code{catmaid::read.neurons.catmaid}) or flywire (using \code{flywire_neurons}) for matching. Alternatively,light level
 skeletons  (\code{"LM"}) from Dolan et al. and Frechter et al. 2019 (eLife), stored in the package \code{lhns} as
 \code{most.lhns}.}
-
-\item{repository}{whether to read CATMAID (using \code{catmaid::read.neurons.catmaid}) or flywire neurons (using \code{flywire_neurons}) for matching.}
 }
 \description{
 Match up neurons between the hemibrain, FAFB and light level data and save the

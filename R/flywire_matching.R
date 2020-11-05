@@ -23,7 +23,7 @@ flywire_matching_rewrite <- function(flywire.ids = names(flywire_neurons()),
     simp = nat::nlapply(cat,nat::simplify_neuron,n=1, .parallel = TRUE, OmitFailures = TRUE)
     branchpoints = sapply(simp, function(y) nat::xyzmatrix(y)[ifelse(length(nat::branchpoints(y)),nat::branchpoints(y),max(nat::endpoints(y))),])
     branchpoints = t(branchpoints)
-    FAFB.xyz = apply(branchpoints, 1, paste, collapse = ",")
+    FAFB.xyz = apply(branchpoints, 1, paste, collapse = ";")
 
     # Get FlyWire voxel coordinates
     branchpoints.flywire = nat.templatebrains::xform_brain(branchpoints, reference = "FlyWire", sample = "FAFB14", .parallel = TRUE, verbose = TRUE)
@@ -59,10 +59,10 @@ flywire_matching_rewrite <- function(flywire.ids = names(flywire_neurons()),
 
   ## Read the LM Google Sheet
   lmg = hemibrain_match_sheet(sheet = "lm", selected_file = selected_file)
-  orig = lmg$flywire.match
-  lmg$flywire.match = fg$flywire.xyz[match(lmg$bodyid,fg$hemibrain.match)]
-  different = paste(orig)!=paste(lmg$flywire.match)
-  lmg$flywire.match = fg$flywire.xyz[match(lmg$id,fg$LM.match)]
+  orig = lmg$flywire.xyz
+  lmg$flywire.xyz = fg$flywire.xyz[match(lmg$bodyid,fg$hemibrain.match)]
+  different = paste(orig)!=paste(lmg$flywire.xyz)
+  lmg$flywire.xyz = fg$flywire.xyz[match(lmg$id,fg$LM.match)]
   update_gsheet(update = lmg[different,],
                   gs = lmg,
                   tab = "LM",
@@ -71,9 +71,9 @@ flywire_matching_rewrite <- function(flywire.ids = names(flywire_neurons()),
 
   ## Read the hemibrain Google Sheet
   hg = hemibrain_match_sheet(sheet = "hemibrain", selected_file = selected_file)
-  orig = hg$flywire.match
-  hg$flywire.match = fg$flywire.xyz[match(hg$bodyid,fg$hemibrain.match)]
-  different = paste(orig)!=paste(hg$flywire.match)
+  orig = hg$flywire.xyz
+  hg$flywire.xyz = fg$flywire.xyz[match(hg$bodyid,fg$hemibrain.match)]
+  different = paste(orig)!=paste(hg$flywire.xyz)
   update_gsheet(update = hg[different,],
                   gs = hg,
                   tab = "hemibrain",
@@ -149,7 +149,7 @@ LR_matching <- function(ids = NULL,
   print(table(gs[[quality.field]]))
   # choose user
   message("Users: ", paste(unique(gs$User),collapse = " "))
-  initials = must_be("Choose a user : ", answers = unique(gs$User))
+  initials = must_be("Choose a user : ", answers = sort(unique(gs$User)))
   say_hello(initials)
   rgl::bg3d("white")
   # choose ids

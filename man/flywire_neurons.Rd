@@ -9,16 +9,15 @@
 \usage{
 flywire_neurons(
   local = FALSE,
-  brain = c("FlyWire", "JRCFIB2018F", "JRCFIB2018F", "FAFB", "JFRC2", "JRC2018F",
-    "FCWB"),
+  brain = c("FlyWire", "JRCFIB2018Fraw", "JRCFIB2018F", "FAFB", "FAFB14", "JFRC2",
+    "JFRC2013", "JRC2018F", "FCWB"),
   mirror = FALSE,
   ...
 )
 
 flywire_neurons_update(
   x,
-  brain = c("FlyWire", "JRCFIB2018F", "JRCFIB2018F", "FAFB", "JFRC2", "JRC2018F",
-    "FCWB"),
+  brain = c("FlyWire", "JRCFIB2018F", "FAFB", "JFRC2", "JFRC2013", "JRC2018F", "FCWB"),
   mirror = FALSE,
   ...
 )

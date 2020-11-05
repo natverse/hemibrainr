@@ -45,12 +45,16 @@
 #'@importFrom utils download.file
 #'@importFrom googledrive drive_ls as_id
 flywire_neurons <- function(local = FALSE,
-                            brain = c("FlyWire", "JRCFIB2018F","JRCFIB2018F","FAFB","JFRC2","JRC2018F","FCWB"),
+                            brain = c("FlyWire", "JRCFIB2018Fraw","JRCFIB2018F","FAFB","FAFB14","JFRC2", "JFRC2013","JRC2018F","FCWB"),
                             mirror = FALSE,
                             ...){
   brain = match.arg(brain)
   if(brain == "JRCFIB2018Fraw"){
-   scale = TRUE
+    brain = "JRCFIB2018F"
+    scale = TRUE
+  }else if (brain %in% c("FAFB","FAFB14")){
+    brain = "FlyWire"
+    scale = FALSE
   }else{
     scale = FALSE
   }
@@ -85,7 +89,7 @@ flywire_neurons <- function(local = FALSE,
 #' @rdname flywire_neurons
 #' @export
 flywire_neurons_update <- function(x,
-                                brain = c("FlyWire", "JRCFIB2018F","JRCFIB2018F","FAFB","JFRC2","JRC2018F","FCWB"),
+                                brain = c("FlyWire", "JRCFIB2018F","FAFB","JFRC2", "JFRC2013", "JRC2018F","FCWB"),
                                 mirror = FALSE,
                                 ...){
   if(!requireNamespace("fafbseg", quietly = TRUE)) {
@@ -128,10 +132,10 @@ flywire_neurons_update <- function(x,
 
   # Save
   googledrive_upload_neuronlistfh(z,
-                                               team_drive = hemibrainr_team_drive(),
-                                               file_name = sprintf("flywire_neurons_%s%s.rds", brain, flip),
-                                               folder = "flywire_neurons",
-                                               subfolder = brain)
+                                  team_drive = hemibrainr_team_drive(),
+                                  file_name = sprintf("flywire_neurons_%s%s.rds", brain, flip),
+                                  folder = "flywire_neurons",
+                                  subfolder = brain)
 }
 
 #' @rdname flywire_neurons

@@ -237,7 +237,7 @@
 #' returning one or more clusters of actual soma positions, and a cluster of ‘noise’ positions which do not fit any cluster.
 #' The user can then choose to manually fix either the noise somas, or the entire cluster, or subset of clusters if multiple potential soma clusters are returned.
 #'
-#' In the instance a manual error has been made when labeling a soma position, the somas can be fixed using:
+#' In the instance a manual error has been made when labelling a soma position, the somas can be fixed using:
 #'
 #' \code{hemibrainr::adjust_saved_somas(bodyid = #####)}
 #'

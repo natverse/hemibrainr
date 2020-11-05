@@ -31,14 +31,14 @@
 #'   go.
 #' @param db Either a neuronlist or the name of a character vector naming a
 #'   neuronlist. Defaults to the value of \code{\link{hemibrain_neurons}()}.
-#' @param match.type whether to match up FAFB skeletons (\code{"EM"}) or light level
+#' @param repository whether to match up FAFB skeletons from
+#' CATMAID (using \code{catmaid::read.neurons.catmaid}) or flywire (using \code{flywire_neurons}) for matching. Alternatively,light level
 #' skeletons  (\code{"LM"}) from Dolan et al. and Frechter et al. 2019 (eLife), stored in the package \code{lhns} as
 #' \code{most.lhns}.
 #' @param query a neuronlist of light level neurons to match against. Should correspond to the given NBLAST matrix.
 #' Defaults to reading a transformed \code{most.lhns} from the Hemibrain Google Team Drive.
 #' @param overwrite logical, whether or not to overwrite matches already made. However, if set to 'none' then the pipeline will
 #' include neurons with 'tract' and 'none' values in the match column of our Google sheet, i.e. will help you overwrite non-matches.
-#' @param repository whether to read CATMAID (using \code{catmaid::read.neurons.catmaid}) or flywire neurons (using \code{flywire_neurons}) for matching.
 #'
 #' @details Currently, the
 #'   \href{https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit#gid=0}{Google
@@ -81,10 +81,10 @@ hemibrain_matching <- function(ids = NULL,
                          selected_file = options()$hemibrainr_matching_gsheet,
                          batch_size = 10,
                          db=hemibrain_neurons(), # brain="FAFB"
-                         match.type = c("FAFB", "LM"),
+                         repository = c("CATMAID", "flywire", "LM"),
                          query = NULL,
                          overwrite = FALSE){
-  match.type = match.arg(match.type)
+  repository = match.arg(repository)
   if(!requireNamespace("nat.jrcbrains", quietly = TRUE)) {
     stop("Please install nat.jrcbrains using:\n", call. = FALSE,
          "remotes::install_github('natverse/nat.jrcbrains')")
@@ -106,18 +106,27 @@ hemibrain_matching <- function(ids = NULL,
           #######################Colours#######################
           ")
   ## Get NBLAST
-  if(is.null(hemibrain.nblast) & match.type =="FAFB"){
-      hemibrain.nblast  = hemibrain_nblast('hemibrain-fafb14')
+  if(is.null(hemibrain.nblast) & repository == "CATMAID"){
+    hemibrain.nblast = hemibrain_nblast("hemibrain-fafb14")
   }
-  if(is.null(hemibrain.nblast) & match.type =="LM"){
+  if(is.null(hemibrain.nblast) & repository == "flywire"){
+    hemibrain.nblast = t(hemibrain_nblast("hemibrain-flywire"))
+  }
+  if(is.null(hemibrain.nblast) & repository =="LM"){
     hemibrain.lhns.mean.compressed=NULL
     matname="hemibrain.lhns.mean.compressed"
-      message("Loading LM-FIB NBLAST ", matname,
-              " from hemibrain Google Team Drive using Google Filestream: ")
-      load(sprintf("/Volumes/GoogleDrive/Shared\ drives/hemibrain/hemibrain_nblast/%s.rda", matname))
-      hemibrain.nblast = get(matname)
-      hemibrain.nblast = t(hemibrain.nblast)
-      rm("hemibrain.lhns.mean.compressed")
+    message("Loading LM-FIB NBLAST ", matname,
+            " from hemibrain Google Team Drive using Google Filestream: ")
+    load(sprintf("/Volumes/GoogleDrive/Shared\ drives/hemibrain/hemibrain_nblast/%s.rda", matname))
+    hemibrain.nblast = get(matname)
+    hemibrain.nblast = t(hemibrain.nblast)
+    rm("hemibrain.lhns.mean.compressed")
+  }
+  # FlyWire or CATMAID?
+  if(repository=="FAFB"){
+    id = "skid"
+  }else{
+    id = "flywire.id"
   }
   # Read the Google Sheet
   gs = hemibrain_match_sheet(sheet = "hemibrain", selected_file = selected_file)
@@ -133,20 +142,30 @@ hemibrain_matching <- function(ids = NULL,
   } else if(is.character(db)) {
     db=tryCatch(get(db), error=function(e) stop("Unable to find neuronlist: ", db))
   }
-  if(match.type=="LM" & is.null(query)){
+  if(repository=="LM" & is.null(query)){
     fafb = hemibrain_lm_lhns(brainspace = c("JRCFIB2018F"))
-  }else if(match.type=="LM"){
+  }else if(repository=="LM"){
     fafb = query
   }
   # How much is done?
-  match.field = paste0(match.type,".match")
-  quality.field = paste0(match.type,".match.quality")
+  match.field = if(repository=="CATMAID"){
+    "FAFB.match"
+  }else if(repository == "flywire"){
+    "flywire.xyz"
+  }else{
+    paste0(repository,".match")
+  }
+  quality.field = if(repository%in%c("CATMAID","flywire")){
+    "FAFB.match.quality"
+  }else{
+    paste0(repository,".match.quality")
+  }
   done = subset(gs, !is.na(gs[[match.field]]))
   message("Neuron matches: ", nrow(done))
   print(table(gs[[quality.field]]))
   # Choose user
   message("Users: ", paste(unique(gs$User),collapse = " "))
-  initials = must_be("Choose a user : ", answers = unique(gs$User))
+  initials = must_be("Choose a user : ", answers = sort(unique(gs$User)))
   say_hello(initials)
   rgl::bg3d("white")
   # choose ids
@@ -162,7 +181,7 @@ hemibrain_matching <- function(ids = NULL,
   meta = meta[order(meta$type),]
   meta = subset(meta, meta$bodyid%in%ids)
   # choose brain
-  if(match.type=="FAFB"){
+  if(repository%in%c("flywire","CATMAID")){
     brain = elmr::FAFB14.surf
   }else{
     brain = hemibrainr::hemibrain_microns.surf
@@ -186,9 +205,6 @@ hemibrain_matching <- function(ids = NULL,
     if(n%in%donotdo$bodyid | !n%in%unlist(dimnames(hemibrain.nblast))){
       next
     }
-    # Plot brain
-    rgl::clear3d()
-    plot3d(brain, alpha = 0.1, col ="grey")
     # Read hemibrain neuron
     if(is.null(db)){
       lhn  = neuprintr::neuprint_read_neurons(n, all_segments = TRUE, heal = FALSE)
@@ -200,14 +216,14 @@ hemibrain_matching <- function(ids = NULL,
         nat::as.neuronlist(neuprintr::neuprint_read_neurons(n, all_segments = TRUE, heal = FALSE))
         })
       lhn = scale_neurons.neuronlist(lhn, scaling = (8/1000))
-      lhn = suppressWarnings(nat.templatebrains::xform_brain(lhn, reference = "FAFB14", sample = "JRCFIB2018F"))
+      lhn = suppressWarnings(java_xform_brain(lhn, reference = "FAFB14", sample = "JRCFIB2018F"))
     }
     # Transform hemibrain neuron to FAFB space
     message("Hemibrain body ID: ", lhn[n,"bodyid"])
     message("Hemibrain-assigned cell type : ",lhn[n,"type"])
     # Read top 10 FAFB matches
-    if(match.type=="FAFB"){
-      message(sprintf("Reading the top %s FAFB matches",batch_size))
+    if(repository=="CATMAID"){
+      message(sprintf("Reading the top %s FAFB matches from CATMAID",batch_size))
       r = tryCatch(sort(hemibrain.nblast[,as.character(n)],decreasing = TRUE), error = function(e) NULL)
       if(is.null(r)){
         r = tryCatch(sort(hemibrain.nblast[as.character(n),],decreasing = TRUE), error = function(e) NULL)
@@ -218,13 +234,37 @@ hemibrain_matching <- function(ids = NULL,
       }
       fafb = catmaid::read.neurons.catmaid(names(r)[1:batch_size], OmitFailures = TRUE)
       j = batch_size
+    }else if(repository=="flywire"){
+      message(sprintf("Reading the top %s FAFB matches from flywire",batch_size))
+      r = tryCatch(sort(hemibrain.nblast[,as.character(n)],decreasing = TRUE), error = function(e) NULL)
+      if(is.null(r)){
+        r = tryCatch(sort(hemibrain.nblast[as.character(n),],decreasing = TRUE), error = function(e) NULL)
+      }
+      if(is.null(r)){
+        message(n, " not in NBLAST matrix, skipping ...")
+        next
+      }
+      fafb = tryCatch(flywire_neurons(), error = function(e) NULL)
+      if(is.null(fafb)){
+        message("Flywire skeletons not found on drive, using fafbseg::skeletor ...")
+        fafbseg::choose_segmentation("flywire")
+        fafb = fafbseg::skeletor(names(r)[1:batch_size])
+        fafb = flywire_basics(fafb)
+        flywire.good = FALSE
+      }else{
+        flywire.good = TRUE
+      }
+      j = batch_size
     }else{
       r = sort(hemibrain.nblast[,n],decreasing = TRUE)
       j = length(fafb)
     }
-    plot3d(lhn[n], lwd = 2, soma = TRUE, col = "black")
     sel = c("go","for","it")
     k = 1
+    # Plot brain
+    rgl::clear3d()
+    plot3d(brain, alpha = 0.1, col ="grey")
+    plot3d(lhn[n], lwd = 2, soma = TRUE, col = "black")
     # Cycle through potential matches
     while(length(sel)>1){
       sel = sel.orig = nat::nlscan(fafb[names(r)[1:j]], col = "red", lwd = 2, soma = TRUE)
@@ -245,18 +285,32 @@ hemibrain_matching <- function(ids = NULL,
       }
       if(!prog){
         sel = c("go","for","it")
-        if(match.type=="FAFB"){
-          prog = hemibrain_choice(sprintf("Do you want to read %s more neurons from CATMAID? ", batch_size))
-          if(prog){
-            k = j
-            j = j + batch_size
-            fafb = nat::union(fafb, catmaid::read.neurons.catmaid(names(r)[(k+1):j]), OmitFailures = TRUE)
+        prog = hemibrain_choice(sprintf("Do you want to read %s more FAFB neurons? ", batch_size))
+        if(prog){
+          k = j
+          j = j + batch_size
+          if(repository=="FAFB"){
+          fafb = nat::union(fafb, catmaid::read.neurons.catmaid(names(r)[(k+1):j]), OmitFailures = TRUE)
+          }else if(!flywire.good){
+            fafb = nat::union(fafb, fafbseg::skeletor(names(r)[(k+1):j], OmitFailures = TRUE))
+            fafb = flywire_basics(fafb)
           }
         }
       }
     }
+    if(length(sel) & repository == "flywire"){
+      sel = as.character(sel)
+      if(!is.na(fafb[sel,"flywire.xyz"])){
+        hit = fafb[sel,"flywire.xyz"]
+      }else{
+        fixed = flywire_basics(fafb[sel])
+        hit = fixed[,"flywire.xyz"]
+      }
+    }else{
+      hit = "none"
+    }
+    gs[n,match.field] = hit
     # Assign match and its quality
-    gs[n,match.field] = ifelse(length(sel)==0,'none',sel)
     if(length(sel)){
       rgl::plot3d(fafb[sel],col="blue",lwd=2,soma=TRUE)
       quality = must_be("What is the quality of this match? good(e)/okay(o)/poor(p)/tract-only(t) ", answers = c("e","o","p","t"))
@@ -274,14 +328,9 @@ hemibrain_matching <- function(ids = NULL,
       plot_inspirobot()
       say_encouragement(initials)
       # Read!
-      gs2 = gsheet_manipulation(FUN = googlesheets4::read_sheet,
-                               ss = selected_file,
-                               sheet = "hemibrain",
-                               guess_max = 3000,
-                               return = TRUE)
-      gs2$bodyid = correct_id(gs2$bodyid)
-      rownames(gs2) = gs2$bodyid
-      gs = gs[rownames(gs2),]
+      gs2 = hemibrain_match_sheet(selected_file = selected_file, sheet = "hemibrain")
+      gs2[match(gs[[id]],gs2[[id]]),match.field]=gs[[match.field]]
+      gs2[match(gs[[id]],gs2[[id]]),quality.field]=gs[[quality.field]]
       # Write!
       write_matches(gs=gs,
                  ids = unsaved,
@@ -298,14 +347,9 @@ hemibrain_matching <- function(ids = NULL,
     plot_inspirobot()
     say_encouragement(initials)
     # Read!
-    gs2 = gsheet_manipulation(FUN = googlesheets4::read_sheet,
-                              ss = selected_file,
-                              sheet = "hemibrain",
-                              guess_max = 3000,
-                              return = TRUE)
-    gs2$bodyid = correct_id(gs2$bodyid)
-    rownames(gs2) = gs2$bodyid
-    gs = gs[rownames(gs2),]
+    gs2 = hemibrain_match_sheet(selected_file = selected_file, sheet = "hemibrain")
+    gs2[match(gs[[id]],gs2[[id]]),match.field]=gs[[match.field]]
+    gs2[match(gs[[id]],gs2[[id]]),quality.field]=gs[[quality.field]]
     # Write!
     write_matches(gs=gs,
                   ids = unsaved,
@@ -349,12 +393,6 @@ write_matches <- function(gs,
                                      col_names = FALSE)
   }
 }
-
-# hidden
-correct_id <-function(v){
-  gsub(" ","",v)
-}
-
 
 #' @rdname hemibrain_matching
 #' @export
@@ -428,7 +466,7 @@ lm_matching <- function(ids = NULL,
   print(table(gs[[quality.field]]))
   # Choose user
   message("Users: ", paste(unique(gs$User),collapse = " "))
-  initials = must_be("Choose a user : ", answers = unique(gs$User))
+  initials = must_be("Choose a user : ", answers = sort(unique(gs$User)))
   say_hello(initials)
   rgl::bg3d("white")
   # choose ids
@@ -664,16 +702,7 @@ fafb_matching <- function(ids = NULL,
     id = "flywire.id"
   }
   # Read the Google Sheet
-  gs = gsheet_manipulation(FUN = googlesheets4::read_sheet,
-                           ss = selected_file,
-                           sheet = "FAFB",
-                           guess_max = 3000,
-                           return = TRUE)
-  gs[[id]] = correct_id(gs[[id]])
-  gs = gs[!duplicated(gs[[id]]),]
-  is = gs[[id]]
-  is[is.na(is)] = "0"
-  rownames(gs) = is
+  gs = hemibrain_match_sheet(selected_file = selected_file, sheet = repository)
   gs$User[is.na(gs$User)] = ""
   # Get hemibrain neurons
   if(missing(db)) {
@@ -692,7 +721,7 @@ fafb_matching <- function(ids = NULL,
   print(table(gs[[quality.field]]))
   # Choose user
   message("Users: ", paste(unique(gs$User),collapse = " "))
-  initials = must_be("Choose a user : ", answers = unique(gs$User))
+  initials = must_be("Choose a user : ", answers = sort(unique(gs$User)))
   say_hello(initials)
   rgl::bg3d("white")
   # choose ids

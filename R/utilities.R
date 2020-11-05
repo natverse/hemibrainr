@@ -533,3 +533,9 @@ update.neuronlistfh <- function(x, rds, ...){
 }
 
 
+# hidden
+correct_id <-function(v){
+  gsub(" ","",v)
+}
+
+
