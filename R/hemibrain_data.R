@@ -237,6 +237,14 @@
 #' returning one or more clusters of actual soma positions, and a cluster of ‘noise’ positions which do not fit any cluster.
 #' The user can then choose to manually fix either the noise somas, or the entire cluster, or subset of clusters if multiple potential soma clusters are returned.
 #'
+#' In the instance a manual error has been made when labeling a soma position, the somas can be fixed using:
+#'
+#' \code{hemibrainr::adjust_saved_somas(bodyid = #####)}
+#'
+#' And selecting the neuron method when prompted and run through the pipeline instructions provided.
+#'  When asked if you wish to try using DBSCAN on the neurons sa no. The pipeline will then try
+#'  to suggest a soma position based on a global clustering of those neurons which are already identified as correct.
+#'
 #' @return a \code{data.frame} with the 'best case' root points for each large hemibrain neuron. This is typically the soma, where one has been tagged by the FlyEM project.
 #' However, for many neurons their soma has been truncated and a leaf node on the cell body fiber has been chosen. The columns to this \code{data.frame} denote:
 #' \itemize{
