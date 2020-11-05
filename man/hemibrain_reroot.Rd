@@ -53,14 +53,17 @@ neurons.bs = neuprintr::neuprint_read_neurons(bad.soma)
 neurons = hemibrain_reroot(neurons.bs, meshes = hemibrain.surf)
 
 \dontrun{
-# Let's check that this worked
+# Let's check that this worked. Old root in red, new in green
 nat::nopen3d()
-for(n in neurons){
+for(i in 1:length(neurons)){
+     n = neurons[[i]]
+     bs = neurons.bs[[i]]
      clear3d();
      message(n$bodyid)
      plot3d(n,col="brown",lwd=2)
      points3d(nat::xyzmatrix(n$connectors),col="black")
-     spheres3d(nat::xyzmatrix(n)[nat::rootpoints(n),],radius=500, alpha=0.5)
+     spheres3d(nat::xyzmatrix(n)[nat::rootpoints(n),],radius=500, alpha=0.5, col = "green")
+     spheres3d(nat::xyzmatrix(bs)[nat::rootpoints(bs),],radius=500, alpha=0.5, col = "red")
      p = readline("Done? ")
 }
 }}

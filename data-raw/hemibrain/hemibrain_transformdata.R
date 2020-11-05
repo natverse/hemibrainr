@@ -57,7 +57,7 @@ all.neurons.fafb = as.neuronlistfh(all.neurons.fafb, dbdir= "/net/flystore3/jdat
 write.neuronlistfh(all.neurons.fafb, file="/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/FAFB14/hemibrain_all_neurons_flow_FAFB14.rds", overwrite=TRUE)
 
 # Mirror in FAFB14
-all.neurons.fafb.m = mirror_fafb(all.neurons.fafb, .parallel = FALSE, OmitFailures = TRUE)
+all.neurons.fafb.m = mirror_fafb(all.neurons.fafb, .parallel = TRUE, OmitFailures = TRUE)
 all.neurons.fafb.m = as.neuronlistfh(all.neurons.fafb.m, dbdir= "/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/FAFB14/data", WriteObjects = "yes")
 write.neuronlistfh(all.neurons.fafb.m, file="/net/flystore3/jdata/jdata5/JPeople/Alex/FIBSEM/data/neurons/fibsem/FAFB14/hemibrain_all_neurons_flow_FAFB14_mirrored.rds", overwrite=TRUE)
 

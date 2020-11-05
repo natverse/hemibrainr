@@ -221,13 +221,49 @@
 #' @rdname hemibrain_olfactory_layers
 "hemibrain_olfactory_layers"
 
-#' Soma locations for hemibrain neurons
+#' Soma / best 'root point' locations for hemibrain neurons
 #'
 #' Somas have been manually tagged by the FlyEM project.
 #' However, in some cases the roots are wrong, or somas are outside of the volume. The Fly Connectome team at the University of Cambridge has
-#' manually tagged better root points for these neurons. Soma locations, updated by this work, as saved as \code{\link{hemibrain_somas}} in this package.
+#' manually tagged better root points for these neurons. Soma locations, updated by this work, and saved as \code{hemibrain_somas} in this package.
 #' A user can read somas from here, or get a bleeding edge version from
-#' the \href{https://docs.google.com/spreadsheets/d/1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E/edit#gid=1524900531}{Google Sheet}.
+#' the \href{https://docs.google.com/spreadsheets/d/1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E/edit#gid=1524900531}{Google Sheet}. This information is used
+#' by \code{\link{hemibrain_read_neurons}} to re-root hemibrain neurons read from neuprint.
+#'
+#' @details An interactive root point fixing pipeline \code{\link{hemibrain_adjust_saved_somas}} was used to identify correct and
+#' incorrect soma positions within a group. Specifically, the DBSCAN algorithm is used. All neurons within the hemibrain data set
+#' are either grouped by their CBF, or, when no CBF annotation is available, an all by all NBLAST clustering was done for neurons without a
+#' CBF and this was used to group neurons into similar morphological groups. DBSCAN within one of these groups then clusters the positions of the somas,
+#' returning one or more clusters of actual soma positions, and a cluster of ‘noise’ positions which do not fit any cluster.
+#' The user can then choose to manually fix either the noise somas, or the entire cluster, or subset of clusters if multiple potential soma clusters are returned.
+#'
+#' @return a \code{data.frame} with the 'best case' root points for each large hemibrain neuron. This is typically the soma, where one has been tagged by the FlyEM project.
+#' However, for many neurons their soma has been truncated and a leaf node on the cell body fiber has been chosen. The columns to this \code{data.frame} denote:
+#' \itemize{
+#'
+#'   \item{"bodyid"} { - the unique body ID identifier for a neuron.}
+#'
+#'   \item{"position"}{ - the node ID of the rootpoint. This is
+#'   for the skeleton associated with \code{bodyid}, as read from neuPrint.}
+#'
+#'   \item{"X"}{ - x coordinate for the root point.}
+#'
+#'   \item{"Y"}{ - y coordinate for the root point.}
+#'
+#'   \item{"Z"}{ - z coordinate for the root point.}
+#'
+#'   \item{"soma.edit"}{ - logical. If the soma is 300 voxels away from the soma/root for the naive neuprint skeleton,
+#'   we consider the soma to have been 'edited' for the better.
+#'   I.e. these are the somas that were fixed by
+#'   Cambridge Drosophila Connectomics using \code{\link{hemibrain_adjust_saved_somas}}.}
+#'
+#'   \item{"fixed"}{ - notes if there was a problem identifying the soma, eg, is the neuron only a fragment, or just the tract to the soma is visible.}
+#'
+#'   \item{"cellBodyFiber"}{ - The cell body fiber for a neuron, as read from neuPrint and annotated by a team under \href{https://www.janelia.org/people/kei-ito}{Kei Ito}.
+#'   Where the cell body fiber is unknown, possible because it is an older neuron born in the embryo, course clustering was done to group them into loose groups.
+#'   Here, \code{"unknown_number"} denotes the cluster.}
+#'
+#'}
 #'
 #' @name hemibrain_somas
 #' @rdname hemibrain_somas

@@ -45,7 +45,17 @@ write.csv(manual, file = "data-raw/hemibrain_data/hemibrain_manual/split_pipelin
 ### Somas
 hemibrain_somas = googlesheets4::read_sheet(ss = selected_file, sheet = "somas")
 hemibrain_somas = as.data.frame(hemibrain_somas)
+hemibrain_somas[hemibrain_somas=="NA"] = NA
 hemibrain_somas = hemibrain_somas[!is.na(hemibrain_somas$bodyid),]
+hemibrain_somas$cellBodyFiber = hemibrain_somas$cbf
+hemibrain_somas$cellBodyFiber[is.na(hemibrain_somas$cellBodyFiber)] = hemibrain_somas$clusters[is.na(hemibrain_somas$cellBodyFiber)]
+hemibrain_somas$cellBodyFiber[hemibrain_somas$cellBodyFiber=="unknown"] = paste0("unknown_",hemibrain_somas$clusters[hemibrain_somas$cellBodyFiber=="unknown"])
+hemibrain_somas$soma.edit = as.logical(hemibrain_somas$soma.edit)
+hemibrain_somas$init = NULL
+hemibrain_somas$cbf = NULL
+hemibrain_somas$soma.checked = NULL
+hemibrain_somas$clusters = NULL
+hemibrain_somas$wrong.cbf = NULL
 rownames(hemibrain_somas) = hemibrain_somas$bodyid
 usethis::use_data(hemibrain_somas, overwrite = TRUE)
 
