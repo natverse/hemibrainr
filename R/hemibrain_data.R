@@ -242,7 +242,7 @@
 #' \code{hemibrainr::adjust_saved_somas(bodyid = #####)}
 #'
 #' And selecting the neuron method when prompted and run through the pipeline instructions provided.
-#'  When asked if you wish to try using DBSCAN on the neurons sa no. The pipeline will then try
+#'  When asked if you wish to try using DBSCAN on the neurons say no. The pipeline will then try
 #'  to suggest a soma position based on a global clustering of those neurons which are already identified as correct.
 #'
 #' @return a \code{data.frame} with the 'best case' root points for each large hemibrain neuron. This is typically the soma, where one has been tagged by the FlyEM project.
