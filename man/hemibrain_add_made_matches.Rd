@@ -23,8 +23,8 @@ hemibrain_add_made_matches(
 )
 
 hemibrain_matching_add(
-  ids,
-  dataset = c("hemibrain", "FAFB", "flywire"),
+  ids = NULL,
+  dataset = c("hemibrain", "FAFB", "CATMAID", "flywire"),
   User = dataset,
   selected_file = options()$hemibrainr_matching_gsheet,
   ...

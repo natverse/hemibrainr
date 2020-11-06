@@ -23,9 +23,11 @@ hemibrain_matching(
   selected_file = options()$hemibrainr_matching_gsheet,
   batch_size = 10,
   db = hemibrain_neurons(),
-  repository = c("CATMAID", "flywire", "LM"),
+  repository = c("CATMAID", "flywire", "lm"),
   query = NULL,
-  overwrite = FALSE
+  overwrite = c("FALSE", "mine", "mine_empty", "TRUE"),
+  column = NULL,
+  field = NULL
 )
 
 lm_matching(
@@ -35,18 +37,20 @@ lm_matching(
   batch_size = 50,
   db = hemibrain_neurons(),
   query = NULL,
-  overwrite = FALSE
+  overwrite = c("FALSE", "mine", "mine_empty", "TRUE")
 )
 
 fafb_matching(
   ids = NULL,
-  repository = c("FAFB", "flywire"),
+  repository = c("CATMAID", "flywire"),
   hemibrain.nblast = NULL,
   selected_file = options()$hemibrainr_matching_gsheet,
   batch_size = 50,
   db = hemibrain_neurons(),
   query = NULL,
-  overwrite = FALSE
+  overwrite = c("FALSE", "mine", "mine_empty", "TRUE"),
+  column = NULL,
+  field = NULL
 )
 }
 \arguments{
@@ -72,16 +76,27 @@ neuronlist. Defaults to the value of \code{\link{hemibrain_neurons}()}.}
 \item{query}{a neuronlist of light level neurons to match against. Should correspond to the given NBLAST matrix.
 Defaults to reading a transformed \code{most.lhns} from the Hemibrain Google Team Drive.}
 
-\item{overwrite}{logical, whether or not to overwrite matches already made. However, if set to 'none' then the pipeline will
-include neurons with 'tract' and 'none' values in the match column of our Google sheet, i.e. will help you overwrite non-matches.}
+\item{overwrite}{Whether or not to overwrite matches already made.
+The neurons you could possibly be looking at are selected through
+the arguments: \code{ids}, \code{column}, \code{field}. If \code{ids} is \code{NULL} you will be given all neurons that have been assigned to your user on the
+\href{https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit#gid=0}{Google sheet}.
+If \code{overwrite} is set to \code{FALSE}, you will not overwrite any matches that have already been made from among the selected neurons.
+If \code{'mine'} you will re-examine and overwrite any matches you have made out of the selected neurons.
+With \code{'mine_empty'} the same happens, but you will also retain neurons that have no match, and have been assigned to any other user.
+If \code{"FALSE} (be careful!) then you overwrite made matches among the selected neurons.}
 
 \item{hemibrain.nblast}{a FAFB (rows) - hemibrain (columns) normalised
 NBLAST matrix. By default this is read from the flyconnectome Team Drive.}
 
 \item{repository}{whether to match up FAFB skeletons from
 CATMAID (using \code{catmaid::read.neurons.catmaid}) or flywire (using \code{flywire_neurons}) for matching. Alternatively,light level
-skeletons  (\code{"LM"}) from Dolan et al. and Frechter et al. 2019 (eLife), stored in the package \code{lhns} as
+skeletons  (\code{"lm"}) from Dolan et al. and Frechter et al. 2019 (eLife), stored in the package \code{lhns} as
 \code{most.lhns}.}
+
+\item{column}{defaults to \code{NULL}, no further subsetting. Else, you can select a column from the Google sheet.
+Only  neurons with a certain value (\code{field}) in that column will be chosen for matching.}
+
+\item{field}{defaults to \code{NULL}, no further subsetting. Else, it is a value in \code{column}.}
 }
 \description{
 Match up neurons between the hemibrain, FAFB and light level data and save the
