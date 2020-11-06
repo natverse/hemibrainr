@@ -1716,15 +1716,15 @@ id_selector <- function(gs,
   }
   # choose possible ids
   if(is.null(ids)|!length(ids)){
-    if(!is.null(initials) & overwrite == "mine"){
+    if(!is.null(initials) & overwrite %in% c("FALSE","mine")){
       ids = gs[[id]][gs$User==initials]
     }else if(!is.null(initials) & overwrite == "mine_empty"){
       ids = gs[[id]][gs$User==initials|is.na(gs[[match.field]])|is.na(gs[[quality.field]])]
     }
-    ids = ids[!grepl("missing",ids)]
   }else{
     ids = intersect(ids,gs[[id]])
   }
+  ids = ids[!grepl("missing",ids)]
   # further narrow
   selected = subset(gs, gs[[id]] %in% ids)
   if(overwrite %in% c("mine", "mine_empty")){
