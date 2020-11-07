@@ -65,7 +65,7 @@ flywire_matching_rewrite <- function(flywire.ids = names(flywire_neurons()),
   lmg$flywire.xyz = fg$flywire.xyz[match(lmg$id,fg$LM.match)]
   update_gsheet(update = lmg[different,],
                   gs = lmg,
-                  tab = "LM",
+                  tab = "lm",
                   match = "flywire",
                   id = "id")
 
