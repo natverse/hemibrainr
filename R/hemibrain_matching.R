@@ -44,7 +44,7 @@
 #' If \code{overwrite} is set to \code{FALSE}, you will not overwrite any matches that have already been made from among the selected neurons.
 #' If \code{'mine'} you will re-examine and overwrite any matches you have made out of the selected neurons.
 #' With \code{'mine_empty'} the same happens, but you will also retain neurons that have no match, and have been assigned to any other user.
-#' If \code{"FALSE} (be careful!) then you overwrite made matches among the selected neurons.
+#' If \code{FALSE} (be careful!) then you overwrite made matches among the selected neurons.
 #' @param column defaults to \code{NULL}, no further subsetting. Else, you can select a column from the Google sheet.
 #' Only  neurons with a certain value (\code{field}) in that column will be chosen for matching.
 #' @param field defaults to \code{NULL}, no further subsetting. Else, it is a value in \code{column}.

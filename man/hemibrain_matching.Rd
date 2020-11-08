@@ -83,7 +83,7 @@ the arguments: \code{ids}, \code{column}, \code{field}. If \code{ids} is \code{N
 If \code{overwrite} is set to \code{FALSE}, you will not overwrite any matches that have already been made from among the selected neurons.
 If \code{'mine'} you will re-examine and overwrite any matches you have made out of the selected neurons.
 With \code{'mine_empty'} the same happens, but you will also retain neurons that have no match, and have been assigned to any other user.
-If \code{"FALSE} (be careful!) then you overwrite made matches among the selected neurons.}
+If \code{FALSE} (be careful!) then you overwrite made matches among the selected neurons.}
 
 \item{hemibrain.nblast}{a FAFB (rows) - hemibrain (columns) normalised
 NBLAST matrix. By default this is read from the flyconnectome Team Drive.}
