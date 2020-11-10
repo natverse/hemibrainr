@@ -469,10 +469,12 @@ flywire_ids_update <- function(selected_sheets = NULL,
 # hidden
 gsheet_manipulation <- function(FUN,
                                 wait = 10,
+                                max.tries = 10,
                                 ...,
                                 return = FALSE){
   sleep = wait
   success = FALSE
+  tries = 0
   while(!success){
     g = tryCatch(FUN(...),
                  error = function(e){
@@ -482,6 +484,10 @@ gsheet_manipulation <- function(FUN,
     if(!is.null(g)){
       success = TRUE
     }else{
+      tries = tries+1
+      if(tries>max.tries){
+        stop("Could not make google manipulation")
+      }
       message("Google read/write failure(s), re-trying in ", sleep," seconds ...")
       Sys.sleep(sleep)
       sleep = sleep + wait
