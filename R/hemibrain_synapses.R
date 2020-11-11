@@ -10,10 +10,50 @@
 #'   partners returned. Broken down by axon/dendrite (\code{Label}), and
 #'   pre/postsynapses or pre/postsynaptic partners. Note that \code{hemibrain_extract_compartment_edgelist} will
 #'   only return connections between neurons given in the argument \code{x}.
+#'
 #' @inheritParams flow_centrality
+#'
 #' @param prepost whether to get presynapses, postsynapses or both
 #'
-#' @return a \code{data.frame}
+#' @return a \code{data.frame}. Depending on which synapse function was called, it can contain the columns:
+#'
+#' \itemize{
+#'
+#'   \item{"treenode_id"} { - the position of the node in the SWC-style table found at \code{neuron$d}, where the neuron is the skeleton for \code{bodyid}.}
+#'
+#'   \item{"connector_id"}{ - the unique ID for a pre/post synapse, as read from neuPrint. If this is not given, you are looking at a connection not a synapse.
+#'   In this case \code{count} should be given, which shows the number of synapses in this connection.}
+#'
+#'   \item{"prepost"}{ - whether the given synapse is a pre-synape (0, output synapse) or postsynapse (1, input synapse). Alternatively, if a connection is given,
+#'   whether this connection is presynaptic to \code{bodyid} (0, \code{bodyid} is target) or postsynaptic (1, \code{bodyid} is source).
+#'
+#'   \item{"x"}{ - x coordinate for the root point.}
+#'
+#'   \item{"y"}{ - y coordinate for the root point.}
+#'
+#'   \item{"z"}{ - z coordinate for the root point.}
+#'
+#'   \item{"confidence"}{ - FlyEM's confidence level. The lower the score, the more likely this synapse is an artefact.}
+#'
+#'   \item{"bodyid"}{ - The neuPrint neuron/body related to the synapse/connection given in each row.}
+#'
+#'   \item{"partner"}{ - The neuron connecting to \code{bodyid} by the givne synapse/connection.}
+#'
+#'   \item{"pre"}{ - The body ID for the presynaptic (source) neuron.}
+#'
+#'   \item{"partner"}{ - The body ID for the presynaptic (target) neuron.}
+#'
+#'   \item{"Label"}{ - The compartment of the \code{bodyid} neuron on which the synapse is placed / which receives/makes the given connection.
+#'   See \code{?standardise}.}
+#'
+#'   \item{"partner.Label"}{ - The compartment of the \code{partner} neuron on which the synapse is placed / which receives/makes the given connection.}
+#'
+#'   \item{"count"}{ - The number of synapses that make the given connection. Sometimes referred to as 'weight'.}
+#'
+#'   \item{"norm"}{ - The normalised synapse weight. \code{count} is divided by the total number of inputs that the
+#'   target neuron's (\code{post}) compartment (\code{Label}) has. I.e. this normalisation is by total inputs onto a dendrite or axon, not the whole neuron.}
+#'
+#'}
 #'
 #' @export
 #' @rdname hemibrain_extract_connections
@@ -22,20 +62,15 @@
 #' @examples
 #' \dontrun{
 #' # Choose bodyids
-#' al.local.neurons =
-#'  c("1702323386", "2068966051", "2069311379", "1702305987", "5812996027",
-#'  "1702336197", "1793744512", "1976565858", "2007578510", "2101339904",
-#'  "5813003258", "2069647778", "1947192569", "1883788812", "1916485259",
-#' "1887177026", "2101348562", "2132375072", "2256863785", "5813002313",
-#'  "5813054716", "5813018847", "5813055448", "1763037543", "2101391269",
-#'  "1794037618", "5813018729", "2013333009")
+#' some.pns  = sample(pn.ids, 20)
 #'
 #' # Read in these neurons
-#' neurons = neuprintr::neuprint_read_neurons(al.local.neurons)
+#' neurons = neuprintr::neuprint_read_neurons(some.pns)
 #'
 #' # Re-root
-#' neurons.flow = flow_centrality(neurons, polypre = TRUE,
-#'   mode = "centrifugal", split = "distance")
+#' neurons.flow = flow_centrality(neurons,
+#' polypre = TRUE,
+#' mode = "centrifugal", split = "distance")
 #'
 #' # Let's check that this worked
 #' syns = hemibrain_extract_synapses(neurons.flow)
@@ -84,7 +119,7 @@ hemibrain_extract_connections <- function(x,
   x = add_field_seq(x,x[,"bodyid"],field="bodyid")
   prepost = match.arg(prepost)
   if(nat::is.neuronlist(x)){
-    syns = nat::nlapply(x,extract_synapses, unitary = TRUE, ...)
+    syns = nat::nlapply(x, extract_synapses, unitary = TRUE, ...)
     syns = do.call(rbind,syns)
   }else if (nat::is.neuron(x)){
     syns = extract_synapses(x, unitary = TRUE)
@@ -96,6 +131,8 @@ hemibrain_extract_connections <- function(x,
   }else if (prepost=="POST"){
     syns = syns[syns$prepost==1,]
   }
+  syns$Label = standard_compartments(syns$Label)
+  syns$partner.Label = standard_compartments(syns$partner.Label)
   rownames(syns) = 1:nrow(syns)
   syns
 }
@@ -118,7 +155,7 @@ extract_synapses <-function(x, unitary = FALSE){
   }else{
     id = "id"
   }
-  syn[[id]] = nullToNA(x[[id]])
+  syn[[id]] = nullToNA(as.character(x[[id]]))
   syn[[id]] = gsub(" ","",syn[[id]])
   syn$Label = nullToNA(x$d$Label[match(syn$treenode_id,x$d$PointNo)])
   if(unitary){ # connections, rather than synapses
@@ -128,12 +165,13 @@ extract_synapses <-function(x, unitary = FALSE){
         .data$prepost==1  ~ 0
       )) %>% # i.e. switch perspective, presynapses connect to postsynaptic partners
       dplyr::group_by(.data[[id]], .data$partner, .data$prepost, .data$Label) %>%
-      dplyr::mutate(weight = dplyr::n()) %>%
-      dplyr::distinct(.data[[id]], .data$partner, .data$prepost, .data$Label, .data$weight) %>%
-      dplyr::select(.data[[id]], .data$partner, .data$prepost, .data$Label, .data$weight) %>%
+      dplyr::mutate(count = dplyr::n()) %>%
+      dplyr::distinct(.data[[id]], .data$partner, .data$prepost, .data$Label, .data$count) %>%
+      dplyr::select(.data[[id]], .data$partner, .data$prepost, .data$Label, .data$count) %>%
       as.data.frame() ->
       syn
   }
+  syn$partner.Label = standard_compartments(syn$Label)
   syn
 }
 
@@ -149,34 +187,71 @@ hemibrain_extract_compartment_edgelist <- function(x, ...){
   names(syns.list) = NULL
   lookup = nat::nlapply(syns.list, extract_lookup, ...)
   lookup = unlist(lookup)
-  elists = nat::nlapply(syns.list, extract_elist, lookup = lookup, ...)
+  sel.cols = c("total.outputs", "total.inputs", "axon.outputs",
+               "dend.outputs", "axon.inputs", "dend.inputs")
+  if(sum(sel.cols%in%colnames(x[,]))!=length(sel.cols)){
+    mets = hemibrain_compartment_metrics(x, OmitFailures = TRUE, delta = 5, resample = NULL, locality = FALSE)
+    mets[is.na(mets)] = 0
+  }else{
+    mets = x[,]
+  }
+  comp.meta = mets[,c("total.outputs", "total.inputs", "axon.outputs",
+                   "dend.outputs", "axon.inputs", "dend.inputs")]
+  elists = nat::nlapply(syns.list, extract_elist, lookup = lookup, meta = comp.meta, ...)
   elist = do.call(rbind, elists)
   rownames(elist) = 1:nrow(elist)
+  elist = elist[order(elist$norm, decreasing = TRUE),]
+  elist = elist[order(elist$count, decreasing = TRUE),]
   elist
 }
 
-# hidden
-extract_elist <- function(syns, lookup){
+# hidden, for one pre neuron
+extract_elist <- function(syns, lookup, meta = NULL){
+  bodyid = unique(nullToNA(as.character(syns$bodyid)))
+  if(!is.null(meta)){
+    if(!bodyid%in%rownames(meta)){
+      stop(bodyid, " not in rownames of meta")
+    }
+    d.post = nullToNA(as.numeric(meta[bodyid,"dend.inputs"]))
+    a.post = nullToNA(as.numeric(meta[bodyid,"axon.inputs"]))
+  }else{
+    d.post = nrow(subset(syns, syns$prepost==1 & syns$Label==3))
+    a.post = nrow(subset(syns, syns$prepost==1 & syns$Label==2))
+    warning("Argument 'meta' not given. norm column represents normalisation by the total number of pre-post connections
+    in the final data.frame, not necessarily the total number of postsynapses for
+    the 'post' neuron.")
+  }
   syns %>%
-    dplyr::filter(.data$prepost==0) %>%
-    dplyr::mutate(partner.Label = lookup[as.character(.data$connector_id)]) %>%
-    dplyr::group_by(.data$bodyid, .data$partner, .data$Label) %>%
-    dplyr::mutate(weight = dplyr::n()) %>%
-    dplyr::distinct(.data$bodyid, .data$partner,.data$Label, .data$partner.Label, .data$weight) %>%
-    dplyr::select(.data$bodyid, .data$partner, .data$Label, .data$partner.Label, .data$weight) %>%
-    dplyr::filter(!is.na(.data$partner.Label) & .data$weight > 0) %>%
+    # Re-name for clarity
+    dplyr::filter(.data$prepost==1) %>%
+    dplyr::rename(post = .data$bodyid) %>%
+    dplyr::rename(pre = .data$partner) %>%
+    dplyr::rename(post.Label = .data$Label) %>%
+    # Compartment labels
+    dplyr::mutate(pre.Label = lookup[as.character(.data$connector_id)]) %>%
+    # Synapse counts
+    dplyr::group_by(.data$post, .data$pre, .data$post.Label, .data$pre.Label) %>%
+    dplyr::mutate(count = dplyr::n()) %>%
+    # Normalised synapses, by compartment
+    dplyr::ungroup() %>%
+    dplyr::group_by(.data$post,.data$post.Label) %>%
+    dplyr::mutate(norm = .data$count/ifelse(.data$post.Label%in%c(2,"dendrite","dendrites","dend"),d.post,a.post)) %>%
+    # Clean up
+    dplyr::distinct(.data$post, .data$pre,.data$post.Label, .data$pre.Label, .data$count, .data$norm) %>%
+    dplyr::select(.data$post, .data$pre, .data$post.Label, .data$pre.Label, .data$count, .data$norm) %>%
+    dplyr::filter(!is.na(.data$pre.Label) & .data$count > 0) %>%
     as.data.frame() ->
     elist
   rownames(elist) = 1:nrow(elist)
-  elist$Label = standard_compartments(elist$Label)
-  elist$partner.Label = standard_compartments(elist$partner.Label)
+  elist$post.Label = standard_compartments(elist$post.Label)
+  elist$pre.Label = standard_compartments(elist$pre.Label)
   elist
 }
 
 # hidden
 extract_lookup <- function(syns){
   syns %>%
-    dplyr::filter(.data$prepost==1) %>%
+    dplyr::filter(.data$prepost==0) %>%
     dplyr::distinct(.data$bodyid, .data$partner, .data$connector_id, .data$Label) %>%
     as.data.frame() ->
     conn.lookup

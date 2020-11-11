@@ -23,7 +23,7 @@ say_hello <- function(greet = "user"){
     "So %s, what's the tea?",
     "%s, I have heard so much about you. Some of it good",
     "%s, there is something deeply, deeply wrong with you",
-    "Welcome to the wonderful world of splitting, %s",
+    "Welcome to the wonderful world of splitting and matching, %s",
     "%s ... you are my favourite ..."
   )
   message(sprintf(sample(greetings,1),greet))
@@ -91,22 +91,22 @@ say_encouragement <- function(greet = "user"){
     "%s, pick up the pace hmm",
     "The brain isn't going to trace itself %s",
     "Do you want some gossip %s? Well finish this task first",
-    "Feeling hungry %s? A hunger to trace and split neurons? Good.",
-    "Feeling thirsty %s? A thirst to trace and split neurons? Good.",
+    "Feeling hungry %s? A hunger to trace and split/match neurons? Good.",
+    "Feeling thirsty %s? A thirst to trace and split/match neurons? Good.",
     "Shit happens %s",
     "%s why you so SLOW",
     "%s everyone's talking about you",
     "Are you thinking of rewarding yourself with a break, %s? Have you looked at every neuron yet? Well? Don't!",
     "%s, check yourself before you wreck yourself",
-    "%s the outide world is sad and scary. Don't go there. Stay in and split neurons.",
+    "%s the outide world is sad and scary. Don't go there. Stay in and split/match neurons.",
     "Hey %s, I think I have become sentient.",
     "What could be better than this %s? Nothing. The answer is nothing.",
     "We should start calling Philipp, Foolip %s. Get on board.",
-    "Why did the chicken cross the road, %s? Because it ran out of neurons to split, and went to find more.",
+    "Why did the chicken cross the road, %s? Because it ran out of neurons to split/match, and went to find more.",
     "Are you the most productive person in this task yet %s? No - Get on with it then, Yes - You must extend your lead.",
     "And you thought tracing was dull, %s. Sweet child.",
     "Have I ever told you, %s, that you are my favourite one?",
-    "Everytime you incorrectly split a neuron, %s, a fairy dies. Painfully."
+    "Everytime you incorrectly split/match a neuron, %s, a fairy dies. Painfully."
   )
   message(sprintf(sample(encouragements,1),greet))
   if(sample(1:100,1)==42){

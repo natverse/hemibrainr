@@ -4,7 +4,7 @@
 
 #' Use standard names and spellings
 #'
-#' @description Standardise the names of lineage groups and transmitters.
+#' @description Standardise the names of lineage groups, neuron compartments and transmitters.
 #'
 #' @param x a character vector to be standardised.
 #' @param invert return compartment numbers rather than names.
@@ -48,6 +48,7 @@ standard_compartments <- function(x, invert = FALSE){
     x[x=="primary.dendrite"] = 4
     x[x=="primary.neurite"] = 7
   }else{
+    x[x==0] = "unknown"
     x[x==3] = "dendrite"
     x[x==2] = "axon"
     x[x==1] = "soma"

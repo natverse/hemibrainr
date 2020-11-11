@@ -24,7 +24,7 @@ that this neuron has been read in by
 \code{nat::\link{nlapply}}}
 }
 \value{
-a \code{data.frame}
+
 }
 \description{
 Extract a single data frame describing synapse/connection types,
@@ -37,20 +37,15 @@ Extract a single data frame describing synapse/connection types,
 \examples{
 \dontrun{
 # Choose bodyids
-al.local.neurons =
- c("1702323386", "2068966051", "2069311379", "1702305987", "5812996027",
- "1702336197", "1793744512", "1976565858", "2007578510", "2101339904",
- "5813003258", "2069647778", "1947192569", "1883788812", "1916485259",
-"1887177026", "2101348562", "2132375072", "2256863785", "5813002313",
- "5813054716", "5813018847", "5813055448", "1763037543", "2101391269",
- "1794037618", "5813018729", "2013333009")
+some.pns  = sample(pn.ids, 20)
 
 # Read in these neurons
-neurons = neuprintr::neuprint_read_neurons(al.local.neurons)
+neurons = neuprintr::neuprint_read_neurons(some.pns)
 
 # Re-root
-neurons.flow = flow_centrality(neurons, polypre = TRUE,
-  mode = "centrifugal", split = "distance")
+neurons.flow = flow_centrality(neurons,
+polypre = TRUE,
+mode = "centrifugal", split = "distance")
 
 # Let's check that this worked
 syns = hemibrain_extract_synapses(neurons.flow)

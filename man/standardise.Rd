@@ -24,5 +24,5 @@ standardise(x)
 a character vector
 }
 \description{
-Standardise the names of lineage groups and transmitters.
+Standardise the names of lineage groups, neuron compartments and transmitters.
 }

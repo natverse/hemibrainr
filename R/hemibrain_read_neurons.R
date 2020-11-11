@@ -93,7 +93,7 @@ hemibrain_read_neurons<-function(x = NULL,
                                   clean = FALSE)
       neurons.flow = union(neurons.flow.fh[as.character(y)], nz)
     }else{
-      neurons.flow = neurons.flow.fh
+      neurons.flow = neurons.flow.fh[y]
     }
   }else{
     neurons = neuprintr::neuprint_read_neurons(x, ...)
