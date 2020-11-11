@@ -259,7 +259,7 @@ save_compressed_nblast_mat <- function(x,
   x[x<threshold]=threshold
   x=round(x, digits=digits)
   newobjname <- paste0(objname, ".compressed")
-  fname <- paste0(paste0(file, newobjname), ".", format)
+  fname <- paste0(file.path(file, newobjname), ".", format)
   message("Resaving a compressed version of ", objname, " to ", fname)
   if(format=="rds") {
     saveRDS(x, file=fname, ...)
