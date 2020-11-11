@@ -1,5 +1,5 @@
 #######################################################################################
-################################ hemibrain meat data ##################################
+################################ hemibrain meta data ##################################
 #######################################################################################
 
 #' Get meta information for hemibrain neurons
@@ -32,6 +32,12 @@ hemibrain_get_meta <- function(x, ...){
   # Get information from neuprint
   nmeta = neuprintr::neuprint_get_meta(x, ...)
 
+  # Add cell. type
+  nmeta2$connectivity.type = nmeta2$type
+  nmeta2$cell.type = gsub("_.*","",nmeta2$type)
+  nmeta2$cell.type[is.na(nmeta2$cell.type)] = "uncertain"
+  nmeta2$connectivity.type[is.na(nmeta2$connectivity.type)] = "uncertain"
+
   # Add lineage information
   nmeta2 = merge(nmeta,hemibrainr::hemibrain_hemilineages, all.x = TRUE, all.y = FALSE)
   nmeta2$FAFB = NULL
@@ -53,7 +59,8 @@ hemibrain_get_meta <- function(x, ...){
   nmeta$class[nmeta$bodyid%in%hemibrainr::mbon.ids] = "MBON"
   nmeta$class[nmeta$bodyid%in%hemibrainr::kc.ids] = "KC"
   nmeta$class[nmeta$bodyid%in%hemibrainr::apl.ids] = "APL"
-  nmeta$class[nmeta$bodyid%in%hemibrainr::cent.ids] = "CENT"
+  nmeta$class[nmeta$bodyid%in%hemibrainr::cent.ids] = "LHCENT"
+  nmeta$class[nmeta$bodyid%in%hemibrainr::lc.ids] = "LCPN"
 
   # Add match information
   nmeta2$FAFB.match = hemibrainr::hemibrain_matched[as.character(nmeta2$bodyid),"match"]
@@ -68,7 +75,14 @@ hemibrain_get_meta <- function(x, ...){
   }
 
   # Add split information
-  selcols=setdiff(colnames(hemibrainr::hemibrain_metrics), colnames(nmeta2))
+  selcols = c("soma.edit", "skeletonization", "edited.cable",
+              "axon.outputs", "dend.outputs", "axon.inputs",
+              "dend.inputs", "total.outputs.density", "total.inputs.density",
+              "axon.outputs.density", "dend.outputs.density", "axon.inputs.density",
+              "dend.inputs.density", "total.length", "axon.length", "dend.length",
+              "pd.length", "segregation_index")
+  selcols = intersect(selcols, colnames(hemibrainr::hemibrain_metrics))
+  #selcols=setdiff(colnames(hemibrainr::hemibrain_metrics), colnames(nmeta2))
   hemibrain_metrics_sel = hemibrainr::hemibrain_metrics[as.character(nmeta2$bodyid), selcols]
   nmeta2 = cbind(nmeta2, hemibrain_metrics_sel)
   rownames(nmeta2) = nmeta2$bodyid

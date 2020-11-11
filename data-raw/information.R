@@ -86,9 +86,20 @@ a$catmaid_name = catmaid_get_neuronnames(a$FAFB.match)
 a$pre = sapply(a$FAFB.match,function(s) length(unique(catmaid_get_connector_table(s, direction = "outgoing")$connector_id)))
 catmaid_set_annotations_for_skeletons(a$FAFB.match, annotations = "matched_ALLNs")
 
+# KC information
+kc.info = neuprint_search("^KC.*",field="type")
+kc.info = hemibrain_get_meta(kc.info$bodyid)
+kc.info$class = "KC"
+
+# CENT information
+cent.info = hemibrain_get_meta(unique(hemibrainr::cent.ids))
+cent.info$class = "LHCENT"
+
 # Save information
 usethis::use_data(pn.info, overwrite = TRUE)
 usethis::use_data(mbon.info, overwrite = TRUE)
 usethis::use_data(ton.info, overwrite = TRUE)
 usethis::use_data(lc.info, overwrite = TRUE)
 usethis::use_data(alln.info, overwrite = TRUE)
+usethis::use_data(kc.info, overwrite = TRUE)
+usethis::use_data(cent.info, overwrite = TRUE)

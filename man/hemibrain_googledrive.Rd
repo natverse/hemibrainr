@@ -29,7 +29,7 @@ hemibrain_nblast(
 
 flycircuit_neurons(
   local = FALSE,
-  folder = "hemibrain_neurons/light_level/flycircuit",
+  folder = "light_level/flycircuit",
   cable = c("all", "primary.neurites", "arbour"),
   data = c("neuronlist", "nblast", "dps"),
   brainspace = c("JRCFIB2018F", "JRCFIB2018Fraw", "FCWB")
@@ -37,7 +37,7 @@ flycircuit_neurons(
 
 hemibrain_lm_lhns(
   local = FALSE,
-  folder = "hemibrain_neurons/light_level/lhns",
+  folder = "light_level/lhns",
   data = c("neuronlist", "nblast", "dps"),
   cable = c("lhns", "lhins", "lines"),
   brainspace = c("JRCFIB2018F", "JRCFIB2018Fraw", "FCWB")

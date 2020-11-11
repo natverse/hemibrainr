@@ -48,13 +48,15 @@ An object of class \code{character} of length 1428.
 
 An object of class \code{character} of length 417.
 
-An object of class \code{character} of length 2035.
+An object of class \code{character} of length 1927.
 
 An object of class \code{character} of length 5.
 
 An object of class \code{character} of length 24.
 
 An object of class \code{character} of length 2129.
+
+An object of class \code{character} of length 1927.
 }
 \usage{
 rn.ids
@@ -90,6 +92,8 @@ apl.ids
 cent.ids
 
 lc.ids
+
+kc.ids
 }
 \description{
 Bodyids for neuron classes. Hard saved equivalent for \code{\link{class2ids}}.

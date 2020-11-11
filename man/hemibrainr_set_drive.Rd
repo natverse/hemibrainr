@@ -8,7 +8,7 @@
 \title{Set data source for precomputed information}
 \usage{
 hemibrainr_set_drive(
-  Gdrive = "hemibrain",
+  Gdrive = "hemibrainr",
   path = "/Volumes/GoogleDrive/Shared drives/"
 )
 
@@ -67,8 +67,7 @@ We have two \href{https://support.google.com/a/users/answer/9310156?hl=en}{Googl
 \examples{
 \donttest{
 \dontrun{
-# The default drive is named 'hemibrain'
-# The Wilson lab at HMS uses a drive called 'hemibrainr'.
+# The default drive is named 'hemibrainr'
 # You could also set up your own drive with saved data.
 hemibrainr_set_drive("hemibrainr")
 

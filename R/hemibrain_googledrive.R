@@ -45,8 +45,7 @@
 #' @examples
 #' \donttest{
 #' \dontrun{
-#' # The default drive is named 'hemibrain'
-#' # The Wilson lab at HMS uses a drive called 'hemibrainr'.
+#' # The default drive is named 'hemibrainr'
 #' # You could also set up your own drive with saved data.
 #' hemibrainr_set_drive("hemibrainr")
 #'
@@ -70,7 +69,7 @@
 #' @seealso \code{\link{hemibrain_googledrive}}
 #' @name hemibrainr_set_drive
 #' @export
-hemibrainr_set_drive <- function(Gdrive = "hemibrain",
+hemibrainr_set_drive <- function(Gdrive = "hemibrainr",
                                  path = "/Volumes/GoogleDrive/Shared\ drives/"){
   if(!grepl("/",Gdrive)){
     Gdrive = sprintf("/Volumes/GoogleDrive/Shared\ drives/%s/", Gdrive)
@@ -235,7 +234,7 @@ find_gfile <- function(savedir,
 #' @export
 #' @rdname hemibrain_googledrive
 flycircuit_neurons <- function(local = FALSE,
-                               folder = "hemibrain_neurons/light_level/flycircuit",
+                               folder = "light_level/flycircuit",
                                cable = c("all",
                                           "primary.neurites",
                                           "arbour"),
@@ -270,7 +269,7 @@ flycircuit_neurons <- function(local = FALSE,
 #'   \code{hemibrain_lm_lhns}. Defaults to \code{JRCFIB2018F}.
 #' @importFrom utils installed.packages
 hemibrain_lm_lhns <- function(local = FALSE,
-                              folder = "hemibrain_neurons/light_level/lhns",
+                              folder = "light_level/lhns",
                               data = c("neuronlist",
                                        "nblast",
                                        "dps"),

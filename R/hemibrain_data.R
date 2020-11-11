@@ -54,6 +54,9 @@
 #' @name classed.ids
 #' @rdname classed.ids
 "lc.ids"
+#' @name classed.ids
+#' @rdname classed.ids
+"kc.ids"
 
 #' The hemibrain mesh
 #'
@@ -300,7 +303,9 @@
 
 #' Meta information of certain neuron classes
 #'
-#' For olfactory projection neurons (PNS), non-MB third order olfactory neurons (TONs), lobula connection visual neurons (LC) and MB output neurons (MBONs).
+#' For olfactory projection neurons (PNS), antennal lobe local neurons (ALLN),
+#' non-MB third order olfactory neurons (TONs), lobula connection visual neurons (LC),
+#' Kenyon cells (KC) and MB output neurons (MBONs).
 #' Collated by the Flyconnectome group.
 #'
 #' @name info
@@ -314,3 +319,7 @@
 "lc.info"
 #' @rdname info
 "alln.info"
+#' @rdname info
+"kc.info"
+#' @rdname info
+"cent.info"

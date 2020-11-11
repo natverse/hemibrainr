@@ -158,6 +158,7 @@ alln.ids = class2ids("ALLN")
 dan.ids = class2ids("DAN")
 mbon.ids = class2ids("MBON")
 dn.ids = class2ids("DN")
+kc.ids = as.character(unique(kc.info$bodyid))
 
 # Read in other classes
 ## Let's get some other, easy and popular neuron types
