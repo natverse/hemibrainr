@@ -33,10 +33,10 @@ hemibrain_get_meta <- function(x, ...){
   nmeta = neuprintr::neuprint_get_meta(x, ...)
 
   # Add cell. type
-  nmeta2$connectivity.type = nmeta2$type
-  nmeta2$cell.type = gsub("_.*","",nmeta2$type)
-  nmeta2$cell.type[is.na(nmeta2$cell.type)] = "uncertain"
-  nmeta2$connectivity.type[is.na(nmeta2$connectivity.type)] = "uncertain"
+  nmeta$connectivity.type = nmeta$type
+  nmeta$cell.type = gsub("_.*","",nmeta$type)
+  nmeta$cell.type[is.na(nmeta$cell.type)] = "uncertain"
+  nmeta$connectivity.type[is.na(nmeta$connectivity.type)] = "uncertain"
 
   # Add lineage information
   nmeta2 = merge(nmeta,hemibrainr::hemibrain_hemilineages, all.x = TRUE, all.y = FALSE)
