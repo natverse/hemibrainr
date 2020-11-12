@@ -381,6 +381,9 @@ flywire_ids_update <- function(selected_sheets = NULL,
           # Get flywire IDs from these positions
           bbx = matrix(c(5100, 1440, 16, 59200, 29600, 7062),ncol=3,byrow = TRUE)
           bbx = nat::boundingbox(scale(bbx, scale = 1/c(4, 4, 40), center = FALSE))
+          gs.t$fw.x = as.numeric(gs.t$fw.x)
+          gs.t$fw.y = as.numeric(gs.t$fw.y)
+          gs.t$fw.z = as.numeric(gs.t$fw.z)
           if(numCores>1){
             batch = 1
             batches = split(1:nrow(gs.t), round(seq(from = 1, to = numCores, length.out = nrow(gs.t))))
@@ -389,6 +392,7 @@ flywire_ids_update <- function(selected_sheets = NULL,
               pos = pos[apply(pos, 1, function(row) sum(is.na(row[c("fw.x","fw.y",'fw.z')]))==0),]
               p = nat::pointsinside(pos[,c("fw.x","fw.y",'fw.z')],bbx)
               pos = pos[p,]
+              pos = pos[pos$flywire.id!=0,]
               if(nrow(pos)){
                 i <- tryCatch(fafbseg::flywire_xyz2id(pos[,c("fw.x","fw.y",'fw.z')], rawcoords = TRUE),
                               error = function(e){cat(as.character(e));rep("0",nrow(pos))})
