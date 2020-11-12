@@ -199,10 +199,6 @@ hemibrain_matching <- function(ids = NULL,
   for(n in meta$bodyid){
     # Get bodyid
     n = as.character(n)
-    # Remove neurons with matches
-    if(n%in%donotdo$bodyid | !n%in%unlist(dimnames(hemibrain.nblast))){
-      next
-    }
     # Read hemibrain neuron
     if(is.null(db)){
       lhn  = neuprintr::neuprint_read_neurons(n, all_segments = TRUE, heal = FALSE)
@@ -400,7 +396,9 @@ lm_matching <- function(ids = NULL,
                         batch_size = 50,
                         db=hemibrain_neurons(),
                         query = NULL,
-                        overwrite = c("FALSE","mine","mine_empty","TRUE")){
+                        overwrite = c("FALSE","mine","mine_empty","TRUE"),
+                        column = NULL,
+                        field = NULL){
   # Motivate!
   nat::nopen3d()
   plot_inspirobot()
@@ -438,15 +436,9 @@ lm_matching <- function(ids = NULL,
     query = nat::union(query, q3)
   }
   # Read the Google Sheet
-  gs = gsheet_manipulation(FUN = googlesheets4::read_sheet,
-                           ss = selected_file,
-                           sheet = "lm",
-                           guess_max = 3000,
-                           return = TRUE)
-  gs$id = correct_id(gs$id)
-  rownames(gs) = gs$id
-  gs[gs==""] = NA
+  gs = hemibrain_match_sheet(sheet = "hemibrain", selected_file = "lm")
   gs$User[is.na(gs$User)] = ""
+  id = "id"
   # Get hemibrain neurons
   if(missing(db)) {
     # this means we weren't told to use a specific neuronlist, so

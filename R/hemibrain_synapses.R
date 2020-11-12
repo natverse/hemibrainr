@@ -25,7 +25,7 @@
 #'   In this case \code{count} should be given, which shows the number of synapses in this connection.}
 #'
 #'   \item{"prepost"}{ - whether the given synapse is a pre-synape (0, output synapse) or postsynapse (1, input synapse). Alternatively, if a connection is given,
-#'   whether this connection is presynaptic to \code{bodyid} (0, \code{bodyid} is target) or postsynaptic (1, \code{bodyid} is source).
+#'   whether this connection is presynaptic to \code{bodyid} (0, \code{bodyid} is target) or postsynaptic (1, \code{bodyid} is source).}
 #'
 #'   \item{"x"}{ - x coordinate for the root point.}
 #'

@@ -352,18 +352,18 @@ flywire_ids_update <- function(selected_sheets = NULL,
                                ss = selected_sheet,
                                return = TRUE)
     for(tab in tabs){
-      gs.t = gsheet_manipulation(FUN = googlesheets4::read_sheet,
+      gs.t.current = gsheet_manipulation(FUN = googlesheets4::read_sheet,
                                  wait = 20,
                                  ss = selected_sheet,
                                  sheet = tab,
                                  guess_max = 3000,
                                  return = TRUE)
-      used.cols = colnames(gs.t)
-      if(ncol(gs.t)&&sum(grepl("fw.x|flywire.xyz",colnames(gs.t)))>0){
+      used.cols = colnames(gs.t.current)
+      if(ncol(gs.t.current)&&sum(grepl("fw.x|flywire.xyz",colnames(gs.t.current)))>0){
         # Separate x,y,z positions
-        gs2 = subset(gs.t, !is.na(gs.t$flywire.xyz))
-        gs1 = subset(gs.t[setdiff(rownames(gs.t),rownames(gs2)),], !is.na(gs.t$fw.x))
-        gs0 = gs.t[setdiff(rownames(gs.t),c(rownames(gs1),rownames(gs2))),]
+        gs2 = subset(gs.t.current, !is.na(gs.t.current$flywire.xyz))
+        gs1 = subset(gs.t.current[setdiff(rownames(gs.t.current),rownames(gs2)),], !is.na(gs.t.current$fw.x))
+        gs0 = gs.t.current[setdiff(rownames(gs.t.current),c(rownames(gs1),rownames(gs2))),]
         if(nrow(gs1)){
           gs1$flywire.xyz = tryCatch(apply(gs1[,c("fw.x","fw.y",'fw.z')],1,paste,sep=";",collapse=";"),
                                      error = function(e) NA)
@@ -415,6 +415,9 @@ flywire_ids_update <- function(selected_sheets = NULL,
             gs.t$flywire.xyz = apply(gs.t[,c("fw.x","fw.y",'fw.z')],1,paste,sep=";",collapse=";")
             # Update
             update = rbind(gs.t[,used.cols],gs0[,used.cols])
+            if(nrow(update)!=nrow(gs.t.current)){
+              stop("Rows dropped, aborting")
+            }
             rownames(update) = NULL
             continue =  TRUE
             while (continue) {

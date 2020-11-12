@@ -779,7 +779,7 @@ hemibrain_flow_centrality <-function(x,
                                      ...) UseMethod("hemibrain_flow_centrality")
 
 #' @export
-hemibrain_flow_centrality.neuron <- function(x, splitpoints = hemibrainr::hemibrain_all_splitpoints, knn = FALSE, ...){
+hemibrain_flow_centrality.neuron <- function(x, splitpoints = hemibrainr::hemibrain_all_splitpoints, knn = FALSE, calculate = TRUE, ...){
   bi = x$bodyid
   if(is.null(x$bodyid)|is.na(x$bodyid)){
     stop("No bodyid given at x$bodyid")

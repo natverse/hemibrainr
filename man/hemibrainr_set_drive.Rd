@@ -55,7 +55,7 @@ By default, this is what \code{hemibrainr} expects.
 However, you need a \href{https://workspace.google.com/pricing.html}{Google Workspace}
 account (formerly G-Suite), which is a paid-for service.
 Without this, the best option is to use \href{https://rclone.org/drive/}{rclone}. For detailed
-instructions on how to configure rclone, please see your article in this package:
+instructions on how to configure \code{rclone}, please see your article in this package:
 Reading hemibrainr data from Google drive.
 You can also download to an external hard drive and use that.
 
@@ -90,5 +90,5 @@ hemibrainr_rclone_unmount()
 }}
 }
 \seealso{
-\code{\link{hemibrain_googledrive}}
+\code{\link{hemibrainr_googledrive_data}}
 }

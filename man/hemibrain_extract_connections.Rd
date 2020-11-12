@@ -24,7 +24,45 @@ that this neuron has been read in by
 \code{nat::\link{nlapply}}}
 }
 \value{
+a \code{data.frame}. Depending on which synapse function was called, it can contain the columns:
 
+\itemize{
+
+  \item{"treenode_id"} { - the position of the node in the SWC-style table found at \code{neuron$d}, where the neuron is the skeleton for \code{bodyid}.}
+
+  \item{"connector_id"}{ - the unique ID for a pre/post synapse, as read from neuPrint. If this is not given, you are looking at a connection not a synapse.
+  In this case \code{count} should be given, which shows the number of synapses in this connection.}
+
+  \item{"prepost"}{ - whether the given synapse is a pre-synape (0, output synapse) or postsynapse (1, input synapse). Alternatively, if a connection is given,
+  whether this connection is presynaptic to \code{bodyid} (0, \code{bodyid} is target) or postsynaptic (1, \code{bodyid} is source).}
+
+  \item{"x"}{ - x coordinate for the root point.}
+
+  \item{"y"}{ - y coordinate for the root point.}
+
+  \item{"z"}{ - z coordinate for the root point.}
+
+  \item{"confidence"}{ - FlyEM's confidence level. The lower the score, the more likely this synapse is an artefact.}
+
+  \item{"bodyid"}{ - The neuPrint neuron/body related to the synapse/connection given in each row.}
+
+  \item{"partner"}{ - The neuron connecting to \code{bodyid} by the givne synapse/connection.}
+
+  \item{"pre"}{ - The body ID for the presynaptic (source) neuron.}
+
+  \item{"partner"}{ - The body ID for the presynaptic (target) neuron.}
+
+  \item{"Label"}{ - The compartment of the \code{bodyid} neuron on which the synapse is placed / which receives/makes the given connection.
+  See \code{?standardise}.}
+
+  \item{"partner.Label"}{ - The compartment of the \code{partner} neuron on which the synapse is placed / which receives/makes the given connection.}
+
+  \item{"count"}{ - The number of synapses that make the given connection. Sometimes referred to as 'weight'.}
+
+  \item{"norm"}{ - The normalised synapse weight. \code{count} is divided by the total number of inputs that the
+  target neuron's (\code{post}) compartment (\code{Label}) has. I.e. this normalisation is by total inputs onto a dendrite or axon, not the whole neuron.}
+
+}
 }
 \description{
 Extract a single data frame describing synapse/connection types,

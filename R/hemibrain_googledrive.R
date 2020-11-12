@@ -31,7 +31,7 @@
 #' However, you need a \href{https://workspace.google.com/pricing.html}{Google Workspace}
 #' account (formerly G-Suite), which is a paid-for service.
 #' Without this, the best option is to use \href{https://rclone.org/drive/}{rclone}. For detailed
-#' instructions on how to configure rclone, please see your article in this package:
+#' instructions on how to configure \code{rclone}, please see your article in this package:
 #' Reading hemibrainr data from Google drive.
 #' You can also download to an external hard drive and use that.
 #'
@@ -66,7 +66,7 @@
 #' hemibrainr_rclone_unmount()
 #'
 #' }}
-#' @seealso \code{\link{hemibrain_googledrive}}
+#' @seealso \code{\link{hemibrainr_googledrive_data}}
 #' @name hemibrainr_set_drive
 #' @export
 hemibrainr_set_drive <- function(Gdrive = "hemibrainr",
@@ -89,24 +89,19 @@ hemibrainr_team_drive <- function(){
   basename(options()$Gdrive_hemibrain_data)
 }
 
-#' Read precomputed information from the hemibrain Google Drive
+#' Read precomputed information from the hemibrainr Google Drive
 #'
 #' @description Read precomputed data available on the hemibrain Google Team
-#'   Drive. This includes all synapses, neuron-neuron connections and an
-#'   edgelist for all hemibrain neurons, broken down by axon and dendrite
+#'   Drive. This includes body IDs for all hemibrain neurons ((\code{hemibrain_neuron_bodyids})),
+#'   all synapses (\code{hemibrain_synapses}),
+#'   neuron-neuron connections (\code{hemibrain_connections}) and an
+#'   edgelist  (\code{hemibrain_elist}) for all hemibrain neurons, broken down by axon and dendrite
 #'   assignments. NBLAST matrices for all neurons against all neurons in the
 #'   data set are also available, including ones broken down by neuron
 #'   compartment.
 #'
 #' @param local \code{FALSE} or path. By default (\code{FALSE}) data is read from \code{options()$Drive_hemibrain_data}),
 #' but the user can specify an alternative path.
-#' @param nblast the NBLAST matrix you would like to retrieve, e.g.
-#'   \code{"arbours"} gives you a normalised all by all NBLAST matrix of all
-#'   branching arbour.
-#' @param cable the type of cable we want to read. \code{"all"} indicates full
-#'   neurons.
-#' @param data the type of data to read, i.e. neurons, an NBLAST matrix or a
-#'   \code{\link{dotprops}} object.
 #' @param folder A subfolder on the hemibrain team drive or your local data folder
 #'   containing the data object to read.
 #'
@@ -116,8 +111,14 @@ hemibrainr_team_drive <- function(){
 #' \donttest{
 #' \dontrun{
 #'
-#' #  All neuprint IDs for neurons that have a split precomputed
+#' # All neuprint IDs for neurons that have a split precomputed
 #' ids = hemibrain_neuron_bodyids()
+#'
+#' # For these body IDs, all synapses:
+#' syns = hemibrain_synapses()
+#'
+#' # For these body IDs, input and output connections:
+#' conns = hemibrain_connections()
 #'
 #' # Connectivity edgelist, broken down by axon/dendrite
 #' elist = hemibrain_elist()
@@ -125,9 +126,9 @@ hemibrainr_team_drive <- function(){
 #' }}
 #' @seealso \code{\link{hemibrain_splitpoints}},
 #'   \code{\link{hemibrain_flow_centrality}},
-#'   \code{\link{hemibrain_precomputed_splitpoints}},
+#'   \code{\link{hemibrainr_googledrive_data}},
 #'   \code{\link{hemibrain_metrics}}
-#' @name hemibrain_googledrive
+#' @name hemibrainr_googledrive_data
 #' @aliases hemibrain_neuron_bodyids
 #' @export
 hemibrain_neuron_bodyids <- function(local = FALSE, folder = "hemibrain_neurons/"){
@@ -137,7 +138,7 @@ hemibrain_neuron_bodyids <- function(local = FALSE, folder = "hemibrain_neurons/
   as.character(gcsv$x)
 }
 
-#' @rdname hemibrain_googledrive
+#' @rdname hemibrainr_googledrive_data
 #' @export
 hemibrain_elist <- function(local = FALSE, folder = "hemibrain_neurons/"){
   savedir = good_savedir(local = local)
@@ -147,7 +148,7 @@ hemibrain_elist <- function(local = FALSE, folder = "hemibrain_neurons/"){
   gcsv
 }
 
-#' @rdname hemibrain_googledrive
+#' @rdname hemibrainr_googledrive_data
 #' @export
 hemibrain_synapses <- function(local = FALSE, folder = "hemibrain_neurons/"){
   savedir = good_savedir(local = local)
@@ -156,7 +157,7 @@ hemibrain_synapses <- function(local = FALSE, folder = "hemibrain_neurons/"){
   gcsv
 }
 
-#' @rdname hemibrain_googledrive
+#' @rdname hemibrainr_googledrive_data
 #' @export
 hemibrain_connections <- function(local = FALSE, folder = "hemibrain_neurons/"){
   savedir = good_savedir(local = local)
@@ -165,8 +166,81 @@ hemibrain_connections <- function(local = FALSE, folder = "hemibrain_neurons/"){
   gcsv
 }
 
+
+#' Read precomputed NBLASTs from the hemibrainr Google Drive
+#'
+#' @description Read precomputed data available on the hemibrain Google Team
+#'   Drive. This includes body IDs for all hemibrain neurons ((\code{hemibrain_neuron_bodyids})),
+#'   all synapses (\code{hemibrain_synapses}),
+#'   neuron-neuron connections (\code{hemibrain_connections}) and an
+#'   edgelist  (\code{hemibrain_elist}) for all hemibrain neurons, broken down by axon and dendrite
+#'   assignments. NBLAST matrices for all neurons against all neurons in the
+#'   data set are also available, including ones broken down by neuron
+#'   compartment.
+#'
+#' @param nblast the NBLAST matrix you would like to retrieve, e.g.
+#'   \code{"arbours"} gives you a normalised all by all NBLAST matrix of all
+#'   branching arbour.
+#'   \code{\link{dotprops}} object.
+#' @inheritParams hemibrainr_googledrive_data
+#'
+#' @details NBLASTs were made in \code{JRCFIB2018F} space. Hemibrain neurons first had their 'twigs' pruned:
+#'
+#' \code{fib.twigs5 = nlapply(all.neurons.flow, prune_twigs, twig_length=5000, .parallel = TRUE, OmitFailures = TRUE)}.
+#'
+#' Where \code{all.neurons.flow} can be called with \code{hemibrain_neurons}. Neurons were moved from \code{JRC2018Fraw}
+#' to \code{JRC2018F} by:
+#'
+#' \code{all.neurons.flow.microns = hemibrainr:::scale_neurons.neuronlist(fib.twigs5, .parallel = TRUE, OmitFailures = TRUE)}
+#'
+#' For 'compartment' NBLASTs neurons' axons, dendrites, primary neurite
+#' tracts, etc., were extracted. E.g.
+#'
+#' \code{all.neurons.pnt = primary_neurite_cable(x = all.neurons.flow.microns, .parallel = TRUE, OmitFailures = TRUE)}
+#' \code{all.neurons.arbour = arbour_cable(x = all.neurons.flow.microns, .parallel = TRUE, OmitFailures = TRUE)}
+#' \code{all.neurons.tract = tract_cable(x = all.neurons.flow.microns, .parallel = TRUE, OmitFailures = TRUE)}
+#'
+#' For the 'simplified' hemibrain neuron NBLAST, the function \code{nat::simplify_neuron} was used as so:
+#'
+#' \code{all.neurons.simp = nat::nlapply(X = all.neurons.flow.microns, FUN = nat::simplify_neuron, n = 1, invert = FALSE, .parallel = TRUE, OmitFailures = TRUE)}
+#'
+#' Neurons, simplified neurons and compartments were turned into vector cloud using \code{nat::dotprops} as so:
+#'
+#' \code{hemibrain.microns.dps =dotprops(all.neurons.flow.microns, k=5, resample=1, .parallel=T, OmitFailures = T)}
+#'
+#' NBLASTs were run as so:
+#'
+#' \code{hemibrain.aba.mean=nat.nblast::nblast_allbyall(hemibrain.twigs5.dps,
+#' .progress='text',.parallel=TRUE, normalisation='mean')}
+#'
+#' NBLASTs were also run against flywire and flycircuit neurons.
+#' Flywire neurons were oulled from the \href{https://ngl.flywire.ai/?local_id=1191adb1d6f85f5f8be0fedc675460f6}{flywire project} as meshes and skeletonised
+#' using \code{fafbseg::skeletor}.
+#'
+#' The code for this pipeline can be found as a \href{https://github.com/flyconnectome/fafbpipeline}{flyconnecome GitHub repository}
+#'
+#' @return a \code{matrix} with named rows and columns describing an NBLAST result.
+#'
+#' @examples
+#' \donttest{
+#' \dontrun{
+#'
+#' # A normalised neuron-neuron NBLASST for all hemibrain neurons
+#' hemibrain.nblast = hemibrain_nblast(nblast = "hemibrain")
+#'
+#' # A normalised neuron-neuron NBLASST for all hemibrain neurons's axons
+#' hemibrain.axon.nblast = hemibrain_nblast(nblast = "hemibrain-axons")
+#'
+#' # And for simplified hemibrain neurons
+#' hemibrain.simp.nblast = hemibrain_nblast(nblast = "hemibrain-simplified")
+#'
+#' }}
+#' @seealso \code{\link{hemibrain_splitpoints}},
+#'   \code{\link{hemibrain_flow_centrality}},
+#'   \code{\link{hemibrain_metrics}},
+#'   \code{\link{hemibrainr_googledrive_data}}
+#' @name hemibrain_nblast
 #' @export
-#' @rdname hemibrain_googledrive
 hemibrain_nblast <- function(nblast = c("hemibrain",
                                         "flywire",
                                         "hemibrain-flywire",
@@ -231,8 +305,38 @@ find_gfile <- function(savedir,
   gfile
 }
 
+#' Read flycircuit neurons from hemibrainr Google Drive
+#'
+#' @description Read \href{}{flycircuit} neurons from the \code{hemibrainr} google drive.
+#' The google drive must be mounted with Goolge Filestream or rclone.
+#' See \code{\link{hemibrainr_set_drive}}.
+#'
+#' @param cable the type of cable we want to read. \code{"all"} indicates full neurons.
+#' @param data the type of data to read, i.e. neurons, an NBLAST matrix or a
+#'   \code{\link{dotprops}} object.
+#' @param brainspace A template brain space for neurons loaded by
+#'   \code{hemibrain_lm_lhns}. Defaults to \code{JRCFIB2018F}.
+#' @inheritParams hemibrainr_googledrive_data
+#'
+#' @return a \code{nat::neuronlistfh} object for 'light-level' neurons in the given brainspace.
+#'
+#' @examples
+#' \donttest{
+#' \dontrun{
+#'
+#' # All flycircuit neurons
+#' fw = flycircuit_neurons()
+#'
+#' # All LHNs from Frechter et al. 2019, eLife
+#' lhns = lm_lhns()
+#'
+#' }}
+#' @seealso \code{\link{hemibrain_splitpoints}},
+#'   \code{\link{hemibrain_flow_centrality}},
+#'   \code{\link{hemibrain_metrics}},
+#'   \code{\link{hemibrainr_googledrive_data}}
+#' @name flycircuit_neurons
 #' @export
-#' @rdname hemibrain_googledrive
 flycircuit_neurons <- function(local = FALSE,
                                folder = "light_level/flycircuit",
                                cable = c("all",
@@ -264,11 +368,9 @@ flycircuit_neurons <- function(local = FALSE,
 }
 
 #' @export
-#' @rdname hemibrain_googledrive
-#' @param brainspace A template brain space for neurons loaded by
-#'   \code{hemibrain_lm_lhns}. Defaults to \code{JRCFIB2018F}.
+#' @rdname flycircuit_neurons
 #' @importFrom utils installed.packages
-hemibrain_lm_lhns <- function(local = FALSE,
+lm_lhns <- function(local = FALSE,
                               folder = "light_level/lhns",
                               data = c("neuronlist",
                                        "nblast",

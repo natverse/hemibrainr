@@ -481,6 +481,7 @@ skeletor_batch <- function(obj, swc, numCores = 1, max.file.size = 1000000000, .
     warning("Dropping ", length(big), " .obj files larger than ", max.file.size, " bytes")
   }
   batches = split(ids, round(seq(from = 1, to = numCores, length.out = length(ids))))
+  batch = 0
   foreach.skeletons <- foreach::foreach (batch = seq_along(batches)) %dopar% {
     neuron.ids = batches[[batch]]
     j = tryCatch({
@@ -501,7 +502,8 @@ skeletor_batch <- function(obj, swc, numCores = 1, max.file.size = 1000000000, .
 # hidden
 download_neuron_obj_batch <- function(ids, numCores = 1, ratio = 1, save.obj = "obj"){
   batches = split(ids, round(seq(from = 1, to = numCores, length.out = length(ids))))
-  foreach.skeletons <- foreach::foreach (batch = seq_along(batches)) %dopar% {
+  batch = 0
+  oreach.skeletons <- foreach::foreach (batch = seq_along(batches)) %dopar% {
     neuron.ids = batches[[batch]]
     j = tryCatch(fafbseg::download_neuron_obj(segments = neuron.ids,
                                               ratio = ratio,
@@ -521,7 +523,7 @@ update.neuronlistfh <- function(x, rds, ...){
     if(!is.null(attr(old.neurons,"df"))){
       old.neurons = old.neurons[!sapply(old.neurons, function(x) isFALSE(x))]
       old.neurons = old.neurons[setdiff(names(old.neurons),names(x))]
-      x = nat:::union.neuronlist(old.neurons, x)
+      x = nat::union(old.neurons, x)
     }
   }
   if(nat::is.neuronlist(x)){

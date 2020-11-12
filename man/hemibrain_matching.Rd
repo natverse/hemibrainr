@@ -37,7 +37,9 @@ lm_matching(
   batch_size = 50,
   db = hemibrain_neurons(),
   query = NULL,
-  overwrite = c("FALSE", "mine", "mine_empty", "TRUE")
+  overwrite = c("FALSE", "mine", "mine_empty", "TRUE"),
+  column = NULL,
+  field = NULL
 )
 
 fafb_matching(
