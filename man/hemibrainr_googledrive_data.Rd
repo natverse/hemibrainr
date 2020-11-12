@@ -3,18 +3,41 @@
 \name{hemibrainr_googledrive_data}
 \alias{hemibrainr_googledrive_data}
 \alias{hemibrain_neuron_bodyids}
+\alias{flywire_contributions}
 \alias{hemibrain_elist}
 \alias{hemibrain_synapses}
 \alias{hemibrain_connections}
 \title{Read precomputed information from the hemibrainr Google Drive}
 \usage{
-hemibrain_neuron_bodyids(local = FALSE, folder = "hemibrain_neurons/")
+hemibrain_neuron_bodyids(
+  local = FALSE,
+  folder = "hemibrain_neurons/",
+  sql = FALSE,
+  ...
+)
 
-hemibrain_elist(local = FALSE, folder = "hemibrain_neurons/")
+flywire_contributions(
+  local = FALSE,
+  folder = "flywire_neurons/",
+  sql = TRUE,
+  ...
+)
 
-hemibrain_synapses(local = FALSE, folder = "hemibrain_neurons/")
+hemibrain_elist(local = FALSE, folder = "hemibrain_neurons/", sql = TRUE, ...)
 
-hemibrain_connections(local = FALSE, folder = "hemibrain_neurons/")
+hemibrain_synapses(
+  local = FALSE,
+  folder = "hemibrain_neurons/",
+  sql = TRUE,
+  ...
+)
+
+hemibrain_connections(
+  local = FALSE,
+  folder = "hemibrain_neurons/",
+  sql = TRUE,
+  ...
+)
 }
 \arguments{
 \item{local}{\code{FALSE} or path. By default (\code{FALSE}) data is read from \code{options()$Drive_hemibrain_data}),
@@ -22,13 +45,59 @@ but the user can specify an alternative path.}
 
 \item{folder}{A subfolder on the hemibrain team drive or your local data folder
 containing the data object to read.}
+
+\item{sql}{logical. Whether not to read the desired data from an \code{SQL} database. This can save you from having to load
+a lot of information into memory, and it works well with \code{dplyr} pipes. If \code{FALSE} the relevant \code{.csv} is read from
+the connected google drive (see \code{\link{hemibrainr_set_drive}}) and (see \code{\link{hemibrainr_rclone}}) and loaded into memory,
+which can take some time.}
+
+\item{...}{if \code{sql=TRUE}, methods passed to \code{dplyr::tbl}.}
 }
 \value{
-a \code{data.frame} or character vector
+a \code{data.frame}. Depending on which synapse function was called, it can contain the columns:
+
+\itemize{
+
+  \item{"treenode_id"} { - the position of the node in the SWC-style table found at \code{neuron$d}, where the neuron is the skeleton for \code{bodyid}.}
+
+  \item{"connector_id"}{ - the unique ID for a pre/post synapse, as read from neuPrint. If this is not given, you are looking at a connection not a synapse.
+  In this case \code{count} should be given, which shows the number of synapses in this connection.}
+
+  \item{"prepost"}{ - whether the given synapse is a pre-synape (0, output synapse) or postsynapse (1, input synapse). Alternatively, if a connection is given,
+  whether this connection is presynaptic to \code{bodyid} (0, \code{bodyid} is target) or postsynaptic (1, \code{bodyid} is source).}
+
+  \item{"x"}{ - x coordinate for the root point.}
+
+  \item{"y"}{ - y coordinate for the root point.}
+
+  \item{"z"}{ - z coordinate for the root point.}
+
+  \item{"confidence"}{ - FlyEM's confidence level. The lower the score, the more likely this synapse is an artefact.}
+
+  \item{"bodyid"}{ - The neuPrint neuron/body related to the synapse/connection given in each row.}
+
+  \item{"partner"}{ - The neuron connecting to \code{bodyid} by the givne synapse/connection.}
+
+  \item{"pre"}{ - The body ID for the presynaptic (source) neuron.}
+
+  \item{"partner"}{ - The body ID for the presynaptic (target) neuron.}
+
+  \item{"Label"}{ - The compartment of the \code{bodyid} neuron on which the synapse is placed / which receives/makes the given connection.
+  See \code{?standardise}.}
+
+  \item{"partner.Label"}{ - The compartment of the \code{partner} neuron on which the synapse is placed / which receives/makes the given connection.}
+
+  \item{"count"}{ - The number of synapses that make the given connection. Sometimes referred to as 'weight'.}
+
+  \item{"norm"}{ - The normalised synapse weight. \code{count} is divided by the total number of inputs that the
+  target neuron's (\code{post}) compartment (\code{Label}) has. I.e. this normalisation is by total inputs onto a dendrite or axon, not the whole neuron.}
+
+}
 }
 \description{
 Read precomputed data available on the hemibrain Google Team
-  Drive. This includes body IDs for all hemibrain neurons ((\code{hemibrain_neuron_bodyids})),
+  Drive. (see \code{\link{hemibrainr_set_drive}}) and (see \code{\link{hemibrainr_rclone}}).
+  This includes body IDs for all hemibrain neurons ((\code{hemibrain_neuron_bodyids})),
   all synapses (\code{hemibrain_synapses}),
   neuron-neuron connections (\code{hemibrain_connections}) and an
   edgelist  (\code{hemibrain_elist}) for all hemibrain neurons, broken down by axon and dendrite

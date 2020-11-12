@@ -34,14 +34,14 @@ containing the data object to read.}
 \code{\link{dotprops}} object.}
 
 \item{brainspace}{A template brain space for neurons loaded by
-\code{hemibrain_lm_lhns}. Defaults to \code{JRCFIB2018F}.}
+\code{lm_lhns}. Defaults to \code{JRCFIB2018F}.}
 }
 \value{
 a \code{nat::neuronlistfh} object for 'light-level' neurons in the given brainspace.
 }
 \description{
-Read \href{}{flycircuit} neurons from the \code{hemibrainr} google drive.
-The google drive must be mounted with Goolge Filestream or rclone.
+Read \href{http://www.flycircuit.tw/}{flycircuit} neurons from the \code{hemibrainr} google drive.
+The google drive must be mounted with Google Filestream or rclone.
 See \code{\link{hemibrainr_set_drive}}.
 }
 \examples{

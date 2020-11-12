@@ -53,7 +53,8 @@ Imports:
     catmaid,
     progress,
     nat.nblast,
-    fafbseg
+    fafbseg,
+    readr
 Remotes: 
     natverse/neuprintr,
     tidyverse/googlesheets4,

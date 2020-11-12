@@ -79,7 +79,7 @@ hemibrainr_set_drive <- function(Gdrive = "hemibrainr",
   if(file.exists(options()$Gdrive_hemibrain_data)){
     message("Google drive found")
   }else{
-    message("Google not found")
+    message("Google drive not found")
   }
 }
 
@@ -92,7 +92,8 @@ hemibrainr_team_drive <- function(){
 #' Read precomputed information from the hemibrainr Google Drive
 #'
 #' @description Read precomputed data available on the hemibrain Google Team
-#'   Drive. This includes body IDs for all hemibrain neurons ((\code{hemibrain_neuron_bodyids})),
+#'   Drive. (see \code{\link{hemibrainr_set_drive}}) and (see \code{\link{hemibrainr_rclone}}).
+#'   This includes body IDs for all hemibrain neurons ((\code{hemibrain_neuron_bodyids})),
 #'   all synapses (\code{hemibrain_synapses}),
 #'   neuron-neuron connections (\code{hemibrain_connections}) and an
 #'   edgelist  (\code{hemibrain_elist}) for all hemibrain neurons, broken down by axon and dendrite
@@ -104,8 +105,51 @@ hemibrainr_team_drive <- function(){
 #' but the user can specify an alternative path.
 #' @param folder A subfolder on the hemibrain team drive or your local data folder
 #'   containing the data object to read.
+#' @param sql logical. Whether not to read the desired data from an \code{SQL} database. This can save you from having to load
+#' a lot of information into memory, and it works well with \code{dplyr} pipes. If \code{FALSE} the relevant \code{.csv} is read from
+#' the connected google drive (see \code{\link{hemibrainr_set_drive}}) and (see \code{\link{hemibrainr_rclone}}) and loaded into memory,
+#' which can take some time.
+#' @param ... if \code{sql=TRUE}, methods passed to \code{dplyr::tbl}.
 #'
-#' @return a \code{data.frame} or character vector
+#' @return a \code{data.frame}. Depending on which synapse function was called, it can contain the columns:
+#'
+#' \itemize{
+#'
+#'   \item{"treenode_id"} { - the position of the node in the SWC-style table found at \code{neuron$d}, where the neuron is the skeleton for \code{bodyid}.}
+#'
+#'   \item{"connector_id"}{ - the unique ID for a pre/post synapse, as read from neuPrint. If this is not given, you are looking at a connection not a synapse.
+#'   In this case \code{count} should be given, which shows the number of synapses in this connection.}
+#'
+#'   \item{"prepost"}{ - whether the given synapse is a pre-synape (0, output synapse) or postsynapse (1, input synapse). Alternatively, if a connection is given,
+#'   whether this connection is presynaptic to \code{bodyid} (0, \code{bodyid} is target) or postsynaptic (1, \code{bodyid} is source).}
+#'
+#'   \item{"x"}{ - x coordinate for the root point.}
+#'
+#'   \item{"y"}{ - y coordinate for the root point.}
+#'
+#'   \item{"z"}{ - z coordinate for the root point.}
+#'
+#'   \item{"confidence"}{ - FlyEM's confidence level. The lower the score, the more likely this synapse is an artefact.}
+#'
+#'   \item{"bodyid"}{ - The neuPrint neuron/body related to the synapse/connection given in each row.}
+#'
+#'   \item{"partner"}{ - The neuron connecting to \code{bodyid} by the givne synapse/connection.}
+#'
+#'   \item{"pre"}{ - The body ID for the presynaptic (source) neuron.}
+#'
+#'   \item{"partner"}{ - The body ID for the presynaptic (target) neuron.}
+#'
+#'   \item{"Label"}{ - The compartment of the \code{bodyid} neuron on which the synapse is placed / which receives/makes the given connection.
+#'   See \code{?standardise}.}
+#'
+#'   \item{"partner.Label"}{ - The compartment of the \code{partner} neuron on which the synapse is placed / which receives/makes the given connection.}
+#'
+#'   \item{"count"}{ - The number of synapses that make the given connection. Sometimes referred to as 'weight'.}
+#'
+#'   \item{"norm"}{ - The normalised synapse weight. \code{count} is divided by the total number of inputs that the
+#'   target neuron's (\code{post}) compartment (\code{Label}) has. I.e. this normalisation is by total inputs onto a dendrite or axon, not the whole neuron.}
+#'
+#'}
 #'
 #' @examples
 #' \donttest{
@@ -131,41 +175,66 @@ hemibrainr_team_drive <- function(){
 #' @name hemibrainr_googledrive_data
 #' @aliases hemibrain_neuron_bodyids
 #' @export
-hemibrain_neuron_bodyids <- function(local = FALSE, folder = "hemibrain_neurons/"){
+hemibrain_neuron_bodyids <- function(local = FALSE, folder = "hemibrain_neurons/", sql = FALSE, ...){
   savedir = good_savedir(local = local)
-  gfile = find_gfile(savedir = savedir, file = "hemibrain_all_neuron_bodyids", folder = folder)
-  gcsv = utils::read.csv(gfile)
-  as.character(gcsv$x)
+  if(sql){
+    find_gsql(savedir = savedir, tab = "hemibrain_all_neuron_bodyids", sql.db = "hemibrainr_data.sqlite", folder = folder, ...)
+  }else{
+    gfile = find_gfile(savedir = savedir, file = "hemibrain_all_neuron_bodyids", folder = folder)
+    gcsv = as.data.frame(readr::read_csv(gfile))
+    as.character(gcsv$x)
+  }
 }
 
 #' @rdname hemibrainr_googledrive_data
 #' @export
-hemibrain_elist <- function(local = FALSE, folder = "hemibrain_neurons/"){
+flywire_contributions <-function(local = FALSE, folder = "flywire_neurons/", sql = TRUE, ...){
   savedir = good_savedir(local = local)
-  folder = "hemibrain_neurons/"
-  gfile = find_gfile(savedir = savedir, file = "hemibrain_all_neurons_edgelist", folder = folder)
-  gcsv = utils::read.csv(gfile)
+  if(sql){
+    find_gsql(savedir = savedir, tab = "flywire_edits", sql.db = "flywire_data.sqlite", folder = folder, ...)
+  }else{
+    gfile = find_gfile(savedir = savedir, file = "flywire_edits", folder = folder)
+    gcsv = as.data.frame(readr::read_csv(gfile))
+    as.character(gcsv$x)
+  }
+}
+
+#' @rdname hemibrainr_googledrive_data
+#' @export
+hemibrain_elist <- function(local = FALSE, folder = "hemibrain_neurons/", sql = TRUE, ...){
+  savedir = good_savedir(local = local)
+  if(sql){
+    gcsv = find_gsql(savedir = savedir, tab = "hemibrain_all_neurons_edgelist_polypre_centrifugal_synapses", folder = folder, ...)
+  }else{
+    gfile = find_gfile(savedir = savedir, file = "hemibrain_all_neurons_edgelist", folder = folder)
+    gcsv = as.data.frame(readr::read_csv(gfile))
+  }
   gcsv
 }
 
 #' @rdname hemibrainr_googledrive_data
 #' @export
-hemibrain_synapses <- function(local = FALSE, folder = "hemibrain_neurons/"){
+hemibrain_synapses <- function(local = FALSE, folder = "hemibrain_neurons/", sql = TRUE, ...){
   savedir = good_savedir(local = local)
-  gfile = find_gfile(savedir = savedir, file = "hemibrain_all_neurons_synapses", folder = folder)
-  gcsv = utils::read.csv(gfile)
-  gcsv
+  if(sql){
+    gcsv = find_gsql(savedir = savedir, tab = "hemibrain_all_neurons_synapses_polypre_centrifugal_synapses", sql.db = "hemibrainr_data.sqlite", folder = folder, ...)
+  }else{
+    gfile = find_gfile(savedir = savedir, file = "hemibrain_all_neurons_synapses", folder = folder)
+    gcsv = as.data.frame(readr::read_csv(gfile))
+  }
 }
 
 #' @rdname hemibrainr_googledrive_data
 #' @export
-hemibrain_connections <- function(local = FALSE, folder = "hemibrain_neurons/"){
+hemibrain_connections <- function(local = FALSE, folder = "hemibrain_neurons/", sql = TRUE, ...){
   savedir = good_savedir(local = local)
-  gfile = find_gfile(savedir = savedir, file = "hemibrain_all_neurons_connections", folder = folder)
-  gcsv = utils::read.csv(gfile)
-  gcsv
+  if(sql){
+    gcsv = find_gsql(savedir = savedir, tab = "hemibrain_all_neurons_connections_polypre_centrifugal_synapses", sql.db = "hemibrainr_data.sqlite", folder = folder, ...)
+  }else{
+    gfile = find_gfile(savedir = savedir, file = "hemibrain_all_neurons_connections", folder = folder)
+    gcsv = as.data.frame(readr::read_csv(gfile))
+  }
 }
-
 
 #' Read precomputed NBLASTs from the hemibrainr Google Drive
 #'
@@ -305,17 +374,32 @@ find_gfile <- function(savedir,
   gfile
 }
 
+# hidden
+find_gsql <- function(savedir,
+                      sql.db = "hemibrainr_data.sqlite",
+                      tab = NULL,
+                      folder = "hemibrain_neurons",
+                      ...){
+  gfile = find_gfile(savedir = savedir, file = sql.db, folder = folder)
+  sql.db.load  = dplyr::src_sqlite(gfile, create = FALSE)
+  if(!is.null(tab)){
+    dplyr::tbl(sql.db.load, tab, ...)
+  }else{
+    sql.db.load
+  }
+}
+
 #' Read flycircuit neurons from hemibrainr Google Drive
 #'
-#' @description Read \href{}{flycircuit} neurons from the \code{hemibrainr} google drive.
-#' The google drive must be mounted with Goolge Filestream or rclone.
+#' @description Read \href{http://www.flycircuit.tw/}{flycircuit} neurons from the \code{hemibrainr} google drive.
+#' The google drive must be mounted with Google Filestream or rclone.
 #' See \code{\link{hemibrainr_set_drive}}.
 #'
 #' @param cable the type of cable we want to read. \code{"all"} indicates full neurons.
 #' @param data the type of data to read, i.e. neurons, an NBLAST matrix or a
 #'   \code{\link{dotprops}} object.
 #' @param brainspace A template brain space for neurons loaded by
-#'   \code{hemibrain_lm_lhns}. Defaults to \code{JRCFIB2018F}.
+#'   \code{lm_lhns}. Defaults to \code{JRCFIB2018F}.
 #' @inheritParams hemibrainr_googledrive_data
 #'
 #' @return a \code{nat::neuronlistfh} object for 'light-level' neurons in the given brainspace.

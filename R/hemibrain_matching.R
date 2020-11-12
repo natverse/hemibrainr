@@ -155,7 +155,7 @@ hemibrain_matching <- function(ids = NULL,
     db=tryCatch(get(db), error=function(e) stop("Unable to find neuronlist: ", db))
   }
   if(repository=="LM" & is.null(query)){
-    fafb = hemibrain_lm_lhns(brainspace = c("JRCFIB2018F"))
+    fafb = lm_lhns(brainspace = c("JRCFIB2018F"))
   }else if(repository=="LM"){
     fafb = query
   }
@@ -429,9 +429,9 @@ lm_matching <- function(ids = NULL,
       rm("hemibrain.lhins.mean.compressed")
   }
   if(is.null(query)){
-    q1 = hemibrain_lm_lhns(brainspace = c("JRCFIB2018F"))
-    q2 = hemibrain_lm_lhns(cable = "lhins", brainspace = c("JRCFIB2018F"))
-    q3 = hemibrain_lm_lhns(cable = "lines", brainspace = c("JRCFIB2018F"))
+    q1 = lm_lhns(brainspace = c("JRCFIB2018F"))
+    q2 = lm_lhns(cable = "lhins", brainspace = c("JRCFIB2018F"))
+    q3 = lm_lhns(cable = "lines", brainspace = c("JRCFIB2018F"))
     query = nat::union(q1, q2)
     query = nat::union(query, q3)
   }
