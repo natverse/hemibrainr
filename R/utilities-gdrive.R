@@ -362,7 +362,8 @@ flywire_ids_update <- function(selected_sheets = NULL,
       if(ncol(gs.t.current)&&sum(grepl("fw.x|flywire.xyz",colnames(gs.t.current)))>0){
         # Separate x,y,z positions
         gs2 = subset(gs.t.current, !is.na(gs.t.current$flywire.xyz))
-        gs1 = subset(gs.t.current[setdiff(rownames(gs.t.current),rownames(gs2)),], !is.na(gs.t.current$fw.x))
+        gs1 = subset(gs.t.current[setdiff(rownames(gs.t.current),rownames(gs2)),])
+        gs1 = subset(gs1, !is.na(gs1$fw.x))
         gs0 = gs.t.current[setdiff(rownames(gs.t.current),c(rownames(gs1),rownames(gs2))),]
         if(nrow(gs1)){
           gs1$flywire.xyz = tryCatch(apply(gs1[,c("fw.x","fw.y",'fw.z')],1,paste,sep=";",collapse=";"),
@@ -393,6 +394,7 @@ flywire_ids_update <- function(selected_sheets = NULL,
               p = nat::pointsinside(pos[,c("fw.x","fw.y",'fw.z')],bbx)
               pos = pos[p,]
               pos = pos[pos$flywire.id!=0,]
+              pos = pos[!is.na(pos$fw.x),]
               if(nrow(pos)){
                 i <- tryCatch(fafbseg::flywire_xyz2id(pos[,c("fw.x","fw.y",'fw.z')], rawcoords = TRUE),
                               error = function(e){cat(as.character(e));rep("0",nrow(pos))})
@@ -405,6 +407,8 @@ flywire_ids_update <- function(selected_sheets = NULL,
             pos = gs.t[apply(gs.t, 1, function(row) sum(is.na(row[c("fw.x","fw.y",'fw.z')]))==0),]
             p = nat::pointsinside(pos[,c("fw.x","fw.y",'fw.z')],bbx)
             pos = pos[p,]
+            pos = pos[pos$flywire.id!=0,]
+            pos = pos[!is.na(pos$fw.x),]
             if(nrow(pos)){
               foreach.ids = fafbseg::flywire_xyz2id(pos[,c("fw.x","fw.y",'fw.z')], rawcoords = TRUE)
               names(foreach.ids) = pos[,"flywire.xyz"]
@@ -475,9 +479,9 @@ flywire_ids_update <- function(selected_sheets = NULL,
 
 # hidden
 gsheet_manipulation <- function(FUN,
+                                ...,
                                 wait = 10,
                                 max.tries = 10,
-                                ...,
                                 return = FALSE){
   sleep = wait
   success = FALSE
