@@ -338,7 +338,8 @@ flywire_ids_update <- function(selected_sheets = NULL,
                                                   "FAFB.xyz", "side",
                                                   "ItoLee_Hemilineage", "Hartenstein_Hemilineage",
                                                   "hemibrain_match"),
-                               numCores = 1){
+                               numCores = 1,
+                               max.tries = 10){
   # Read selected sheets and extract positions for flywire neurons
   # One xyz position is enough to identify a neuron
   # We do this because flywire.ids change all of the time
@@ -395,10 +396,20 @@ flywire_ids_update <- function(selected_sheets = NULL,
               pos = pos[p,]
               pos = pos[!is.na(pos$fw.x),]
               if(nrow(pos)){
-                i <- tryCatch(fafbseg::flywire_xyz2id(pos[,c("fw.x","fw.y",'fw.z')], rawcoords = TRUE),
-                              error = function(e){cat(as.character(e));rep("0",nrow(pos))})
-                names(i) = pos$flywire.xyz
-                i[is.na(i)|is.nan(i)] = 0
+                tries = 0
+                try.again = TRUE
+                while(try.again){
+                  tries = tries+1
+                  i <- tryCatch(fafbseg::flywire_xyz2id(pos[,c("fw.x","fw.y",'fw.z')], rawcoords = TRUE),
+                                error = function(e){cat(as.character(e));rep("failed",nrow(pos))})
+                  names(i) = pos$flywire.xyz
+                  i[is.na(i)|is.nan(i)] = "failed"
+                  if(all(i%in%c("failed"))&tries<max.tries){
+                    try.again = TRUE
+                  }else{
+                    try.again = FALSE
+                  }
+                }
                 i
               }
             }
