@@ -12,19 +12,21 @@
                                    options()$flywire_flagged_gsheet))
   }else{
     packageStartupMessage("
-          ########################remote data#########################
-          You do not have a shared Google drive mounted that has data
-          for hemibrainr. To use data grabbing functions in hemibrainr
-          please mount hemibrainr to your drive, mounted with Google
-          filestream OR rclone, by setting the option
-                            Gdrive_hemibrain_data
-          To the right location. To mount with rclone, just run in R:
-                            hemibrainr_rclone()
-          And unmount with:
-                            hemibrainr_rclone_unmount()
-          You will need to have installed and configre rclone
-          ########################remote data#########################
-          ")
+  ####################### remote data ########################
+  To use data grabbing functions in hemibrainr please point
+  hemibrainr to a shared drive, mounted with Google
+  filestream OR rclone, by setting the option
+      options(Gdrive_hemibrain_data='/path/to/drive')
+
+  To mount with rclone, just run in R:
+      hemibrainr_rclone()
+  And unmount with:
+      hemibrainr_rclone_unmount()
+  You will need to have installed and configured rclone. See
+  https://flyconnectome.github.io/hemibrainr/articles/google_filestream.html
+  or ?hemibrainr_set_drive
+  ####################### remote data ########################
+  ")
     # Set Google sheets of interest
     options(Gdrive_hemibrain_data = paste0(getwd(),"/data-raw/hemibrainr_data/"))
     options(hemibrainr_matching_gsheet = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw")
