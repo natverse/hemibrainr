@@ -421,6 +421,9 @@ flywire_ids_update <- function(selected_sheets = NULL,
           if(length(fids)){
             gs.t[match(names(fids),gs.t$flywire.xyz),"flywire.id"] = fids
             gs.t$flywire.xyz = apply(gs.t[,c("fw.x","fw.y",'fw.z')],1,paste,sep=";",collapse=";")
+            gs.t$fw.x = as.numeric(gs.t$fw.x)
+            gs.t$fw.y = as.numeric(gs.t$fw.y)
+            gs.t$fw.z = as.numeric(gs.t$fw.z)
             # Update
             update = rbind(gs.t[,used.cols],gs0[,used.cols])
             if(nrow(update)!=nrow(gs.t.current)){
