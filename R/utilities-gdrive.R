@@ -493,7 +493,7 @@ flywire_ids_update <- function(selected_sheets = NULL,
 gsheet_manipulation <- function(FUN,
                                 ...,
                                 wait = 10,
-                                max.tries = 10,
+                                max.tries = 25,
                                 return = FALSE){
   sleep = wait
   success = FALSE
