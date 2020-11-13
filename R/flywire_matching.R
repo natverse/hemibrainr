@@ -95,7 +95,9 @@ LR_matching <- function(ids = NULL,
                         batch_size = 50,
                         db = flywire_neurons(),
                         query = flywire_neurons(mirror=TRUE),
-                        overwrite = FALSE){
+                        overwrite = c("FALSE","mine","mine_empty","TRUE"),
+                        column = NULL,
+                        field = NULL){
   # Packages
   if(!requireNamespace("elmr", quietly = TRUE)) {
     stop("Please install elmr using:\n", call. = FALSE,
@@ -113,10 +115,10 @@ LR_matching <- function(ids = NULL,
           #######################Colours##########################
           black = FAFB CATMAID neuron,
           dark grey = flywire neuron,
-          blue = mirrrored flywire neuron,
+          blue = mirrrored flywire neuron you are trying to match,
           red = potential hemibrain matches based on NBLAST score,
           green = a chosen hemibrain neuron during scanning,
-          blue = your selected hemibrain match.
+          dark blue = your selected hemibrain match.
           #######################Colours##########################
           ")
   ## Get NBLAST
@@ -148,39 +150,22 @@ LR_matching <- function(ids = NULL,
   message("Neuron matches: ", nrow(done), "/", nrow(gs))
   print(table(gs[[quality.field]]))
   # choose user
-  message("Users: ", paste(unique(gs$User),collapse = " "))
-  initials = must_be("Choose a user : ", answers = sort(unique(gs$User)))
+  message("Users: ", paste(sort(unique(gs$User)),collapse = " "))
+  initials = must_be("Choose a user : ", answers = unique(gs$User))
   say_hello(initials)
   rgl::bg3d("white")
   # choose ids
-  if(is.null(ids)|!length(ids)){
-    ids = gs[[id]][gs$User==initials]
-    ids = ids[!grepl("missing",ids)]
-  }else{
-    ids = intersect(ids,gs[[id]])
-  }
-  # Deselect some IDs
-  if(overwrite == "none"){
-    donotdo = subset(gs, !gs[[quality.field]] %in% c("none","n","tract","t") | !gs[[id]]%in%ids)
-  } else if(!overwrite){
-    donotdo = subset(gs, !is.na(gs[[match.field]]) | !gs[[id]]%in%ids)
-  }else{
-    donotdo = subset(gs, !gs[[id]]%in%ids)
-  }
-  if(sum(ids%in%donotdo[[id]])==length(ids)){
-    message("No matches to make for ", initials, " either assign more neurons to your initials, or use overwrite = TRUE to replace matches already made")
-  }
+  selected = id_selector(gs=gs, ids=ids, id=id, overwrite = overwrite,
+                         quality.field = quality.field, match.field = match.field,
+                         initials = initials, column = column, field = field)
+  ids = unique(selected[[id]])
   # choose brain
   brain = elmr::FAFB.surf
   # Make matches!
-  for(n in gs[[id]]){
+  for(n in unique(selected[[id]])){
     # Get id
     n = as.character(n)
-    end = n==gs[[id]][length(gs[[id]])]
-    # Remove neurons with matches
-    if(n%in%donotdo[[id]]){
-      next
-    }
+    end = n==selected[[id]][length(selected[[id]])]
     # Plot brain
     rgl::clear3d()
     hemibrain_view()
@@ -299,7 +284,18 @@ LR_matching <- function(ids = NULL,
       }
     }
     # Assign match and its quality
-    gs[n,match.field] = ifelse(length(sel)==0,'none',sel)
+    if(length(sel)){
+      sel = as.character(sel)
+      if(!is.na(db[sel,"flywire.xyz"])){
+        hit = db[sel,"flywire.xyz"]
+      }else{
+        fixed = flywire_basics(db[sel])
+        hit = fixed[,"flywire.xyz"]
+      }
+    }else{
+      hit = "none"
+    }
+    gs[gs[[id]]%in%n,match.field] = hit
     if(length(sel)){
       rgl::plot3d(native[sel],col="blue",lwd=2,soma=TRUE)
       quality = must_be("What is the quality of this match? good(e)/okay(o)/poor(p)/tract-only(t) ", answers = c("e","o","p","t"))
@@ -307,8 +303,8 @@ LR_matching <- function(ids = NULL,
       quality = "n"
     }
     quality = standardise_quality(quality)
-    gs[n,quality.field] = quality
-    unsaved = c(unsaved, n)
+    gs[gs[[id]]%in%n,quality.field] = quality
+    unsaved = unique(c(unsaved, n))
     message(length(unsaved), " unsaved matches")
     print(knitr::kable(gs[unsaved,c(id,"ItoLee_Hemilineage",match.field,quality.field)]))
     p = must_be("Continue (enter) or save (s)? ", answers = c("","s"))

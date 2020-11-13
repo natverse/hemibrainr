@@ -14,7 +14,9 @@ LR_matching(
   batch_size = 50,
   db = flywire_neurons(),
   query = flywire_neurons(mirror = TRUE),
-  overwrite = FALSE
+  overwrite = c("FALSE", "mine", "mine_empty", "TRUE"),
+  column = NULL,
+  field = NULL
 )
 
 hemibrain_matching(
@@ -87,6 +89,11 @@ If \code{'mine'} you will re-examine and overwrite any matches you have made out
 With \code{'mine_empty'} the same happens, but you will also retain neurons that have no match, and have been assigned to any other user.
 If \code{FALSE} (be careful!) then you overwrite made matches among the selected neurons.}
 
+\item{column}{defaults to \code{NULL}, no further subsetting. Else, you can select a column from the Google sheet.
+Only  neurons with a certain value (\code{field}) in that column will be chosen for matching.}
+
+\item{field}{defaults to \code{NULL}, no further subsetting. Else, it is a value in \code{column}.}
+
 \item{hemibrain.nblast}{a FAFB (rows) - hemibrain (columns) normalised
 NBLAST matrix. By default this is read from the flyconnectome Team Drive.}
 
@@ -94,18 +101,14 @@ NBLAST matrix. By default this is read from the flyconnectome Team Drive.}
 CATMAID (using \code{catmaid::read.neurons.catmaid}) or flywire (using \code{flywire_neurons}) for matching. Alternatively,light level
 skeletons  (\code{"lm"}) from Dolan et al. and Frechter et al. 2019 (eLife), stored in the package \code{lhns} as
 \code{most.lhns}.}
-
-\item{column}{defaults to \code{NULL}, no further subsetting. Else, you can select a column from the Google sheet.
-Only  neurons with a certain value (\code{field}) in that column will be chosen for matching.}
-
-\item{field}{defaults to \code{NULL}, no further subsetting. Else, it is a value in \code{column}.}
 }
 \description{
 Match up neurons between the hemibrain, FAFB and light level data and save the
   result using a
   \href{https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit#gid=0}{Google
   Sheet} on the hemibrain Google Team Drive operated by the flyconnectome
-  group at the University of Cambridge. You must have access to the Team Drive
+  group at the University of Cambridge. Your aim is to match the light blue neuron to the best red neuron!
+  You must have access to the Team Drive
   in order to use this function. This function makes use of the Google
   Filestream application, which should be installed on your machine. Further,
   note that neurons are read from the FAFB CATMAID project, and you must have

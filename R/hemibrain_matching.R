@@ -8,7 +8,8 @@
 #'   result using a
 #'   \href{https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit#gid=0}{Google
 #'   Sheet} on the hemibrain Google Team Drive operated by the flyconnectome
-#'   group at the University of Cambridge. You must have access to the Team Drive
+#'   group at the University of Cambridge. Your aim is to match the light blue neuron to the best red neuron!
+#'   You must have access to the Team Drive
 #'   in order to use this function. This function makes use of the Google
 #'   Filestream application, which should be installed on your machine. Further,
 #'   note that neurons are read from the FAFB CATMAID project, and you must have
@@ -111,10 +112,10 @@ hemibrain_matching <- function(ids = NULL,
   unsaved = c()
   message("
           #######################Colours#######################
-          black = hemibrain neuron,
+          blue = hemibrain neuron,
           red = potential FAFB matches based on NBLAST score,
           green = a chosen FAFB neuron during scanning,
-          blue = your selected FAFB match.
+          dark blue = your selected FAFB match.
           #######################Colours#######################
           ")
   ## Get NBLAST
@@ -258,10 +259,10 @@ hemibrain_matching <- function(ids = NULL,
     # Plot brain
     rgl::clear3d()
     plot3d(brain, alpha = 0.1, col ="grey")
-    plot3d(lhn[n], lwd = 2, soma = TRUE, col = "black")
+    plot3d(lhn[n], lwd = 2, soma = TRUE, col = "#1BB6AF")
     # Cycle through potential matches
     while(length(sel)>1){
-      sel = sel.orig = nat::nlscan(fafb[names(r)[1:j]], col = "red", lwd = 2, soma = TRUE)
+      sel = sel.orig = nat::nlscan(fafb[names(r)[1:j]], col = "#EE4244", lwd = 2, soma = TRUE)
       if(length(sel)>1){
         message("Note: You selected more than one neuron")
       }
@@ -314,7 +315,7 @@ hemibrain_matching <- function(ids = NULL,
     quality = standardise_quality(quality)
     gs[n,quality.field] = quality
     gs = gs[!duplicated(gs$bodyid),]
-    unsaved = c(unsaved, n)
+    unsaved = unique(c(unsaved, n))
     message(length(unsaved), " unsaved matches")
     print(knitr::kable(gs[unsaved,c("bodyid","cell.type",match.field,quality.field)]))
     p = must_be("Continue (enter) or save (s)? ", answers = c("","s"))
@@ -404,10 +405,10 @@ lm_matching <- function(ids = NULL,
   plot_inspirobot()
   message("
           #######################Colours##########################
-          black = LM neuron,
+          blue = LM neuron,
           red = potential hemibrain matches based on NBLAST score,
           green = a chosen hemibrain neuron during scanning,
-          blue = your selected hemibrain match.
+          dark blue = your selected hemibrain match.
           #######################Colours##########################
           ")
   ## Get NBLAST
@@ -485,9 +486,9 @@ lm_matching <- function(ids = NULL,
     lhn = tryCatch( scale_neurons(lhn, scaling = (1000/8)),
                     error = function(e) lhn*(1000/8))
     if(nat::is.dotprops(lhn[[1]])){
-      points3d(nat::xyzmatrix(lhn), col = "black")
+      points3d(nat::xyzmatrix(lhn), col = "#1BB6AF")
     }else{
-      plot3d(lhn, lwd = 2, soma = TRUE, col = "black")
+      plot3d(lhn, lwd = 2, soma = TRUE, col = "#1BB6AF")
     }
     message("ID: ", n)
     message("cell type : ",lhn[n,"cell.type"])
@@ -519,7 +520,7 @@ lm_matching <- function(ids = NULL,
     while(length(sel)>1){
       cycle = hemi[r[1:j]]
       cycle = cycle[!is.na(names(cycle))]
-      sel = sel.orig = nat::nlscan(cycle, col = "red", lwd = 2, soma = TRUE)
+      sel = sel.orig = nat::nlscan(cycle, col = "#EE4244", lwd = 2, soma = TRUE)
       if(length(sel)>1){
         message("Note: You selected more than one neuron")
       }
@@ -571,7 +572,7 @@ lm_matching <- function(ids = NULL,
     quality = standardise_quality(quality)
     gs[n,quality.field] = quality
     gs = gs[!duplicated(gs$id),]
-    unsaved = c(unsaved, n)
+    unsaved = unique(c(unsaved, n))
     message(length(unsaved), " unsaved matches")
     print(knitr::kable(gs[unsaved,c("id","cell.type",match.field,quality.field)]))
     p = must_be("Continue (enter) or save (s)? ", answers = c("","s"))
@@ -659,12 +660,12 @@ fafb_matching <- function(ids = NULL,
   unsaved = c()
   message("
           #######################Colours##########################
-          black = FAFB CATMAID neuron,
-          dark grey = flywire neuron,
+          black = FAFB CATMAID neuron you are trying to match,
+          blue = flywire neuron you are trying to match,
           light grey = mirrrored flywire neuron,
           red = potential hemibrain matches based on NBLAST score,
           green = a chosen hemibrain neuron during scanning,
-          blue = your selected hemibrain match.
+          dark blue = your selected hemibrain match.
           #######################Colours##########################
           ")
   ## Get NBLAST
@@ -721,7 +722,7 @@ fafb_matching <- function(ids = NULL,
   # Subset gs
   message("We'll look at ", nrow(selected)," ", repository, " neurons sequentially.")
   # Make matches!
-  for(n in selected[[id]]){
+  for(n in unique(selected[[id]])){
     # Get id
     n = as.character(n)
     end = n==selected[[id]][length(selected[[id]])]
@@ -770,7 +771,7 @@ fafb_matching <- function(ids = NULL,
       plot3d(lhn, lwd = 2, soma = TRUE, col = "black")
     }
     if(repository=="flywire"){
-      if(!is.null(fw.n)&length(is.null(fw.n))) {plot3d(fw.n, lwd = 3, soma = TRUE, col = "grey30")}
+      if(!is.null(fw.n)&length(is.null(fw.n))) {plot3d(fw.n, lwd = 3, soma = TRUE, col = "#1BB6AF")}
       if(!is.null(fw.m)&length(fw.m)) {plot3d(fw.m, lwd = 3, soma = TRUE, col = "grey50")}
     }
     message("ID: ", n)
@@ -804,7 +805,7 @@ fafb_matching <- function(ids = NULL,
     j = batch_size
     # Cycle through potential matches
     while(length(sel)>1){
-      sel = sel.orig = tryCatch(nat::nlscan(hemi[names(r)[1:j]], col = "red", lwd = 2, soma = TRUE), error = function(e) NULL)
+      sel = sel.orig = tryCatch(nat::nlscan(hemi[names(r)[1:j]], col = "#EE4244", lwd = 2, soma = TRUE), error = function(e) NULL)
       if(is.null(sel)){
         next
       }
@@ -858,7 +859,7 @@ fafb_matching <- function(ids = NULL,
     }
     quality = standardise_quality(quality)
     gs[n,quality.field] = quality
-    unsaved = c(unsaved, n)
+    unsaved = unique(c(unsaved, n))
     message(length(unsaved), " unsaved matches")
     print(knitr::kable(gs[unsaved,c("skid","ItoLee_Hemilineage",match.field,quality.field)]))
     p = must_be("Continue (enter) or save (s)? ", answers = c("","s"))
