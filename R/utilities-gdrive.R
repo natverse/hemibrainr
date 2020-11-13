@@ -393,7 +393,6 @@ flywire_ids_update <- function(selected_sheets = NULL,
               pos = pos[apply(pos, 1, function(row) sum(is.na(row[c("fw.x","fw.y",'fw.z')]))==0),]
               p = nat::pointsinside(pos[,c("fw.x","fw.y",'fw.z')],bbx)
               pos = pos[p,]
-              pos = pos[pos$flywire.id!=0,]
               pos = pos[!is.na(pos$fw.x),]
               if(nrow(pos)){
                 i <- tryCatch(fafbseg::flywire_xyz2id(pos[,c("fw.x","fw.y",'fw.z')], rawcoords = TRUE),
@@ -407,7 +406,6 @@ flywire_ids_update <- function(selected_sheets = NULL,
             pos = gs.t[apply(gs.t, 1, function(row) sum(is.na(row[c("fw.x","fw.y",'fw.z')]))==0),]
             p = nat::pointsinside(pos[,c("fw.x","fw.y",'fw.z')],bbx)
             pos = pos[p,]
-            pos = pos[pos$flywire.id!=0,]
             pos = pos[!is.na(pos$fw.x),]
             if(nrow(pos)){
               foreach.ids = fafbseg::flywire_xyz2id(pos[,c("fw.x","fw.y",'fw.z')], rawcoords = TRUE)
