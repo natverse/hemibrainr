@@ -90,7 +90,7 @@ hemibrain_extract_synapses <- function(x,
   x = nat::as.neuronlist(x)
   prepost = match.arg(prepost)
   if("bodyid"%in%colnames(x[,])){
-    x = add_field_seq(x,x[,"bodyid"],field="bodyid")
+    x = add_field_seq(x,names(x),field="bodyid")
   }else if("skid"%in%colnames(x[,])){
     x = add_field_seq(x,x[,"skid"],field="skid")
   }
@@ -116,7 +116,7 @@ hemibrain_extract_synapses <- function(x,
 hemibrain_extract_connections <- function(x,
                                        prepost = c("BOTH","PRE","POST"),
                                        ...){
-  x = add_field_seq(x,x[,"bodyid"],field="bodyid")
+  x = add_field_seq(x,names(x),field="bodyid")
   prepost = match.arg(prepost)
   if(nat::is.neuronlist(x)){
     syns = nat::nlapply(x, extract_synapses, unitary = TRUE, ...)
@@ -171,14 +171,15 @@ extract_synapses <-function(x, unitary = FALSE){
       as.data.frame() ->
       syn
   }
-  syn$partner.Label = standard_compartments(syn$Label)
+  syn$Label = standard_compartments(syn$Label)
+  syn$partner.Label = standard_compartments(syn$partner.Label)
   syn
 }
 
 #' @export
 #' @rdname hemibrain_extract_connections
 hemibrain_extract_compartment_edgelist <- function(x, ...){
-  x = add_field_seq(x,x[,"bodyid"],field="bodyid")
+  x = add_field_seq(x,names(x),field="bodyid")
   if(nat::is.neuronlist(x)){
     syns.list = nat::nlapply(x, extract_synapses, unitary = FALSE, ...)
   }else{
