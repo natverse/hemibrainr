@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Meshes for Antennal Lobe (AL) glomeruli — hemibrain_al.surf • hemibrainr</title>
+<title>Read precomputed flywire data from the hemibrainr Google Drive — flywire_googledrive_data • hemibrainr</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,12 +46,13 @@
 
 
 
-<meta property="og:title" content="Meshes for Antennal Lobe (AL) glomeruli — hemibrain_al.surf" />
-<meta property="og:description" content="3D meshes of 51 olfactory + 7 thermosensory antennal lobe glomeruli for the
-the hemibrain volume. They are represented as a hxsurf
-object, in which 58 'regions' are defined, one for each glomerulus. Meshes
-are available both in raw voxels and in microns. You can see which glomeruli are truncated, and by
-roughly how much by examining hemibrain_glomeruli_summary." />
+<meta property="og:title" content="Read precomputed flywire data from the hemibrainr Google Drive — flywire_googledrive_data" />
+<meta property="og:description" content="Read precomputed data available on the hemibrain Google Team
+  Drive. (see hemibrainr_set_drive) and (see
+  hemibrainr_rclone). This includes body IDs for all flywire
+  neurons ((flywire_ids)), and user contributions towards their
+  creation (flywire_contributions), as well as Flywire related NBLAST
+  scores retrieved using hemibrain_nblast." />
 <meta property="og:image" content="/logo.svg" />
 
 
@@ -138,114 +139,94 @@ roughly how much by examining hemibrain_glomeruli_summary." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Meshes for Antennal Lobe (AL) glomeruli</h1>
-    <small class="dont-index">Source: <a href='https://github.com/flyconnectome/hemibrainr/blob/master/R/hemibrain_data.R'><code>R/hemibrain_data.R</code></a></small>
-    <div class="hidden name"><code>hemibrain_al.surf.Rd</code></div>
+    <h1>Read precomputed flywire data from the hemibrainr Google Drive</h1>
+    <small class="dont-index">Source: <a href='https://github.com/flyconnectome/hemibrainr/blob/master/R/flywire_googledrive.R'><code>R/flywire_googledrive.R</code></a></small>
+    <div class="hidden name"><code>flywire_googledrive_data.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>3D meshes of 51 olfactory + 7 thermosensory antennal lobe glomeruli for the
-the hemibrain volume. They are represented as a <code><a href='https://rdrr.io/pkg/nat/man/read.hxsurf.html'>hxsurf</a></code>
-object, in which 58 'regions' are defined, one for each glomerulus. Meshes
-are available both in raw voxels and in microns. You can see which glomeruli are truncated, and by
-roughly how much by examining <code>hemibrain_glomeruli_summary</code>.</p>
+    <p>Read precomputed data available on the hemibrain Google Team
+  Drive. (see <code><a href='hemibrainr_set_drive.html'>hemibrainr_set_drive</a></code>) and (see
+  <code><a href='hemibrainr_set_drive.html'>hemibrainr_rclone</a></code>). This includes body IDs for all flywire
+  neurons ((<code>flywire_ids</code>)), and user contributions towards their
+  creation (<code>flywire_contributions</code>), as well as Flywire related NBLAST
+  scores retrieved using <code><a href='hemibrain_nblast.html'>hemibrain_nblast</a></code>.</p>
     </div>
 
-    <pre class="usage"><span class='va'>hemibrain_al.surf</span>
+    <pre class="usage"><span class='fu'>flywire_meta</span><span class='op'>(</span>local <span class='op'>=</span> <span class='cn'>FALSE</span>, folder <span class='op'>=</span> <span class='st'>"flywire_neurons/"</span>, sql <span class='op'>=</span> <span class='cn'>TRUE</span>, <span class='va'>...</span><span class='op'>)</span>
 
-<span class='va'>hemibrain_al_microns.surf</span>
+<span class='fu'>flywire_contributions</span><span class='op'>(</span>
+  local <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  folder <span class='op'>=</span> <span class='st'>"flywire_neurons/"</span>,
+  sql <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span>
 
-<span class='va'>hemibrain_glomeruli_summary</span></pre>
+<span class='fu'>flywire_ids</span><span class='op'>(</span>local <span class='op'>=</span> <span class='cn'>FALSE</span>, folder <span class='op'>=</span> <span class='st'>"flywire_neurons/"</span>, sql <span class='op'>=</span> <span class='cn'>TRUE</span>, <span class='va'>...</span><span class='op'>)</span></pre>
 
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>local</th>
+      <td><p><code>FALSE</code> or path. By default (<code>FALSE</code>) data is read from <code>options()$Drive_hemibrain_data</code>),
+but the user can specify an alternative path.</p></td>
+    </tr>
+    <tr>
+      <th>folder</th>
+      <td><p>A subfolder on the hemibrain team drive or your local data folder
+containing the data object to read.</p></td>
+    </tr>
+    <tr>
+      <th>sql</th>
+      <td><p>logical. Whether not to read the desired data from an <code>SQL</code> database. This can save you from having to load
+a lot of information into memory, and it works well with <code>dplyr</code> pipes. If <code>FALSE</code> the relevant <code>.csv</code> is read from
+the connected google drive (see <code><a href='hemibrainr_set_drive.html'>hemibrainr_set_drive</a></code>) and (see <code><a href='hemibrainr_set_drive.html'>hemibrainr_rclone</a></code>) and loaded into memory,
+which can take some time.</p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p>if <code>sql=TRUE</code>, methods passed to <code><a href='https://dplyr.tidyverse.org/reference/tbl.html'>dplyr::tbl</a></code>.</p></td>
+    </tr>
+    </table>
 
-    <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>An object of class <code>hxsurf</code> of length 4.</p>
-<p>An object of class <code>hxsurf</code> of length 4.</p>
-<p>An object of class <code>data.frame</code> with 58 rows and 6 columns.</p>
-    <h2 class="hasAnchor" id="source"><a class="anchor" href="#source"></a>Source</h2>
+    <p>a <code>data.frame</code>. Depending on which synapse function was called, it can contain the columns:</p>
+<ul>
+<li><p>"flywire.xyz"  - coordinates of a point in the neuron in flywire voxel space. XYZ, separated by a semicolon.</p></li>
+<li><p>"flywire.id" - the unique ID associated with this flywire neuron. This ID changes every time a neuron is, even slightly, modified. So it is an unstable identifier.
+  This is why <code>flywire.xyz</code> is sometimes used.</p></li>
+<li><p>"fw.x" - the x coordinate of a point in the flywire neuron, in flywire voxel space..</p></li>
+<li><p>"fw.y" - the y coordinate of a point in the flywire neuron, in flywire voxel space..</p></li>
+<li><p>"fw.z" - the z coordinate of a point in the flywire neuron, in flywire voxel space..</p></li>
+<li><p>"user_name" - the name of the user who made the number of edits given in this row.</p></li>
+<li><p>"edits" - the number of edits (merges, splits, etc.) made by a user for the given <code>flywire.id</code>.</p></li>
+<li><p>"proportion" - the proportion of total edits for this neuron, that the given user made.</p></li>
+<li><p>"dataset" - the dataset this neuron is from, i.e. flywire.</p></li>
+</ul>
 
-    <p><a href='https://neuprint.janelia.org/'>https://neuprint.janelia.org/</a></p>
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
-    <p>note that hemibrain coordinate system does has the
-  anterior-posterior axis aligned with the Y axis (rather than the Z axis,
-  which is more commonly observed).</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='hemibrain_roi_meshes.html'>hemibrain_roi_meshes</a></code>, <code><a href='hemibrain.surf.html'>hemibrain.surf</a></code></p></div>
+    <div class='dont-index'><p><code><a href='hemibrain_splitpoints.html'>hemibrain_splitpoints</a></code>,
+  <code><a href='hemibrain_flow_centrality.html'>hemibrain_flow_centrality</a></code>,
+  <code><a href='hemibrainr_googledrive_data.html'>hemibrainr_googledrive_data</a></code>,
+  <code><a href='hemibrain_metrics.html'>hemibrain_metrics</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
-<span class='fu'><a href='https://rdrr.io/pkg/nat/man/nvertices.html'>nvertices</a></span><span class='op'>(</span><span class='va'>hemibrain_al.surf</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] 6053</div><div class='input'><span class='fu'><a href='https://rdrr.io/pkg/nat/man/materials.html'>materials</a></span><span class='op'>(</span><span class='va'>hemibrain_al.surf</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;      name id     col
-#&gt; D       D  1 #C70E7B
-#&gt; DA1   DA1  2 #DA2F7D
-#&gt; DA2   DA2  3 #EE5080
-#&gt; DA3   DA3  4 #E16A88
-#&gt; DA4l DA4l  5 #8471A0
-#&gt; DA4m DA4m  6 #2778B8
-#&gt; DC1   DC1  7 #1188C5
-#&gt; DC2   DC2  8 #30A0CB
-#&gt; DC3   DC3  9 #4FB8D0
-#&gt; DC4   DC4 10 #84A794
-#&gt; DL1   DL1 11 #BE904E
-#&gt; DL2d DL2d 12 #EF7F15
-#&gt; DL2v DL2v 13 #F19530
-#&gt; DL3   DL3 14 #F2AC4A
-#&gt; DL4   DL4 15 #CDB455
-#&gt; DL5   DL5 16 #73AB4B
-#&gt; DM1   DM1 17 #19A141
-#&gt; DM2   DM2 18 #25AE2F
-#&gt; DM3   DM3 19 #5AC419
-#&gt; DM4   DM4 20 #8FDA04
-#&gt; DM5   DM5 21 #9AAD10
-#&gt; DM6   DM6 22 #A6801C
-#&gt; DP1l DP1l 23 #B66E36
-#&gt; DP1m DP1m 24 #CF9E71
-#&gt; V       V 25 #E9CEAD
-#&gt; VA1d VA1d 26 #E6C6BB
-#&gt; VA1v VA1v 27 #CD95A7
-#&gt; VA2   VA2 28 #B56493
-#&gt; VA3   VA3 29 #C57EAB
-#&gt; VA4   VA4 30 #DBA5CB
-#&gt; VA5   VA5 31 #EFC3DA
-#&gt; VA6   VA6 32 #EFA78C
-#&gt; VA7l VA7l 33 #EF8B3E
-#&gt; VA7m VA7m 34 #EF851D
-#&gt; VC1   VC1 35 #F19C37
-#&gt; VC2   VC2 36 #F3B252
-#&gt; VC3l VC3l 37 #E69756
-#&gt; VC3m VC3m 38 #D46850
-#&gt; VC4   VC4 39 #C23A4B
-#&gt; VC5   VC5 40 #D66949
-#&gt; VL1   VL1 41 #EC9948
-#&gt; VL2a VL2a 42 #F9C047
-#&gt; VL2p VL2p 43 #F5D347
-#&gt; VM1   VM1 44 #F0E646
-#&gt; VM2   VM2 45 #C7E947
-#&gt; VM3   VM3 46 #80E04A
-#&gt; VM4   VM4 47 #3BD74C
-#&gt; VM5d VM5d 48 #279C50
-#&gt; VM5v VM5v 49 #1C5A53
-#&gt; VM7d VM7d 50 #1E2255
-#&gt; VM7v VM7v 51 #6F2E4E
-#&gt; VP1d VP1d 52 #BF3B48
-#&gt; VP1l VP1l 53 #EA3C39
-#&gt; VP1m VP1m 54 #E13020
-#&gt; VP2   VP2 55 #D92307
-#&gt; VP3   VP3 56 #A5472E
-#&gt; VP4   VP4 57 #607E6E
-#&gt; VP5   VP5 58 #1BB6AF</div><div class='input'>
 <span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
-<span class='fu'><a href='https://rdrr.io/pkg/nat/man/plot3d.html'>plot3d</a></span><span class='op'>(</span><span class='va'>hemibrain_al.surf</span>, alpha<span class='op'>=</span><span class='fl'>.3</span><span class='op'>)</span>
 
-<span class='co'># can also plot single glomeruli</span>
-<span class='fu'><a href='https://rdrr.io/pkg/nat/man/plot3d.html'>plot3d</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/pkg/nat/man/subset.html'>subset</a></span><span class='op'>(</span><span class='va'>hemibrain_al.surf</span>,<span class='st'>"DM1"</span><span class='op'>)</span><span class='op'>)</span>
+<span class='co'># All flywire IDs for neurons that have a split precomputed</span>
+<span class='va'>fw.ids</span> <span class='op'>=</span> <span class='fu'>flywire_ids</span><span class='op'>(</span><span class='op'>)</span>
 
-<span class='op'>}</span>
-<span class='co'># }</span>
+<span class='co'># For these flywire IDs, their meya data:</span>
+<span class='va'>fw.meta</span> <span class='op'>=</span> <span class='fu'>flywire_meta</span><span class='op'>(</span><span class='op'>)</span>
+
+<span class='co'># For flywire IDs, which users contributed what:</span>
+<span class='va'>fw.edits</span> <span class='op'>=</span> <span class='fu'>flywire_contributions</span><span class='op'>(</span><span class='op'>)</span>
+
+<span class='op'>}</span><span class='co'># }</span>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

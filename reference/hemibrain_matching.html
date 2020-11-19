@@ -51,7 +51,8 @@
   result using a
   Google
   Sheet on the hemibrain Google Team Drive operated by the flyconnectome
-  group at the University of Cambridge. You must have access to the Team Drive
+  group at the University of Cambridge. Your aim is to match the light blue neuron to the best red neuron!
+  You must have access to the Team Drive
   in order to use this function. This function makes use of the Google
   Filestream application, which should be installed on your machine. Further,
   note that neurons are read from the FAFB CATMAID project, and you must have
@@ -112,6 +113,12 @@
       <a href="../articles/google_filestream.html">read data from Google drive</a>
     </li>
     <li>
+      <a href="../articles/hemibrain_axons_dendrites.html">axons_dendrites</a>
+    </li>
+    <li>
+      <a href="../articles/hemibrain_connectivity.html">hemibrain_connectivity</a>
+    </li>
+    <li>
       <a href="../articles/match_making.html">neuron match making</a>
     </li>
   </ul>
@@ -147,7 +154,8 @@
   result using a
   <a href='https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit#gid=0'>Google
   Sheet</a> on the hemibrain Google Team Drive operated by the flyconnectome
-  group at the University of Cambridge. You must have access to the Team Drive
+  group at the University of Cambridge. Your aim is to match the light blue neuron to the best red neuron!
+  You must have access to the Team Drive
   in order to use this function. This function makes use of the Google
   Filestream application, which should be installed on your machine. Further,
   note that neurons are read from the FAFB CATMAID project, and you must have
@@ -162,7 +170,9 @@
   batch_size <span class='op'>=</span> <span class='fl'>50</span>,
   db <span class='op'>=</span> <span class='fu'><a href='flywire_neurons.html'>flywire_neurons</a></span><span class='op'>(</span><span class='op'>)</span>,
   query <span class='op'>=</span> <span class='fu'><a href='flywire_neurons.html'>flywire_neurons</a></span><span class='op'>(</span>mirror <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>,
-  overwrite <span class='op'>=</span> <span class='cn'>FALSE</span>
+  overwrite <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"FALSE"</span>, <span class='st'>"mine"</span>, <span class='st'>"mine_empty"</span>, <span class='st'>"TRUE"</span><span class='op'>)</span>,
+  column <span class='op'>=</span> <span class='cn'>NULL</span>,
+  field <span class='op'>=</span> <span class='cn'>NULL</span>
 <span class='op'>)</span>
 
 <span class='fu'>hemibrain_matching</span><span class='op'>(</span>
@@ -185,7 +195,9 @@
   batch_size <span class='op'>=</span> <span class='fl'>50</span>,
   db <span class='op'>=</span> <span class='fu'><a href='hemibrain_read_neurons.html'>hemibrain_neurons</a></span><span class='op'>(</span><span class='op'>)</span>,
   query <span class='op'>=</span> <span class='cn'>NULL</span>,
-  overwrite <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"FALSE"</span>, <span class='st'>"mine"</span>, <span class='st'>"mine_empty"</span>, <span class='st'>"TRUE"</span><span class='op'>)</span>
+  overwrite <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"FALSE"</span>, <span class='st'>"mine"</span>, <span class='st'>"mine_empty"</span>, <span class='st'>"TRUE"</span><span class='op'>)</span>,
+  column <span class='op'>=</span> <span class='cn'>NULL</span>,
+  field <span class='op'>=</span> <span class='cn'>NULL</span>
 <span class='op'>)</span>
 
 <span class='fu'>fafb_matching</span><span class='op'>(</span>
@@ -250,6 +262,15 @@ With <code>'mine_empty'</code> the same happens, but you will also retain neuron
 If <code>FALSE</code> (be careful!) then you overwrite made matches among the selected neurons.</p></td>
     </tr>
     <tr>
+      <th>column</th>
+      <td><p>defaults to <code>NULL</code>, no further subsetting. Else, you can select a column from the Google sheet.
+Only  neurons with a certain value (<code>field</code>) in that column will be chosen for matching.</p></td>
+    </tr>
+    <tr>
+      <th>field</th>
+      <td><p>defaults to <code>NULL</code>, no further subsetting. Else, it is a value in <code>column</code>.</p></td>
+    </tr>
+    <tr>
       <th>hemibrain.nblast</th>
       <td><p>a FAFB (rows) - hemibrain (columns) normalised
 NBLAST matrix. By default this is read from the flyconnectome Team Drive.</p></td>
@@ -260,15 +281,6 @@ NBLAST matrix. By default this is read from the flyconnectome Team Drive.</p></t
 CATMAID (using <code><a href='https://rdrr.io/pkg/catmaid/man/read.neuron.catmaid.html'>catmaid::read.neurons.catmaid</a></code>) or flywire (using <code>flywire_neurons</code>) for matching. Alternatively,light level
 skeletons  (<code>"lm"</code>) from Dolan et al. and Frechter et al. 2019 (eLife), stored in the package <code>lhns</code> as
 <code>most.lhns</code>.</p></td>
-    </tr>
-    <tr>
-      <th>column</th>
-      <td><p>defaults to <code>NULL</code>, no further subsetting. Else, you can select a column from the Google sheet.
-Only  neurons with a certain value (<code>field</code>) in that column will be chosen for matching.</p></td>
-    </tr>
-    <tr>
-      <th>field</th>
-      <td><p>defaults to <code>NULL</code>, no further subsetting. Else, it is a value in <code>column</code>.</p></td>
     </tr>
     </table>
 

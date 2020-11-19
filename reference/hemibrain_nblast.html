@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Set data source for precomputed information — hemibrainr_set_drive • hemibrainr</title>
+<title>Read precomputed NBLASTs from the hemibrainr Google Drive — hemibrain_nblast • hemibrainr</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,10 +46,12 @@
 
 
 
-<meta property="og:title" content="Set data source for precomputed information — hemibrainr_set_drive" />
-<meta property="og:description" content="One can read precomputed data available on the hemibrain Google Team
-  Drive, and other supported team drives. This includes all synapses, neuron-neuron connections and an
-  edgelist for all hemibrain neurons, broken down by axon and dendrite
+<meta property="og:title" content="Read precomputed NBLASTs from the hemibrainr Google Drive — hemibrain_nblast" />
+<meta property="og:description" content="Read precomputed data available on the hemibrain Google Team
+  Drive. This includes body IDs for all hemibrain neurons ((hemibrain_neuron_bodyids)),
+  all synapses (hemibrain_synapses),
+  neuron-neuron connections (hemibrain_connections) and an
+  edgelist  (hemibrain_elist) for all hemibrain neurons, broken down by axon and dendrite
   assignments. NBLAST matrices for all neurons against all neurons in the
   data set are also available, including ones broken down by neuron
   compartment." />
@@ -139,100 +141,92 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Set data source for precomputed information</h1>
-    <small class="dont-index">Source: <a href='https://github.com/flyconnectome/hemibrainr/blob/master/R/hemibrain_googledrive.R'><code>R/hemibrain_googledrive.R</code></a>, <a href='https://github.com/flyconnectome/hemibrainr/blob/master/R/utilities-rclone.R'><code>R/utilities-rclone.R</code></a></small>
-    <div class="hidden name"><code>hemibrainr_set_drive.Rd</code></div>
+    <h1>Read precomputed NBLASTs from the hemibrainr Google Drive</h1>
+    <small class="dont-index">Source: <a href='https://github.com/flyconnectome/hemibrainr/blob/master/R/hemibrain_googledrive.R'><code>R/hemibrain_googledrive.R</code></a></small>
+    <div class="hidden name"><code>hemibrain_nblast.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>One can read precomputed data available on the hemibrain Google Team
-  Drive, and other supported team drives. This includes all synapses, neuron-neuron connections and an
-  edgelist for all hemibrain neurons, broken down by axon and dendrite
+    <p>Read precomputed data available on the hemibrain Google Team
+  Drive. This includes body IDs for all hemibrain neurons ((<code>hemibrain_neuron_bodyids</code>)),
+  all synapses (<code>hemibrain_synapses</code>),
+  neuron-neuron connections (<code>hemibrain_connections</code>) and an
+  edgelist  (<code>hemibrain_elist</code>) for all hemibrain neurons, broken down by axon and dendrite
   assignments. NBLAST matrices for all neurons against all neurons in the
   data set are also available, including ones broken down by neuron
   compartment.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>hemibrainr_set_drive</span><span class='op'>(</span>
-  Gdrive <span class='op'>=</span> <span class='st'>"hemibrainr"</span>,
-  path <span class='op'>=</span> <span class='st'>"/Volumes/GoogleDrive/Shared drives/"</span>
-<span class='op'>)</span>
-
-<span class='fu'>hemibrainr_team_drive</span><span class='op'>(</span><span class='op'>)</span>
-
-<span class='fu'>hemibrainr_rclone</span><span class='op'>(</span>
-  Gdrive <span class='op'>=</span> <span class='st'>"hemibrainr"</span>,
-  path <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste0</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/getwd.html'>getwd</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='st'>"hemibrainr_rclone/"</span><span class='op'>)</span>
-<span class='op'>)</span>
-
-<span class='fu'>hemibrainr_rclone_unmount</span><span class='op'>(</span>path <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste0</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/getwd.html'>getwd</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='st'>"hemibrainr_rclone/"</span><span class='op'>)</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>hemibrain_nblast</span><span class='op'>(</span>
+  nblast <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"hemibrain"</span>, <span class='st'>"flywire"</span>, <span class='st'>"hemibrain-flywire"</span>, <span class='st'>"hemibrain-fafb14"</span>,
+    <span class='st'>"hemibrain-flycircuit"</span>, <span class='st'>"flywire-mirror"</span>, <span class='st'>"hemibrain-primary.neurites"</span>,
+    <span class='st'>"hemibrain-primary.dendrites"</span>, <span class='st'>"hemibrain-axons"</span>, <span class='st'>"hemibrain-dendrites"</span>,
+    <span class='st'>"hemibrain-spines"</span>, <span class='st'>"hemibrain-tracts"</span>, <span class='st'>"hemibrain-arbour"</span>, <span class='st'>"hemibrain-simplified"</span><span class='op'>)</span>,
+  local <span class='op'>=</span> <span class='cn'>FALSE</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>Gdrive</th>
-      <td><p>name of the mounted Google drive. Can just be the name of a team
-drive to be found in the standard location: <code>"/Volumes/GoogleDrive/Shared\ drives/"</code>.</p></td>
+      <th>nblast</th>
+      <td><p>the NBLAST matrix you would like to retrieve, e.g.
+<code>"arbours"</code> gives you a normalised all by all NBLAST matrix of all
+branching arbour.
+<code><a href='https://rdrr.io/pkg/nat/man/dotprops.html'>dotprops</a></code> object.</p></td>
     </tr>
     <tr>
-      <th>path</th>
-      <td><p>path to your 'hemibrainr Google drive', either a mounted remote or a local copy.
-For example on a Mac, <a href='https://support.google.com/drive/answer/7329379?authuser=2'>Google filestream</a> mounts it at: <code>/Volumes/GoogleDrive/Shared\ drives/</code>.
-With <a href='https://rclone.org/drive/'>rclone sheet</a> you can mount it wherever you like, by default hemibrainr expects it at:
-<code><a href='https://rdrr.io/r/base/paste.html'>paste0(getwd(),"hemibrainr_rclone/")</a></code></p></td>
+      <th>local</th>
+      <td><p><code>FALSE</code> or path. By default (<code>FALSE</code>) data is read from <code>options()$Drive_hemibrain_data</code>),
+but the user can specify an alternative path.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>Sets options <code>Gdrive_hemibrain_data</code></p>
+    <p>a <code>matrix</code> with named rows and columns describing an NBLAST result.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>In order to use this package to its fullest,
-you need to get <code>hemibrainr</code> to read large amounts of data stored on a Google drive.
-To do this, you have three options:</p>
-<p>1. Mount your Google drive using <a href='https://support.google.com/drive/answer/7329379?authuser=2'>Google filestream</a>
-2. Mount your Google drive using <a href='https://rclone.org/drive/'>rclone</a>
-3. Download the Google drive and save locally</p>
-<p>The best option is to use Google filestream.
-By default, this is what <code>hemibrainr</code> expects.
-However, you need a <a href='https://workspace.google.com/pricing.html'>Google Workspace</a>
-account (formerly G-Suite), which is a paid-for service.
-Without this, the best option is to use <a href='https://rclone.org/drive/'>rclone</a>. For detailed
-instructions on how to configure <code>rclone</code>, please see your article in this package:
-Reading hemibrainr data from Google drive.
-You can also download to an external hard drive and use that.</p>
-<p>We have two <a href='https://support.google.com/a/users/answer/9310156?hl=en'>Google team drives</a>
- available for you to use, which contain similar data. One ("hemibrain")
- is for internal use by the <a href='https://www.zoo.cam.ac.uk/research/groups/connectomics'>Drosophila Connectomics Group</a>.
- The other one (<code>"hemibrainr"</code>) is shared with those who would like access. Contact us by email to request access.</p>
+    <p>NBLASTs were made in <code>JRCFIB2018F</code> space. Hemibrain neurons first had their 'twigs' pruned:</p>
+<p><code>fib.twigs5 = nlapply(all.neurons.flow, prune_twigs, twig_length=5000, .parallel = TRUE, OmitFailures = TRUE)</code>.</p>
+<p>Where <code>all.neurons.flow</code> can be called with <code>hemibrain_neurons</code>. Neurons were moved from <code>JRC2018Fraw</code>
+to <code>JRC2018F</code> by:</p>
+<p><code>all.neurons.flow.microns = hemibrainr:::scale_neurons.neuronlist(fib.twigs5, .parallel = TRUE, OmitFailures = TRUE)</code></p>
+<p>For 'compartment' NBLASTs neurons' axons, dendrites, primary neurite
+tracts, etc., were extracted. E.g.</p>
+<p><code>all.neurons.pnt = primary_neurite_cable(x = all.neurons.flow.microns, .parallel = TRUE, OmitFailures = TRUE)</code>
+<code>all.neurons.arbour = arbour_cable(x = all.neurons.flow.microns, .parallel = TRUE, OmitFailures = TRUE)</code>
+<code>all.neurons.tract = tract_cable(x = all.neurons.flow.microns, .parallel = TRUE, OmitFailures = TRUE)</code></p>
+<p>For the 'simplified' hemibrain neuron NBLAST, the function <code><a href='https://rdrr.io/pkg/nat/man/simplify_neuron.html'>nat::simplify_neuron</a></code> was used as so:</p>
+<p><code>all.neurons.simp = nat::nlapply(X = all.neurons.flow.microns, FUN = nat::simplify_neuron, n = 1, invert = FALSE, .parallel = TRUE, OmitFailures = TRUE)</code></p>
+<p>Neurons, simplified neurons and compartments were turned into vector cloud using <code><a href='https://rdrr.io/pkg/nat/man/dotprops.html'>nat::dotprops</a></code> as so:</p>
+<p><code>hemibrain.microns.dps =dotprops(all.neurons.flow.microns, k=5, resample=1, .parallel=T, OmitFailures = T)</code></p>
+<p>NBLASTs were run as so:</p>
+<p><code>hemibrain.aba.mean=nat.nblast::nblast_allbyall(hemibrain.twigs5.dps,
+.progress='text',.parallel=TRUE, normalisation='mean')</code></p>
+<p>NBLASTs were also run against flywire and flycircuit neurons.
+Flywire neurons were pulled from the <a href='https://ngl.flywire.ai/?local_id=1191adb1d6f85f5f8be0fedc675460f6'>flywire project</a> as meshes and skeletonised
+using <code><a href='https://rdrr.io/pkg/fafbseg/man/skeletor.html'>fafbseg::skeletor</a></code>.</p>
+<p>The code for this pipeline can be found as a <a href='https://github.com/flyconnectome/fafbpipeline'>flyconnectome GitHub repository</a></p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='hemibrainr_googledrive_data.html'>hemibrainr_googledrive_data</a></code></p></div>
+    <div class='dont-index'><p><code><a href='hemibrain_splitpoints.html'>hemibrain_splitpoints</a></code>,
+  <code><a href='hemibrain_flow_centrality.html'>hemibrain_flow_centrality</a></code>,
+  <code><a href='hemibrain_metrics.html'>hemibrain_metrics</a></code>,
+  <code><a href='hemibrainr_googledrive_data.html'>hemibrainr_googledrive_data</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
 <span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
-<span class='co'># The default drive is named 'hemibrainr'</span>
-<span class='co'># You could also set up your own drive with saved data.</span>
-<span class='fu'>hemibrainr_set_drive</span><span class='op'>(</span><span class='st'>"hemibrainr"</span><span class='op'>)</span>
 
-<span class='co'># Ah but what it you do not have the drive loaded</span>
-<span class='co'># With Google filestream say, as a network drive?</span>
-<span class='co'># In this case, you can use the free-service rclone instead</span>
-<span class='co'># However, you will need to install and configure it:https://rclone.org/drive/</span>
-<span class='fu'>hemibrainr_rclone</span><span class='op'>(</span>Gdrive <span class='op'>=</span> <span class='st'>"hemibrainr"</span><span class='op'>)</span>
-<span class='co'>### Mounts in your working directory</span>
+<span class='co'># A normalised neuron-neuron NBLASST for all hemibrain neurons</span>
+<span class='va'>hemibrain.nblast</span> <span class='op'>=</span> <span class='fu'>hemibrain_nblast</span><span class='op'>(</span>nblast <span class='op'>=</span> <span class='st'>"hemibrain"</span><span class='op'>)</span>
 
-<span class='co'># All neuprint IDs for neurons that have a split precomputed</span>
-<span class='va'>ids</span> <span class='op'>=</span> <span class='fu'><a href='hemibrainr_googledrive_data.html'>hemibrain_neuron_bodyids</a></span><span class='op'>(</span><span class='op'>)</span>
+<span class='co'># A normalised neuron-neuron NBLASST for all hemibrain neurons's axons</span>
+<span class='va'>hemibrain.axon.nblast</span> <span class='op'>=</span> <span class='fu'>hemibrain_nblast</span><span class='op'>(</span>nblast <span class='op'>=</span> <span class='st'>"hemibrain-axons"</span><span class='op'>)</span>
 
-<span class='co'># Connectivity edgelist, broken down by axon/dendrite</span>
-<span class='va'>elist</span> <span class='op'>=</span> <span class='fu'><a href='hemibrainr_googledrive_data.html'>hemibrain_elist</a></span><span class='op'>(</span><span class='op'>)</span>
-
-<span class='co'># Unmount rclone drive</span>
-<span class='fu'>hemibrainr_rclone_unmount</span><span class='op'>(</span><span class='op'>)</span>
+<span class='co'># And for simplified hemibrain neurons</span>
+<span class='va'>hemibrain.simp.nblast</span> <span class='op'>=</span> <span class='fu'>hemibrain_nblast</span><span class='op'>(</span>nblast <span class='op'>=</span> <span class='st'>"hemibrain-simplified"</span><span class='op'>)</span>
 
 <span class='op'>}</span><span class='co'># }</span>
 </div></pre>
