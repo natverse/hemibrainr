@@ -5,7 +5,7 @@
   paths=c(
     getOption("Gdrive_hemibrain_data"),
     file.path("/Volumes/GoogleDrive/Shared\ drives",
-    c("hemibrain", "hemibrainr")))
+    c("hemibrainr", "hemibrain")))
   pathsok=file.exists(paths)
 
   if(any(pathsok)){
@@ -41,3 +41,7 @@
                                  options()$flywire_flagged_gsheet))
 }
 
+flycircuit_neurons
+flywire_googledrive_data
+hemibrain_nblast
+hemibrainr_googledrive_data
