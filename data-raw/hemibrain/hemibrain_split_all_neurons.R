@@ -85,7 +85,7 @@ message("Saved connections: ", nrow(all.neurons.flow.elist))
 all.neurons.flow.microns = all.neurons.flow*(8/1000) # convert to microns
 mets = hemibrain_compartment_metrics(all.neurons.flow.microns, OmitFailures = TRUE, .parallel = TRUE, delta = 5, resample = NULL)
 mets2 = lapply(1:ncol(mets), function(x) unlist(mets[,x]))
-mets2 = as.data.frame(t(do.call(rbind, mets2)))
+mets2 = as.data.frame(t(do.call(rbind, mets2)), stringsAsFactors = FALSE)
 dimnames(mets2) = dimnames(mets)
 all.neurons.flow[,] = mets2[names(all.neurons.flow),]
 all.neurons.flow.microns[,] = mets2[names(all.neurons.flow),]

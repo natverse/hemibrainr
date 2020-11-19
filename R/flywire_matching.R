@@ -85,8 +85,6 @@ flywire_matching_rewrite <- function(flywire.ids = names(flywire_neurons()),
   hemibrain_matching_add(ids = missing, dataset="flywire", ...)
 }
 
-
-
 #' @rdname hemibrain_matching
 #' @export
 LR_matching <- function(ids = NULL,

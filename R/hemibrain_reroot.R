@@ -72,7 +72,7 @@ hemibrain_reroot.neuron <- function(x,
     if(googlesheet){
       selected_file = "1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E"
       hemibrain_somas = googlesheets4::read_sheet(ss = selected_file, sheet = "somas")
-      hemibrain_somas = as.data.frame(hemibrain_somas)
+      hemibrain_somas = as.data.frame(hemibrain_somas, stringsAsFactors = FALSE)
       rownames(hemibrain_somas) = hemibrain_somas$bodyid
     }
     bis = as.character(x$bodyid)
@@ -154,7 +154,7 @@ hemibrain_reroot.neuronlist <- function(x,
   if(googlesheet){
     selected_file = "1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E"
     hemibrain_somas = googlesheets4::read_sheet(ss = selected_file, sheet = "somas")
-    hemibrain_somas = as.data.frame(hemibrain_somas)
+    hemibrain_somas = as.data.frame(hemibrain_somas, stringsAsFactors = FALSE)
     rownames(hemibrain_somas) = hemibrain_somas$bodyid
   }
   if(method == "estimated"){

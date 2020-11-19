@@ -1601,7 +1601,7 @@ update_gsheet <- function(update,
       gsheet_manipulation(FUN = googlesheets4::range_write,
                           ss = selected_file,
                           range = range,
-                          data = as.data.frame(update[row,column]),
+                          data = as.data.frame(update[row,column], stringsAsFactors = FALSE),
                           sheet = tab,
                           col_names = FALSE)
     }

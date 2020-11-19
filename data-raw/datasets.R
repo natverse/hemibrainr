@@ -14,7 +14,7 @@ hemibrain_hemilineages$notes = NULL
 hemibrain_hemilineages = hemibrain_hemilineages[hemibrain_hemilineages$cellBodyFiber!="",]
 hemibrain_hemilineages = hemibrain_hemilineages[!duplicated(hemibrain_hemilineages$cellBodyFiber),]
 rownames(hemibrain_hemilineages) = NULL
-hemibrain_hemilineages = as.data.frame(apply(hemibrain_hemilineages,2,function(c) gsub(" ","",c)))
+hemibrain_hemilineages = as.data.frame(apply(hemibrain_hemilineages,2,function(c) gsub(" ","",c)), stringsAsFactors = FALSE)
 usethis::use_data(hemibrain_hemilineages, overwrite = TRUE)
 
 ### Olfactory layers ###
@@ -44,7 +44,7 @@ write.csv(manual, file = "data-raw/hemibrain_data/hemibrain_manual/split_pipelin
 
 ### Somas
 hemibrain_somas = googlesheets4::read_sheet(ss = selected_file, sheet = "somas")
-hemibrain_somas = as.data.frame(hemibrain_somas)
+hemibrain_somas = as.data.frame(hemibrain_somas, stringsAsFactors = FALSE)
 hemibrain_somas[hemibrain_somas=="NA"] = NA
 hemibrain_somas = hemibrain_somas[!is.na(hemibrain_somas$bodyid),]
 hemibrain_somas$cellBodyFiber = hemibrain_somas$cbf
@@ -82,10 +82,10 @@ hemibrain_all_splitpoints <- hemibrain_splitpoints_polypre_centrifugal_synapses 
 hemibrain_metrics <- hemibrain_metrics_polypre_centrifugal_synapses ### original definition
 selected_file = "1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E"
 gs = googlesheets4::read_sheet(ss = selected_file, sheet = "roots")
-gs = as.data.frame(gs)
+gs = as.data.frame(gs, stringsAsFactors = FALSE)
 gs = gs[!duplicated(gs$bodyid),]
 manual = googlesheets4::read_sheet(ss = selected_file, sheet = "manual")
-manual = as.data.frame(manual)
+manual = as.data.frame(manual, stringsAsFactors = FALSE)
 manual = remove_duplicates(manual)
 hemibrain_all_splitpoints = subset(hemibrain_all_splitpoints, !bodyid%in%manual$bodyid)
 hemibrain_all_splitpoints = plyr::rbind.fill(hemibrain_all_splitpoints,manual)

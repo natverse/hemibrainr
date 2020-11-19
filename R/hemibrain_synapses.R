@@ -170,7 +170,7 @@ extract_synapses <-function(x, unitary = FALSE){
       dplyr::mutate(count = dplyr::n()) %>%
       dplyr::distinct(.data[[id]], .data$partner, .data$prepost, .data$Label, .data$count) %>%
       dplyr::select(.data[[id]], .data$partner, .data$prepost, .data$Label, .data$count) %>%
-      as.data.frame() ->
+      as.data.frame(stringsAsFactors = FALSE) ->
       syn
   }
   syn$Label = standard_compartments(syn$Label)
@@ -243,7 +243,7 @@ extract_elist <- function(syns, lookup, meta = NULL){
     dplyr::distinct(.data$post, .data$pre,.data$post.Label, .data$pre.Label, .data$count, .data$norm) %>%
     dplyr::select(.data$post, .data$pre, .data$post.Label, .data$pre.Label, .data$count, .data$norm) %>%
     dplyr::filter(!is.na(.data$pre.Label) & .data$count > 0) %>%
-    as.data.frame() ->
+    as.data.frame(stringsAsFactors = FALSE) ->
     elist
   rownames(elist) = 1:nrow(elist)
   elist$post.Label = standard_compartments(elist$post.Label)
@@ -257,7 +257,7 @@ extract_lookup <- function(syns){
   syns %>%
     dplyr::filter(.data$prepost==0) %>%
     dplyr::distinct(.data$bodyid, .data$partner, .data$connector_id, .data$Label) %>%
-    as.data.frame() ->
+    as.data.frame(stringsAsFactors = FALSE) ->
     conn.lookup
   lookup = conn.lookup$Label
   names(lookup) = conn.lookup$connector_id

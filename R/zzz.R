@@ -9,7 +9,7 @@
   pathsok=file.exists(paths)
 
   if(any(pathsok)){
-    options(Gdrive_hemibrain_data = which(pathsok)[1])
+    options(Gdrive_hemibrain_data = paths[which(pathsok)[1]])
   }else{
     # fallback
     options(Gdrive_hemibrain_data = paste0(getwd(),"/data-raw/hemibrainr_data/"))
@@ -33,9 +33,12 @@
   }
 
   # Set Google sheets of interest
-  options(hemibrainr_matching_gsheet = "1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw")
-  options(flywire_lineages_gsheet = "1spGSuhUX6Hhn-8HH0U_ArIWUuPpMBFNjIjeSSh_MFVY")
-  options(flywire_flagged_gsheet = "1rzG1MuZYacM-vbW7100aK8HeA-BY6dWAVXQ7TB6E2cQ")
+  hemibrainr_matching_gsheet = ifelse(is.null(getOption("hemibrainr_matching_gsheet")),getOption("hemibrainr_matching_gsheet"),"1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw")
+  flywire_lineages_gsheet = ifelse(is.null(getOption("flywire_lineages_gsheet")),getOption("flywire_lineages_gsheet"),"1spGSuhUX6Hhn-8HH0U_ArIWUuPpMBFNjIjeSSh_MFVY")
+  flywire_flagged_gsheet = ifelse(is.null(getOption("flywire_flagged_gsheet")),getOption("flywire_flagged_gsheet"),"1rzG1MuZYacM-vbW7100aK8HeA-BY6dWAVXQ7TB6E2cQ")
+  options(hemibrainr_matching_gsheet = hemibrainr_matching_gsheet)
+  options(flywire_lineages_gsheet = flywire_lineages_gsheet)
+  options(flywire_flagged_gsheet = flywire_flagged_gsheet)
   options(hemibrainr_gsheets = c(options()$hemibrainr_matching_gsheet,
                                  options()$flywire_lineages_gsheet,
                                  options()$flywire_flagged_gsheet))
