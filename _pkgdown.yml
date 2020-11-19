@@ -90,7 +90,7 @@ reference:
   - title: Access hemibrain google drive data
     desc: ~
     contents:
-    - 'flywire_googledrive_data'
+    - 'hemibrain_googledrive_data'
     - 'hemibrain_nblast'
   - title: Access flywire google drive data
     desc: ~
