@@ -1,0 +1,20 @@
+---
+title: "hemibrain_connectivity"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{hemibrain connectivity}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+> "We’re Building Something, Here, Detective, We’re Building It From Scratch. All The Pieces Matter."
+([Lester, The Wire](https://en.wikipedia.org/wiki/The_Wire))
+
+# Connection data

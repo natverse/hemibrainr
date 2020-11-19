@@ -89,7 +89,7 @@ hemibrainr_team_drive <- function(){
   basename(options()$Gdrive_hemibrain_data)
 }
 
-#' Read precomputed information from the hemibrainr Google Drive
+#' Read precomputed hemibrain data from the hemibrainr Google Drive
 #'
 #' @description Read precomputed data available on the hemibrain Google Team
 #'   Drive. (see \code{\link{hemibrainr_set_drive}}) and (see \code{\link{hemibrainr_rclone}}).
@@ -97,9 +97,7 @@ hemibrainr_team_drive <- function(){
 #'   all synapses (\code{hemibrain_synapses}),
 #'   neuron-neuron connections (\code{hemibrain_connections}) and an
 #'   edgelist  (\code{hemibrain_elist}) for all hemibrain neurons, broken down by axon and dendrite
-#'   assignments. NBLAST matrices for all neurons against all neurons in the
-#'   data set are also available, including ones broken down by neuron
-#'   compartment.
+#'   assignments. Hemibrain related NBLASTs retrieved using \code{\link{hemibrain_nblast}}.
 #'
 #' @param local \code{FALSE} or path. By default (\code{FALSE}) data is read from \code{options()$Drive_hemibrain_data}),
 #' but the user can specify an alternative path.
@@ -181,19 +179,6 @@ hemibrain_neuron_bodyids <- function(local = FALSE, folder = "hemibrain_neurons/
     find_gsql(savedir = savedir, tab = "hemibrain_all_neuron_bodyids", sql.db = "hemibrainr_data.sqlite", folder = folder, ...)
   }else{
     gfile = find_gfile(savedir = savedir, file = "hemibrain_all_neuron_bodyids", folder = folder)
-    gcsv = as.data.frame(readr::read_csv(gfile))
-    as.character(gcsv$x)
-  }
-}
-
-#' @rdname hemibrainr_googledrive_data
-#' @export
-flywire_contributions <-function(local = FALSE, folder = "flywire_neurons/", sql = TRUE, ...){
-  savedir = good_savedir(local = local)
-  if(sql){
-    find_gsql(savedir = savedir, tab = "flywire_edits", sql.db = "flywire_data.sqlite", folder = folder, ...)
-  }else{
-    gfile = find_gfile(savedir = savedir, file = "flywire_edits", folder = folder)
     gcsv = as.data.frame(readr::read_csv(gfile))
     as.character(gcsv$x)
   }
@@ -283,10 +268,10 @@ hemibrain_connections <- function(local = FALSE, folder = "hemibrain_neurons/", 
 #' .progress='text',.parallel=TRUE, normalisation='mean')}
 #'
 #' NBLASTs were also run against flywire and flycircuit neurons.
-#' Flywire neurons were oulled from the \href{https://ngl.flywire.ai/?local_id=1191adb1d6f85f5f8be0fedc675460f6}{flywire project} as meshes and skeletonised
+#' Flywire neurons were pulled from the \href{https://ngl.flywire.ai/?local_id=1191adb1d6f85f5f8be0fedc675460f6}{flywire project} as meshes and skeletonised
 #' using \code{fafbseg::skeletor}.
 #'
-#' The code for this pipeline can be found as a \href{https://github.com/flyconnectome/fafbpipeline}{flyconnecome GitHub repository}
+#' The code for this pipeline can be found as a \href{https://github.com/flyconnectome/fafbpipeline}{flyconnectome GitHub repository}
 #'
 #' @return a \code{matrix} with named rows and columns describing an NBLAST result.
 #'

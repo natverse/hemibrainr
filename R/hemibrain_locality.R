@@ -61,16 +61,16 @@ hemibrain_compartment_metrics <- function(x, resample = 10, delta = 62.5, locali
 compartment_metrics <- function(x, resample = 10, delta = 62.5, locality = FALSE, ...){
 
   # Axon-dendrite split?
-  if(!(sum(x$d$Label==2)&sum(x$d$Label==3))){
+  if(!(sum(x$d$Label%in%c(2,"axon"))&sum(x$d$Label%in%c(3,"dendrite")))){
     warning("Axon / dendrite missing")
   }
 
   # Synapses
   syns = tryCatch(hemibrain_extract_synapses(x), error = function(e) NULL)
-  axon.outputs = tryCatch(sum(syns$prepost==0&syns$Label==2), error = function(e) NA)
-  dend.outputs = tryCatch(sum(syns$prepost==0&syns$Label==3), error = function(e) NA)
-  axon.inputs = tryCatch(sum(syns$prepost==1&syns$Label==2), error = function(e) NA)
-  dend.inputs = tryCatch(sum(syns$prepost==1&syns$Label==3), error = function(e) NA)
+  axon.outputs = tryCatch(sum(syns$prepost==0&syns$Label%in%c(2,"axon")), error = function(e) NA)
+  dend.outputs = tryCatch(sum(syns$prepost==0&syns$Label%in%c(3,"dendrite")), error = function(e) NA)
+  axon.inputs = tryCatch(sum(syns$prepost==1&syns$Label%in%c(2,"axon")), error = function(e) NA)
+  dend.inputs = tryCatch(sum(syns$prepost==1&syns$Label%in%c(3,"dendrite")), error = function(e) NA)
   total.outputs = tryCatch(sum(syns$prepost==0), error = function(e) NA)
   total.inputs = tryCatch(sum(syns$prepost==1), error = function(e) NA)
 
@@ -142,7 +142,7 @@ overlap_locality <- function(x,
                              ...){
 
   # Axon-dendrite split?
-  if(!(sum(x$d$Label==2)&sum(x$d$Label==3))){
+  if(!(sum(x$d$Label%in%c(2,"axon"))&sum(x$d$Label%in%c(3,"dendrite")))){
     warning("Axon / dendrite missing")
   }
 

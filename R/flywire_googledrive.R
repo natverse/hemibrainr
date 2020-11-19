@@ -128,7 +128,7 @@ flywire_neurons_update <- function(x,
 
   # Add to data
   message("Making neuronlist object ...")
-  z = union(t, nat::as.neuronlist(f))
+  z = nat::union(t, nat::as.neuronlist(f))
 
   # Save
   googledrive_upload_neuronlistfh(z,
@@ -307,7 +307,7 @@ flywire_request <- function(request,
     fb = flywire_basics(request)
     xyz = do.call(rbind, lapply(fb[,"flywire.xyz"], function(y) strsplit(y,",| |;|:")))
   }else{
-    xyz = nat::xyzmatrix(request)
+    xyz = as.data.frame(nat::xyzmatrix(request), stringsAsFactors =FALSE)
   }
 
   # Add to Google sheet
@@ -321,6 +321,99 @@ flywire_request <- function(request,
   message("FlyWire positions added")
 }
 
+
+#' Read precomputed flywire data from the hemibrainr Google Drive
+#'
+#' @description Read precomputed data available on the hemibrain Google Team
+#'   Drive. (see \code{\link{hemibrainr_set_drive}}) and (see \code{\link{hemibrainr_rclone}}).
+#'   This includes body IDs for all flywire neurons ((\code{flywire_ids})),
+#'   and user contributitions towards their creation (\code{flywire_contributions}),
+#'   as well as. Flywire related NBLASTs retrieved using \code{\link{hemibrain_nblast}}.
+#'
+#' @inheritParams hemibrainr_googledrive_data
+#'
+#' @return a \code{data.frame}. Depending on which synapse function was called, it can contain the columns:
+#'
+#' \itemize{
+#'
+#'   \item{"flywire.xyz"} { - coordinates of a point in the neuron in flywire voxel space. XYZ, sparated by a semicolon.}
+#'
+#'   \item{"flywire.id"}{ - the unique ID associated with this flywire neuron. This ID changed every time a neuron is, even slightly, kodified. So it is an unstable identifier.
+#'   This is why \code{flywire.xyz} is sometimes used.}
+#'
+#'   \item{"fw.x"}{ - the x coordinate of a point in the flywire neuron, in flywire voxel space..}
+#'
+#'   \item{"fw.y"}{ - the y coordinate of a point in the flywire neuron, in flywire voxel space..}
+#'
+#'   \item{"fw.z"}{ - the z coordinate of a point in the flywire neuron, in flywire voxel space..}
+#'
+#'   \item{"user_name"}{ - the name of the user who made the number of edits given in this row.}
+#'
+#'   \item{"edits"}{ - the number of edits (merges, splits, etc.) made by a user for the given \code{flywire.id}.}
+#'
+#'   \item{"proportion"}{ - the proportion of total edits for this neuron, that the given user made.}
+#'
+#'   \item{"dataset"}{ - the dataset this neuron is from, i.e. flywire.}
+#'
+#'}
+#'
+#' @examples
+#' \donttest{
+#' \dontrun{
+#'
+#' # All flywire IDs for neurons that have a split precomputed
+#' fw.ids = flywire_ids()
+#'
+#' # For these flywire IDs, their meya data:
+#' fw.meta = flywire_meta()
+#'
+#' # For flywire IDs, which users contributed what:
+#' fw.edits = flywire_contributions()
+#'
+#' }}
+#' @seealso \code{\link{hemibrain_splitpoints}},
+#'   \code{\link{hemibrain_flow_centrality}},
+#'   \code{\link{hemibrainr_googledrive_data}},
+#'   \code{\link{hemibrain_metrics}}
+#' @name flywire_googledrive_data
+#' @aliases flywire_meta
+#' @export
+flywire_meta <-function(local = FALSE, folder = "flywire_neurons/", sql = TRUE, ...){
+  savedir = good_savedir(local = local)
+  if(sql){
+    find_gsql(savedir = savedir, tab = "flywire_meta", sql.db = "flywire_data.sqlite", folder = folder, ...)
+  }else{
+    gfile = find_gfile(savedir = savedir, file = "flywire_meta", folder = folder)
+    gcsv = as.data.frame(readr::read_csv(gfile))
+    gcsv
+  }
+}
+
+#' @rdname flywire_googledrive_data
+#' @export
+flywire_contributions <-function(local = FALSE, folder = "flywire_neurons/", sql = TRUE, ...){
+  savedir = good_savedir(local = local)
+  if(sql){
+    find_gsql(savedir = savedir, tab = "flywire_edits", sql.db = "flywire_data.sqlite", folder = folder, ...)
+  }else{
+    gfile = find_gfile(savedir = savedir, file = "flywire_edits", folder = folder)
+    gcsv = as.data.frame(readr::read_csv(gfile))
+    gcsv
+  }
+}
+
+#' @rdname flywire_googledrive_data
+#' @export
+flywire_ids <-function(local = FALSE, folder = "flywire_neurons/", sql = TRUE, ...){
+  savedir = good_savedir(local = local)
+  if(sql){
+    find_gsql(savedir = savedir, tab = "flywire_ids", sql.db = "flywire_data.sqlite", folder = folder, ...)
+  }else{
+    gfile = find_gfile(savedir = savedir, file = "flywire_ids", folder = folder)
+    gcsv = as.data.frame(readr::read_csv(gfile))
+    as.character(gcsv$x)
+  }
+}
 
 
 

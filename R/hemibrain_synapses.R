@@ -24,7 +24,7 @@
 #'   \item{"connector_id"}{ - the unique ID for a pre/post synapse, as read from neuPrint. If this is not given, you are looking at a connection not a synapse.
 #'   In this case \code{count} should be given, which shows the number of synapses in this connection.}
 #'
-#'   \item{"prepost"}{ - whether the given synapse is a pre-synape (0, output synapse) or postsynapse (1, input synapse). Alternatively, if a connection is given,
+#'   \item{"prepost"}{ - whether the given synapse is a pre-synapse (0, output synapse) or postsynapse (1, input synapse). Alternatively, if a connection is given,
 #'   whether this connection is presynaptic to \code{bodyid} (0, \code{bodyid} is target) or postsynaptic (1, \code{bodyid} is source).}
 #'
 #'   \item{"x"}{ - x coordinate for the root point.}
@@ -37,7 +37,7 @@
 #'
 #'   \item{"bodyid"}{ - The neuPrint neuron/body related to the synapse/connection given in each row.}
 #'
-#'   \item{"partner"}{ - The neuron connecting to \code{bodyid} by the givne synapse/connection.}
+#'   \item{"partner"}{ - The neuron connecting to \code{bodyid} by the given synapse/connection.}
 #'
 #'   \item{"pre"}{ - The body ID for the presynaptic (source) neuron.}
 #'
@@ -52,6 +52,8 @@
 #'
 #'   \item{"norm"}{ - The normalised synapse weight. \code{count} is divided by the total number of inputs that the
 #'   target neuron's (\code{post}) compartment (\code{Label}) has. I.e. this normalisation is by total inputs onto a dendrite or axon, not the whole neuron.}
+#'
+#'   \item{"connection"}{ - The type of compartment-compartment connection specified by this row. The first compartment is the source (pre), the second, the target (post).}
 #'
 #'}
 #'
@@ -90,7 +92,7 @@ hemibrain_extract_synapses <- function(x,
   x = nat::as.neuronlist(x)
   prepost = match.arg(prepost)
   if("bodyid"%in%colnames(x[,])){
-    x = add_field_seq(x,names(x),field="bodyid")
+    x = add_field_seq(x,x[,"bodyid"],field="bodyid")
   }else if("skid"%in%colnames(x[,])){
     x = add_field_seq(x,x[,"skid"],field="skid")
   }
@@ -132,8 +134,8 @@ hemibrain_extract_connections <- function(x,
     syns = syns[syns$prepost==1,]
   }
   syns$Label = standard_compartments(syns$Label)
-  syns$partner.Label = standard_compartments(syns$partner.Label)
   rownames(syns) = 1:nrow(syns)
+  syns = syns[order(syns$count, decreasing = TRUE),]
   syns
 }
 
@@ -172,7 +174,6 @@ extract_synapses <-function(x, unitary = FALSE){
       syn
   }
   syn$Label = standard_compartments(syn$Label)
-  syn$partner.Label = standard_compartments(syn$partner.Label)
   syn
 }
 
@@ -230,6 +231,7 @@ extract_elist <- function(syns, lookup, meta = NULL){
     dplyr::rename(post.Label = .data$Label) %>%
     # Compartment labels
     dplyr::mutate(pre.Label = lookup[as.character(.data$connector_id)]) %>%
+    dplyr::mutate(pre.Label = ifelse(is.na(.data$pre.Label),"error",.data$pre.Label)) %>%
     # Synapse counts
     dplyr::group_by(.data$post, .data$pre, .data$post.Label, .data$pre.Label) %>%
     dplyr::mutate(count = dplyr::n()) %>%
@@ -246,7 +248,8 @@ extract_elist <- function(syns, lookup, meta = NULL){
   rownames(elist) = 1:nrow(elist)
   elist$post.Label = standard_compartments(elist$post.Label)
   elist$pre.Label = standard_compartments(elist$pre.Label)
-  elist
+  elist$connection = paste(elist$pre.Label,elist$post.Label,sep="-")
+  subset(elist, elist$pre.Label!="error")
 }
 
 # hidden

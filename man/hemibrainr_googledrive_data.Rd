@@ -3,23 +3,15 @@
 \name{hemibrainr_googledrive_data}
 \alias{hemibrainr_googledrive_data}
 \alias{hemibrain_neuron_bodyids}
-\alias{flywire_contributions}
 \alias{hemibrain_elist}
 \alias{hemibrain_synapses}
 \alias{hemibrain_connections}
-\title{Read precomputed information from the hemibrainr Google Drive}
+\title{Read precomputed hemibrain data from the hemibrainr Google Drive}
 \usage{
 hemibrain_neuron_bodyids(
   local = FALSE,
   folder = "hemibrain_neurons/",
   sql = FALSE,
-  ...
-)
-
-flywire_contributions(
-  local = FALSE,
-  folder = "flywire_neurons/",
-  sql = TRUE,
   ...
 )
 
@@ -101,9 +93,7 @@ Read precomputed data available on the hemibrain Google Team
   all synapses (\code{hemibrain_synapses}),
   neuron-neuron connections (\code{hemibrain_connections}) and an
   edgelist  (\code{hemibrain_elist}) for all hemibrain neurons, broken down by axon and dendrite
-  assignments. NBLAST matrices for all neurons against all neurons in the
-  data set are also available, including ones broken down by neuron
-  compartment.
+  assignments. Hemibrain related NBLASTs retrieved using \code{\link{hemibrain_nblast}}.
 }
 \examples{
 \donttest{

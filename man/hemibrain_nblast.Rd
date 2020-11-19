@@ -65,10 +65,10 @@ NBLASTs were run as so:
 .progress='text',.parallel=TRUE, normalisation='mean')}
 
 NBLASTs were also run against flywire and flycircuit neurons.
-Flywire neurons were oulled from the \href{https://ngl.flywire.ai/?local_id=1191adb1d6f85f5f8be0fedc675460f6}{flywire project} as meshes and skeletonised
+Flywire neurons were pulled from the \href{https://ngl.flywire.ai/?local_id=1191adb1d6f85f5f8be0fedc675460f6}{flywire project} as meshes and skeletonised
 using \code{fafbseg::skeletor}.
 
-The code for this pipeline can be found as a \href{https://github.com/flyconnectome/fafbpipeline}{flyconnecome GitHub repository}
+The code for this pipeline can be found as a \href{https://github.com/flyconnectome/fafbpipeline}{flyconnectome GitHub repository}
 }
 \examples{
 \donttest{
