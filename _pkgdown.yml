@@ -90,11 +90,17 @@ reference:
   - title: Access hemibrain google drive data
     desc: ~
     contents:
-    - 'hemibrain_googledrive'
+    - 'flywire_googledrive_data'
+    - 'hemibrain_nblast'
   - title: Access flywire google drive data
     desc: ~
     contents:
     - 'flywire_neurons'
+    - 'flywire_googledrive_data'
+  - title: Access light-level google drive data
+    desc: ~
+    contents:
+    - 'flycircuit_neurons'
   - title: Manipulate googlesheets for neuron matching
     desc: ~
     contents:
