@@ -238,7 +238,7 @@ extract_elist <- function(syns, lookup, meta = NULL){
     # Normalised synapses, by compartment
     dplyr::ungroup() %>%
     dplyr::group_by(.data$post,.data$post.Label) %>%
-    dplyr::mutate(norm = .data$count/ifelse(.data$post.Label%in%c(2,"dendrite","dendrites","dend"),d.post,a.post)) %>%
+    dplyr::mutate(norm = .data$count/ifelse(.data$post.Label%in%c(3,"dendrite","dendrites","dend"),d.post,a.post)) %>%
     # Clean up
     dplyr::distinct(.data$post, .data$pre,.data$post.Label, .data$pre.Label, .data$count, .data$norm) %>%
     dplyr::select(.data$post, .data$pre, .data$post.Label, .data$pre.Label, .data$count, .data$norm) %>%
