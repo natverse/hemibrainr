@@ -69,7 +69,7 @@ you will get:
  \item{"hemilineage"}{ An estimated hemilineage identity from both of two naming systems, Ito et al. 2013 and Wong et al. 2013}
  \item{"side"}{ An estimate as to the 'side', i.e. brain hemisphere, in which the neuron lies}
  \item{"skid"}{ The 'skeleton ID' of this neuron's match in CATMAID for FAFBv14}
- \item{"FAFB.xyz"}{ The coordinates in nanometers of a point in the neuron, in FAFBv14 space}
+ \item{"FAFB.xyz"}{ The coordinates in nanometres of a point in the neuron, in FAFBv14 space}
  \item{"hemibrain_match"}{ The bodyid of an estimated hemibrain match}
 }
 }

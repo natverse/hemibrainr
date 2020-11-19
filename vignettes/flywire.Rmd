@@ -100,7 +100,7 @@ fw.edits = flywire_contributions()
 head(fw.edits)
 ```
 
-Now, excitingly we can read the neurons themselves! And not only that, we can read them mirrored (flipped to the other hemisphere of the brain) or in a different brainsapce (from a small selection) if we wish. We read these neurons as `nat::neuronlistfh` objects. This means that a data frame for the neurons and information specifying where to find each neuron's data is read into R - but not the whole, huge `nat::neuronlist` object. This saves on memory for your R session. When an operation that requires the actual neuron data is performed, neurons are read into R. 
+Now, excitingly we can read the neurons themselves! And not only that, we can read them mirrored (flipped to the other hemisphere of the brain) or in a different brainspace (from a small selection) if we wish. We read these neurons as `nat::neuronlistfh` objects. This means that a data frame for the neurons and information specifying where to find each neuron's data is read into R - but not the whole, huge `nat::neuronlist` object. This saves on memory for your R session. When an operation that requires the actual neuron data is performed, neurons are read into R. 
 
 ```{r flywire.gdrive.neurons, eval = FALSE}
 # Get all aflywire neurons
@@ -134,7 +134,7 @@ plot3d(hemibrain_microns.surf, alpha = 0.1, col = "grey", add = TRUE)
 
 ### Get flywire neuron IDs
 
-You might want to look at specific flywire neurons. You could choose them based on the meta data that you can see with `flywire.neurons[,]`. However, you may also want to choose neurons based on a specific location in the data set. You can do this by giving locations to functions in `fafbseg` and turning them into coordinates. You can either give points in nanometers or raw voxel space. Note that the flywire dataset has a different registration than FAFB14 (used in CATMAID and also some other published data sources). 
+You might want to look at specific flywire neurons. You could choose them based on the meta data that you can see with `flywire.neurons[,]`. However, you may also want to choose neurons based on a specific location in the data set. You can do this by giving locations to functions in `fafbseg` and turning them into coordinates. You can either give points in nanometres or raw voxel space. Note that the flywire dataset has a different registration than FAFB14 (used in CATMAID and also some other published data sources). 
 
 ```{r choose_segmentation, eval = FALSE}
 # Set the package fafbseg to look at the flywire segmentation
@@ -144,7 +144,7 @@ fafbseg::choose_segmentation("flywire")
 # Let's say we want the ID for a neuron at these voxel coordinates:
 pos = matrix(c(165630,24412,3765),ncol=3) # Can be copied
 # from the button at the top of flywire https://ngl.flywire.ai/
-pos.nm = pos*c(4,4,40) # this is what it would be in nanometers
+pos.nm = pos*c(4,4,40) # this is what it would be in nanometres
 
 # Find the flywire ID!
 ids = fafbseg::flywire_xyz2id(pos, rawcoords = TRUE)
@@ -218,7 +218,7 @@ The neuron matching pipeline reads neuron skeletons from Google Drive and and di
 
 ### Matching pipelines
 
-Matches are stored on a [Google sheet](https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit#gid=2090252460). This sheet can be modfified using interactive pipelines in R. These pipelines use the results of a nightly NBLAST of thousands of neurons, to visually present you with the best canddiate matches in 3D:
+Matches are stored on a [Google sheet](https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit#gid=2090252460). This sheet can be modified using interactive pipelines in R. These pipelines use the results of a nightly NBLAST of thousands of neurons, to visually present you with the best candidate matches in 3D:
 
 ```{r flywire_matching, eval = FALSE}
 # As simple as:

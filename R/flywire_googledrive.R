@@ -36,7 +36,7 @@
 ##'  \item{"hemilineage"}{ An estimated hemilineage identity from both of two naming systems, Ito et al. 2013 and Wong et al. 2013}
 ##'  \item{"side"}{ An estimate as to the 'side', i.e. brain hemisphere, in which the neuron lies}
 ##'  \item{"skid"}{ The 'skeleton ID' of this neuron's match in CATMAID for FAFBv14}
-##'  \item{"FAFB.xyz"}{ The coordinates in nanometers of a point in the neuron, in FAFBv14 space}
+##'  \item{"FAFB.xyz"}{ The coordinates in nanometres of a point in the neuron, in FAFBv14 space}
 ##'  \item{"hemibrain_match"}{ The bodyid of an estimated hemibrain match}
 ##' }
 #'
@@ -325,10 +325,11 @@ flywire_request <- function(request,
 #' Read precomputed flywire data from the hemibrainr Google Drive
 #'
 #' @description Read precomputed data available on the hemibrain Google Team
-#'   Drive. (see \code{\link{hemibrainr_set_drive}}) and (see \code{\link{hemibrainr_rclone}}).
-#'   This includes body IDs for all flywire neurons ((\code{flywire_ids})),
-#'   and user contributitions towards their creation (\code{flywire_contributions}),
-#'   as well as. Flywire related NBLASTs retrieved using \code{\link{hemibrain_nblast}}.
+#'   Drive. (see \code{\link{hemibrainr_set_drive}}) and (see
+#'   \code{\link{hemibrainr_rclone}}). This includes body IDs for all flywire
+#'   neurons ((\code{flywire_ids})), and user contributions towards their
+#'   creation (\code{flywire_contributions}), as well as Flywire related NBLAST
+#'   scores retrieved using \code{\link{hemibrain_nblast}}.
 #'
 #' @inheritParams hemibrainr_googledrive_data
 #'
@@ -336,9 +337,9 @@ flywire_request <- function(request,
 #'
 #' \itemize{
 #'
-#'   \item{"flywire.xyz"} { - coordinates of a point in the neuron in flywire voxel space. XYZ, sparated by a semicolon.}
+#'   \item{"flywire.xyz"} { - coordinates of a point in the neuron in flywire voxel space. XYZ, separated by a semicolon.}
 #'
-#'   \item{"flywire.id"}{ - the unique ID associated with this flywire neuron. This ID changed every time a neuron is, even slightly, kodified. So it is an unstable identifier.
+#'   \item{"flywire.id"}{ - the unique ID associated with this flywire neuron. This ID changes every time a neuron is, even slightly, modified. So it is an unstable identifier.
 #'   This is why \code{flywire.xyz} is sometimes used.}
 #'
 #'   \item{"fw.x"}{ - the x coordinate of a point in the flywire neuron, in flywire voxel space..}

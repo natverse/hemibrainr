@@ -55,7 +55,7 @@ a \code{data.frame}. Depending on which synapse function was called, it can cont
   \item{"connector_id"}{ - the unique ID for a pre/post synapse, as read from neuPrint. If this is not given, you are looking at a connection not a synapse.
   In this case \code{count} should be given, which shows the number of synapses in this connection.}
 
-  \item{"prepost"}{ - whether the given synapse is a pre-synape (0, output synapse) or postsynapse (1, input synapse). Alternatively, if a connection is given,
+  \item{"prepost"}{ - whether the given synapse is a pre-synapse (0, output synapse) or postsynapse (1, input synapse). Alternatively, if a connection is given,
   whether this connection is presynaptic to \code{bodyid} (0, \code{bodyid} is target) or postsynaptic (1, \code{bodyid} is source).}
 
   \item{"x"}{ - x coordinate for the root point.}
@@ -68,7 +68,7 @@ a \code{data.frame}. Depending on which synapse function was called, it can cont
 
   \item{"bodyid"}{ - The neuPrint neuron/body related to the synapse/connection given in each row.}
 
-  \item{"partner"}{ - The neuron connecting to \code{bodyid} by the givne synapse/connection.}
+  \item{"partner"}{ - The neuron connecting to \code{bodyid} by the given synapse/connection.}
 
   \item{"pre"}{ - The body ID for the presynaptic (source) neuron.}
 

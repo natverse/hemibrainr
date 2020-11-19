@@ -21,7 +21,7 @@ knitr::opts_chunk$set(
 
 The philosophy of `hemibrainr` is to try and treat axons and dendrites separately, where we can. Generally, the division between axon and dendrite is ignored when people use graph theoretic approach on connectome data, or otherwise build their models. However, dendrite and axons may function differently - we just don't yet know in insects, how differently. 
 
-Other compartments include the 'primary neurite' or 'cell body fibre' (purple, beow) [(Ito et al., 2014)](https://www.sciencedirect.com/science/article/pii/S0896627313011781), the non-synaptic cable that attaches the neuron's cell body, its 'soma' to the rest of the neuron. There is also a 'primary dendrite', or 'linker' (green, below), which is non-synaptic cable that connects a neuron's dendrite and axon, throguh which an action potential presumably travels.
+Other compartments include the 'primary neurite' or 'cell body fibre' (purple, below) [(Ito et al., 2014)](https://www.sciencedirect.com/science/article/pii/S0896627313011781), the non-synaptic cable that attaches the neuron's cell body, its 'soma' to the rest of the neuron. There is also a 'primary dendrite', or 'linker' (green, below), which is non-synaptic cable that connects a neuron's dendrite and axon, through which an action potential presumably travels.
 
 ## Splitting a neuron
 
@@ -107,7 +107,7 @@ neurons.flow = hemibrain_read_neurons(ids, remote = FALSE)
 
 ## Get already split neurons
 
-Splitting neurons can take a little time. We can also load thousands of pre-split neurons from the `hemibrainr` Google team drive. In order to connect R to this Google drive, you have a few options. Please see [this article](https://flyconnectome.github.io/hemibrainr/articles/google_filestream.html). Once you have access and have moutned the drive, you should be able to do:
+Splitting neurons can take a little time. We can also load thousands of pre-split neurons from the `hemibrainr` Google team drive. In order to connect R to this Google drive, you have a few options. Please see [this article](https://flyconnectome.github.io/hemibrainr/articles/google_filestream.html). Once you have access and have mounted the drive, you should be able to do:
 
 ```{r hemi.db, eval = FALSE}
 # All split hemibrain neurons
@@ -201,7 +201,7 @@ neuron.synapses = hemibrain_extract_synapses(neurons.flow, prepost = "BOTH")
 table(neuron.synapses$prepost, neuron.synapses$Label)
 ```
 
-Here, there is one entry per synapse. The prepost column tells us whether the synapse is presynaptic (0, an outout synapse) or postsynaptic (1, an input synapse).
+Here, there is one entry per synapse. The prepost column tells us whether the synapse is presynaptic (0, an output synapse) or postsynaptic (1, an input synapse).
 
 We can also easily get one entry per target-source connection, by:
 
@@ -248,6 +248,6 @@ sort(table(pns.elist.strong$connection))
 ## A lot of axo-axonic and dendro-dendritic action amongst the PNs
 ```
 
-Here, pre is the `bodyid` of the presynaptic (upstream source) neuron and post is the `bodyid` of the postsynaptic (downstream target) neuron. The `norm` column gives a synaptic weight normalised by the totla inputs of the downstream neuron (post), i.e. count/total postsynapses on 'post'.
+Here, pre is the `bodyid` of the presynaptic (upstream source) neuron and post is the `bodyid` of the postsynaptic (downstream target) neuron. The `norm` column gives a synaptic weight normalised by the total inputs of the downstream neuron (post), i.e. count/total postsynapses on 'post'.
 
 Please see [this article]() to see a more in-depth example of how to efficiently work neuron connectivity data from `hemibrainr`.

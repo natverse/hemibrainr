@@ -37,9 +37,9 @@ a \code{data.frame}. Depending on which synapse function was called, it can cont
 
 \itemize{
 
-  \item{"flywire.xyz"} { - coordinates of a point in the neuron in flywire voxel space. XYZ, sparated by a semicolon.}
+  \item{"flywire.xyz"} { - coordinates of a point in the neuron in flywire voxel space. XYZ, separated by a semicolon.}
 
-  \item{"flywire.id"}{ - the unique ID associated with this flywire neuron. This ID changed every time a neuron is, even slightly, kodified. So it is an unstable identifier.
+  \item{"flywire.id"}{ - the unique ID associated with this flywire neuron. This ID changes every time a neuron is, even slightly, modified. So it is an unstable identifier.
   This is why \code{flywire.xyz} is sometimes used.}
 
   \item{"fw.x"}{ - the x coordinate of a point in the flywire neuron, in flywire voxel space..}
@@ -60,10 +60,11 @@ a \code{data.frame}. Depending on which synapse function was called, it can cont
 }
 \description{
 Read precomputed data available on the hemibrain Google Team
-  Drive. (see \code{\link{hemibrainr_set_drive}}) and (see \code{\link{hemibrainr_rclone}}).
-  This includes body IDs for all flywire neurons ((\code{flywire_ids})),
-  and user contributitions towards their creation (\code{flywire_contributions}),
-  as well as. Flywire related NBLASTs retrieved using \code{\link{hemibrain_nblast}}.
+  Drive. (see \code{\link{hemibrainr_set_drive}}) and (see
+  \code{\link{hemibrainr_rclone}}). This includes body IDs for all flywire
+  neurons ((\code{flywire_ids})), and user contributions towards their
+  creation (\code{flywire_contributions}), as well as Flywire related NBLAST
+  scores retrieved using \code{\link{hemibrain_nblast}}.
 }
 \examples{
 \donttest{
