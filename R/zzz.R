@@ -41,7 +41,4 @@
                                  options()$flywire_flagged_gsheet))
 }
 
-flycircuit_neurons
-flywire_googledrive_data
-hemibrain_nblast
-hemibrainr_googledrive_data
+
