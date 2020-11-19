@@ -116,7 +116,7 @@ al.objs = list.files("data-raw/AL/",pattern = ".obj",full.names = TRUE)
 al.meshes = sapply(al.objs, readobj::read.obj, convert.rgl = TRUE)
 gloms = gsub(".*raw\\.|\\_mesh.*","",names(al.meshes))
 names(al.meshes) = gloms
-Vertices = data.frame()
+Vertices = data.frame(stringsAsFactors = FALSE)
 Regions = list()
 count = 0
 for(i in 1:length(al.meshes)){

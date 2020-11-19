@@ -1178,7 +1178,8 @@ suggest_soma = function(data = NULL,
     X = points[, 1],
     Y = points[, 2],
     Z = points[, 3],
-    sugg_clust = suggest
+    sugg_clust = suggest,
+    stringsAsFactors = FALSE
   )
   sugg_points = sugg_points[which(sugg_points$sugg_clust != 0), ]
   # cut down to the just the points furthest from boundary in each cluster
@@ -1198,7 +1199,7 @@ soma_locations = function(data = NULL) {
     NA,
     nrow = length(data$neurons),
     ncol = length(colnames(data$neurons[[1]]$d))
-  ))
+  ), stringsAsFactors = FALSE)
   colnames(somas) = colnames(data$neurons[[1]]$d)
   for (n in 1:length(data$neurons)) {
     if (sum(is.na(data$neurons[[n]]$d[data$neurons[[n]]$soma, ])) == 0) {

@@ -137,7 +137,7 @@ hemibrain_prune_online.neuron <- function (x, brain = NULL, Label = NULL, lock =
     reset3d(brain=brain)
     if(nrow(selected)){
       message("Selected cable in red")
-      v = match(data.frame(t(selected)), data.frame(t(nat::xyzmatrix(x))))
+      v = match(data.frame(t(selected), stringsAsFactors = FALSE), data.frame(t(nat::xyzmatrix(x)), stringsAsFactors = FALSE))
       x = add_Label(x = x, PointNo = v, Label = Label, erase = TRUE)
       frag = nat::prune_vertices(x, verticestoprune = v, invert = TRUE, ...)
       ids = rgl::plot3d(nat::as.neuronlist(frag), col = hemibrain_bright_colours["cerise"], ...)
@@ -166,7 +166,7 @@ hemibrain_select_points <- function(x, clear_plot_on_exit = FALSE, Label = NULL,
     x = x$d
   }
   if(is.null(Label)){
-    selected.points <- data.frame()
+    selected.points <- data.frame(stringsAsFactors = FALSE)
   }else{
     selected.points <- nat::xyzmatrix(x[x$Label==Label,])
   }

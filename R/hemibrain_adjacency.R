@@ -138,12 +138,12 @@ grouped_adjacency <- function(inputids=NULL, outputids=NULL,
   }
 
   if(!is.null(ingroup)) {
-    l=split(as.data.frame(am), ingroup)
+    l=split(as.data.frame(am, stringsAsFactors = FALSE), ingroup)
     # nb transpose back to original orientation
     am=t(sapply(l, colSums))
   }
   if(!is.null(outgroup)) {
-    l=split(as.data.frame(t(am)), outgroup)
+    l=split(as.data.frame(t(am), stringsAsFactors = FALSE), outgroup)
     # don't transpose so back to inputs as rows
     am=sapply(l, colSums)
   }

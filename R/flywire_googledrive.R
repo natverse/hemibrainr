@@ -385,7 +385,7 @@ flywire_meta <-function(local = FALSE, folder = "flywire_neurons/", sql = TRUE, 
     find_gsql(savedir = savedir, tab = "flywire_meta", sql.db = "flywire_data.sqlite", folder = folder, ...)
   }else{
     gfile = find_gfile(savedir = savedir, file = "flywire_meta", folder = folder)
-    gcsv = as.data.frame(readr::read_csv(gfile))
+    gcsv = readr::read_csv(gfile)
     gcsv
   }
 }
@@ -398,7 +398,7 @@ flywire_contributions <-function(local = FALSE, folder = "flywire_neurons/", sql
     find_gsql(savedir = savedir, tab = "flywire_edits", sql.db = "flywire_data.sqlite", folder = folder, ...)
   }else{
     gfile = find_gfile(savedir = savedir, file = "flywire_edits", folder = folder)
-    gcsv = as.data.frame(readr::read_csv(gfile))
+    gcsv = readr::read_csv(gfile)
     gcsv
   }
 }
@@ -411,7 +411,7 @@ flywire_ids <-function(local = FALSE, folder = "flywire_neurons/", sql = TRUE, .
     find_gsql(savedir = savedir, tab = "flywire_ids", sql.db = "flywire_data.sqlite", folder = folder, ...)
   }else{
     gfile = find_gfile(savedir = savedir, file = "flywire_ids", folder = folder)
-    gcsv = as.data.frame(readr::read_csv(gfile))
+    gcsv = readr::read_csv(gfile)
     as.character(gcsv$x)
   }
 }

@@ -64,16 +64,16 @@ hemibrain_seetags <-function(x, ...) UseMethod("hemibrain_seetags")
 #' @export
 hemibrain_seetags.neuron <- function(x,...){
   bodyid = x$bodyid
-  sop = data.frame()
+  sop = data.frame(stringsAsFactors = FALSE)
   for(tag in names(x$tags)){
     col = nullToNA(x$tags[[tag]])
     sop = rbind(sop,col)
   }
   sop = t(sop)
   colnames(sop) = names(x$tags)
-  sop = cbind(sop, data.frame(bodyid = bodyid))
+  sop = cbind(sop, data.frame(bodyid = bodyid, stringsAsFactors = FALSE))
   rownames(sop) = NULL
-  as.data.frame(sop)
+  as.data.frame(sop, stringsAsFactors = FALSE)
 }
 #' @rdname hemibrain_tags
 #' @export

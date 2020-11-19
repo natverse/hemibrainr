@@ -143,7 +143,7 @@ which.consecutive <- function(Vec,
 change_points <- function(x, v, only.jumps = FALSE, run = "min"){
   eps = nat::endpoints(x)
   segs = x$SegList
-  df=data.frame(node=unlist(segs), seg=rep(seq_along(segs), sapply(segs, length)))
+  df=data.frame(node=unlist(segs), seg=rep(seq_along(segs), sapply(segs, length)), stringsAsFactors = FALSE)
   bb=by(df$node%in%v, df$seg, function(x) any(x))
   segs.d=segs[bb]
   s.d = unique(unlist(lapply(segs.d, function(seg) seg[which.consecutive(seg %in% v, only.jumps = only.jumps, run = run)])))

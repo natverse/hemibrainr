@@ -107,12 +107,12 @@ compartment_metrics <- function(x, resample = 10, delta = 62.5, locality = FALSE
              dend.length= nullToNA(dend.length),
              pd.length= nullToNA(pd.length),
              segregation_index = nullToNA(si),
-             overlap_locality = nullToNA(locality.score)),
+             overlap_locality = nullToNA(locality.score), stringsAsFactors = FALSE),
              error = function(e) NULL)
   if(!locality){
     met$overlap_locality = NULL
   }
-  as.data.frame(t(apply(met, 1, unlist)))
+  as.data.frame(t(apply(met, 1, unlist)), stringsAsFactors = FALSE)
 }
 
 

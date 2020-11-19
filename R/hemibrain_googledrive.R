@@ -179,7 +179,7 @@ hemibrain_neuron_bodyids <- function(local = FALSE, folder = "hemibrain_neurons/
     find_gsql(savedir = savedir, tab = "hemibrain_all_neuron_bodyids", sql.db = "hemibrainr_data.sqlite", folder = folder, ...)
   }else{
     gfile = find_gfile(savedir = savedir, file = "hemibrain_all_neuron_bodyids", folder = folder)
-    gcsv = as.data.frame(readr::read_csv(gfile))
+    gcsv = as.data.frame(readr::read_csv(gfile), stringsAsFactors = FALSE)
     as.character(gcsv$x)
   }
 }
@@ -192,7 +192,7 @@ hemibrain_elist <- function(local = FALSE, folder = "hemibrain_neurons/", sql = 
     gcsv = find_gsql(savedir = savedir, tab = "hemibrain_all_neurons_edgelist_polypre_centrifugal_synapses", folder = folder, ...)
   }else{
     gfile = find_gfile(savedir = savedir, file = "hemibrain_all_neurons_edgelist", folder = folder)
-    gcsv = as.data.frame(readr::read_csv(gfile))
+    gcsv = readr::read_csv(gfile)
   }
   gcsv
 }
@@ -205,7 +205,7 @@ hemibrain_synapses <- function(local = FALSE, folder = "hemibrain_neurons/", sql
     gcsv = find_gsql(savedir = savedir, tab = "hemibrain_all_neurons_synapses_polypre_centrifugal_synapses", sql.db = "hemibrainr_data.sqlite", folder = folder, ...)
   }else{
     gfile = find_gfile(savedir = savedir, file = "hemibrain_all_neurons_synapses", folder = folder)
-    gcsv = as.data.frame(readr::read_csv(gfile))
+    gcsv = readr::read_csv(gfile)
   }
 }
 
@@ -217,7 +217,7 @@ hemibrain_connections <- function(local = FALSE, folder = "hemibrain_neurons/", 
     gcsv = find_gsql(savedir = savedir, tab = "hemibrain_all_neurons_connections_polypre_centrifugal_synapses", sql.db = "hemibrainr_data.sqlite", folder = folder, ...)
   }else{
     gfile = find_gfile(savedir = savedir, file = "hemibrain_all_neurons_connections", folder = folder)
-    gcsv = as.data.frame(readr::read_csv(gfile))
+    gcsv = readr::read_csv(gfile)
   }
 }
 

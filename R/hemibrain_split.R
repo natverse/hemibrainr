@@ -469,7 +469,7 @@ hemibrain_splitpoints <- function(x){
   if(!nat::is.neuronlist(x)){
     x = nat::as.neuronlist(x)
   }
-  splits = data.frame()
+  splits = data.frame(stringsAsFactors = FALSE)
   for(i in 1:length(x)){
     bi = names(x)[i]
     n = x[[i]]

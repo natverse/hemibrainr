@@ -143,7 +143,7 @@ nlscan_split <- function (someneuronlist,
   if (nat::is.neuronlist(someneuronlist)) {
     db = someneuronlist
     neurons = names(someneuronlist)
-    nams = as.data.frame(someneuronlist)$name
+    nams = as.data.frame(someneuronlist, stringsAsFactors = FALSE)$name
   }
   frames <- length(neurons)
   if(!is.issue(already_selected)){
@@ -260,7 +260,7 @@ plot3d_somas <- function(someneuronlist,
                          soma.alpha = 1,
                          volume = NULL,
                          invert = FALSE){
-  somapos <- as.data.frame(catmaid::soma(someneuronlist))
+  somapos <- as.data.frame(catmaid::soma(someneuronlist), stringsAsFactors = FALSE)
   somapos <- somapos[!is.na(somapos$X),]
   if(!is.null(volume)){
     p = nat::pointsinside(somapos, surf = volume)

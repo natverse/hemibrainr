@@ -346,7 +346,7 @@ flywire_ids_update <- function(selected_sheets = NULL,
   if(is.null(selected_sheets)){
     selected_sheets = getOption("hemibrainr_gsheets", stop("Please set option('hemibrainr_gsheets')"))
   }
-  gs = data.frame()
+  gs = data.frame(stringsAsFactors = FALSE)
   for(selected_sheet in selected_sheets){
     ## Read Google sheets and extract glywire neuron positions
     tabs = gsheet_manipulation(FUN = googlesheets4::sheet_names,

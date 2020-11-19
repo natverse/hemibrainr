@@ -151,7 +151,7 @@ hemibrain_task_update <- function(bodyids,
     gsheet_manipulation(FUN = googlesheets4::range_write,
                         ss = selected_file,
                         range = range,
-                        data = data.frame(update[r]),
+                        data = data.frame(update[r], stringsAsFactors = FALSE),
                         sheet = "roots",
                         col_names = FALSE)
   }
@@ -467,7 +467,8 @@ prepare_update <- function(someneuronlist,
     update2 = data.frame(
       checked = checked + 1,
       user = users,
-      time = Sys.time())
+      time = Sys.time(),
+      stringsAsFactors = FALSE)
     update = cbind(update,update2)
   }
   update[is.na(update)] = ""
