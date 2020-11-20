@@ -190,6 +190,7 @@ locations in flywire space, based on CATMAID skids.</p>
 <span class='fu'>hemibrain_matching_rewrite</span><span class='op'>(</span>
   ids <span class='op'>=</span> <span class='cn'>NULL</span>,
   selected_file <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>options</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>$</span><span class='va'>hemibrainr_matching_gsheet</span>,
+  top.nblast <span class='op'>=</span> <span class='cn'>FALSE</span>,
   <span class='va'>...</span>
 <span class='op'>)</span>
 
@@ -238,6 +239,10 @@ you can use, for example, <code><a href='LR_matching.html'>hemibrain_matching</a
     <tr>
       <th>dataset</th>
       <td><p>the tab to which to add your new information. You are either adding to information related to hemibrain neurons, or FAFB neurons.</p></td>
+    </tr>
+    <tr>
+      <th>top.nblast</th>
+      <td><p>logical. Whether or not to also give the top NBLAST match for each entry.</p></td>
     </tr>
     <tr>
       <th>flycircuit.ids</th>

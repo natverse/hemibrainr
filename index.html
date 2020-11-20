@@ -102,9 +102,12 @@
 <center>
 <img src="https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/hemibrain.png" alt="hemibrain">
 </center>
-<div id="installation" class="section level2">
+<div id="get-started-with-hemibrainr" class="section level2">
 <h2 class="hasAnchor">
-<a href="#installation" class="anchor"></a>Installation</h2>
+<a href="#get-started-with-hemibrainr" class="anchor"></a>Get started with hemibrainr</h2>
+<div id="installation" class="section level3">
+<h3 class="hasAnchor">
+<a href="#installation" class="anchor"></a>Installation</h3>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># install</span>
 <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="st"><a href="https://remotes.r-lib.org">"remotes"</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span>
@@ -113,9 +116,9 @@
 <span class="co"># use </span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/flyconnectome/hemibrainr">hemibrainr</a></span><span class="op">)</span></code></pre></div>
 </div>
-<div id="using-hemibrainr" class="section level2">
-<h2 class="hasAnchor">
-<a href="#using-hemibrainr" class="anchor"></a>Using hemibrainr</h2>
+<div id="using-hemibrainr" class="section level3">
+<h3 class="hasAnchor">
+<a href="#using-hemibrainr" class="anchor"></a>Using hemibrainr</h3>
 <p><em>hemibrainr</em> contains tools with which to quickly work with <a href="https://neuprint.janelia.org/help/videos?dataset=hemibrain">hemibrain</a> and <a href="https://ngl.flywire.ai/?local_id=c8c06ea181ad5447b04beacfc4cb1b66">FlyWire</a> neurons, and match up neurons within and between data sets.</p>
 <p>If you can connect to the <em>hemibrainr</em> google shared drive, this package puts thousands of hemibrain and FlyWire neurons at your fingertips, as well as information on their compartments (e.g. axons versus dendrites), synapses and connectivity and between data set neuron-neuron matches. You can:</p>
 <ul>
@@ -129,7 +132,7 @@
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/flyconnectome/hemibrainr">hemibrainr</a></span><span class="op">)</span>
 
 <span class="co"># Else, it wants to see it on the mounted team drive, here</span>
-<span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">Gdrive_hemibrain_data</span>
+<span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span><span class="op">(</span><span class="st">"Gdrive_hemibrain_data"</span><span class="op">)</span>
 
 <span class="co"># We can load meta data for all neurons in hemibrain</span>
 <span class="va">db</span> <span class="op">=</span> <span class="fu"><a href="reference/hemibrain_read_neurons.html">hemibrain_neurons</a></span><span class="op">(</span><span class="op">)</span>
@@ -148,9 +151,9 @@
 <span class="va">hemibrain_matched_new</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/hemibrain_matches.html">hemibrain_matches</a></span><span class="op">(</span><span class="op">)</span> 
 <span class="co">## NOTE: includes hemibrain&lt;-&gt;FlyWire matches!</span></code></pre></div>
 </div>
-<div id="authentication" class="section level2">
-<h2 class="hasAnchor">
-<a href="#authentication" class="anchor"></a>Authentication</h2>
+<div id="neuprint-authentication" class="section level3">
+<h3 class="hasAnchor">
+<a href="#neuprint-authentication" class="anchor"></a>neuPrint authentication</h3>
 <p>In order to use <em>neuprintr</em>, which fetches data we want to use with <em>hemibrainr</em>, you will need to be able to login to a neuPrint server and be able to access it underlying Neo4j database.</p>
 <p>You may need an authenticated accounted, or you may be able to register your <code>@gmail</code> address without an authentication process. Navigate to a neuPrint website, e.g. <a href="https://neuprint.janelia.org" class="uri">https://neuprint.janelia.org</a>, and hit ‘login’. Sign in using an <code>@gmail</code> account. If you have authentication/the server is public, you will now be able to see your access token by going to ‘Account’:</p>
 <p><img src="https://raw.githubusercontent.com/natverse/neuprintr/master/inst/images/bearertoken.png" alt="access your bearer token"></p>
@@ -169,11 +172,51 @@
    token<span class="op">=</span> <span class="st">"asBatEsiOIJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImIsImxldmVsIjoicmVhZHdyaXRlIiwiaW1hZ2UtdXJsIjoiaHR0cHM7Ly9saDQuZ29vZ2xldXNlcmNvbnRlbnQuY29tLy1QeFVrTFZtbHdmcy9BQUFBQUFBQUFBDD9BQUFBQUFBQUFBQS9BQ0hpM3JleFZMeEI4Nl9FT1asb0dyMnV0QjJBcFJSZlI6MTczMjc1MjU2HH0.jhh1nMDBPl5A1HYKcszXM518NZeAhZG9jKy3hzVOWEU"</span><span class="op">)</span></code></pre></div>
 <p>This is also the approach that you would take if you were working with more than two neuPrint servers.</p>
 </div>
-<div id="example" class="section level2">
-<h2 class="hasAnchor">
-<a href="#example" class="anchor"></a>Example</h2>
-<p>Let’s get started with a useful function for splitting a neuron into its axon and dendrite:</p>
+<div id="connect-to-hemibrainr-google-team-drive" class="section level3">
+<h3 class="hasAnchor">
+<a href="#connect-to-hemibrainr-google-team-drive" class="anchor"></a>Connect to hemibrainr Google team drive</h3>
+<p>For this, you need access to th hemibrainr google team drive. Authentication is through an email account. Once you have access, there are two basic ways to mount the data for use:</p>
+<p>Option 1, mount your Google drives using <a href="https://support.google.com/a/answer/7491144?hl=en">Google filestream</a>. However, for this to work you will need <a href="https://workspace.google.com/pricing.html">Google Workspace</a>, Google’s monthly subscription offering for businesses and organizations. One the <a href="https://support.google.com/a/answer/7491144?hl=en">Google filestream</a> application is run, you should be able to see your drives mounted like external hard drive, as so:</p>
+<center>
+<img src="https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/google_filestream.png" alt="google_filestream">
+</center>
+<p>Then, this should work:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Set a new Google drive, can be the team drive name or a path to the correct drive</span>
+<span class="fu"><a href="reference/hemibrainr_set_drive.html">hemibrainr_set_drive</a></span><span class="op">(</span><span class="st">"hemibrainr"</span><span class="op">)</span> <span class="co"># No need to run this each time though, this is the default. Use if you want to use a different name drive.</span>
+
+<span class="co"># Now just get the name of your default team drive.</span>
+<span class="co">## This will be used to locate your team drive using the R package googledrive</span>
+<span class="fu"><a href="reference/hemibrainr_set_drive.html">hemibrainr_team_drive</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<p>Option 2, this is free. You still need authenticated access to the hemibrainr Gogle team drive. It cna then be moutned using <a href="https://rclone.org/">rclone</a>. First, <a href="https://rclone.org/downloads/">download</a> rclone for your operating system. You can also download from your system’s command line (e.g. from terminal) and then configure it for the drive:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="co"># unix/macosx</span></a>
+<a class="sourceLine" id="cb8-2" data-line-number="2"><span class="ex">curl</span> https://rclone.org/install.sh <span class="kw">|</span> <span class="fu">sudo</span> bash</a>
+<a class="sourceLine" id="cb8-3" data-line-number="3"><span class="ex">rclone</span> config</a></code></pre></div>
+<p>And now check this has worked:</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># mounts in working directory</span>
+<span class="fu"><a href="reference/hemibrainr_set_drive.html">hemibrainr_rclone</a></span><span class="op">(</span><span class="op">)</span>
+
+<span class="co"># Now hemibrain neurons are read from this mount</span>
+<span class="va">db</span> <span class="op">=</span> <span class="fu"><a href="reference/hemibrain_read_neurons.html">hemibrain_neurons</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># read from the google drive</span>
+<span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">db</span><span class="op">)</span>
+<span class="fu">plot3d</span><span class="op">(</span><span class="va">hemibrain_neurons</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span><span class="op">)</span>
+
+<span class="co"># Specifically, from here</span>
+<span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span><span class="op">(</span><span class="st">"Gdrive_hemibrain_data"</span><span class="op">)</span>
+
+<span class="co"># unmounts</span>
+<span class="fu"><a href="reference/hemibrainr_set_drive.html">hemibrainr_rclone_unmount</a></span><span class="op">(</span><span class="op">)</span>
+
+<span class="co"># And now we are back to:</span>
+<span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span><span class="op">(</span><span class="st">"Gdrive_hemibrain_data"</span><span class="op">)</span></code></pre></div>
+<p>For more detailed instructions, see <a href="https://flyconnectome.github.io/hemibrainr/articles/google_filestream.html">this article</a>.</p>
+</div>
+<div id="example-splitting-neurons" class="section level3">
+<h3 class="hasAnchor">
+<a href="#example-splitting-neurons" class="anchor"></a>Example: ‘splitting’ neurons</h3>
+<p>Let’s get started with a useful function for splitting a neuron into its axon and dendrite:</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Choose neurons</span>
 <span class="co">## These neurons are some 'tough' examples from the hemibrain:v1.0.1</span>
 <span class="co">### They will split differently depending on the parameters you use.</span>
@@ -202,6 +245,11 @@ split <span class="op">=</span> <span class="st">"distance"</span><span class="o
 <span class="fu">nat</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/nat/man/nopen3d.html">nopen3d</a></span><span class="op">(</span><span class="op">)</span>
 <span class="fu"><a href="reference/plot3d_split.html">nlscan_split</a></span><span class="op">(</span><span class="va">neurons.flow</span>, WithConnectors <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 </div>
+</div>
+<div id="tutorial" class="section level2">
+<h2 class="hasAnchor">
+<a href="#tutorial" class="anchor"></a>Tutorial</h2>
+</div>
 <div id="data" class="section level2">
 <h2 class="hasAnchor">
 <a href="#data" class="anchor"></a>Data</h2>
@@ -214,7 +262,7 @@ split <span class="op">=</span> <span class="st">"distance"</span><span class="o
 <a href="#acknowledging-the-tools" class="anchor"></a>Acknowledging the tools</h2>
 <p>neuPrint comprises a set of tools for loading and analyzing connectome data into a Neo4j database. Analyze and explore connectome data stored in Neo4j using the neuPrint ecosystem: <a href="https://github.com/connectome-neuprint/neuPrintHTTP">neuPrintHTTP</a>, <a href="https://github.com/connectome-neuprint/neuPrintExplorer">neuPrintExplorer</a>, <a href="https://github.com/connectome-neuprint/neuprint-python">Python API</a>.</p>
 <p>This package was created by <a href="https://scholar.google.com/citations?user=BOVTiXIAAAAJ&amp;hl=en">Alexander Shakeel Bates</a> and <a href="https://en.wikipedia.org/wiki/Gregory_Jefferis">Gregory Jefferis</a>. You can cite this package as:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/citation.html">citation</a></span><span class="op">(</span>package <span class="op">=</span> <span class="st">"hemibrainr"</span><span class="op">)</span></code></pre></div>
 <p><strong>Bates AS, Jefferis GSXE</strong> (2020). <em>hemibrainr: Code for working with data from Janelia FlyEM’s hemibrain project.</em> <strong>R package</strong> version 0.1.0. <a href="https://github.com/flyconnectome/hemibrainr" class="uri">https://github.com/flyconnectome/hemibrainr</a></p>
 </div>
