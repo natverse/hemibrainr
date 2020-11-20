@@ -199,6 +199,19 @@ hemibrain_elist <- function(local = FALSE, folder = "hemibrain_neurons/", sql = 
 
 #' @rdname hemibrainr_googledrive_data
 #' @export
+hemibrain_meta <- function(local = FALSE, folder = "hemibrain_neurons/", sql = TRUE, ...){
+  savedir = good_savedir(local = local)
+  if(sql){
+    gcsv = find_gsql(savedir = savedir, tab = "hemibrain_all_neurons_metrics_polypre_centrifugal_synapses", folder = folder, ...)
+  }else{
+    gfile = find_gfile(savedir = savedir, file = "hemibrain_all_neurons_metrics", folder = folder)
+    gcsv = readr::read_csv(gfile)
+  }
+  gcsv
+}
+
+#' @rdname hemibrainr_googledrive_data
+#' @export
 hemibrain_synapses <- function(local = FALSE, folder = "hemibrain_neurons/", sql = TRUE, ...){
   savedir = good_savedir(local = local)
   if(sql){

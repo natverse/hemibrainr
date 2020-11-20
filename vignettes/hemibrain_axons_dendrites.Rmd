@@ -250,4 +250,4 @@ sort(table(pns.elist.strong$connection))
 
 Here, pre is the `bodyid` of the presynaptic (upstream source) neuron and post is the `bodyid` of the postsynaptic (downstream target) neuron. The `norm` column gives a synaptic weight normalised by the total inputs of the downstream neuron (post), i.e. count/total postsynapses on 'post'.
 
-Please see [this article]() to see a more in-depth example of how to efficiently work neuron connectivity data from `hemibrainr`.
+Please see [this article](https://flyconnectome.github.io/hemibrainr/articles/hemibrain_connectivity.html) to see a more in-depth example of how to efficiently work neuron connectivity data from `hemibrainr`.

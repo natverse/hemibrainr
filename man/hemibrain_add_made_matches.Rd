@@ -43,6 +43,7 @@ fafb_matching_rewrite(
 hemibrain_matching_rewrite(
   ids = NULL,
   selected_file = options()$hemibrainr_matching_gsheet,
+  top.nblast = FALSE,
   ...
 )
 
@@ -73,6 +74,8 @@ simply open this Google Sheet in your browser and add your initials to neurons o
 you can use, for example, \code{\link{hemibrain_matching}}.}
 
 \item{dataset}{the tab to which to add your new information. You are either adding to information related to hemibrain neurons, or FAFB neurons.}
+
+\item{top.nblast}{logical. Whether or not to also give the top NBLAST match for each entry.}
 
 \item{flycircuit.ids}{flycircuit IDs to add to Google sheet if not already present.}
 

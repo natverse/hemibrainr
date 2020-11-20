@@ -1245,6 +1245,7 @@ lm_matches <- function(priority = c("hemibrain","lm")){
 #' @param flywire.ids flywire IDs to add to Google sheet if not already present.
 #' @param flycircuit.ids flycircuit IDs to add to Google sheet if not already present.
 #' @param meta meta data for the given flycircuit IDs.
+#' @param top.nblast logical. Whether or not to also give the top NBLAST match for each entry.
 #'
 #' @param ... arguments passed to methods for, for example, \code{neuprintr::neuprint_get_meta} and \code{elmr::fafb_get_meta}.
 #'
@@ -1640,14 +1641,16 @@ fafb_matching_rewrite <- function(selected_file  = options()$hemibrainr_matching
   lskids = as.character(catmaid::catmaid_skids("annotation:side: left", ...))
   n$side = "right"
   n[n$skid%in%lskids,"side"] = "left"
-  nblast = tryCatch(hemibrain_nblast('hemibrain-fafb14'), error = function(e) NULL)
-  if(!is.null(nblast)){
-    nblast = hemibrain_nblast('hemibrain-fafb14')
-    nblast.top =nblast[match(n$skid,rownames(nblast)),]
-    tops = apply(nblast.top,1,function(r) which.max(r))
-    top = colnames(nblast)[unlist(tops)]
-    top[!n$skid%in%rownames(nblast)] = NA
-    n$nblast.top = top
+  if(top.nblast){
+    nblast = tryCatch(hemibrain_nblast('hemibrain-fafb14'), error = function(e) NULL)
+    if(!is.null(nblast)){
+      nblast = hemibrain_nblast('hemibrain-fafb14')
+      nblast.top =nblast[match(n$skid,rownames(nblast)),]
+      tops = apply(nblast.top,1,function(r) which.max(r))
+      top = colnames(nblast)[unlist(tops)]
+      top[!n$skid%in%rownames(nblast)] = NA
+      n$nblast.top = top
+    }
   }
   n = n[order(n$cell.type),]
   n = n[order(n$ItoLee_Hemilineage),]
@@ -1671,6 +1674,7 @@ fafb_matching_rewrite <- function(selected_file  = options()$hemibrainr_matching
 #' @export
 hemibrain_matching_rewrite <- function(ids = NULL,
                                        selected_file  = options()$hemibrainr_matching_gsheet,
+                                       top.nblast = FALSE,
                                   ...){
   gs = hemibrain_match_sheet(sheet = "hemibrain", selected_file = selected_file)
   if(is.null(ids)){
@@ -1694,22 +1698,24 @@ hemibrain_matching_rewrite <- function(ids = NULL,
   meta = meta[order(meta$bodyid),]
   meta = meta[order(meta$cell.type),]
   meta = meta[order(meta$ItoLee_Hemilineage),]
-  nblast = tryCatch(hemibrain_nblast('hemibrain-fafb14'), error = function(e) NULL)
-  if(!is.null(nblast)){
-    nblast.top =nblast[,match(meta$bodyid,colnames(nblast))]
-    tops = apply(nblast.top,1,function(r) which.max(r))
-    top = rownames(nblast)[unlist(tops)]
-    top[!meta$bodyid%in%colnames(nblast)] = NA
-    meta$nblast.catmaid.top = top
-  }
-  nblast = tryCatch(hemibrain_nblast('hemibrain-flywire'), error = function(e) NULL)
-  fw.neurons = tryCatch(flywire_neurons(), error = function(e) NULL)
-  if(!is.null(nblast) & !is.null(fw.neurons)){
-    nblast.top =nblast[,match(meta$bodyid,colnames(nblast))]
-    tops = apply(nblast.top,1,function(r) which.max(r))
-    top = rownames(nblast)[unlist(tops)]
-    top[!meta$bodyid%in%colnames(nblast)] = NA
-    meta$nblast.flywire.top = fw.neurons[unlist(top),"flywire.xyz"]
+  if(top.nblast){
+    nblast = tryCatch(hemibrain_nblast('hemibrain-fafb14'), error = function(e) NULL)
+    if(!is.null(nblast)){
+      nblast.top =nblast[,match(meta$bodyid,colnames(nblast))]
+      tops = apply(nblast.top,1,function(r) which.max(r))
+      top = rownames(nblast)[unlist(tops)]
+      top[!meta$bodyid%in%colnames(nblast)] = NA
+      meta$nblast.catmaid.top = top
+    }
+    nblast = tryCatch(hemibrain_nblast('hemibrain-flywire'), error = function(e) NULL)
+    fw.neurons = tryCatch(flywire_neurons(), error = function(e) NULL)
+    if(!is.null(nblast) & !is.null(fw.neurons)){
+      nblast.top =nblast[,match(meta$bodyid,colnames(nblast))]
+      tops = apply(nblast.top,1,function(r) which.max(r))
+      top = rownames(nblast)[unlist(tops)]
+      top[!meta$bodyid%in%colnames(nblast)] = NA
+      meta$nblast.flywire.top = fw.neurons[unlist(top),"flywire.xyz"]
+    }
   }
   batches = split(1:nrow(meta), ceiling(seq_along(1:nrow(meta))/500))
   gsheet_manipulation(FUN = googlesheets4::write_sheet,

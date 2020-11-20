@@ -67,6 +67,12 @@ options("hemibrainr_matching_gsheet")
 
 ### Set your drive location
 
+If you have mounted your Google drives with Google file stream, you should be able to see something like this:
+
+<center>
+![google_filestream](https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/google_filestream.png)
+</center>
+
 If you need to set `hemibrainr` to look at a new drive, use:
 
 ```{r new.drive, eval = FALSE}
@@ -194,7 +200,7 @@ Try it somewhere like `/Documents` to see how it works. For `hemibrainr` there i
 # mounts in working directory
 hemibrainr_rclone()
 
-# Now hemibrain neurins are read from this mount
+# Now hemibrain neurons are read from this mount
 db = hemibrain_neurons()
 length(db)
 
@@ -205,7 +211,7 @@ options("Gdrive_hemibrain_data")
 hemibrainr_rclone_unmount()
 
 # And now we are back to:
-options()$Gdrive_hemibrain_data
+options("Gdrive_hemibrain_data")
 ```
 
 ## Option 3: local data and hemibrainr

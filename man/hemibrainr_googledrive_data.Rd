@@ -4,6 +4,7 @@
 \alias{hemibrainr_googledrive_data}
 \alias{hemibrain_neuron_bodyids}
 \alias{hemibrain_elist}
+\alias{hemibrain_meta}
 \alias{hemibrain_synapses}
 \alias{hemibrain_connections}
 \title{Read precomputed hemibrain data from the hemibrainr Google Drive}
@@ -16,6 +17,8 @@ hemibrain_neuron_bodyids(
 )
 
 hemibrain_elist(local = FALSE, folder = "hemibrain_neurons/", sql = TRUE, ...)
+
+hemibrain_meta(local = FALSE, folder = "hemibrain_neurons/", sql = TRUE, ...)
 
 hemibrain_synapses(
   local = FALSE,
