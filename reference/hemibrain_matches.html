@@ -155,7 +155,10 @@ through an authenticated account to view and use this function. Matches have thr
 dependent on the degree of manual tracing for FAFB neurons - good (could be the same cell), medium (same cell type) and poor (could be the same or similar cell type).</p>
     </div>
 
-    <pre class="usage"><span class='fu'>hemibrain_matches</span><span class='op'>(</span>priority <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"FAFB"</span>, <span class='st'>"hemibrain"</span><span class='op'>)</span><span class='op'>)</span>
+    <pre class="usage"><span class='fu'>hemibrain_matches</span><span class='op'>(</span>
+  priority <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"FAFB"</span>, <span class='st'>"hemibrain"</span><span class='op'>)</span>,
+  selected_file <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>options</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>$</span><span class='va'>hemibrainr_matching_gsheet</span>
+<span class='op'>)</span>
 
 <span class='fu'>lm_matches</span><span class='op'>(</span>priority <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"hemibrain"</span>, <span class='st'>"lm"</span><span class='op'>)</span><span class='op'>)</span></pre>
 
@@ -166,6 +169,13 @@ dependent on the degree of manual tracing for FAFB neurons - good (could be the 
       <th>priority</th>
       <td><p>whether to use FAFB-&gt;hemibrain matches (FAFB) or hemibrain-&gt;FAFB matches (hemibrain) in order to ascribe
 cell type names to FAFB neurons. In both cases, cell type names are attached to hemibrain bodyids, and propagated to their FAFB matches.</p></td>
+    </tr>
+    <tr>
+      <th>selected_file</th>
+      <td><p>the Google Sheet database to read and write from. For
+now, defaults to this
+<a href='https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit#gid=0'>Google
+ Sheet</a>.</p></td>
     </tr>
     </table>
 

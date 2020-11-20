@@ -141,7 +141,7 @@
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/flyconnectome/hemibrainr">hemibrainr</a></span><span class="op">)</span>
 
 <span class="co"># Else, it wants to see it on the mounted team drive, here</span>
-<span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">Gdrive_hemibrain_data</span>
+<span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span><span class="op">(</span><span class="st">"Gdrive_hemibrain_data"</span><span class="op">)</span>
 
 <span class="co"># Get hemibrain skeletons</span>
 <span class="va">db</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/hemibrain_read_neurons.html">hemibrain_neurons</a></span><span class="op">(</span>local<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span> 
@@ -149,7 +149,7 @@
 
 <span class="co"># You can also specify certain Google sheets</span>
 <span class="co">## Used for neuron-neuron matching</span>
-<span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">hemibrainr_matching_gsheet</span></code></pre></div>
+<span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span><span class="op">(</span><span class="st">"hemibrainr_matching_gsheet"</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="set-your-drive-location" class="section level3">
 <h3 class="hasAnchor">
