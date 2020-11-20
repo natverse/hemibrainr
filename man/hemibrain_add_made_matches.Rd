@@ -7,6 +7,7 @@
 \alias{hemibrain_matching_transfers}
 \alias{fafb_matching_rewrite}
 \alias{hemibrain_matching_rewrite}
+\alias{flycircuit_matching_rewrite}
 \title{Manage hemibrain-FAFB neuron matches}
 \usage{
 flywire_matching_rewrite(
@@ -44,6 +45,12 @@ hemibrain_matching_rewrite(
   selected_file = options()$hemibrainr_matching_gsheet,
   ...
 )
+
+flycircuit_matching_rewrite(
+  flycircuit.ids = names(flycircuit_neurons()),
+  meta = flycircuit_neurons[, ],
+  selected_file = options()$hemibrainr_matching_gsheet
+)
 }
 \arguments{
 \item{flywire.ids}{flywire IDs to add to Google sheet if not already present.}
@@ -66,6 +73,10 @@ simply open this Google Sheet in your browser and add your initials to neurons o
 you can use, for example, \code{\link{hemibrain_matching}}.}
 
 \item{dataset}{the tab to which to add your new information. You are either adding to information related to hemibrain neurons, or FAFB neurons.}
+
+\item{flycircuit.ids}{flycircuit IDs to add to Google sheet if not already present.}
+
+\item{meta}{meta data for the given flycircuit IDs.}
 }
 \value{
 \code{NULL}. Updates the master Google sheet.
@@ -96,5 +107,5 @@ hemibrain_matching_add(ids = "16", sheet = "FAFB", User = "ASB")
 }}
 }
 \seealso{
-\code{\link{hemibrain_matching}}
+\code{\link{hemibrain_matching}}, \code{\link{fafb_matching}}
 }

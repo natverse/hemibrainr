@@ -61,8 +61,8 @@ flywire_neurons <- function(local = FALSE,
 
   # Get Google drive folder
   savedir = good_savedir(local = local)
-  neuronsdir = paste0(savedir,"flywire_neurons/")
-  fhdir = paste0(neuronsdir,brain,"/")
+  neuronsdir = file.path(savedir,"flywire_neurons/")
+  fhdir = file.path(neuronsdir,brain,"/")
 
   # Read
   filelist = list.files(path = fhdir, pattern = ".rds", full.names = TRUE)

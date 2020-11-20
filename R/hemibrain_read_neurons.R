@@ -365,13 +365,13 @@ hemibrain_neurons <- function(local = FALSE,
                               folder = "hemibrain_neurons/"){
   brain = match.arg(brain)
   savedir = good_savedir(local = local)
-  neuronsdir = paste0(savedir,folder)
+  neuronsdir = file.path(savedir,folder)
   if(dotprops){
     message("Vector cloud object only available for JRCFIB2018F")
     brain = "JRCFIB2018F"
-    fhdir = paste0(neuronsdir,brain,"/dotprops/")
+    fhdir = file.path(neuronsdir,brain,"dotprops/")
   }else{
-    fhdir = paste0(neuronsdir,brain,"/")
+    fhdir = file.path(neuronsdir,brain,"/")
   }
   filelist = list.files(path = fhdir, pattern = ".rds", full.names = TRUE)
   filelist = filelist[grepl("mirror",filelist)==mirror]

@@ -24,6 +24,12 @@ knitr::opts_chunk$set(
 
 The goal of *hemibrainr* is to provide useful code for preprocessing and analysing data from the [Janelia FlyEM hemibrain](https://www.janelia.org/project-team/flyem) project. It makes use of the [natverse](https://github.com/natverse) R package, [neuprintr](https://github.com/natverse/neuprintr) to get hemibrain data from their connectome analysis and data hosting service [neuprint](https://github.com/connectome-neuprint/neuPrint). The dataset has been described [here]((https://www.biorxiv.org/content/10.1101/2020.01.21.911859v1)). Using this R package in concert with the [natverse](https://github.com/natverse/natverse) ecosystem is highly recommended. 
 
+The hemibrain connectome comprises the region of the fly brain depicted below. It is ~21,662 ~full neurons, 9.5 million synapses and is about ~35% complete in this region:
+
+<center>
+![hemibrain](https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/hemibrain.png)
+</center>
+
 ## Installation
 
 ```{r install, eval = FALSE}

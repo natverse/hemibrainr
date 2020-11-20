@@ -5,13 +5,21 @@
 \alias{lm_matches}
 \title{Retrieve matched up neurons between the hemibrain and FAFB}
 \usage{
-hemibrain_matches(priority = c("FAFB", "hemibrain"))
+hemibrain_matches(
+  priority = c("FAFB", "hemibrain"),
+  selected_file = options()$hemibrainr_matching_gsheet
+)
 
 lm_matches(priority = c("hemibrain", "lm"))
 }
 \arguments{
 \item{priority}{whether to use FAFB->hemibrain matches (FAFB) or hemibrain->FAFB matches (hemibrain) in order to ascribe
 cell type names to FAFB neurons. In both cases, cell type names are attached to hemibrain bodyids, and propagated to their FAFB matches.}
+
+\item{selected_file}{the Google Sheet database to read and write from. For
+now, defaults to this
+\href{https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit#gid=0}{Google
+ Sheet}.}
 }
 \value{
 a \code{data.frame} which includes neuron's ID (either its CATMAID skeleton ID or neuprint body ID), the data set from which it comes,

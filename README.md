@@ -1,6 +1,5 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 <!-- badges: start -->
-
 <img src="man/figures/logo.svg" align="right" height="139" /> [![Travis
 build
 status](https://travis-ci.org/flyconnectome/hemibrainr.svg?branch=master)](https://travis-ci.org/flyconnectome/hemibrainr)
@@ -26,6 +25,13 @@ Using this R package in concert with the
 [natverse](https://github.com/natverse/natverse) ecosystem is highly
 recommended.
 
+The hemibrain connectome comprises the region of the fly brain depicted
+below. It is \~21,662 \~full neurons, 9.5 million synapses and is about
+\~35% complete in this region:
+
+<center>
+![hemibrain](https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/hemibrain.png)
+</center>
 Installation
 ------------
 

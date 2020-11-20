@@ -921,6 +921,10 @@ fafb_matching <- function(ids = NULL,
 #'
 #' @param priority whether to use FAFB->hemibrain matches (FAFB) or hemibrain->FAFB matches (hemibrain) in order to ascribe
 #' cell type names to FAFB neurons. In both cases, cell type names are attached to hemibrain bodyids, and propagated to their FAFB matches.
+#' @param selected_file the Google Sheet database to read and write from. For
+#'   now, defaults to this
+#'   \href{https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit#gid=0}{Google
+#'    Sheet}.
 #'
 #' @return  a \code{data.frame} which includes neuron's ID (either its CATMAID skeleton ID or neuprint body ID), the data set from which it comes,
 #' its putative cell type and connectivity type, and its match in the other dataset.
@@ -944,11 +948,11 @@ fafb_matching <- function(ids = NULL,
 #' @export
 #' @seealso \code{\link{hemibrain_matching}}
 #' @importFrom stats ave
-hemibrain_matches <- function(priority = c("FAFB","hemibrain")){
+hemibrain_matches <- function(priority = c("FAFB","hemibrain"),
+                              selected_file = options()$hemibrainr_matching_gsheet){
   priority = match.arg(priority)
 
   # Get matches
-  selected_file = options()$hemibrainr_matching_gsheet
   hemibrain.matches = gsheet_manipulation(FUN = googlesheets4::read_sheet,
                                                        ss = selected_file,
                                                        sheet = "hemibrain",
@@ -1239,6 +1243,8 @@ lm_matches <- function(priority = c("hemibrain","lm")){
 #'   assigned a number of neurons to match up. In order to add yourself as a user,
 #'   simply open this Google Sheet in your browser and add your initials to neurons of your choosing on the rightmost column 'Users'.
 #' @param flywire.ids flywire IDs to add to Google sheet if not already present.
+#' @param flycircuit.ids flycircuit IDs to add to Google sheet if not already present.
+#' @param meta meta data for the given flycircuit IDs.
 #'
 #' @param ... arguments passed to methods for, for example, \code{neuprintr::neuprint_get_meta} and \code{elmr::fafb_get_meta}.
 #'
@@ -1256,7 +1262,7 @@ lm_matches <- function(priority = c("hemibrain","lm")){
 #'
 #'
 #' }}
-#' @seealso \code{\link{hemibrain_matching}}
+#' @seealso \code{\link{hemibrain_matching}}, \code{\link{fafb_matching}}
 #' @rdname hemibrain_add_made_matches
 hemibrain_add_made_matches <- function(df,
                                   direction = c("both","hemibrain-FAFB","FAFB-hemibrain"),
@@ -1346,7 +1352,7 @@ hemibrain_add_made_matches <- function(df,
 
 # Get correct GSheet
 hemibrain_match_sheet <- function(selected_file = options()$hemibrainr_matching_gsheet,
-                                  sheet = c("hemibrain","FAFB","CATMAID","flywire")){
+                                  sheet = c("hemibrain","FAFB","CATMAID","flywire","lm")){
   # Which sheet
   sheet = match.arg(sheet)
   sheet[sheet=="hemibrain"] = "hemibrain"
@@ -1357,21 +1363,26 @@ hemibrain_match_sheet <- function(selected_file = options()$hemibrainr_matching_
     id.field = "flywire.id"
     sheet = "FAFB"
   }else if (sheet=="CATMAID"){
-    sheet = "FAFB"
-  }else{
     id.field = "skid"
+    sheet = "FAFB"
+  }else if (sheet=="FAFB"){
+    id.field = "skid"
+  }else{
+    id.field = "id"
   }
   # Read sheet
   gs = gsheet_manipulation(FUN = googlesheets4::read_sheet,
                                         ss = selected_file,
                                         sheet = sheet,
                                         return = TRUE)
-  gs[[id.field]] = correct_id(gs[[id.field]])
-  ids = gs[[id.field]]
-  ids[is.na(ids)] = paste0("missing_",1:sum(is.na(ids)))
-  ids = paste0(ids,"#",ave(ids,ids,FUN= seq.int))
-  ids = gsub("#1$","",ids)
-  rownames(gs) = ids
+  if(nrow(gs)){
+    gs[[id.field]] = correct_id(gs[[id.field]])
+    ids = gs[[id.field]]
+    ids[is.na(ids)] = paste0("missing_",1:sum(is.na(ids)))
+    ids = paste0(ids,"#",ave(ids,ids,FUN= seq.int))
+    ids = gsub("#1$","",ids)
+    rownames(gs) = ids
+  }
   gs
 }
 
@@ -1581,7 +1592,7 @@ update_gsheet <- function(update,
                           gs,
                           selected_file = options()$hemibrainr_matching_gsheet,
                           tab,
-                          match = c("hemibrain", "LM", "FAFB", "flywire"),
+                          match = c("hemibrain", "lm", "FAFB", "flywire"),
                           id){
   match = match.arg(match)
   if(match=="flywire"){
@@ -1620,14 +1631,15 @@ fafb_matching_rewrite <- function(selected_file  = options()$hemibrainr_matching
   n2 = subset(n1, n1$skid %in% n$skid)
   n[match(n2$skid,n$skid),c("skid","ItoLee_Hemilineage", "Hartenstein_Hemilineage", "cell_body_fiber")] = n2[,c("skid","ItoLee_Hemilineage", "Hartenstein_Hemilineage", "cell_body_fiber")]
   ids.missing = setdiff(n1$skid,n$skid)
-  n3 = elmr::fafb_get_meta(unique(ids.missing), batch = TRUE, ...)
-  n = plyr::rbind.fill(n, n3[,c("skid","ItoLee_Hemilineage", "Hartenstein_Hemilineage", "cell_body_fiber")])
+  if(length(ids.missing)){
+    n3 = elmr::fafb_get_meta(unique(ids.missing), batch = TRUE, ...)
+    n = plyr::rbind.fill(n, n3[,c("skid","ItoLee_Hemilineage", "Hartenstein_Hemilineage", "cell_body_fiber")])
+  }
   n = n[!duplicated(n),]
   n$cell.type = matches[as.character(n$skid),"connectivity.type"]
   lskids = as.character(catmaid::catmaid_skids("annotation:side: left", ...))
   n$side = "right"
   n[n$skid%in%lskids,"side"] = "left"
-  n$User[is.na(n$User)] = "flyconnectome"
   nblast = tryCatch(hemibrain_nblast('hemibrain-fafb14'), error = function(e) NULL)
   if(!is.null(nblast)){
     nblast = hemibrain_nblast('hemibrain-fafb14')
@@ -1666,8 +1678,12 @@ hemibrain_matching_rewrite <- function(ids = NULL,
   }
   meta1 = hemibrain_get_meta(unique(ids), ...)
   ids.missing = setdiff(gs$bodyid,meta1$bodyid)
-  meta2 = hemibrain_get_meta(unique(ids.missing), ...)
-  meta = rbind(meta1,meta2)
+  if(length(ids.missing)){
+    meta2 = hemibrain_get_meta(unique(ids.missing), ...)
+    meta = rbind(meta1,meta2)
+  }else{
+    meta = meta1
+  }
   meta$cell.type = meta$type
   meta = meta[,c("bodyid","ItoLee_Hemilineage","Hartenstein_Hemilineage","cellBodyFiber","cell.type","layer","ct.layer")]
   meta$FAFB.match = gs$FAFB.match[match(meta$bodyid,gs$bodyid)]
@@ -1678,6 +1694,23 @@ hemibrain_matching_rewrite <- function(ids = NULL,
   meta = meta[order(meta$bodyid),]
   meta = meta[order(meta$cell.type),]
   meta = meta[order(meta$ItoLee_Hemilineage),]
+  nblast = tryCatch(hemibrain_nblast('hemibrain-fafb14'), error = function(e) NULL)
+  if(!is.null(nblast)){
+    nblast.top =nblast[,match(meta$bodyid,colnames(nblast))]
+    tops = apply(nblast.top,1,function(r) which.max(r))
+    top = rownames(nblast)[unlist(tops)]
+    top[!meta$bodyid%in%colnames(nblast)] = NA
+    meta$nblast.catmaid.top = top
+  }
+  nblast = tryCatch(hemibrain_nblast('hemibrain-flywire'), error = function(e) NULL)
+  fw.neurons = tryCatch(flywire_neurons(), error = function(e) NULL)
+  if(!is.null(nblast) & !is.null(fw.neurons)){
+    nblast.top =nblast[,match(meta$bodyid,colnames(nblast))]
+    tops = apply(nblast.top,1,function(r) which.max(r))
+    top = rownames(nblast)[unlist(tops)]
+    top[!meta$bodyid%in%colnames(nblast)] = NA
+    meta$nblast.flywire.top = fw.neurons[unlist(top),"flywire.xyz"]
+  }
   batches = split(1:nrow(meta), ceiling(seq_along(1:nrow(meta))/500))
   gsheet_manipulation(FUN = googlesheets4::write_sheet,
                       data = meta[0,],
@@ -1690,6 +1723,45 @@ hemibrain_matching_rewrite <- function(ids = NULL,
                         sheet = "hemibrain")
   }
 }
+
+#' @rdname hemibrain_add_made_matches
+#' @export
+flycircuit_matching_rewrite <- function(flycircuit.ids = names(flycircuit_neurons()),
+                                        meta = flycircuit_neurons[,],
+                                        selected_file  = options()$hemibrainr_matching_gsheet){
+
+  # Get the LM matching Google sheet
+  gs = hemibrain_match_sheet(sheet = "lm", selected_file = selected_file)
+  ids = unique(gs$id)
+
+  # Get meta
+  fc.meta = meta[,intersect(colnames(fc.meta), colnames(gs))]
+  fc.meta = fc.meta[,colnames(gs)]
+  fc.meta = subset(fc.meta, fc.meta$id %in% flycircuit.ids)
+
+  # gs merge
+  if(nrow(gs)){
+    gs = merge(gs, fc.meta, all.x = TRUE, all.y = TRUE)
+  }else{
+    gs = fc.meta
+  }
+
+  # Update
+  rownames(gs) = NULL
+  googlesheets4::write_sheet(gs[0,],
+                             ss = selected_file,
+                             sheet = "lm")
+  batches = split(1:nrow(gs), ceiling(seq_along(1:nrow(gs))/500))
+  for(i in batches){
+    gsheet_manipulation(FUN = googlesheets4::sheet_append,
+                        data = gs[min(i):max(i),],
+                        ss = selected_file,
+                        sheet = "lm")
+  }
+}
+
+
+
 
 # hidden
 id_selector <- function(gs,

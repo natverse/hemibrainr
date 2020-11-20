@@ -54,7 +54,7 @@ Let us have a look at the default `hemibrainr` settings, letting it to know wher
 library(hemibrainr)
 
 # Else, it wants to see it on the mounted team drive, here
-options()$Gdrive_hemibrain_data
+options("Gdrive_hemibrain_data")
 
 # Get hemibrain skeletons
 db <- hemibrain_neurons(local=FALSE) 
@@ -62,7 +62,7 @@ db <- hemibrain_neurons(local=FALSE)
 
 # You can also specify certain Google sheets
 ## Used for neuron-neuron matching
-options()$hemibrainr_matching_gsheet
+options("hemibrainr_matching_gsheet")
 ```
 
 ### Set your drive location
