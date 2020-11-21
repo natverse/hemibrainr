@@ -3,6 +3,7 @@
 #' @rdname hemibrain_add_made_matches
 #' @export
 flywire_matching_rewrite <- function(flywire.ids = names(flywire_neurons()),
+                                     meta = flywire_neurons[,],
                                      selected_file  = options()$hemibrainr_matching_gsheet,
                                      ...){
   # Get the FAFB matching Google sheet
@@ -90,7 +91,7 @@ flywire_matching_rewrite <- function(flywire.ids = names(flywire_neurons()),
 
   # Add missing flywire information
   missing = setdiff(flywire.ids, all.ids)
-  hemibrain_matching_add(ids = missing, dataset="flywire", ...)
+  hemibrain_matching_add(ids = missing, meta = meta, dataset="flywire", selected_file = selected_file, ...)
 }
 
 #' @rdname hemibrain_matching
