@@ -1391,7 +1391,7 @@ hemibrain_match_sheet <- function(selected_file = options()$hemibrainr_matching_
 #' @rdname hemibrain_add_made_matches
 #' @export
 hemibrain_matching_add <- function(ids = NULL,
-                                   dataset = c("hemibrain","FAFB","CATMAID","flywire"),
+                                   dataset = c("hemibrain","FAFB","CATMAID","flywire","lm"),
                                    User = dataset,
                                    selected_file  = options()$hemibrainr_matching_gsheet,
                                    ...){
@@ -1625,6 +1625,7 @@ update_gsheet <- function(update,
 #' @rdname hemibrain_add_made_matches
 #' @export
 fafb_matching_rewrite <- function(selected_file  = options()$hemibrainr_matching_gsheet,
+                                  top.nblast = FALSE,
                                    ...){
   matches = hemibrain_matches()
   n = hemibrain_match_sheet(sheet = "FAFB", selected_file = selected_file)

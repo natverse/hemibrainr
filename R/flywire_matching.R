@@ -10,75 +10,83 @@ flywire_matching_rewrite <- function(flywire.ids = names(flywire_neurons()),
   skids = unique(gs$skid)
 
   # Get FAFBv14 coordinates
-  cats = nat::neuronlist()
-  batches = split(1:length(skids), round(seq(from = 1, to = 100, length.out = length(skids))))
-  all.ids = c()
-  for(i in 1:10){
-    # Read CATMAID neurons
-    message("Batch:", i, "/100")
-    cat = catmaid::read.neurons.catmaid(skids[batches[[i]]], OmitFailures = TRUE)
-    cats = union(cats,cat)
+  if(length(skids)){
+    cats = nat::neuronlist()
+    batches = split(1:length(skids), round(seq(from = 1, to = 100, length.out = length(skids))))
+    all.ids = c()
+    for(i in 1:10){
+      # Read CATMAID neurons
+      message("Batch:", i, "/10")
+      cat = catmaid::read.neurons.catmaid(skids[batches[[i]]], OmitFailures = TRUE)
+      cats = union(cats,cat)
 
-    # Get xyz for primary branch points
-    simp = nat::nlapply(cat,nat::simplify_neuron,n=1, .parallel = TRUE, OmitFailures = TRUE)
-    branchpoints = sapply(simp, function(y) nat::xyzmatrix(y)[ifelse(length(nat::branchpoints(y)),nat::branchpoints(y),max(nat::endpoints(y))),])
-    branchpoints = t(branchpoints)
-    FAFB.xyz = apply(branchpoints, 1, paste, collapse = ";")
+      # Get xyz for primary branch points
+      simp = nat::nlapply(cat,nat::simplify_neuron,n=1, .parallel = TRUE, OmitFailures = TRUE)
+      branchpoints = sapply(simp, function(y) nat::xyzmatrix(y)[ifelse(length(nat::branchpoints(y)),nat::branchpoints(y),max(nat::endpoints(y))),])
+      branchpoints = t(branchpoints)
+      FAFB.xyz = apply(branchpoints, 1, paste, collapse = ";")
 
-    # Get FlyWire voxel coordinates
-    branchpoints.flywire = nat.templatebrains::xform_brain(branchpoints, reference = "FlyWire", sample = "FAFB14", .parallel = TRUE, verbose = TRUE)
-    rownames(branchpoints.flywire) = rownames(branchpoints)
-    branchpoints.flywire.raw = scale(branchpoints.flywire, scale = c(4, 4, 40), center = FALSE)
-    fw.ids = fafbseg::flywire_xyz2id(branchpoints.flywire.raw, rawcoords = TRUE)
-    fw.ids[fw.ids=="0"] = NA
-    flywire.xyz = apply(branchpoints.flywire.raw, 1, paste, collapse = ";")
+      # Get FlyWire voxel coordinates
+      branchpoints.flywire = nat.templatebrains::xform_brain(branchpoints, reference = "FlyWire", sample = "FAFB14", .parallel = TRUE, verbose = TRUE)
+      rownames(branchpoints.flywire) = rownames(branchpoints)
+      branchpoints.flywire.raw = scale(branchpoints.flywire, scale = c(4, 4, 40), center = FALSE)
+      fw.ids = fafbseg::flywire_xyz2id(branchpoints.flywire.raw, rawcoords = TRUE)
+      fw.ids[fw.ids=="0"] = NA
+      flywire.xyz = apply(branchpoints.flywire.raw, 1, paste, collapse = ";")
 
-    # Add
-    gs[rownames(branchpoints),]$FAFB.xyz = FAFB.xyz
-    gs[rownames(branchpoints),]$flywire.xyz = flywire.xyz
-    gs[rownames(branchpoints),]$flywire.id = fw.ids
-    all.ids=unique(c(all.ids,fw.ids))
+      # Add
+      gs[rownames(branchpoints),]$FAFB.xyz = FAFB.xyz
+      gs[rownames(branchpoints),]$flywire.xyz = flywire.xyz
+      gs[rownames(branchpoints),]$flywire.id = fw.ids
+      all.ids=unique(c(all.ids,fw.ids))
+    }
+
+    # Update
+    rownames(gs) = NULL
+    googlesheets4::write_sheet(gs[0,],
+                               ss = selected_file,
+                               sheet = "FAFB")
+    batches = split(1:nrow(gs), ceiling(seq_along(1:nrow(gs))/500))
+    for(i in batches){
+      gsheet_manipulation(FUN = googlesheets4::sheet_append,
+                          data = gs[min(i):max(i),],
+                          ss = selected_file,
+                          sheet = "FAFB")
+    }
+
+    # Add flywire match to the hemibrain and LM sheets
+    ## Read the FAFB Google Sheet
+    fg = hemibrain_match_sheet(sheet = "FAFB", selected_file = selected_file)
+  }else{
+    fg = gs
   }
-
-  # Update
-  rownames(gs) = NULL
-  googlesheets4::write_sheet(gs[0,],
-                             ss = selected_file,
-                             sheet = "FAFB")
-  batches = split(1:nrow(gs), ceiling(seq_along(1:nrow(gs))/500))
-  for(i in batches){
-    gsheet_manipulation(FUN = googlesheets4::sheet_append,
-                        data = gs[min(i):max(i),],
-                        ss = selected_file,
-                        sheet = "FAFB")
-  }
-
-  # Add flywire match to the hemibrain and LM sheets
-  ## Read the FAFB Google Sheet
-  fg = hemibrain_match_sheet(sheet = "FAFB", selected_file = selected_file)
 
   ## Read the LM Google Sheet
   lmg = hemibrain_match_sheet(sheet = "lm", selected_file = selected_file)
-  orig = lmg$flywire.xyz
-  lmg$flywire.xyz = fg$flywire.xyz[match(lmg$bodyid,fg$hemibrain.match)]
-  different = paste(orig)!=paste(lmg$flywire.xyz)
-  lmg$flywire.xyz = fg$flywire.xyz[match(lmg$id,fg$LM.match)]
-  update_gsheet(update = lmg[different,],
+  if(nrow(lmg)){
+    orig = lmg$flywire.xyz
+    lmg$flywire.xyz = fg$flywire.xyz[match(lmg$bodyid,fg$hemibrain.match)]
+    different = paste(orig)!=paste(lmg$flywire.xyz)
+    lmg$flywire.xyz = fg$flywire.xyz[match(lmg$id,fg$LM.match)]
+    update_gsheet(update = lmg[different,],
                   gs = lmg,
                   tab = "lm",
                   match = "flywire",
                   id = "id")
+  }
 
   ## Read the hemibrain Google Sheet
   hg = hemibrain_match_sheet(sheet = "hemibrain", selected_file = selected_file)
-  orig = hg$flywire.xyz
-  hg$flywire.xyz = fg$flywire.xyz[match(hg$bodyid,fg$hemibrain.match)]
-  different = paste(orig)!=paste(hg$flywire.xyz)
-  update_gsheet(update = hg[different,],
+  if(nrow(hg)){
+    orig = hg$flywire.xyz
+    hg$flywire.xyz = fg$flywire.xyz[match(hg$bodyid,fg$hemibrain.match)]
+    different = paste(orig)!=paste(hg$flywire.xyz)
+    update_gsheet(update = hg[different,],
                   gs = hg,
                   tab = "hemibrain",
                   match = "flywire",
                   id = "bodyid")
+  }
 
   # Add missing flywire information
   missing = setdiff(flywire.ids, all.ids)
