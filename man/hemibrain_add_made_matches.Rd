@@ -12,6 +12,7 @@
 \usage{
 flywire_matching_rewrite(
   flywire.ids = names(flywire_neurons()),
+  meta = flywire_neurons[, ],
   selected_file = options()$hemibrainr_matching_gsheet,
   ...
 )
@@ -25,6 +26,7 @@ hemibrain_add_made_matches(
 
 hemibrain_matching_add(
   ids = NULL,
+  meta = NULL,
   dataset = c("hemibrain", "FAFB", "CATMAID", "flywire", "lm"),
   User = dataset,
   selected_file = options()$hemibrainr_matching_gsheet,
@@ -57,6 +59,8 @@ flycircuit_matching_rewrite(
 \arguments{
 \item{flywire.ids}{flywire IDs to add to Google sheet if not already present.}
 
+\item{meta}{meta data for the given flycircuit IDs.}
+
 \item{selected_file}{Specifies which Google Sheet to use. Unless you are using a personal Google Sheet, this should be \code{options()$hemibrainr_matching_gsheet}.}
 
 \item{...}{arguments passed to methods for, for example, \code{neuprintr::neuprint_get_meta} and \code{elmr::fafb_get_meta}.}
@@ -79,8 +83,6 @@ you can use, for example, \code{\link{hemibrain_matching}}.}
 \item{top.nblast}{logical. Whether or not to also give the top NBLAST match for each entry.}
 
 \item{flycircuit.ids}{flycircuit IDs to add to Google sheet if not already present.}
-
-\item{meta}{meta data for the given flycircuit IDs.}
 }
 \value{
 \code{NULL}. Updates the master Google sheet.
