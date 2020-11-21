@@ -1289,7 +1289,7 @@ hemibrain_add_made_matches <- function(df,
     missing = setdiff(df$bodyid,gs$bodyid)
     if(length(missing)){
       message("Adding missing hemibrain bodyids")
-      hemibrain_matching_add(ids = missing, sheet = "hemibrain", User = User)
+      hemibrain_matching_add(ids = missing, sheet = "hemibrain", User = User, selected_file = selected_file)
       gs = hemibrain_match_sheet(sheet = "hemibrain")
     }
     message("Checking that FAFB matches exist")
@@ -1322,7 +1322,7 @@ hemibrain_add_made_matches <- function(df,
     missing = setdiff(df$skid,gs$skid)
     if(length(missing)){
       message("Adding missing FAFB bodyids")
-      hemibrain_matching_add(ids = missing, sheet = "FAFB", User = User)
+      hemibrain_matching_add(ids = missing, sheet = "FAFB", User = User, selected_file = selected_file)
       gs = hemibrain_match_sheet(sheet = "FAFB")
     }
     message("Checking that hemibrain matches exist")
@@ -1391,6 +1391,7 @@ hemibrain_match_sheet <- function(selected_file = options()$hemibrainr_matching_
 #' @rdname hemibrain_add_made_matches
 #' @export
 hemibrain_matching_add <- function(ids = NULL,
+                                   meta = NULL,
                                    dataset = c("hemibrain","FAFB","CATMAID","flywire","lm"),
                                    User = dataset,
                                    selected_file  = options()$hemibrainr_matching_gsheet,
@@ -1417,17 +1418,19 @@ hemibrain_matching_add <- function(ids = NULL,
   add = setdiff(ids, rownames(gs))
 
   # Meta information
-  if(dataset=="hemibrain"){
-    meta = hemibrain_get_meta(add, ...)
-    meta$cell.type = meta$type
-  }else if (dataset == "FAFB"){
-    meta = elmr::fafb_get_meta(add, ...)
-  } else if (dataset == "flywire"){
-    add = setdiff(ids, gs$flywire.id)
-    meta = flywire_neurons()[as.character(add),]
-    if(!nrow(meta)){
-      stop("Selected IDs could not be added. They must be among the neurons
+  if(is.null(meta)){
+    if(dataset=="hemibrain"){
+      meta = hemibrain_get_meta(add, ...)
+      meta$cell.type = meta$type
+    }else if (dataset == "FAFB"){
+      meta = elmr::fafb_get_meta(add, ...)
+    } else if (dataset == "flywire"){
+      add = setdiff(ids, gs$flywire.id)
+      meta = flywire_neurons()[as.character(add),]
+      if(!nrow(meta)){
+        stop("Selected IDs could not be added. They must be among the neurons
          saved on Google drive, see flywire_neurons()")
+      }
     }
   }
   if(!length(add)){
@@ -1627,7 +1630,7 @@ update_gsheet <- function(update,
 fafb_matching_rewrite <- function(selected_file  = options()$hemibrainr_matching_gsheet,
                                   top.nblast = FALSE,
                                    ...){
-  matches = hemibrain_matches()
+  matches = hemibrain_matches(selected_file=selected_file)
   n = hemibrain_match_sheet(sheet = "FAFB", selected_file = selected_file)
   n1 = elmr::fafb_get_meta("annotation:Lineage_annotated", batch = TRUE, ...)
   n2 = subset(n1, n1$skid %in% n$skid)
@@ -1667,7 +1670,7 @@ fafb_matching_rewrite <- function(selected_file  = options()$hemibrainr_matching
   }
   missing = setdiff(subset(matches,matches$dataset=="hemibrain")$match,subset(matches,matches$dataset=="FAFB")$id)
   missing = unique(missing[!missing%in%c("none","","NA"," ","good","medium","poor","tract")])
-  hemibrain_matching_add(ids = missing, sheet="FAFB", ...)
+  hemibrain_matching_add(ids = missing, sheet="FAFB", selected_file = selected_file, ...)
 }
 
 
@@ -1679,7 +1682,7 @@ hemibrain_matching_rewrite <- function(ids = NULL,
                                   ...){
   gs = hemibrain_match_sheet(sheet = "hemibrain", selected_file = selected_file)
   if(is.null(ids)){
-    ids = hemibrain_neuron_bodyids()
+    ids = tryCatch(hemibrain_neuron_bodyids(), error  = function(e) unique(hemibrainr::hemibrain_metrics$bodyid))
   }
   meta1 = hemibrain_get_meta(unique(ids), ...)
   ids.missing = setdiff(gs$bodyid,meta1$bodyid)
