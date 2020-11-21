@@ -172,7 +172,7 @@ locations in flywire space, based on CATMAID skids.</p>
 
 <span class='fu'>hemibrain_matching_add</span><span class='op'>(</span>
   ids <span class='op'>=</span> <span class='cn'>NULL</span>,
-  dataset <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"hemibrain"</span>, <span class='st'>"FAFB"</span>, <span class='st'>"CATMAID"</span>, <span class='st'>"flywire"</span><span class='op'>)</span>,
+  dataset <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"hemibrain"</span>, <span class='st'>"FAFB"</span>, <span class='st'>"CATMAID"</span>, <span class='st'>"flywire"</span>, <span class='st'>"lm"</span><span class='op'>)</span>,
   User <span class='op'>=</span> <span class='va'>dataset</span>,
   selected_file <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>options</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>$</span><span class='va'>hemibrainr_matching_gsheet</span>,
   <span class='va'>...</span>
@@ -184,6 +184,7 @@ locations in flywire space, based on CATMAID skids.</p>
 
 <span class='fu'>fafb_matching_rewrite</span><span class='op'>(</span>
   selected_file <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>options</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>$</span><span class='va'>hemibrainr_matching_gsheet</span>,
+  top.nblast <span class='op'>=</span> <span class='cn'>FALSE</span>,
   <span class='va'>...</span>
 <span class='op'>)</span>
 

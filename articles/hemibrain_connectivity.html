@@ -108,6 +108,84 @@
 <div id="connection-data" class="section level1">
 <h1 class="hasAnchor">
 <a href="#connection-data" class="anchor"></a>Connection data</h1>
+<p>In this guide, we will use <code>hemibrainr</code> look at connectivity data for a starting neuron of interest. They neuron will be <em>LHMB1</em> <a href="https://www.sciencedirect.com/science/article/pii/S0960982220308587">(Bates &amp; Schlegel et al., 2020)</a>), the only neuron from the ‘innate olfactory’ brain center of the fly (lateral horn), to innervate the ‘associative memroy centre’ directly (mushroom body lobes). You can try re-running this analysis for any neuron of your interest.</p>
+<p>We will use precomputed data from the <code>hemibrainr</code> Google team drive. In order to connect R to this Google drive, you have a few options. Please see <a href="https://flyconnectome.github.io/hemibrainr/articles/google_filestream.html">this article</a>. To see how to split neurons into axon and dendrite, without acces to this drive, please see <a href="https://flyconnectome.github.io/hemibrainr/articles/hemibrain_axons_dendrites.html">this article</a>.</p>
+<div id="load-google-drive" class="section level2">
+<h2 class="hasAnchor">
+<a href="#load-google-drive" class="anchor"></a>Load google drive</h2>
+<p>Let’s get hemibrainr and our Google drive loaded:</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Load package</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/flyconnectome/hemibrainr">hemibrainr</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span>
+
+<span class="co"># Else, it wants to see it on the mounted team drive, here</span>
+<span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span><span class="op">(</span><span class="st">"Gdrive_hemibrain_data"</span><span class="op">)</span>
+
+<span class="co"># If this does not give a path to the hemibrainr google drive...</span>
+<span class="co">## But you do have access, and have set up rclone</span>
+<span class="co">### Try:</span>
+<span class="co">##### hemibrainr_rclone()</span></code></pre></div>
+</div>
+<div id="find-neuron-of-interest" class="section level2">
+<h2 class="hasAnchor">
+<a href="#find-neuron-of-interest" class="anchor"></a>Find neuron of interest</h2>
+<p>First, let us find the beautiful LHMB1 neuron:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">lhmb1.meta</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/nat/man/subset.html">subset</a></span><span class="op">(</span><span class="va">hemibrain_metrics</span>, <span class="fu"><a href="https://rdrr.io/r/base/grep.html">grepl</a></span><span class="op">(</span><span class="st">"LHMB1"</span>, <span class="va">name</span><span class="op">)</span><span class="op">)</span>
+<span class="va">lhmb1.bodyid</span> <span class="op">=</span> <span class="va">lhmb1.meta</span><span class="op">$</span><span class="va">bodyid</span></code></pre></div>
+<p>We now have our unique identifier, ‘body ID’, for LHMB1. We can use it to get hold of this neuron:</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">db</span> <span class="op">=</span> <span class="fu"><a href="../reference/hemibrain_read_neurons.html">hemibrain_neurons</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># This a neuronlistfh object read from the google drive</span>
+<span class="va">lhmb1.neuron</span> <span class="op">=</span> <span class="va">db</span><span class="op">[</span><span class="va">lhmb1.bodyid</span><span class="op">]</span>
+
+<span class="co"># Alternatively, without the drive:</span>
+<span class="co">## lhmb1.neuron = hemibrain_read_neurons(lhmb1.bodyid, remote = FALSE)</span></code></pre></div>
+<p>Let us confirm it is what we think it is, by plotting this neurons:</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Get ROIs</span>
+<span class="va">lhr</span> <span class="op">=</span> <span class="fu">neuprint_ROI_mesh</span><span class="op">(</span><span class="st">"LH(R)"</span><span class="op">)</span>
+<span class="va">mbr</span> <span class="op">=</span> <span class="fu">neuprint_ROI_mesh</span><span class="op">(</span><span class="st">"MB(R)"</span><span class="op">)</span>
+
+<span class="co"># Plot</span>
+<span class="fu">nat</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/nat/man/nopen3d.html">nopen3d</a></span><span class="op">(</span><span class="op">)</span>
+<span class="fu"><a href="../reference/hemibrain_view.html">hemibrain_view</a></span><span class="op">(</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/nat/man/plot3d.html">plot3d</a></span><span class="op">(</span><span class="va">lhr</span>, alpha <span class="op">=</span> <span class="fl">0.3</span>, col <span class="op">=</span> <span class="va">hemibrain_bright_colors</span><span class="op">[</span><span class="st">"green"</span><span class="op">]</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/nat/man/plot3d.html">plot3d</a></span><span class="op">(</span><span class="va">mbr</span>, alpha <span class="op">=</span> <span class="fl">0.3</span>, col <span class="op">=</span> <span class="va">hemibrain_bright_colors</span><span class="op">[</span><span class="st">"pink"</span><span class="op">]</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/nat/man/plot3d.html">plot3d</a></span><span class="op">(</span><span class="va">hemibrain.surf</span>, alpha <span class="op">=</span> <span class="fl">0.1</span>, col <span class="op">=</span> <span class="st">"lightgrey"</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="fu"><a href="../reference/plot3d_split.html">plot3d_split</a></span><span class="op">(</span><span class="va">lhmb1.neuron</span>, lwd <span class="op">=</span><span class="fl">2</span>, soma <span class="op">=</span> <span class="fl">600</span><span class="op">)</span></code></pre></div>
+<center>
+<img src="https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/birthday.png" alt="birthday">
+</center>
+<p>So here you can see dendrite (blue) in the lateral horn (green volume) and calyx, and axon (orange) in the lobes of the msuhroom body (pink volume).</p>
+</div>
+<div id="get-neuron-connectivity-data" class="section level2">
+<h2 class="hasAnchor">
+<a href="#get-neuron-connectivity-data" class="anchor"></a>Get neuron connectivity data</h2>
+<p>Now we can get a precomputed edgelist for the brain from the Google drive, which breaks down connections by axon and dendrite. By default this is read from an SQLlite database on the Google drive. This means we can access the data, without loading a multi Gb .csv into memory:</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Get  the edgelist</span>
+<span class="va">elist</span> <span class="op">=</span> <span class="fu"><a href="../reference/hemibrainr_googledrive_data.html">hemibrain_elist</a></span><span class="op">(</span><span class="op">)</span>
+
+<span class="co"># Let's count a strong connection as one that is 10-synapses strong and/or account for at least 1% of the downstream arbour's postsynapses:</span>
+<span class="va">elist.strong</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/nat/man/subset.html">subset</a></span><span class="op">(</span><span class="va">elist</span>, <span class="va">elist</span><span class="op">$</span><span class="va">count</span> <span class="op">&gt;=</span> <span class="fl">10</span> <span class="op">|</span> <span class="va">elist</span><span class="op">$</span><span class="va">norm</span> <span class="op">&gt;=</span> <span class="fl">0.01</span><span class="op">)</span>
+
+<span class="co"># Get a lot of meyta data for each hemibrain neuron</span>
+<span class="va">hemi.meta</span> <span class="op">=</span> <span class="fu"><a href="../reference/hemibrainr_googledrive_data.html">hemibrain_meta</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<p>In our <code>elist</code>, count is the number of synaptic connections between two arbours. The arbour types are given by <code>Label</code> and <code>partner.Label</code>. The neuron identities are given as <code>pre</code>, the upstream (source) neuron and <code>post</code>, the downstream (target) neuron. The value of <code>norm</code> is generated by taking <code>count</code> and dividing it by the total number of posynapses on the downstream target’s given arbour (note, not all connection in the neuron!). See your <a href="https://flyconnectome.github.io/hemibrainr/articles/hemibrain_axons_dendrites.html">article</a> on neuron splitting, for more information.</p>
+<p>We have the connectivity of whe whole dataset at our fingertips. Or at least, all the large fragments that could be considered neurons (see <code>?hemibrain_bodyids</code>). Let us have a quick look at what rthe distribution of different connection types is:</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">lhmb1.elist</span> <span class="op">&lt;-</span> <span class="va">elist</span> <span class="op">%&gt;%</span>
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">pre</span> <span class="op">==</span> <span class="va">lhmb1.bodyid</span> <span class="op">|</span> <span class="va">post</span> <span class="op">==</span> <span class="va">lhmb1.bodyid</span>, <span class="va">count</span> <span class="op">&gt;</span> <span class="fl">10</span> <span class="op">|</span> <span class="va">norm</span> <span class="op">&gt;</span> <span class="fl">0.01</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">mutate</span><span class="op">(</span>feedback <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span> <span class="op">(</span><span class="va">post</span> <span class="op">%in%</span> <span class="va">.data</span><span class="op">$</span><span class="va">pre</span> <span class="op">&amp;</span> <span class="va">post</span> <span class="op">%in%</span> <span class="va">.data</span><span class="op">$</span><span class="va">post</span><span class="op">)</span><span class="op">)</span> <span class="op">&amp;</span> <span class="op">!</span><span class="va">post</span><span class="op">%in%</span><span class="va">lhmb1.bodyid</span> <span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">arrange</span><span class="op">(</span><span class="fu">desc</span><span class="op">(</span><span class="va">norm</span><span class="op">)</span>, <span class="fu">desc</span><span class="op">(</span><span class="va">count</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="co"># sort</span>
+  <span class="fu">mutate</span><span class="op">(</span>post.type <span class="op">=</span> <span class="va">hemi.meta</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/match.html">match</a></span><span class="op">(</span><span class="va">post</span>, <span class="va">hemi.meta</span><span class="op">$</span><span class="va">bodyid</span><span class="op">)</span>,<span class="st">"type"</span><span class="op">]</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="co"># cell type</span>
+  <span class="fu">mutate</span><span class="op">(</span>post.layer <span class="op">=</span> <span class="va">hemi.meta</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/match.html">match</a></span><span class="op">(</span><span class="va">post</span>, <span class="va">hemi.meta</span><span class="op">$</span><span class="va">bodyid</span><span class="op">)</span>,<span class="st">"ct.layer"</span><span class="op">]</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="co"># 'layre' in the olfactory system</span>
+  <span class="fu">mutate</span><span class="op">(</span>pre.type <span class="op">=</span> <span class="va">hemi.meta</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/match.html">match</a></span><span class="op">(</span><span class="va">pre</span>, <span class="va">hemi.meta</span><span class="op">$</span><span class="va">bodyid</span><span class="op">)</span>,<span class="st">"type"</span><span class="op">]</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">mutate</span><span class="op">(</span>pre.layer <span class="op">=</span> <span class="va">hemi.meta</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/match.html">match</a></span><span class="op">(</span><span class="va">pre</span>, <span class="va">hemi.meta</span><span class="op">$</span><span class="va">bodyid</span><span class="op">)</span>,<span class="st">"ct.layer"</span><span class="op">]</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/nat/man/neuronlist-dataframe-methods.html">head</a></span><span class="op">(</span><span class="va">lhmb1.elist</span><span class="op">)</span></code></pre></div>
+</div>
 </div>
   </div>
 
