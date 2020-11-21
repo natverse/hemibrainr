@@ -6,7 +6,7 @@
 \alias{lm_matched}
 \title{Manually verified neuron matches between the hemibrain and FAFB dataset}
 \format{
-An object of class \code{data.frame} with 32707 rows and 12 columns.
+An object of class \code{data.frame} with 38739 rows and 15 columns.
 
 An object of class \code{data.frame} with 28041 rows and 11 columns.
 }
@@ -14,6 +14,39 @@ An object of class \code{data.frame} with 28041 rows and 11 columns.
 hemibrain_matched
 
 lm_matched
+}
+\value{
+a \code{data.frame} where each row is a neuron, either from the hemibrain or FAFB data sets. Each row gives you its matching neuron in the other data set. These matches have been
+manually assigned using \code{\link{fafb_matching}}, \code{\link{hemibrain_matching}} and \code{\link{LR_matching}}. If you use this information make sure you credit it appriopriately.
+Contact us if unsure:
+\itemize{
+
+  \item{"cell.type"}{ - the neuPrint designated 'type' for the neuron. If \code{dataset} is not \code{"hemibrain"}, then this is based on the hemibrain \code{match}.}
+
+  \item{"cell"}{ - the unique cell, which is just \code{cell.type#number}.}
+
+  \item{"cellBodyFiber"}{ - the cell body fiber to which this neuron belongs}
+
+  \item{"ItoLee_Hemilineage"}{ - the hemilineage to which this neuron belongs. Seer \code{\link{hemibrain_hemilineages}}.}
+
+  \item{"match"}{ - the ID of the manual match from the other data set. If \code{dataset=="hemibrain"} then this is a \code{flywire.id} that can be found in \code{flywire_neurons}.If \code{"CATMAID"} or \code{"flywire"} then it is a hemibrain body ID.}
+
+  \item{"quality"}{ - the matcher makers qualitative assement of how good this match is.}
+
+  \item{"FAFB.hemisphere.match"}{ - the flywire coordinates of a neuron on the opposite hemisphere, which a match maker has designated as this \code{id}'s cognate.}
+
+  \item{"FAFB.hemisphere.match.quality"}{ - the quality of this match.}
+
+  \item{"LM.match"}{ - indicates a light level neuron that is a match for \code{id}. This neuron will be in \code{flycircuit_neurons()} or other light level data.}
+
+  \item{"LM.match.quality"}{ - the quality of this match.}
+
+  \item{"dataset"}{ - the data set to which \code{id} belongs. Either \code{"hemibrain"}, or one of the two FAFB repositories, \code{"CATMAID"} or \code{"flywire"}.}
+
+  \item{"priority"}{ - whether FAFB->hemibrain matches (\code{"FAFB"}) or hemibrain->FAFB matches (\code{"hemibrain"}) were used in order to ascribe cell type names to FAFB neurons.
+  In both cases, cell type names are attached to hemibrain bodyids, and propagated to their FAFB matches.}
+
+}
 }
 \description{
 Manually verified neuron matches between the hemibrain and FAFB dataset, as well as some light level data from the package natverse-compatible \code{lhns}.

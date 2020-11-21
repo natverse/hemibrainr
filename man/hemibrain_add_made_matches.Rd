@@ -21,6 +21,7 @@ hemibrain_add_made_matches(
   df,
   direction = c("both", "hemibrain-FAFB", "FAFB-hemibrain"),
   User = "flyconnectome",
+  selected_file = options()$hemibrainr_matching_gsheet,
   ...
 )
 
