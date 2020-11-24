@@ -9,6 +9,7 @@
 \usage{
 LR_matching(
   ids = NULL,
+  threshold = 0,
   mirror.nblast = NULL,
   selected_file = options()$hemibrainr_matching_gsheet,
   batch_size = 50,
@@ -22,11 +23,12 @@ LR_matching(
 hemibrain_matching(
   ids = NULL,
   hemibrain.nblast = NULL,
+  threshold = 0,
   selected_file = options()$hemibrainr_matching_gsheet,
-  batch_size = 10,
-  db = hemibrain_neurons(),
-  repository = c("CATMAID", "flywire", "lm"),
-  query = NULL,
+  batch_size = 50,
+  db = NULL,
+  repository = c("flywire", "CATMAID", "lm"),
+  query = hemibrain_neurons(brain = "FAFB14"),
   overwrite = c("FALSE", "mine", "mine_empty", "TRUE"),
   column = NULL,
   field = NULL
@@ -46,11 +48,12 @@ lm_matching(
 
 fafb_matching(
   ids = NULL,
-  repository = c("CATMAID", "flywire"),
+  repository = c("flywire", "CATMAID"),
   hemibrain.nblast = NULL,
+  threshold = 0,
   selected_file = options()$hemibrainr_matching_gsheet,
   batch_size = 50,
-  db = hemibrain_neurons(),
+  db = hemibrain_neurons(brain = "FAFB14"),
   query = NULL,
   overwrite = c("FALSE", "mine", "mine_empty", "TRUE"),
   column = NULL,
@@ -62,6 +65,8 @@ fafb_matching(
 \href{https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit#gid=0}{Google
  Sheet}, for which the user will attempt to make a match if one has not
 been made already. Else, LM neuron IDs in the tab 'lm' when using \code{lm_matching}.}
+
+\item{threshold}{the minimum normalised NBLAST score between query and target neurons, for the potential match to be show. If set to \code{NULL} then all hits can be shown.}
 
 \item{mirror.nblast}{a flywire (rows) - flywire-mirrored (columns) normalised
 NBLAST matrix. By default this is read from the hemibrain Team Drive.}
@@ -77,7 +82,7 @@ go.}
 \item{db}{Either a neuronlist or the name of a character vector naming a
 neuronlist. Defaults to the value of \code{\link{hemibrain_neurons}()}.}
 
-\item{query}{a neuronlist of light level neurons to match against. Should correspond to the given NBLAST matrix.
+\item{query}{a neuronlist of neurons for matching. Should correspond to the given NBLAST matrix.
 Defaults to reading a transformed \code{most.lhns} from the Hemibrain Google Team Drive.}
 
 \item{overwrite}{Whether or not to overwrite matches already made.
@@ -110,8 +115,8 @@ Match up neurons between the hemibrain, FAFB and light level data and save the
   group at the University of Cambridge. Your aim is to match the light blue neuron to the best red neuron!
   You must have access to the Team Drive
   in order to use this function. This function makes use of the Google
-  Filestream application, which should be installed on your machine. Further,
-  note that neurons are read from the FAFB CATMAID project, and you must have
+  Filestream application or rclone, which should be installed on your machine. Further,
+  note that neurons are read from the FAFB CATMAID project when \code{repository=="CATMAID'}, and you must have
   login details for this project recorded in your .Renviron for these
   functions to work.
 }

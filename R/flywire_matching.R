@@ -59,6 +59,7 @@ flywire_matching_rewrite <- function(flywire.ids = names(flywire_neurons()),
     ## Read the FAFB Google Sheet
     fg = hemibrain_match_sheet(sheet = "FAFB", selected_file = selected_file)
   }else{
+    all.ids = c()
     fg = gs
   }
 
@@ -70,6 +71,7 @@ flywire_matching_rewrite <- function(flywire.ids = names(flywire_neurons()),
     different = paste(orig)!=paste(lmg$flywire.xyz)
     lmg$flywire.xyz = fg$flywire.xyz[match(lmg$id,fg$LM.match)]
     update_gsheet(update = lmg[different,],
+                  selected_file = selected_file,
                   gs = lmg,
                   tab = "lm",
                   match = "flywire",
@@ -83,6 +85,7 @@ flywire_matching_rewrite <- function(flywire.ids = names(flywire_neurons()),
     hg$flywire.xyz = fg$flywire.xyz[match(hg$bodyid,fg$hemibrain.match)]
     different = paste(orig)!=paste(hg$flywire.xyz)
     update_gsheet(update = hg[different,],
+                  selected_file = selected_file,
                   gs = hg,
                   tab = "hemibrain",
                   match = "flywire",
@@ -97,6 +100,7 @@ flywire_matching_rewrite <- function(flywire.ids = names(flywire_neurons()),
 #' @rdname hemibrain_matching
 #' @export
 LR_matching <- function(ids = NULL,
+                        threshold = 0,
                         mirror.nblast = NULL,
                         selected_file = options()$hemibrainr_matching_gsheet,
                         batch_size = 50,
@@ -105,6 +109,7 @@ LR_matching <- function(ids = NULL,
                         overwrite = c("FALSE","mine","mine_empty","TRUE"),
                         column = NULL,
                         field = NULL){
+  message("Matching mirrored flywire neurons (blue) to non-mirrored flywire neurons (red)")
   # Packages
   if(!requireNamespace("elmr", quietly = TRUE)) {
     stop("Please install elmr using:\n", call. = FALSE,
@@ -117,7 +122,7 @@ LR_matching <- function(ids = NULL,
   # Motivate!
   nat::nopen3d()
   plot_inspirobot()
-  unsaved = c()
+  unsaved = saved = c()
   message("
           #######################Colours##########################
           black = FAFB CATMAID neuron,
@@ -131,7 +136,7 @@ LR_matching <- function(ids = NULL,
   ## Get NBLAST
   if(is.null(mirror.nblast)){
     message("Loading flywire NBLAST from flyconnectome Google Team Drive using Google Filestream: ")
-    message(paste0(options()$Gdrive_hemibrain_data,"hemibrain_nblast/flywire.mirror.mean.rda"))
+    message(file.path(options()$Gdrive_hemibrain_data,"hemibrain_nblast/flywire.mirror.mean.rda"))
     mirror.nblast = hemibrain_nblast("flywire-mirror")
   }
   # Read the Google Sheet
@@ -145,7 +150,7 @@ LR_matching <- function(ids = NULL,
     })
   }
   if(missing(query)) {
-    db=tryCatch(force(query), error=function(e) {
+    query=tryCatch(force(query), error=function(e) {
       stop("Unable to use `flywire_neurons(mirror=TRUE)`. ",
            "You must load the hemibrain Google Team Drive")
     })
@@ -160,92 +165,236 @@ LR_matching <- function(ids = NULL,
   message("Users: ", paste(sort(unique(gs$User)),collapse = " "))
   initials = must_be("Choose a user : ", answers = unique(gs$User))
   say_hello(initials)
-  rgl::bg3d("white")
   # choose ids
   selected = id_selector(gs=gs, ids=ids, id=id, overwrite = overwrite,
                          quality.field = quality.field, match.field = match.field,
                          initials = initials, column = column, field = field)
-  ids = unique(selected[[id]])
   # choose brain
   brain = elmr::FAFB.surf
   # Make matches!
-  for(n in unique(selected[[id]])){
+  match.more = TRUE
+  while(match.more){
+    match_cycle = neuron_match_scanner(brain = brain,
+                                       selected = selected,
+                                       id = id,
+                                       unsaved = unsaved,
+                                       saved = saved,
+                                       chosen.field = "flywire.xyz",
+                                       nblast = mirror.nblast,
+                                       threshold = threshold,
+                                       batch_size = batch_size,
+                                       targets = db,
+                                       targets.repository = "flywire",
+                                       query = query,
+                                       extra.neurons = db,
+                                       query.repository = "flywire",
+                                       extra.repository = "CATMAID",
+                                       match.field = match.field,
+                                       quality.field = quality.field,
+                                       soma.size = 400,
+                                       show.columns = c("cell.type","ItoLee_Hemilineage","note"))
+    selected = match_cycle[["selected"]]
+    unsaved = match_cycle[["unsaved"]]
+    if(length(unsaved)){
+      plot_inspirobot()
+      say_encouragement(initials)
+      # Read!
+      gs2 = hemibrain_match_sheet(selected_file = selected_file, sheet = "flywire")
+      gs2[match(gs[[id]],gs2[[id]]),match.field]= selected[[match.field]][match(gs2[[id]],selected[[id]])]
+      gs2[match(gs[[id]],gs2[[id]]),quality.field]=selected[[quality.field]][match(gs2[[id]],selected[[id]])]
+      gs2[match(gs[[id]],gs2[[id]]),"note"]=selected[["note"]][match(gs2[[id]],selected[[id]])]
+      gs2[match(gs[[id]],gs2[[id]]),"User"]= initials
+      # Write!
+      write_matches(gs=gs2,
+                    ids = unsaved,
+                    id.field = id,
+                    column = match.field,
+                    selected_file = selected_file,
+                    ws = "FAFB")
+      write_matches(gs=gs2,
+                    ids = unsaved,
+                    id.field = id,
+                    column = quality.field,
+                    selected_file = selected_file,
+                    ws = "FAFB")
+      write_matches(gs=gs2,
+                    ids = unsaved,
+                    id.field = id,
+                    column = "note",
+                    selected_file = selected_file,
+                    ws = "FAFB")
+      write_matches(gs=gs2,
+                    ids = unsaved,
+                    id.field = id,
+                    column = "User",
+                    selected_file = selected_file,
+                    ws = "FAFB")
+      saved = c(unsaved, saved)
+      unsaved = c()
+    }
+    match.more = hemibrain_choice("Match more neurons? ")
+  }
+  say_encouragement(initials)
+}
+
+# Hidden
+neuron_match_scanner <- function(brain,
+                                 selected,
+                                 id,
+                                 chosen.field,
+                                 nblast,
+                                 threshold,
+                                 batch_size,
+                                 targets,
+                                 targets.repository = c("CATMAID","flywire","hemibrain","lm"),
+                                 query,
+                                 query.repository = c("CATMAID","flywire","hemibrain","lm"),
+                                 extra.neurons = NULL,
+                                 extra.repository = c("none","CATMAID","flywire","hemibrain","lm"),
+                                 match.field,
+                                 quality.field,
+                                 unsaved = c(),
+                                 saved = c(),
+                                 soma.size = 400,
+                                 show.columns = c("cell.type","ItoLee_Hemilineage","note")){
+  targets.repository = match.arg(targets.repository)
+  extra.repository = match.arg(extra.repository)
+  query.repository = match.arg(query.repository)
+  check = unique(setdiff(unique(selected[[id]]),c(unsaved,saved)))
+  check = check[!check%in%c("NA","none",0)]
+  check = check[!is.na(check)]
+  message("We'll look at ", length(check)," ", query.repository, " neurons sequentially.")
+  for(i in 1:length(check)){
     # Get id
-    n = as.character(n)
+    message("neuron query ",i+length(saved),"/",length(check)+length(saved))
+    n = as.character(check[i])
     end = n==selected[[id]][length(selected[[id]])]
-    # Plot brain
-    rgl::clear3d()
-    hemibrain_view()
-    rgl::bg3d("white")
-    plot3d(brain, alpha = 0.1, col ="grey")
-    # Transform hemibrain neuron to FAFB space
-    fw.m = tryCatch(query[n], error = function(e){
-      message("Could not read mirrored neuron: ", n)
-      NULL
-    })
-    fw.n = tryCatch(db[n], error = function(e){
-      message("Could not read native neuron: ", n)
-      NULL
-    })
-    sk = gs[n,]$skid[1]
-    if(!is.na(sk)){
-      lhn = tryCatch(catmaid::read.neurons.catmaid(sk, OmitFailures = TRUE), error = function(e) NULL)
-    }else{
-      lhn = NULL
-    }
-    if(is.null(fw.n)){
-        fw.n = tryCatch({
-          message("Neuron not found on Google drive, attempting to read from flywire ...")
-          if(!requireNamespace("fafbseg", quietly = TRUE)) {
-            stop("Please install fafbseg using:\n", call. = FALSE,
-                 "remotes::install_github('natverse/fafbseg')")
-          }
-          fw.n = fafbseg::skeletor(n)
-          fw.n = suppressWarnings(nat.templatebrains::xform_brain(fw.n, sample = "FAFB14", reference = "JRCFIB2018F"))
-          scale_neurons(fw.n, scaling = (1000/8))
-        }, error = function(e) {NULL})
-    }
-    if(!is.null(lhn)){plot3d(lhn, lwd = 2, soma = TRUE, col = "black")}
-    if(!is.null(fw.n)) {plot3d(fw.n, lwd = 3, soma = TRUE, col = "grey50")}
-    if(!is.null(fw.m)) {plot3d(fw.m, lwd = 3, soma = TRUE, col = "#1BB6AF")}
-    message("ID: ", n)
-    message("ItoLee_Hemilineage : ",lhn[n,"ItoLee_Hemilineage"])
-    # Read top 10 FIB matches
-    r = tryCatch(sort(mirror.nblast[n,],decreasing = TRUE), error = function(e) NULL)
+    # Read top 10  matches
+    r = tryCatch(sort(nblast[n,],decreasing = TRUE), error = function(e) NULL)
     if(is.null(r)){
       message(n, " not in NBLAST matrix, skipping ...")
+      progress = readline(prompt = "Press any key to continue ")
       next
     }
-    message(sprintf("Reading the top %s flywire hits",batch_size))
-    # Read hemibrain neurons
-    if(is.null(db)){
-      native  = fafbseg::skeletor((names(r)[1:batch_size]), mesh3d = FALSE, clean = FALSE)
+    if(!is.null(threshold)){
+      r = r[r>threshold]
+      if(!length(r)){
+        message(" no normalised NBLAST score greater or equal to ", threshold," for neuron ", n," ...")
+        progress = readline(prompt = "This neuron will be skipped. Press any key to continue ")
+        next
+      }
+    }
+    batch.size = ifelse(length(r)>=batch_size,batch_size, length(r))
+    # Plot brain
+    rgl::clear3d()
+    rgl::rgl.viewpoint(userMatrix = structure(c(0.990777730941772, 0.049733679741621,
+                             -0.126039981842041, 0, 0.060652956366539, -0.994590044021606,
+                             0.084330290555954, 0, -0.121164083480835, -0.091197244822979,
+                             -0.988434314727783, 0, 0, 0, 0, 1), .Dim = c(4L, 4L)), zoom = 0.644609212875366) # FAFB14 view
+    rgl::bg3d("white")
+    plot3d(brain, alpha = 0.1, col ="grey")
+    # Get data
+    query.n = tryCatch(query[n], error = function(e){
+      message("Could not immediately load query neuron: ", n)
+      NULL
+    })
+    if(is.null(query.n)){ # in FAFB14 space.
+      query.n = tryCatch({
+        message("Neuron not found on Google drive, attempting to read ...")
+        if(!requireNamespace("fafbseg", quietly = TRUE)) {
+          stop("Please install fafbseg using:\n", call. = FALSE,
+               "remotes::install_github('natverse/fafbseg')")
+        }
+        if(query.repository == "flywire"){
+          fafbseg::choose_segmentation("flywire")
+          query.n = fafbseg::skeletor(n)
+        }else if(query.repository == "hemibrain"){
+          query.n  = neuprintr::neuprint_read_neurons(n, all_segments = TRUE, heal = FALSE)
+          query.n = scale_neurons.neuronlist(query.n, scaling = (8/1000))
+          query.n = suppressWarnings(nat.templatebrains::xform_brain(query.n, reference = "FAFB14", sample = "JRCFIB2018F"))
+        }else if (query.repository=="CATMAID"){
+          query.n = catmaid::read.neurons.catmaid(query.n)
+        }else{
+          NULL
+        }
+      }, error = function(e) {NULL})
+    }
+    # Other neurons to always plot
+    if(extra.repository!="none"){
+      if(extra.repository=="CATMAID"){
+        sk = selected[n,]$skid[1]
+        if(!is.na(sk)){
+          extra.n = tryCatch(catmaid::read.neurons.catmaid(sk, OmitFailures = TRUE), error = function(e) NULL)
+        }else{
+          extra.n = NULL
+        }
+      }else if(extra.repository=="flywire"){
+        fw.id = selected[n,]$flywire.id[1]
+        if(!is.na(fw.id)){
+          extra.n = tryCatch(flywire_neurons()[as.character(fw.id)], error = function(e) NULL)
+        }else{
+          extra.n = NULL
+        }
+      }else{
+        extra.n = NULL
+      }
+    }else{
+      extra.n = NULL
+    }
+    if(!is.null(extra.neurons)){
+      another.n = tryCatch(extra.neurons[n], error = function(e){
+        NULL
+      })
+      if(is.null(another.n)){
+        fw.id = selected[n,]$flywire.id[1]
+        extra.n = tryCatch(flywire_neurons()[as.character(fw.id)], error = function(e) NULL)
+      }
+    }else{
+      another.n = NULL
+    }
+    ### Plot in 3D
+    if(!length(extra.n)){
+      extra.n=NULL
+    }
+    if(!length(another.n)){
+      extra.n=NULL
+    }
+    if(!is.null(query.n)){plot3d(query.n, lwd = 3, soma = soma.size, col = "#1BB6AF")}
+    if(!is.null(extra.n)){plot3d(extra.n, lwd = 2, soma = soma.size, col = "black")}
+    if(!is.null(another.n)){plot3d(another.n, lwd = 3, soma = soma.size, col = "grey50")}
+    message("ID: ", n)
+    show.columns = intersect(show.columns,colnames(query.n[,]))
+    for(sc in show.columns){
+      message(sc," : ", query.n[n,sc])
+    }
+    # Read database neurons
+    message(sprintf("Reading the top %s %s hits",batch.size, targets.repository))
+    batch = names(r)[1:batch.size]
+    if(is.null(targets)){
+      if(targets.repository=="flywire"){
+        fafbseg::choose_segmentation("flywire")
+        native  = fafbseg::skeletor(batch, mesh3d = FALSE, clean = FALSE)
+      }else if (targets.repository == "hemibrain"){
+        native  = neuprintr::neuprint_read_neurons(batch, all_segments = TRUE, heal = FALSE)
+        native = scale_neurons.neuronlist(native, scaling = (8/1000))
+        native = suppressWarnings(nat.templatebrains::xform_brain(native, reference = "FAFB14", sample = "JRCFIB2018F"))
+      }else if (targets.repository == "CATMAID"){
+        native  = catmaid::read.neurons.catmaid(batch,  OmitFailures = TRUE)
+      }
     } else {
-      batch = names(r)[1:batch_size]
-      batch.in = intersect(batch, names(db))
-      native = tryCatch(db[match(batch.in,names(db))], error = function(e) NULL)
+      batch.in = intersect(batch, names(targets))
+      native = tryCatch(targets[match(batch.in,names(targets))], error = function(e) NULL)
       if(is.null(native)|length(batch.in)!=length(batch)){
-        # message("Cannot read neurons from local db; fetching from flywire!")
-        # if(!requireNamespace("fafbseg", quietly = TRUE)) {
-        #   stop("Please install fafbseg using:\n", call. = FALSE,
-        #        "remotes::install_github('natverse/fafbseg')")
-        # }
-        # batch.out = setdiff(batch, names(native))
-        # native2 =(tryCatch(fafbseg::skeletor(batch.out, mesh3d = TRUE, clean = FALSE), error=function(e) NULL) )
-        # if(!is.null(native2)){
-        #   native = nat::union(native, native2)
-        #   native = native[as.character(batch)]
-        # }
-        message("Dropping ",length(batch)-length(batch.in) ," neuron missing from db" )
+        message("Dropping ",length(batch)-length(batch.in) ," neuron missing from targets" )
         batch = intersect(batch, batch.in)
       }
     }
     sel = c("go","for","it")
     k = 1
-    j = batch_size
+    j = batch.size
     # Cycle through potential matches
     while(length(sel)>1){
-      sel = sel.orig = tryCatch(nat::nlscan(native[names(r)[1:j]], col = "#EE4244", lwd = 3, soma = TRUE),
+      sel = sel.orig = tryCatch(nat::nlscan(native[names(r)[1:j]], col = "#EE4244", lwd = 3, soma = soma.size),
                                 error = function(e) NULL)
       if(is.null(sel)){
         next
@@ -254,7 +403,7 @@ LR_matching <- function(ids = NULL,
         message("Note: You selected more than one neuron")
       }
       if(length(sel) > 0){
-        rgl::plot3d(native[sel], lwd = 2, soma = TRUE)
+        rgl::plot3d(native[sel], lwd = 2, soma = soma.size, col = hemibrain_bright_colour_ramp(length(sel)))
       }
       prog = hemibrain_choice(sprintf("You selected %s neurons. Are you happy with that? ",length(sel)))
       if(length(sel)>0){
@@ -262,24 +411,36 @@ LR_matching <- function(ids = NULL,
       }
       if(!prog){
         sel = c("go","for","it")
-        prog = hemibrain_choice(sprintf("Do you want to read %s more neurons? ", batch_size))
-        if(prog){
-          k = j
-          j = j + batch_size
-          if(is.null(db)){
-            native2  = fafbseg::skeletor((names(r)[(k+1):j]), mesh3d = TRUE, clean = FALSE)
-          } else {
-            native2 = tryCatch(db[(names(r)[(k+1):j])], error = function(e) {
-              warning("Cannot read neuron: ", n, " from local db; fetching from flywire!")
-              fafbseg::skeletor((names(r)[(k+1):j]), mesh3d = TRUE, clean = FALSE)
-            })
+        if(batch.size < length(r)){
+          prog = hemibrain_choice(sprintf("Do you want to read %s more neurons? ", batch.size))
+          if(prog){
+            k = j
+            j = j + batch_size
+            if(!is.null(targets)){
+              native2 = tryCatch(targets[(names(r)[(k+1):j])], error = function(e) {
+                warning("Cannot read neuron: ", n, " from local targets; fetching from remote!")
+                NULL
+              })
+            }
+            if(is.null(targets)|is.null(native2)){
+              if(targets.repository=="flywire"){
+                fafbseg::choose_segmentation("flywire")
+                native2  = fafbseg::skeletor((names(r)[1:batch.size]), mesh3d = FALSE, clean = FALSE)
+              }else if (targets.repository == "hemibrain"){
+                native2  = neuprintr::neuprint_read_neurons((names(r)[1:batch.size]), all_segments = TRUE, heal = FALSE)
+                native = scale_neurons.neuronlist(native2, scaling = (8/1000))
+                native2 = suppressWarnings(nat.templatebrains::xform_brain(native2, reference = "FAFB14", sample = "JRCFIB2018F"))
+              }else if (targets.repository == "CATMAID"){
+                native2  = catmaid::read.neurons.catmaid((names(r)[1:batch.size]), .progress = TRUE, OmitFailures = TRUE)
+              }
+            }
+            native = nat::union(native, native2)
           }
-          native = nat::union(native, native2)
         }
       }else{
         while(length(sel)>1){
           message("Choose single best match: ")
-          sel = nat::nlscan(native[as.character(sel.orig)], col = "orange", lwd = 2, soma = TRUE)
+          sel = nat::nlscan(native[as.character(sel.orig)], col = hemibrain_bright_colours["orange"], lwd = 2, soma = TRUE)
           message(sprintf("You selected %s neurons", length(sel)))
           if(!length(sel)){
             noselection = hemibrain_choice("You selected no neurons. Are you happy with that? ")
@@ -293,70 +454,55 @@ LR_matching <- function(ids = NULL,
     # Assign match and its quality
     if(length(sel)){
       sel = as.character(sel)
-      if(!is.na(db[sel,"flywire.xyz"])){
-        hit = db[sel,"flywire.xyz"]
+      if(!is.na(native[sel,chosen.field])){
+        hit = as.character(native[sel,chosen.field])
+      }else if(targets.repository=="flywire"){
+        fixed = flywire_basics(native[sel])
+        hit = as.character(fixed[,chosen.field])
       }else{
-        fixed = flywire_basics(db[sel])
-        hit = fixed[,"flywire.xyz"]
+        hit = names(targets[sel])
       }
     }else{
       hit = "none"
     }
-    gs[gs[[id]]%in%n,match.field] = hit
+    message("You chose: ", hit)
+    selected[selected[[id]]%in%n,match.field] = hit
     if(length(sel)){
-      rgl::plot3d(native[sel],col="blue",lwd=2,soma=TRUE)
+      rgl::plot3d(native[sel],col= hemibrain_bright_colours["navy"],lwd=2,soma=TRUE)
       quality = must_be("What is the quality of this match? good(e)/okay(o)/poor(p)/tract-only(t) ", answers = c("e","o","p","t"))
     }else{
       quality = "n"
     }
     quality = standardise_quality(quality)
-    gs[gs[[id]]%in%n,quality.field] = quality
+    selected[selected[[id]]%in%n,quality.field] = quality
+    # Make a note?
+    orig.note = selected[selected[[id]]%in%n,'note']
+    if(!is.na(orig.note)){
+      message("This neuron has note: ", orig.note)
+    }
+    make.note = hemibrain_choice("Would you like to record a note? y/n ")
+    while(make.note){
+      note = readline(prompt = "Your note on this match/these neurons:  ")
+      message(note)
+      note[note%in%c(" ","","NA")] = NA
+      selected[selected[[id]]%in%n,'note'] = note
+      make.note = !hemibrain_choice("Happy with this note? y/n ")
+    }
     unsaved = unique(c(unsaved, n))
     message(length(unsaved), " unsaved matches")
-    print(knitr::kable(gs[unsaved,c(id,"ItoLee_Hemilineage",match.field,quality.field)]))
+    show.columns = intersect(show.columns,colnames(selected))
+    print(knitr::kable(selected[unsaved,c(id,show.columns,match.field,quality.field)]))
     p = must_be("Continue (enter) or save (s)? ", answers = c("","s"))
     if(p=="s"|end){
-      plot_inspirobot()
-      say_encouragement(initials)
-      # Read!
-      gs2 = hemibrain_match_sheet(selected_file = selected_file, sheet = "flywire")
-      gs2[match(gs[[id]],gs2[[id]]),match.field]=gs[[match.field]]
-      gs2[match(gs[[id]],gs2[[id]]),quality.field]=gs[[quality.field]]
-      # Write!
-      write_matches(gs=gs2,
-                    ids = unsaved,
-                    id.field = id,
-                    column = match.field,
-                    ws = "FAFB")
-      write_matches(gs=gs2,
-                    ids = unsaved,
-                    id.field = id,
-                    column = quality.field,
-                    ws = "FAFB")
-      unsaved = c()
-      gs = gs2
-      rgl::bg3d("white")
+      break
     }
   }
-  if(length(unsaved)){
-    plot_inspirobot()
-    say_encouragement(initials)
-    # Read!
-    gs2 = hemibrain_match_sheet(selected_file = selected_file, sheet = "flywire")
-    gs2[match(gs[[id]],gs2[[id]]),match.field]=gs[[match.field]]
-    gs2[match(gs[[id]],gs2[[id]]),quality.field]=gs[[quality.field]]
-    # Write!
-    write_matches(gs=gs2,
-                  ids = unsaved,
-                  id.field = id,
-                  column = match.field,
-                  ws = "FAFB")
-    write_matches(gs=gs2,
-                  ids = unsaved,
-                  id.field = id,
-                  column = quality.field,
-                  ws = "FAFB")
-  }
-  say_encouragement(initials)
+  list(selected = selected, unsaved = unsaved)
 }
+
+
+
+
+
+
 
