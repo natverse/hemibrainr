@@ -54,8 +54,8 @@
   group at the University of Cambridge. Your aim is to match the light blue neuron to the best red neuron!
   You must have access to the Team Drive
   in order to use this function. This function makes use of the Google
-  Filestream application, which should be installed on your machine. Further,
-  note that neurons are read from the FAFB CATMAID project, and you must have
+  Filestream application or rclone, which should be installed on your machine. Further,
+  note that neurons are read from the FAFB CATMAID project when repository==&quot;CATMAID&quot;, and you must have
   login details for this project recorded in your .Renviron for these
   functions to work." />
 <meta property="og:image" content="/logo.svg" />
@@ -157,14 +157,15 @@
   group at the University of Cambridge. Your aim is to match the light blue neuron to the best red neuron!
   You must have access to the Team Drive
   in order to use this function. This function makes use of the Google
-  Filestream application, which should be installed on your machine. Further,
-  note that neurons are read from the FAFB CATMAID project, and you must have
+  Filestream application or rclone, which should be installed on your machine. Further,
+  note that neurons are read from the FAFB CATMAID project when <code>repository=="CATMAID"</code>, and you must have
   login details for this project recorded in your .Renviron for these
   functions to work.</p>
     </div>
 
     <pre class="usage"><span class='fu'>LR_matching</span><span class='op'>(</span>
   ids <span class='op'>=</span> <span class='cn'>NULL</span>,
+  threshold <span class='op'>=</span> <span class='fl'>0</span>,
   mirror.nblast <span class='op'>=</span> <span class='cn'>NULL</span>,
   selected_file <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>options</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>$</span><span class='va'>hemibrainr_matching_gsheet</span>,
   batch_size <span class='op'>=</span> <span class='fl'>50</span>,
@@ -178,11 +179,12 @@
 <span class='fu'>hemibrain_matching</span><span class='op'>(</span>
   ids <span class='op'>=</span> <span class='cn'>NULL</span>,
   hemibrain.nblast <span class='op'>=</span> <span class='cn'>NULL</span>,
+  threshold <span class='op'>=</span> <span class='fl'>0</span>,
   selected_file <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>options</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>$</span><span class='va'>hemibrainr_matching_gsheet</span>,
-  batch_size <span class='op'>=</span> <span class='fl'>10</span>,
-  db <span class='op'>=</span> <span class='fu'><a href='hemibrain_read_neurons.html'>hemibrain_neurons</a></span><span class='op'>(</span><span class='op'>)</span>,
-  repository <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"CATMAID"</span>, <span class='st'>"flywire"</span>, <span class='st'>"lm"</span><span class='op'>)</span>,
-  query <span class='op'>=</span> <span class='cn'>NULL</span>,
+  batch_size <span class='op'>=</span> <span class='fl'>50</span>,
+  db <span class='op'>=</span> <span class='cn'>NULL</span>,
+  repository <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"flywire"</span>, <span class='st'>"CATMAID"</span>, <span class='st'>"lm"</span><span class='op'>)</span>,
+  query <span class='op'>=</span> <span class='fu'><a href='hemibrain_read_neurons.html'>hemibrain_neurons</a></span><span class='op'>(</span>brain <span class='op'>=</span> <span class='st'>"FAFB14"</span><span class='op'>)</span>,
   overwrite <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"FALSE"</span>, <span class='st'>"mine"</span>, <span class='st'>"mine_empty"</span>, <span class='st'>"TRUE"</span><span class='op'>)</span>,
   column <span class='op'>=</span> <span class='cn'>NULL</span>,
   field <span class='op'>=</span> <span class='cn'>NULL</span>
@@ -202,11 +204,12 @@
 
 <span class='fu'>fafb_matching</span><span class='op'>(</span>
   ids <span class='op'>=</span> <span class='cn'>NULL</span>,
-  repository <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"CATMAID"</span>, <span class='st'>"flywire"</span><span class='op'>)</span>,
+  repository <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"flywire"</span>, <span class='st'>"CATMAID"</span><span class='op'>)</span>,
   hemibrain.nblast <span class='op'>=</span> <span class='cn'>NULL</span>,
+  threshold <span class='op'>=</span> <span class='fl'>0</span>,
   selected_file <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>options</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>$</span><span class='va'>hemibrainr_matching_gsheet</span>,
   batch_size <span class='op'>=</span> <span class='fl'>50</span>,
-  db <span class='op'>=</span> <span class='fu'><a href='hemibrain_read_neurons.html'>hemibrain_neurons</a></span><span class='op'>(</span><span class='op'>)</span>,
+  db <span class='op'>=</span> <span class='fu'><a href='hemibrain_read_neurons.html'>hemibrain_neurons</a></span><span class='op'>(</span>brain <span class='op'>=</span> <span class='st'>"FAFB14"</span><span class='op'>)</span>,
   query <span class='op'>=</span> <span class='cn'>NULL</span>,
   overwrite <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"FALSE"</span>, <span class='st'>"mine"</span>, <span class='st'>"mine_empty"</span>, <span class='st'>"TRUE"</span><span class='op'>)</span>,
   column <span class='op'>=</span> <span class='cn'>NULL</span>,
@@ -222,6 +225,10 @@
 <a href='https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit#gid=0'>Google
  Sheet</a>, for which the user will attempt to make a match if one has not
 been made already. Else, LM neuron IDs in the tab 'lm' when using <code>lm_matching</code>.</p></td>
+    </tr>
+    <tr>
+      <th>threshold</th>
+      <td><p>the minimum normalised NBLAST score between query and target neurons, for the potential match to be show. If set to <code>NULL</code> then all hits can be shown.</p></td>
     </tr>
     <tr>
       <th>mirror.nblast</th>
@@ -247,7 +254,7 @@ neuronlist. Defaults to the value of <code><a href='hemibrain_read_neurons.html'
     </tr>
     <tr>
       <th>query</th>
-      <td><p>a neuronlist of light level neurons to match against. Should correspond to the given NBLAST matrix.
+      <td><p>a neuronlist of neurons for matching. Should correspond to the given NBLAST matrix.
 Defaults to reading a transformed <code>most.lhns</code> from the Hemibrain Google Team Drive.</p></td>
     </tr>
     <tr>
