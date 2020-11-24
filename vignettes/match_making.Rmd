@@ -32,16 +32,45 @@ What use is this information? Matches could be used to look at morphological ste
 
 For example, by matching neurons up between the hemibrain and FAFB, we see that the numbers of [cell types](https://pubmed.ncbi.nlm.nih.gov/30703584/) within one 'hemilineage' (a set of neurons that are born and develop together) are comparable between these two different flies:
 
-
 <center>
 ![hemilineage_example](https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/hemilineage_example.png)
+</center>
+
+## Overview
+
+<center>
+![Slide60](https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/Slide60.png)
+</center>
+
+<center>
+![Slide61](https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/Slide61.png)
+</center>
+
+<center>
+![Slide62](https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/Slide62.png)
+</center>
+
+<center>
+![Slide63](https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/Slide63.png)
+</center>
+
+<center>
+![Slide64](https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/Slide64.png)
+</center>
+
+<center>
+![Slide65](https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/Slide65.png)
+</center>
+
+<center>
+![Slide66](https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/Slide66.png)
 </center>
 
 ## What You need
 
 In order to use these tools you will need to have [RStudio](https://rstudio.com/) and to have installed the [natverse](http://natverse.org/). To use them to maximum effect, you will need to also have permission to access the [FAFB CATMAID v14 project](https://neuropil.janelia.org/tracing/fafb/v14/), although some neurons are available to be read by the public from [Virtual Fly Brain](https://v2.virtualflybrain.org/org.geppetto.frontend/geppetto)'s CATMAID project for FAFB and should have the same unique skeleton ID numbers. Our pipeline function makes use of the [Google Filestream](https://support.google.com/a/answer/7491144?hl=en) application, which should be installed on your machine. Further, note that neurons are read from the FAFB CATMAID project, and you must have login details for this project recorded in your .Renviron (edit with: `usethis::edit_r_environ()`) for these functions to work. For help, see [here](https://github.com/natverse/rcatmaid) and [here](https://github.com/natverse/neuprintr).
 
-## Authorisation
+### Authorisation
 
 In order to write neuron matches to the project you must have access to the `hemibrain` Google Drive or the match making Google sheet (see below) owned by the [Drosophila Connectomics Group](https://www.zoo.cam.ac.uk/research/cell-and-developmental-biology/drosophila-connectomics#:~:text=The%20project%20aims%20to%20reconstruct,Research%20Campus%20in%20the%20US.). If you do not have access but would like to help or use this information, get in contact! You do not need programming skills to to help us match make neurons, as we have written an interactive pipeline in R which does most of the work for you (see below).
 
@@ -54,14 +83,13 @@ library(hemibrainr)
 View(hemibrain_matched)
 ```
 
-## The Google Sheet
+### The Google Sheet
 
 We in the [Drosophila Connectomics Group](https://www.zoo.cam.ac.uk/research/cell-and-developmental-biology/drosophila-connectomics#:~:text=The%20project%20aims%20to%20reconstruct,Research%20Campus%20in%20the%20US.) have been recording our match making in a Google sheet named [em_matching](https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit). This sheet has two tabs of concern here, `hemibrain` for hemibrain neuron -> FAFB neuron matches and `fafb` for FAFB neuron to hemibrain neuron matches.
 
 <center>
 ![google_sheet](https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/google_sheet.png)
 </center>
-
 
 If you have authorisation, you can see the most up-to-date matches as so:
 
@@ -166,8 +194,7 @@ And even fragments if you are convinced the morphology is unique enough (but be 
 ![poor_match_5](https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/poor_match_5.png)
 </center>
 
-
-## Adding Your Own Matches
+### Adding Your Own Matches
 
 So far we have matched up a few thousand neurons. About 25 thousand matches are possible because that is the number of reconstructed neurons in the hemibrain data set. You can help us (and yourself!) by adding matches to our database. There are two main ways of doing this:
 
@@ -188,7 +215,7 @@ hemibrain_matching_add(ids = "16", sheet = "fafb", User = "ASB")
 ## the sheet argument specifies the worksheet or 'tab' on the Google sheet we want to add to
 ```
 
-### The Match Making Pipeline
+## The Match Making Pipeline
 
 You can also use our interactive pipeline to match neurons between hemibrain and FAFB. There are two version of this pipeline. One that takes hemibrain neurons from [neuPrint](https://github.com/natverse/neuprintr), and tries to find the best match for each hemibrain neuron (`hemibrain_matching`) and one that takes FAFB neurons from [CATMAID](https://github.com/natverse/rcatmaid) and tries to find the best hemibrain match for those FAFB neurons (`fafb_matching`). There is also a third pipeline (`LR_matching`) that takes advantage of the fact that the FAFB data set has two intact hemispheres and invites you to match up [FlyWire](https://ngl.flywire.ai/?local_id=c8c06ea181ad5447b04beacfc4cb1b66) between the two hemispheres. Once matches are made, the result become available with `hemibrain_matches`.
 
