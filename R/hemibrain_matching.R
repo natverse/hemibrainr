@@ -1493,14 +1493,14 @@ fafb_matching_rewrite <- function(selected_file  = options()$hemibrainr_matching
   n1 = elmr::fafb_get_meta("annotation:Lineage_annotated", batch = TRUE, ...)
   n2 = subset(n1, n1$skid %in% n$skid)
   n[match(n2$skid,n$skid),c("skid","ItoLee_Hemilineage", "Hartenstein_Hemilineage", "cell_body_fiber")] = n2[,c("skid","ItoLee_Hemilineage", "Hartenstein_Hemilineage", "cell_body_fiber")]
-  ids.missing = setdiff(n1$skid,n$skid)
+  ids.missing = as.character(setdiff(n1$skid,n$skid))
   if(length(ids.missing)){
     n3 = elmr::fafb_get_meta(unique(ids.missing), batch = TRUE, ...)
     n = plyr::rbind.fill(n, n3[,c("skid","ItoLee_Hemilineage", "Hartenstein_Hemilineage", "cell_body_fiber")])
   }
   n = n[!duplicated(n),]
   matches = tryCatch(hemibrain_matches(selected_file=selected_file), error = function(e) NULL)
-  if(!is.null){
+  if(!is.null(is.null)){
     n$cell.type = matches[as.character(n$skid),"connectivity.type"]
   }else{
     n$cell.type = NULL
