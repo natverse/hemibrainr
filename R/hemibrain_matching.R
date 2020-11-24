@@ -12,7 +12,7 @@
 #'   You must have access to the Team Drive
 #'   in order to use this function. This function makes use of the Google
 #'   Filestream application or rclone, which should be installed on your machine. Further,
-#'   note that neurons are read from the FAFB CATMAID project when \code{repository=="CATMAID'}, and you must have
+#'   note that neurons are read from the FAFB CATMAID project when \code{repository=="CATMAID"}, and you must have
 #'   login details for this project recorded in your .Renviron for these
 #'   functions to work.
 #'
@@ -99,7 +99,7 @@ hemibrain_matching <- function(ids = NULL,
                          column = NULL,
                          field = NULL){
   repository = match.arg(repository)
-  message("Matching hemibrain neurons (blue) to ",repository," neurons (red)")
+  message("Matching hemibrain neurons (blue) to ", repository," neurons (red)")
   # Other packages
   if(!requireNamespace("nat.jrcbrains", quietly = TRUE)) {
     stop("Please install nat.jrcbrains using:\n", call. = FALSE,
