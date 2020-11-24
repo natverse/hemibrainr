@@ -190,7 +190,7 @@ hemibrain_matching <- function(ids = NULL,
   say_hello(initials)
   rgl::bg3d("white")
   # choose ids
-  selected = id_selector(gs=gs, ids=ids, id = search.id, overwrite = overwrite,
+  selected = id_selector(gs=gs, ids=ids, id = id, overwrite = overwrite,
                          quality.field = quality.field, match.field = match.field,
                          initials = initials, column = column, field = field)
   # Make matches!
@@ -1646,38 +1646,37 @@ id_selector <- function(gs,
                         column = NULL,
                         field = NULL){
   id = match.arg(id)
-  overwrite = as.character(overwrite)
   overwrite = match.arg(overwrite)
   if(is.null(column)+is.null(field)==1){
     stop("column and field must both be NULL, or both be given")
   }
   # choose possible ids
-  if(is.null(ids)|!length(ids)){
-    if(!is.null(initials) & overwrite %in% c("FALSE","mine")){
-      ids = gs[[id]][gs$User==initials]
-    }else if(!is.null(initials) & overwrite == "mine_empty"){
-      ids = gs[[id]][gs$User==initials|is.na(gs[[match.field]])|is.na(gs[[quality.field]])]
-    }
+  if(overwrite %in% c("TRUE") | is.null(initials)){
+    doit = gs
+  }else if(overwrite=="mine"){
+    doit = subset(gs, gs$User == initials)
+  } else if(overwrite=="mine_empty"){
+    doit = subset(gs, gs$User == initials
+                  | (is.na(gs[[quality.field]])
+                  | is.na(gs[[quality.field]])
+                  | gs[[quality.field]] %in% c("none","n","tract","t",""," ","NA")
+                  | gs[[match.field]] %in% c("none","n","tract","t",""," ","NA")))
+  }else if(overwrite=="FALSE"){
+    doit = subset(gs, gs$User == initials & (is.na(gs[[match.field]]) | is.na(gs[[quality.field]])) )
+  }
+  if(is.null(ids)){
+    ids = doit[[id]]
   }else{
-    ids = intersect(ids,gs[[id]])
+    ids = intersect(ids,doit[[id]])
   }
   ids = ids[!grepl("missing",ids)]
   ids = ids[!is.na(ids)]
   # further narrow
-  selected = subset(gs, gs[[id]] %in% ids)
-  if(overwrite %in% c("mine", "mine_empty")){
-    doit = subset(selected, is.na(selected[[quality.field]]) | selected[[quality.field]] %in% c("none","n","tract","t","","NA"))
-  } else if(overwrite=="TRUE"){
-    doit = subset(selected, is.na(selected[[match.field]]) |  is.na(selected[[match.field]])%in%c(""," "))
-  }else{
-    doit = selected
-  }
-  # choose wheee we only have certain column values
+  selected = subset(doit, doit[[id]] %in% ids)
   if(!is.null(column)+!is.null(field)==2){
-    doit = subset(doit, doit[[column]]%in%field)
+    selected = subset(selected, selected[[column]]%in%field)
   }
-  doit = doit[!is.na(doit[[id]]),]
-  if(!nrow(doit)){
+  if(!nrow(selected)){
     stop(sprintf("No matches to be made with the given IDs and parameters -
 id = '%s'; overwrite = '%s'; quality.field = '%s'; match.field = '%s'; initials = '%s'; column = '%s'; field = '%s'",
                  id,
@@ -1689,7 +1688,7 @@ id = '%s'; overwrite = '%s'; quality.field = '%s'; match.field = '%s'; initials 
                  nullToNA(field)))
   }
   # return
-  doit
+  selected
 }
 
 
