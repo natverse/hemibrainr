@@ -1,8 +1,8 @@
 ---
-title: "axons_dendrites"
+title: "axons and dendrites"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{axons_dendrites}
+  %\VignetteIndexEntry{axons and dendrites}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
