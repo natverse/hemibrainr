@@ -1,8 +1,8 @@
 ---
-title: "hemibrain_connectivity"
+title: "hemibrain connectivity"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{hemibrain_connectivity}
+  %\VignetteIndexEntry{hemibrain connectivity}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
