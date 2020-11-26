@@ -1295,7 +1295,7 @@ hemibrain_matching_add <- function(ids = NULL,
   meta$User = User
 
   # Add new rows
-  dataset[dataset=="hemibrain"] = "hemibrain"
+  dataset[dataset=="flywire"] = "FAFB"
   batches = split(1:nrow(meta), ceiling(seq_along(1:nrow(meta))/500))
   for(i in batches){
     gsheet_manipulation(FUN = googlesheets4::sheet_append,
