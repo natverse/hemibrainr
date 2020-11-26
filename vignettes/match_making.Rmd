@@ -35,7 +35,7 @@ For example, by matching neurons up between the hemibrain and FAFB, we see that 
 ![hemilineage_example](https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/hemilineage_example.png)
 </center>
 
-In order to match neurons, we make use of other [natverse](http://natverse.org/) tools to 'bridge' data between two different brainspace, so they can be co-visualised:
+In order to match neurons, we make use of other [natverse](http://natverse.org/) tools to 'bridge' data between two different brainspace, so they can be co-visualised (enabled by template brain and bridging registrations by [Bogovic et al. 2019](https://www.biorxiv.org/content/10.1101/376384v2.full)):
 
 <center>
 ![hemibrain_to_FAFB](https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/hemibrain_to_FAFB.png)
