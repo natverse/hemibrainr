@@ -45,12 +45,12 @@ hemibrain_get_meta <- function(x, ...){
   # Neuron class
   nmeta$class = NA
   nmeta$class[nmeta$bodyid%in%hemibrainr::dn.ids] = "DN"
-  nmeta$class[nmeta$bodyid%in%hemibrainr::ton.ids] = "TON"
+  nmeta$class[nmeta$bodyid%in%hemibrainr::ton.ids] = "TOON"
   nmeta$class[nmeta$bodyid%in%hemibrainr::lhn.ids] = "LHN"
-  nmeta$class[nmeta$bodyid%in%hemibrainr::rn.ids] = "RN"
+  nmeta$class[nmeta$bodyid%in%hemibrainr::rn.ids] = "ALRN"
   nmeta$class[nmeta$bodyid%in%hemibrainr::orn.ids] = "ORN"
   nmeta$class[nmeta$bodyid%in%hemibrainr::hrn.ids] = "HRN"
-  nmeta$class[nmeta$bodyid%in%hemibrainr::pn.ids] = "PN"
+  nmeta$class[nmeta$bodyid%in%hemibrainr::pn.ids] = "ALPN"
   nmeta$class[nmeta$bodyid%in%hemibrainr::upn.ids] = "uPN"
   nmeta$class[nmeta$bodyid%in%hemibrainr::mpn.ids] = "mPN"
   nmeta$class[nmeta$bodyid%in%hemibrainr::vppn.ids] = "VPPN"
