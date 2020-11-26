@@ -7,7 +7,6 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
@@ -36,34 +35,43 @@ For example, by matching neurons up between the hemibrain and FAFB, we see that 
 ![hemilineage_example](https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/hemilineage_example.png)
 </center>
 
+In order to match neurons, we make use of other [natverse](http://natverse.org/) tools to 'bridge' data between two different brainspace, so they can be co-visualised:
+
+<center>
+![hemibrain_to_FAFB](https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/hemibrain_to_FAFB.png)
+</center>
+
+
 ## Overview
 
+In general, our interactive matching pipelines follow this workslow (this exmple is for `fafb_matching`):
+
 <center>
-![Slide60](https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/Slide60.png)
+![pipeline1](https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/pipeline1.png)
 </center>
 
 <center>
-![Slide61](https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/Slide61.png)
+![pipeline3](https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/pipeline2.png)
 </center>
 
 <center>
-![Slide62](https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/Slide62.png)
+![pipeline3](https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/pipeline3.png)
 </center>
 
 <center>
-![Slide63](https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/Slide63.png)
+![pipeline4](https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/pipeline4.png)
 </center>
 
 <center>
-![Slide64](https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/Slide64.png)
+![pipeline5](https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/pipeline5.png)
 </center>
 
 <center>
-![Slide65](https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/Slide65.png)
+![pipeline6](https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/pipeline6.png)
 </center>
 
 <center>
-![Slide66](https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/Slide66.png)
+![pipeline7](https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/pipeline7.png)
 </center>
 
 ## What You need
@@ -276,7 +284,6 @@ fafb_hemibrain_annotate(skds)
 ## Uses
 
 One use we have already found for all of this match making, is to cross-identify neuron cell body fiber tracts and [(hemi)lineages](https://pubmed.ncbi.nlm.nih.gov/23541733/). This means that we now have the locations in FAFB for different known sets of cells. You can see seed planes for them [here](https://docs.google.com/spreadsheets/d/1HI8RZJhV8aWC6hw5T0qh2__9D8V0zKdtxx2kkDsuI8Y/edit?usp=sharing).
-
 
 <center>
 ![google_sheet_lineages](https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/google_sheet_lineages.png)

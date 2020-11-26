@@ -95,6 +95,10 @@ kc.info$class = "KC"
 cent.info = hemibrain_get_meta(unique(hemibrainr::cent.ids))
 cent.info$class = "LHCENT"
 
+# Dn information
+dn.info = hemibrain_get_meta(unique(hemibrainr::dn.ids))
+dn.info$class = "DN"
+
 # Save information
 usethis::use_data(pn.info, overwrite = TRUE)
 usethis::use_data(mbon.info, overwrite = TRUE)
@@ -103,3 +107,4 @@ usethis::use_data(lc.info, overwrite = TRUE)
 usethis::use_data(alln.info, overwrite = TRUE)
 usethis::use_data(kc.info, overwrite = TRUE)
 usethis::use_data(cent.info, overwrite = TRUE)
+usethis::use_data(dn.info, overwrite = TRUE)

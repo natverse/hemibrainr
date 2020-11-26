@@ -245,21 +245,42 @@ very_simple_connectivity <- function(conn.df){
 # We can make another version of the matrix that contains essentially all
 # the useful information, but compresses much smaller (~16x at time of writing)
 save_compressed_nblast_mat <- function(x,
+                                       overwrite = c("combine","yes","no"),
                                        file = NULL,
                                        threshold=-0.5,
                                        digits=3,
                                        format=c("rda", "rds"),
                                        ...) {
-  objname=deparse(substitute(x))
   format=match.arg(format)
+  objname=deparse(substitute(x))
+  newobjname <- paste0(objname, ".compressed")
+  fname <- paste0(file.path(file, newobjname), ".", format)
+  combine = FALSE
+  if(file.exists(fname)){
+    if(overwrite=="no"){
+      stop(fname, " already exists")
+    }else if(overwrite=="combine"){
+      combine = TRUE
+      if(format=="rds"){
+        old = readRDS(fname)
+      }else{
+        old = load_assign(fname)
+      }
+    }
+  }
   colnames(x) = gsub("_m$","",colnames(x)) # factor in mirrored hemibrain neurons
   rownames(x) = gsub("_m$","",rownames(x))
   x = apply(x, 2, function(i) tapply(i, rownames(x), sum, na.rm = TRUE))
   x = t(apply(t(x), 2, function(i) tapply(i, colnames(x), sum, na.rm = TRUE)))
   x[x<threshold]=threshold
   x=round(x, digits=digits)
-  newobjname <- paste0(objname, ".compressed")
-  fname <- paste0(file.path(file, newobjname), ".", format)
+  if(combine){
+    old = old[!rownames(x)%in%rownames(x),]
+    if(nrow(old)){
+      warning("combining with extant file: ", fname)
+      x = plyr::rbind.fill(old, x)
+    }
+  }
   message("Resaving a compressed version of ", objname, " to ", fname)
   if(format=="rds") {
     saveRDS(x, file=fname, ...)
@@ -269,6 +290,13 @@ save_compressed_nblast_mat <- function(x,
     assign(newobjname, x)
     save(list = newobjname, file = fname, ...)
   }
+}
+
+# hidden
+load_assign <- function(f){
+  env <- new.env()
+  nm <- load(f, env)[1]
+  env[[nm]]
 }
 
 # Transform into template brainspace

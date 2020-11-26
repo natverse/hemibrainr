@@ -354,3 +354,5 @@
 "kc.info"
 #' @rdname info
 "cent.info"
+#' @rdname info
+"dn.info"

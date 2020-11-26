@@ -5,7 +5,7 @@
 \alias{hemibrain_olfactory_layers}
 \title{Hemibrain neurons in different Olfactory layers}
 \format{
-An object of class \code{data.frame} with 31186 rows and 23 columns.
+An object of class \code{data.frame} with 24549 rows and 25 columns.
 }
 \usage{
 hemibrain_olfactory_layers

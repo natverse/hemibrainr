@@ -10,21 +10,24 @@
 \alias{alln.info}
 \alias{kc.info}
 \alias{cent.info}
+\alias{dn.info}
 \title{Meta information of certain neuron classes}
 \format{
-An object of class \code{data.frame} with 333 rows and 23 columns.
+An object of class \code{data.frame} with 333 rows and 25 columns.
 
 An object of class \code{data.frame} with 70 rows and 31 columns.
 
 An object of class \code{data.frame} with 2383 rows and 21 columns.
 
-An object of class \code{data.frame} with 2129 rows and 43 columns.
+An object of class \code{data.frame} with 2129 rows and 45 columns.
 
-An object of class \code{data.frame} with 197 rows and 43 columns.
+An object of class \code{data.frame} with 197 rows and 45 columns.
 
-An object of class \code{data.frame} with 1927 rows and 43 columns.
+An object of class \code{data.frame} with 1927 rows and 45 columns.
 
-An object of class \code{data.frame} with 24 rows and 43 columns.
+An object of class \code{data.frame} with 24 rows and 45 columns.
+
+An object of class \code{data.frame} with 431 rows and 45 columns.
 }
 \usage{
 pn.info
@@ -40,6 +43,8 @@ alln.info
 kc.info
 
 cent.info
+
+dn.info
 }
 \description{
 For olfactory projection neurons (PNS), antennal lobe local neurons (ALLN),

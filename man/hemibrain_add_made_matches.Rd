@@ -12,7 +12,7 @@
 \usage{
 flywire_matching_rewrite(
   flywire.ids = names(flywire_neurons()),
-  meta = flywire_neurons[, ],
+  meta = flywire_neurons()[, ],
   selected_file = options()$hemibrainr_matching_gsheet,
   ...
 )
@@ -108,7 +108,7 @@ Currently, information is recorded in a
 \dontrun{
 
 # Add a mising FAFB projection neuron, so we can match it later:
-hemibrain_matching_add(ids = "16", sheet = "FAFB", User = "ASB")
+hemibrain_matching_add(ids = "16", dataset = "FAFB", User = "ASB")
 
 
 }}

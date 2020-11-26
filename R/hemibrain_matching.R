@@ -41,15 +41,15 @@
 #' Defaults to reading a transformed \code{most.lhns} from the Hemibrain Google Team Drive.
 #' @param overwrite Whether or not to overwrite matches already made.
 #' The neurons you could possibly be looking at are selected through
-#' the arguments: \code{ids}, \code{column}, \code{field}. If \code{ids} is \code{NULL} you will be given all neurons that have been assigned to your user on the
+#' the arguments: \code{ids}, \code{column}, \code{entry}. If \code{ids} is \code{NULL} you will be given all neurons that have been assigned to your user on the
 #' \href{https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit#gid=0}{Google sheet}.
 #' If \code{overwrite} is set to \code{FALSE}, you will not overwrite any matches that have already been made from among the selected neurons.
 #' If \code{'mine'} you will re-examine and overwrite any matches you have made out of the selected neurons.
 #' With \code{'mine_empty'} the same happens, but you will also retain neurons that have no match, and have been assigned to any other user.
 #' If \code{FALSE} (be careful!) then you overwrite made matches among the selected neurons.
 #' @param column defaults to \code{NULL}, no further subsetting. Else, you can select a column from the Google sheet.
-#' Only  neurons with a certain value (\code{field}) in that column will be chosen for matching.
-#' @param field defaults to \code{NULL}, no further subsetting. Else, it is a value in \code{column}.
+#' Only  neurons with a certain value (\code{entry}) in that column will be chosen for matching.
+#' @param entry defaults to \code{NULL}, no further subsetting. Else, it is a value in \code{column}.
 #'
 #' @details Currently, the
 #'   \href{https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit#gid=0}{Google
@@ -97,7 +97,7 @@ hemibrain_matching <- function(ids = NULL,
                          query = hemibrain_neurons(brain = "FAFB14"), # brain="FAFB"
                          overwrite = c("FALSE","mine","mine_empty","TRUE"),
                          column = NULL,
-                         field = NULL){
+                         entry = NULL){
   repository = match.arg(repository)
   message("Matching hemibrain neurons (blue) to ", repository," neurons (red)")
   # Other packages
@@ -192,7 +192,7 @@ hemibrain_matching <- function(ids = NULL,
   # choose ids
   selected = id_selector(gs=gs, ids=ids, id = id, overwrite = overwrite,
                          quality.field = quality.field, match.field = match.field,
-                         initials = initials, column = column, field = field)
+                         initials = initials, column = column, entry = entry)
   # Make matches!
   match.more = TRUE
   while(match.more){
@@ -305,7 +305,7 @@ lm_matching <- function(ids = NULL,
                         query = NULL,
                         overwrite = c("FALSE","mine","mine_empty","TRUE"),
                         column = NULL,
-                        field = NULL){
+                        entry = NULL){
   # Motivate!
   nat::nopen3d()
   plot_inspirobot()
@@ -369,7 +369,7 @@ lm_matching <- function(ids = NULL,
   # choose ids
   selected = id_selector(gs=gs, ids=ids, id=id, overwrite = overwrite,
                          quality.field = quality.field, match.field = match.field,
-                         initials = initials, column = column, field = field)
+                         initials = initials, column = column, entry = entry)
   ids = unique(selected[[id]])
   # choose brain
   brain = hemibrainr::hemibrain.surf
@@ -554,7 +554,7 @@ fafb_matching <- function(ids = NULL,
                         query = NULL,
                         overwrite = c("FALSE","mine","mine_empty","TRUE"),
                         column = NULL,
-                        field = NULL){
+                        entry = NULL){
   repository = match.arg(repository)
   message("Matching ",repository," FAFB neurons (blue) to hemibrain neurons (red)")
   # Packages
@@ -628,7 +628,7 @@ fafb_matching <- function(ids = NULL,
   # choose ids
   selected = id_selector(gs=gs, ids=ids, id=id, overwrite = overwrite,
                          quality.field = quality.field, match.field = match.field,
-                         initials = initials, column = column, field = field)
+                         initials = initials, column = column, entry = entry)
   # Make matches!
   match.more = TRUE
   while(match.more){
@@ -1107,7 +1107,7 @@ lm_matches <- function(priority = c("hemibrain","lm"), selected_file = options()
 #' \dontrun{
 #'
 #' # Add a mising FAFB projection neuron, so we can match it later:
-#' hemibrain_matching_add(ids = "16", sheet = "FAFB", User = "ASB")
+#' hemibrain_matching_add(ids = "16", dataset = "FAFB", User = "ASB")
 #'
 #'
 #' }}
@@ -1138,7 +1138,7 @@ hemibrain_add_made_matches <- function(df,
     missing = setdiff(df$bodyid,gs$bodyid)
     if(length(missing)){
       message("Adding missing hemibrain bodyids")
-      hemibrain_matching_add(ids = missing, sheet = "hemibrain", User = User, selected_file = selected_file)
+      hemibrain_matching_add(ids = missing, dataset = "hemibrain", User = User, selected_file = selected_file)
       gs = hemibrain_match_sheet(sheet = "hemibrain")
     }
     message("Checking that FAFB matches exist")
@@ -1173,7 +1173,7 @@ hemibrain_add_made_matches <- function(df,
     missing = setdiff(df$skid,gs$skid)
     if(length(missing)){
       message("Adding missing FAFB bodyids")
-      hemibrain_matching_add(ids = missing, sheet = "FAFB", User = User, selected_file = selected_file)
+      hemibrain_matching_add(ids = missing, dataset = "FAFB", User = User, selected_file = selected_file)
       gs = hemibrain_match_sheet(sheet = "FAFB")
     }
     message("Checking that hemibrain matches exist")
@@ -1295,13 +1295,13 @@ hemibrain_matching_add <- function(ids = NULL,
   meta$User = User
 
   # Add new rows
-  sheet[sheet=="hemibrain"] = "hemibrain"
+  dataset[dataset=="hemibrain"] = "hemibrain"
   batches = split(1:nrow(meta), ceiling(seq_along(1:nrow(meta))/500))
   for(i in batches){
     gsheet_manipulation(FUN = googlesheets4::sheet_append,
                                      data = meta[min(i):max(i),],
                                      ss = selected_file,
-                                     sheet = sheet)
+                                     sheet = dataset)
   }
 
 }
@@ -1500,8 +1500,9 @@ fafb_matching_rewrite <- function(selected_file  = options()$hemibrainr_matching
   }
   n = n[!duplicated(n),]
   matches = tryCatch(hemibrain_matches(selected_file=selected_file), error = function(e) NULL)
-  if(!is.null(is.null)){
+  if(!is.null(matches)){
     n$cell.type = matches[as.character(n$skid),"connectivity.type"]
+    n = n[order(n$cell.type),]
   }else{
     n$cell.type = NULL
   }
@@ -1519,9 +1520,9 @@ fafb_matching_rewrite <- function(selected_file  = options()$hemibrainr_matching
       n$nblast.top = top
     }
   }
-  n = n[order(n$cell.type),]
   n = n[order(n$ItoLee_Hemilineage),]
-  gsheet_manipulation(data = n[0,],
+  gsheet_manipulation(FUN = googlesheets4::write_sheet,
+                      data = n[0,],
                       ss = selected_file,
                       sheet = "FAFB")
   batches = split(1:nrow(n), ceiling(seq_along(1:nrow(n))/500))
@@ -1534,7 +1535,7 @@ fafb_matching_rewrite <- function(selected_file  = options()$hemibrainr_matching
   if(!is.null(matches)){
     missing = setdiff(subset(matches,matches$dataset=="hemibrain")$match,subset(matches,matches$dataset=="FAFB")$id)
     missing = unique(missing[!missing%in%c("none","","NA"," ","good","medium","poor","tract")])
-    hemibrain_matching_add(ids = missing, sheet="FAFB", selected_file = selected_file, ...)
+    hemibrain_matching_add(ids = missing, dataset="FAFB", selected_file = selected_file, ...)
   }
 }
 
@@ -1616,7 +1617,8 @@ flycircuit_matching_rewrite <- function(flycircuit.ids = names(flycircuit_neuron
 
   # gs merge
   if(nrow(gs)){
-    gs = merge(gs, fc.meta, all.x = TRUE, all.y = TRUE)
+    fc.meta = subset(fc.meta, !fc.meta$id %in% gs$id)
+    gs = plyr::rbind.fill(gs, fc.meta)
   }else{
     gs = fc.meta
   }
@@ -1644,11 +1646,11 @@ id_selector <- function(gs,
                         match.field,
                         initials = NULL,
                         column = NULL,
-                        field = NULL){
+                        entry = NULL){
   id = match.arg(id)
   overwrite = match.arg(overwrite)
-  if(is.null(column)+is.null(field)==1){
-    stop("column and field must both be NULL, or both be given")
+  if(is.null(column)+is.null(entry)==1){
+    stop("column and entry must both be NULL, or both be given")
   }
   # choose possible ids
   if(overwrite %in% c("TRUE") | is.null(initials)){
@@ -1673,19 +1675,19 @@ id_selector <- function(gs,
   ids = ids[!is.na(ids)]
   # further narrow
   selected = subset(doit, doit[[id]] %in% ids)
-  if(!is.null(column)+!is.null(field)==2){
-    selected = subset(selected, selected[[column]]%in%field)
+  if(!is.null(column)+!is.null(entry)==2){
+    selected = subset(selected, selected[[column]]%in%entry)
   }
   if(!nrow(selected)){
     stop(sprintf("No matches to be made with the given IDs and parameters -
-id = '%s'; overwrite = '%s'; quality.field = '%s'; match.field = '%s'; initials = '%s'; column = '%s'; field = '%s'",
+id = '%s'; overwrite = '%s'; quality.field = '%s'; match.field = '%s'; initials = '%s'; column = '%s'; entry = '%s'",
                  id,
                  overwrite,
                  quality.field,
                  match.field,
                  initials,
                  nullToNA(column),
-                 nullToNA(field)))
+                 nullToNA(entry)))
   }
   # return
   selected

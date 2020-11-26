@@ -3,7 +3,7 @@
 #' @rdname hemibrain_add_made_matches
 #' @export
 flywire_matching_rewrite <- function(flywire.ids = names(flywire_neurons()),
-                                     meta = flywire_neurons[,],
+                                     meta = flywire_neurons()[,],
                                      selected_file  = options()$hemibrainr_matching_gsheet,
                                      ...){
   # Get the FAFB matching Google sheet
@@ -63,11 +63,15 @@ flywire_matching_rewrite <- function(flywire.ids = names(flywire_neurons()),
     fg = gs
   }
 
+  # Add missing flywire information
+  missing = setdiff(flywire.ids, all.ids)
+  hemibrain_matching_add(ids = missing, meta = meta, dataset="flywire", selected_file = selected_file, ...)
+
   ## Read the LM Google Sheet
   lmg = hemibrain_match_sheet(sheet = "lm", selected_file = selected_file)
   if(nrow(lmg)){
     orig = lmg$flywire.xyz
-    lmg$flywire.xyz = fg$flywire.xyz[match(lmg$bodyid,fg$hemibrain.match)]
+    lmg$flywire.xyz = fg$flywire.xyz[match(lmg$id,fg$LM.match)]
     different = paste(orig)!=paste(lmg$flywire.xyz)
     lmg$flywire.xyz = fg$flywire.xyz[match(lmg$id,fg$LM.match)]
     update_gsheet(update = lmg[different,],
@@ -92,9 +96,6 @@ flywire_matching_rewrite <- function(flywire.ids = names(flywire_neurons()),
                   id = "bodyid")
   }
 
-  # Add missing flywire information
-  missing = setdiff(flywire.ids, all.ids)
-  hemibrain_matching_add(ids = missing, meta = meta, dataset="flywire", selected_file = selected_file, ...)
 }
 
 #' @rdname hemibrain_matching
@@ -108,7 +109,7 @@ LR_matching <- function(ids = NULL,
                         query = flywire_neurons(mirror=TRUE),
                         overwrite = c("FALSE","mine","mine_empty","TRUE"),
                         column = NULL,
-                        field = NULL){
+                        entry = NULL){
   message("Matching mirrored flywire neurons (blue) to non-mirrored flywire neurons (red)")
   # Packages
   if(!requireNamespace("elmr", quietly = TRUE)) {
@@ -168,7 +169,7 @@ LR_matching <- function(ids = NULL,
   # choose ids
   selected = id_selector(gs=gs, ids=ids, id=id, overwrite = overwrite,
                          quality.field = quality.field, match.field = match.field,
-                         initials = initials, column = column, field = field)
+                         initials = initials, column = column, entry = entry)
   # choose brain
   brain = elmr::FAFB.surf
   # Make matches!

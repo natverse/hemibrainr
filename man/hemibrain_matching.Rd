@@ -17,7 +17,7 @@ LR_matching(
   query = flywire_neurons(mirror = TRUE),
   overwrite = c("FALSE", "mine", "mine_empty", "TRUE"),
   column = NULL,
-  field = NULL
+  entry = NULL
 )
 
 hemibrain_matching(
@@ -31,7 +31,7 @@ hemibrain_matching(
   query = hemibrain_neurons(brain = "FAFB14"),
   overwrite = c("FALSE", "mine", "mine_empty", "TRUE"),
   column = NULL,
-  field = NULL
+  entry = NULL
 )
 
 lm_matching(
@@ -43,7 +43,7 @@ lm_matching(
   query = NULL,
   overwrite = c("FALSE", "mine", "mine_empty", "TRUE"),
   column = NULL,
-  field = NULL
+  entry = NULL
 )
 
 fafb_matching(
@@ -57,7 +57,7 @@ fafb_matching(
   query = NULL,
   overwrite = c("FALSE", "mine", "mine_empty", "TRUE"),
   column = NULL,
-  field = NULL
+  entry = NULL
 )
 }
 \arguments{
@@ -87,7 +87,7 @@ Defaults to reading a transformed \code{most.lhns} from the Hemibrain Google Tea
 
 \item{overwrite}{Whether or not to overwrite matches already made.
 The neurons you could possibly be looking at are selected through
-the arguments: \code{ids}, \code{column}, \code{field}. If \code{ids} is \code{NULL} you will be given all neurons that have been assigned to your user on the
+the arguments: \code{ids}, \code{column}, \code{entry}. If \code{ids} is \code{NULL} you will be given all neurons that have been assigned to your user on the
 \href{https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit#gid=0}{Google sheet}.
 If \code{overwrite} is set to \code{FALSE}, you will not overwrite any matches that have already been made from among the selected neurons.
 If \code{'mine'} you will re-examine and overwrite any matches you have made out of the selected neurons.
@@ -95,9 +95,9 @@ With \code{'mine_empty'} the same happens, but you will also retain neurons that
 If \code{FALSE} (be careful!) then you overwrite made matches among the selected neurons.}
 
 \item{column}{defaults to \code{NULL}, no further subsetting. Else, you can select a column from the Google sheet.
-Only  neurons with a certain value (\code{field}) in that column will be chosen for matching.}
+Only  neurons with a certain value (\code{entry}) in that column will be chosen for matching.}
 
-\item{field}{defaults to \code{NULL}, no further subsetting. Else, it is a value in \code{column}.}
+\item{entry}{defaults to \code{NULL}, no further subsetting. Else, it is a value in \code{column}.}
 
 \item{hemibrain.nblast}{a FAFB (rows) - hemibrain (columns) normalised
 NBLAST matrix. By default this is read from the flyconnectome Team Drive.}
