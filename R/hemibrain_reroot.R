@@ -399,3 +399,72 @@ hemibrain_skeleton_check <- function(x, # as read by neuprint_read_neurons
   x.goodsyn = metadata_add_tags(x.goodsyn)
   x.goodsyn
 }
+
+
+
+
+#' Cut neurons to the hemibrain volume
+#'
+#' @description Cut neurons from another data source to the hemibrain volume.
+#'
+#' @param x a \code{nat::neuronlist} object.
+#' @param brain the brainspace to which \code{x} is registered.
+#' @param scale scale \code{x} by a factor of \code{scale}.
+#' @param mirror whether or not to mirror the hemibrain volume, to which \code{x} is cut.
+#' @param ... methods supplied to \code{nat::nlapply}
+#'
+#' @return a \code{nat::neuronlist}.
+#'
+#' @examples
+#' \donttest{
+#' \dontrun{
+#' Cell07PNs.cut = hemibrain_cut(Cell07PNs.cut, brain = "FCWB")
+#' }}
+#' @export
+#' @seealso \code{\link{hemibrain_reroot}}
+hemibrain_cut <- function(x,
+                          scale = 1,
+                          brain = "FAFB14",
+                          mirror = FALSE,
+                          ...){
+  fafb.cut.1 = structure(c(312048, 601733, 71265, 319018, 4315, 270859), .Dim = c(2L, 3L))
+  fafb.cut.2 = structure(c(519300, 601733, 259570, 319018, 0, 300000), .Dim = c(2L, 3L))
+  if(mirror){
+    fafb.cut.1 = nat.jrcbrains::mirror_fafb(fafb.cut.1)
+    fafb.cut.2 = nat.jrcbrains::mirror_fafb(fafb.cut.2)
+  }
+  if(brain!="FAFB14"){
+    fafb.cut.1 = nat.templatebrains::xform_brain(fafb.cut.1, sample = "FAFB14", reference = brain)
+    fafb.cut.2 = nat.templatebrains::xform_brain(fafb.cut.2, sample = "FAFB14", reference = brain)
+  }
+  y = nat::nlapply(x,
+                   subbbx,
+                   bbx = fafb.cut.1,
+                   scale = scale,
+                   ret='inside',
+                   ...)
+  # Remove a chunk of left antennal lobe that's missing in hemibrain
+  z = nat::nlapply(y,
+                   subbbx,
+                   bbx = fafb.cut.2,
+                   scale = scale,
+                   ret='outside',
+                   ...)
+  # drop any FAFB neurons that don't have at least 5 vertices left
+  z = z[nat::nvertices(z)>=5]
+  z
+}
+
+# Cut neurons by bounding box
+subbbx <- function(n.dps, bbx, scale, ret='inside'){
+  points = nat::xyzmatrix(n.dps)
+  bbx = nat::boundingbox(scale(bbx, scale = rep(scale,3), center = FALSE))
+  inside = nat::pointsinside(points,bbx)
+  # or subset(n.dps, inside, invert=ret != 'inside')
+  if (ret == 'inside') {
+    subset(n.dps, inside)
+  }
+  else {
+    subset(n.dps,!inside)
+  }
+}

@@ -336,55 +336,6 @@ scale_points.shapelist <- function(shapelist,
   shapelist.transformed
 }
 
-# Cut neurons by bounding box
-subbbx <- function(n.dps, bbx, scale, ret='inside'){
-  points = nat::xyzmatrix(n.dps)
-  bbx = nat::boundingbox(scale(bbx, scale = rep(scale,3), center = FALSE))
-  inside = nat::pointsinside(points,bbx)
-  # or subset(n.dps, inside, invert=ret != 'inside')
-  if (ret == 'inside') {
-    subset(n.dps, inside)
-  }
-  else {
-    subset(n.dps,!inside)
-  }
-}
-
-# Subset FAFB neurons to FIB bounding box
-## This works only when in FAFB space, then /1000
-## Essentially for pruning dotprops objects
-hemibrain_cut <- function(x,
-                          scale = 1,
-                          brain = "FAFB14",
-                          mirror = TRUE,
-                          ...){
-  fafb.cut.1 = structure(c(312048, 601733, 71265, 319018, 4315, 270859), .Dim = c(2L, 3L))
-  fafb.cut.2 = structure(c(519300, 601733, 259570, 319018, 0, 300000), .Dim = c(2L, 3L))
-  if(brain!="FAFB14"){
-    if(mirror){
-      fafb.cut.1 = nat.jrcbrains::mirror_fafb(fafb.cut.1)
-      fafb.cut.2 = nat.jrcbrains::mirror_fafb(fafb.cut.2)
-    }
-    fafb.cut.1 = nat.templatebrains::xform_brain(fafb.cut.1, sample = "FAFB14", reference = brain)
-    fafb.cut.2 = nat.templatebrains::xform_brain(fafb.cut.2, sample = "FAFB14", reference = brain)
-  }
-  y = nat::nlapply(x,
-                   subbbx,
-                   bbx = fafb.cut.1,
-                   scale = scale,
-                   ret='inside',
-                   ...)
-  # Remove a chunk of left antennal lobe that's missing in hemibrain
-  z = nat::nlapply(y,
-                  subbbx,
-                  bbx = fafb.cut.2,
-                  scale = scale,
-                  ret='outside',
-                   ...)
-  # drop any FAFB neurons that don't have at least 5 vertices left
-  z = z[nat::nvertices(z)>=5]
-  z
-}
 
 # use foreach to process in parallel
 #' @importFrom nat.templatebrains regtemplate xform_brain
