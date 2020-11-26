@@ -173,7 +173,7 @@
   query <span class='op'>=</span> <span class='fu'><a href='flywire_neurons.html'>flywire_neurons</a></span><span class='op'>(</span>mirror <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>,
   overwrite <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"FALSE"</span>, <span class='st'>"mine"</span>, <span class='st'>"mine_empty"</span>, <span class='st'>"TRUE"</span><span class='op'>)</span>,
   column <span class='op'>=</span> <span class='cn'>NULL</span>,
-  field <span class='op'>=</span> <span class='cn'>NULL</span>
+  entry <span class='op'>=</span> <span class='cn'>NULL</span>
 <span class='op'>)</span>
 
 <span class='fu'>hemibrain_matching</span><span class='op'>(</span>
@@ -187,7 +187,7 @@
   query <span class='op'>=</span> <span class='fu'><a href='hemibrain_read_neurons.html'>hemibrain_neurons</a></span><span class='op'>(</span>brain <span class='op'>=</span> <span class='st'>"FAFB14"</span><span class='op'>)</span>,
   overwrite <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"FALSE"</span>, <span class='st'>"mine"</span>, <span class='st'>"mine_empty"</span>, <span class='st'>"TRUE"</span><span class='op'>)</span>,
   column <span class='op'>=</span> <span class='cn'>NULL</span>,
-  field <span class='op'>=</span> <span class='cn'>NULL</span>
+  entry <span class='op'>=</span> <span class='cn'>NULL</span>
 <span class='op'>)</span>
 
 <span class='fu'>lm_matching</span><span class='op'>(</span>
@@ -199,7 +199,7 @@
   query <span class='op'>=</span> <span class='cn'>NULL</span>,
   overwrite <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"FALSE"</span>, <span class='st'>"mine"</span>, <span class='st'>"mine_empty"</span>, <span class='st'>"TRUE"</span><span class='op'>)</span>,
   column <span class='op'>=</span> <span class='cn'>NULL</span>,
-  field <span class='op'>=</span> <span class='cn'>NULL</span>
+  entry <span class='op'>=</span> <span class='cn'>NULL</span>
 <span class='op'>)</span>
 
 <span class='fu'>fafb_matching</span><span class='op'>(</span>
@@ -213,7 +213,7 @@
   query <span class='op'>=</span> <span class='cn'>NULL</span>,
   overwrite <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"FALSE"</span>, <span class='st'>"mine"</span>, <span class='st'>"mine_empty"</span>, <span class='st'>"TRUE"</span><span class='op'>)</span>,
   column <span class='op'>=</span> <span class='cn'>NULL</span>,
-  field <span class='op'>=</span> <span class='cn'>NULL</span>
+  entry <span class='op'>=</span> <span class='cn'>NULL</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -261,7 +261,7 @@ Defaults to reading a transformed <code>most.lhns</code> from the Hemibrain Goog
       <th>overwrite</th>
       <td><p>Whether or not to overwrite matches already made.
 The neurons you could possibly be looking at are selected through
-the arguments: <code>ids</code>, <code>column</code>, <code>field</code>. If <code>ids</code> is <code>NULL</code> you will be given all neurons that have been assigned to your user on the
+the arguments: <code>ids</code>, <code>column</code>, <code>entry</code>. If <code>ids</code> is <code>NULL</code> you will be given all neurons that have been assigned to your user on the
 <a href='https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit#gid=0'>Google sheet</a>.
 If <code>overwrite</code> is set to <code>FALSE</code>, you will not overwrite any matches that have already been made from among the selected neurons.
 If <code>'mine'</code> you will re-examine and overwrite any matches you have made out of the selected neurons.
@@ -271,10 +271,10 @@ If <code>FALSE</code> (be careful!) then you overwrite made matches among the se
     <tr>
       <th>column</th>
       <td><p>defaults to <code>NULL</code>, no further subsetting. Else, you can select a column from the Google sheet.
-Only  neurons with a certain value (<code>field</code>) in that column will be chosen for matching.</p></td>
+Only  neurons with a certain value (<code>entry</code>) in that column will be chosen for matching.</p></td>
     </tr>
     <tr>
-      <th>field</th>
+      <th>entry</th>
       <td><p>defaults to <code>NULL</code>, no further subsetting. Else, it is a value in <code>column</code>.</p></td>
     </tr>
     <tr>
