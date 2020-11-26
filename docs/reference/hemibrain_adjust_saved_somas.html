@@ -47,11 +47,11 @@
 
 
 <meta property="og:title" content="Adjust and correct hemibrain neurons somas. — hemibrain_adjust_saved_somas" />
-<meta property="og:description" content="Currently provides three &quot;modes&quot;: correct single neurons, correct cell body fibers, and correct from Google sheet.
+<meta property="og:description" content="Currently provides three &quot;modes&quot;: correct single neurons, correct cell body fibers (cbf), and correct from Google Sheet.
   Correct singles will allow you to manually correct each neuron in a provided list of bodyids. If requested, DBSCAN can be used
       to try to predict potential soma positions against already correctly identified somas, based on the provided Google sheet.
-  Correct cell body fibers(cbf) asks for a cbf to be inputted based on those labelled in the Google sheet. DBSCAN is then used to
-      cluster the already annotated soma positions on the Google sheet within the cbf. This will allow you to identify correct
+  Correct cell body fibers asks for a cbf to be inputted based on those labelled in the Google sheet. DBSCAN is then used to
+      cluster the already annotated soma positions on the Google Sheett within the cbf. This will allow you to identify correct
       soma positions, and then manually fix incorrect somas. for each neuron with an incorrect soma, a potential new soma will be
       suggested based on the DBSCAN clustering result.
   Correct Google sheet is useful when screening large numbers of neurons. Once a large group of neurons has been split into
@@ -96,12 +96,6 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -116,6 +110,12 @@
     </li>
     <li>
       <a href="../articles/google_filestream.html">read data from Google drive</a>
+    </li>
+    <li>
+      <a href="../articles/hemibrain_axons_dendrites.html">axons and dendrites</a>
+    </li>
+    <li>
+      <a href="../articles/hemibrain_connectivity.html">hemibrain connectivity</a>
     </li>
     <li>
       <a href="../articles/match_making.html">neuron match making</a>
@@ -149,11 +149,11 @@
     </div>
 
     <div class="ref-description">
-    <p>Currently provides three "modes": correct single neurons, correct cell body fibers, and correct from Google sheet.
+    <p>Currently provides three "modes": correct single neurons, correct cell body fibers (cbf), and correct from <a href='https://docs.google.com/spreadsheets/d/1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E/edit#gid=1524900531'>Google Sheet</a>.
   Correct singles will allow you to manually correct each neuron in a provided list of bodyids. If requested, DBSCAN can be used
       to try to predict potential soma positions against already correctly identified somas, based on the provided Google sheet.
-  Correct cell body fibers(cbf) asks for a cbf to be inputted based on those labelled in the Google sheet. DBSCAN is then used to
-      cluster the already annotated soma positions on the Google sheet within the cbf. This will allow you to identify correct
+  Correct cell body fibers asks for a cbf to be inputted based on those labelled in the Google sheet. DBSCAN is then used to
+      cluster the already annotated soma positions on the <a href='https://docs.google.com/spreadsheets/d/1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E/edit#gid=1524900531'>Google Sheet</a>t within the cbf. This will allow you to identify correct
       soma positions, and then manually fix incorrect somas. for each neuron with an incorrect soma, a potential new soma will be
       suggested based on the DBSCAN clustering result.
   Correct Google sheet is useful when screening large numbers of neurons. Once a large group of neurons has been split into
@@ -222,7 +222,7 @@ otherwise, will search for them based on CBF data in neuprint.</p></td>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>Updates Google Sheet with soma information</p>
+    <p>Updates <a href='https://docs.google.com/spreadsheets/d/1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E/edit#gid=1524900531'>Google Sheet</a> with soma information</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -239,7 +239,7 @@ otherwise, will search for them based on CBF data in neuprint.</p></td>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

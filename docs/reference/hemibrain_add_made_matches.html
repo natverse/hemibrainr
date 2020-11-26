@@ -94,12 +94,6 @@ locations in flywire space, based on CATMAID skids." />
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -114,6 +108,12 @@ locations in flywire space, based on CATMAID skids." />
     </li>
     <li>
       <a href="../articles/google_filestream.html">read data from Google drive</a>
+    </li>
+    <li>
+      <a href="../articles/hemibrain_axons_dendrites.html">axons and dendrites</a>
+    </li>
+    <li>
+      <a href="../articles/hemibrain_connectivity.html">hemibrain connectivity</a>
     </li>
     <li>
       <a href="../articles/match_making.html">neuron match making</a>
@@ -159,6 +159,7 @@ locations in flywire space, based on CATMAID skids.</p>
 
     <pre class="usage"><span class='fu'>flywire_matching_rewrite</span><span class='op'>(</span>
   flywire.ids <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span><span class='op'>(</span><span class='fu'><a href='flywire_neurons.html'>flywire_neurons</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>,
+  meta <span class='op'>=</span> <span class='fu'><a href='flywire_neurons.html'>flywire_neurons</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>[</span>, <span class='op'>]</span>,
   selected_file <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>options</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>$</span><span class='va'>hemibrainr_matching_gsheet</span>,
   <span class='va'>...</span>
 <span class='op'>)</span>
@@ -167,12 +168,14 @@ locations in flywire space, based on CATMAID skids.</p>
   <span class='va'>df</span>,
   direction <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"both"</span>, <span class='st'>"hemibrain-FAFB"</span>, <span class='st'>"FAFB-hemibrain"</span><span class='op'>)</span>,
   User <span class='op'>=</span> <span class='st'>"flyconnectome"</span>,
+  selected_file <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>options</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>$</span><span class='va'>hemibrainr_matching_gsheet</span>,
   <span class='va'>...</span>
 <span class='op'>)</span>
 
 <span class='fu'>hemibrain_matching_add</span><span class='op'>(</span>
-  <span class='va'>ids</span>,
-  dataset <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"hemibrain"</span>, <span class='st'>"FAFB"</span>, <span class='st'>"flywire"</span><span class='op'>)</span>,
+  ids <span class='op'>=</span> <span class='cn'>NULL</span>,
+  meta <span class='op'>=</span> <span class='cn'>NULL</span>,
+  dataset <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"hemibrain"</span>, <span class='st'>"FAFB"</span>, <span class='st'>"CATMAID"</span>, <span class='st'>"flywire"</span>, <span class='st'>"lm"</span><span class='op'>)</span>,
   User <span class='op'>=</span> <span class='va'>dataset</span>,
   selected_file <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>options</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>$</span><span class='va'>hemibrainr_matching_gsheet</span>,
   <span class='va'>...</span>
@@ -184,12 +187,21 @@ locations in flywire space, based on CATMAID skids.</p>
 
 <span class='fu'>fafb_matching_rewrite</span><span class='op'>(</span>
   selected_file <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>options</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>$</span><span class='va'>hemibrainr_matching_gsheet</span>,
+  top.nblast <span class='op'>=</span> <span class='cn'>FALSE</span>,
   <span class='va'>...</span>
 <span class='op'>)</span>
 
 <span class='fu'>hemibrain_matching_rewrite</span><span class='op'>(</span>
+  ids <span class='op'>=</span> <span class='cn'>NULL</span>,
   selected_file <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>options</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>$</span><span class='va'>hemibrainr_matching_gsheet</span>,
+  top.nblast <span class='op'>=</span> <span class='cn'>FALSE</span>,
   <span class='va'>...</span>
+<span class='op'>)</span>
+
+<span class='fu'>flycircuit_matching_rewrite</span><span class='op'>(</span>
+  flycircuit.ids <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span><span class='op'>(</span><span class='fu'><a href='flycircuit_neurons.html'>flycircuit_neurons</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>,
+  meta <span class='op'>=</span> <span class='va'>flycircuit_neurons</span><span class='op'>[</span>, <span class='op'>]</span>,
+  selected_file <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>options</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>$</span><span class='va'>hemibrainr_matching_gsheet</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -198,6 +210,10 @@ locations in flywire space, based on CATMAID skids.</p>
     <tr>
       <th>flywire.ids</th>
       <td><p>flywire IDs to add to Google sheet if not already present.</p></td>
+    </tr>
+    <tr>
+      <th>meta</th>
+      <td><p>meta data for the given flycircuit IDs.</p></td>
     </tr>
     <tr>
       <th>selected_file</th>
@@ -232,6 +248,14 @@ you can use, for example, <code><a href='LR_matching.html'>hemibrain_matching</a
       <th>dataset</th>
       <td><p>the tab to which to add your new information. You are either adding to information related to hemibrain neurons, or FAFB neurons.</p></td>
     </tr>
+    <tr>
+      <th>top.nblast</th>
+      <td><p>logical. Whether or not to also give the top NBLAST match for each entry.</p></td>
+    </tr>
+    <tr>
+      <th>flycircuit.ids</th>
+      <td><p>flycircuit IDs to add to Google sheet if not already present.</p></td>
+    </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
@@ -244,14 +268,14 @@ you can use, for example, <code><a href='LR_matching.html'>hemibrain_matching</a
    Sheet</a></p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='LR_matching.html'>hemibrain_matching</a></code></p></div>
+    <div class='dont-index'><p><code><a href='LR_matching.html'>hemibrain_matching</a></code>, <code><a href='LR_matching.html'>fafb_matching</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
 <span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
 
 <span class='co'># Add a mising FAFB projection neuron, so we can match it later:</span>
-<span class='fu'>hemibrain_matching_add</span><span class='op'>(</span>ids <span class='op'>=</span> <span class='st'>"16"</span>, sheet <span class='op'>=</span> <span class='st'>"FAFB"</span>, User <span class='op'>=</span> <span class='st'>"ASB"</span><span class='op'>)</span>
+<span class='fu'>hemibrain_matching_add</span><span class='op'>(</span>ids <span class='op'>=</span> <span class='st'>"16"</span>, dataset <span class='op'>=</span> <span class='st'>"FAFB"</span>, User <span class='op'>=</span> <span class='st'>"ASB"</span><span class='op'>)</span>
 
 
 <span class='op'>}</span><span class='co'># }</span>
@@ -271,7 +295,7 @@ you can use, for example, <code><a href='LR_matching.html'>hemibrain_matching</a
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

@@ -92,12 +92,6 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -112,6 +106,12 @@
     </li>
     <li>
       <a href="../articles/google_filestream.html">read data from Google drive</a>
+    </li>
+    <li>
+      <a href="../articles/hemibrain_axons_dendrites.html">axons and dendrites</a>
+    </li>
+    <li>
+      <a href="../articles/hemibrain_connectivity.html">hemibrain connectivity</a>
     </li>
     <li>
       <a href="../articles/match_making.html">neuron match making</a>
@@ -155,16 +155,15 @@
 
     <pre class="usage"><span class='fu'>flywire_neurons</span><span class='op'>(</span>
   local <span class='op'>=</span> <span class='cn'>FALSE</span>,
-  brain <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"FlyWire"</span>, <span class='st'>"JRCFIB2018F"</span>, <span class='st'>"JRCFIB2018F"</span>, <span class='st'>"FAFB"</span>, <span class='st'>"JFRC2"</span>, <span class='st'>"JRC2018F"</span>,
-    <span class='st'>"FCWB"</span><span class='op'>)</span>,
+  brain <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"FlyWire"</span>, <span class='st'>"JRCFIB2018Fraw"</span>, <span class='st'>"JRCFIB2018F"</span>, <span class='st'>"FAFB"</span>, <span class='st'>"FAFB14"</span>, <span class='st'>"JFRC2"</span>,
+    <span class='st'>"JFRC2013"</span>, <span class='st'>"JRC2018F"</span>, <span class='st'>"FCWB"</span><span class='op'>)</span>,
   mirror <span class='op'>=</span> <span class='cn'>FALSE</span>,
   <span class='va'>...</span>
 <span class='op'>)</span>
 
 <span class='fu'>flywire_neurons_update</span><span class='op'>(</span>
   <span class='va'>x</span>,
-  brain <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"FlyWire"</span>, <span class='st'>"JRCFIB2018F"</span>, <span class='st'>"JRCFIB2018F"</span>, <span class='st'>"FAFB"</span>, <span class='st'>"JFRC2"</span>, <span class='st'>"JRC2018F"</span>,
-    <span class='st'>"FCWB"</span><span class='op'>)</span>,
+  brain <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"FlyWire"</span>, <span class='st'>"JRCFIB2018F"</span>, <span class='st'>"FAFB"</span>, <span class='st'>"JFRC2"</span>, <span class='st'>"JFRC2013"</span>, <span class='st'>"JRC2018F"</span>, <span class='st'>"FCWB"</span><span class='op'>)</span>,
   mirror <span class='op'>=</span> <span class='cn'>FALSE</span>,
   <span class='va'>...</span>
 <span class='op'>)</span>
@@ -199,7 +198,7 @@
     </tr>
     <tr>
       <th>...</th>
-      <td><p>Additional arguments passed to <code><a href='https://rdrr.io/pkg/nat/man/nlapply.html'>nat::nlapply</a></code>.and/or <code>fafbseg::skeletor</code>.</p></td>
+      <td><p>Additional arguments passed to <code><a href='https://rdrr.io/pkg/nat/man/nlapply.html'>nat::nlapply</a></code>.and/or <code><a href='https://rdrr.io/pkg/fafbseg/man/skeletor.html'>fafbseg::skeletor</a></code>.</p></td>
     </tr>
     <tr>
       <th>x</th>
@@ -238,7 +237,7 @@ you will get:</p>
 <li><p>"hemilineage" An estimated hemilineage identity from both of two naming systems, Ito et al. 2013 and Wong et al. 2013</p></li>
 <li><p>"side" An estimate as to the 'side', i.e. brain hemisphere, in which the neuron lies</p></li>
 <li><p>"skid" The 'skeleton ID' of this neuron's match in CATMAID for FAFBv14</p></li>
-<li><p>"FAFB.xyz" The coordinates in nanometers of a point in the neuron, in FAFBv14 space</p></li>
+<li><p>"FAFB.xyz" The coordinates in nanometres of a point in the neuron, in FAFBv14 space</p></li>
 <li><p>"hemibrain_match" The bodyid of an estimated hemibrain match</p></li>
 </ul>
 
@@ -267,7 +266,7 @@ you will get:</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

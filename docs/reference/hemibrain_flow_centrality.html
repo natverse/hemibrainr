@@ -91,12 +91,6 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -111,6 +105,12 @@
     </li>
     <li>
       <a href="../articles/google_filestream.html">read data from Google drive</a>
+    </li>
+    <li>
+      <a href="../articles/hemibrain_axons_dendrites.html">axons and dendrites</a>
+    </li>
+    <li>
+      <a href="../articles/hemibrain_connectivity.html">hemibrain connectivity</a>
     </li>
     <li>
       <a href="../articles/match_making.html">neuron match making</a>
@@ -155,6 +155,7 @@
   <span class='va'>x</span>,
   splitpoints <span class='op'>=</span> <span class='fu'>hemibrainr</span><span class='fu'>::</span><span class='va'><a href='hemibrain_precomputed_splitpoints.html'>hemibrain_all_splitpoints</a></span>,
   knn <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  calculate <span class='op'>=</span> <span class='cn'>TRUE</span>,
   <span class='va'>...</span>
 <span class='op'>)</span></pre>
 
@@ -185,9 +186,12 @@ space (TRUE) or just use the given point IDs in <code>splitpoints</code> (i.e. i
 have not been resampled or their skeletons otherwise modified).</p></td>
     </tr>
     <tr>
+      <th>calculate</th>
+      <td><p>logical. If <code>TRUE</code> then <code>flow_centrality</code> is called on any given neurons missing from the precomputed <code>splitpoints</code>.</p></td>
+    </tr>
+    <tr>
       <th>...</th>
-      <td><p>Additional arguments passed to methods or eventually to
-<code>nat::<a href='https://rdrr.io/pkg/nat/man/nlapply.html'>nlapply</a></code></p></td>
+      <td><p>methods sent to  <code>flow_centrality</code>.</p></td>
     </tr>
     </table>
 
@@ -254,7 +258,7 @@ have not been resampled or their skeletons otherwise modified).</p></td>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

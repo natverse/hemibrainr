@@ -86,12 +86,6 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -106,6 +100,12 @@
     </li>
     <li>
       <a href="../articles/google_filestream.html">read data from Google drive</a>
+    </li>
+    <li>
+      <a href="../articles/hemibrain_axons_dendrites.html">axons and dendrites</a>
+    </li>
+    <li>
+      <a href="../articles/hemibrain_connectivity.html">hemibrain connectivity</a>
     </li>
     <li>
       <a href="../articles/match_making.html">neuron match making</a>
@@ -308,7 +308,7 @@
         <td>
           <p><code><a href="hemibrain_somas.html">hemibrain_somas</a></code> </p>
         </td>
-        <td><p>Soma locations for hemibrain neurons</p></td>
+        <td><p>Soma / best 'root point' locations for hemibrain neurons</p></td>
       </tr><tr>
         
         <td>
@@ -417,7 +417,7 @@
       </tr><tr>
         
         <td>
-          <p><code><a href="classed.ids.html">rn.ids</a></code> <code><a href="classed.ids.html">orn.ids</a></code> <code><a href="classed.ids.html">hrn.ids</a></code> <code><a href="classed.ids.html">pn.ids</a></code> <code><a href="classed.ids.html">upn.ids</a></code> <code><a href="classed.ids.html">mpn.ids</a></code> <code><a href="classed.ids.html">vppn.ids</a></code> <code><a href="classed.ids.html">dan.ids</a></code> <code><a href="classed.ids.html">mbon.ids</a></code> <code><a href="classed.ids.html">alln.ids</a></code> <code><a href="classed.ids.html">ton.ids</a></code> <code><a href="classed.ids.html">lhn.ids</a></code> <code><a href="classed.ids.html">dn.ids</a></code> <code><a href="classed.ids.html">kc.ids</a></code> <code><a href="classed.ids.html">apl.ids</a></code> <code><a href="classed.ids.html">cent.ids</a></code> <code><a href="classed.ids.html">lc.ids</a></code> </p>
+          <p><code><a href="classed.ids.html">rn.ids</a></code> <code><a href="classed.ids.html">orn.ids</a></code> <code><a href="classed.ids.html">hrn.ids</a></code> <code><a href="classed.ids.html">pn.ids</a></code> <code><a href="classed.ids.html">upn.ids</a></code> <code><a href="classed.ids.html">mpn.ids</a></code> <code><a href="classed.ids.html">vppn.ids</a></code> <code><a href="classed.ids.html">dan.ids</a></code> <code><a href="classed.ids.html">mbon.ids</a></code> <code><a href="classed.ids.html">alln.ids</a></code> <code><a href="classed.ids.html">ton.ids</a></code> <code><a href="classed.ids.html">lhn.ids</a></code> <code><a href="classed.ids.html">dn.ids</a></code> <code><a href="classed.ids.html">kc.ids</a></code> <code><a href="classed.ids.html">apl.ids</a></code> <code><a href="classed.ids.html">cent.ids</a></code> <code><a href="classed.ids.html">lc.ids</a></code> <code><a href="classed.ids.html">kc.ids</a></code> </p>
         </td>
         <td><p>Bodyids for neuron classes</p></td>
       </tr><tr>
@@ -453,7 +453,7 @@
       </tr><tr>
         
         <td>
-          <p><code><a href="info.html">pn.info</a></code> <code><a href="info.html">mbon.info</a></code> <code><a href="info.html">ton.info</a></code> <code><a href="info.html">lc.info</a></code> <code><a href="info.html">alln.info</a></code> </p>
+          <p><code><a href="info.html">pn.info</a></code> <code><a href="info.html">mbon.info</a></code> <code><a href="info.html">ton.info</a></code> <code><a href="info.html">lc.info</a></code> <code><a href="info.html">alln.info</a></code> <code><a href="info.html">kc.info</a></code> <code><a href="info.html">cent.info</a></code> <code><a href="info.html">dn.info</a></code> </p>
         </td>
         <td><p>Meta information of certain neuron classes</p></td>
       </tr>
@@ -603,9 +603,15 @@ al. 2020 (in prep)</p></td>
       <tr>
         
         <td>
-          <p><code><a href="hemibrain_googledrive.html">hemibrain_neuron_bodyids()</a></code> <code><a href="hemibrain_googledrive.html">hemibrain_elist()</a></code> <code><a href="hemibrain_googledrive.html">hemibrain_synapses()</a></code> <code><a href="hemibrain_googledrive.html">hemibrain_connections()</a></code> <code><a href="hemibrain_googledrive.html">hemibrain_nblast()</a></code> <code><a href="hemibrain_googledrive.html">flycircuit_neurons()</a></code> <code><a href="hemibrain_googledrive.html">hemibrain_lm_lhns()</a></code> </p>
+          <p><code><a href="hemibrainr_googledrive_data.html">hemibrain_neuron_bodyids()</a></code> <code><a href="hemibrainr_googledrive_data.html">hemibrain_elist()</a></code> <code><a href="hemibrainr_googledrive_data.html">hemibrain_meta()</a></code> <code><a href="hemibrainr_googledrive_data.html">hemibrain_synapses()</a></code> <code><a href="hemibrainr_googledrive_data.html">hemibrain_connections()</a></code> </p>
         </td>
-        <td><p>Read precomputed information from the hemibrain Google Drive</p></td>
+        <td><p>Read precomputed hemibrain data from the hemibrainr Google Drive</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="hemibrain_nblast.html">hemibrain_nblast()</a></code> </p>
+        </td>
+        <td><p>Read precomputed NBLASTs from the hemibrainr Google Drive</p></td>
       </tr>
     </tbody><tbody>
       <tr>
@@ -625,6 +631,31 @@ al. 2020 (in prep)</p></td>
           <p><code><a href="flywire_neurons.html">flywire_neurons()</a></code> <code><a href="flywire_neurons.html">flywire_neurons_update()</a></code> <code><a href="flywire_neurons.html">flywire_nblast_update()</a></code> <code><a href="flywire_neurons.html">flywire_request()</a></code> </p>
         </td>
         <td><p>Download a large set of well-traced skeletonised neurons from FlyWire</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="flywire_googledrive_data.html">flywire_meta()</a></code> <code><a href="flywire_googledrive_data.html">flywire_contributions()</a></code> <code><a href="flywire_googledrive_data.html">flywire_ids()</a></code> </p>
+        </td>
+        <td><p>Read precomputed flywire data from the hemibrainr Google Drive</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-access-light-level-google-drive-data" class="hasAnchor"><a href="#section-access-light-level-google-drive-data" class="anchor"></a>Access light-level google drive data</h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      
+      
+    </tbody><tbody>
+      
+      
+      <tr>
+        
+        <td>
+          <p><code><a href="flycircuit_neurons.html">flycircuit_neurons()</a></code> <code><a href="flycircuit_neurons.html">lm_lhns()</a></code> </p>
+        </td>
+        <td><p>Read flycircuit neurons from hemibrainr Google Drive</p></td>
       </tr>
     </tbody><tbody>
       <tr>
@@ -641,7 +672,7 @@ al. 2020 (in prep)</p></td>
       <tr>
         
         <td>
-          <p><code><a href="hemibrain_add_made_matches.html">flywire_matching_rewrite()</a></code> <code><a href="hemibrain_add_made_matches.html">hemibrain_add_made_matches()</a></code> <code><a href="hemibrain_add_made_matches.html">hemibrain_matching_add()</a></code> <code><a href="hemibrain_add_made_matches.html">hemibrain_matching_transfers()</a></code> <code><a href="hemibrain_add_made_matches.html">fafb_matching_rewrite()</a></code> <code><a href="hemibrain_add_made_matches.html">hemibrain_matching_rewrite()</a></code> </p>
+          <p><code><a href="hemibrain_add_made_matches.html">flywire_matching_rewrite()</a></code> <code><a href="hemibrain_add_made_matches.html">hemibrain_add_made_matches()</a></code> <code><a href="hemibrain_add_made_matches.html">hemibrain_matching_add()</a></code> <code><a href="hemibrain_add_made_matches.html">hemibrain_matching_transfers()</a></code> <code><a href="hemibrain_add_made_matches.html">fafb_matching_rewrite()</a></code> <code><a href="hemibrain_add_made_matches.html">hemibrain_matching_rewrite()</a></code> <code><a href="hemibrain_add_made_matches.html">flycircuit_matching_rewrite()</a></code> </p>
         </td>
         <td><p>Manage hemibrain-FAFB neuron matches</p></td>
       </tr>
@@ -663,7 +694,7 @@ al. 2020 (in prep)</p></td>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

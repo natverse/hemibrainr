@@ -87,12 +87,6 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -107,6 +101,12 @@
     </li>
     <li>
       <a href="../articles/google_filestream.html">read data from Google drive</a>
+    </li>
+    <li>
+      <a href="../articles/hemibrain_axons_dendrites.html">axons and dendrites</a>
+    </li>
+    <li>
+      <a href="../articles/hemibrain_connectivity.html">hemibrain connectivity</a>
     </li>
     <li>
       <a href="../articles/match_making.html">neuron match making</a>
@@ -204,7 +204,7 @@ have not been resampled or their skeletons otherwise modified).</p></td>
 <span class='co'># Now make sure the neurons have a soma marked</span>
 <span class='co'>## Some hemibrain neurons do not, as the soma was chopped off</span>
 <span class='va'>neurons.checked</span> <span class='op'>=</span> <span class='fu'><a href='hemibrain_skeleton_check.html'>hemibrain_skeleton_check</a></span><span class='op'>(</span><span class='va'>neurons</span>, meshes <span class='op'>=</span> <span class='va'>hemibrain.surf</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'>Re-rooting 2 neurons without a soma</span></div><div class='output co'>#&gt; <span class='message'>Removing synapses outside the hemibrain neuropil volume for 5 neurons</span></div><div class='input'>
+</div><div class='output co'>#&gt; <span class='message'>Re-rooting 2 neurons without a soma</span></div><div class='output co'>#&gt; <span class='message'>Removing synapses outside the hemibrain neuropil volume for 5 neurons</span></div><div class='output co'>#&gt; <span class='warning'>Warning: invalid factor level, NA generated</span></div><div class='output co'>#&gt; <span class='warning'>Warning: invalid factor level, NA generated</span></div><div class='output co'>#&gt; <span class='warning'>Warning: invalid factor level, NA generated</span></div><div class='output co'>#&gt; <span class='warning'>Warning: invalid factor level, NA generated</span></div><div class='output co'>#&gt; <span class='warning'>Warning: invalid factor level, NA generated</span></div><div class='output co'>#&gt; <span class='warning'>Warning: invalid factor level, NA generated</span></div><div class='input'>
 <span class='co'># Split neuron</span>
 <span class='co'>## These are the recommended parameters for hemibrain neurons</span>
 <span class='va'>neurons.flow</span> <span class='op'>=</span> <span class='fu'><a href='flow_centrality.html'>flow_centrality</a></span><span class='op'>(</span><span class='va'>neurons.checked</span>, polypre <span class='op'>=</span> <span class='cn'>TRUE</span>,
@@ -238,7 +238,7 @@ split <span class='op'>=</span> <span class='st'>"distance"</span><span class='o
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

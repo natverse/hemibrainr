@@ -94,12 +94,6 @@ a neuron's axon and dendrite." />
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -114,6 +108,12 @@ a neuron's axon and dendrite." />
     </li>
     <li>
       <a href="../articles/google_filestream.html">read data from Google drive</a>
+    </li>
+    <li>
+      <a href="../articles/hemibrain_axons_dendrites.html">axons and dendrites</a>
+    </li>
+    <li>
+      <a href="../articles/hemibrain_connectivity.html">hemibrain connectivity</a>
     </li>
     <li>
       <a href="../articles/match_making.html">neuron match making</a>
@@ -166,9 +166,9 @@ a neuron's axon and dendrite.</p>
 
     <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
 
-    <p>An object of class <code>data.frame</code> with 22571 rows and 50 columns.</p>
+    <p>An object of class <code>data.frame</code> with 25114 rows and 63 columns.</p>
 <p>An object of class <code>data.frame</code> with 22567 rows and 30 columns.</p>
-<p>An object of class <code>data.frame</code> with 22584 rows and 29 columns.</p>
+<p>An object of class <code>data.frame</code> with 24693 rows and 63 columns.</p>
     <h2 class="hasAnchor" id="source"><a class="anchor" href="#source"></a>Source</h2>
 
     <p><a href='https://elifesciences.org/articles/44590'>https://elifesciences.org/articles/44590</a></p>
@@ -183,76 +183,97 @@ a neuron's axon and dendrite.</p>
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
 <span class='fu'><a href='https://rdrr.io/pkg/nat/man/neuronlist-dataframe-methods.html'>head</a></span><span class='op'>(</span><span class='va'>hemibrain_metrics</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;                bodyid pre post status    statusLabel cropped
-#&gt; 202916528   202916528  95  422 Traced Roughly traced   FALSE
-#&gt; 1279775082 1279775082  24  140 Traced Roughly traced   FALSE
-#&gt; 203253072   203253072  62  352 Traced Roughly traced   FALSE
-#&gt; 326530038   326530038 383 3030 Traced Roughly traced   FALSE
-#&gt; 203253253   203253253 402 2675 Traced Roughly traced   FALSE
-#&gt; 5813079341 5813079341  37  260 Traced Roughly traced   FALSE
-#&gt;                           name              type cellBodyFiber     voxels soma
-#&gt; 202916528          FQ12_b_C4_R            FQ12_b         PDM03  235510665 TRUE
-#&gt; 1279775082     FQ12_a(AB)_C1_R            FQ12_a         PDM04  123003453 TRUE
-#&gt; 203253072          FQ12_a_C3_R            FQ12_a         PDM03  153162662 TRUE
-#&gt; 326530038  PDM22c_pct(PDM22)_R        PDM22c_pct          iPB7 1683764851 TRUE
-#&gt; 203253253            (PDM09)_L unknown_203253253          &lt;NA&gt; 1735663327 TRUE
-#&gt; 5813079341         FQ12_a_C7_R            FQ12_a         PDM01  157723613 TRUE
-#&gt;            total.outputs total.inputs axon.outputs dend.outputs axon.inputs
-#&gt; 202916528              0            0            0            0           0
-#&gt; 1279775082             0            0            0            0           0
-#&gt; 203253072              0            0            0            0           0
-#&gt; 326530038              0            0            0            0           0
-#&gt; 203253253              0            0            0            0           0
-#&gt; 5813079341             0            0            0            0           0
-#&gt;            dend.inputs total.outputs.density total.inputs.density
-#&gt; 202916528            0                     0                    0
-#&gt; 1279775082           0                     0                    0
-#&gt; 203253072            0                     0                    0
-#&gt; 326530038            0                     0                    0
-#&gt; 203253253            0                     0                    0
-#&gt; 5813079341           0                     0                    0
-#&gt;            axon.outputs.density dend.outputs.density axon.inputs.density
-#&gt; 202916528                     0                    0                   0
-#&gt; 1279775082                    0                    0                   0
-#&gt; 203253072                     0                    0                   0
-#&gt; 326530038                     0                    0                   0
-#&gt; 203253253                     0                    0                   0
-#&gt; 5813079341                    0                    0                   0
-#&gt;            dend.inputs.density total.length axon.length dend.length pd.length
-#&gt; 202916528                    0    1112.3618    266.6821    597.8835  115.2070
-#&gt; 1279775082                   0     665.5844    142.4987    215.3377  131.9537
-#&gt; 203253072                    0     872.0359    153.1920    398.8624  185.3908
-#&gt; 326530038                    0    5862.5848   2405.8263   3137.6304  181.9760
-#&gt; 203253253                    0    5446.3040   2032.0275   3135.4174  141.6915
-#&gt; 5813079341                   0     858.6868    199.9989    380.2688  117.9344
-#&gt;            segregation_index overlap_locality position point     X     Y     Z
-#&gt; 202916528         0.76090559               NA        2  root 20075 12279 12198
-#&gt; 1279775082        0.59005623               NA      872  root 16943  9152 18425
-#&gt; 203253072         0.45279400               NA      802  root 17776 10196 14204
-#&gt; 326530038         0.08404521               NA    12181  root 19205 12326 13177
-#&gt; 203253253         0.19753908     3.104936e-01     5768  root 32091 13789 13339
-#&gt; 5813079341        0.61201577     1.020000e-10      761  root 22754 17806  7185
-#&gt;            soma.edit   cut truncated manual_edit splittable skeletonization
-#&gt; 202916528      FALSE FALSE     FALSE       FALSE       TRUE            good
-#&gt; 1279775082     FALSE FALSE     FALSE       FALSE       TRUE            good
-#&gt; 203253072      FALSE FALSE     FALSE       FALSE       TRUE            good
-#&gt; 326530038      FALSE FALSE     FALSE       FALSE       TRUE            good
-#&gt; 203253253      FALSE FALSE     FALSE       FALSE       TRUE            good
-#&gt; 5813079341     FALSE FALSE     FALSE       FALSE       TRUE            good
-#&gt;            checked          user             time note priority edited.cable
-#&gt; 202916528        0 flyconnectome 1587120331.87611 none        0            0
-#&gt; 1279775082       0 flyconnectome 1587120331.87611 none        0            0
-#&gt; 203253072        0 flyconnectome 1587120331.87611 none        0            0
-#&gt; 326530038        0 flyconnectome 1587120331.87611 none        0            0
-#&gt; 203253253        0 flyconnectome 1587120331.87611 none        0            0
-#&gt; 5813079341       0 flyconnectome 1587120331.87611 none        0            0
-#&gt;            orig.soma orig.cut soma.checked   cbf
-#&gt; 202916528       TRUE    FALSE         TRUE PDM03
-#&gt; 1279775082      TRUE    FALSE         TRUE PDM04
-#&gt; 203253072       TRUE    FALSE         TRUE PDM03
-#&gt; 326530038       TRUE    FALSE         TRUE PDM22
-#&gt; 203253253       TRUE    FALSE         TRUE PDM09
-#&gt; 5813079341      TRUE    FALSE         TRUE PDM01</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/hist.html'>hist</a></span><span class='op'>(</span><span class='va'>hemibrain_metrics</span><span class='op'>$</span><span class='va'>overlap_locality</span>,breaks <span class='op'>=</span> <span class='fl'>1000</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;            cellBodyFiber     bodyid pre post upstream downstream status
+#&gt; 5812980768         PDL03 5812980768 233  411      411        742 Traced
+#&gt; 480918798          PDL13  480918798 103  114      114        959 Traced
+#&gt; 599674785          PDL02  599674785 219  646      646        710 Traced
+#&gt; 358424052          AVM10  358424052 339 1017     1017       1804 Traced
+#&gt; 326530038          PDM22  326530038 392 4143     4143       2972 Traced
+#&gt; 203594175          PDM03  203594175  57  343      343        380 Traced
+#&gt;               statusLabel cropped                name         type     voxels
+#&gt; 5812980768 Roughly traced   FALSE            KCab-s_R      KCab-sc  168076566
+#&gt; 480918798  Roughly traced   FALSE         LHPD3a4_c_R PDL13f_c_pct  200996180
+#&gt; 599674785  Roughly traced   FALSE            KCab-m_R      KCab-sc  297379383
+#&gt; 358424052  Roughly traced   FALSE              FB8G_L         FB7H  471990409
+#&gt; 326530038  Roughly traced   FALSE            SMP505_R   PDM22c_pct 1760593458
+#&gt; 203594175  Roughly traced   FALSE FS4A(AB)(FQ12)_C4_R       FQ12_a  155191393
+#&gt;                  notes  soma ItoLee_Lineage ItoLee_Hemilineage
+#&gt; 5812980768        &lt;NA&gt; FALSE           MBp3               MBp3
+#&gt; 480918798         &lt;NA&gt;  TRUE           LHd2               LHd2
+#&gt; 599674785         &lt;NA&gt;  TRUE           MBp2               MBp2
+#&gt; 358424052  SMPSIPFB8_2 FALSE         AOTUv4     AOTUv4_ventral
+#&gt; 326530038         &lt;NA&gt;  TRUE            DM3                DM3
+#&gt; 203594175   FB3,8ABSMP  TRUE            DM3                DM3
+#&gt;            Hartenstein_Lineage Hartenstein_Hemilineage
+#&gt; 5812980768                MBp3                    MBp3
+#&gt; 480918798                DPLm2                   DPLm2
+#&gt; 599674785                 MBp2                    MBp2
+#&gt; 358424052               DALcl2          DALcl2_ventral
+#&gt; 326530038               DPMpm2                  DPMpm2
+#&gt; 203594175               DPMpm2                  DPMpm2
+#&gt;            putative.classic.transmitter putative.other.transmitter FAFB.match
+#&gt; 5812980768                acetylcholine                    unknown       none
+#&gt; 480918798                     glutamate                    unknown    3136002
+#&gt; 599674785                 acetylcholine                    unknown       none
+#&gt; 358424052                       unknown                    unknown       none
+#&gt; 326530038                       unknown                    unknown       none
+#&gt; 203594175                       unknown                    unknown       none
+#&gt;            FAFB.match.quality    layer ct.layer overlap_locality position point
+#&gt; 5812980768               none 4.963892        3               NA      684  root
+#&gt; 480918798                good 3.032000        3               NA        7  root
+#&gt; 599674785                none 3.409919        3               NA     1921  root
+#&gt; 358424052                none 6.718847        7         2.47e-32      328  root
+#&gt; 326530038                none 5.909853        6               NA    12181  root
+#&gt; 203594175                none 6.468041        6               NA     1405  root
+#&gt;                X     Y     Z soma.edit   cut truncated manual_edit splittable
+#&gt; 5812980768 10372 12128 12116     FALSE FALSE     FALSE       FALSE       TRUE
+#&gt; 480918798   8416 22008  4650     FALSE FALSE     FALSE        TRUE       TRUE
+#&gt; 599674785  11448 13554  9230     FALSE FALSE     FALSE       FALSE       TRUE
+#&gt; 358424052  29797 31023 23871     FALSE FALSE     FALSE       FALSE       TRUE
+#&gt; 326530038  19205 12326 13177     FALSE FALSE     FALSE       FALSE       TRUE
+#&gt; 203594175  18571 12005 12002     FALSE FALSE     FALSE       FALSE       TRUE
+#&gt;            skeletonization checked          user             time note priority
+#&gt; 5812980768            good       0 flyconnectome 1587120331.87611 none        0
+#&gt; 480918798     major errors       1            IT       1596121300 none        3
+#&gt; 599674785             good       1            JH       1591330875 none        2
+#&gt; 358424052             good       0 flyconnectome 1587120331.87611 none        0
+#&gt; 326530038             good       0 flyconnectome 1587120331.87611 none        0
+#&gt; 203594175             good       0 flyconnectome 1587120331.87611 none        0
+#&gt;            edited.cable orig.soma orig.cut soma.checked     cbf total.outputs
+#&gt; 5812980768            0     FALSE    FALSE         TRUE   PDL03           737
+#&gt; 480918798             0      TRUE    FALSE         TRUE   PDL13           959
+#&gt; 599674785             0      TRUE    FALSE         TRUE   PDL02           710
+#&gt; 358424052             0     FALSE    FALSE         TRUE unknown          1800
+#&gt; 326530038             0      TRUE    FALSE         TRUE   PDM22          2972
+#&gt; 203594175             0      TRUE    FALSE         TRUE   PDM03           380
+#&gt;            total.inputs axon.outputs dend.outputs axon.inputs dend.inputs
+#&gt; 5812980768          411          231          286         117         175
+#&gt; 480918798           112          912           27          83          29
+#&gt; 599674785           645          519           58         402         153
+#&gt; 358424052          1008         1673          120         846         157
+#&gt; 326530038          4122         2264          704        1660        2415
+#&gt; 203594175           342          307           45          31         289
+#&gt;            total.outputs.density total.inputs.density axon.outputs.density
+#&gt; 5812980768             1.1657676            0.6501092            1.9553200
+#&gt; 480918798              1.0857725            0.1268055            2.5803720
+#&gt; 599674785              0.7475305            0.6790946            1.5012897
+#&gt; 358424052              0.9851495            0.5516837            1.7191172
+#&gt; 326530038              0.3981166            0.5521657            0.8698357
+#&gt; 203594175              0.4307125            0.3876412            2.1063067
+#&gt;            dend.outputs.density axon.inputs.density dend.inputs.density
+#&gt; 5812980768            1.2005536           0.9903569           0.7346045
+#&gt; 480918798             0.1912590           0.2348365           0.2054263
+#&gt; 599674785             0.2494194           1.1628487           0.6579513
+#&gt; 358424052             0.2488725           0.8693205           0.3256081
+#&gt; 326530038             0.1983176           0.6377771           0.6803083
+#&gt; 203594175             0.1386399           0.2126890           0.8903761
+#&gt;            total.length axon.length dend.length pd.length segregation_index
+#&gt; 5812980768     632.2015    118.1392    238.2234  35.60497       0.001535072
+#&gt; 480918798      883.2421    353.4374    141.1698  25.92909       0.090286543
+#&gt; 599674785      949.7940    345.7028    232.5400 238.69601       0.037495571
+#&gt; 358424052     1827.1338    973.1739    482.1747 110.84933       0.015147438
+#&gt; 326530038     7465.1498   2602.7904   3549.8610 182.18083       0.095015986
+#&gt; 203594175      882.2591    145.7528    324.5819 186.84728       0.493331090</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/hist.html'>hist</a></span><span class='op'>(</span><span class='va'>hemibrain_metrics</span><span class='op'>$</span><span class='va'>overlap_locality</span>,breaks <span class='op'>=</span> <span class='fl'>1000</span><span class='op'>)</span>
 </div><div class='img'><img src='hemibrain_metrics-1.png' alt='' width='700' height='433' /></div><div class='input'><span class='co'># }</span>
 </div></pre>
   </div>
@@ -270,7 +291,7 @@ a neuron's axon and dendrite.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

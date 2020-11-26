@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Extract axonic/dendritic points/cable from a neuron/neuronlist — axonic_points • hemibrainr</title>
+<title>Read precomputed flywire data from the hemibrainr Google Drive — flywire_googledrive_data • hemibrainr</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,8 +46,13 @@
 
 
 
-<meta property="og:title" content="Extract axonic/dendritic points/cable from a neuron/neuronlist — axonic_points" />
-<meta property="og:description" content="Extract axonic/dendritic/mixed/primary dendrite points/endpoints/cable from a neuron/neuronlist object" />
+<meta property="og:title" content="Read precomputed flywire data from the hemibrainr Google Drive — flywire_googledrive_data" />
+<meta property="og:description" content="Read precomputed data available on the hemibrain Google Team
+  Drive. (see hemibrainr_set_drive) and (see
+  hemibrainr_rclone). This includes body IDs for all flywire
+  neurons ((flywire_ids)), and user contributions towards their
+  creation (flywire_contributions), as well as Flywire related NBLAST
+  scores retrieved using hemibrain_nblast." />
 <meta property="og:image" content="/logo.svg" />
 
 
@@ -134,70 +139,95 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Extract axonic/dendritic points/cable from a neuron/neuronlist</h1>
-    <small class="dont-index">Source: <a href='https://github.com/flyconnectome/hemibrainr/blob/master/R/hemibrain_cable.R'><code>R/hemibrain_cable.R</code></a></small>
-    <div class="hidden name"><code>extract_cable.Rd</code></div>
+    <h1>Read precomputed flywire data from the hemibrainr Google Drive</h1>
+    <small class="dont-index">Source: <a href='https://github.com/flyconnectome/hemibrainr/blob/master/R/flywire_googledrive.R'><code>R/flywire_googledrive.R</code></a></small>
+    <div class="hidden name"><code>flywire_googledrive_data.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Extract axonic/dendritic/mixed/primary dendrite points/endpoints/cable from a neuron/neuronlist object</p>
+    <p>Read precomputed data available on the hemibrain Google Team
+  Drive. (see <code><a href='hemibrainr_set_drive.html'>hemibrainr_set_drive</a></code>) and (see
+  <code><a href='hemibrainr_set_drive.html'>hemibrainr_rclone</a></code>). This includes body IDs for all flywire
+  neurons ((<code>flywire_ids</code>)), and user contributions towards their
+  creation (<code>flywire_contributions</code>), as well as Flywire related NBLAST
+  scores retrieved using <code><a href='hemibrain_nblast.html'>hemibrain_nblast</a></code>.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>axonic_points</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
+    <pre class="usage"><span class='fu'>flywire_meta</span><span class='op'>(</span>local <span class='op'>=</span> <span class='cn'>FALSE</span>, folder <span class='op'>=</span> <span class='st'>"flywire_neurons/"</span>, sql <span class='op'>=</span> <span class='cn'>TRUE</span>, <span class='va'>...</span><span class='op'>)</span>
 
-<span class='fu'>dendritic_points</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
+<span class='fu'>flywire_contributions</span><span class='op'>(</span>
+  local <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  folder <span class='op'>=</span> <span class='st'>"flywire_neurons/"</span>,
+  sql <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span>
 
-<span class='fu'>mixed_points</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
-
-<span class='fu'>primary_dendrite_points</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
-
-<span class='fu'>primary_neurite_points</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
-
-<span class='fu'>axonal_endings</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
-
-<span class='fu'>dendritic_endings</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
-
-<span class='fu'>axonic_endings</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
-
-<span class='fu'>primary_dendrite_endings</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
-
-<span class='fu'>primary_neurite_endings</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
-
-<span class='fu'>axonic_cable</span><span class='op'>(</span><span class='va'>x</span>, mixed <span class='op'>=</span> <span class='cn'>FALSE</span>, <span class='va'>...</span><span class='op'>)</span>
-
-<span class='fu'>dendritic_cable</span><span class='op'>(</span><span class='va'>x</span>, mixed <span class='op'>=</span> <span class='cn'>FALSE</span>, <span class='va'>...</span><span class='op'>)</span>
-
-<span class='fu'>arbour_cable</span><span class='op'>(</span><span class='va'>x</span>, mixed <span class='op'>=</span> <span class='cn'>FALSE</span>, <span class='va'>...</span><span class='op'>)</span>
-
-<span class='fu'>unsure_cable</span><span class='op'>(</span><span class='va'>x</span>, mixed <span class='op'>=</span> <span class='cn'>FALSE</span>, <span class='va'>...</span><span class='op'>)</span>
-
-<span class='fu'>primary_dendrite_cable</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
-
-<span class='fu'>primary_neurite_cable</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
-
-<span class='fu'>tract_cable</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span></pre>
+<span class='fu'>flywire_ids</span><span class='op'>(</span>local <span class='op'>=</span> <span class='cn'>FALSE</span>, folder <span class='op'>=</span> <span class='st'>"flywire_neurons/"</span>, sql <span class='op'>=</span> <span class='cn'>TRUE</span>, <span class='va'>...</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>x</th>
-      <td><p>a neuron/neuronlist object that has its axons/dendrites labelled in swc format in its neuron$d dataframes</p></td>
+      <th>local</th>
+      <td><p><code>FALSE</code> or path. By default (<code>FALSE</code>) data is read from <code>options()$Drive_hemibrain_data</code>),
+but the user can specify an alternative path.</p></td>
+    </tr>
+    <tr>
+      <th>folder</th>
+      <td><p>A subfolder on the hemibrain team drive or your local data folder
+containing the data object to read.</p></td>
+    </tr>
+    <tr>
+      <th>sql</th>
+      <td><p>logical. Whether not to read the desired data from an <code>SQL</code> database. This can save you from having to load
+a lot of information into memory, and it works well with <code>dplyr</code> pipes. If <code>FALSE</code> the relevant <code>.csv</code> is read from
+the connected google drive (see <code><a href='hemibrainr_set_drive.html'>hemibrainr_set_drive</a></code>) and (see <code><a href='hemibrainr_set_drive.html'>hemibrainr_rclone</a></code>) and loaded into memory,
+which can take some time.</p></td>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>additional arguments passed to methods</p></td>
-    </tr>
-    <tr>
-      <th>mixed</th>
-      <td><p>whether or not to include points assigned as uncertain or mixed polarity cable</p></td>
+      <td><p>if <code>sql=TRUE</code>, methods passed to <code><a href='https://dplyr.tidyverse.org/reference/tbl.html'>dplyr::tbl</a></code>.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>a matrix of 3D points</p>
+    <p>a <code>data.frame</code>. Depending on which synapse function was called, it can contain the columns:</p>
+<ul>
+<li><p>"flywire.xyz"  - coordinates of a point in the neuron in flywire voxel space. XYZ, separated by a semicolon.</p></li>
+<li><p>"flywire.id" - the unique ID associated with this flywire neuron. This ID changes every time a neuron is, even slightly, modified. So it is an unstable identifier.
+  This is why <code>flywire.xyz</code> is sometimes used.</p></li>
+<li><p>"fw.x" - the x coordinate of a point in the flywire neuron, in flywire voxel space..</p></li>
+<li><p>"fw.y" - the y coordinate of a point in the flywire neuron, in flywire voxel space..</p></li>
+<li><p>"fw.z" - the z coordinate of a point in the flywire neuron, in flywire voxel space..</p></li>
+<li><p>"user_name" - the name of the user who made the number of edits given in this row.</p></li>
+<li><p>"edits" - the number of edits (merges, splits, etc.) made by a user for the given <code>flywire.id</code>.</p></li>
+<li><p>"proportion" - the proportion of total edits for this neuron, that the given user made.</p></li>
+<li><p>"dataset" - the dataset this neuron is from, i.e. flywire.</p></li>
+</ul>
 
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p><code><a href='hemibrain_splitpoints.html'>hemibrain_splitpoints</a></code>,
+  <code><a href='hemibrain_flow_centrality.html'>hemibrain_flow_centrality</a></code>,
+  <code><a href='hemibrainr_googledrive_data.html'>hemibrainr_googledrive_data</a></code>,
+  <code><a href='hemibrain_metrics.html'>hemibrain_metrics</a></code></p></div>
+
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
+<span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
+
+<span class='co'># All flywire IDs for neurons that have a split precomputed</span>
+<span class='va'>fw.ids</span> <span class='op'>=</span> <span class='fu'>flywire_ids</span><span class='op'>(</span><span class='op'>)</span>
+
+<span class='co'># For these flywire IDs, their meya data:</span>
+<span class='va'>fw.meta</span> <span class='op'>=</span> <span class='fu'>flywire_meta</span><span class='op'>(</span><span class='op'>)</span>
+
+<span class='co'># For flywire IDs, which users contributed what:</span>
+<span class='va'>fw.edits</span> <span class='op'>=</span> <span class='fu'>flywire_contributions</span><span class='op'>(</span><span class='op'>)</span>
+
+<span class='op'>}</span><span class='co'># }</span>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

@@ -91,12 +91,6 @@ space (as they are stored in neuPrint) to microns." />
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -111,6 +105,12 @@ space (as they are stored in neuPrint) to microns." />
     </li>
     <li>
       <a href="../articles/google_filestream.html">read data from Google drive</a>
+    </li>
+    <li>
+      <a href="../articles/hemibrain_axons_dendrites.html">axons and dendrites</a>
+    </li>
+    <li>
+      <a href="../articles/hemibrain_connectivity.html">hemibrain connectivity</a>
     </li>
     <li>
       <a href="../articles/match_making.html">neuron match making</a>
@@ -156,6 +156,7 @@ space (as they are stored in neuPrint) to microns.</p>
   local <span class='op'>=</span> <span class='cn'>FALSE</span>,
   microns <span class='op'>=</span> <span class='cn'>FALSE</span>,
   reroot <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  remote <span class='op'>=</span> <span class='cn'>TRUE</span>,
   googlesheet <span class='op'>=</span> <span class='cn'>FALSE</span>,
   remove.bad.synapses <span class='op'>=</span> <span class='cn'>FALSE</span>,
   clean <span class='op'>=</span> <span class='cn'>FALSE</span>,
@@ -191,6 +192,10 @@ space (as they are stored in neuPrint) to microns.</p>
       <th>reroot</th>
       <td><p>logical, whether or not somas should be re-rooted.
 Note that if FALSE, re-rooting occurs anyway via <code>hemibrain_flow_centrality</code>. However, setting this argument to <code>TRUE</code></p></td>
+    </tr>
+    <tr>
+      <th>remote</th>
+      <td><p>logical. Whether not to use <code>hemibrain_neurons</code> to try  to read neurons stored on the hemibrainr google drive, and mounted with either rclone or google filestream.</p></td>
     </tr>
     <tr>
       <th>googlesheet</th>
@@ -283,7 +288,7 @@ by default the mounted Google drive (<code>options()$Gdrive_hemibrain_data</code
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

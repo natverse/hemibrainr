@@ -93,12 +93,6 @@ neurons the soma should be located in a cortex outside of the neuropil proper." 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -113,6 +107,12 @@ neurons the soma should be located in a cortex outside of the neuropil proper." 
     </li>
     <li>
       <a href="../articles/google_filestream.html">read data from Google drive</a>
+    </li>
+    <li>
+      <a href="../articles/hemibrain_axons_dendrites.html">axons and dendrites</a>
+    </li>
+    <li>
+      <a href="../articles/hemibrain_connectivity.html">hemibrain connectivity</a>
     </li>
     <li>
       <a href="../articles/match_making.html">neuron match making</a>
@@ -215,14 +215,17 @@ from the hemibrain Google team drive overseen by the Drosophila Connectomics gro
 <span class='va'>neurons</span> <span class='op'>=</span> <span class='fu'>hemibrain_reroot</span><span class='op'>(</span><span class='va'>neurons.bs</span>, meshes <span class='op'>=</span> <span class='va'>hemibrain.surf</span><span class='op'>)</span>
 
 <span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
-<span class='co'># Let's check that this worked</span>
+<span class='co'># Let's check that this worked. Old root in red, new in green</span>
 <span class='fu'>nat</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/nat/man/nopen3d.html'>nopen3d</a></span><span class='op'>(</span><span class='op'>)</span>
-<span class='kw'>for</span><span class='op'>(</span><span class='va'>n</span> <span class='kw'>in</span> <span class='va'>neurons</span><span class='op'>)</span><span class='op'>{</span>
+<span class='kw'>for</span><span class='op'>(</span><span class='va'>i</span> <span class='kw'>in</span> <span class='fl'>1</span><span class='op'>:</span><span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span><span class='op'>(</span><span class='va'>neurons</span><span class='op'>)</span><span class='op'>)</span><span class='op'>{</span>
+     <span class='va'>n</span> <span class='op'>=</span> <span class='va'>neurons</span><span class='op'>[[</span><span class='va'>i</span><span class='op'>]</span><span class='op'>]</span>
+     <span class='va'>bs</span> <span class='op'>=</span> <span class='va'>neurons.bs</span><span class='op'>[[</span><span class='va'>i</span><span class='op'>]</span><span class='op'>]</span>
      <span class='fu'>clear3d</span><span class='op'>(</span><span class='op'>)</span>;
      <span class='fu'><a href='https://rdrr.io/r/base/message.html'>message</a></span><span class='op'>(</span><span class='va'>n</span><span class='op'>$</span><span class='va'>bodyid</span><span class='op'>)</span>
      <span class='fu'><a href='https://rdrr.io/pkg/nat/man/plot3d.html'>plot3d</a></span><span class='op'>(</span><span class='va'>n</span>,col<span class='op'>=</span><span class='st'>"brown"</span>,lwd<span class='op'>=</span><span class='fl'>2</span><span class='op'>)</span>
      <span class='fu'>points3d</span><span class='op'>(</span><span class='fu'>nat</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/nat/man/xyzmatrix.html'>xyzmatrix</a></span><span class='op'>(</span><span class='va'>n</span><span class='op'>$</span><span class='va'>connectors</span><span class='op'>)</span>,col<span class='op'>=</span><span class='st'>"black"</span><span class='op'>)</span>
-     <span class='fu'>spheres3d</span><span class='op'>(</span><span class='fu'>nat</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/nat/man/xyzmatrix.html'>xyzmatrix</a></span><span class='op'>(</span><span class='va'>n</span><span class='op'>)</span><span class='op'>[</span><span class='fu'>nat</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/nat/man/rootpoints.html'>rootpoints</a></span><span class='op'>(</span><span class='va'>n</span><span class='op'>)</span>,<span class='op'>]</span>,radius<span class='op'>=</span><span class='fl'>500</span>, alpha<span class='op'>=</span><span class='fl'>0.5</span><span class='op'>)</span>
+     <span class='fu'>spheres3d</span><span class='op'>(</span><span class='fu'>nat</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/nat/man/xyzmatrix.html'>xyzmatrix</a></span><span class='op'>(</span><span class='va'>n</span><span class='op'>)</span><span class='op'>[</span><span class='fu'>nat</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/nat/man/rootpoints.html'>rootpoints</a></span><span class='op'>(</span><span class='va'>n</span><span class='op'>)</span>,<span class='op'>]</span>,radius<span class='op'>=</span><span class='fl'>500</span>, alpha<span class='op'>=</span><span class='fl'>0.5</span>, col <span class='op'>=</span> <span class='st'>"green"</span><span class='op'>)</span>
+     <span class='fu'>spheres3d</span><span class='op'>(</span><span class='fu'>nat</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/nat/man/xyzmatrix.html'>xyzmatrix</a></span><span class='op'>(</span><span class='va'>bs</span><span class='op'>)</span><span class='op'>[</span><span class='fu'>nat</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/nat/man/rootpoints.html'>rootpoints</a></span><span class='op'>(</span><span class='va'>bs</span><span class='op'>)</span>,<span class='op'>]</span>,radius<span class='op'>=</span><span class='fl'>500</span>, alpha<span class='op'>=</span><span class='fl'>0.5</span>, col <span class='op'>=</span> <span class='st'>"red"</span><span class='op'>)</span>
      <span class='va'>p</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/readline.html'>readline</a></span><span class='op'>(</span><span class='st'>"Done? "</span><span class='op'>)</span>
 <span class='op'>}</span>
 <span class='op'>}</span><span class='co'># }</span>
@@ -242,7 +245,7 @@ from the hemibrain Google team drive overseen by the Drosophila Connectomics gro
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

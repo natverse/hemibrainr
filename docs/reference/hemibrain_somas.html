@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Soma locations for hemibrain neurons — hemibrain_somas • hemibrainr</title>
+<title>Soma / best 'root point' locations for hemibrain neurons — hemibrain_somas • hemibrainr</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,12 +46,13 @@
 
 
 
-<meta property="og:title" content="Soma locations for hemibrain neurons — hemibrain_somas" />
+<meta property="og:title" content="Soma / best 'root point' locations for hemibrain neurons — hemibrain_somas" />
 <meta property="og:description" content="Somas have been manually tagged by the FlyEM project.
 However, in some cases the roots are wrong, or somas are outside of the volume. The Fly Connectome team at the University of Cambridge has
-manually tagged better root points for these neurons. Soma locations, updated by this work, as saved as hemibrain_somas in this package.
+manually tagged better root points for these neurons. Soma locations, updated by this work, and saved as hemibrain_somas in this package.
 A user can read somas from here, or get a bleeding edge version from
-the Google Sheet." />
+the Google Sheet. This information is used
+by hemibrain_read_neurons to re-root hemibrain neurons read from neuprint." />
 <meta property="og:image" content="/logo.svg" />
 
 
@@ -91,12 +92,6 @@ the Google Sheet." />
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -111,6 +106,12 @@ the Google Sheet." />
     </li>
     <li>
       <a href="../articles/google_filestream.html">read data from Google drive</a>
+    </li>
+    <li>
+      <a href="../articles/hemibrain_axons_dendrites.html">axons and dendrites</a>
+    </li>
+    <li>
+      <a href="../articles/hemibrain_connectivity.html">hemibrain connectivity</a>
     </li>
     <li>
       <a href="../articles/match_making.html">neuron match making</a>
@@ -138,7 +139,7 @@ the Google Sheet." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Soma locations for hemibrain neurons</h1>
+    <h1>Soma / best 'root point' locations for hemibrain neurons</h1>
     <small class="dont-index">Source: <a href='https://github.com/flyconnectome/hemibrainr/blob/master/R/hemibrain_data.R'><code>R/hemibrain_data.R</code></a></small>
     <div class="hidden name"><code>hemibrain_somas.Rd</code></div>
     </div>
@@ -146,9 +147,10 @@ the Google Sheet." />
     <div class="ref-description">
     <p>Somas have been manually tagged by the FlyEM project.
 However, in some cases the roots are wrong, or somas are outside of the volume. The Fly Connectome team at the University of Cambridge has
-manually tagged better root points for these neurons. Soma locations, updated by this work, as saved as <code>hemibrain_somas</code> in this package.
+manually tagged better root points for these neurons. Soma locations, updated by this work, and saved as <code>hemibrain_somas</code> in this package.
 A user can read somas from here, or get a bleeding edge version from
-the <a href='https://docs.google.com/spreadsheets/d/1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E/edit#gid=1524900531'>Google Sheet</a>.</p>
+the <a href='https://docs.google.com/spreadsheets/d/1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E/edit#gid=1524900531'>Google Sheet</a>. This information is used
+by <code><a href='hemibrain_read_neurons.html'>hemibrain_read_neurons</a></code> to re-root hemibrain neurons read from neuprint.</p>
     </div>
 
     <pre class="usage"><span class='va'>hemibrain_somas</span></pre>
@@ -156,7 +158,40 @@ the <a href='https://docs.google.com/spreadsheets/d/1YjkVjokXL4p4Q6BR-rGGGKWecXU
 
     <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
 
-    <p>An object of class <code>data.frame</code> with 22560 rows and 13 columns.</p>
+    <p>An object of class <code>data.frame</code> with 22560 rows and 9 columns.</p>
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>a <code>data.frame</code> with the 'best case' root points for each large hemibrain neuron. This is typically the soma, where one has been tagged by the FlyEM project.
+However, for many neurons their soma has been truncated and a leaf node on the cell body fiber has been chosen. The columns to this <code>data.frame</code> denote:</p><ul>
+<li><p>"bodyid"  - the unique body ID identifier for a neuron.</p></li>
+<li><p>"position" - the node ID of the rootpoint. This is
+  for the skeleton associated with <code>bodyid</code>, as read from neuPrint.</p></li>
+<li><p>"X" - x coordinate for the root point.</p></li>
+<li><p>"Y" - y coordinate for the root point.</p></li>
+<li><p>"Z" - z coordinate for the root point.</p></li>
+<li><p>"soma.edit" - logical. If the soma is 300 voxels away from the soma/root for the naive neuprint skeleton,
+  we consider the soma to have been 'edited' for the better.
+  I.e. these are the somas that were fixed by
+  Cambridge Drosophila Connectomics using <code><a href='hemibrain_adjust_saved_somas.html'>hemibrain_adjust_saved_somas</a></code>.</p></li>
+<li><p>"fixed" - notes if there was a problem identifying the soma, eg, is the neuron only a fragment, or just the tract to the soma is visible.</p></li>
+<li><p>"cellBodyFiber" - The cell body fiber for a neuron, as read from neuPrint and annotated by a team under <a href='https://www.janelia.org/people/kei-ito'>Kei Ito</a>.
+  Where the cell body fiber is unknown, possible because it is an older neuron born in the embryo, course clustering was done to group them into loose groups.
+  Here, <code>"unknown_number"</code> denotes the cluster.</p></li>
+</ul>
+
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>An interactive root point fixing pipeline <code><a href='hemibrain_adjust_saved_somas.html'>hemibrain_adjust_saved_somas</a></code> was used to identify correct and
+incorrect soma positions within a group. Specifically, the DBSCAN algorithm is used. All neurons within the hemibrain data set
+are either grouped by their CBF, or, when no CBF annotation is available, an all by all NBLAST clustering was done for neurons without a
+CBF and this was used to group neurons into similar morphological groups. DBSCAN within one of these groups then clusters the positions of the somas,
+returning one or more clusters of actual soma positions, and a cluster of ‘noise’ positions which do not fit any cluster.
+The user can then choose to manually fix either the noise somas, or the entire cluster, or subset of clusters if multiple potential soma clusters are returned.</p>
+<p>In the instance a manual error has been made when labelling a soma position, the somas can be fixed using:</p>
+<p><code>hemibrainr::adjust_saved_somas(bodyid = #####)</code></p>
+<p>And selecting the neuron method when prompted and run through the pipeline instructions provided.
+ When asked if you wish to try using DBSCAN on the neurons say no. The pipeline will then try
+ to suggest a soma position based on a global clustering of those neurons which are already identified as correct.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -173,7 +208,7 @@ the <a href='https://docs.google.com/spreadsheets/d/1YjkVjokXL4p4Q6BR-rGGGKWecXU
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

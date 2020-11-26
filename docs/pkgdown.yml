@@ -1,9 +1,11 @@
-pandoc: 2.9.2.1
-pkgdown: 1.6.1
-pkgdown_sha: ~
+pandoc: 2.3.1
+pkgdown: 1.6.1.9000
+pkgdown_sha: 6094ac3dd80a1f3f1d4e2f47d0ed4716d51362b0
 articles:
   flywire: flywire.html
   google_filestream: google_filestream.html
+  hemibrain_axons_dendrites: hemibrain_axons_dendrites.html
+  hemibrain_connectivity: hemibrain_connectivity.html
   match_making: match_making.html
-last_built: 2020-10-19T13:55Z
+last_built: 2020-11-26T12:50Z
 
