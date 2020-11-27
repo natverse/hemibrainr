@@ -500,7 +500,7 @@ flywire_ids_update <- function(selected_sheets = NULL,
           gs.t[good.xyz,c("fw.x","fw.y","fw.z")] = nat::xyzmatrix(gs.t[good.xyz,"flywire.xyz"])
         }
         gs.t[!good.xyz,c("flywire.xyz")] = apply(gs.t[!good.xyz,c("fw.x","fw.y",'fw.z')],1,paste_coords)
-        if(nrow(gs.t)){
+        if(sum(is.na(gs.t$flywire.xyz))>0){
           # Get flywire IDs from these positions
           bbx = matrix(c(5100, 1440, 16, 59200, 29600, 7062),ncol=3,byrow = TRUE)
           bbx = nat::boundingbox(scale(bbx, scale = 1/c(4, 4, 40), center = FALSE))
@@ -566,15 +566,15 @@ flywire_ids_update <- function(selected_sheets = NULL,
             }
           }
         }
-      }
-      # Now continue processing
-      gs.t = gs.t[,colnames(gs.t)%in%chosen.columns]
-      for(col in chosen.columns){
-        if(is.null(gs.t[[col]])){
-          gs.t[[col]] = NA
+        # Now continue processing
+        gs.t = gs.t[,colnames(gs.t)%in%chosen.columns]
+        for(col in chosen.columns){
+          if(is.null(gs.t[[col]])){
+            gs.t[[col]] = NA
+          }
         }
+        gs = plyr::rbind.fill(gs.t,gs)
       }
-      gs = plyr::rbind.fill(gs.t,gs)
     }
   }
   # Make this unique, but keep row with most information
