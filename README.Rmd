@@ -27,7 +27,9 @@ The goal of *hemibrainr* is to provide useful code for preprocessing and analysi
 The hemibrain connectome comprises the region of the fly brain depicted below. It is ~21,662 ~full neurons, 9.5 million synapses and is about ~35% complete in this region:
 
 <center>
+
 ![hemibrain](https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/hemibrain.png)
+
 </center>
 
 ## Get started with hemibrainr
