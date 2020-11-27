@@ -1,5 +1,6 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 <!-- badges: start -->
+
 <img src="man/figures/logo.svg" align="right" height="139" /> [![Travis
 build
 status](https://travis-ci.org/flyconnectome/hemibrainr.svg?branch=master)](https://travis-ci.org/flyconnectome/hemibrainr)
@@ -30,8 +31,11 @@ below. It is \~21,662 \~full neurons, 9.5 million synapses and is about
 \~35% complete in this region:
 
 <center>
+
 ![hemibrain](https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/hemibrain.png)
+
 </center>
+
 Get started with hemibrainr
 ---------------------------
 
@@ -106,11 +110,10 @@ be able to access it underlying Neo4j database.
 
 You may need an authenticated accounted, or you may be able to register
 your `@gmail` address without an authentication process. Navigate to a
-neuPrint website,
-e.g. <a href="https://neuprint.janelia.org" class="uri">https://neuprint.janelia.org</a>,
-and hit ‘login’. Sign in using an `@gmail` account. If you have
-authentication/the server is public, you will now be able to see your
-access token by going to ‘Account’:
+neuPrint website, e.g. <https://neuprint.janelia.org>, and hit ‘login’.
+Sign in using an `@gmail` account. If you have authentication/the server
+is public, you will now be able to see your access token by going to
+‘Account’:
 
 ![access your bearer
 token](https://raw.githubusercontent.com/natverse/neuprintr/master/inst/images/bearertoken.png)
@@ -163,8 +166,9 @@ application is run, you should be able to see your drives mounted like
 external hard drive, as so:
 
 <center>
-![google\_filestream](https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/google_filestream.png)
+![google_filestream](https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/google_filestream.png "fig:")
 </center>
+
 Then, this should work:
 
 ``` r
@@ -280,5 +284,4 @@ citation(package = "hemibrainr")
 
 **Bates AS, Jefferis GSXE** (2020). *hemibrainr: Code for working with
 data from Janelia FlyEM’s hemibrain project.* **R package** version
-0.1.0.
-<a href="https://github.com/flyconnectome/hemibrainr" class="uri">https://github.com/flyconnectome/hemibrainr</a>
+0.1.0. <https://github.com/flyconnectome/hemibrainr>
