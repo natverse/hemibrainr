@@ -67,6 +67,7 @@ reference:
     - 'hemibrain_matched'
     - 'hemibrain_task_update'
     - 'hemibrain_type_plot'
+    - 'hemibrain_cut'
   - title: Utility
     desc: ~
     contents:
