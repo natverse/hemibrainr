@@ -89,9 +89,12 @@ flywire_neurons <- function(local = FALSE,
 #' @rdname flywire_neurons
 #' @export
 flywire_neurons_update <- function(x,
-                                brain = c("FlyWire", "JRCFIB2018F","FAFB","JFRC2", "JFRC2013", "JRC2018F","FCWB"),
+                                brain = c("FlyWire", "JRCFIB2018F","FAFB14","JFRC2", "JFRC2013", "JRC2018F","FCWB"),
                                 mirror = FALSE,
                                 ...){
+  if(brain=="FlyWire"){
+    brain = "FAFB14"
+  }
   if(!requireNamespace("fafbseg", quietly = TRUE)) {
     stop("Please install fafbseg using:\n", call. = FALSE,
          "remotes::install_github('natverse/fafbseg')")
@@ -116,10 +119,10 @@ flywire_neurons_update <- function(x,
     message("Mirroring neurons version ...")
     m = nat.templatebrains::xform_brain(y, reference = "JRC2", sample = "FAFB14", ...)
     t = nat.templatebrains::mirror_brain(m, brain = "JRC2", ...)
-    if(brain!="FlyWire"){
+    if(brain!="FAFB14"){
       t = nat.templatebrains::xform_brain(t, sample = "JRC2", reference = brain, ...)
     }
-  }else if (brain!="FlyWire"){
+  }else if (brain!="FAFB14"){
     message("Transforming skeletons ...")
     t = nat.templatebrains::xform_brain(y, reference = brain, sample = "FAFB14", ...)
   }else{
@@ -255,13 +258,12 @@ flywire_basics <- function(x){
   simp = nat::nlapply(x,nat::simplify_neuron,n=1)
   branchpoints = sapply(simp, function(y) nat::xyzmatrix(y)[ifelse(length(nat::branchpoints(y)),nat::branchpoints(y),max(nat::endpoints(y))),])
   branchpoints = t(branchpoints)
-  flywire.xyz = apply(branchpoints, 1, paste, collapse = ";")
-
+  flywire.xyz = apply(branchpoints, 1, paste_coords)
 
   # Get FAFBv14 nm coordinates
   # roots.flywire.raw = scale(roots, scale = 1/c(4, 4, 40), center = FALSE)
   #FAFB.xyz = nat.templatebrains::xform_brain(roots.flywire.raw, sample = "FlyWire", reference = "FAFB14")
-  #FAFB.xyz = apply(FAFB.xyz, 1, paste, collapse = ";")
+  #FAFB.xyz = apply(FAFB.xyz, 1, paste_coords)
   FAFB.xyz = ""
 
   # Add
@@ -416,6 +418,315 @@ flywire_ids <-function(local = FALSE, folder = "flywire_neurons/", sql = TRUE, .
   }
 }
 
+#' Update the flywire.id column in a set of google sheets based on flywire xyz positions
+#'
+#' @description This function retreives flywire IDs based on xyz positions in flywire voxel space, from a set of google sheets.
+#' It also writes the updated flywire IDs to the same google sheets. This is often helpful because flywire IDs are inherently unstable, they change every time
+#' a neuron is modified even slightly. Users can record 'stable' points in a neuron that identify it, e.g. a single xyz position in the cell body fibre, or at the soma, and
+#' then use this function to update and get the correct flywire ID whenever they wish.
+#'
+#' @param selected_sheets character vector. the google sheet(s) to update. Each entry is a unique google sheet ID. You can find these in a sheet's URL.
+#' If \code{NULL} then defaults to \code{option('hemibrainr_gsheets')}.
+#' @param chosen.columns as well as writing column updates to the specified google sheets, this function returns a \code{data.frame} built fromm all given sheets and their
+#' individual tabs, that have been updated. This argument specifies which column you want returned. Filled with NAs if it does not exist.
+#' @param numCores if run in parallel, the number of cores to use. This is not necessary unless you have >10k points and want to see if you can get a speed up.
+#' @param max.tries maximum number of attempts to write to/read from the google sheets before aborting. Sometimes attempts fail due to sporadic connections or API issues.
+#'
+#' @details For this function to work, the specified google sheet(s) must have either the column \code{flywire.xyz},
+#' which gives the xyz position of points in a format that can be read by \code{nat::xyzmatrix}, for example \code{"(135767,79463,5284)"} or \code{"(135767;79463;5284)"}.
+#' If this is missing, then the columns: \code{fw.x}, \code{fw.y}, \code{fw.z} must be specified. The xyz positions must be in FlyWire voxel space, which is what you get if you use the
+#' copy location tool in the flywire.ai web-interface.
+#'
+#' The logic of the update procedure is:, find the \code{flywire.xyz} column.
+#' If that does not exist, find: \code{fw.x}, \code{fw.y}, \code{fw.z}, and use that to create a \code{flywire.xyz} column.
+#' We use \code{flywire.xyz} if both are given, and there is a mismatch.
+#' For each row, a \code{flywire.id} is then found based on these points, using \code{fafbseg::flywire_xyz2id} (using the argument \code{rawcoords = TRUE}).
+#' The google sheet columns \code{flywire.id},\code{flywire.xyz}, \code{fw.x}, \code{fw.y}, \code{fw.z} are then updated if they exist in the original google sheet.
+#' If they do not, they are not updated. The function returns a \code{data.frame} combining all tabs of all googlesheets specified, but returning only the columns
+#' specified by the argument \code{chosen.columns}.
+#'
+#' @return a \code{data.frame} with columns from the given google sheet(s), specified using the argument \code{chosen.columns}.
+#'
+#' @examples
+#' \donttest{
+#' \dontrun{
+#'
+#' # Update flywire.ids in the sheet:
+#' ## https://docs.google.com/spreadsheets/d/1rzG1MuZYacM-vbW7100aK8HeA-BY6dWAVXQ7TB6E2cQ/edit#gid=0
+#' ## And return
+#' fw.gsheet.meta = flywire_ids_update(selected_sheets = "1rzG1MuZYacM-vbW7100aK8HeA-BY6dWAVXQ7TB6E2cQ")
+#'
+#' }}
+#' @seealso \code{\link{flywire_ids}},
+#'   \code{\link{flywire_meta}},
+#'   \code{\link{flywire_neurons}}
+#' @name flywire_ids_update
+#' @export
+flywire_ids_update <- function(selected_sheets = NULL,
+                               chosen.columns = c("fw.x","fw.y",'fw.z', 'flywire.xyz',
+                                                  "flywire.id", "skid",
+                                                  "FAFB.xyz", "cell.type", "side",
+                                                  "ItoLee_Hemilineage", "Hartenstein_Hemilineage",
+                                                  "hemibrain_match"),
+                               numCores = 1,
+                               max.tries = 10){
+  if(is.null(selected_sheets)){
+    selected_sheets = getOption("hemibrainr_gsheets", stop("Please set option('hemibrainr_gsheets')"))
+  }
+  fw.columns = c("flywire.id","fw.x","fw.y","fw.z","flywire.xyz")
+  gs = data.frame(stringsAsFactors = FALSE)
+  for(selected_sheet in selected_sheets){
+    ## Read Google sheets and extract glywire neuron positions
+    tabs = gsheet_manipulation(FUN = googlesheets4::sheet_names,
+                               ss = selected_sheet,
+                               return = TRUE)
+    for(tab in tabs){
+      gs.t = gs.t.current = gsheet_manipulation(FUN = googlesheets4::read_sheet,
+                                                wait = 20,
+                                                ss = selected_sheet,
+                                                sheet = tab,
+                                                guess_max = 3000,
+                                                return = TRUE)
+      used.cols = colnames(gs.t.current)
+      if(nrow(gs.t)&&ncol(gs.t)&&sum(grepl("fw.x|flywire.xyz",used.cols))>0){
+        # Separate x,y,z positions
+        for(fw.c in fw.columns){
+          if(is.null(gs.t[[fw.c]])){
+            gs.t[[fw.c]] = NA
+          }
+        }
+        good.xyz = sapply(gs.t$flywire.xyz,function(x) length(tryCatch(nat::xyzmatrix(x),error = function(e) NA))==3)
+        if(sum(good.xyz)){
+          gs.t[good.xyz,c("fw.x","fw.y","fw.z")] = nat::xyzmatrix(gs.t[good.xyz,"flywire.xyz"])
+        }
+        gs.t[!good.xyz,c("flywire.xyz")] = apply(gs.t[!good.xyz,c("fw.x","fw.y",'fw.z')],1,paste_coords)
+        if(nrow(gs.t)){
+          # Get flywire IDs from these positions
+          bbx = matrix(c(5100, 1440, 16, 59200, 29600, 7062),ncol=3,byrow = TRUE)
+          bbx = nat::boundingbox(scale(bbx, scale = 1/c(4, 4, 40), center = FALSE))
+          gs.t$fw.x = as.numeric(gs.t$fw.x)
+          gs.t$fw.y = as.numeric(gs.t$fw.y)
+          gs.t$fw.z = as.numeric(gs.t$fw.z)
+          if(numCores>1){
+            batch = 1
+            batches = split(1:nrow(gs.t), round(seq(from = 1, to = numCores, length.out = nrow(gs.t))))
+            foreach.ids <- foreach::foreach (batch = 1:length(batches)) %dopar% {
+              pos = gs.t[batches[[batch]],]
+              pos = pos[apply(pos, 1, function(row) sum(is.na(row[c("fw.x","fw.y",'fw.z')]))==0),]
+              p = nat::pointsinside(pos[,c("fw.x","fw.y",'fw.z')],bbx)
+              pos = pos[p,]
+              pos = pos[!is.na(pos$fw.x),]
+              if(nrow(pos)){
+                tries = 0
+                try.again = TRUE
+                while(try.again){
+                  tries = tries+1
+                  i <- tryCatch(fafbseg::flywire_xyz2id(pos[,c("fw.x","fw.y",'fw.z')], rawcoords = TRUE),
+                                error = function(e){cat(as.character(e));rep("failed",nrow(pos))})
+                  names(i) = pos$flywire.xyz
+                  i[is.na(i)|is.nan(i)] = "failed"
+                  if(all(i%in%c("failed"))&tries<max.tries){
+                    try.again = TRUE
+                  }else{
+                    try.again = FALSE
+                  }
+                }
+                i
+              }
+            }
+          }else{
+            pos = gs.t[apply(gs.t, 1, function(row) sum(is.na(row[c("fw.x","fw.y",'fw.z')]))==0),]
+            p = nat::pointsinside(pos[,c("fw.x","fw.y",'fw.z')],bbx)
+            pos = pos[p,]
+            pos = pos[!is.na(pos$fw.x),]
+            if(nrow(pos)){
+              foreach.ids = fafbseg::flywire_xyz2id(pos[,c("fw.x","fw.y",'fw.z')], rawcoords = TRUE)
+              names(foreach.ids) = pos[,"flywire.xyz"]
+            }else{
+              foreach.ids = NULL
+            }
+          }
+          fids = unlist(foreach.ids)
+          fids[is.na(fids)|is.nan(fids)] = "0"
+          gs.t$flywire.id = fids[match(gs.t$flywire.xyz ,names(fids))]
+          if(nrow(gs.t)!=nrow(gs.t.current)){
+            stop("Sheet processing corruption.")
+          }
+          write.cols = intersect(fw.columns,used.cols)
+          if(length(fids) & length(write.cols)){
+            for(column in write.cols){
+              letter = LETTERS[match(column,colnames(gs.t))]
+              range = paste0(letter,2,":",letter,nrow(gs.t)+1)
+              gsheet_manipulation(FUN = googlesheets4::range_write,
+                                  ss = selected_sheet,
+                                  range = range,
+                                  data = as.data.frame(gs.t[,column], stringsAsFactors = FALSE),
+                                  sheet = tab,
+                                  col_names = FALSE)
+            }
+          }
+        }
+      }
+      # Now continue processing
+      gs.t = gs.t[,colnames(gs.t)%in%chosen.columns]
+      for(col in chosen.columns){
+        if(is.null(gs.t[[col]])){
+          gs.t[[col]] = NA
+        }
+      }
+      gs = plyr::rbind.fill(gs.t,gs)
+    }
+  }
+  # Make this unique, but keep row with most information
+  master = gs
+  master = master[!is.na(master$fw.x),]
+  master = master[!is.na(master$fw.y),]
+  master = master[!is.na(master$fw.z),]
+  master$filled = apply(master, 1, function(r) sum(!is.na(r)))
+  master = master[order(master$filled,decreasing = TRUE),]
+  master = master[!duplicated(master$flywire.xyz),]
+  rownames(master) = master$flywire.xyz
+  master = subset(master, !is.na(master$flywire.id))
+  master$filled = NULL
+  master
+}
 
+#' Update neuron match information on a google sheet
+#'
+#' @description This function retreives neuron matches (\code{\link{hemibrain_matches}}) from a master-matching google sheet. If then
+#' can update other google sheets, specified by the user to update neuron-match information.
+#' Just columns giving the match, match quality and cell type are updated.
+#'
+#' @param selected_sheets character vector. the google sheet(s) to update. Each entry is a unique google sheet ID. You can find these in a sheet's URL.
+#' If \code{NULL} then defaults to \code{option('hemibrainr_gsheets')}.
+#' @param matching_sheet the master matching sheet. Cannot be in \code{selected_sheets}. This sheet will be processed using \code{\link{hemibrain_matches}} to produce a
+#' \code{data.frame} describing hemibrain-FAFB and FAFB-hemibrain matches.
+#' @param priority whether to use FAFB->hemibrain matches (FAFB) or hemibrain->FAFB matches (hemibrain) in order to ascribe
+#' cell type names to FAFB neurons. In both cases, cell type names are attached to hemibrain bodyids, and propagated to their FAFB matches.
+#' @param id the ID specifying unique neuron identity for each row, for each tab of the google sheets specified with \code{selected_sheets}. When matches are added
+#' they are for the neuron specified in the \code{id} column of each worksheet.
+#' @param match.field which match to record. E.g. if \code{id} is \code{"flywire.id"} you may want to add the hemibrain match from the master matching sheets. To do this
+#' set \code{match.field} to \code{"hemibrain"}. Then, if there is a \code{"hemibrain.match"} and/or \code{"hemibrain.match.quality"} column, it will be updated. You
+#' may also want to know the hemispheric match within FAFB, in which case \code{"FAFB.hemisphere"} could be used.
+#' @param chosen.columns as well as writing column updates to the specified google sheets, this function returns a \code{data.frame} built fromm all given sheets and their
+#' individual tabs, that have been updated. This argument specifies which column you want returned. Filled with NAs if it does not exist.
+#'
+#' @details For this function to work, the specified google sheet(s) must have either the column specified with the argument \code{id},
+#' which gives the ID of a neuron from the FAFB (CATMAID or flywire) data set, or the hemibrain data set.
+#' Each tab of each specified google sheet is read in turn. The data set match (specified with the argument \code{match.field}). A match is recovered
+#' using \code{hemibrain_matching(selected_file = matching_sheet, priority=priority)}. If the right columns exist in the google sheet, i.e. 'hemibrain.match'
+#' and 'hemibrain.match.quality' for a hemibrain match, then this column in the google sheet is wiped and updated. If not, no update takes place.
+#'
+#' @return a \code{data.frame} with columns from the given google sheet(s), specified using the argument \code{chosen.columns}.
+#'
+#' @examples
+#' \donttest{
+#' \dontrun{
+#'
+#' # Update flywire.ids in the sheet:
+#' ## https://docs.google.com/spreadsheets/d/
+#' ## 1spGSuhUX6Hhn-8HH0U_ArIWUuPpMBFNjIjeSSh_MFVY
+#' ## /edit#gid=603762040
+#' lineage.gsheet.meta = matches_update(id = "flywire.id",
+#' match.field = "hemibrain",
+#' selected_sheets = "1spGSuhUX6Hhn-8HH0U_ArIWUuPpMBFNjIjeSSh_MFVY")
+#'
+#' }}
+#' @seealso \code{\link{hemibrain_matches}},
+#'   \code{\link{hemibrain_matched}},
+#'   \code{\link{hemibrain_matching}}
+#' @name matches_update
+#' @export
+matches_update <- function(matching_sheet = options()$hemibrainr_matching_gsheet,
+                           priority = c("FAFB","hemibrain"),
+                           selected_sheets,
+                           id = c("flywire.id","bodyid","skid","id"),
+                           match.field = c("hemibrain","CATMAID","flywire","LM","FAFB.hemisphere"),
+                           chosen.columns = c("cell.type", "flywire.xyz", "side",
+                                              "ItoLee_Hemilineage", "Hartenstein_Hemilineage")){
+  id = match.arg(id)
+  match.field = match.arg(match.field)
+  priority = match.arg(priority)
+  matches = hemibrain_matches(selected_file = matching_sheet, priority = priority)
+  if(sum(selected_sheets%in%c(options()$hemibrainr_matching_gsheet,matching_sheet))>1){
+    stop("selected_sheets should not indicate master matching sheets.
+         I.e. in options()$hemibrainr_matching_gsheet.")
+  }
+  # iterate through sheets and tabs
+  if(is.null(selected_sheets)){
+    selected_sheets = getOption("hemibrainr_gsheets", stop("Please set option('hemibrainr_gsheets')"))
+  }
+  gs = data.frame(stringsAsFactors = FALSE)
+  for(selected_sheet in selected_sheets){
+    ## Read Google sheets and extract glywire neuron positions
+    tabs = gsheet_manipulation(FUN = googlesheets4::sheet_names,
+                               ss = selected_sheet,
+                               return = TRUE)
+    for(tab in tabs){
+      gs.t = gs.t.current = gsheet_manipulation(FUN = googlesheets4::read_sheet,
+                                                wait = 20,
+                                                ss = selected_sheet,
+                                                sheet = tab,
+                                                guess_max = 3000,
+                                                return = TRUE)
+      used.cols = colnames(gs.t.current)
+      field = match.field
+      if(field=="CATMAID"){ # for historic reasons. Chould fix.
+        field = "FAFB"
+      }
+      match.column = paste0(field,".match")
+      quality.column = paste0(field,".match.quality")
+      if(!match.column%in%used.cols){
+        match.column = paste0(field,"_match")
+        if(!quality.column%in%used.cols){
+          quality.column = paste0(field,"_match.quality")
+        }
+      }
+      chosen.columns = unique(c(chosen.columns,match.column,quality.column,"cell.type"))
+      in.sheet = intersect(gs.t[[id]],matches$id)
+      if(nrow(gs.t) & length(in.sheet)){
+        matches.sel = subset(matches, matches$id%in%in.sheet & matches$match.dataset == match.field)
+        if(match.field=="hemibrain"){
+          gs.t[[match.column]] = matches.sel$match[match(gs.t[[id]], matches.sel$id)]
+          gs.t[[quality.column]] = matches.sel$quality[match(gs.t[[id]], matches.sel$id)]
+        }else if(match.field == "FAFB.hemisphere"){
+          gs.t[[match.column]] = matches.sel$FAFB.hemisphere.match[match(gs.t[[id]], matches.sel$id)]
+          gs.t[[quality.column]] = matches.sel$FAFB.hemisphere.match.quality[match(gs.t[[id]], matches.sel$id)]
+        }else if(match.field == "LM"){
+          gs.t[[match.column]] = matches.sel$LM.match[match(gs.t[[id]], matches.sel$id)]
+          gs.t[[quality.column]] = matches.sel$LM.match.quality[match(gs.t[[id]], matches.sel$id)]
+        }else if(match.field == "CATMAID"){
+          gs.t[[match.column]] = matches.sel$match[match(gs.t[[id]], matches.sel$id)]
+          gs.t[[quality.column]] = matches.sel$quality[match(gs.t[[id]], matches.sel$id)]
+        }
+        gs.t[["cell.type"]] = matches.sel$cell.type[match(gs.t[[id]], matches.sel$id)]
+        if(nrow(gs.t)!=nrow(gs.t.current)){
+          stop("Sheet processing corruption.")
+        }
+        write.cols = intersect(c(match.column,quality.column,"cell.type"),used.cols)
+        if(nrow(matches.sel) & length(write.cols)){
+          for(column in write.cols){
+            letter = LETTERS[match(column,colnames(gs.t))]
+            range = paste0(letter,2,":",letter,nrow(gs.t)+1)
+            gsheet_manipulation(FUN = googlesheets4::range_write,
+                                ss = selected_sheet,
+                                range = range,
+                                data = as.data.frame(gs.t[,column], stringsAsFactors = FALSE),
+                                sheet = tab,
+                                col_names = FALSE)
+          }
+        }
+        gs.t = gs.t[,colnames(gs.t)%in%chosen.columns]
+        for(col in chosen.columns){
+          if(is.null(gs.t[[col]])){
+            gs.t[[col]] = NA
+          }
+        }
+        gs = plyr::rbind.fill(gs,gs.t)
+      }
+    }
+  }
+  gs
+}
 
 

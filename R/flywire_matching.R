@@ -25,7 +25,7 @@ flywire_matching_rewrite <- function(flywire.ids = names(flywire_neurons()),
       simp = nat::nlapply(cat,nat::simplify_neuron,n=1, .parallel = TRUE, OmitFailures = TRUE)
       branchpoints = sapply(simp, function(y) nat::xyzmatrix(y)[ifelse(length(nat::branchpoints(y)),nat::branchpoints(y),max(nat::endpoints(y))),])
       branchpoints = t(branchpoints)
-      FAFB.xyz = apply(branchpoints, 1, paste, collapse = ";")
+      FAFB.xyz = apply(branchpoints, 1, paste_coords)
 
       # Get FlyWire voxel coordinates
       branchpoints.flywire = nat.templatebrains::xform_brain(branchpoints, reference = "FlyWire", sample = "FAFB14", .parallel = TRUE, verbose = TRUE)
@@ -33,7 +33,7 @@ flywire_matching_rewrite <- function(flywire.ids = names(flywire_neurons()),
       branchpoints.flywire.raw = scale(branchpoints.flywire, scale = c(4, 4, 40), center = FALSE)
       fw.ids = fafbseg::flywire_xyz2id(branchpoints.flywire.raw, rawcoords = TRUE)
       fw.ids[fw.ids=="0"] = NA
-      flywire.xyz = apply(branchpoints.flywire.raw, 1, paste, collapse = ";")
+      flywire.xyz = apply(branchpoints.flywire.raw, 1, paste_coords)
 
       # Add
       gs[rownames(branchpoints),]$FAFB.xyz = FAFB.xyz
@@ -419,7 +419,7 @@ neuron_match_scanner <- function(brain,
             j = j + batch_size
             if(!is.null(targets)){
               native2 = tryCatch(targets[(names(r)[(k+1):j])], error = function(e) {
-                warning("Cannot read neuron: ", n, " from local targets; fetching from remote!")
+                warning("Cannot read neuron: ", n, " from local targets, fetching from remote!")
                 NULL
               })
             }

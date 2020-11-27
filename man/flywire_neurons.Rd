@@ -17,7 +17,8 @@ flywire_neurons(
 
 flywire_neurons_update(
   x,
-  brain = c("FlyWire", "JRCFIB2018F", "FAFB", "JFRC2", "JFRC2013", "JRC2018F", "FCWB"),
+  brain = c("FlyWire", "JRCFIB2018F", "FAFB14", "JFRC2", "JFRC2013", "JRC2018F",
+    "FCWB"),
   mirror = FALSE,
   ...
 )

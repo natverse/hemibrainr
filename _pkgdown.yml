@@ -65,6 +65,7 @@ reference:
     contents:
     - 'hemibrain_matches'
     - 'hemibrain_matched'
+    - 'matches_update'
     - 'hemibrain_task_update'
     - 'hemibrain_type_plot'
     - 'hemibrain_cut'
@@ -98,6 +99,7 @@ reference:
     contents:
     - 'flywire_neurons'
     - 'flywire_googledrive_data'
+    - 'flywire_ids_update'
   - title: Access light-level google drive data
     desc: ~
     contents:

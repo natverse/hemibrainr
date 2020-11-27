@@ -897,35 +897,45 @@ hemibrain_matches <- function(priority = c("FAFB","hemibrain"),
   hemibrain.matches$dataset = "hemibrain"
   flywire.matches$dataset = "flywire"
   catmaid.matches$dataset = "CATMAID"
+  hemibrain.matches$match.dataset = "flywire"
+  flywire.matches$match.dataset = "hemibrain"
+  catmaid.matches$match.dataset = "hemibrain"
+  hemibrain.matches.catmaid = hemibrain.matches
+  hemibrain.matches.catmaid$match.dataset = "CATMAID"
 
   # Make matching data frame
   matched.h = hemibrain.matches[,c("bodyid", "cell.type", "cell", "cellBodyFiber", "ItoLee_Hemilineage",
                                    "flywire.id", "FAFB.match.quality",
                                    "FAFB.hemisphere.match", "FAFB.hemisphere.match.quality",
-                                   "LM.match", "LM.match.quality", "dataset")]
+                                   "LM.match", "LM.match.quality", "dataset", "match.dataset")]
+  matched.hc = hemibrain.matches.catmaid[,c("bodyid", "cell.type", "cell", "cellBodyFiber", "ItoLee_Hemilineage",
+                                   "FAFB.match", "FAFB.match.quality",
+                                   "FAFB.hemisphere.match", "FAFB.hemisphere.match.quality",
+                                   "LM.match", "LM.match.quality", "dataset", "match.dataset")]
   matched.c = catmaid.matches[,c("skid",  "cell.type",  "cell", "cellBodyFiber", "ItoLee_Hemilineage",
                               "hemibrain.match", "hemibrain.match.quality",
                               "FAFB.hemisphere.match", "FAFB.hemisphere.match.quality",
-                              "LM.match", "LM.match.quality","dataset")]
+                              "LM.match", "LM.match.quality","dataset", "match.dataset")]
   matched.f = flywire.matches[,c("flywire.id",  "cell.type",  "cell", "cellBodyFiber", "ItoLee_Hemilineage",
                               "hemibrain.match", "hemibrain.match.quality",
                               "FAFB.hemisphere.match", "FAFB.hemisphere.match.quality",
-                              "LM.match", "LM.match.quality","dataset")]
-  colnames(matched.h) = colnames(matched.c) = colnames(matched.f) = c("id","cell.type", "cell","cellBodyFiber","ItoLee_Hemilineage",
+                              "LM.match", "LM.match.quality","dataset", "match.dataset")]
+  colnames(matched.h) = colnames(matched.hc) = colnames(matched.c) = colnames(matched.f) = c("id","cell.type", "cell","cellBodyFiber","ItoLee_Hemilineage",
                                                 "match","quality",
                                                 "FAFB.hemisphere.match", "FAFB.hemisphere.match.quality",
-                                                "LM.match", "LM.match.quality","dataset")
-  matched = rbind(matched.h,matched.f,matched.c)
+                                                "LM.match", "LM.match.quality","dataset", "match.dataset")
+  matched = rbind(matched.h,matched.hc,matched.f,matched.c)
   matched$quality[is.na(matched$match)] = "none"
   matched$match[is.na(matched$match)] = "none"
   matched$ItoLee_Lineage = gsub("_.*","",matched$ItoLee_Hemilineage)
 
   # Sort out types
   matched$connectivity.type = matched$cell.type
-  matched$cell.type = gsub("_.*","",matched$cell.type)
+  matched$cell.type = gsub("_[a-z]{1}$","",matched$cell.type)
   matched$cell.type[is.na(matched$cell.type)] = "uncertain"
   matched$connectivity.type[is.na(matched$connectivity.type)] = "uncertain"
   matched$priority = priority
+  rownames(matched) = 1:nrow(matched)
 
   # Return
   matched
