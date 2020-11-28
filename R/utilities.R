@@ -252,6 +252,7 @@ save_compressed_nblast_mat <- function(x,
                                        format=c("rda", "rds"),
                                        ...) {
   format=match.arg(format)
+  overwrite=match.arg(overwrite)
   objname=deparse(substitute(x))
   newobjname <- paste0(objname, ".compressed")
   fname <- paste0(file.path(file, newobjname), ".", format)
@@ -275,19 +276,22 @@ save_compressed_nblast_mat <- function(x,
   x[x<threshold]=threshold
   x=round(x, digits=digits)
   if(combine){
-    old = old[!rownames(x)%in%rownames(x),]
+    old = old[!rownames(old)%in%rownames(x),]
     if(nrow(old)){
       warning("combining with extant file: ", fname)
-      x = plyr::rbind.fill(old, x)
+      y = plyr::rbind.fill.matrix(old, x)
+      rownames(y) = c(rownames(old), rownames(x))
     }
+  }else{
+    y = x
   }
   message("Resaving a compressed version of ", objname, " to ", fname)
   if(format=="rds") {
-    saveRDS(x, file=fname, ...)
+    saveRDS(y, file=fname, ...)
   } else {
     # the object being saved must have the name that you would like it
     # to have when it is loaded again
-    assign(newobjname, x)
+    assign(newobjname, y)
     save(list = newobjname, file = fname, ...)
   }
 }
