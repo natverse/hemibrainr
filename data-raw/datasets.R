@@ -190,10 +190,5 @@ usethis::use_data(apl.ids, overwrite = TRUE)
 usethis::use_data(cent.ids, overwrite = TRUE)
 usethis::use_data(lc.ids, overwrite = TRUE)
 
-# AL information
-hemibrain_glomeruli_summary <- read.csv("data-raw/annotations/AL_gloms_RNs.csv")
-hemibrain_glomeruli_summary = hemibrain_glomeruli_summary[,c("glomerulus",  "RN", "laterality", "missing","rn.vol.um", "fafb.vol.um")]
-usethis::use_data(hemibrain_glomeruli_summary, overwrite = TRUE)
-
 ## Some notes on data
 # Badly skeletonised: "5812986485"

@@ -11,7 +11,7 @@ An object of class \code{hxsurf} of length 4.
 
 An object of class \code{hxsurf} of length 4.
 
-An object of class \code{data.frame} with 58 rows and 6 columns.
+An object of class \code{data.frame} with 58 rows and 11 columns.
 }
 \source{
 \url{https://neuprint.janelia.org/}
@@ -23,6 +23,26 @@ hemibrain_al_microns.surf
 
 hemibrain_glomeruli_summary
 }
+\value{
+\code{hemibrain_glomeruli_summary} is a \code{data.frame} with the columns:
+
+\itemize{
+
+  \item{"excpected_cit"}{a citation that describes this glomerulus},
+
+  \item{"expected_RN_female_1h"}{.}
+
+  \item{"expected_RN_female_SD"}{.}
+
+  \item{"missing"}{.}
+
+  \item{"odour_scenes"}{the general 'odour scene(s)' which this glomerulus may help signal (Mansourian 2015, Bates 2020)}
+
+  \item{"key_ligand"}{the ligand that excites the cognate ALLRN or receptor the most, based on pooled data from multiple studies (Münch 2016)).}
+
+  \item{"valence"}{the presumed valence of this odour channel (Badel 2016).}
+}
+}
 \description{
 3D meshes of 51 olfactory + 7 thermosensory antennal lobe glomeruli for the
 the hemibrain volume. They are represented as a \code{\link[nat]{hxsurf}}
@@ -31,7 +51,7 @@ are available both in raw voxels and in microns. You can see which glomeruli are
 roughly how much by examining \code{hemibrain_glomeruli_summary}.
 }
 \details{
-note that hemibrain coordinate system does has the
+note that hemibrain coordinate system  has the
   anterior-posterior axis aligned with the Y axis (rather than the Z axis,
   which is more commonly observed).
 }

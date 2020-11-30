@@ -14,6 +14,71 @@
 #' @return a \code{data.frame} with columns that can give a user neuron lineage and class information, as well as numbers
 #' related to neurons' putative axon-dendrite split.
 #'
+#' #' \itemize{
+#'
+#'   \item{"bodyid"} { - unique identifier for a single hemibrain neuron.}
+#'
+#'   \item{"pre"} { - the number of presynapses (outputs) a neuron contains. Each of this is polyadic.}
+#'
+#'   \item{"post"} { - the number of postsynapses (inputs) to the neuron.}
+#'
+#'   \item{"upstream"} { - the number of incoming connections to a neuron.}
+#'
+#'   \item{"downstream"} { - the number of outgoing connections from a neuron.}
+#'
+#'   \item{"soma"} { - neuron size in voxels.}
+#'
+#'   \item{"sid"} { - which brain hemisphere contains the neuron's soma.}
+#'
+#'   \item{"voxels"} { - whether the neuron has a soma in the hemibrain volume.}
+#'
+#'   \item{"name"} { - the name of this neuron.}
+#'
+#'   \item{"connectivity.type"}{ - the neuPrint designated 'type' for the neuron. A subset of neurons within a cell type that share similar connectivity. A connectivity
+#'   type is distinguished from a cell type by an ending _letter, defined using CBLAST (Scheffer et al. 2020).}
+#'
+#'   \item{"cell.type"}{ - neurons of a shared morphology that take the same cell body fibre tract and come from the same hemilineage (Bates 2019).}
+#'
+#'   \item{"cellBodyFiber"}{ - The cell body fiber for a neuron, as read from neuPrint and annotated by a team under \href{https://www.janelia.org/people/kei-ito}{Kei Ito}.}
+#'
+#'   \item{"putative.classic.transmitter"}{ - putative neurotransmitter based on what neurons in the hemilineage in question has been shown to express, out of acetylcholine, GABA, glutamate.}
+#'
+#'   \item{"ItoLee_Hemilineage"}{ - the hemilineage that we reckon this cell type belongs to, based on expert review of light level data from the K. Ito and T. Lee groups (Yu 2013, Ito 2013).
+#'    See \code{\link{hemibrain_hemilineages}}.}
+#'
+#'   \item{"Hartenstein_Hemilineage"}{ - the hemilineage that we reckon this cell type belongs to, based on expert review of light level data from the V. Hartenstein Lee group (Wong 2013, Lovick 2013).
+#'    See \code{\link{hemibrain_hemilineages}}.}
+#'
+#'   \item{"FAFB.match"}{ - the ID of the manual match from the FAFB data set. ID indicates a neuron reconstructed in FAFBv14 CATMAID. Many of these neurons will be available through Virtual Fly Brain.}
+#'
+#'   \item{"FAFB.match.quality"}{ - the matcher makers qualitative assement of how good this match is: a poor match could be a neuron from a very similar same cell type or a highly untraced neuron that may be the correct cell type. An okay match should be a neuron that looks to be from the same morphological cell type but there may be some discrepancies in its arbour. A good match is a
+#'   neuron that corresponds well between FAFB and the hemibrain data.}
+#'
+#'   \item{"layer"}{ - probabilistic mean path length from neuron from ALRNs, depends on connection strengths.}
+#'
+#'   \item{"layer.ct"}{- the mean layer for cell type, rounded to the nearest whole number.}
+#'
+#'   \item{"axon.outputs"}{- number of outgoing connections from the neuron's predicted axon.}
+#'
+#'   \item{"dend.outputs"}{- number of outgoing connections from the neuron's predicted dendrite.}
+#'
+#'   \item{"axon.inputs"}{- number of incoming connections from the neuron's predicted axon.}
+#'
+#'   \item{"dend.inputs"}{- number of incoming connections from the neuron's predicted dendrite.}
+#'
+#'   \item{"total.length"}{- total cable length of the neuron in micrometers.}
+#'
+#'   \item{"axon.length"}{- total axon cable length of the neuron in micrometers.}
+#'
+#'   \item{"dend.length"}{- total dendrite cable length of the neuron in micrometers.}
+#'
+#'   \item{"pd.length"}{- total  cable length of the primary dendrite 'linker' between axon and dendrite.}
+#'
+#'   \item{"segregation_index"}{- a quantification of how polarised a neuron is, in terms of its segregation of inputs onto its predicted dendrite and outputs onto its axon,
+#'    where 0 is no-polarisation and 1 is totally polarised (Schneider-Mizell 2016).}
+#'
+#'}
+#'
 #' @examples
 #' \donttest{
 #' \dontrun{

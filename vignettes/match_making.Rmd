@@ -111,7 +111,7 @@ As you can see, other meta information is present in the data frame `matches`. T
 ## Match Quality
 
 Once a match is recorded, the user selects a quality for that match. There can be no match (none), a tract-only match (tract) a poor match (poor) an okay match (medium) or an exact match (good). As a rule of thumb, a poor match could be a neuron from a very similar same cell type or a highly untraced neuron that may be the correct cell type. An okay match should be a neuron that looks to be from the same morphological cell type but there may be some discrepancies in its arbour. A good match is a 
-neuron that corresponds well between FAFB and the hemibrain data.A tract only match just means that the matched neuron should share the same cell body fiber, and therefore same developmental ontogeny, even if the rest of its morphology is quite different.
+neuron that corresponds well between FAFB and the hemibrain data. A tract only match just means that the matched neuron should share the same cell body fiber, and therefore same developmental ontogeny, even if the rest of its morphology is quite different.
 
 It is very important to note that a match cannot be a match if neurons do not seem to share the same cell body fiber tract. Being in a different tract is a deal breaker.
 
