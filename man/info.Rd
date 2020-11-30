@@ -13,21 +13,21 @@
 \alias{dn.info}
 \title{Meta information of certain neuron classes}
 \format{
-An object of class \code{data.frame} with 333 rows and 25 columns.
+An object of class \code{data.frame} with 379 rows and 58 columns.
 
-An object of class \code{data.frame} with 70 rows and 31 columns.
+An object of class \code{data.frame} with 70 rows and 58 columns.
 
-An object of class \code{data.frame} with 2383 rows and 21 columns.
+An object of class \code{data.frame} with 2383 rows and 48 columns.
 
 An object of class \code{data.frame} with 2129 rows and 45 columns.
 
-An object of class \code{data.frame} with 197 rows and 45 columns.
+An object of class \code{data.frame} with 197 rows and 46 columns.
 
 An object of class \code{data.frame} with 1927 rows and 45 columns.
 
 An object of class \code{data.frame} with 24 rows and 45 columns.
 
-An object of class \code{data.frame} with 431 rows and 45 columns.
+An object of class \code{data.frame} with 431 rows and 40 columns.
 }
 \usage{
 pn.info

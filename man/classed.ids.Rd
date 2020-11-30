@@ -20,6 +20,8 @@
 \alias{apl.ids}
 \alias{cent.ids}
 \alias{lc.ids}
+\alias{rn.info}
+\alias{olfactory.info}
 \title{Bodyids for neuron classes}
 \format{
 An object of class \code{character} of length 2654.
@@ -57,6 +59,10 @@ An object of class \code{character} of length 24.
 An object of class \code{character} of length 2129.
 
 An object of class \code{character} of length 1927.
+
+An object of class \code{data.frame} with 1350 rows and 44 columns.
+
+An object of class \code{data.frame} with 59 rows and 11 columns.
 }
 \usage{
 rn.ids
@@ -94,6 +100,10 @@ cent.ids
 lc.ids
 
 kc.ids
+
+rn.info
+
+olfactory.info
 }
 \description{
 Bodyids for neuron classes. Hard saved equivalent for \code{\link{class2ids}}.

@@ -1290,6 +1290,7 @@ hemibrain_matching_add <- function(ids = NULL,
     } else if (dataset == "flywire"){
       add = setdiff(ids, gs$flywire.id)
       meta = flywire_neurons()[as.character(add),]
+      meta = meta[!meta$flywire.xyz%in%gs$flywire.xyz,]
       if(!nrow(meta)){
         stop("Selected IDs could not be added. They must be among the neurons
          saved on Google drive, see flywire_neurons()")

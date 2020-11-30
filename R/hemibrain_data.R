@@ -359,3 +359,6 @@
 #' @name classed.ids
 #' @rdname classed.ids
 "rn.info"
+#' @name classed.ids
+#' @rdname classed.ids
+"olfactory.info"
