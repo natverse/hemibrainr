@@ -168,14 +168,61 @@ Collated by the Flyconnectome group.</p>
 
     <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
 
-    <p>An object of class <code>data.frame</code> with 333 rows and 25 columns.</p>
-<p>An object of class <code>data.frame</code> with 70 rows and 31 columns.</p>
-<p>An object of class <code>data.frame</code> with 2383 rows and 21 columns.</p>
+    <p>An object of class <code>data.frame</code> with 379 rows and 58 columns.</p>
+<p>An object of class <code>data.frame</code> with 70 rows and 58 columns.</p>
+<p>An object of class <code>data.frame</code> with 2383 rows and 48 columns.</p>
 <p>An object of class <code>data.frame</code> with 2129 rows and 45 columns.</p>
-<p>An object of class <code>data.frame</code> with 197 rows and 45 columns.</p>
+<p>An object of class <code>data.frame</code> with 197 rows and 46 columns.</p>
 <p>An object of class <code>data.frame</code> with 1927 rows and 45 columns.</p>
 <p>An object of class <code>data.frame</code> with 24 rows and 45 columns.</p>
-<p>An object of class <code>data.frame</code> with 431 rows and 45 columns.</p>
+<p>An object of class <code>data.frame</code> with 431 rows and 33 columns.</p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    
+<ul>
+<li><p>"bodyid"  - unique identifier for a single hemibrain neuron.</p></li>
+<li><p>"pre"  - the number of presynapses (outputs) a neuron contains. Each of this is polyadic.</p></li>
+<li><p>"post"  - the number of postsynapses (inputs) to the neuron.</p></li>
+<li><p>"upstream"  - the number of incoming connections to a neuron.</p></li>
+<li><p>"downstream"  - the number of outgoing connections from a neuron.</p></li>
+<li><p>"soma"  - neuron size in voxels.</p></li>
+<li><p>"sid"  - which brain hemisphere contains the neuron's soma.</p></li>
+<li><p>"voxels"  - whether the neuron has a soma in the hemibrain volume.</p></li>
+<li><p>"name"  - the name of this neuron.</p></li>
+<li><p>"connectivity.type" - the neuPrint designated 'type' for the neuron. A subset of neurons within a cell type that share similar connectivity. A connectivity
+  type is distinguished from a cell type by an ending _letter, defined using CBLAST (Scheffer et al. 2020).</p></li>
+<li><p>"cell.type" - neurons of a shared morphology that take the same cell body fibre tract and come from the same hemilineage (Bates 2019).</p></li>
+<li><p>"cellBodyFiber" - The cell body fiber for a neuron, as read from neuPrint and annotated by a team under <a href='https://www.janelia.org/people/kei-ito'>Kei Ito</a>.</p></li>
+<li><p>"putative.classic.transmitter" - putative neurotransmitter based on what neurons in the hemilineage in question has been shown to express, out of acetylcholine, GABA, glutamate.</p></li>
+<li><p>"ItoLee_Hemilineage" - the hemilineage that we reckon this cell type belongs to, based on expert review of light level data from the K. Ito and T. Lee groups (Yu 2013, Ito 2013).
+   See <code><a href='hemilineages.html'>hemibrain_hemilineages</a></code>.</p></li>
+<li><p>"Hartenstein_Hemilineage" - the hemilineage that we reckon this cell type belongs to, based on expert review of light level data from the V. Hartenstein Lee group (Wong 2013, Lovick 2013).
+   See <code><a href='hemilineages.html'>hemibrain_hemilineages</a></code>.</p></li>
+<li><p>"FAFB.match" - the ID of the manual match from the FAFB data set. ID indicates a neuron reconstructed in FAFBv14 CATMAID. Many of these neurons will be available through Virtual Fly Brain.</p></li>
+<li><p>"FAFB.match.quality" - the matcher makers qualitative assement of how good this match is: a poor match could be a neuron from a very similar same cell type or a highly untraced neuron that may be the correct cell type. An okay match should be a neuron that looks to be from the same morphological cell type but there may be some discrepancies in its arbour. A good match is a
+  neuron that corresponds well between FAFB and the hemibrain data.</p></li>
+<li><p>"layer" - probabilistic mean path length from neuron from ALRNs, depends on connection strengths.</p></li>
+<li><p>"layer.ct"- the mean layer for cell type, rounded to the nearest whole number.</p></li>
+<li><p>"axon.outputs"- number of outgoing connections from the neuron's predicted axon.</p></li>
+<li><p>"dend.outputs"- number of outgoing connections from the neuron's predicted dendrite.</p></li>
+<li><p>"axon.inputs"- number of incoming connections from the neuron's predicted axon.</p></li>
+<li><p>"dend.inputs"- number of incoming connections from the neuron's predicted dendrite.</p></li>
+<li><p>"total.length"- total cable length of the neuron in micrometers.</p></li>
+<li><p>"axon.length"- total axon cable length of the neuron in micrometers.</p></li>
+<li><p>"dend.length"- total dendrite cable length of the neuron in micrometers.</p></li>
+<li><p>"pd.length"- total  cable length of the primary dendrite 'linker' between axon and dendrite.</p></li>
+<li><p>"segregation_index"- a quantification of how polarised a neuron is, in terms of its segregation of inputs onto its predicted dendrite and outputs onto its axon,
+   where 0 is no-polarisation and 1 is totally polarised (Schneider-Mizell 2016).</p></li>
+<li><p>"notes"- other notes from annotators.</p></li>
+<li><p>"excpected_cit"a citation that describes this glomerulus,</p></li>
+<li><p>"expected_RN_female_1h".</p></li>
+<li><p>"expected_RN_female_SD".</p></li>
+<li><p>"missing".</p></li>
+<li><p>"odour_scenes"the general 'odour scene(s)' which this glomerulus may help signal (Mansourian 2015, Bates 2020)</p></li>
+<li><p>"key_ligand"the ligand that excites the cognate ALLRN or receptor the most, based on pooled data from multiple studies (Münch 2016)).</p></li>
+<li><p>"valence"the presumed valence of this odour channel (Badel 2016).</p></li>
+</ul>
+
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
