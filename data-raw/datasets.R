@@ -57,6 +57,7 @@ hemibrain_somas$soma.checked = NULL
 hemibrain_somas$clusters = NULL
 hemibrain_somas$wrong.cbf = NULL
 rownames(hemibrain_somas) = hemibrain_somas$bodyid
+hemibrain_somas = unlist_df(hemibrain_somas)
 usethis::use_data(hemibrain_somas, overwrite = TRUE)
 
 ### Split points
@@ -89,6 +90,7 @@ manual = as.data.frame(manual, stringsAsFactors = FALSE)
 manual = remove_duplicates(manual)
 hemibrain_all_splitpoints = subset(hemibrain_all_splitpoints, !bodyid%in%manual$bodyid)
 hemibrain_all_splitpoints = plyr::rbind.fill(hemibrain_all_splitpoints,manual)
+hemibrain_all_splitpoints$X.1 = NULL
 hemibrain_metrics[as.character(gs$bodyid),colnames(gs)] = gs
 
 ### Further update metrics based on manual splits

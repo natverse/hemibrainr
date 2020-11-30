@@ -34,7 +34,7 @@ hemibrain_get_meta <- function(x, ...){
 
   # Add cell. type
   nmeta$connectivity.type = nmeta$type
-  nmeta$cell.type = gsub("_.*","",nmeta$type)
+  nmeta$cell.type = gsub("_[a-z]{1}$","",nmeta$type)
   nmeta$cell.type[is.na(nmeta$cell.type)] = "uncertain"
   nmeta$connectivity.type[is.na(nmeta$connectivity.type)] = "uncertain"
 

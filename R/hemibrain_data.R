@@ -356,3 +356,6 @@
 "cent.info"
 #' @rdname info
 "dn.info"
+#' @name classed.ids
+#' @rdname classed.ids
+"rn.info"

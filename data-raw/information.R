@@ -1,20 +1,22 @@
 ### Code to prepare neuron information ###
 library(googledrive)
 
-# Get matches
-matches = hemibrain_matches()
-
 ## Olfactory projection neurons
 ### Depends on having the repo: hemibrain_olf_data
 mpns.fib.info = read.csv("/Users/GD/LMBD/Papers/hemibrain_olf_data/FIB_mPNs.csv")
 upns.fib.info = read.csv("/Users/GD/LMBD/Papers/hemibrain_olf_data/FIB_uPNs.csv")
+upns.left.fib.info = read.csv("/Users/GD/LMBD/Papers/hemibrain_olf_data/FIB_LHS_uPNs.csv")
 vpns.fib.info = read.csv("/Users/GD/LMBD/Papers/hemibrain_olf_data/FIB_VP_PNs.csv")
+other.fib.info = read.csv("/Users/GD/LMBD/Papers/hemibrain_olf_data/FIB_other_PNs.csv")
 odour.scenes = read.csv("/Users/GD/LMBD/Papers/hemibrain_olf_data/odour_scenes.csv")
 colnames(odour.scenes) = c("glomerulus", "key_ligand", "odour_scene", "valence")
 odour.scenes.agg = aggregate(list(odour.scenes=odour.scenes$odour_scene),
                              list(glomerulus=odour.scenes$glomerulus),
                              function(x) paste(unique(x), collapse="/"))
-pn.info = plyr::rbind.fill(upns.fib.info,mpns.fib.info,vpns.fib.info)
+pn.info = plyr::rbind.fill(upns.fib.info,mpns.fib.info,vpns.fib.info, other.fib.info, upns.left.fib.info)
+pn.info = plyr::rbind.fill(pn.info, upns.left.fib.info)
+pn.info = pn.info[!is.na(pn.info$bodyid),]
+pn.info = pn.info[!duplicated(pn.info$bodyid),]
 pn.info$glomerulus = gsub("\\+.*","",pn.info$glomerulus)
 pn.info = merge(pn.info, odour.scenes.agg, all.x = TRUE, all.y = FALSE)
 pn.meta = neuprint_get_meta(pn.info$bodyid)
@@ -28,14 +30,22 @@ pn.info$class = pn.info$PN_type
 pn.info$neurotransmitter = ifelse(pn.info$tract=="mlALT","GABA","acetylcholine")
 pn.info$glomerulus = gsub(" ","",pn.info$glomerulus)
 pn.info$glomerulus[pn.info$class=='mPN'] = "mPN"
-pn.info$layer = hemibrain_olfactory_layers[match(pn.info$bodyid,hemibrain_olfactory_layers$node),"layer_mean"]
-pn.info$cell.type = pn.info$type
-pn.info$ct.layer = NA
-for(ct in unique(pn.info$cell.type)){
-  layer = round(mean(subset(pn.info,cell.type==ct)$layer))
-  pn.info$ct.layer[pn.info$cell.type==ct] = layer
-}
-pn.info=pn.info[,!colnames(pn.info)%in%c( "X", "PN_type",  "fafb_type", "PN_type_revised")]
+pn.meta = hemibrain_get_meta(as.character(pn.info$bodyid))
+pn.info$side = "right"
+pn.info[rownames(pn.info)%in%upns.left.fib.info$bodyId] = "left"
+pn.info = cbind(pn.info, pn.meta[as.character(pn.meta$bodyid),setdiff(colnames(pn.meta),colnames(pn.info))])
+pn.info=pn.info[,!colnames(pn.info)%in%c( "X", "PN_type", "fafb_type", "PN_type_revised", "best_fafb_match")]
+
+# ALRN info
+rn.info = read.csv("/Users/GD/LMBD/Papers/hemibrain_olf_data/FIB_RNs.csv")
+rownames(rn.info) = rn.info$bodyid
+rn.info$glomerulus = gsub(" ","",rn.info$glomerulus)
+rn.meta = hemibrain_get_meta(as.character(rn.info$bodyid))
+rn.info = cbind(rn.info, rn.meta[as.character(rn.meta$bodyid),setdiff(colnames(rn.meta),colnames(rn.info))])
+rn.info$class = ifelse(rn.info$modality=="olfactory","ORN","THRN")
+rn.info$side = rn.info$soma_side
+rn.info=rn.info[,!colnames(rn.info)%in%c( "X", "PN_type", "fafb_type", "PN_type_revised", "best_fafb_match", "soma_side")]
+rn.info = rn.info[,!grepl("dend\\.|pd\\.|segregation",colnames(rn.info))]
 
 ## MBON information
 mbon.info = neuprint_search(".*MBON.*")
@@ -46,22 +56,18 @@ mb_ann = hemibrainr:::gsheet_manipulation(FUN = googlesheets4::read_sheet,
 mbon.info = cbind(mbon.info,mb_ann[match(mbon.info$bodyid,mb_ann$bodyId),])
 mbon.info[is.na(mbon.info)] = "unknown"
 mbon.info = subset(mbon.info, compartments!=""&!is.na(compartments))
-mbon.info$cell.type = gsub("_.*","",mbon.info$name)#paste0("MBON-",mbon.info$compartments)
 mbon.info$class = "MBON"
 rownames(mbon.info) = mbon.info$bodyid
-mbon.info$layer = hemibrain_olfactory_layers[match(mbon.info$bodyid,hemibrain_olfactory_layers$node),"layer_mean"]
-mbon.info$ct.layer = NA
-for(ct in unique(mbon.info$cell.type)){
-  layer = round(mean(subset(mbon.info,cell.type==ct)$layer))
-  mbon.info$ct.layer[mbon.info$cell.type==ct] = layer
-}
-mbon.info$match = matches[as.character(mbon.info$bodyid),"match"]
-mbon.info$quality = matches[as.character(mbon.info$bodyid),"quality"]
+mbon.meta = hemibrain_get_meta(as.character(mbon.info$bodyid))
+mbon.info = cbind(mbon.info, mbon.meta[as.character(mbon.meta$bodyid),setdiff(colnames(mbon.meta),colnames(mbon.info))])
 
 ### olfactory TON information
 ton.info = lhns::hemibrain_tons
 ton.info$class[ton.info$class=="TON"] = "TOON"
 ton.info$class[ton.info$bodyid%in%cent.ids] = "LHCENT"
+ton.meta = hemibrain_get_meta(as.character(ton.info$bodyid))
+ton.meta$side = "right"
+ton.info = cbind(ton.info, ton.meta[as.character(ton.meta$bodyid),setdiff(colnames(ton.meta),colnames(ton.info))])
 
 ## Visual projection neuron information
 lc.info = neuprint_search("LC.*",field="type")
@@ -76,16 +82,16 @@ al.sheet = hemibrainr:::gsheet_manipulation(FUN = googlesheets4::read_sheet,
 alln.info = hemibrain_get_meta(alln.ids)
 alln.info = alln.info[!is.na(alln.info$type),]
 alln.info$class = "ALLN"
-alln.info$class =al.sheet[match(alln.info$bodyid,al.sheet$bodyid),"manual_morph_group"]
+alln.info$class = al.sheet[match(alln.info$bodyid,al.sheet$bodyid),"manual_morph_group"]
 alln.info$class = paste0("ALLN_",alln.info$class)
 rownames(alln.info) = alln.info$bodyid
 
 # See what the status of our FAB matches is. We need presynapses for predictions.
-a = alln.info[,c("bodyid", "cellBodyFiber","type", "ItoLee_Hemilineage", "FAFB.match", "FAFB.match.quality", "class")]
-a = subset(a, FAFB.match!='none' & !is.na(FAFB.match))
-a$catmaid_name = catmaid_get_neuronnames(a$FAFB.match)
-a$pre = sapply(a$FAFB.match,function(s) length(unique(catmaid_get_connector_table(s, direction = "outgoing")$connector_id)))
-catmaid_set_annotations_for_skeletons(a$FAFB.match, annotations = "matched_ALLNs")
+# a = alln.info[,c("bodyid", "cellBodyFiber","type", "ItoLee_Hemilineage", "FAFB.match", "FAFB.match.quality", "class")]
+# a = subset(a, FAFB.match!='none' & !is.na(FAFB.match))
+# a$catmaid_name = catmaid_get_neuronnames(a$FAFB.match)
+# a$pre = sapply(a$FAFB.match,function(s) length(unique(catmaid_get_connector_table(s, direction = "outgoing")$connector_id)))
+# catmaid_set_annotations_for_skeletons(a$FAFB.match, annotations = "matched_ALLNs")
 
 # KC information
 kc.info = neuprint_search("^KC.*",field="type")
@@ -99,6 +105,7 @@ cent.info$class = "LHCENT"
 # Dn information
 dn.info = hemibrain_get_meta(unique(hemibrainr::dn.ids))
 dn.info$class = "DN"
+dn.info = dn.info[,!grepl("dend\\.|pd\\.|segregation|axon\\.",colnames(rn.info))]
 
 # Save information
 usethis::use_data(pn.info, overwrite = TRUE)
@@ -109,3 +116,38 @@ usethis::use_data(alln.info, overwrite = TRUE)
 usethis::use_data(kc.info, overwrite = TRUE)
 usethis::use_data(cent.info, overwrite = TRUE)
 usethis::use_data(dn.info, overwrite = TRUE)
+
+### Supplementary data for Schlegel and Bates 2021:
+supp.cols = c("bodyid", "pre", "post", "upstream", "downstream",
+              "status", "name",  "voxels", "soma", "side",
+              "connectivity.type", "cell.type", "class", "cellBodyFiber", "ItoLee_Lineage",
+              "ItoLee_Hemilineage", "Hartenstein_Lineage", "Hartenstein_Hemilineage",
+              "putative.classic.transmitter", "putative.other.transmitter", "glomerulus",
+              "FAFB.match", "FAFB.match.quality", "layer", "ct.layer",
+              "axon.outputs", "dend.outputs",
+              "axon.inputs", "dend.inputs", "total.length", "axon.length", "dend.length",
+              "pd.length", "segregation_index", "notes")
+toon.supp = ton.info[,colnames(ton.info)%in%supp.cols]
+order =match(supp.cols,colnames(toon.supp))
+order = order[!is.na(order)]
+toon.supp = toon.supp[,order]
+alpn.supp = pn.info[,colnames(pn.info)%in%supp.cols]
+order =match(supp.cols,colnames(alpn.supp))
+order = order[!is.na(order)]
+alpn.supp = alpn.supp[,order]
+alrn.supp = alln.info[,colnames(alln.info)%in%supp.cols]
+order =match(supp.cols,colnames(alrn.supp))
+order = order[!is.na(order)]
+alrn.supp = alrn.supp[,order]
+alln.supp = rn.info[,colnames(rn.info)%in%supp.cols]
+order =match(supp.cols,colnames(alln.supp))
+order = order[!is.na(order)]
+alln.supp = alln.supp[,order]
+write.csv(toon.supp, file = "/Users/GD/LMBD/Papers/hemibrain_olf_data/Schlegel2021_supp/hemibrain_TOON_meta.csv", row.names = FALSE)
+write.csv(alpn.supp, file = "/Users/GD/LMBD/Papers/hemibrain_olf_data/Schlegel2021_supp/hemibrain_ALPN_meta.csv", row.names = FALSE)
+write.csv(alrn.supp, file = "/Users/GD/LMBD/Papers/hemibrain_olf_data/Schlegel2021_supp/hemibrain_ALRN_meta.csv", row.names = FALSE)
+write.csv(alln.supp, file = "/Users/GD/LMBD/Papers/hemibrain_olf_data/Schlegel2021_supp/hemibrain_ALLN_meta.csv", row.names = FALSE)
+hemibrain.roots = hemibrain_somas[,c("bodyid","X","Y","Z")]
+write.csv(hemibrain.roots, file = "/Users/GD/LMBD/Papers/hemibrain_olf_data/Schlegel2021_supp/hemibrain_root_points.csv", row.names = FALSE)
+hemibrain.splitpoints = c("bodyid", "position", "point", "X", "Y", "Z")
+write.csv(hemibrain.splitpoints, file = "/Users/GD/LMBD/Papers/hemibrain_olf_data/Schlegel2021_supp/hemibrain_compartment_startpoints.csv", row.names = FALSE)
