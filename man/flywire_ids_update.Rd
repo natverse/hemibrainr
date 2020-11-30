@@ -52,9 +52,12 @@ specified by the argument \code{chosen.columns}.
 \dontrun{
 
 # Update flywire.ids in the sheet:
-## https://docs.google.com/spreadsheets/d/1rzG1MuZYacM-vbW7100aK8HeA-BY6dWAVXQ7TB6E2cQ/edit#gid=0
+### https://docs.google.com/spreadsheets/d/
+### 1rzG1MuZYacM-vbW7100aK8HeA-BY6dWAVXQ7TB6E2cQ
+### /edit#gid=0
 ## And return
-fw.gsheet.meta = flywire_ids_update(selected_sheets = "1rzG1MuZYacM-vbW7100aK8HeA-BY6dWAVXQ7TB6E2cQ")
+fw.gsheet.meta = flywire_ids_update(selected_sheets =
+"1rzG1MuZYacM-vbW7100aK8HeA-BY6dWAVXQ7TB6E2cQ")
 
 }}
 }
