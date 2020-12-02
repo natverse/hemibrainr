@@ -249,7 +249,7 @@ flywire_nblast_update <- function(x = NULL,
 
 
 # hidden
-flywire_basics <- function(x){
+flywire_basics <- function(x, ...){
   if(!nat::is.neuronlist(x)){
     stop("x must be a neuronlist")
   }
@@ -261,10 +261,10 @@ flywire_basics <- function(x){
   flywire.xyz = apply(branchpoints, 1, paste_coords)
 
   # Get FAFBv14 nm coordinates
-  # roots.flywire.raw = scale(roots, scale = 1/c(4, 4, 40), center = FALSE)
-  #FAFB.xyz = nat.templatebrains::xform_brain(roots.flywire.raw, sample = "FlyWire", reference = "FAFB14")
-  #FAFB.xyz = apply(FAFB.xyz, 1, paste_coords)
-  FAFB.xyz = ""
+  branchpoints.flywire.raw = scale(branchpoints, scale = 1/c(4, 4, 40), center = FALSE)
+  FAFB.xyz = nat.templatebrains::xform_brain(branchpoints.flywire.raw, sample = "FlyWire", reference = "FAFB14", ...)
+  FAFB.xyz = apply(FAFB.xyz, 1, paste_coords)
+  #FAFB.xyz = ""
 
   # Add
   x[,"flywire.id"] =  names(x)

@@ -19,7 +19,7 @@ flywire_matching_rewrite <- function(flywire.ids = names(flywire_neurons()),
       # Read CATMAID neurons
       message("Batch:", i, "/10")
       cat = catmaid::read.neurons.catmaid(skids[batches[[i]]], OmitFailures = TRUE)
-      cats = union(cats,cat)
+      cats = nat::union(cats,cat)
 
       # Get xyz for primary branch points
       simp = nat::nlapply(cat,nat::simplify_neuron,n=1, .parallel = TRUE, OmitFailures = TRUE)
@@ -36,23 +36,32 @@ flywire_matching_rewrite <- function(flywire.ids = names(flywire_neurons()),
       flywire.xyz = apply(branchpoints.flywire.raw, 1, paste_coords)
 
       # Add
-      gs[rownames(branchpoints),]$FAFB.xyz = FAFB.xyz
-      gs[rownames(branchpoints),]$flywire.xyz = flywire.xyz
-      gs[rownames(branchpoints),]$flywire.id = fw.ids
+      indices = match(rownames(branchpoints),gs$skid)
+      flywire.xyz.na = is.na(gs[indices,]$flywire.xyz)
+      indices.na = indices[flywire.xyz.na]
+      if(length(indices)){
+        gs[indices,]$FAFB.xyz = FAFB.xyz
+      }
+      if(length(indices.na)){
+        gs[indices.na,]$flywire.xyz = flywire.xyz
+        gs[indices.na,]$flywire.id = fw.ids
+      }
       all.ids=unique(c(all.ids,fw.ids))
     }
 
     # Update
-    rownames(gs) = NULL
-    googlesheets4::write_sheet(gs[0,],
-                               ss = selected_file,
-                               sheet = "FAFB")
-    batches = split(1:nrow(gs), ceiling(seq_along(1:nrow(gs))/500))
-    for(i in batches){
-      gsheet_manipulation(FUN = googlesheets4::sheet_append,
-                          data = gs[min(i):max(i),],
-                          ss = selected_file,
-                          sheet = "FAFB")
+    write.cols = setdiff(colnames(gs),c("FAFB.xyz", "flywire.xyz", "flywire.id"))
+    if(length(fids) & length(write.cols)){
+      for(column in write.cols){
+        letter = LETTERS[match(column,colnames(gs))]
+        range = paste0(letter,2,":",letter,nrow(gs)+1)
+        gsheet_manipulation(FUN = googlesheets4::range_write,
+                            ss = selected_sheet,
+                            range = range,
+                            data = as.data.frame(gs[,column], stringsAsFactors = FALSE),
+                            sheet = "FAFB",
+                            col_names = FALSE)
+      }
     }
 
     # Add flywire match to the hemibrain and LM sheets

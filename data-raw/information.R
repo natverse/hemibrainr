@@ -49,10 +49,7 @@ pn.info=pn.info[,!colnames(pn.info)%in%c( "X", "PN_type", "fafb_type", "PN_type_
 
 # ALRN info
 rn.info = read.csv("/Users/GD/LMBD/Papers/hemibrain_olf_data/FIB_RNs.csv")
-rn.info.2 = read.csv("/Users/GD/LMBD/Papers/hemibrain_olf_data/RN_bids_presyn_cable.csv")
 rownames(rn.info) = rn.info$bodyid
-rownames(rn.info.2) = rn.info.2$bodyid
-rn.info = cbind(rn.info.2, rn.info[as.character(rn.info.2$bodyid),setdiff(colnames(rn.info),colnames(rn.info.2))])
 rn.info$glomerulus = gsub(" ","",rn.info$glomerulus)
 rn.meta = hemibrain_get_meta(as.character(rn.info$bodyid))
 rn.info = cbind(rn.info, rn.meta[as.character(rn.info$bodyid),setdiff(colnames(rn.meta),colnames(rn.info))])
@@ -69,7 +66,7 @@ mb_ann = hemibrainr:::gsheet_manipulation(FUN = googlesheets4::read_sheet,
                                           return = TRUE)#read.csv("data-raw/annotations/mb_annotations.csv")
 mbon.info = cbind(mbon.info,mb_ann[match(mbon.info$bodyid,mb_ann$bodyId),])
 mbon.info[is.na(mbon.info)] = "unknown"
-mbon.info = subset(mbon.info, compartments!=""&!is.na(compartments))
+# mbon.info = subset(mbon.info, compartments!=""&!is.na(compartments))
 mbon.info$class = "MBON"
 rownames(mbon.info) = mbon.info$bodyid
 mbon.meta = hemibrain_get_meta(as.character(mbon.info$bodyid))
@@ -93,6 +90,7 @@ al.sheet = hemibrainr:::gsheet_manipulation(FUN = googlesheets4::read_sheet,
                                             ss = "124eTYqQ8evTGm_z75V8jNVmfBI763_s4h1EAPVMiSvI",
                                             sheet = "AL",
                                             return = TRUE)
+alln.summary = read.csv("/Users/GD/LMBD/Papers/hemibrain_olf_data/LN_type_description.csv")
 alln.info = hemibrain_get_meta(alln.ids)
 alln.info = alln.info[!is.na(alln.info$type),]
 alln.info$class = "ALLN"
@@ -100,7 +98,9 @@ alln.info$class = al.sheet[match(alln.info$bodyid,al.sheet$bodyid),"manual_morph
 alln.info$class = paste0("ALLN_",alln.info$class)
 alln.info$side = "right"
 rownames(alln.info) = alln.info$bodyid
-
+alln.info$anatomy.group = alln.summary$classification[match(alln.info$bodyid,alln.summary$bodyid)]
+alln.info$anatomy.group = gsub("_$","",alln.info$anatomy.group)
+alln.info$notes = alln.summary$description[match(alln.info$bodyid,alln.summary$bodyid)]
 
 # See what the status of our FAB matches is. We need presynapses for predictions.
 # a = alln.info[,c("bodyid", "cellBodyFiber","type", "ItoLee_Hemilineage", "FAFB.match", "FAFB.match.quality", "class")]
@@ -123,6 +123,24 @@ dn.info = hemibrain_get_meta(unique(hemibrainr::dn.ids))
 dn.info$class = "DN"
 dn.info = dn.info[,!grepl("dend\\.|pd\\.|segregation|axon\\.",colnames(dn.info))]
 
+# chatacter when needs
+char_df <- function(df, cols = c("bodyid","match","FAFB.match","skid","flywire.id")){
+  for(col in cols){
+    df[[col]] = as.character(df[[col]])
+  }
+  df
+}
+rn.info = char_df(rn.info)
+pn.info = char_df(pn.info)
+mbon.info = char_df(mbon.info)
+ton.info = char_df(ton.info)
+lc.info = char_df(lc.info)
+alln.info = char_df(alln.info)
+kc.info = char_df(kc.info)
+cent.info = char_df(cent.info)
+dn.info = char_df(dn.info)
+hemibrain_glomeruli_summary = char_df(hemibrain_glomeruli_summary)
+
 # Save information
 usethis::use_data(rn.info, overwrite = TRUE)
 usethis::use_data(pn.info, overwrite = TRUE)
@@ -138,12 +156,12 @@ usethis::use_data(hemibrain_glomeruli_summary, overwrite = TRUE)
 ### Supplementary data for Schlegel and Bates 2021:
 supp.cols = c("bodyid", "pre", "post", "upstream", "downstream",
               "status", "name",  "voxels", "soma", "side",
-              "connectivity.type", "cell.type", "class", "cellBodyFiber", "ItoLee_Lineage",
+              "connectivity.type", "cell.type", "anatomy.group", "class", "cellBodyFiber", "ItoLee_Lineage",
               "ItoLee_Hemilineage", "Hartenstein_Lineage", "Hartenstein_Hemilineage",
               "putative.classic.transmitter", "putative.other.transmitter", "glomerulus", "presyn.glom",
               "FAFB.match", "FAFB.match.quality", "layer", "ct.layer",
               "axon.outputs", "dend.outputs",
-              "axon.inputs", "dend.inputs", "total.length", "cable.length.um", "axon.length", "dend.length",
+              "axon.inputs", "dend.inputs", "total.length", "cable.length.um", "cable.length.glom.um","axon.length", "dend.length",
               "pd.length", "segregation_index", "notes")
 toon.supp = ton.info[,colnames(ton.info)%in%supp.cols]
 order = match(supp.cols,colnames(toon.supp))
@@ -165,6 +183,15 @@ dn.supp = dn.info[,colnames(dn.info)%in%supp.cols]
 order =match(supp.cols,colnames(dn.supp))
 order = order[!is.na(order)]
 dn.supp = dn.supp[,order]
+# clean data a little
+wipe = c("FAFB.match", "FAFB.match.quality","putative.classic.transmitter","putative.other.transmitter")
+for(w in wipe){
+  alpn.supp[[w]] = NULL
+  alrn.supp[[w]] = NULL
+  alln.supp[[w]] = NULL
+  dn.supp[[w]] = NULL
+}
+# Write supp data
 write.csv(toon.supp, file = "/Users/GD/LMBD/Papers/hemibrain_olf_data/Schlegel2021_supp/hemibrain_TOON_meta.csv", row.names = FALSE)
 write.csv(alpn.supp, file = "/Users/GD/LMBD/Papers/hemibrain_olf_data/Schlegel2021_supp/hemibrain_ALPN_meta.csv", row.names = FALSE)
 write.csv(alrn.supp, file = "/Users/GD/LMBD/Papers/hemibrain_olf_data/Schlegel2021_supp/hemibrain_ALRN_meta.csv", row.names = FALSE)

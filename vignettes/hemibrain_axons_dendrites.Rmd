@@ -14,8 +14,8 @@ knitr::opts_chunk$set(
 )
 ```
 
-> "We’re Building Something, Here, Detective, We’re Building It From Scratch. All The Pieces Matter."
-([Lester, The Wire](https://en.wikipedia.org/wiki/The_Wire))
+> "This history of civilization proves beyond doubt just how sterile the repeated attempts of metaphysics to guess at nature' s laws have been. Instead, there is every reason to believe that when the human intellect ignores reality and concentrates within, it can no longer explain the simplest inner workings of life' s machinery or of the world around us."
+([Santiago Ramón y Cajal](https://en.wikiquote.org/wiki/Santiago_Ram%C3%B3n_y_Cajal)
 
 # Axons, dendrite and other compartments
 
@@ -55,7 +55,11 @@ Explore their methods for more information.
 First, let us get and load the packages we will need:
 
 ```{r load, eval = FALSE}
-# Load package
+# install
+if (!require("remotes")) install.packages("remotes")
+remotes::install_github("natverse/hemibrainr")
+
+# use 
 library(hemibrainr)
 ```
 
