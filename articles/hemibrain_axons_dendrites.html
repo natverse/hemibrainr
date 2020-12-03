@@ -69,6 +69,9 @@
     <li>
       <a href="../articles/match_making.html">neuron match making</a>
     </li>
+    <li>
+      <a href="../articles/packages_guide.html">related packags</a>
+    </li>
   </ul>
 </li>
       </ul>
@@ -103,7 +106,7 @@
     
     
 <blockquote>
-<p>“We’re Building Something, Here, Detective, We’re Building It From Scratch. All The Pieces Matter.” (<a href="https://en.wikipedia.org/wiki/The_Wire">Lester, The Wire</a>)</p>
+<p>“This history of civilization proves beyond doubt just how sterile the repeated attempts of metaphysics to guess at nature’ s laws have been. Instead, there is every reason to believe that when the human intellect ignores reality and concentrates within, it can no longer explain the simplest inner workings of life’ s machinery or of the world around us.” (<a href="https://en.wikiquote.org/wiki/Santiago_Ram%C3%B3n_y_Cajal">Santiago Ramón y Cajal</a></p>
 </blockquote>
 <div id="axons-dendrite-and-other-compartments" class="section level1">
 <h1 class="hasAnchor">
@@ -137,7 +140,11 @@
 <a href="#tutorial" class="anchor"></a>Tutorial</h1>
 <p>First, let us get and load the packages we will need:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Load package</span>
+<code class="sourceCode R"><span class="co"># install</span>
+<span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="st"><a href="https://remotes.r-lib.org">"remotes"</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span>
+<span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span><span class="op">(</span><span class="st">"natverse/hemibrainr"</span><span class="op">)</span>
+
+<span class="co"># use </span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/flyconnectome/hemibrainr">hemibrainr</a></span><span class="op">)</span></code></pre></div>
 <div id="split-neurons-from-the-hemibrain" class="section level2">
 <h2 class="hasAnchor">
