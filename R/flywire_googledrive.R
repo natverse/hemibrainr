@@ -503,7 +503,7 @@ flywire_ids_update <- function(selected_sheets = NULL,
           gs.t[good.xyz,c("fw.x","fw.y","fw.z")] = nat::xyzmatrix(gs.t[good.xyz,"flywire.xyz"])
         }
         gs.t[!good.xyz,c("flywire.xyz")] = apply(gs.t[!good.xyz,c("fw.x","fw.y",'fw.z')],1,paste_coords)
-        if(sum(is.na(gs.t$flywire.xyz))>0){
+        if(!all(is.na(gs.t$flywire.xyz))){
           # Get flywire IDs from these positions
           bbx = matrix(c(5100, 1440, 16, 59200, 29600, 7062),ncol=3,byrow = TRUE)
           bbx = nat::boundingbox(scale(bbx, scale = 1/c(4, 4, 40), center = FALSE))
