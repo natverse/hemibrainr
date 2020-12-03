@@ -325,15 +325,7 @@ hemibrain_nblast <- function(nblast = c("hemibrain",
                              local = FALSE){
   nblast = match.arg(nblast)
   savedir = good_savedir(local = local)
-  folder = if(nblast %in% c("hemibrain",
-                            "hemibrain-flywire",
-                            "hemibrain-flycircuit",
-                            "hemibrain-fafb14",
-                            "flywire-mirror")){
-    "hemibrain_nblast"
-  }else{
-    "hemibrain_nblast/nblast_"
-  }
+  folder = "hemibrain_nblast"
   file = switch(nblast,
     hemibrain = "hemibrain.aba.mean.compress.rda",
     `hemibrain-spines` = "hemibrain.spine.aba.mean.compressed.rda",
@@ -348,6 +340,7 @@ hemibrain_nblast <- function(nblast = c("hemibrain",
     `hemibrain-flycircuit` = "hemibrain.flycircuit.mean.compressed.rda",
     `hemibrain-fafb14` = "hemibrain.fafb14.mean.compressed.rda",
     `flywire-mirror` = "flywire.mirror.mean.compressed.rda",
+    flywire = "flywire.mean.compressed.rda",
     stop("Unrecognised value of nblast argument!")
   )
   if(nblast=="hemibrain-fafb14" && file.exists("/Volumes/GoogleDrive/Shared drives/flyconnectome/fafbpipeline/fib.fafb.crossnblast.twigs5.mean.compress.rda")){
