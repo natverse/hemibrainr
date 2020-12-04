@@ -56,7 +56,7 @@ flywire_matching_rewrite <- function(flywire.ids = names(flywire_neurons()),
         letter = LETTERS[match(column,colnames(gs))]
         range = paste0(letter,2,":",letter,nrow(gs)+1)
         gsheet_manipulation(FUN = googlesheets4::range_write,
-                            ss = selected_sheet,
+                            ss = selected_file,
                             range = range,
                             data = as.data.frame(gs[,column], stringsAsFactors = FALSE),
                             sheet = "FAFB",
