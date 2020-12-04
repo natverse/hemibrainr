@@ -61,6 +61,9 @@
       <a href="../articles/google_filestream.html">read data from Google drive</a>
     </li>
     <li>
+      <a href="../articles/hemibrain_alpns_toons.html">olfactory connectivity</a>
+    </li>
+    <li>
       <a href="../articles/hemibrain_axons_dendrites.html">axons and dendrites</a>
     </li>
     <li>
@@ -70,7 +73,7 @@
       <a href="../articles/match_making.html">neuron match making</a>
     </li>
     <li>
-      <a href="../articles/packages_guide.html">related packags</a>
+      <a href="../articles/packages_guide.html">related packages</a>
     </li>
   </ul>
 </li>
@@ -176,7 +179,7 @@
 <p>If you have authorisation, you can see the most up-to-date matches as so:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">matches</span> <span class="op">=</span> <span class="fu"><a href="../reference/hemibrain_matches.html">hemibrain_matches</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># You will be asked to log-in through a Google-enabled email address.</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/View.html">View</a></span><span class="op">(</span><span class="fu">matches</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="https://rdrr.io/r/utils/View.html">View</a></span><span class="op">(</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html">matches</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p>As you can see, other meta information is present in the data frame <code>matches</code>. The function <code>hemibrain_matches</code> has an argument called <code>priority</code>. This specifies whether to use FAFB-&gt;hemibrain matches (FAFB) or hemibrain-&gt;FAFB matches (hemibrain) in order to ascribe cell type names to FAFB neurons. In both cases, cell type names are attached to hemibrain bodyids, and propagated to their FAFB matches.</p>
 </div>
 </div>
