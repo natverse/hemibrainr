@@ -19,6 +19,9 @@ flywire_matching_rewrite <- function(flywire.ids = names(flywire_neurons()),
       # Read CATMAID neurons
       message("Batch:", i, "/10")
       cat = catmaid::read.neurons.catmaid(skids[batches[[i]]], OmitFailures = TRUE)
+      if(!length(cat)){
+        next
+      }
       cats = nat::union(cats,cat)
 
       # Get xyz for primary branch points
