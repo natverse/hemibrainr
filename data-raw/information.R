@@ -156,8 +156,8 @@ usethis::use_data(hemibrain_glomeruli_summary, overwrite = TRUE)
 ### Supplementary data for Schlegel and Bates 2021:
 supp.cols = c("bodyid", "pre", "post", "upstream", "downstream",
               "status", "name",  "voxels", "soma", "side",
-              "connectivity.type", "cell.type", "anatomy.group", "class", "cellBodyFiber", "ItoLee_Lineage",
-              "ItoLee_Hemilineage", "Hartenstein_Lineage", "Hartenstein_Hemilineage",
+              "connectivity.type", "cell.type", "anatomy.group", "class", "cellBodyFiber",
+              # "ItoLee_Lineage", "ItoLee_Hemilineage", "Hartenstein_Lineage", "Hartenstein_Hemilineage",
               "putative.classic.transmitter", "putative.other.transmitter", "glomerulus", "presyn.glom",
               "FAFB.match", "FAFB.match.quality", "layer", "ct.layer",
               "axon.outputs", "dend.outputs",

@@ -61,6 +61,9 @@
       <a href="../articles/google_filestream.html">read data from Google drive</a>
     </li>
     <li>
+      <a href="../articles/hemibrain_alpns_toons.html">olfactory connectivity</a>
+    </li>
+    <li>
       <a href="../articles/hemibrain_axons_dendrites.html">axons and dendrites</a>
     </li>
     <li>
@@ -68,6 +71,9 @@
     </li>
     <li>
       <a href="../articles/match_making.html">neuron match making</a>
+    </li>
+    <li>
+      <a href="../articles/packages_guide.html">related packages</a>
     </li>
   </ul>
 </li>
@@ -118,7 +124,7 @@
 <center>
 <img src="https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/hemilineage_example.png" alt="hemilineage_example">
 </center>
-<p>In order to match neurons, we make use of other <a href="http://natverse.org/">natverse</a> tools to ‘bridge’ data between two different brainspace, so they can be co-visualised:</p>
+<p>In order to match neurons, we make use of other <a href="http://natverse.org/">natverse</a> tools to ‘bridge’ data between two different brainspace, so they can be co-visualised (enabled by template brain and bridging registrations by <a href="https://www.biorxiv.org/content/10.1101/376384v2.full">Bogovic et al. 2019</a>):</p>
 <center>
 <img src="https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/hemibrain_to_FAFB.png" alt="hemibrain_to_FAFB">
 </center>
@@ -173,14 +179,14 @@
 <p>If you have authorisation, you can see the most up-to-date matches as so:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">matches</span> <span class="op">=</span> <span class="fu"><a href="../reference/hemibrain_matches.html">hemibrain_matches</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># You will be asked to log-in through a Google-enabled email address.</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/View.html">View</a></span><span class="op">(</span><span class="fu">matches</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="https://rdrr.io/r/utils/View.html">View</a></span><span class="op">(</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html">matches</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p>As you can see, other meta information is present in the data frame <code>matches</code>. The function <code>hemibrain_matches</code> has an argument called <code>priority</code>. This specifies whether to use FAFB-&gt;hemibrain matches (FAFB) or hemibrain-&gt;FAFB matches (hemibrain) in order to ascribe cell type names to FAFB neurons. In both cases, cell type names are attached to hemibrain bodyids, and propagated to their FAFB matches.</p>
 </div>
 </div>
 <div id="match-quality" class="section level2">
 <h2 class="hasAnchor">
 <a href="#match-quality" class="anchor"></a>Match Quality</h2>
-<p>Once a match is recorded, the user selects a quality for that match. There can be no match (none), a tract-only match (tract) a poor match (poor) an okay match (medium) or an exact match (good). As a rule of thumb, a poor match could be a neuron from a very similar same cell type or a highly untraced neuron that may be the correct cell type. An okay match should be a neuron that looks to be from the same morphological cell type but there may be some discrepancies in its arbour. A good match is a neuron that corresponds well between FAFB and the hemibrain data.A tract only match just means that the matched neuron should share the same cell body fiber, and therefore same developmental ontogeny, even if the rest of its morphology is quite different.</p>
+<p>Once a match is recorded, the user selects a quality for that match. There can be no match (none), a tract-only match (tract) a poor match (poor) an okay match (medium) or an exact match (good). As a rule of thumb, a poor match could be a neuron from a very similar same cell type or a highly untraced neuron that may be the correct cell type. An okay match should be a neuron that looks to be from the same morphological cell type but there may be some discrepancies in its arbour. A good match is a neuron that corresponds well between FAFB and the hemibrain data. A tract only match just means that the matched neuron should share the same cell body fiber, and therefore same developmental ontogeny, even if the rest of its morphology is quite different.</p>
 <p>It is very important to note that a match cannot be a match if neurons do not seem to share the same cell body fiber tract. Being in a different tract is a deal breaker.</p>
 <p>Some good matches are striking. For example:</p>
 <center>

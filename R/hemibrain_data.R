@@ -241,6 +241,14 @@
 #' @rdname hemilineages
 "hemibrain_hemilineages"
 
+#' Colours for labels used in Schlegel and Bates et al.2021
+#'
+#' Named vector of hex codes describing the colours used in Schlegel and Bates et al.2021 for a variety of labels.
+#'
+#' @name paper_colours
+#' @rdname paper_colours
+"paper_colours"
+
 #' Hemibrain neurons in different Olfactory layers
 #'
 #' Results of an infection model used by Philipp Schlegel.

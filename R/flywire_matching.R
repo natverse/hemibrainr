@@ -51,7 +51,7 @@ flywire_matching_rewrite <- function(flywire.ids = names(flywire_neurons()),
 
     # Update
     write.cols = setdiff(colnames(gs),c("FAFB.xyz", "flywire.xyz", "flywire.id"))
-    if(length(fids) & length(write.cols)){
+    if(length(all.ids) & length(write.cols)){
       for(column in write.cols){
         letter = LETTERS[match(column,colnames(gs))]
         range = paste0(letter,2,":",letter,nrow(gs)+1)

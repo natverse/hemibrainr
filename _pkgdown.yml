@@ -78,6 +78,7 @@ reference:
     - 'hemibrain_settags'
     - 'plot_inspirobot'
     - 'hemibrain_view'
+    - 'paper_colours'
   - title: R annotation pipelines
     desc: ~
     contents:

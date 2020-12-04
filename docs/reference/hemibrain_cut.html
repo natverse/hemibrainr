@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Read flycircuit neurons from hemibrainr Google Drive — flycircuit_neurons • hemibrainr</title>
+<title>Cut neurons to the hemibrain volume — hemibrain_cut • hemibrainr</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,10 +46,8 @@
 
 
 
-<meta property="og:title" content="Read flycircuit neurons from hemibrainr Google Drive — flycircuit_neurons" />
-<meta property="og:description" content="Read flycircuit neurons from the hemibrainr google drive.
-The google drive must be mounted with Google Filestream or rclone.
-See hemibrainr_set_drive." />
+<meta property="og:title" content="Cut neurons to the hemibrain volume — hemibrain_cut" />
+<meta property="og:description" content="Cut neurons from another data source to the hemibrain volume." />
 <meta property="og:image" content="/logo.svg" />
 
 
@@ -142,82 +140,53 @@ See hemibrainr_set_drive." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Read flycircuit neurons from hemibrainr Google Drive</h1>
-    <small class="dont-index">Source: <a href='https://github.com/flyconnectome/hemibrainr/blob/master/R/hemibrain_googledrive.R'><code>R/hemibrain_googledrive.R</code></a></small>
-    <div class="hidden name"><code>flycircuit_neurons.Rd</code></div>
+    <h1>Cut neurons to the hemibrain volume</h1>
+    <small class="dont-index">Source: <a href='https://github.com/flyconnectome/hemibrainr/blob/master/R/hemibrain_reroot.R'><code>R/hemibrain_reroot.R</code></a></small>
+    <div class="hidden name"><code>hemibrain_cut.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Read <a href='http://www.flycircuit.tw/'>flycircuit</a> neurons from the <code>hemibrainr</code> google drive.
-The google drive must be mounted with Google Filestream or rclone.
-See <code><a href='hemibrainr_set_drive.html'>hemibrainr_set_drive</a></code>.</p>
+    <p>Cut neurons from another data source to the hemibrain volume.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>flycircuit_neurons</span><span class='op'>(</span>
-  local <span class='op'>=</span> <span class='cn'>FALSE</span>,
-  folder <span class='op'>=</span> <span class='st'>"light_level/flycircuit"</span>,
-  cable <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"all"</span>, <span class='st'>"primary.neurites"</span>, <span class='st'>"arbour"</span><span class='op'>)</span>,
-  data <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"neuronlist"</span>, <span class='st'>"nblast"</span>, <span class='st'>"dps"</span><span class='op'>)</span>,
-  brainspace <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"JRCFIB2018F"</span>, <span class='st'>"JRCFIB2018Fraw"</span>, <span class='st'>"FCWB"</span><span class='op'>)</span>
-<span class='op'>)</span>
-
-<span class='fu'>lm_lhns</span><span class='op'>(</span>
-  local <span class='op'>=</span> <span class='cn'>FALSE</span>,
-  folder <span class='op'>=</span> <span class='st'>"light_level/lhns"</span>,
-  data <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"neuronlist"</span>, <span class='st'>"nblast"</span>, <span class='st'>"dps"</span><span class='op'>)</span>,
-  cable <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"lhns"</span>, <span class='st'>"lhins"</span>, <span class='st'>"lines"</span><span class='op'>)</span>,
-  brainspace <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"JRCFIB2018F"</span>, <span class='st'>"JRCFIB2018Fraw"</span>, <span class='st'>"FCWB"</span><span class='op'>)</span>
-<span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>hemibrain_cut</span><span class='op'>(</span><span class='va'>x</span>, scale <span class='op'>=</span> <span class='fl'>1</span>, brain <span class='op'>=</span> <span class='st'>"FAFB14"</span>, mirror <span class='op'>=</span> <span class='cn'>FALSE</span>, <span class='va'>...</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>local</th>
-      <td><p><code>FALSE</code> or path. By default (<code>FALSE</code>) data is read from <code>options()$Drive_hemibrain_data</code>),
-but the user can specify an alternative path.</p></td>
+      <th>x</th>
+      <td><p>a <code><a href='https://rdrr.io/pkg/nat/man/neuronlist.html'>nat::neuronlist</a></code> object.</p></td>
     </tr>
     <tr>
-      <th>folder</th>
-      <td><p>A subfolder on the hemibrain team drive or your local data folder
-containing the data object to read.</p></td>
+      <th>scale</th>
+      <td><p>scale <code>x</code> by a factor of <code>scale</code>.</p></td>
     </tr>
     <tr>
-      <th>cable</th>
-      <td><p>the type of cable we want to read. <code>"all"</code> indicates full neurons.</p></td>
+      <th>brain</th>
+      <td><p>the brainspace to which <code>x</code> is registered.</p></td>
     </tr>
     <tr>
-      <th>data</th>
-      <td><p>the type of data to read, i.e. neurons, an NBLAST matrix or a
-<code>dotprops</code> object.</p></td>
+      <th>mirror</th>
+      <td><p>whether or not to mirror the hemibrain volume, to which <code>x</code> is cut.</p></td>
     </tr>
     <tr>
-      <th>brainspace</th>
-      <td><p>A template brain space for neurons loaded by
-<code>lm_lhns</code>. Defaults to <code>JRCFIB2018F</code>.</p></td>
+      <th>...</th>
+      <td><p>methods supplied to <code><a href='https://rdrr.io/pkg/nat/man/nlapply.html'>nat::nlapply</a></code></p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>a <code><a href='https://rdrr.io/pkg/nat/man/neuronlistfh.html'>nat::neuronlistfh</a></code> object for 'light-level' neurons in the given brainspace.</p>
+    <p>a <code><a href='https://rdrr.io/pkg/nat/man/neuronlist.html'>nat::neuronlist</a></code>.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='hemibrain_splitpoints.html'>hemibrain_splitpoints</a></code>,
-  <code><a href='hemibrain_flow_centrality.html'>hemibrain_flow_centrality</a></code>,
-  <code><a href='hemibrain_metrics.html'>hemibrain_metrics</a></code>,
-  <code><a href='hemibrainr_googledrive_data.html'>hemibrainr_googledrive_data</a></code></p></div>
+    <div class='dont-index'><p><code><a href='hemibrain_reroot.html'>hemibrain_reroot</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
 <span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
-
-<span class='co'># All flycircuit neurons</span>
-<span class='va'>fw</span> <span class='op'>=</span> <span class='fu'>flycircuit_neurons</span><span class='op'>(</span><span class='op'>)</span>
-
-<span class='co'># All LHNs from Frechter et al. 2019, eLife</span>
-<span class='va'>lhns</span> <span class='op'>=</span> <span class='fu'>lm_lhns</span><span class='op'>(</span><span class='op'>)</span>
-
+<span class='va'>Cell07PNs.cut</span> <span class='op'>=</span> <span class='fu'>hemibrain_cut</span><span class='op'>(</span><span class='va'>Cell07PNs.cut</span>, brain <span class='op'>=</span> <span class='st'>"FCWB"</span><span class='op'>)</span>
 <span class='op'>}</span><span class='co'># }</span>
 </div></pre>
   </div>

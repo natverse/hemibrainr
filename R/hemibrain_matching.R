@@ -1544,7 +1544,8 @@ fafb_matching_rewrite <- function(selected_file  = options()$hemibrainr_matching
                                      sheet = "FAFB")
   }
   if(!is.null(matches)){
-    missing = setdiff(subset(matches,matches$dataset=="hemibrain" & match.dataset == "CATMAID")$match,subset(matches,matches$dataset=="CATMAID" & match.dataset == "hemibrain")$id)
+    missing = setdiff(subset(matches,matches$dataset=="hemibrain" & matches$match.dataset == "CATMAID")$match,
+                      subset(matches,matches$dataset=="CATMAID" & matches$match.dataset == "hemibrain")$id)
     missing = missing[!grepl("missing|none|NA|good|medium|poor|tract|,|;|)",missing)]
     missing = missing[!is.na(missing)]
     if(length(missing)){

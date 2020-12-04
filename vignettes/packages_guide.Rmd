@@ -1,5 +1,5 @@
 ---
-title: "related packags"
+title: "related packages"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{related packages}
