@@ -486,7 +486,7 @@ skeletor_batch <- function(obj, swc, numCores = 1, max.file.size = 1000000000, .
 download_neuron_obj_batch <- function(ids, numCores = 1, ratio = 1, save.obj = "obj"){
   batches = split(ids, round(seq(from = 1, to = numCores, length.out = length(ids))))
   batch = 0
-  oreach.skeletons <- foreach::foreach (batch = seq_along(batches)) %dopar% {
+  foreach.skeletons <- foreach::foreach (batch = seq_along(batches)) %dopar% {
     neuron.ids = batches[[batch]]
     j = tryCatch(fafbseg::download_neuron_obj(segments = neuron.ids,
                                               ratio = ratio,
