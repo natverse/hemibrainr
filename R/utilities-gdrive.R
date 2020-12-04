@@ -60,46 +60,48 @@ googledrive_upload_neuronlistfh <- function(x,
     sub.data = googledrive::drive_ls(path = t.folder.data, team_drive = td)
     t.list.master = t.list.master[! basename(t.list.master) %in% sub.data$name]
   }
-  if(numCores>1){
-    batch = 1
-    batches = split(t.list.master, round(seq(from = 1, to = numCores, length.out = length(t.list.master))))
-    foreach.upload <- foreach::foreach (batch = 1:length(batches)) %dopar% {
-      t.list = batches[[batch]]
-      for(t.neuron.fh.data.file in t.list){
+  if(length(t.list.master)){
+    if(numCores>1){
+      batch = 1
+      batches = split(t.list.master, round(seq(from = 1, to = numCores, length.out = length(t.list.master))))
+      foreach.upload <- foreach::foreach (batch = 1:length(batches)) %dopar% {
+        t.list = batches[[batch]]
+        for(t.neuron.fh.data.file in t.list){
+          t = basename(t.neuron.fh.data.file)
+          save.data =  t.folder.data
+          upload = tryCatch({gsheet_manipulation(googledrive::drive_upload,
+                                                 media = t.neuron.fh.data.file,
+                                                 path = save.data,
+                                                 verbose = FALSE)},
+                            error = function(e){
+                              cat(as.character(e))
+                              error.files <<- c(error.files,t.neuron.fh.data.file)
+                              NA
+                            } )
+        }
+      }
+    }else{
+      pb <- progress::progress_bar$new(
+        format = "  uploading [:bar] :current/:total eta: :eta",
+        total = length(t.list.master), clear = FALSE, show_after = 1)
+      for(t.neuron.fh.data.file in t.list.master){
+        pb$tick()
         t = basename(t.neuron.fh.data.file)
         save.data =  t.folder.data
         upload = tryCatch({gsheet_manipulation(googledrive::drive_upload,
-                                              media = t.neuron.fh.data.file,
-                                              path = save.data,
-                                              verbose = FALSE)},
-                            error = function(e){
+                                               media = t.neuron.fh.data.file,
+                                               path = save.data,
+                                               verbose = FALSE)},
+                          error = function(e){
                             cat(as.character(e))
                             error.files <<- c(error.files,t.neuron.fh.data.file)
                             NA
-                            } )
+                          } )
       }
     }
-  }else{
-    pb <- progress::progress_bar$new(
-      format = "  uploading [:bar] :current/:total eta: :eta",
-      total = length(t.list.master), clear = FALSE, show_after = 1)
-    for(t.neuron.fh.data.file in t.list.master){
-      pb$tick()
-      t = basename(t.neuron.fh.data.file)
-      save.data =  t.folder.data
-      upload = tryCatch({gsheet_manipulation(googledrive::drive_upload,
-                                             media = t.neuron.fh.data.file,
-                                             path = save.data,
-                                             verbose = FALSE)},
-                        error = function(e){
-                          cat(as.character(e))
-                          error.files <<- c(error.files,t.neuron.fh.data.file)
-                          NA
-                        } )
+    if(length(error.files)){
+      warning("Failed to upload: ", length(error.files)," files")
     }
-  }
-  if(length(error.files)){
-    warning("Failed to upload: ", length(error.files)," files")
   }
 
   # upload .rds
