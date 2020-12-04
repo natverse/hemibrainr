@@ -51,7 +51,7 @@ annotations set on CATMAID neurons in specified CATMAID instance, see your \code
 \description{
 Set annotations for FAFB neurons in CATMAID based on matches made to hemibrain neurons.
 E.g. transfer information on matches and cell body fibers, and also update lineage related information.
-Not that \code{catmaid::flywire_matching_rewrite()} will writ annotations related to flywire.
+Not that \code{catmaid::flywire_matching_rewrite()} will write annotations related to flywire.
 }
 \examples{
 \donttest{
