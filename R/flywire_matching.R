@@ -18,7 +18,7 @@ flywire_matching_rewrite <- function(flywire.ids = names(flywire_neurons()),
     for(i in 1:10){
       # Read CATMAID neurons
       message("Batch:", i, "/10")
-      cat = catmaid::read.neurons.catmaid(skids[batches[[i]]], OmitFailures = TRUE)
+      cat = tryCatch(catmaid::read.neurons.catmaid(skids[batches[[i]]], OmitFailures = TRUE), error = function(e) NULL)
       if(!length(cat)){
         next
       }
