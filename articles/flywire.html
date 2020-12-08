@@ -55,6 +55,9 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
+      <a href="../articles/data.html">hemibrain and flywire meta data</a>
+    </li>
+    <li>
       <a href="../articles/flywire.html">flywire</a>
     </li>
     <li>
@@ -108,9 +111,6 @@
 
     
     
-<blockquote>
-<p>“We’re Building Something, Here, Detective, We’re Building It From Scratch. All The Pieces Matter.” (<a href="https://en.wikipedia.org/wiki/The_Wire">Lester, The Wire</a>)</p>
-</blockquote>
 <div id="flywire-and-r" class="section level1">
 <h1 class="hasAnchor">
 <a href="#flywire-and-r" class="anchor"></a>FlyWire and R</h1>
@@ -162,9 +162,9 @@
 <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="st"><a href="https://github.com/natverse/fafbseg">"fafbseg"</a></span><span class="op">)</span><span class="op">)</span> <span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span><span class="op">(</span><span class="st">"flyconnectome/fafbseg"</span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/natverse/nat.jrcbrains">nat.jrcbrains</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/natverse/fafbseg">fafbseg</a></span><span class="op">)</span></code></pre></div>
-<div id="get-flywire" class="section level2">
+<div id="get-flywire-data" class="section level2">
 <h2 class="hasAnchor">
-<a href="#get-flywire" class="anchor"></a>Get flywire</h2>
+<a href="#get-flywire-data" class="anchor"></a>Get flywire data</h2>
 <p>With <code>hemibrainr</code> you can easily get thousands of skeletons for flywire neurons. These skeletons have been built using <a href="https://github.com/schlegelp/skeletor">skeletor</a>, which is a python module. You can also use it <a href="https://github.com/natverse/fafbseg">directly in R</a> with <code><a href="https://rdrr.io/pkg/fafbseg/man/skeletor.html">fafbseg::skeletor</a></code>. It has been run on thousands of neurons, which have then been stored on Google Drive, at: <code>hemibrainr/flywire_neurons/</code> as <code><a href="https://rdrr.io/pkg/nat/man/neuronlistfh.html">nat::neuronlistfh</a></code> objects. This means that you can use either get flywire skeletons for neurons using the drive, or by making them from meshes yourself. Let’s demonstrate:</p>
 <div id="access-flywire-data-on-the-hemibrainr-google-drive" class="section level3">
 <h3 class="hasAnchor">
@@ -172,7 +172,7 @@
 <p>From the the hemibrainr Google drive we can see which flywire IDs have been read from <a href="https://ngl.flywire.ai/?local_id=c8c06ea181ad5447b04beacfc4cb1b66">FlyWire</a> and skeletonised. We can also see some meta data about them, and get a data frame that tells us which users have built these neurons - useful for assigning credit!</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># All flywire IDs for neurons that have a split precomputed</span>
-<span class="va">fw.ids</span> <span class="op">=</span> <span class="fu"><a href="../reference/flywire_googledrive_data.html">flywire_ids</a></span><span class="op">(</span><span class="op">)</span>
+<span class="va">fw.ids</span> <span class="op">=</span> <span class="fu"><a href="../reference/flywire_googledrive_data.html">flywire_ids</a></span><span class="op">(</span>sql<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">fw.ids</span><span class="op">)</span>
 
 <span class="co"># For these flywire IDs, their meta data:</span>
@@ -181,7 +181,12 @@
 
 <span class="co"># For flywire IDs, which users contributed what:</span>
 <span class="va">fw.edits</span> <span class="op">=</span> <span class="fu"><a href="../reference/flywire_googledrive_data.html">flywire_contributions</a></span><span class="op">(</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/pkg/nat/man/neuronlist-dataframe-methods.html">head</a></span><span class="op">(</span><span class="va">fw.edits</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="https://rdrr.io/pkg/nat/man/neuronlist-dataframe-methods.html">head</a></span><span class="op">(</span><span class="va">fw.edits</span><span class="op">)</span>
+
+<span class="co"># For flywire IDs which do not have available skeletons on the google drive:</span>
+<span class="co">## but have been flaghged for processing (i.e. they errored)</span>
+<span class="va">fw.failed</span> <span class="op">=</span> <span class="fu"><a href="../reference/flywire_googledrive_data.html">flywire_failed</a></span><span class="op">(</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/nat/man/neuronlist-dataframe-methods.html">head</a></span><span class="op">(</span><span class="va">fw.failed</span><span class="op">)</span></code></pre></div>
 <p>Now, excitingly we can read the neurons themselves! And not only that, we can read them mirrored (flipped to the other hemisphere of the brain) or in a different brainspace (from a small selection) if we wish. We read these neurons as <code><a href="https://rdrr.io/pkg/nat/man/neuronlistfh.html">nat::neuronlistfh</a></code> objects. This means that a data frame for the neurons and information specifying where to find each neuron’s data is read into R - but not the whole, huge <code><a href="https://rdrr.io/pkg/nat/man/neuronlist.html">nat::neuronlist</a></code> object. This saves on memory for your R session. When an operation that requires the actual neuron data is performed, neurons are read into R.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Get all aflywire neurons</span>
@@ -308,6 +313,26 @@
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/flywire_matching_rewrite.html">flywire_matching_rewrite</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># bring all the flywire information up to date</span></code></pre></div>
 </div>
+</div>
+<div id="full-example" class="section level2">
+<h2 class="hasAnchor">
+<a href="#full-example" class="anchor"></a>Full Example</h2>
+<p>Let us get some neurons from the ‘flywire interest’ googlesheet:</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Get all the flywire IDs (updated regularly based on position information) users have flagged</span>
+<span class="va">gs</span> <span class="op">=</span> <span class="fu">googlesheets4</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/googlesheets4/man/range_read.html">read_sheet</a></span><span class="op">(</span>ss <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">flywire_flagged_gsheet</span>, sheet <span class="op">=</span> <span class="st">"flywire"</span><span class="op">)</span>
+
+<span class="co"># Get IDs for User 'Tots'</span>
+<span class="va">gs.chosen</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/nat/man/subset.html">subset</a></span><span class="op">(</span><span class="va">gs</span>, <span class="va">User</span> <span class="op">==</span> <span class="st">"Tots"</span><span class="op">)</span>
+
+<span class="co"># Load processed flywire neurons</span>
+<span class="va">fw</span> <span class="op">=</span> <span class="fu"><a href="../reference/flywire_neurons.html">flywire_neurons</a></span><span class="op">(</span><span class="op">)</span>
+
+<span class="co"># Get those for Tots</span>
+<span class="va">fw.tots</span> <span class="op">=</span> <span class="va">fw</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">fw</span><span class="op">)</span><span class="op">%in%</span><span class="va">gs.chosen</span><span class="op">$</span><span class="va">flywire.id</span><span class="op">]</span>
+
+<span class="co"># Examine their meta data</span>
+<span class="va">fw.tots</span><span class="op">[</span>,<span class="op">]</span></code></pre></div>
 </div>
 </div>
   </div>
