@@ -14,9 +14,6 @@ knitr::opts_chunk$set(
 )
 ```
 
-> "We’re Building Something, Here, Detective, We’re Building It From Scratch. All The Pieces Matter."
-([Lester, The Wire](https://en.wikipedia.org/wiki/The_Wire))
-
 # FlyWire and R
 
 [FlyWire](https://ngl.flywire.ai/?local_id=c8c06ea181ad5447b04beacfc4cb1b66) is an open neuron reconstruction environment for the full adult fly brain ( [FAFB](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6063995/) ) EM data set. 
@@ -78,7 +75,7 @@ library(nat.jrcbrains)
 library(fafbseg)
 ```
 
-## Get flywire
+## Get flywire data
 
 With `hemibrainr` you can easily get thousands of skeletons for flywire neurons. These skeletons have been built using [skeletor](https://github.com/schlegelp/skeletor), which is a python module. You can also use it [directly in R](https://github.com/natverse/fafbseg) with `fafbseg::skeletor`. It has been run on thousands of neurons, which have then been stored on Google Drive, at: `hemibrainr/flywire_neurons/` as `nat::neuronlistfh` objects. This means that you can use either get flywire skeletons for neurons using the drive, or by making them from meshes yourself. Let's demonstrate:
 
@@ -88,7 +85,7 @@ From the the hemibrainr Google drive we can see which flywire IDs have been read
 
 ```{r flywire.gdrive, eval = FALSE}
 # All flywire IDs for neurons that have a split precomputed
-fw.ids = flywire_ids()
+fw.ids = flywire_ids(sql=FALSE)
 length(fw.ids)
 
 # For these flywire IDs, their meta data:
@@ -98,6 +95,11 @@ head(fw.meta)
 # For flywire IDs, which users contributed what:
 fw.edits = flywire_contributions()
 head(fw.edits)
+
+# For flywire IDs which do not have available skeletons on the google drive:
+## but have been flaghged for processing (i.e. they errored)
+fw.failed = flywire_failed()
+head(fw.failed)
 ```
 
 Now, excitingly we can read the neurons themselves! And not only that, we can read them mirrored (flipped to the other hemisphere of the brain) or in a different brainspace (from a small selection) if we wish. We read these neurons as `nat::neuronlistfh` objects. This means that a data frame for the neurons and information specifying where to find each neuron's data is read into R - but not the whole, huge `nat::neuronlist` object. This saves on memory for your R session. When an operation that requires the actual neuron data is performed, neurons are read into R. 
@@ -130,7 +132,6 @@ nat::nopen3d()
 plot3d(dl1.dorsal.hemi, col = 'darkgrey', soma = 5000)
 plot3d(hemibrain_microns.surf, alpha = 0.1, col = "grey", add = TRUE)
 ```
-
 
 ### Get flywire neuron IDs
 
@@ -245,3 +246,26 @@ Matches between FAFB neurons (both from FAFBv14 CATMAID and flywire) are recorde
 ```{r flywire_matching_rewrite, eval = FALSE}
 flywire_matching_rewrite() # bring all the flywire information up to date
 ```
+
+## Full Example
+
+Let us get some neurons from the 'flywire interest' googlesheet:
+
+```{r interest, eval = FALSE}
+# Get all the flywire IDs (updated regularly based on position information) users have flagged
+gs = googlesheets4::read_sheet(ss = options()$flywire_flagged_gsheet, sheet = "flywire")
+
+# Get IDs for User 'Tots'
+gs.chosen = subset(gs, User == "Tots")
+
+# Load processed flywire neurons
+fw = flywire_neurons()
+
+# Get those for Tots
+fw.tots = fw[names(fw)%in%gs.chosen$flywire.id]
+
+# Examine their meta data
+fw.tots[,]
+```
+
+

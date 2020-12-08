@@ -130,7 +130,6 @@ flywire_neurons_update <- function(x,
   }
   if(mirror){
     flip = "_mirrored"
-  }else{
     flip = NULL
   }
   message("Skeletonising skelected neurons using skeletor ...")
@@ -408,52 +407,113 @@ flywire_request <- function(request,
 #' @name flywire_googledrive_data
 #' @aliases flywire_meta
 #' @export
-flywire_meta <-function(local = FALSE, folder = "flywire_neurons/", sql = TRUE, ...){
+flywire_meta <-function(local = FALSE, folder = "flywire_neurons/", sql = FALSE, ...){
   savedir = good_savedir(local = local)
   if(sql){
     find_gsql(savedir = savedir, tab = "flywire_meta", sql.db = "flywire_data.sqlite", folder = folder, ...)
   }else{
     gfile = find_gfile(savedir = savedir, file = "flywire_meta", folder = folder)
-    gcsv = readr::read_csv(gfile)
+    gcsv = suppressWarnings(readr::read_csv(gfile, col_types = sql_col_types))
     gcsv
   }
 }
+
+#' @rdname flywire_googledrive_data
+#' @export
+flywire_failed <-function(local = FALSE, folder = "flywire_neurons/", sql = FALSE, ...){
+  savedir = good_savedir(local = local)
+  if(sql){
+    find_gsql(savedir = savedir, tab = "flywire_failed", sql.db = "flywire_data.sqlite", folder = folder, ...)
+  }else{
+    gfile = find_gfile(savedir = savedir, file = "flywire_failed", folder = folder)
+    gcsv = suppressWarnings(readr::read_csv(gfile, col_types = sql_col_types))
+    gcsv
+  }
+}
+
+# hidden
+sql_col_types = readr::cols(.default = "c",
+                 edits = "i",
+                 total.edits = "i",
+                 pre = "i",
+                 post = "i",
+                 upstream = "i",
+                 downstream = "i",
+                 voxels = "i",
+                 layer = "n",
+                 ct.layer = "n",
+                 orig.soma = "?",
+                 soma = "?",
+                 soma.edit = "?",
+                 truncated = "?",
+                 splittable = "?",
+                 checked = "?",
+                 edited.cable = "?",
+                 skeletonization = "?",
+                 time = "?",
+                 total.outputs = "n",
+                 axon.outputs = "n",
+                 dend.outputs = "n",
+                 total.inputs = "n",
+                 axon.inputs = "n",
+                 dend.inputs = "n",
+                 axon.outputs = "n",
+                 dend.outputs = "n",
+                 axon.inputs = "n",
+                 dend.inputs = "n",
+                 total.outputs.density = "n",
+                 total.inputs.density = "n",
+                 axon.outputs.density = "n",
+                 dend.outputs.density = "n",
+                 axon.inputs.density = "n",
+                 dend.inputs.density = "n",
+                 total.length = "n",
+                 axon.length = "n",
+                 dend.length = "n",
+                 pd.length = "n",
+                 length = "?",
+                 segregation_index = "n",
+                 X = "n",
+                 Y = "n",
+                 Z = "n",
+                 x = "n",
+                 x = "n",
+                 z = "n",
+                 fw.x ="n",
+                 fw.y = "n",
+                 fw.z = "n",
+                 cable.length = "n",
+                 proportion = "n",
+                 count = "n",
+                 weight = "n",
+                 norm = "n",
+                 synapses = "n",
+                 syn = "n",
+                 syns = "n",
+                 n.syn = "n")
 
 #' @rdname flywire_googledrive_data
 #' @export
 flywire_contributions <-function(local = FALSE, folder = "flywire_neurons/", sql = TRUE, ...){
   savedir = good_savedir(local = local)
   if(sql){
-    find_gsql(savedir = savedir, tab = "flywire_failed", sql.db = "flywire_data.sqlite", folder = folder, ...)
-  }else{
-    gfile = find_gfile(savedir = savedir, file = "flywire_failed", folder = folder)
-    gcsv = readr::read_csv(gfile)
-    gcsv
-  }
-}
-
-#' @rdname flywire_googledrive_data
-#' @export
-flywire_failed <-function(local = FALSE, folder = "flywire_neurons/", sql = TRUE, ...){
-  savedir = good_savedir(local = local)
-  if(sql){
     find_gsql(savedir = savedir, tab = "flywire_edits", sql.db = "flywire_data.sqlite", folder = folder, ...)
   }else{
     gfile = find_gfile(savedir = savedir, file = "flywire_edits", folder = folder)
-    gcsv = readr::read_csv(gfile)
+    gcsv = suppressWarnings(readr::read_csv(gfile, col_types = sql_col_types))
     gcsv
   }
 }
 
 #' @rdname flywire_googledrive_data
 #' @export
-flywire_ids <-function(local = FALSE, folder = "flywire_neurons/", sql = TRUE, ...){
+flywire_ids <-function(local = FALSE, folder = "flywire_neurons/", sql = FALSE, ...){
   savedir = good_savedir(local = local)
   if(sql){
     find_gsql(savedir = savedir, tab = "flywire_ids", sql.db = "flywire_data.sqlite", folder = folder, ...)
   }else{
     gfile = find_gfile(savedir = savedir, file = "flywire_ids", folder = folder)
-    gcsv = readr::read_csv(gfile)
+    gcsv = suppressWarnings(readr::read_csv(gfile, col_types = sql_col_types))
     as.character(gcsv$x)
   }
 }
