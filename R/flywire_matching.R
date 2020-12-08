@@ -49,11 +49,16 @@ flywire_matching_rewrite <- function(flywire.ids = names(flywire_neurons()),
         gs[indices.na,]$flywire.xyz = flywire.xyz
         gs[indices.na,]$flywire.id = fw.ids
       }
+      if(!is.null(meta$side)){
+        side.indices = match(gs$flywire.xyz,meta$flywire.xyz)
+        sides = meta$side[side.indices]
+        gs$side[!is.na(side.indices)] = sides[!is.na(side.indices)]
+      }
       all.ids=unique(c(all.ids,fw.ids))
     }
 
     # Update
-    write.cols = setdiff(colnames(gs),c("FAFB.xyz", "flywire.xyz", "flywire.id"))
+    write.cols = setdiff(colnames(gs),c("FAFB.xyz", "flywire.xyz", "flywire.id", "side"))
     if(length(all.ids) & length(write.cols)){
       for(column in write.cols){
         letter = LETTERS[match(column,colnames(gs))]

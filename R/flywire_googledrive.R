@@ -22,7 +22,31 @@
 #' @examples
 #' \donttest{
 #' \dontrun{
+#' # Loads all processed flywire neurons as a neuronlistfh object
 #' fw.neurons = flywire_neurons()
+#'
+#' # Get them already bridged to the JRC2018F brainsapce
+#' ## (Bogovic et al. 2018, high performance brain space)
+#' fw.neurons.jrc2018f = flywire_neurons(brain = "JRC2018F")
+#'
+#' # Get them already mirrored to the other hemispehre, i.e. flipped
+#' fw.neurons.jrc2018f.m = flywire_neurons(brain = "JRC2018F", mirror = TRUE)
+#'
+#' # Now say you have some flywire ID~s you wants to add
+#' ## to the nightly processing so they are available from Google drive.
+#' ## And they are stored in a .csv:
+#' library(readr)
+#' csv = read_csv("/Users/abates/Downloads/FlyWire_list.txt",
+#' col_type = cols(.default = "c"))
+#' ids = csv[,1][[1]]
+#' neurons = skeletor(ids)
+#' neurons.with.info = hemibrainr:::flywire_basics(neurons)
+#' new.points = nat::xyzmatrix(neurons.with.info[,"flywire.xyz"])
+#' flywire_request(new.points)
+#' ## Now they are added to a google sheet, and will be read and
+#' ##  processed as part of this nightly pipeline:
+#' ### https://github.com/flyconnectome/fafbpipeline
+#'
 #'}}
 #'@return A \code{neuronlist} object containing flywire skeletons. In the meta-data, it might be useful for some users to note that
 #'you will get:
@@ -258,11 +282,14 @@ flywire_basics <- function(x, ...){
   simp = nat::nlapply(x,nat::simplify_neuron,n=1)
   branchpoints = sapply(simp, function(y) nat::xyzmatrix(y)[ifelse(length(nat::branchpoints(y)),nat::branchpoints(y),max(nat::endpoints(y))),])
   branchpoints = t(branchpoints)
-  flywire.xyz = apply(branchpoints, 1, paste_coords)
+  flywire.nm.xyz = apply(branchpoints, 1, paste_coords)
+
+  # Convert to voxel space
+  branchpoints.flywire.raw = scale(branchpoints, scale = c(4, 4, 40), center = FALSE)
+  flywire.xyz = apply(branchpoints.flywire.raw, 1, paste_coords)
 
   # Get FAFBv14 nm coordinates
-  branchpoints.flywire.raw = scale(branchpoints, scale = 1/c(4, 4, 40), center = FALSE)
-  FAFB.xyz = nat.templatebrains::xform_brain(branchpoints.flywire.raw, sample = "FlyWire", reference = "FAFB14", ...)
+  FAFB.xyz = nat.templatebrains::xform_brain(branchpoints, sample = "FlyWire", reference = "FAFB14", ...)
   FAFB.xyz = apply(FAFB.xyz, 1, paste_coords)
   #FAFB.xyz = ""
 
@@ -395,6 +422,19 @@ flywire_meta <-function(local = FALSE, folder = "flywire_neurons/", sql = TRUE, 
 #' @rdname flywire_googledrive_data
 #' @export
 flywire_contributions <-function(local = FALSE, folder = "flywire_neurons/", sql = TRUE, ...){
+  savedir = good_savedir(local = local)
+  if(sql){
+    find_gsql(savedir = savedir, tab = "flywire_failed", sql.db = "flywire_data.sqlite", folder = folder, ...)
+  }else{
+    gfile = find_gfile(savedir = savedir, file = "flywire_failed", folder = folder)
+    gcsv = readr::read_csv(gfile)
+    gcsv
+  }
+}
+
+#' @rdname flywire_googledrive_data
+#' @export
+flywire_failed <-function(local = FALSE, folder = "flywire_neurons/", sql = TRUE, ...){
   savedir = good_savedir(local = local)
   if(sql){
     find_gsql(savedir = savedir, tab = "flywire_edits", sql.db = "flywire_data.sqlite", folder = folder, ...)

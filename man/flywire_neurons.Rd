@@ -85,7 +85,31 @@ Get a large number of skeletonised neurons from FlyWire. The neuronlist is saved
 \examples{
 \donttest{
 \dontrun{
+# Loads all processed flywire neurons as a neuronlistfh object
 fw.neurons = flywire_neurons()
+
+# Get them already bridged to the JRC2018F brainsapce
+## (Bogovic et al. 2018, high performance brain space)
+fw.neurons.jrc2018f = flywire_neurons(brain = "JRC2018F")
+
+# Get them already mirrored to the other hemispehre, i.e. flipped
+fw.neurons.jrc2018f.m = flywire_neurons(brain = "JRC2018F", mirror = TRUE)
+
+# Now say you have some flywire ID~s you wants to add
+## to the nightly processing so they are available from Google drive.
+## And they are stored in a .csv:
+library(readr)
+csv = read_csv("/Users/abates/Downloads/FlyWire_list.txt",
+col_type = cols(.default = "c"))
+ids = csv[,1][[1]]
+neurons = skeletor(ids)
+neurons.with.info = hemibrainr:::flywire_basics(neurons)
+new.points = nat::xyzmatrix(neurons.with.info[,"flywire.xyz"])
+flywire_request(new.points)
+## Now they are added to a google sheet, and will be read and
+##  processed as part of this nightly pipeline:
+### https://github.com/flyconnectome/fafbpipeline
+
 }}
 }
 \seealso{

@@ -4,6 +4,7 @@
 \alias{flywire_googledrive_data}
 \alias{flywire_meta}
 \alias{flywire_contributions}
+\alias{flywire_failed}
 \alias{flywire_ids}
 \title{Read precomputed flywire data from the hemibrainr Google Drive}
 \usage{
@@ -15,6 +16,8 @@ flywire_contributions(
   sql = TRUE,
   ...
 )
+
+flywire_failed(local = FALSE, folder = "flywire_neurons/", sql = TRUE, ...)
 
 flywire_ids(local = FALSE, folder = "flywire_neurons/", sql = TRUE, ...)
 }
