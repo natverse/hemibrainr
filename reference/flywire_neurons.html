@@ -255,7 +255,31 @@ you will get:</p>
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
 <span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
+<span class='co'># Loads all processed flywire neurons as a neuronlistfh object</span>
 <span class='va'>fw.neurons</span> <span class='op'>=</span> <span class='fu'>flywire_neurons</span><span class='op'>(</span><span class='op'>)</span>
+
+<span class='co'># Get them already bridged to the JRC2018F brainsapce</span>
+<span class='co'>## (Bogovic et al. 2018, high performance brain space)</span>
+<span class='va'>fw.neurons.jrc2018f</span> <span class='op'>=</span> <span class='fu'>flywire_neurons</span><span class='op'>(</span>brain <span class='op'>=</span> <span class='st'>"JRC2018F"</span><span class='op'>)</span>
+
+<span class='co'># Get them already mirrored to the other hemispehre, i.e. flipped</span>
+<span class='va'>fw.neurons.jrc2018f.m</span> <span class='op'>=</span> <span class='fu'>flywire_neurons</span><span class='op'>(</span>brain <span class='op'>=</span> <span class='st'>"JRC2018F"</span>, mirror <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+
+<span class='co'># Now say you have some flywire ID~s you wants to add</span>
+<span class='co'>## to the nightly processing so they are available from Google drive.</span>
+<span class='co'>## And they are stored in a .csv:</span>
+<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://readr.tidyverse.org'>readr</a></span><span class='op'>)</span>
+<span class='va'>csv</span> <span class='op'>=</span> <span class='fu'><a href='https://readr.tidyverse.org/reference/read_delim.html'>read_csv</a></span><span class='op'>(</span><span class='st'>"/Users/abates/Downloads/FlyWire_list.txt"</span>,
+col_type <span class='op'>=</span> <span class='fu'><a href='https://readr.tidyverse.org/reference/cols.html'>cols</a></span><span class='op'>(</span>.default <span class='op'>=</span> <span class='st'>"c"</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>ids</span> <span class='op'>=</span> <span class='va'>csv</span><span class='op'>[</span>,<span class='fl'>1</span><span class='op'>]</span><span class='op'>[[</span><span class='fl'>1</span><span class='op'>]</span><span class='op'>]</span>
+<span class='va'>neurons</span> <span class='op'>=</span> <span class='fu'>skeletor</span><span class='op'>(</span><span class='va'>ids</span><span class='op'>)</span>
+<span class='va'>neurons.with.info</span> <span class='op'>=</span> <span class='fu'>hemibrainr</span><span class='fu'>:::</span><span class='fu'>flywire_basics</span><span class='op'>(</span><span class='va'>neurons</span><span class='op'>)</span>
+<span class='va'>new.points</span> <span class='op'>=</span> <span class='fu'>nat</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/nat/man/xyzmatrix.html'>xyzmatrix</a></span><span class='op'>(</span><span class='va'>neurons.with.info</span><span class='op'>[</span>,<span class='st'>"flywire.xyz"</span><span class='op'>]</span><span class='op'>)</span>
+<span class='fu'>flywire_request</span><span class='op'>(</span><span class='va'>new.points</span><span class='op'>)</span>
+<span class='co'>## Now they are added to a google sheet, and will be read and</span>
+<span class='co'>##  processed as part of this nightly pipeline:</span>
+<span class='co'>### https://github.com/flyconnectome/fafbpipeline</span>
+
 <span class='op'>}</span><span class='co'># }</span>
 </div></pre>
   </div>
