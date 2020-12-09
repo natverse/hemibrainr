@@ -44,6 +44,10 @@ plot3d(hemibrain.surf, col = "grey", alpha = 0.1) # plot the brain in raw voxel 
 hemibrain_view() # orients the brain to face forward. Note that hemibrain coordinate system has the anterior-posterior axis aligned with the Y axis (rather than the Z axis, which is more commonly observed)
 ```
 
+<center>
+![hemibrain_meshrgl](https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/hemibrain_meshrgl.png)
+</center>
+
 We have also generatred 3D meshes of 51 olfactory + 7 thermo/hygrosensory antennal lobe glomeruli for the hemibrain volume. They have been made using antennal lobe projection neuron presynapses.
 
 ```{r gloms, eval = FALSE}
@@ -59,6 +63,13 @@ hemibrain_glomeruli_summary
 ### And what sorts of odours seem to excite them
 ```
 
+<center>
+![hemibrain_glomeruli](https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/hemibrain_glomeruli.png)
+</center>
+
+<center>
+![hemibrain_glomeruli_summary](https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/hemibrain_glomeruli_summary.png)
+</center>
 
 ## Hemibrain linage information
 
@@ -67,6 +78,10 @@ We have tried to map reported cell body fibres designations (Scheffer et al. 202
 ```{r hemilineage, eval = FALSE}
 head(hemibrain_hemilineages)
 ```
+
+<center>
+![hemibrain_hemilineages](https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/hemibrain_hemilineages.png)
+</center>
 
 This mapping may be in precise, and we are working on creating a direct neuron-hemilineage mapping.
 
@@ -91,6 +106,10 @@ head(hemibrain_olfactory_layers) # layer information for every neuron in the hem
 # Dataset, as described in Schlegel and Bates et al. 2021.
 ```
 
+<center>
+![ton_info](https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/ton_info.png)
+</center>
+
 We also provides groups of IDs for various neuron classes:
 
 ```{r ids, eval = FALSE}
@@ -113,7 +132,8 @@ cent.ids # LH centrifugal neuron IDs
 lc.ids # lobular column visual projection neurons IDs
 ```
 
-
-
+<center>
+![ton_ids](https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/ton_ids.png)
+</center>
 
 
