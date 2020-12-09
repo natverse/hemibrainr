@@ -90,7 +90,8 @@ al.sheet = hemibrainr:::gsheet_manipulation(FUN = googlesheets4::read_sheet,
                                             ss = "124eTYqQ8evTGm_z75V8jNVmfBI763_s4h1EAPVMiSvI",
                                             sheet = "AL",
                                             return = TRUE)
-alln.summary = read.csv("/Users/GD/LMBD/Papers/hemibrain_olf_data/LN_type_description.csv")
+# alln.summary = read.csv("/Users/GD/LMBD/Papers/hemibrain_olf_data/LN_type_description.csv")
+alln.summary = read.csv("/Users/GD/LMBD/Papers/hemibrain_olf_data/ALLN_type_group_description.csv")
 alln.info = hemibrain_get_meta(alln.ids)
 alln.info = alln.info[!is.na(alln.info$type),]
 alln.info$class = "ALLN"
@@ -100,7 +101,8 @@ alln.info$side = "right"
 rownames(alln.info) = alln.info$bodyid
 alln.info$anatomy.group = alln.summary$classification[match(alln.info$bodyid,alln.summary$bodyid)]
 alln.info$anatomy.group = gsub("_$","",alln.info$anatomy.group)
-alln.info$notes = alln.summary$description[match(alln.info$bodyid,alln.summary$bodyid)]
+alln.info$group = gsub(" |  ","/",alln.summary$grouped[match(alln.info$bodyid,alln.summary$bodyid)])
+alln.info$notes = paste0("Type: ",alln.summary$type.description[match(alln.info$bodyid,alln.summary$bodyid)],". Group: ", alln.summary$type.description[match(alln.info$bodyid,alln.summary$bodyid)])
 
 # See what the status of our FAB matches is. We need presynapses for predictions.
 # a = alln.info[,c("bodyid", "cellBodyFiber","type", "ItoLee_Hemilineage", "FAFB.match", "FAFB.match.quality", "class")]

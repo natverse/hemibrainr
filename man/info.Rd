@@ -21,7 +21,7 @@ An object of class \code{data.frame} with 2383 rows and 48 columns.
 
 An object of class \code{data.frame} with 2129 rows and 45 columns.
 
-An object of class \code{data.frame} with 197 rows and 47 columns.
+An object of class \code{data.frame} with 197 rows and 48 columns.
 
 An object of class \code{data.frame} with 1927 rows and 45 columns.
 
