@@ -9,6 +9,7 @@ flywire_ids_update(
   chosen.columns = c("fw.x", "fw.y", "fw.z", "flywire.xyz", "flywire.id", "skid",
     "FAFB.xyz", "cell.type", "side", "ItoLee_Hemilineage", "Hartenstein_Hemilineage",
     "hemibrain_match"),
+  tabs = NULL,
   numCores = 1,
   max.tries = 10
 )
@@ -19,6 +20,8 @@ If \code{NULL} then defaults to \code{option('hemibrainr_gsheets')}.}
 
 \item{chosen.columns}{as well as writing column updates to the specified google sheets, this function returns a \code{data.frame} built fromm all given sheets and their
 individual tabs, that have been updated. This argument specifies which column you want returned. Filled with NAs if it does not exist.}
+
+\item{tabs}{a character vector of work sheet, i.e. tab, names for the googlesheet. If given, this function will only update those tabs.}
 
 \item{numCores}{if run in parallel, the number of cores to use. This is not necessary unless you have >10k points and want to see if you can get a speed up.}
 
