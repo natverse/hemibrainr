@@ -47,7 +47,7 @@ An object of class \code{character} of length 2383.
 
 An object of class \code{character} of length 1428.
 
-An object of class \code{character} of length 431.
+An object of class \code{character} of length 345.
 
 An object of class \code{character} of length 1927.
 
