@@ -96,14 +96,17 @@ flywire_matching_rewrite <- function(flywire.ids = names(flywire_neurons()),
                                                    "LM.match", "LM.match.quality",
                                                    "FAFB.hemisphere.match", "FAFB.hemisphere.match.quality")]))))
     remove = sub[-best,]
-    for(r in remove$index){
-      range.del = googlesheets4::cell_rows(r)
-      message("Removing a row for: ", dupe)
-      gsheet_manipulation(FUN = googlesheets4::range_delete,
-                                       ss = selected_file,
-                                       range = range.del,
-                                       sheet = "FAFB",
-                                       col_names = TRUE)
+    remove = subset(remove, is.na(remove$skid)|remove$skid%in%c(""," ","NA"))
+    if(nrow(remove)){
+      for(r in remove$index){
+        range.del = googlesheets4::cell_rows(r)
+        message("Removing a row for: ", dupe)
+        gsheet_manipulation(FUN = googlesheets4::range_delete,
+                            ss = selected_file,
+                            range = range.del,
+                            sheet = "FAFB",
+                            col_names = TRUE)
+      }
     }
   }
 
