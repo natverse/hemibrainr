@@ -534,7 +534,7 @@ flywire_ids <-function(local = FALSE, folder = "flywire_neurons/", sql = FALSE, 
 #' individual tabs, that have been updated. This argument specifies which column you want returned. Filled with NAs if it does not exist.
 #' @param numCores if run in parallel, the number of cores to use. This is not necessary unless you have >10k points and want to see if you can get a speed up.
 #' @param max.tries maximum number of attempts to write to/read from the google sheets before aborting. Sometimes attempts fail due to sporadic connections or API issues.
-#' @param tabs a character vector of work sheet, i.e. tab, names for the googlesheet. If given, this function will only update those tabs.
+#' @param work_sheets a character vector of work sheet, i.e. tab, names for the googlesheet. If given, this function will only update those tabs.
 #'
 #' @details For this function to work, the specified google sheet(s) must have either the column \code{flywire.xyz},
 #' which gives the xyz position of points in a format that can be read by \code{nat::xyzmatrix}, for example \code{"(135767,79463,5284)"} or \code{"(135767;79463;5284)"}.
@@ -575,7 +575,7 @@ flywire_ids_update <- function(selected_sheets = NULL,
                                                   "FAFB.xyz", "cell.type", "side",
                                                   "ItoLee_Hemilineage", "Hartenstein_Hemilineage",
                                                   "hemibrain_match"),
-                               tabs = NULL,
+                               work_sheets = NULL,
                                numCores = 1,
                                max.tries = 10){
   if(is.null(selected_sheets)){
@@ -585,12 +585,12 @@ flywire_ids_update <- function(selected_sheets = NULL,
   gs = data.frame(stringsAsFactors = FALSE)
   for(selected_sheet in selected_sheets){
     ## Read Google sheets and extract glywire neuron positions
-    if(is.null(tabs)){
+    if(is.null(work_sheets)){
       tabs = gsheet_manipulation(FUN = googlesheets4::sheet_names,
                                  ss = selected_sheet,
                                  return = TRUE)
     }else{
-      tabs = tabs
+      tabs = work_sheets
     }
     for(tab in tabs){
       gs.t = gs.t.current = gsheet_manipulation(FUN = googlesheets4::read_sheet,
