@@ -526,7 +526,7 @@ neuron_match_scanner <- function(brain,
     selected[selected[[id]]%in%n,quality.field] = quality
     # Make a note?
     orig.note = selected[selected[[id]]%in%n,'note']
-    if(!is.na(orig.note)){
+    if(!is.issue(orig.note)){
       message("This neuron has note: ", orig.note)
     }
     make.note = hemibrain_choice("Would you like to record a note? y/n ")
