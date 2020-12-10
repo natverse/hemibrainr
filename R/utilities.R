@@ -218,10 +218,12 @@ replace_with_none <- function(x, FUN = is.na){
 
 # hidden
 unlist_df <- function(df){
-  data = as.data.frame(df, stringsAsFactors = FALSE)
+  df = as.data.frame(df, stringsAsFactors = FALSE)
   if(nrow(df)&ncol(df)){
-    data = as.data.frame(df, stringsAsFactors = FALSE)
-    data = apply(data,2,function(c) unlist(nullToNA(c)))
+    data = apply(df,2,function(c) unlist(nullToNA(c)))
+    if(nrow(df)==1){
+      data = t(data)
+    }
     data = as.data.frame(unlist(data), stringsAsFactors = FALSE)
     dimnames(data) = dimnames(df)
     data
