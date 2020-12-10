@@ -52,7 +52,8 @@
  without loading the entire, large neuronlist into memory. You will need access to the hemibrain Google Team Drive and
  have it mounted with Google filestream.The function flywire_neurons_update can be used to update the available data.
  If you want to flag flywire neurons that should be added to the Google drive, without doing this yourself, you can use
- flywire_request." />
+ flywire_request. The flywire_basics function will calculate some useful meta-data, namely
+a point in the primary neurite tract that can be used as a stable reference for this neuron." />
 <meta property="og:image" content="/logo.svg" />
 
 
@@ -159,7 +160,8 @@
  without loading the entire, large <code>neuronlist</code> into memory. You will need access to the hemibrain Google Team Drive and
  have it mounted with Google filestream.The function <code>flywire_neurons_update</code> can be used to update the available data.
  If you want to flag flywire neurons that should be added to the Google drive, without doing this yourself, you can use
- <code>flywire_request</code>.</p>
+ <code>flywire_request</code>. The <code>flywire_basics</code> function will calculate some useful meta-data, namely
+a point in the primary neurite tract that can be used as a stable reference for this neuron.</p>
     </div>
 
     <pre class="usage"><span class='fu'>flywire_neurons</span><span class='op'>(</span>
@@ -183,6 +185,8 @@
   nblast <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"hemibrain-flywire"</span>, <span class='st'>"flywire"</span>, <span class='st'>"flywire-mirror"</span><span class='op'>)</span>,
   <span class='va'>...</span>
 <span class='op'>)</span>
+
+<span class='fu'>flywire_basics</span><span class='op'>(</span><span class='va'>flywire.neurons</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='fu'>flywire_request</span><span class='op'>(</span>
   <span class='va'>request</span>,
@@ -217,6 +221,11 @@
     <tr>
       <th>nblast</th>
       <td><p>which flywire NBLAST to update on Google drive.</p></td>
+    </tr>
+    <tr>
+      <th>flywire.neurons</th>
+      <td><p>a <code>neuronlist</code> of flywire neurons in FlyWire space. The <code>flywire_basics</code> function will calculate some useful meta-data, namely
+a point in the primary neurite tract that can be used as a stable reference for this neuron.</p></td>
     </tr>
     <tr>
       <th>request</th>

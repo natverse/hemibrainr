@@ -169,6 +169,7 @@ locations in flywire space, based on CATMAID skids.</p>
     <pre class="usage"><span class='fu'>flywire_matching_rewrite</span><span class='op'>(</span>
   flywire.ids <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span><span class='op'>(</span><span class='fu'><a href='flywire_neurons.html'>flywire_neurons</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>,
   meta <span class='op'>=</span> <span class='fu'><a href='flywire_neurons.html'>flywire_neurons</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>[</span>, <span class='op'>]</span>,
+  catmaid.update <span class='op'>=</span> <span class='cn'>TRUE</span>,
   selected_file <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>options</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>$</span><span class='va'>hemibrainr_matching_gsheet</span>,
   <span class='va'>...</span>
 <span class='op'>)</span>
@@ -223,6 +224,10 @@ locations in flywire space, based on CATMAID skids.</p>
     <tr>
       <th>meta</th>
       <td><p>meta data for the given flycircuit IDs.</p></td>
+    </tr>
+    <tr>
+      <th>catmaid.update</th>
+      <td><p>logical. Whether or not to update <code>flywire.xyz</code> and <code>flywire.id</code> columns, based on e CATMAID neuron specified by a <code>skid</code> column.</p></td>
     </tr>
     <tr>
       <th>selected_file</th>
