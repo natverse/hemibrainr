@@ -98,10 +98,12 @@ flywire_matching_rewrite <- function(flywire.ids = names(flywire_neurons()),
     remove = sub[-best,]
     for(r in remove$index){
       range.del = googlesheets4::cell_rows(r)
-      googlesheets4::range_delete(ss = selected_file,
-                                  range = range.del,
-                                  sheet = "FAFB")
       message("Removing a row for: ", dupe)
+      gsheet_manipulation(FUN = googlesheets4::range_delete,
+                                       ss = selected_file,
+                                       range = range.del,
+                                       sheet = "FAFB",
+                                       col_names = TRUE)
     }
   }
 
