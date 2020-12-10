@@ -13,6 +13,7 @@
 flywire_matching_rewrite(
   flywire.ids = names(flywire_neurons()),
   meta = flywire_neurons()[, ],
+  catmaid.update = TRUE,
   selected_file = options()$hemibrainr_matching_gsheet,
   ...
 )
@@ -61,6 +62,8 @@ flycircuit_matching_rewrite(
 \item{flywire.ids}{flywire IDs to add to Google sheet if not already present.}
 
 \item{meta}{meta data for the given flycircuit IDs.}
+
+\item{catmaid.update}{logical. Whether or not to update \code{flywire.xyz} and \code{flywire.id} columns, based on e CATMAID neuron specified by a \code{skid} column.}
 
 \item{selected_file}{Specifies which Google Sheet to use. Unless you are using a personal Google Sheet, this should be \code{options()$hemibrainr_matching_gsheet}.}
 

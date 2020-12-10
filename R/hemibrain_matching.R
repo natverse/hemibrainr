@@ -1104,6 +1104,7 @@ lm_matches <- function(priority = c("hemibrain","lm"), selected_file = options()
 #' @param flycircuit.ids flycircuit IDs to add to Google sheet if not already present.
 #' @param meta meta data for the given flycircuit IDs.
 #' @param top.nblast logical. Whether or not to also give the top NBLAST match for each entry.
+#' @param catmaid.update logical. Whether or not to update \code{flywire.xyz} and \code{flywire.id} columns, based on e CATMAID neuron specified by a \code{skid} column.
 #'
 #' @param ... arguments passed to methods for, for example, \code{neuprintr::neuprint_get_meta} and \code{elmr::fafb_get_meta}.
 #'

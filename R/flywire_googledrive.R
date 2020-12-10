@@ -5,11 +5,14 @@
 #'  without loading the entire, large \code{neuronlist} into memory. You will need access to the hemibrain Google Team Drive and
 #'  have it mounted with Google filestream.The function \code{flywire_neurons_update} can be used to update the available data.
 #'  If you want to flag flywire neurons that should be added to the Google drive, without doing this yourself, you can use
-#'  \code{flywire_request}.
+#'  \code{flywire_request}. The \code{flywire_basics} function will calculate some useful meta-data, namely
+#' a point in the primary neurite tract that can be used as a stable reference for this neuron.
 #'
 #' @param brain the brainspace in which hemibrain neurons have been registered. Defaults to raw voxel space for the FlyWire project.
 #' @param local \code{FALSE} or path. By default (\code{FALSE}) data is read from \code{options()$Drive_hemibrain_data}), but the user can specify an alternative path.
 #' @param mirror logical, whether or not to read neurons that have been mirrored (i.e. flipped to the 'other' brain hemisphere).
+#' @param flywire.neurons a \code{neuronlist} of flywire neurons in FlyWire space. The \code{flywire_basics} function will calculate some useful meta-data, namely
+#' a point in the primary neurite tract that can be used as a stable reference for this neuron.
 #' @param x flywire IDs to update, for the saved Google drive \code{neuronlistfh} objects called with \code{flywire_neurons}.
 #' @param request a neuronlist, matrix of x,y,z position or flywire ID to add to a
 #' \href{https://docs.google.com/spreadsheets/d/1rzG1MuZYacM-vbW7100aK8HeA-BY6dWAVXQ7TB6E2cQ/edit#gid=0}{Google sheet} that records flywire positions
@@ -270,15 +273,15 @@ flywire_nblast_update <- function(x = NULL,
 
 }
 
-
-# hidden
-flywire_basics <- function(x, ...){
-  if(!nat::is.neuronlist(x)){
-    stop("x must be a neuronlist")
+#' @rdname flywire_neurons
+#' @export
+flywire_basics <- function(flywire.neurons, ...){
+  if(!nat::is.neuronlist(flywire.neurons)){
+    stop("flywire.neurons must be a neuronlist")
   }
 
   # Get xyz for primary branch points
-  simp = nat::nlapply(x,nat::simplify_neuron,n=1)
+  simp = nat::nlapply(flywire.neurons,nat::simplify_neuron,n=1)
   branchpoints = sapply(simp, function(y) nat::xyzmatrix(y)[ifelse(length(nat::branchpoints(y)),nat::branchpoints(y),max(nat::endpoints(y))),])
   branchpoints = t(branchpoints)
   flywire.nm.xyz = apply(branchpoints, 1, paste_coords)
@@ -293,12 +296,12 @@ flywire_basics <- function(x, ...){
   #FAFB.xyz = ""
 
   # Add
-  x[,"flywire.id"] =  names(x)
-  x[,"flywire.xyz"] = flywire.xyz
-  x[,"FAFB.xyz"] = FAFB.xyz
-  x[,"dataset"] = "flywire"
-  x[,"id"] = NULL
-  x
+  flywire.neurons[,"flywire.id"] =  names(flywire.neurons)
+  flywire.neurons[,"flywire.xyz"] = flywire.xyz
+  flywire.neurons[,"FAFB.xyz"] = FAFB.xyz
+  flywire.neurons[,"dataset"] = "flywire"
+  flywire.neurons[,"id"] = NULL
+  flywire.neurons
 
 }
 

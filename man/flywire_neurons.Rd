@@ -4,6 +4,7 @@
 \alias{flywire_neurons}
 \alias{flywire_neurons_update}
 \alias{flywire_nblast_update}
+\alias{flywire_basics}
 \alias{flywire_request}
 \title{Download a large set of well-traced skeletonised neurons from FlyWire}
 \usage{
@@ -29,6 +30,8 @@ flywire_nblast_update(
   ...
 )
 
+flywire_basics(flywire.neurons, ...)
+
 flywire_request(
   request,
   selected_file = options()$flywire_flagged_gsheet,
@@ -48,6 +51,9 @@ flywire_request(
 \item{x}{flywire IDs to update, for the saved Google drive \code{neuronlistfh} objects called with \code{flywire_neurons}.}
 
 \item{nblast}{which flywire NBLAST to update on Google drive.}
+
+\item{flywire.neurons}{a \code{neuronlist} of flywire neurons in FlyWire space. The \code{flywire_basics} function will calculate some useful meta-data, namely
+a point in the primary neurite tract that can be used as a stable reference for this neuron.}
 
 \item{request}{a neuronlist, matrix of x,y,z position or flywire ID to add to a
 \href{https://docs.google.com/spreadsheets/d/1rzG1MuZYacM-vbW7100aK8HeA-BY6dWAVXQ7TB6E2cQ/edit#gid=0}{Google sheet} that records flywire positions
@@ -80,7 +86,8 @@ Get a large number of skeletonised neurons from FlyWire. The neuronlist is saved
  without loading the entire, large \code{neuronlist} into memory. You will need access to the hemibrain Google Team Drive and
  have it mounted with Google filestream.The function \code{flywire_neurons_update} can be used to update the available data.
  If you want to flag flywire neurons that should be added to the Google drive, without doing this yourself, you can use
- \code{flywire_request}.
+ \code{flywire_request}. The \code{flywire_basics} function will calculate some useful meta-data, namely
+a point in the primary neurite tract that can be used as a stable reference for this neuron.
 }
 \examples{
 \donttest{

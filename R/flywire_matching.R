@@ -4,21 +4,30 @@
 #' @export
 flywire_matching_rewrite <- function(flywire.ids = names(flywire_neurons()),
                                      meta = flywire_neurons()[,],
-                                     selected_file  = options()$hemibrainr_matching_gsheet,
+                                     catmaid.update = TRUE,
+                                     selected_file  = options()$hemibrainr_matching_gsheet, # 1_RXfVRw2nVjzk6yXOKiOr_JKwqk2dGSVG_Xe7_v8roU
                                      ...){
   # Get the FAFB matching Google sheet
   gs = hemibrain_match_sheet(sheet = "FAFB", selected_file = selected_file)
   skids = unique(gs$skid)
 
+  # Update side information
+  if(!is.null(meta$side)){
+    side.indices = match(gs$flywire.xyz,meta$flywire.xyz)
+    sides = meta$side[side.indices]
+    gs$side[!is.na(side.indices)] = sides[!is.na(side.indices)]
+  }
+
   # Get FAFBv14 coordinates
-  if(length(skids)){
+  if(length(skids) & catmaid.update){
     cats = nat::neuronlist()
     batches = split(1:length(skids), round(seq(from = 1, to = 100, length.out = length(skids))))
     all.ids = c()
     for(i in 1:10){
       # Read CATMAID neurons
       message("Batch:", i, "/10")
-      cat = tryCatch(catmaid::read.neurons.catmaid(skids[batches[[i]]], OmitFailures = TRUE), error = function(e) NULL)
+      search = skids[batches[[i]]]
+      cat = tryCatch(catmaid::read.neurons.catmaid(search, OmitFailures = TRUE), error = function(e) NULL)
       if(!length(cat)){
         next
       }
@@ -39,27 +48,20 @@ flywire_matching_rewrite <- function(flywire.ids = names(flywire_neurons()),
       flywire.xyz = apply(branchpoints.flywire.raw, 1, paste_coords)
 
       # Add
-      indices = match(rownames(branchpoints),gs$skid)
-      flywire.xyz.na = is.na(gs[indices,]$flywire.xyz)
-      indices.na = indices[flywire.xyz.na]
+      indices = match(rownames(branchpoints),names(cat))
       if(length(indices)){
         gs[indices,]$FAFB.xyz = FAFB.xyz
       }
-      if(length(indices.na)){
-        gs[indices.na,]$flywire.xyz = flywire.xyz
-        gs[indices.na,]$flywire.id = fw.ids
+      if(length(indices)){
+        gs[indices,]$flywire.xyz = flywire.xyz
+        gs[indices,]$flywire.id = fw.ids
       }
-      if(!is.null(meta$side)){
-        side.indices = match(gs$flywire.xyz,meta$flywire.xyz)
-        sides = meta$side[side.indices]
-        gs$side[!is.na(side.indices)] = sides[!is.na(side.indices)]
-      }
-      all.ids=unique(c(all.ids,fw.ids))
     }
+  }
 
     # Update
-    write.cols = setdiff(colnames(gs),c("FAFB.xyz", "flywire.xyz", "flywire.id", "side"))
-    if(length(all.ids) & length(write.cols)){
+    write.cols = intersect(c("FAFB.xyz", "flywire.xyz", "flywire.id", "side"),colnames(gs))
+    if(length(write.cols)){
       for(column in write.cols){
         letter = LETTERS[match(column,colnames(gs))]
         range = paste0(letter,2,":",letter,nrow(gs)+1)
@@ -70,17 +72,41 @@ flywire_matching_rewrite <- function(flywire.ids = names(flywire_neurons()),
                             sheet = "FAFB",
                             col_names = FALSE)
       }
+      # Add flywire match to the hemibrain and LM sheets
+      ## Read the FAFB Google Sheet
+      fg = hemibrain_match_sheet(sheet = "FAFB", selected_file = selected_file)
+    }else{
+      fg = gs
     }
 
-    # Add flywire match to the hemibrain and LM sheets
-    ## Read the FAFB Google Sheet
-    fg = hemibrain_match_sheet(sheet = "FAFB", selected_file = selected_file)
-  }else{
-    all.ids = c()
-    fg = gs
+  # Figure out duplicate entries
+  fg$index = 1:nrow(fg)+1
+  dupes = unique(fg$flywire.id[duplicated(fg$flywire.id)])
+  dupes = dupes[!is.na(dupes)]
+  dupes = dupes[!dupes%in%c("NA"," ","")]
+  for(dupe in dupes){
+    sub = subset(fg, fg$flywire.id == dupe)
+    skd = unique(sub$skid)
+    skd = skd[!is.na(skd)]
+    skd = skd[!skd%in%c("NA"," ","")]
+    if(length(skd)>1){
+      next
+    }
+    best = which.max(apply(sub, 1, function(r) sum(is.na(r[c("hemibrain.match", "hemibrain.match.quality",
+                                                   "LM.match", "LM.match.quality",
+                                                   "FAFB.hemisphere.match", "FAFB.hemisphere.match.quality")]))))
+    remove = sub[-best,]
+    for(r in remove$index){
+      range.del = googlesheets4::cell_rows(r)
+      googlesheets4::range_delete(ss = selected_file,
+                                  range = range.del,
+                                  sheet = "FAFB")
+      message("Removing a row for: ", dupe)
+    }
   }
 
   # Add missing flywire information
+  all.ids = unique(gs$flywire.id)
   missing = setdiff(flywire.ids, all.ids)
   hemibrain_matching_add(ids = missing, meta = meta, dataset="flywire", selected_file = selected_file, ...)
 

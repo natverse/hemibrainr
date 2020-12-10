@@ -101,6 +101,7 @@ reference:
     - 'flywire_neurons'
     - 'flywire_googledrive_data'
     - 'flywire_ids_update'
+    - '`flywire_basics`'
   - title: Access light-level google drive data
     desc: ~
     contents:
