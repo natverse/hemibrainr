@@ -98,7 +98,7 @@ flywire_matching_rewrite <- function(flywire.ids = names(flywire_neurons()),
     remove = sub[-best,]
     remove = subset(remove, is.na(remove$skid)|remove$skid%in%c(""," ","NA"))
     if(nrow(remove)){
-      for(r in remove$index){
+      for(r in sort(remove$index,decreasing = TRUE)){
         range.del = googlesheets4::cell_rows(r)
         message("Removing a row for: ", dupe)
         gsheet_manipulation(FUN = googlesheets4::range_delete,
