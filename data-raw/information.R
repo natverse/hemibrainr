@@ -5,7 +5,7 @@ library(googledrive)
 ### Depends on having the repo: hemibrain_olf_data
 odour.scenes = read.csv("/Users/GD/LMBD/Papers/hemibrain_olf_data/odour_scenes.csv")
 colnames(odour.scenes) = c("glomerulus", "key_ligand", "odour_scene", "valence")
-odour.scenes.agg.1 = aggregate(list(odour_scenes=odour.scenes$odour_scene),
+odour.scenes.agg.1 = odour.scenes.agg = aggregate(list(odour_scenes=odour.scenes$odour_scene),
                              list(glomerulus=odour.scenes$glomerulus),
                              function(x) paste(unique(x), collapse="/"))
 odour.scenes.agg.2 = aggregate(list(key_ligand=odour.scenes$key_ligand),
@@ -100,7 +100,7 @@ alln.info$class = paste0("ALLN_",alln.info$class)
 alln.info$side = "right"
 rownames(alln.info) = alln.info$bodyid
 alln.info$anatomy.group = alln.summary$classification[match(alln.info$bodyid,alln.summary$bodyid)]
-alln.info$anatomy.group = gsub("_$","",alln.info$anatomy.group)
+# alln.info$anatomy.group = gsub("_$","",alln.info$anatomy.group)
 alln.info$group = gsub(" |  ","/",alln.summary$grouped[match(alln.info$bodyid,alln.summary$bodyid)])
 alln.info$notes = paste0("Type: ",alln.summary$type.description[match(alln.info$bodyid,alln.summary$bodyid)],". Group: ", alln.summary$type.description[match(alln.info$bodyid,alln.summary$bodyid)])
 
@@ -127,6 +127,7 @@ dn.info = dn.info[,!grepl("dend\\.|pd\\.|segregation|axon\\.",colnames(dn.info))
 
 # chatacter when needs
 char_df <- function(df, cols = c("bodyid","match","FAFB.match","skid","flywire.id")){
+  cols = intersect(cols,colnames(df))
   for(col in cols){
     df[[col]] = as.character(df[[col]])
   }
