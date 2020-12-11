@@ -218,9 +218,9 @@ replace_with_none <- function(x, FUN = is.na){
 
 # hidden
 unlist_df <- function(df){
-  df = as.data.frame(df, stringsAsFactors = FALSE)
+  data = as.data.frame(df, stringsAsFactors = FALSE)
   if(nrow(df)&ncol(df)){
-    data = apply(df,2,function(c) unlist(nullToNA(c)))
+    data = apply(data,2,function(c) unlist(nullToNA(c)))
     if(nrow(df)==1){
       data = t(data)
     }
