@@ -163,6 +163,7 @@ then use this function to update and get the correct flywire ID whenever they wi
   chosen.columns <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"fw.x"</span>, <span class='st'>"fw.y"</span>, <span class='st'>"fw.z"</span>, <span class='st'>"flywire.xyz"</span>, <span class='st'>"flywire.id"</span>, <span class='st'>"skid"</span>,
     <span class='st'>"FAFB.xyz"</span>, <span class='st'>"cell.type"</span>, <span class='st'>"side"</span>, <span class='st'>"ItoLee_Hemilineage"</span>, <span class='st'>"Hartenstein_Hemilineage"</span>,
     <span class='st'>"hemibrain_match"</span><span class='op'>)</span>,
+  work_sheets <span class='op'>=</span> <span class='cn'>NULL</span>,
   numCores <span class='op'>=</span> <span class='fl'>1</span>,
   max.tries <span class='op'>=</span> <span class='fl'>10</span>
 <span class='op'>)</span></pre>
@@ -179,6 +180,10 @@ If <code>NULL</code> then defaults to <code><a href='https://rdrr.io/r/base/opti
       <th>chosen.columns</th>
       <td><p>as well as writing column updates to the specified google sheets, this function returns a <code>data.frame</code> built fromm all given sheets and their
 individual tabs, that have been updated. This argument specifies which column you want returned. Filled with NAs if it does not exist.</p></td>
+    </tr>
+    <tr>
+      <th>work_sheets</th>
+      <td><p>a character vector of work sheet, i.e. tab, names for the googlesheet. If given, this function will only update those tabs.</p></td>
     </tr>
     <tr>
       <th>numCores</th>
