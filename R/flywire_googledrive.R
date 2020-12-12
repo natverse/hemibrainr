@@ -690,8 +690,10 @@ flywire_ids_update <- function(selected_sheets = NULL,
             gs.t[[col]] = NA
           }
         }
-        gs$gsheet = selected_sheet
-        gs = plyr::rbind.fill(gs.t,gs)
+        if(nrow(gs.t)){
+          gs.t$gsheet = selected_sheet
+          gs = plyr::rbind.fill(gs.t,gs)
+        }
       }
     }
   }
