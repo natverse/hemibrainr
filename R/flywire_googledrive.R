@@ -493,7 +493,12 @@ sql_col_types = readr::cols(.default = "c",
                  synapses = "n",
                  syn = "n",
                  syns = "n",
-                 n.syn = "n")
+                 n.syn = "n",
+                 nodes = "n",
+                 endpoints = "n",
+                 segments = "n",
+                 branchpoints = "n",
+                 root = "i")
 
 #' @rdname flywire_googledrive_data
 #' @export
@@ -685,6 +690,7 @@ flywire_ids_update <- function(selected_sheets = NULL,
             gs.t[[col]] = NA
           }
         }
+        gs$gsheet = selected_sheet
         gs = plyr::rbind.fill(gs.t,gs)
       }
     }
