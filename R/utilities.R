@@ -283,6 +283,8 @@ save_compressed_nblast_mat <- function(x,
       warning("combining with extant file: ", fname)
       y = plyr::rbind.fill.matrix(old, x)
       rownames(y) = c(rownames(old), rownames(x))
+    }else{
+      y = x
     }
   }else{
     y = x
