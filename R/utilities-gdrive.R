@@ -373,3 +373,42 @@ paste_coords <- function(xyz){
   paste0("(",paste(xyz,sep=",",collapse=","),")")
 }
 
+# write columns to gsheet
+gsheet_update_cols <- function(write.cols,
+                                gs,
+                                selected_sheet,
+                                sheet = NULL,
+                                ...
+                       ){
+  shared = setdiff(write.cols,colnames(write.cols))
+  if(!length(shared)){
+    stop("write.cols missing from given data frame, gs")
+  }
+  if(!nrow(gs)){
+    stop("No rows in given data frame, gs")
+  }
+  for(wc in write.cols){
+    index = match(wc,colnames(gs))
+    if(index>26){
+      letter = paste0("A",LETTERS[match(wc,colnames(gs))-26])
+    }else if(index>52){
+      letter = paste0("B",LETTERS[match(wc,colnames(gs))-52])
+    }else{
+      letter = LETTERS[match(wc,colnames(gs))]
+    }
+    range = paste0(letter,1,":",letter,nrow(gs)+1)
+    update = tryCatch(as.data.frame(nullToNA(gs[,wc]), stringsAsFactors = FALSE),
+                      error = function(e) data.frame(rep(NA,nrow(gs)), stringsAsFactors = FALSE))
+    colnames(update) = wc
+    gsheet_manipulation(FUN = googlesheets4::range_write,
+                                     ss = selected_sheet,
+                                     range = range,
+                                     data = update,
+                                     sheet = sheet,
+                                     col_names = TRUE,
+                                     ...)
+  }
+}
+
+
+
