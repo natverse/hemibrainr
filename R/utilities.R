@@ -252,6 +252,7 @@ save_compressed_nblast_mat <- function(x,
                                        threshold=-0.5,
                                        digits=3,
                                        format=c("rda", "rds"),
+                                       remove = NULL,
                                        ...) {
   format=match.arg(format)
   overwrite=match.arg(overwrite)
@@ -265,11 +266,14 @@ save_compressed_nblast_mat <- function(x,
     }else if(overwrite=="combine"){
       combine = TRUE
       if(format=="rds"){
-        old = readRDS(fname)
+        old = tryCatch(readRDS(fname), function(e) NULL)
       }else{
-        old = load_assign(fname)
+        old = tryCatch(load_assign(fname), function(e) NULL)
       }
     }
+  }
+  if(is.null(old)){
+    warning("No extant NBLAST at ", fname)
   }
   colnames(x) = gsub("_m$","",colnames(x)) # factor in mirrored hemibrain neurons
   rownames(x) = gsub("_m$","",rownames(x))
@@ -277,17 +281,22 @@ save_compressed_nblast_mat <- function(x,
   x = t(apply(t(x), 2, function(i) tapply(i, colnames(x), sum, na.rm = TRUE)))
   x[x<threshold]=threshold
   x=round(x, digits=digits)
+  y = x
   if(combine){
     old = old[!rownames(old)%in%rownames(x),]
-    if(nrow(old)){
-      warning("combining with extant file: ", fname)
-      y = plyr::rbind.fill.matrix(old, x)
-      rownames(y) = c(rownames(old), rownames(x))
-    }else{
-      y = x
+    if(!is.null(remove)){
+      old = old[!rownames(old)%in%remove,!colnames(old)%in%remove]
     }
-  }else{
-    y = x
+    if(!is.null(old)){
+      if(nrow(old)){
+        warning("combining with extant file: ", fname)
+        y = plyr::rbind.fill.matrix(old, x)
+        rownames(y) = c(rownames(old), rownames(x))
+      }else{
+        warning("original NBLAST depleted")
+        y = x
+      }
+    }
   }
   message("Resaving a compressed version of ", objname, " to ", fname)
   if(format=="rds") {
