@@ -1575,7 +1575,8 @@ hemibrain_matching_rewrite <- function(ids = NULL,
     meta = meta1
   }
   meta$cell.type = meta$type
-  meta = meta[,c("bodyid","ItoLee_Hemilineage","Hartenstein_Hemilineage","cellBodyFiber","cell.type","layer","ct.layer")]
+  chosen.cols = c("bodyid","ItoLee_Hemilineage","Hartenstein_Hemilineage","cellBodyFiber","cell.type","layer","ct.layer","flywire.xyz","flywire.id","top.nblast")
+  meta = meta[,intersect(colnames(meta),chosen.cols)]
   meta$FAFB.match = gs$FAFB.match[match(meta$bodyid,gs$bodyid)]
   meta$FAFB.match.quality = gs$FAFB.match.quality[match(meta$bodyid,gs$bodyid)]
   meta$LM.match = gs$LM.match[match(meta$bodyid,gs$bodyid)]
@@ -1603,17 +1604,35 @@ hemibrain_matching_rewrite <- function(ids = NULL,
       meta$nblast.flywire.top = fw.neurons[unlist(top),"flywire.xyz"]
     }
   }
-  batches = split(1:nrow(meta), ceiling(seq_along(1:nrow(meta))/500))
-  gsheet_manipulation(FUN = googlesheets4::write_sheet,
-                      data = meta[0,],
-                      ss = selected_file,
-                      sheet = "hemibrain")
-  for(i in batches){
-    gsheet_manipulation(FUN = googlesheets4::sheet_append,
-                        data = meta[min(i):max(i),],
-                        ss = selected_file,
-                        sheet = "hemibrain")
+  if(!identical(gs,meta)){
+    write.cols = unique(colnames(meta),chosen.cols)
+    for(wc in write.cols){
+      gs[[wc]] = meta[match(gs$bodyid,meta$bodyid),wc]
+    }
+    hemibrainr:::gsheet_update_cols(
+      write.cols = write.cols,
+      gs=gs,
+      selected_sheet = selected_file,
+      sheet = "hemibrain")
   }
+  if(nrow(meta)>nrow(gs)){
+    newrows = subset(meta, !meta$bodyid%in%gs$bodyid)
+    hemibrainr:::gsheet_manipulation(FUN = googlesheets4::sheet_append,
+                                     data = newrows,
+                                     ss = selected_file,
+                                     sheet = "hemibrain")
+  }
+  # batches = split(1:nrow(meta), ceiling(seq_along(1:nrow(meta))/500))
+  # gsheet_manipulation(FUN = googlesheets4::write_sheet,
+  #                     data = meta[0,],
+  #                     ss = selected_file,
+  #                     sheet = "hemibrain")
+  # for(i in batches){
+  #   gsheet_manipulation(FUN = googlesheets4::sheet_append,
+  #                       data = meta[min(i):max(i),],
+  #                       ss = selected_file,
+  #                       sheet = "hemibrain")
+  #}
 }
 
 #' @rdname hemibrain_add_made_matches
