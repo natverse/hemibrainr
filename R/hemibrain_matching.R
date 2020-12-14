@@ -1616,6 +1616,13 @@ hemibrain_matching_rewrite <- function(ids = NULL,
       sheet = "hemibrain")
   }
   if(nrow(meta)>nrow(gs)){
+    missed.cols = setdiff(colnames(gs),colnames(meta))
+    if(length(missed.cols)){
+      for(mc in missed.cols){
+        meta[[mc]] = NA
+      }
+    }
+    meta = meta[,colnames(gs)]
     newrows = subset(meta, !meta$bodyid%in%gs$bodyid)
     hemibrainr:::gsheet_manipulation(FUN = googlesheets4::sheet_append,
                                      data = newrows,
