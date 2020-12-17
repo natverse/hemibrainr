@@ -196,14 +196,14 @@ now, defaults to this
     <p>a <code>data.frame</code> which includes neuron's ID (either its CATMAID skeleton ID or neuprint body ID), the data set from which it comes,
 its putative cell type and connectivity type, and its match in the other dataset.</p>
 <p>a <code>data.frame</code> where each row is a neuron, either from the hemibrain or FAFB data sets. Each row gives you its matching neuron in the other data set. These matches have been
-manually assigned using <code><a href='LR_matching.html'>fafb_matching</a></code>, <code><a href='LR_matching.html'>hemibrain_matching</a></code> and <code><a href='LR_matching.html'>LR_matching</a></code>. If you use this information make sure you credit it appriopriately.
+manually assigned using <code><a href='LR_matching.html'>fafb_matching</a></code>, <code><a href='LR_matching.html'>hemibrain_matching</a></code> and <code><a href='LR_matching.html'>LR_matching</a></code>. If you use this information make sure you credit it appropriately.
 Contact us if unsure:</p><ul>
 <li><p>"cell.type" - the neuPrint designated 'type' for the neuron. If <code>dataset</code> is not <code>"hemibrain"</code>, then this is based on the hemibrain <code>match</code>.</p></li>
 <li><p>"cell" - the unique cell, which is just <code>cell.type#number</code>.</p></li>
 <li><p>"cellBodyFiber" - the cell body fiber to which this neuron belongs</p></li>
 <li><p>"ItoLee_Hemilineage" - the hemilineage to which this neuron belongs. Seer <code><a href='hemilineages.html'>hemibrain_hemilineages</a></code>.</p></li>
 <li><p>"match" - the ID of the manual match from the other data set. If <code>dataset=="hemibrain"</code> then this is a <code>flywire.id</code> that can be found in <code>flywire_neurons</code>.If <code>"CATMAID"</code> or <code>"flywire"</code> then it is a hemibrain body ID.</p></li>
-<li><p>"quality" - the matcher makers qualitative assement of how good this match is.</p></li>
+<li><p>"quality" - the matcher makers qualitative assessment of how good this match is.</p></li>
 <li><p>"FAFB.hemisphere.match" - the flywire coordinates of a neuron on the opposite hemisphere, which a match maker has designated as this <code>id</code>'s cognate.</p></li>
 <li><p>"FAFB.hemisphere.match.quality" - the quality of this match.</p></li>
 <li><p>"LM.match" - indicates a light level neuron that is a match for <code>id</code>. This neuron will be in <code><a href='flycircuit_neurons.html'>flycircuit_neurons()</a></code> or other light level data.</p></li>

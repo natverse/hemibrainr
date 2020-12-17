@@ -117,7 +117,7 @@
 <p>The package <code>hemibrainr</code> allows you to retrieve pre-computed/annotated meta data for thousands of neurons.</p>
 <p>This includes neurons from both the <a href="https://neuprint.janelia.org/help/videos?dataset=hemibrain">hemibrain</a> and<br><a href="https://ngl.flywire.ai/?local_id=c8c06ea181ad5447b04beacfc4cb1b66">FlyWire</a> ( <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6063995/">FAFB</a> ) connectomics data sets.</p>
 <p>Unlike with more manual reconstruction environments like <a href="https://neuropil.janelia.org/tracing/fafb/">CATMAID</a>, users concatenate volumetric segmentations to build neurons as 3D meshes. The segmentation was produced by the <a href="https://seunglab.org/">Seung group</a>. With the package <code>hemibrainr</code> we can read flywire neurons as both meshes and skeletons. Meshes can be read directly from flywire, but skeletons need to be built from these meshes. Our package <code>fafbseg</code> can enable users to skeletonise neurons in R (e.g. <code><a href="https://rdrr.io/pkg/fafbseg/man/skeletor.html">fafbseg::skeletor</a></code>), whereas <code>hemibrainr</code> exists to help users get hold of neuron data and match flywire neurons to <a href="https://neuprint.janelia.org/help/videos?dataset=hemibrain">hemibrain</a> neurons.</p>
-<p>Which is all useful stuff. To access some of this data, you will need access to the hemibrainr <a href="https://support.google.com/a/users/answer/9310156?hl=en">Google team drive</a>. In order to connect R to this Google drive, you have a few options. Please see <a href="https://flyconnectome.github.io/hemibrainr/articles/google_filestream.html">this article</a>. The pipeline that produced this data can be found <a href="https://github.com/flyconnectome/fafbpipeline">here</a>. It is run nightly on a machine at the <a href="https://www2.mrc-lmb.cam.ac.uk/research/scientific-facilities-and-support-services/scientific-computing/">MRC LMB</a>.</p>
+<p>Which is all useful stuff. To access some of this data, you will need access to the hemibrainr <a href="https://support.google.com/a/users/answer/9310156?hl=en">Google team drive</a>. In order to connect R to this Google drive, you have a few options. Please see <a href="https://natverse.github.io/hemibrainr/articles/google_filestream.html">this article</a>. The pipeline that produced this data can be found <a href="https://github.com/flyconnectome/fafbpipeline">here</a>. It is run nightly on a machine at the <a href="https://www2.mrc-lmb.cam.ac.uk/research/scientific-facilities-and-support-services/scientific-computing/">MRC LMB</a>.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Load package</span>
 <span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span><span class="op">(</span><span class="st">"natverse/hemibrainr"</span><span class="op">)</span>
@@ -136,9 +136,9 @@
 <span class="co">## plot3d(hemibrain_microns.surf, col = "pink", alpha = 0.1) # You can also plot the brain scaled to microns</span>
 <span class="fu"><a href="../reference/hemibrain_view.html">hemibrain_view</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># orients the brain to face forward. Note that hemibrain coordinate system has the anterior-posterior axis aligned with the Y axis (rather than the Z axis, which is more commonly observed)</span></code></pre></div>
 <center>
-<img src="https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/hemibrain_meshrgl.png" alt="hemibrain_meshrgl">
+<img src="https://raw.githubusercontent.com/natverse/hemibrainr/master/inst/images/hemibrain_meshrgl.png" alt="hemibrain_meshrgl">
 </center>
-<p>We have also generatred 3D meshes of 51 olfactory + 7 thermo/hygrosensory antennal lobe glomeruli for the hemibrain volume. They have been made using antennal lobe projection neuron presynapses.</p>
+<p>We have also generated 3D meshes of 51 olfactory + 7 thermo/hygrosensory antennal lobe glomeruli for the hemibrain volume. They have been made using antennal lobe projection neuron presynapses.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">gloms</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/nat/man/materials.html">materials</a></span><span class="op">(</span><span class="va">hemibrain_al.surf</span><span class="op">)</span><span class="op">$</span><span class="va">name</span>
 <span class="kw">for</span><span class="op">(</span><span class="va">glom</span> <span class="kw">in</span> <span class="va">gloms</span><span class="op">)</span><span class="op">{</span>
@@ -151,20 +151,20 @@
 <span class="co">## including whether or not they are cut-off in the hemibrain volumes</span>
 <span class="co">### And what sorts of odours seem to excite them</span></code></pre></div>
 <center>
-<img src="https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/hemibrain_glomeruli.png" alt="hemibrain_glomeruli">
+<img src="https://raw.githubusercontent.com/natverse/hemibrainr/master/inst/images/hemibrain_glomeruli.png" alt="hemibrain_glomeruli">
 </center>
 <center>
-<img src="https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/hemibrain_glomeruli_summary.png" alt="hemibrain_glomeruli_summary">
+<img src="https://raw.githubusercontent.com/natverse/hemibrainr/master/inst/images/hemibrain_glomeruli_summary.png" alt="hemibrain_glomeruli_summary">
 </center>
 </div>
 <div id="hemibrain-linage-information" class="section level2">
 <h2 class="hasAnchor">
 <a href="#hemibrain-linage-information" class="anchor"></a>Hemibrain linage information</h2>
-<p>We have tried to map reported cell body fibres designations (Scheffer et al. 2020) and match them to hemilineage designations from the literature. Hemilineages are bundles of neurons that have developed together, and which likely express similar genes includign those related to neurotransmitter expression (Lacin et al. 2019; Eckstein et al. 2020).</p>
+<p>We have tried to map reported cell body fibres designations (Scheffer et al. 2020) and match them to hemilineage designations from the literature. Hemilineages are bundles of neurons that have developed together, and which likely express similar genes including those related to neurotransmitter expression (Lacin et al. 2019; Eckstein et al. 2020).</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/nat/man/neuronlist-dataframe-methods.html">head</a></span><span class="op">(</span><span class="va">hemibrain_hemilineages</span><span class="op">)</span></code></pre></div>
 <center>
-<img src="https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/hemibrain_hemilineages.png" alt="hemibrain_hemilineages">
+<img src="https://raw.githubusercontent.com/natverse/hemibrainr/master/inst/images/hemibrain_hemilineages.png" alt="hemibrain_hemilineages">
 </center>
 <p>This mapping may be in precise, and we are working on creating a direct neuron-hemilineage mapping.</p>
 </div>
@@ -188,7 +188,7 @@
 <span class="fu"><a href="https://rdrr.io/pkg/nat/man/neuronlist-dataframe-methods.html">head</a></span><span class="op">(</span><span class="va">hemibrain_olfactory_layers</span><span class="op">)</span> <span class="co"># layer information for every neuron in the hemibrain</span>
 <span class="co"># Dataset, as described in Schlegel and Bates et al. 2021.</span></code></pre></div>
 <center>
-<img src="https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/ton_info.png" alt="ton_info">
+<img src="https://raw.githubusercontent.com/natverse/hemibrainr/master/inst/images/ton_info.png" alt="ton_info">
 </center>
 <p>We also provides groups of IDs for various neuron classes:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
@@ -210,7 +210,7 @@
 <span class="va">cent.ids</span> <span class="co"># LH centrifugal neuron IDs</span>
 <span class="va">lc.ids</span> <span class="co"># lobular column visual projection neurons IDs</span></code></pre></div>
 <center>
-<img src="https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/ton_ids.png" alt="ton_ids">
+<img src="https://raw.githubusercontent.com/natverse/hemibrainr/master/inst/images/ton_ids.png" alt="ton_ids">
 </center>
 </div>
 </div>

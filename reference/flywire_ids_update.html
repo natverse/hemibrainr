@@ -47,7 +47,7 @@
 
 
 <meta property="og:title" content="Update the flywire.id column in a set of google sheets based on flywire xyz positions — flywire_ids_update" />
-<meta property="og:description" content="This function retreives flywire IDs based on xyz positions in flywire voxel space, from a set of google sheets.
+<meta property="og:description" content="This function retrieves flywire IDs based on xyz positions in flywire voxel space, from a set of google sheets.
 It also writes the updated flywire IDs to the same google sheets. This is often helpful because flywire IDs are inherently unstable, they change every time
 a neuron is modified even slightly. Users can record 'stable' points in a neuron that identify it, e.g. a single xyz position in the cell body fibre, or at the soma, and
 then use this function to update and get the correct flywire ID whenever they wish." />
@@ -152,7 +152,7 @@ then use this function to update and get the correct flywire ID whenever they wi
     </div>
 
     <div class="ref-description">
-    <p>This function retreives flywire IDs based on xyz positions in flywire voxel space, from a set of google sheets.
+    <p>This function retrieves flywire IDs based on xyz positions in flywire voxel space, from a set of google sheets.
 It also writes the updated flywire IDs to the same google sheets. This is often helpful because flywire IDs are inherently unstable, they change every time
 a neuron is modified even slightly. Users can record 'stable' points in a neuron that identify it, e.g. a single xyz position in the cell body fibre, or at the soma, and
 then use this function to update and get the correct flywire ID whenever they wish.</p>
@@ -178,7 +178,7 @@ If <code>NULL</code> then defaults to <code><a href='https://rdrr.io/r/base/opti
     </tr>
     <tr>
       <th>chosen.columns</th>
-      <td><p>as well as writing column updates to the specified google sheets, this function returns a <code>data.frame</code> built fromm all given sheets and their
+      <td><p>as well as writing column updates to the specified google sheets, this function returns a <code>data.frame</code> built from all given sheets and their
 individual tabs, that have been updated. This argument specifies which column you want returned. Filled with NAs if it does not exist.</p></td>
     </tr>
     <tr>

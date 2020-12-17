@@ -119,42 +119,42 @@
 <a href="#neuron-matching-making" class="anchor"></a>Neuron Matching Making</h1>
 <p>Insect brains seem pretty stereotyped. But just how stereotyped are they? It comes as a surprise to many neuroscientists who work only on vertebrates, to learn that in insects, individual neurons can readily and reliably be re-found and identified across different members of the species. Perhaps even across species.</p>
 <center>
-<img src="https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/slick_matches.png" alt="match_examples">
+<img src="https://raw.githubusercontent.com/natverse/hemibrainr/master/inst/images/slick_matches.png" alt="match_examples">
 </center>
 <p>As of 2020, two large data sets for the vinegar fly, D. melanogaster, are available making it possible to look at the full morphology of ~25,000 neurons in two data sets. These data sets are the <a href="https://neuprint.janelia.org/help/videos?dataset=hemibrain%3Av1.0&amp;qt=findneurons&amp;qr%5B0%5D%5Bcode%5D=fn&amp;qr%5B0%5D%5Bds%5D=hemibrain%3Av1.0&amp;qr%5B0%5D%5Bpm%5D%5Bdataset%5D=hemibrain%3Av1.0&amp;qr%5B0%5D%5Bpm%5D%5Binput_ROIs%5D%5B0%5D=ATL%28R%29&amp;qr%5B0%5D%5Bpm%5D%5Boutput_ROIs%5D%5B0%5D=IB&amp;qr%5B0%5D%5BvisProps%5D%5BrowsPerPage%5D=25&amp;tab=0&amp;q=1">hemibrain</a> and <a href="https://neuropil.janelia.org/tracing/fafb/v14/">FAFB</a>. However, neurons in FAFB have been semi-manually or manually reconstructed, making the automatic assignment of FAFB-hemibrain neuron matches non-trivial. In this R package we have built tools to enable users to record and deploy inter-dataset matches.</p>
 <p>What use is this information? Matches could be used to look at morphological stereotypy, help find genetic lines that label neurons, help transfer information associated with on reconstructed to the same cell in a different brain, compare neuron connectivity between two brains, etc.</p>
 <p>For example, by matching neurons up between the hemibrain and FAFB, we see that the numbers of <a href="https://pubmed.ncbi.nlm.nih.gov/30703584/">cell types</a> within one ‘hemilineage’ (a set of neurons that are born and develop together) are comparable between these two different flies:</p>
 <center>
-<img src="https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/hemilineage_example.png" alt="hemilineage_example">
+<img src="https://raw.githubusercontent.com/natverse/hemibrainr/master/inst/images/hemilineage_example.png" alt="hemilineage_example">
 </center>
 <p>In order to match neurons, we make use of other <a href="http://natverse.org/">natverse</a> tools to ‘bridge’ data between two different brainspace, so they can be co-visualised (enabled by template brain and bridging registrations by <a href="https://www.biorxiv.org/content/10.1101/376384v2.full">Bogovic et al. 2019</a>):</p>
 <center>
-<img src="https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/hemibrain_to_FAFB.png" alt="hemibrain_to_FAFB">
+<img src="https://raw.githubusercontent.com/natverse/hemibrainr/master/inst/images/hemibrain_to_FAFB.png" alt="hemibrain_to_FAFB">
 </center>
 <div id="overview" class="section level2">
 <h2 class="hasAnchor">
 <a href="#overview" class="anchor"></a>Overview</h2>
-<p>In general, our interactive matching pipelines follow this workslow (this exmple is for <code>fafb_matching</code>):</p>
+<p>In general, our interactive matching pipelines follow this workflow (this example is for <code>fafb_matching</code>):</p>
 <center>
-<img src="https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/pipeline1.png" alt="pipeline1">
+<img src="https://raw.githubusercontent.com/natverse/hemibrainr/master/inst/images/pipeline1.png" alt="pipeline1">
 </center>
 <center>
-<img src="https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/pipeline2.png" alt="pipeline3">
+<img src="https://raw.githubusercontent.com/natverse/hemibrainr/master/inst/images/pipeline2.png" alt="pipeline3">
 </center>
 <center>
-<img src="https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/pipeline3.png" alt="pipeline3">
+<img src="https://raw.githubusercontent.com/natverse/hemibrainr/master/inst/images/pipeline3.png" alt="pipeline3">
 </center>
 <center>
-<img src="https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/pipeline4.png" alt="pipeline4">
+<img src="https://raw.githubusercontent.com/natverse/hemibrainr/master/inst/images/pipeline4.png" alt="pipeline4">
 </center>
 <center>
-<img src="https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/pipeline5.png" alt="pipeline5">
+<img src="https://raw.githubusercontent.com/natverse/hemibrainr/master/inst/images/pipeline5.png" alt="pipeline5">
 </center>
 <center>
-<img src="https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/pipeline6.png" alt="pipeline6">
+<img src="https://raw.githubusercontent.com/natverse/hemibrainr/master/inst/images/pipeline6.png" alt="pipeline6">
 </center>
 <center>
-<img src="https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/pipeline7.png" alt="pipeline7">
+<img src="https://raw.githubusercontent.com/natverse/hemibrainr/master/inst/images/pipeline7.png" alt="pipeline7">
 </center>
 </div>
 <div id="what-you-need" class="section level2">
@@ -177,7 +177,7 @@
 <a href="#the-google-sheet" class="anchor"></a>The Google Sheet</h3>
 <p>We in the <a href="https://www.zoo.cam.ac.uk/research/cell-and-developmental-biology/drosophila-connectomics#:~:text=The%20project%20aims%20to%20reconstruct,Research%20Campus%20in%20the%20US.">Drosophila Connectomics Group</a> have been recording our match making in a Google sheet named <a href="https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit">em_matching</a>. This sheet has two tabs of concern here, <code>hemibrain</code> for hemibrain neuron -&gt; FAFB neuron matches and <code>fafb</code> for FAFB neuron to hemibrain neuron matches.</p>
 <center>
-<img src="https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/google_sheet.png" alt="google_sheet">
+<img src="https://raw.githubusercontent.com/natverse/hemibrainr/master/inst/images/google_sheet.png" alt="google_sheet">
 </center>
 <p>If you have authorisation, you can see the most up-to-date matches as so:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
@@ -193,48 +193,48 @@
 <p>It is very important to note that a match cannot be a match if neurons do not seem to share the same cell body fiber tract. Being in a different tract is a deal breaker.</p>
 <p>Some good matches are striking. For example:</p>
 <center>
-<img src="https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/good_match_1.png" alt="good_match_1">
+<img src="https://raw.githubusercontent.com/natverse/hemibrainr/master/inst/images/good_match_1.png" alt="good_match_1">
 </center>
 <p>In the above case, the FAFB neuron has been quite extensively manually traced, meaning that these cells look very similar to one another.</p>
 <p>Be aware that while neurons must share the same cell body fiber tract, these tracts can be a little off set. For example, this is also a good match:</p>
 <center>
-<img src="https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/good_match_2.png" alt="good_match_2">
+<img src="https://raw.githubusercontent.com/natverse/hemibrainr/master/inst/images/good_match_2.png" alt="good_match_2">
 </center>
 <p>If the soma is missing, it might be safer to note a match as ‘medium’.</p>
 <center>
-<img src="https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/medium_match_1.png" alt="medium_match_1">
+<img src="https://raw.githubusercontent.com/natverse/hemibrainr/master/inst/images/medium_match_1.png" alt="medium_match_1">
 </center>
 <p>You might also use medium if you have a nice looking match and suspect that there is a medium/large discrepancy because the FAFB neuron (here shown in red) is under-traced, such as:</p>
 <center>
-<img src="https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/medium_match_2.png" alt="medium_match_2">
+<img src="https://raw.githubusercontent.com/natverse/hemibrainr/master/inst/images/medium_match_2.png" alt="medium_match_2">
 </center>
 <p>Or:</p>
 <center>
-<img src="https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/medium_match_3.png" alt="medium_match_3">
+<img src="https://raw.githubusercontent.com/natverse/hemibrainr/master/inst/images/medium_match_3.png" alt="medium_match_3">
 </center>
 <p>Bear in mind that the hemibrain volume only covers ~1/4 of the fly mid-brain, so neurons are truncated (here hemibrain neuron in black) but we can still make matches for many of them:</p>
 <center>
-<img src="https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/medium_match_4.png" alt="medium_match_4">
+<img src="https://raw.githubusercontent.com/natverse/hemibrainr/master/inst/images/medium_match_4.png" alt="medium_match_4">
 </center>
 <p>A larger degree of under-tracing may lead you to assign a match as poor. In this case, you think the two neurons may be ‘the same isomorphic cell type’ but you could be wrong. For example:</p>
 <center>
-<img src="https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/poor_match_1.png" alt="poor_match_1">
+<img src="https://raw.githubusercontent.com/natverse/hemibrainr/master/inst/images/poor_match_1.png" alt="poor_match_1">
 </center>
 <p>A poor match may also be made if you think there is a slight offset, possibly due to a registration issue:</p>
 <center>
-<img src="https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/poor_match_2.png" alt="poor_match_2">
+<img src="https://raw.githubusercontent.com/natverse/hemibrainr/master/inst/images/poor_match_2.png" alt="poor_match_2">
 </center>
 <p>Though in this case, choosing an even lesser-traced FAFB neuron may be better:</p>
 <center>
-<img src="https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/poor_match_3.png" alt="poor_match_3">
+<img src="https://raw.githubusercontent.com/natverse/hemibrainr/master/inst/images/poor_match_3.png" alt="poor_match_3">
 </center>
 <p>A poor match can be given even to very under-traced FAFB neurons:</p>
 <center>
-<img src="https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/poor_match_4.png" alt="poor_match_4">
+<img src="https://raw.githubusercontent.com/natverse/hemibrainr/master/inst/images/poor_match_4.png" alt="poor_match_4">
 </center>
 <p>And even fragments if you are convinced the morphology is unique enough (but be careful!):</p>
 <center>
-<img src="https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/poor_match_5.png" alt="poor_match_5">
+<img src="https://raw.githubusercontent.com/natverse/hemibrainr/master/inst/images/poor_match_5.png" alt="poor_match_5">
 </center>
 <div id="adding-your-own-matches" class="section level3">
 <h3 class="hasAnchor">
@@ -281,7 +281,7 @@
 <span class="fu"><a href="../reference/LR_matching.html">fafb_matching</a></span><span class="op">(</span>ids <span class="op">=</span> <span class="st">"16"</span>, overwrite <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span> <span class="co"># Re-look only if no proper match, or just a tract-only match, was found before.</span></code></pre></div>
 <p>When you run these functions you will enter an interactive pipeline in an <code>rgl</code> window. Prompts will be given to you in your R console and you can rotate and pan in the window to see neurons. The neuron selected for-matching is shown in blue (i.e. if using <code>hemibrain_matching</code> this will be a hemibrain neuron), and potential matches in red (i.e. if using <code>hemibrain_matching</code> these will be FAFB neurons). Potential matches are shown by <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4961245/">NBLAST</a> score (a measure of morphological similarity). Usually, for reasonably traced FAFB neurons, a good match appears in the top 10 hits.</p>
 <center>
-<img src="https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/pipeline_console.png" alt="pipeline_console">
+<img src="https://raw.githubusercontent.com/natverse/hemibrainr/master/inst/images/pipeline_console.png" alt="pipeline_console">
 </center>
 </div>
 <div id="re-setting-and-transferring" class="section level2">
@@ -309,7 +309,7 @@
 <a href="#uses" class="anchor"></a>Uses</h2>
 <p>One use we have already found for all of this match making, is to cross-identify neuron cell body fiber tracts and <a href="https://pubmed.ncbi.nlm.nih.gov/23541733/">(hemi)lineages</a>. This means that we now have the locations in FAFB for different known sets of cells. You can see seed planes for them <a href="https://docs.google.com/spreadsheets/d/1HI8RZJhV8aWC6hw5T0qh2__9D8V0zKdtxx2kkDsuI8Y/edit?usp=sharing">here</a>.</p>
 <center>
-<img src="https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/google_sheet_lineages.png" alt="google_sheet_lineages">
+<img src="https://raw.githubusercontent.com/natverse/hemibrainr/master/inst/images/google_sheet_lineages.png" alt="google_sheet_lineages">
 </center>
 </div>
 </div>
