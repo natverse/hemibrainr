@@ -23,7 +23,7 @@ This includes neurons from both the [hemibrain](https://neuprint.janelia.org/hel
 
 Unlike with more manual reconstruction environments like [CATMAID](https://neuropil.janelia.org/tracing/fafb/), users concatenate volumetric segmentations to build neurons as 3D meshes. The segmentation was produced by the [Seung group](https://seunglab.org/). With the package `hemibrainr` we can read flywire neurons as both meshes and skeletons. Meshes can be read directly from flywire, but skeletons need to be built from these meshes. Our package `fafbseg` can enable users to skeletonise neurons in R (e.g. `fafbseg::skeletor`), whereas `hemibrainr` exists to help users get hold of neuron data and match flywire neurons to [hemibrain](https://neuprint.janelia.org/help/videos?dataset=hemibrain) neurons. 
 
-Which is all useful stuff. To access some of this data, you will need access to the hemibrainr [Google team drive](https://support.google.com/a/users/answer/9310156?hl=en). In order to connect R to this Google drive, you have a few options. Please see [this article](https://flyconnectome.github.io/hemibrainr/articles/google_filestream.html). The pipeline that produced this data can be found [here](https://github.com/flyconnectome/fafbpipeline). It is run nightly on a machine at the [MRC LMB](https://www2.mrc-lmb.cam.ac.uk/research/scientific-facilities-and-support-services/scientific-computing/).
+Which is all useful stuff. To access some of this data, you will need access to the hemibrainr [Google team drive](https://support.google.com/a/users/answer/9310156?hl=en). In order to connect R to this Google drive, you have a few options. Please see [this article](https://natverse.github.io/hemibrainr/articles/google_filestream.html). The pipeline that produced this data can be found [here](https://github.com/flyconnectome/fafbpipeline). It is run nightly on a machine at the [MRC LMB](https://www2.mrc-lmb.cam.ac.uk/research/scientific-facilities-and-support-services/scientific-computing/).
 
 ```{r see.matches, eval = FALSE}
 # Load package
@@ -45,7 +45,7 @@ hemibrain_view() # orients the brain to face forward. Note that hemibrain coordi
 ```
 
 <center>
-![hemibrain_meshrgl](https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/hemibrain_meshrgl.png)
+![hemibrain_meshrgl](https://raw.githubusercontent.com/natverse/hemibrainr/master/inst/images/hemibrain_meshrgl.png)
 </center>
 
 We have also generatred 3D meshes of 51 olfactory + 7 thermo/hygrosensory antennal lobe glomeruli for the hemibrain volume. They have been made using antennal lobe projection neuron presynapses.
@@ -64,11 +64,11 @@ hemibrain_glomeruli_summary
 ```
 
 <center>
-![hemibrain_glomeruli](https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/hemibrain_glomeruli.png)
+![hemibrain_glomeruli](https://raw.githubusercontent.com/natverse/hemibrainr/master/inst/images/hemibrain_glomeruli.png)
 </center>
 
 <center>
-![hemibrain_glomeruli_summary](https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/hemibrain_glomeruli_summary.png)
+![hemibrain_glomeruli_summary](https://raw.githubusercontent.com/natverse/hemibrainr/master/inst/images/hemibrain_glomeruli_summary.png)
 </center>
 
 ## Hemibrain linage information
@@ -80,7 +80,7 @@ head(hemibrain_hemilineages)
 ```
 
 <center>
-![hemibrain_hemilineages](https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/hemibrain_hemilineages.png)
+![hemibrain_hemilineages](https://raw.githubusercontent.com/natverse/hemibrainr/master/inst/images/hemibrain_hemilineages.png)
 </center>
 
 This mapping may be in precise, and we are working on creating a direct neuron-hemilineage mapping.
@@ -107,7 +107,7 @@ head(hemibrain_olfactory_layers) # layer information for every neuron in the hem
 ```
 
 <center>
-![ton_info](https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/ton_info.png)
+![ton_info](https://raw.githubusercontent.com/natverse/hemibrainr/master/inst/images/ton_info.png)
 </center>
 
 We also provides groups of IDs for various neuron classes:
@@ -133,7 +133,7 @@ lc.ids # lobular column visual projection neurons IDs
 ```
 
 <center>
-![ton_ids](https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/ton_ids.png)
+![ton_ids](https://raw.githubusercontent.com/natverse/hemibrainr/master/inst/images/ton_ids.png)
 </center>
 
 

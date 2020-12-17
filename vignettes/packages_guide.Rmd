@@ -31,7 +31,7 @@ For more information, have a look [here](https://neuprint.janelia.org/help).
 ### hemibrainr
 The goal of [hemibrainr](https://github.com/natverse/hemibrainr) is to provide useful code for preprocessing and
 analysing data from the [Janelia FlyEM
-hemibrain](https://www.janelia.org/project-team/flyem) project. It contains specific functionality for splitting neurons into axons and dendrites, including split edgelists for connectivity. It also has the capability to load large amount of precomputed data on flywire, FAFB and hemibrain neurons from a linked Google drive. Please see [this article](https://flyconnectome.github.io/hemibrainr/articles/google_filestream.html).
+hemibrain](https://www.janelia.org/project-team/flyem) project. It contains specific functionality for splitting neurons into axons and dendrites, including split edgelists for connectivity. It also has the capability to load large amount of precomputed data on flywire, FAFB and hemibrain neurons from a linked Google drive. Please see [this article](https://natverse.github.io/hemibrainr/articles/google_filestream.html).
 
 ### Python
 #### navis

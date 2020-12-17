@@ -26,7 +26,7 @@
   And unmount with:
       hemibrainr_rclone_unmount()
   You will need to have installed and configured rclone. See
-  https://flyconnectome.github.io/hemibrainr/articles/google_filestream.html
+  https://natverse.github.io/hemibrainr/articles/google_filestream.html
   or ?hemibrainr_set_drive
   ####################### remote data ########################
   ")

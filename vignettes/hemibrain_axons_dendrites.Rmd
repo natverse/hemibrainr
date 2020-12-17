@@ -28,7 +28,7 @@ Other compartments include the 'primary neurite' or 'cell body fibre' (purple, b
 Neurons can be split into a principle input zone, a dendrite, and a principle output zone, an axon. Dendrites tend to be more spindly and axons bulkier, with boutons packed with presynapses, ready to release neurotransmitter. 
 
 <center>
-![neuron_split](https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/neuron_split.png)
+![neuron_split](https://raw.githubusercontent.com/natverse/hemibrainr/master/inst/images/neuron_split.png)
 </center>
 
 But axons and dendrites are not a totally clear division for most neurons. A neuron may have more than one of each. It may also be more 'amacrine-like' and lack this division, though this is less common. Dendrites can have outputs, and axons can have inputs. Axons may connect with axons, even dendrites may input and axon. 
@@ -36,7 +36,7 @@ But axons and dendrites are not a totally clear division for most neurons. A neu
 However, all fly neurons examined can be split into an axon-like and a dendrite-like compartment [(Schneider-Mizell et al., 2016)](https://elifesciences.org/articles/12059)). The density of outputs in the axon is higher than in the dendrite. The density of inputs to the dendrite, are higher than in the axon [(Bates & Schlegel et al., 2020)](https://www.sciencedirect.com/science/article/pii/S0960982220308587)). Interestingly, the 'start' of a dendrite is almost always closer to the neuron's cell body than the start of its axon. See our recent data [(Bates & Schlegel et al., 2020)](https://www.sciencedirect.com/science/article/pii/S0960982220308587)) for three broad classes of olfactory neuron:
 
 <center>
-![split_validation](https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/split_validation.png)
+![split_validation](https://raw.githubusercontent.com/natverse/hemibrainr/master/inst/images/split_validation.png)
 </center>
 
 The biophysical impact of axo-axonic connections is unclear – they can have non-intuitive effects depending on the timing of action potentials in connected partners [(Burrows and Laurent, 1993; Burrows and Matheson, 1994; Cuntz et al., 2007; Haag and Borst, 2004)](https://en.wikipedia.org/wiki/Axo-axonic_synapse).
@@ -111,7 +111,7 @@ neurons.flow = hemibrain_read_neurons(ids, remote = FALSE)
 
 ## Get already split neurons
 
-Splitting neurons can take a little time. We can also load thousands of pre-split neurons from the `hemibrainr` Google team drive. In order to connect R to this Google drive, you have a few options. Please see [this article](https://flyconnectome.github.io/hemibrainr/articles/google_filestream.html). Once you have access and have mounted the drive, you should be able to do:
+Splitting neurons can take a little time. We can also load thousands of pre-split neurons from the `hemibrainr` Google team drive. In order to connect R to this Google drive, you have a few options. Please see [this article](https://natverse.github.io/hemibrainr/articles/google_filestream.html). Once you have access and have mounted the drive, you should be able to do:
 
 ```{r hemi.db, eval = FALSE}
 # All split hemibrain neurons
@@ -157,7 +157,7 @@ head(axon.synapses)
 ```
 
 <center>
-![tracts](https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/tracts.png)
+![tracts](https://raw.githubusercontent.com/natverse/hemibrainr/master/inst/images/tracts.png)
 </center>
 
 ### Visualise the split
@@ -173,7 +173,7 @@ plot3d(hemibrain.surf, col = "lightgrey", alpha = 0.1, add = TRUE)
 ```
 
 <center>
-![plot3d_split](https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/plot3d_split.png)
+![plot3d_split](https://raw.githubusercontent.com/natverse/hemibrainr/master/inst/images/plot3d_split.png)
 </center>
 
 Here, lines: blue = dendrite, orange = axon, green = linker, purple = cell body fibre.
@@ -189,7 +189,7 @@ nlscan_split(neurons.flow)
 ```
 
 <center>
-![nlscan_split](https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/nlscan_split.png)
+![nlscan_split](https://raw.githubusercontent.com/natverse/hemibrainr/master/inst/images/nlscan_split.png)
 </center>
 
 So I think most of those splits are pretty convincing.
@@ -254,4 +254,4 @@ sort(table(pns.elist.strong$connection))
 
 Here, pre is the `bodyid` of the presynaptic (upstream source) neuron and post is the `bodyid` of the postsynaptic (downstream target) neuron. The `norm` column gives a synaptic weight normalised by the total inputs of the downstream neuron (post), i.e. count/total postsynapses on 'post'.
 
-Please see [this article](https://flyconnectome.github.io/hemibrainr/articles/hemibrain_connectivity.html) to see a more in-depth example of how to efficiently work neuron connectivity data from `hemibrainr`.
+Please see [this article](https://natverse.github.io/hemibrainr/articles/hemibrain_connectivity.html) to see a more in-depth example of how to efficiently work neuron connectivity data from `hemibrainr`.
