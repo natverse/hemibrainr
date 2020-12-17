@@ -90,7 +90,7 @@ Collated by the Flyconnectome group.
 
   \item{"FAFB.match"}{ - the ID of the manual match from the FAFB data set. ID indicates a neuron reconstructed in FAFBv14 CATMAID. Many of these neurons will be available through Virtual Fly Brain.}
 
-  \item{"FAFB.match.quality"}{ - the matcher makers qualitative assement of how good this match is: a poor match could be a neuron from a very similar same cell type or a highly untraced neuron that may be the correct cell type. An okay match should be a neuron that looks to be from the same morphological cell type but there may be some discrepancies in its arbour. A good match is a
+  \item{"FAFB.match.quality"}{ - the matcher makers qualitative assessment of how good this match is: a poor match could be a neuron from a very similar same cell type or a highly untraced neuron that may be the correct cell type. An okay match should be a neuron that looks to be from the same morphological cell type but there may be some discrepancies in its arbour. A good match is a
   neuron that corresponds well between FAFB and the hemibrain data.}
 
   \item{"layer"}{ - probabilistic mean path length from neuron from ALRNs, depends on connection strengths.}
@@ -118,7 +118,7 @@ Collated by the Flyconnectome group.
 
   \item{"notes"}{- other notes from annotators.}
 
-  \item{"excpected_cit"}{a citation that describes this glomerulus},
+  \item{"expected_cit"}{a citation that describes this glomerulus},
 
   \item{"expected_RN_female_1h"}{.}
 

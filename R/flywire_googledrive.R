@@ -528,14 +528,14 @@ flywire_ids <-function(local = FALSE, folder = "flywire_neurons/", sql = FALSE, 
 
 #' Update the flywire.id column in a set of google sheets based on flywire xyz positions
 #'
-#' @description This function retreives flywire IDs based on xyz positions in flywire voxel space, from a set of google sheets.
+#' @description This function retrieves flywire IDs based on xyz positions in flywire voxel space, from a set of google sheets.
 #' It also writes the updated flywire IDs to the same google sheets. This is often helpful because flywire IDs are inherently unstable, they change every time
 #' a neuron is modified even slightly. Users can record 'stable' points in a neuron that identify it, e.g. a single xyz position in the cell body fibre, or at the soma, and
 #' then use this function to update and get the correct flywire ID whenever they wish.
 #'
 #' @param selected_sheets character vector. the google sheet(s) to update. Each entry is a unique google sheet ID. You can find these in a sheet's URL.
 #' If \code{NULL} then defaults to \code{option('hemibrainr_gsheets')}.
-#' @param chosen.columns as well as writing column updates to the specified google sheets, this function returns a \code{data.frame} built fromm all given sheets and their
+#' @param chosen.columns as well as writing column updates to the specified google sheets, this function returns a \code{data.frame} built from all given sheets and their
 #' individual tabs, that have been updated. This argument specifies which column you want returned. Filled with NAs if it does not exist.
 #' @param numCores if run in parallel, the number of cores to use. This is not necessary unless you have >10k points and want to see if you can get a speed up.
 #' @param max.tries maximum number of attempts to write to/read from the google sheets before aborting. Sometimes attempts fail due to sporadic connections or API issues.
@@ -713,7 +713,7 @@ flywire_ids_update <- function(selected_sheets = NULL,
 
 #' Update neuron match information on a google sheet
 #'
-#' @description This function retreives neuron matches (\code{\link{hemibrain_matches}}) from a master-matching google sheet. If then
+#' @description This function retrieves neuron matches (\code{\link{hemibrain_matches}}) from a master-matching google sheet. If then
 #' can update other google sheets, specified by the user to update neuron-match information.
 #' Just columns giving the match, match quality and cell type are updated.
 #'
@@ -728,7 +728,7 @@ flywire_ids_update <- function(selected_sheets = NULL,
 #' @param match.field which match to record. E.g. if \code{id} is \code{"flywire.id"} you may want to add the hemibrain match from the master matching sheets. To do this
 #' set \code{match.field} to \code{"hemibrain"}. Then, if there is a \code{"hemibrain.match"} and/or \code{"hemibrain.match.quality"} column, it will be updated. You
 #' may also want to know the hemispheric match within FAFB, in which case \code{"FAFB.hemisphere"} could be used.
-#' @param chosen.columns as well as writing column updates to the specified google sheets, this function returns a \code{data.frame} built fromm all given sheets and their
+#' @param chosen.columns as well as writing column updates to the specified google sheets, this function returns a \code{data.frame} built from all given sheets and their
 #' individual tabs, that have been updated. This argument specifies which column you want returned. Filled with NAs if it does not exist.
 #'
 #' @details For this function to work, the specified google sheet(s) must have either the column specified with the argument \code{id},

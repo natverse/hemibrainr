@@ -18,7 +18,7 @@ flywire_ids_update(
 \item{selected_sheets}{character vector. the google sheet(s) to update. Each entry is a unique google sheet ID. You can find these in a sheet's URL.
 If \code{NULL} then defaults to \code{option('hemibrainr_gsheets')}.}
 
-\item{chosen.columns}{as well as writing column updates to the specified google sheets, this function returns a \code{data.frame} built fromm all given sheets and their
+\item{chosen.columns}{as well as writing column updates to the specified google sheets, this function returns a \code{data.frame} built from all given sheets and their
 individual tabs, that have been updated. This argument specifies which column you want returned. Filled with NAs if it does not exist.}
 
 \item{work_sheets}{a character vector of work sheet, i.e. tab, names for the googlesheet. If given, this function will only update those tabs.}
@@ -31,7 +31,7 @@ individual tabs, that have been updated. This argument specifies which column yo
 a \code{data.frame} with columns from the given google sheet(s), specified using the argument \code{chosen.columns}.
 }
 \description{
-This function retreives flywire IDs based on xyz positions in flywire voxel space, from a set of google sheets.
+This function retrieves flywire IDs based on xyz positions in flywire voxel space, from a set of google sheets.
 It also writes the updated flywire IDs to the same google sheets. This is often helpful because flywire IDs are inherently unstable, they change every time
 a neuron is modified even slightly. Users can record 'stable' points in a neuron that identify it, e.g. a single xyz position in the cell body fibre, or at the soma, and
 then use this function to update and get the correct flywire ID whenever they wish.

@@ -31,14 +31,14 @@ they are for the neuron specified in the \code{id} column of each worksheet.}
 set \code{match.field} to \code{"hemibrain"}. Then, if there is a \code{"hemibrain.match"} and/or \code{"hemibrain.match.quality"} column, it will be updated. You
 may also want to know the hemispheric match within FAFB, in which case \code{"FAFB.hemisphere"} could be used.}
 
-\item{chosen.columns}{as well as writing column updates to the specified google sheets, this function returns a \code{data.frame} built fromm all given sheets and their
+\item{chosen.columns}{as well as writing column updates to the specified google sheets, this function returns a \code{data.frame} built from all given sheets and their
 individual tabs, that have been updated. This argument specifies which column you want returned. Filled with NAs if it does not exist.}
 }
 \value{
 a \code{data.frame} with columns from the given google sheet(s), specified using the argument \code{chosen.columns}.
 }
 \description{
-This function retreives neuron matches (\code{\link{hemibrain_matches}}) from a master-matching google sheet. If then
+This function retrieves neuron matches (\code{\link{hemibrain_matches}}) from a master-matching google sheet. If then
 can update other google sheets, specified by the user to update neuron-match information.
 Just columns giving the match, match quality and cell type are updated.
 }

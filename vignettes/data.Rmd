@@ -48,7 +48,7 @@ hemibrain_view() # orients the brain to face forward. Note that hemibrain coordi
 ![hemibrain_meshrgl](https://raw.githubusercontent.com/natverse/hemibrainr/master/inst/images/hemibrain_meshrgl.png)
 </center>
 
-We have also generatred 3D meshes of 51 olfactory + 7 thermo/hygrosensory antennal lobe glomeruli for the hemibrain volume. They have been made using antennal lobe projection neuron presynapses.
+We have also generated 3D meshes of 51 olfactory + 7 thermo/hygrosensory antennal lobe glomeruli for the hemibrain volume. They have been made using antennal lobe projection neuron presynapses.
 
 ```{r gloms, eval = FALSE}
 gloms = materials(hemibrain_al.surf)$name
@@ -73,7 +73,7 @@ hemibrain_glomeruli_summary
 
 ## Hemibrain linage information
 
-We have tried to map reported cell body fibres designations (Scheffer et al. 2020) and match them to hemilineage designations from the literature. Hemilineages are bundles of neurons that have developed together, and which likely express similar genes includign those related to neurotransmitter expression (Lacin et al. 2019; Eckstein et al. 2020).
+We have tried to map reported cell body fibres designations (Scheffer et al. 2020) and match them to hemilineage designations from the literature. Hemilineages are bundles of neurons that have developed together, and which likely express similar genes including those related to neurotransmitter expression (Lacin et al. 2019; Eckstein et al. 2020).
 
 ```{r hemilineage, eval = FALSE}
 head(hemibrain_hemilineages)

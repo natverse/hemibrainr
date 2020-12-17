@@ -144,7 +144,7 @@ hemibrainr_set_drive("hemibrainr") # No need to run this each time though, this 
 hemibrainr_team_drive()
 ```
 
-Option 2, this is free. You still need authenticated access to the hemibrainr Gogle team drive. It cna then be moutned using [rclone](https://rclone.org/). 
+Option 2, this is free. You still need authenticated access to the hemibrainr Gogle team drive. It can then be mounted using [rclone](https://rclone.org/). 
 First, [download](https://rclone.org/downloads/) rclone for your operating system. You can also download from your system's command line (e.g. from terminal) and then configure it for the drive:
 
 ```{r rclone_download, engine = 'bash', eval = FALSE}

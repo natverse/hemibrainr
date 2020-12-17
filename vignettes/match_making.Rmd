@@ -44,7 +44,7 @@ In order to match neurons, we make use of other [natverse](http://natverse.org/)
 
 ## Overview
 
-In general, our interactive matching pipelines follow this workslow (this exmple is for `fafb_matching`):
+In general, our interactive matching pipelines follow this workflow (this example is for `fafb_matching`):
 
 <center>
 ![pipeline1](https://raw.githubusercontent.com/natverse/hemibrainr/master/inst/images/pipeline1.png)

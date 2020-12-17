@@ -724,7 +724,7 @@ fafb_matching <- function(ids = NULL,
 #'   to neurons of your choosing on the rightmost column 'Users'.
 #'
 #' @return a \code{data.frame} where each row is a neuron, either from the hemibrain or FAFB data sets. Each row gives you its matching neuron in the other data set. These matches have been
-#' manually assigned using \code{\link{fafb_matching}}, \code{\link{hemibrain_matching}} and \code{\link{LR_matching}}. If you use this information make sure you credit it appriopriately.
+#' manually assigned using \code{\link{fafb_matching}}, \code{\link{hemibrain_matching}} and \code{\link{LR_matching}}. If you use this information make sure you credit it appropriately.
 #' Contact us if unsure:
 #' \itemize{
 #'
@@ -738,7 +738,7 @@ fafb_matching <- function(ids = NULL,
 #'
 #'   \item{"match"}{ - the ID of the manual match from the other data set. If \code{dataset=="hemibrain"} then this is a \code{flywire.id} that can be found in \code{flywire_neurons}.If \code{"CATMAID"} or \code{"flywire"} then it is a hemibrain body ID.}
 #'
-#'   \item{"quality"}{ - the matcher makers qualitative assement of how good this match is.}
+#'   \item{"quality"}{ - the matcher makers qualitative assessment of how good this match is.}
 #'
 #'   \item{"FAFB.hemisphere.match"}{ - the flywire coordinates of a neuron on the opposite hemisphere, which a match maker has designated as this \code{id}'s cognate.}
 #'

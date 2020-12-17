@@ -3,9 +3,9 @@
 
 <img src="man/figures/logo.svg" align="right" height="139" /> [![Travis
 build
-status](https://travis-ci.org/flyconnectome/hemibrainr.svg?branch=master)](https://travis-ci.org/flyconnectome/hemibrainr)
+status](https://travis-ci.org/natverse/hemibrainr.svg?branch=master)](https://travis-ci.org/natverse/hemibrainr)
 [![Codecov test
-coverage](https://codecov.io/gh/flyconnectome/hemibrainr/branch/master/graph/badge.svg)](https://codecov.io/gh/flyconnectome/hemibrainr?branch=master)
+coverage](https://codecov.io/gh/natverse/hemibrainr/branch/master/graph/badge.svg)](https://codecov.io/gh/natverse/hemibrainr?branch=master)
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
 <!-- badges: end -->
@@ -32,7 +32,7 @@ below. It is \~21,662 \~full neurons, 9.5 million synapses and is about
 
 <center>
 
-![hemibrain](https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/hemibrain.png)
+![hemibrain](https://raw.githubusercontent.com/natverse/hemibrainr/master/inst/images/hemibrain.png)
 
 </center>
 
@@ -44,7 +44,7 @@ Get started with hemibrainr
 ``` r
 # install
 if (!require("remotes")) install.packages("remotes")
-remotes::install_github("flyconnectome/hemibrainr")
+remotes::install_github("natverse/hemibrainr")
 
 # use 
 library(hemibrainr)
@@ -166,7 +166,7 @@ application is run, you should be able to see your drives mounted like
 external hard drive, as so:
 
 <center>
-![google_filestream](https://raw.githubusercontent.com/flyconnectome/hemibrainr/master/inst/images/google_filestream.png "fig:")
+![google_filestream](https://raw.githubusercontent.com/natverse/hemibrainr/master/inst/images/google_filestream.png "fig:")
 </center>
 
 Then, this should work:
@@ -181,7 +181,7 @@ hemibrainr_team_drive()
 ```
 
 Option 2, this is free. You still need authenticated access to the
-hemibrainr Gogle team drive. It cna then be moutned using
+hemibrainr Gogle team drive. It can then be mounted using
 [rclone](https://rclone.org/). First,
 [download](https://rclone.org/downloads/) rclone for your operating
 system. You can also download from your system’s command line (e.g. from
@@ -215,7 +215,7 @@ options("Gdrive_hemibrain_data")
 ```
 
 For more detailed instructions, see [this
-article](https://flyconnectome.github.io/hemibrainr/articles/google_filestream.html).
+article](https://natverse.github.io/hemibrainr/articles/google_filestream.html).
 
 ### Example: ‘splitting’ neurons
 
@@ -284,4 +284,4 @@ citation(package = "hemibrainr")
 
 **Bates AS, Jefferis GSXE** (2020). *hemibrainr: Code for working with
 data from Janelia FlyEM’s hemibrain project.* **R package** version
-0.1.0. <https://github.com/flyconnectome/hemibrainr>
+0.1.0. <https://github.com/natverse/hemibrainr>
