@@ -266,9 +266,9 @@ save_compressed_nblast_mat <- function(x,
     }else if(overwrite=="combine"){
       combine = TRUE
       if(format=="rds"){
-        old = tryCatch(readRDS(fname), function(e) NULL)
+        old = tryCatch(readRDS(fname), error = function(e) NULL)
       }else{
-        old = tryCatch(load_assign(fname), function(e) NULL)
+        old = tryCatch(load_assign(fname), error = function(e) NULL)
       }
     }
   }
