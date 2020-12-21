@@ -1280,42 +1280,45 @@ hemibrain_matching_add <- function(ids = NULL,
     add = setdiff(fw.ids, all.ids)
   }
   add = setdiff(ids, rownames(gs))
-
-  # Meta information
-  if(is.null(meta)){
-    if(dataset=="hemibrain"){
-      meta = hemibrain_get_meta(add, ...)
-      meta$cell.type = meta$type
-    }else if (dataset == "FAFB"){
-      meta = elmr::fafb_get_meta(add, ...)
-    } else if (dataset == "flywire"){
-      add = setdiff(ids, gs$flywire.id)
-      meta = flywire_neurons()[as.character(add),]
-      meta = meta[!meta$flywire.xyz%in%gs$flywire.xyz,]
-      if(!nrow(meta)){
-        stop("Selected IDs could not be added. They must be among the neurons
+  if(length(add)){
+    # Meta information
+    if(is.null(meta)){
+      if(dataset=="hemibrain"){
+        meta = hemibrain_get_meta(add, ...)
+        meta$cell.type = meta$type
+      }else if (dataset == "FAFB"){
+        meta = elmr::fafb_get_meta(add, ...)
+      } else if (dataset == "flywire"){
+        add = setdiff(ids, gs$flywire.id)
+        meta = flywire_neurons()[as.character(add),]
+        meta = meta[!meta$flywire.xyz%in%gs$flywire.xyz,]
+        if(!nrow(meta)){
+          stop("Selected IDs could not be added. They must be among the neurons
          saved on Google drive, see flywire_neurons()")
+        }
       }
     }
-  }
-  if(!length(add)){
-    stop("Given IDs already exist in sheet")
-  }
-  missing = setdiff(colnames(gs),colnames(meta))
-  meta = add_blanks(meta, missing)
-  meta = meta[,colnames(gs)]
-  meta$User = User
+    if(!nrow(meta)){
+      warning("Given IDs already exist in sheet")
+    }else{
+      missing = setdiff(colnames(gs),colnames(meta))
+      meta = add_blanks(meta, missing)
+      meta = meta[,colnames(gs)]
+      meta$User = User
 
-  # Add new rows
-  dataset[dataset=="flywire"] = "FAFB"
-  batches = split(1:nrow(meta), ceiling(seq_along(1:nrow(meta))/500))
-  for(i in batches){
-    gsheet_manipulation(FUN = googlesheets4::sheet_append,
-                                     data = meta[min(i):max(i),],
-                                     ss = selected_file,
-                                     sheet = dataset)
+      # Add new rows
+      dataset[dataset=="flywire"] = "FAFB"
+      batches = split(1:nrow(meta), ceiling(seq_along(1:nrow(meta))/500))
+      for(i in batches){
+        gsheet_manipulation(FUN = googlesheets4::sheet_append,
+                            data = meta[min(i):max(i),],
+                            ss = selected_file,
+                            sheet = dataset)
+      }
+    }
+  }else{
+    warning("Given IDs already exist in sheet")
   }
-
 }
 
 #' @rdname hemibrain_add_made_matches
