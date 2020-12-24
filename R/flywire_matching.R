@@ -81,7 +81,7 @@ flywire_matching_rewrite <- function(flywire.ids = names(flywire_neurons()),
   fg$index = 1:nrow(fg)+1
   dupes = unique(fg$flywire.id[duplicated(fg$flywire.id)])
   dupes = dupes[!is.na(dupes)]
-  dupes = dupes[!dupes%in%c("NA"," ","")]
+  dupes = dupes[!dupes%in%c("NA"," ","","none","0")]
   for(dupe in dupes){
     sub = subset(fg, fg$flywire.id == dupe)
     skd = unique(sub$skid)
