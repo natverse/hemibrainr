@@ -51,8 +51,6 @@ flywire_matching_rewrite <- function(flywire.ids = names(flywire_neurons()),
       indices = match(rownames(branchpoints),names(cat))
       if(length(indices)){
         gs[indices,]$FAFB.xyz = FAFB.xyz
-      }
-      if(length(indices)){
         gs[indices,]$flywire.xyz = flywire.xyz
         gs[indices,]$flywire.id = fw.ids
       }
@@ -92,7 +90,7 @@ flywire_matching_rewrite <- function(flywire.ids = names(flywire_neurons()),
     if(length(skd)>1){
       next
     }
-    best = which.max(apply(sub, 1, function(r) sum(is.na(r[c("hemibrain.match", "hemibrain.match.quality",
+    best = which.max(apply(sub, 1, function(r) sum(!is.na(r[c("hemibrain.match", "hemibrain.match.quality",
                                                    "LM.match", "LM.match.quality",
                                                    "FAFB.hemisphere.match", "FAFB.hemisphere.match.quality")]))))
     remove = sub[-best,]
@@ -104,14 +102,13 @@ flywire_matching_rewrite <- function(flywire.ids = names(flywire_neurons()),
         gsheet_manipulation(FUN = googlesheets4::range_delete,
                             ss = selected_file,
                             range = range.del,
-                            sheet = "FAFB",
-                            col_names = TRUE)
+                            sheet = "FAFB")
       }
     }
   }
 
   # Add missing flywire information
-  all.ids = unique(gs$flywire.id)
+  all.ids = unique(fg$flywire.id)
   missing = setdiff(flywire.ids, all.ids)
   hemibrain_matching_add(ids = missing, meta = meta, dataset="flywire", selected_file = selected_file, ...)
 
