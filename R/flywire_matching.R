@@ -57,88 +57,73 @@ flywire_matching_rewrite <- function(flywire.ids = names(flywire_neurons()),
     }
   }
 
-    # Update
-    write.cols = intersect(c("FAFB.xyz", "flywire.xyz", "flywire.id", "side"),colnames(gs))
-    if(length(write.cols)){
-      for(column in write.cols){
-        letter = LETTERS[match(column,colnames(gs))]
-        range = paste0(letter,2,":",letter,nrow(gs)+1)
-        gsheet_manipulation(FUN = googlesheets4::range_write,
-                            ss = selected_file,
-                            range = range,
-                            data = as.data.frame(gs[,column], stringsAsFactors = FALSE),
-                            sheet = "FAFB",
-                            col_names = FALSE)
-      }
-      # Add flywire match to the hemibrain and LM sheets
-      ## Read the FAFB Google Sheet
-      fg = hemibrain_match_sheet(sheet = "FAFB", selected_file = selected_file)
-    }else{
-      fg = gs
-    }
+  # Update
+  write.cols = intersect(c("FAFB.xyz", "flywire.xyz", "flywire.id", "side"),colnames(gs))
+  gsheet_update_cols(
+      write.cols = write.cols,
+      gs=gs.l,
+      selected_sheet = selected_file,
+      sheet = "FAFB")
 
   # Figure out duplicate entries
   fg$index = 1:nrow(fg)+1
-  dupes = unique(fg$flywire.id[duplicated(fg$flywire.id)])
-  dupes = dupes[!is.na(dupes)]
-  dupes = dupes[!dupes%in%c("NA"," ","","none","0")]
-  for(dupe in dupes){
-    sub = subset(fg, fg$flywire.id == dupe)
-    skd = unique(sub$skid)
-    skd = skd[!is.na(skd)]
-    skd = skd[!skd%in%c("NA"," ","")]
-    if(length(skd)>1){
-      next
-    }
-    best = which.max(apply(sub, 1, function(r) sum(!is.na(r[c("hemibrain.match", "hemibrain.match.quality",
-                                                   "LM.match", "LM.match.quality",
-                                                   "FAFB.hemisphere.match", "FAFB.hemisphere.match.quality")]))))
-    remove = sub[-best,]
-    remove = subset(remove, is.na(remove$skid)|remove$skid%in%c(""," ","NA"))
-    if(nrow(remove)){
-      for(r in sort(remove$index,decreasing = TRUE)){
-        range.del = googlesheets4::cell_rows(r)
-        message("Removing a row for: ", dupe)
-        gsheet_manipulation(FUN = googlesheets4::range_delete,
-                            ss = selected_file,
-                            range = range.del,
-                            sheet = "FAFB")
+  for(set in sets){
+    dupes = unique(fg[[set]][duplicated(fg[[set]])])
+    dupes = dupes[!is.na(dupes)]
+    dupes = dupes[!dupes%in%c("NA"," ","","none","0")]
+    sets = c("skid","flywire.id")
+    for(dupe in dupes){
+      sub = fg[fg[[set]] == dupe]
+      skd = unique(sub$skid)
+      skd = skd[!is.na(skd)]
+      skd = skd[!skd%in%c("NA"," ","")]
+      if(length(skd)>1){
+        next
+      }
+      best = which.max(apply(sub, 1, function(r) sum(!is.na(r[c("hemibrain.match", "hemibrain.match.quality",
+                                                                "LM.match", "LM.match.quality",
+                                                                "FAFB.hemisphere.match", "FAFB.hemisphere.match.quality")]))))
+      remove = sub[-best,]
+      if(nrow(remove)){
+        for(r in sort(remove$index,decreasing = TRUE)){
+          range.del = googlesheets4::cell_rows(r)
+          message("Removing a row for: ", dupe)
+          gsheet_manipulation(FUN = googlesheets4::range_delete,
+                              ss = selected_file,
+                              range = range.del,
+                              sheet = "FAFB")
+        }
       }
     }
   }
 
   # Add missing flywire information
-  all.ids = unique(fg$flywire.id)
+  all.ids = correct_id(unique(fg$flywire.id))
   missing = setdiff(flywire.ids, all.ids)
-  hemibrain_matching_add(ids = missing, meta = meta, dataset="flywire", selected_file = selected_file, ...)
+  if(length(missing)){
+    hemibrain_matching_add(ids = missing, meta = meta, dataset="flywire", selected_file = selected_file, ...)
+  }
 
   ## Read the LM Google Sheet
   lmg = hemibrain_match_sheet(sheet = "lm", selected_file = selected_file)
   if(nrow(lmg)){
-    orig = lmg$flywire.xyz
     lmg$flywire.xyz = fg$flywire.xyz[match(lmg$id,fg$LM.match)]
-    different = paste(orig)!=paste(lmg$flywire.xyz)
-    lmg$flywire.xyz = fg$flywire.xyz[match(lmg$id,fg$LM.match)]
-    update_gsheet(update = lmg[different,],
-                  selected_file = selected_file,
-                  gs = lmg,
-                  tab = "lm",
-                  match = "flywire",
-                  id = "id")
+    gsheet_update_cols(
+      write.cols = "flywire.xyz",
+      gs=lmg,
+      selected_sheet = selected_file,
+      sheet = "lm")
   }
 
   ## Read the hemibrain Google Sheet
   hg = hemibrain_match_sheet(sheet = "hemibrain", selected_file = selected_file)
   if(nrow(hg)){
-    orig = hg$flywire.xyz
     hg$flywire.xyz = fg$flywire.xyz[match(hg$bodyid,fg$hemibrain.match)]
-    different = paste(orig)!=paste(hg$flywire.xyz)
-    update_gsheet(update = hg[different,],
-                  selected_file = selected_file,
-                  gs = hg,
-                  tab = "hemibrain",
-                  match = "flywire",
-                  id = "bodyid")
+    gsheet_update_cols(
+      write.cols = "flywire.xyz",
+      gs=hg,
+      selected_sheet = selected_file,
+      sheet = "hemibrain")
   }
 
 }
