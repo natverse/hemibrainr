@@ -1297,6 +1297,17 @@ hemibrain_matching_add <- function(ids = NULL,
          saved on Google drive, see flywire_neurons()")
         }
       }
+    }else{
+      id = if(dataset%in%c("FAFB","CATMAID")){
+        "skid"
+      }else if(dataset=="flywire"){
+        "flywire.id"
+      }else if(dataset =="hemibrain"){
+        "bodyid"
+      }else{
+        "id"
+      }
+      meta = meta[meta[[id]]%in%all,]
     }
     if(!nrow(meta)){
       warning("Given IDs already exist in sheet")
