@@ -61,22 +61,22 @@ flywire_matching_rewrite <- function(flywire.ids = names(flywire_neurons()),
   write.cols = intersect(c("FAFB.xyz", "flywire.xyz", "flywire.id", "side"),colnames(gs))
   gsheet_update_cols(
       write.cols = write.cols,
-      gs=gs.l,
+      gs=gs,
       selected_sheet = selected_file,
       sheet = "FAFB")
+  fg = hemibrain_match_sheet(sheet = "FAFB", selected_file = selected_file)
+
 
   # Figure out duplicate entries
   fg$index = 1:nrow(fg)+1
   for(set in sets){
     dupes = unique(fg[[set]][duplicated(fg[[set]])])
-    dupes = dupes[!is.na(dupes)]
-    dupes = dupes[!dupes%in%c("NA"," ","","none","0")]
+    dupes = id_okay(dupes)
     sets = c("skid","flywire.id")
     for(dupe in dupes){
       sub = fg[fg[[set]] == dupe]
       skd = unique(sub$skid)
-      skd = skd[!is.na(skd)]
-      skd = skd[!skd%in%c("NA"," ","")]
+      skd = id_okay(skd)
       if(length(skd)>1){
         next
       }
@@ -292,8 +292,7 @@ neuron_match_scanner <- function(brain,
   extra.repository = match.arg(extra.repository)
   query.repository = match.arg(query.repository)
   check = unique(setdiff(unique(selected[[id]]),c(unsaved,saved)))
-  check = check[!check%in%c("NA","none",0)]
-  check = check[!is.na(check)]
+  check = id_okay(check)
   message("We'll look at ", length(check)," ", query.repository, " neurons sequentially.")
   for(i in 1:length(check)){
     # Get id
