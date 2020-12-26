@@ -1105,6 +1105,7 @@ lm_matches <- function(priority = c("hemibrain","lm"), selected_file = options()
 #' @param meta meta data for the given flycircuit IDs.
 #' @param top.nblast logical. Whether or not to also give the top NBLAST match for each entry.
 #' @param catmaid.update logical. Whether or not to update \code{flywire.xyz} and \code{flywire.id} columns, based on e CATMAID neuron specified by a \code{skid} column.
+#' @param reorder logical. Whether or not to re-write the sheet so that it is ordered by hemilineage.
 #'
 #' @param ... arguments passed to methods for, for example, \code{neuprintr::neuprint_get_meta} and \code{elmr::fafb_get_meta}.
 #'
@@ -1509,11 +1510,11 @@ update_gsheet <- function(update,
 
 }
 
-
 #' @rdname hemibrain_add_made_matches
 #' @export
 fafb_matching_rewrite <- function(selected_file  = options()$hemibrainr_matching_gsheet,
                                   top.nblast = FALSE,
+                                  reorder = FALSE,
                                    ...){
   n = hemibrain_match_sheet(sheet = "FAFB", selected_file = selected_file)
   n1 = elmr::fafb_get_meta("annotation:Lineage_annotated", batch = TRUE, ...)
@@ -1546,18 +1547,34 @@ fafb_matching_rewrite <- function(selected_file  = options()$hemibrainr_matching
       n$nblast.top = top
     }
   }
-  n = n[order(n$ItoLee_Hemilineage),]
-  gsheet_manipulation(FUN = googlesheets4::write_sheet,
-                      data = n[0,],
-                      ss = selected_file,
-                      sheet = "FAFB")
-  batches = split(1:nrow(n), ceiling(seq_along(1:nrow(n))/500))
-  for(i in batches){
-    gsheet_manipulation(FUN = googlesheets4::sheet_append,
-                                     data = n[min(i):max(i),],
-                                     ss = selected_file,
-                                     sheet = "FAFB")
+
+  # Write to google sheet
+  if(reorder){
+    n = n[order(n$ItoLee_Hemilineage),]
+
+    gsheet_manipulation(FUN = googlesheets4::write_sheet,
+                        data = n[0,],
+                        ss = selected_file,
+                        sheet = "FAFB")
+    batches = split(1:nrow(n), ceiling(seq_along(1:nrow(n))/500))
+    for(i in batches){
+      gsheet_manipulation(FUN = googlesheets4::sheet_append,
+                          data = n[min(i):max(i),],
+                          ss = selected_file,
+                          sheet = "FAFB")
+    }
+  }else{
+    # Update
+    write.cols = intersect(c("connectivity.type","cell.type","nblast.top","side","ItoLee_Hemilineage","Hartenstein_Hemilineage","cell_body_fiber"),
+                           colnames(n))
+    gsheet_update_cols(
+      write.cols = write.cols,
+      gs=n,
+      selected_sheet = selected_file,
+      sheet = "FAFB")
   }
+
+  # Add any mising data
   if(!is.null(matches)){
     missing = setdiff(subset(matches,matches$dataset=="hemibrain" & matches$match.dataset == "CATMAID")$match,
                       subset(matches,matches$dataset=="CATMAID" & matches$match.dataset == "hemibrain")$id)
@@ -1569,6 +1586,16 @@ fafb_matching_rewrite <- function(selected_file  = options()$hemibrainr_matching
   }
 }
 
+# hidden
+id_okay <- function(x, zero = TRUE){
+  x = x[!is.na(x)]
+  x = x[!x%in%c(""," ","NA","none","missing","error")]
+  if(zero){
+    x = x[x!="0"]
+    x = x[x!=0]
+  }
+  x
+}
 
 #' @rdname hemibrain_add_made_matches
 #' @export
@@ -1582,6 +1609,8 @@ hemibrain_matching_rewrite <- function(ids = NULL,
   }
   meta1 = hemibrain_get_meta(unique(ids), ...)
   ids.missing = setdiff(gs$bodyid,meta1$bodyid)
+  ids.missing = ids.missing[!is.na(ids.missing)]
+  ids.missing = id_okay(ids.missing)
   if(length(ids.missing)){
     meta2 = hemibrain_get_meta(unique(ids.missing), ...)
     meta = rbind(meta1,meta2)
