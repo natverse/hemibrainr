@@ -1587,7 +1587,7 @@ fafb_matching_rewrite <- function(selected_file  = options()$hemibrainr_matching
 }
 
 # hidden
-id_okay <- function(x, zero = TRUE){
+id_okay <- function(x, zero = TRUE, logical = FALSE){
   x = x[!is.na(x)]
   x = x[!x%in%c(""," ","NA","none","missing","error")]
   if(zero){
