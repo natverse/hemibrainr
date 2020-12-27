@@ -6,17 +6,11 @@ flywire_matching_rewrite <- function(flywire.ids = names(flywire_neurons()),
                                      meta = flywire_neurons()[,],
                                      catmaid.update = TRUE,
                                      selected_file  = options()$hemibrainr_matching_gsheet, # 1_RXfVRw2nVjzk6yXOKiOr_JKwqk2dGSVG_Xe7_v8roU
+                                     reorder = FALSE,
                                      ...){
   # Get the FAFB matching Google sheet
   gs = hemibrain_match_sheet(sheet = "FAFB", selected_file = selected_file)
   skids = unique(gs$skid)
-
-  # Update side information
-  if(!is.null(meta$side)){
-    side.indices = match(gs$flywire.xyz,meta$flywire.xyz)
-    sides = meta$side[side.indices]
-    gs$side[!is.na(side.indices)] = sides[!is.na(side.indices)]
-  }
 
   # Get FAFBv14 coordinates
   if(length(skids) & catmaid.update){
@@ -57,6 +51,29 @@ flywire_matching_rewrite <- function(flywire.ids = names(flywire_neurons()),
     }
   }
 
+  # Update FAFB.xyz column
+  empty = is.na(gs$FAFB.xyz)
+  if(sum(empty)){
+    FAFB.xyz = meta[gs[empty,"flywire.id"],"FAFB.xyz"]
+    gs[empty,"FAFB.xyz"] = FAFB.xyz
+  }
+  empty = is.na(gs$FAFB.xyz)
+  if(sum(empty)){
+    points.raw = nat::xyzmatrix(gs[empty,"flywire.xyz"])
+    points.nm = scale(points.raw, scale = c(4, 4, 40), center = FALSE)
+    points.fafb = nat.templatebrains::xform_brain(points.nm, sample = "FlyWire", reference = "FAFB14", .parallel = TRUE, verbose = TRUE)
+    FAFB.xyz = apply(points.fafb, 1, paste_coords)
+    gs[empty,"FAFB.xyz"] = FAFB.xyz
+  }
+
+  # Update side information
+  if(!is.null(meta$side)){
+    # Update side
+    sides = meta[match(gs$flywire.id,meta$flywire.id),"side"]
+    sides[is.na(sides)] = gs$side[is.na(sides)]
+    gs$side = sides
+  }
+
   # Update
   write.cols = intersect(c("FAFB.xyz", "flywire.xyz", "flywire.id", "side"),colnames(gs))
   gsheet_update_cols(
@@ -64,17 +81,16 @@ flywire_matching_rewrite <- function(flywire.ids = names(flywire_neurons()),
       gs=gs,
       selected_sheet = selected_file,
       sheet = "FAFB")
-  fg = hemibrain_match_sheet(sheet = "FAFB", selected_file = selected_file)
-
 
   # Figure out duplicate entries
+  fg = hemibrain_match_sheet(sheet = "FAFB", selected_file = selected_file)
   fg$index = 1:nrow(fg)+1
   for(set in c("flywire.id",'skid')){
     dupes = unique(fg[[set]][duplicated(fg[[set]])])
     dupes = id_okay(dupes)
     sets = c("skid","flywire.id")
     for(dupe in dupes){
-      sub = fg[fg[[set]] == dupe]
+      sub = fg[fg[[set]] == dupe,]
       skd = unique(sub$skid)
       skd = id_okay(skd)
       if(length(skd)>1){
@@ -102,6 +118,24 @@ flywire_matching_rewrite <- function(flywire.ids = names(flywire_neurons()),
   missing = setdiff(flywire.ids, all.ids)
   if(length(missing)){
     hemibrain_matching_add(ids = missing, meta = meta, dataset="flywire", selected_file = selected_file, ...)
+  }
+
+  # Reorder
+  if(reorder){
+    n = hemibrain_match_sheet(sheet = "FAFB", selected_file = selected_file)
+    n = n[order(n$ItoLee_Hemilineage),]
+    n = n[!is.na(n$flywire.id)|!is.na(n$skid),]
+    gsheet_manipulation(FUN = googlesheets4::write_sheet,
+                        data = n[0,],
+                        ss = selected_file,
+                        sheet = "FAFB")
+    batches = split(1:nrow(n), ceiling(seq_along(1:nrow(n))/500))
+    for(i in batches){
+      gsheet_manipulation(FUN = googlesheets4::sheet_append,
+                          data = n[min(i):max(i),],
+                          ss = selected_file,
+                          sheet = "FAFB")
+    }
   }
 
   ## Read the LM Google Sheet
