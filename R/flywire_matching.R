@@ -69,7 +69,7 @@ flywire_matching_rewrite <- function(flywire.ids = names(flywire_neurons()),
 
   # Figure out duplicate entries
   fg$index = 1:nrow(fg)+1
-  for(set in sets){
+  for(set in c("flywire.id",'skid')){
     dupes = unique(fg[[set]][duplicated(fg[[set]])])
     dupes = id_okay(dupes)
     sets = c("skid","flywire.id")
