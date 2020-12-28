@@ -540,6 +540,8 @@ flywire_ids <-function(local = FALSE, folder = "flywire_neurons/", sql = FALSE, 
 #' @param numCores if run in parallel, the number of cores to use. This is not necessary unless you have >10k points and want to see if you can get a speed up.
 #' @param max.tries maximum number of attempts to write to/read from the google sheets before aborting. Sometimes attempts fail due to sporadic connections or API issues.
 #' @param work_sheets a character vector of work sheet, i.e. tab, names for the googlesheet. If given, this function will only update those tabs.
+#' @param meta meta data for flywire neurons, e.g. as retreived using \code{\link{flywire_meta}}. Used to efficiently input \code{flywire.xyz} column if only a \code{flywire.id} entry has been given.
+#' Only works if that id is also in this provided \code{data.frame}, \code{meta}.
 #'
 #' @details For this function to work, the specified google sheet(s) must have either the column \code{flywire.xyz},
 #' which gives the xyz position of points in a format that can be read by \code{nat::xyzmatrix}, for example \code{"(135767,79463,5284)"} or \code{"(135767;79463;5284)"}.
@@ -581,6 +583,7 @@ flywire_ids_update <- function(selected_sheets = NULL,
                                                   "ItoLee_Hemilineage", "Hartenstein_Hemilineage",
                                                   "hemibrain_match"),
                                work_sheets = NULL,
+                               meta = NULL,
                                numCores = 1,
                                max.tries = 10){
   if(is.null(selected_sheets)){
@@ -617,6 +620,10 @@ flywire_ids_update <- function(selected_sheets = NULL,
           gs.t[good.xyz,c("fw.x","fw.y","fw.z")] = nat::xyzmatrix(gs.t[good.xyz,"flywire.xyz"])
         }
         gs.t[!good.xyz,c("flywire.xyz")] = apply(gs.t[!good.xyz,c("fw.x","fw.y",'fw.z')],1,paste_coords)
+        if(!is.null(meta)){
+          justids = gs.t$flywire.xyz==paste_coords(matrix(NA,ncol=3))&!is.na(gs.t$flywire.id)
+          gs.t[justids,"flywire.xyz"] = meta[match(gs.t[justids,"flywire.id"],meta$flywire.id),"flywire.xyz"]
+        }
         if(!all(is.na(gs.t$flywire.xyz))){
           # Get flywire IDs from these positions
           bbx = matrix(c(5100, 1440, 16, 59200, 29600, 7062),ncol=3,byrow = TRUE)
@@ -665,22 +672,22 @@ flywire_ids_update <- function(selected_sheets = NULL,
           }
           fids = unlist(foreach.ids)
           fids[is.na(fids)|is.nan(fids)] = "0"
-          gs.t$flywire.id = fids[match(gs.t$flywire.xyz ,names(fids))]
+          replacement = fids[match(gs.t$flywire.xyz ,names(fids))]
+          coordsmissing = gs.t$flywire.xyz==paste_coords(matrix(NA,ncol=3))
+          coordsmissing[is.na(gs.t$flywire.xyz)] = TRUE
+          coordsmissing[is.na(replacement)] = TRUE
+          replacement[coordsmissing] = gs.t$flywire.id[coordsmissing]
+          gs.t$flywire.id = replacement
           if(nrow(gs.t)!=nrow(gs.t.current)){
             stop("Sheet processing corruption.")
           }
           write.cols = intersect(fw.columns,used.cols)
           if(length(fids) & length(write.cols)){
-            for(column in write.cols){
-              letter = LETTERS[match(column,colnames(gs.t))]
-              range = paste0(letter,2,":",letter,nrow(gs.t)+1)
-              gsheet_manipulation(FUN = googlesheets4::range_write,
-                                  ss = selected_sheet,
-                                  range = range,
-                                  data = as.data.frame(gs.t[,column], stringsAsFactors = FALSE),
-                                  sheet = tab,
-                                  col_names = FALSE)
-            }
+            gsheet_update_cols(
+              write.cols = write.cols,
+              gs=gs.t,
+              selected_sheet = selected_sheet,
+              sheet = tab)
           }
         }
         # Now continue processing
