@@ -541,7 +541,6 @@ lm_matching <- function(ids = NULL,
   say_encouragement(initials)
 }
 
-
 #' @rdname hemibrain_matching
 #' @export
 fafb_matching <- function(ids = NULL,
@@ -549,7 +548,7 @@ fafb_matching <- function(ids = NULL,
                         hemibrain.nblast = NULL,
                         threshold = 0,
                         selected_file = options()$hemibrainr_matching_gsheet,
-                        batch_size = 50,
+                        batch_size = 20,
                         db=hemibrain_neurons(brain="FAFB14"),
                         query = NULL,
                         overwrite = c("FALSE","mine","mine_empty","TRUE"),
@@ -695,6 +694,50 @@ fafb_matching <- function(ids = NULL,
   say_encouragement(initials)
 }
 
+# neuron ID name
+get_idfield <- function(sheet, return = c("id.field","sheet")){
+  return = match.arg(return)
+  if(sheet=="hemibrain"){
+    id.field = "bodyid"
+  }else if (sheet == "flywire"){
+    id.field = "flywire.id"
+    sheet = "FAFB"
+  }else if (sheet=="CATMAID"){
+    id.field = "skid"
+    sheet = "FAFB"
+  }else if (sheet=="FAFB"){
+    id.field = "skid"
+  }else{
+    id.field = "id"
+  }
+  if(return=="sheet"){
+    sheet
+  }else{
+    id.field
+  }
+}
+
+# flag for user
+# hidden
+matching_user <- function(selected_file,
+                          repository,
+                          ids,
+                          User){
+  if(length(User)>1){
+    stop("Specify just one user")
+  }
+  id.field = get_idfield(repository, return = "id.field")
+  ws = get_idfield(repository, return = "sheet")
+  gs = hemibrain_match_sheet(selected_file = selected_file, sheet = repository)
+  gs[gs[[id.field]]%in%ids,"User"] = User
+  write_matches(gs=gs,
+                ids = ids,
+                id.field = id.field,
+                column = "User",
+                selected_file = selected_file,
+                ws = ws)
+}
+
 
 #' Retrieve matched up neurons between the hemibrain and FAFB
 #'
@@ -799,8 +842,10 @@ hemibrain_matches <- function(priority = c("FAFB","hemibrain"),
   rownames(fafb.matches) = fafb.matches$skid
 
   # Match to other side
-  hemibrain.matches$FAFB.hemisphere.match = fafb.matches$FAFB.hemisphere.match[match(hemibrain.matches$flywire.xyz,fafb.matches$flywire.xyz)]
-  hemibrain.matches$FAFB.hemisphere.match.quality = fafb.matches$FAFB.hemisphere.match.quality[match(hemibrain.matches$flywire.xyz,fafb.matches$flywire.xyz)]
+  side.match = fafb.matches$FAFB.hemisphere.match[match(hemibrain.matches$flywire.xyz,fafb.matches$flywire.xyz)]
+  side.quality = fafb.matches$FAFB.hemisphere.match.quality[match(hemibrain.matches$flywire.xyz,fafb.matches$flywire.xyz)]
+  hemibrain.matches$FAFB.hemisphere.match = ifelse(length(side.match),side.match,NA)
+  hemibrain.matches$FAFB.hemisphere.match.quality = ifelse(length(side.quality),side.quality,NA)
 
   # Unmatched
   fafb.unmatched = is.na(fafb.matches$hemibrain.match)|fafb.matches$hemibrain.match==""
@@ -1652,7 +1697,7 @@ hemibrain_matching_rewrite <- function(ids = NULL,
     for(wc in write.cols){
       gs[[wc]] = meta[match(gs$bodyid,meta$bodyid),wc]
     }
-    hemibrainr:::gsheet_update_cols(
+    gsheet_update_cols(
       write.cols = write.cols,
       gs=gs,
       selected_sheet = selected_file,
@@ -1667,7 +1712,7 @@ hemibrain_matching_rewrite <- function(ids = NULL,
     }
     meta = meta[,colnames(gs)]
     newrows = subset(meta, !meta$bodyid%in%gs$bodyid)
-    hemibrainr:::gsheet_manipulation(FUN = googlesheets4::sheet_append,
+    gsheet_manipulation(FUN = googlesheets4::sheet_append,
                                      data = newrows,
                                      ss = selected_file,
                                      sheet = "hemibrain")

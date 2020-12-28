@@ -52,7 +52,7 @@ fafb_matching(
   hemibrain.nblast = NULL,
   threshold = 0,
   selected_file = options()$hemibrainr_matching_gsheet,
-  batch_size = 50,
+  batch_size = 20,
   db = hemibrain_neurons(brain = "FAFB14"),
   query = NULL,
   overwrite = c("FALSE", "mine", "mine_empty", "TRUE"),

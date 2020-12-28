@@ -52,12 +52,12 @@ flywire_matching_rewrite <- function(flywire.ids = names(flywire_neurons()),
   }
 
   # Update FAFB.xyz column
-  empty = is.na(gs$FAFB.xyz)
+  empty = is.na(gs$FAFB.xyz) & ! is.na(gs$flywire.xyz)
   if(sum(empty)){
     FAFB.xyz = meta[gs[empty,"flywire.id"],"FAFB.xyz"]
     gs[empty,"FAFB.xyz"] = FAFB.xyz
   }
-  empty = is.na(gs$FAFB.xyz)
+  empty = is.na(gs$FAFB.xyz) & ! is.na(gs$flywire.xyz)
   if(sum(empty)){
     points.raw = nat::xyzmatrix(gs[empty,"flywire.xyz"])
     points.nm = scale(points.raw, scale = c(4, 4, 40), center = FALSE)

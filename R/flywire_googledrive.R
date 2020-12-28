@@ -616,13 +616,14 @@ flywire_ids_update <- function(selected_sheets = NULL,
           }
         }
         good.xyz = sapply(gs.t$flywire.xyz,function(x) length(tryCatch(nat::xyzmatrix(x),error = function(e) NA))==3)
-        if(sum(good.xyz)){
-          gs.t[good.xyz,c("fw.x","fw.y","fw.z")] = nat::xyzmatrix(gs.t[good.xyz,"flywire.xyz"])
-        }
         gs.t[!good.xyz,c("flywire.xyz")] = apply(gs.t[!good.xyz,c("fw.x","fw.y",'fw.z')],1,paste_coords)
         if(!is.null(meta)){
           justids = gs.t$flywire.xyz==paste_coords(matrix(NA,ncol=3))&!is.na(gs.t$flywire.id)
           gs.t[justids,"flywire.xyz"] = meta[match(gs.t[justids,"flywire.id"],meta$flywire.id),"flywire.xyz"]
+        }
+        good.xyz = sapply(gs.t$flywire.xyz,function(x) length(tryCatch(nat::xyzmatrix(x),error = function(e) NA))==3)
+        if(sum(good.xyz)){
+          gs.t[good.xyz,c("fw.x","fw.y","fw.z")] = nat::xyzmatrix(gs.t[good.xyz,"flywire.xyz"])
         }
         if(!all(is.na(gs.t$flywire.xyz))){
           # Get flywire IDs from these positions

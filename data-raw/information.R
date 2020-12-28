@@ -60,7 +60,7 @@ rn.info = rn.info[,!grepl("dend\\.|pd\\.|segregation",colnames(rn.info))]
 
 ## MBON information
 mbon.info = neuprint_search(".*MBON.*")
-mb_ann = hemibrainr:::gsheet_manipulation(FUN = googlesheets4::read_sheet,
+mb_ann = gsheet_manipulation(FUN = googlesheets4::read_sheet,
                                           ss = "1NROq0fw-WXGgu_mcWWVW9-l3YOdWHk-nESkI23fz-bo",
                                           sheet = "MBON",
                                           return = TRUE)#read.csv("data-raw/annotations/mb_annotations.csv")
@@ -86,7 +86,7 @@ lc.info = hemibrain_get_meta(lc.info$bodyid)
 lc.info$class = "LC"
 
 # AL local neuron informatipn
-al.sheet = hemibrainr:::gsheet_manipulation(FUN = googlesheets4::read_sheet,
+al.sheet = gsheet_manipulation(FUN = googlesheets4::read_sheet,
                                             ss = "124eTYqQ8evTGm_z75V8jNVmfBI763_s4h1EAPVMiSvI",
                                             sheet = "AL",
                                             return = TRUE)
