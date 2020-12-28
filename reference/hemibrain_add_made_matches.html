@@ -177,6 +177,7 @@ locations in flywire space, based on CATMAID skids.</p>
   meta <span class='op'>=</span> <span class='fu'><a href='flywire_neurons.html'>flywire_neurons</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>[</span>, <span class='op'>]</span>,
   catmaid.update <span class='op'>=</span> <span class='cn'>TRUE</span>,
   selected_file <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>options</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>$</span><span class='va'>hemibrainr_matching_gsheet</span>,
+  reorder <span class='op'>=</span> <span class='cn'>FALSE</span>,
   <span class='va'>...</span>
 <span class='op'>)</span>
 
@@ -241,6 +242,10 @@ locations in flywire space, based on CATMAID skids.</p>
       <td><p>Specifies which Google Sheet to use. Unless you are using a personal Google Sheet, this should be <code>options()$hemibrainr_matching_gsheet</code>.</p></td>
     </tr>
     <tr>
+      <th>reorder</th>
+      <td><p>logical. Whether or not to re-write the sheet so that it is ordered by hemilineage.</p></td>
+    </tr>
+    <tr>
       <th>...</th>
       <td><p>arguments passed to methods for, for example, <code><a href='https://rdrr.io/pkg/neuprintr/man/neuprint_get_meta.html'>neuprintr::neuprint_get_meta</a></code> and <code><a href='https://rdrr.io/pkg/elmr/man/read.neurons.fafb.html'>elmr::fafb_get_meta</a></code>.</p></td>
     </tr>
@@ -272,10 +277,6 @@ you can use, for example, <code><a href='LR_matching.html'>hemibrain_matching</a
     <tr>
       <th>top.nblast</th>
       <td><p>logical. Whether or not to also give the top NBLAST match for each entry.</p></td>
-    </tr>
-    <tr>
-      <th>reorder</th>
-      <td><p>logical. Whether or not to re-write the sheet so that it is ordered by hemilineage.</p></td>
     </tr>
     <tr>
       <th>flycircuit.ids</th>

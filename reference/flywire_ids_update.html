@@ -170,6 +170,7 @@ then use this function to update and get the correct flywire ID whenever they wi
     <span class='st'>"FAFB.xyz"</span>, <span class='st'>"cell.type"</span>, <span class='st'>"side"</span>, <span class='st'>"ItoLee_Hemilineage"</span>, <span class='st'>"Hartenstein_Hemilineage"</span>,
     <span class='st'>"hemibrain_match"</span><span class='op'>)</span>,
   work_sheets <span class='op'>=</span> <span class='cn'>NULL</span>,
+  meta <span class='op'>=</span> <span class='cn'>NULL</span>,
   numCores <span class='op'>=</span> <span class='fl'>1</span>,
   max.tries <span class='op'>=</span> <span class='fl'>10</span>
 <span class='op'>)</span></pre>
@@ -190,6 +191,11 @@ individual tabs, that have been updated. This argument specifies which column yo
     <tr>
       <th>work_sheets</th>
       <td><p>a character vector of work sheet, i.e. tab, names for the googlesheet. If given, this function will only update those tabs.</p></td>
+    </tr>
+    <tr>
+      <th>meta</th>
+      <td><p>meta data for flywire neurons, e.g. as retreived using <code><a href='flywire_googledrive_data.html'>flywire_meta</a></code>. Used to efficiently input <code>flywire.xyz</code> column if only a <code>flywire.id</code> entry has been given.
+Only works if that id is also in this provided <code>data.frame</code>, <code>meta</code>.</p></td>
     </tr>
     <tr>
       <th>numCores</th>
