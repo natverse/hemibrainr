@@ -695,7 +695,7 @@ fafb_matching <- function(ids = NULL,
 }
 
 # neuron ID name
-get_idfield <- function(repository = c("hemibrain","CATMAID","flywire","LM","lm","FAFB.hemisphere"),
+get_idfield <- function(repository = c("hemibrain","CATMAID","flywire","LM","lm","FAFB.hemisphere","FAFB"),
                         return = c("id.field","sheet","match.field","match.quality")){
   return = match.arg(return)
   repository = match.arg(repository)
@@ -705,7 +705,7 @@ get_idfield <- function(repository = c("hemibrain","CATMAID","flywire","LM","lm"
   }else if (repository == c("flywire")){
     id.field = "flywire.id"
     sheet = "FAFB"
-  }else if (repository=="CATMAID"){
+  }else if (repository%in%c("CATMAID","FAFB")){
     id.field = "skid"
     sheet = "FAFB"
   }else if (repository=="FAFB"){
@@ -718,7 +718,7 @@ get_idfield <- function(repository = c("hemibrain","CATMAID","flywire","LM","lm"
   if(return=="sheet"){
     sheet
   }else if(return%in%c("match.field","match.quality")){
-    if(repository=="CATMAID"){
+    if(repository%in%c("CATMAID","FAFB")){
       match.field  = "FAFB.match"
       match.quality = "FAFB.match.quality"
     }else if(repository%in%c("LM","lm")){
@@ -1405,31 +1405,11 @@ hemibrain_matching_transfers <- function(selected_file = options()$hemibrainr_ma
   #############
 
   # Read the LM Google Sheet
-  lmg = gsheet_manipulation(FUN = googlesheets4::read_sheet,
-                            ss = selected_file,
-                            sheet = "lm",
-                            guess_max = 3000,
-                            return = TRUE)
-  lmg$id = correct_id(lmg$id)
-  rownames(lmg) = lmg$id
-
+  lmg =  hemibrain_match_sheet(selected_file = selected_file, sheet = "lm")
   # Read the FAFB Google Sheet
-  fg = gsheet_manipulation(FUN = googlesheets4::read_sheet,
-                           ss = selected_file,
-                           sheet = "FAFB",
-                           guess_max = 3000,
-                           return = TRUE)
-  fg$skid = correct_id(fg$skid)
-  rownames(fg) = fg$skid
-
+  fg = hemibrain_match_sheet(selected_file = selected_file, sheet = "FAFB")
   # Read the hemibrain Google Sheet
-  hg = gsheet_manipulation(FUN = googlesheets4::read_sheet,
-                           ss = selected_file,
-                           sheet = "hemibrain",
-                           guess_max = 3000,
-                           return = TRUE)
-  hg$bodyid = correct_id(hg$bodyid)
-  rownames(hg) = hg$bodyid
+  hg = hemibrain_match_sheet(selected_file = selected_file, sheet = "hemibrain")
 
   ##############
   # LM -> FAFB #
