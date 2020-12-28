@@ -695,23 +695,52 @@ fafb_matching <- function(ids = NULL,
 }
 
 # neuron ID name
-get_idfield <- function(sheet, return = c("id.field","sheet")){
+get_idfield <- function(repository = c("hemibrain","CATMAID","flywire","LM","lm","FAFB.hemisphere"),
+                        return = c("id.field","sheet","match.field","match.quality")){
   return = match.arg(return)
-  if(sheet=="hemibrain"){
+  repository = match.arg(repository)
+  sheet = repository
+  if(repository=="hemibrain"){
     id.field = "bodyid"
-  }else if (sheet == "flywire"){
+  }else if (repository == c("flywire")){
     id.field = "flywire.id"
     sheet = "FAFB"
-  }else if (sheet=="CATMAID"){
+  }else if (repository=="CATMAID"){
     id.field = "skid"
     sheet = "FAFB"
-  }else if (sheet=="FAFB"){
+  }else if (repository=="FAFB"){
     id.field = "skid"
+  }else if(repository=="FAFB.hemisphere"){
+    id.field = "FAFB.hemisphere.match"
   }else{
     id.field = "id"
   }
   if(return=="sheet"){
     sheet
+  }else if(return%in%c("match.field","match.quality")){
+    if(repository=="CATMAID"){
+      match.field  = "FAFB.match"
+      match.quality = "FAFB.match.quality"
+    }else if(repository%in%c("LM","lm")){
+      match.field = "LM.match"
+      match.quality = "LM.match.quality"
+    }else if(repository=="hemibrain"){
+      match.field = "hemibrain.match"
+    }else if(repository=="flywire"){
+      match.field = "flywire.xyz"
+      match.quality = "FAFB.match.quality"
+    }else if(repository%in%c("FAFB.hemisphere","hemisphere")){
+      match.field = "FAFB.hemisphere.match"
+      match.quality = "FAFB.hemisphere.match.quality"
+    }else{
+      match.field = "match"
+      match.quality = "quality"
+    }
+    if(return=="match.field"){
+      match.field
+    }else{
+      match.quality
+    }
   }else{
     id.field
   }
@@ -1266,25 +1295,15 @@ hemibrain_match_sheet <- function(selected_file = options()$hemibrainr_matching_
                                   sheet = c("hemibrain","FAFB","CATMAID","flywire","lm")){
   # Which sheet
   sheet = match.arg(sheet)
-  sheet[sheet=="hemibrain"] = "hemibrain"
+
   # neuron ID name
-  if(sheet=="hemibrain"){
-    id.field = "bodyid"
-  }else if (sheet == "flywire"){
-    id.field = "flywire.id"
-    sheet = "FAFB"
-  }else if (sheet=="CATMAID"){
-    id.field = "skid"
-    sheet = "FAFB"
-  }else if (sheet=="FAFB"){
-    id.field = "skid"
-  }else{
-    id.field = "id"
-  }
+  id.field = get_idfield(sheet = sheet, return = "id.field")
+  ws = get_idfield(sheet = sheet, return = "sheet")
+
   # Read sheet
   gs = gsheet_manipulation(FUN = googlesheets4::read_sheet,
                                         ss = selected_file,
-                                        sheet = sheet,
+                                        sheet = ws,
                                         return = TRUE)
   if(nrow(gs)){
     gs[[id.field]] = correct_id(gs[[id.field]])
