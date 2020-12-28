@@ -679,6 +679,7 @@ flywire_ids_update <- function(selected_sheets = NULL,
           coordsmissing[is.na(replacement)] = TRUE
           replacement[coordsmissing] = gs.t$flywire.id[coordsmissing]
           gs.t$flywire.id = replacement
+          gs.t$flywire.xyz[gs.t$flywire.xyz==paste_coords(matrix(NA,ncol=3))] = NA
           if(nrow(gs.t)!=nrow(gs.t.current)){
             stop("Sheet processing corruption.")
           }

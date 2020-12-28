@@ -2,12 +2,15 @@
 % Please edit documentation in R/hemibrain_standardise.R
 \name{standard_transmitters}
 \alias{standard_transmitters}
+\alias{standard_statuses}
 \alias{standard_lineages}
 \alias{standard_compartments}
 \alias{standardise}
 \title{Use standard names and spellings}
 \usage{
 standard_transmitters(x)
+
+standard_statuses(x, invert = FALSE)
 
 standard_lineages(x)
 

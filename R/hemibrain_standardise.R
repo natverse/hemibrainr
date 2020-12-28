@@ -27,6 +27,44 @@ standard_transmitters <- function(x){
 
 #' @export
 #' @rdname standardise
+standard_statuses <- function(x, invert= FALSE){
+  standard_status <-function(z, invert = FALSE){
+    if(invert){
+      z[z=="incomplete"] = "i"
+      z[z=="complete"] = "c"
+      z[z=="adequate"] = "a"
+      z[z=="merge_error"] = "m"
+      z[z=="needs_extending"] = "e "
+      z[z=="wrong_hemilineage"] = "w"
+      z[z=="wrong_side"] = "s"
+      z[z=="not_neuron"] = "n"
+    }else{
+      z[z=="i"] = "incomplete"
+      z[z=="c"] = "complete"
+      z[z=="a"] = "adequate"
+      z[z=="m"] = "merge_error"
+      z[z=="e"] = "needs_extending "
+      z[z=="w"] = "wrong_hemilineage"
+      z[z=="s"] = "wrong_side"
+      z[z=="n"] = "not_neuron"
+    }
+    paste(sort(z),collapse="/",sep="/")
+  }
+  y = strsplit(x=x,split="/")
+  z = sapply(y,standard_status)
+  x
+}
+# i = incomplete [very small fragment]
+# c = complete [well fleshed out neuron, may even have most medium/small branches]
+# a = adequate [there is a cell body fibre, axon and dendrite]
+# m = noticable merge error [this neuron is merged to another]
+# e = needs extending [not quite adequate, but more than a tiny fragment]
+# w = wrong hemilineage [based on its soma position and cell body fibre, this neuron looks like it is not in the same hemilineage as others of this tab]
+# s = wrong side [soma is on the wrong hemisphere, given the name of this tab]
+# n = not a neuron [this segmentation is not a neuron, i.e. glia, erroneous]
+
+#' @export
+#' @rdname standardise
 standard_lineages <- function(x){
   x[grepl("^ItoLee_l|^itolee_l|^ItoLee_L|^itolee_L",x)] = "ItoLee_Lineage"
   x[grepl("^hartenstein_l|^Hartenstein_l|^Volker_l|^volker_l|
@@ -64,6 +102,7 @@ standardise <- standardize <- function(x){
   x <- standard_transmitters(x)
   x <- standard_lineages(x)
   x <- standard_compartments(x)
+  x <- standard_statuses(x)
   x
 }
 
