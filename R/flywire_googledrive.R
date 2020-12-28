@@ -834,16 +834,11 @@ matches_update <- function(matching_sheet = options()$hemibrainr_matching_gsheet
         }
         write.cols = intersect(c(match.column,quality.column,"cell.type"),used.cols)
         if(nrow(matches.sel) & length(write.cols)){
-          for(column in write.cols){
-            letter = LETTERS[match(column,colnames(gs.t))]
-            range = paste0(letter,2,":",letter,nrow(gs.t)+1)
-            gsheet_manipulation(FUN = googlesheets4::range_write,
-                                ss = selected_sheet,
-                                range = range,
-                                data = as.data.frame(gs.t[,column], stringsAsFactors = FALSE),
-                                sheet = tab,
-                                col_names = FALSE)
-          }
+          gsheet_update_cols(
+            write.cols = write.cols,
+            gs=gs.t[,used.cols],
+            selected_sheet = selected_sheet,
+            sheet = tab)
         }
         gs.t = gs.t[,colnames(gs.t)%in%chosen.columns]
         for(col in chosen.columns){
