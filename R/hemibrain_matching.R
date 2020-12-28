@@ -1297,8 +1297,8 @@ hemibrain_match_sheet <- function(selected_file = options()$hemibrainr_matching_
   sheet = match.arg(sheet)
 
   # neuron ID name
-  id.field = get_idfield(sheet = sheet, return = "id.field")
-  ws = get_idfield(sheet = sheet, return = "sheet")
+  id.field = get_idfield(repository = sheet, return = "id.field")
+  ws = get_idfield(repository = sheet, return = "sheet")
 
   # Read sheet
   gs = gsheet_manipulation(FUN = googlesheets4::read_sheet,
