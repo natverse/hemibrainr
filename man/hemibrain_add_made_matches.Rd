@@ -15,6 +15,7 @@ flywire_matching_rewrite(
   meta = flywire_neurons()[, ],
   catmaid.update = TRUE,
   selected_file = options()$hemibrainr_matching_gsheet,
+  reorder = FALSE,
   ...
 )
 
@@ -68,6 +69,8 @@ flycircuit_matching_rewrite(
 
 \item{selected_file}{Specifies which Google Sheet to use. Unless you are using a personal Google Sheet, this should be \code{options()$hemibrainr_matching_gsheet}.}
 
+\item{reorder}{logical. Whether or not to re-write the sheet so that it is ordered by hemilineage.}
+
 \item{...}{arguments passed to methods for, for example, \code{neuprintr::neuprint_get_meta} and \code{elmr::fafb_get_meta}.}
 
 \item{df}{a \code{data.frame} of pre-made matches that the user wants to transfer onto the Google Sheet. This will erase any extant matches for the specified neurons. This data frame
@@ -86,8 +89,6 @@ you can use, for example, \code{\link{hemibrain_matching}}.}
 \item{dataset}{the tab to which to add your new information. You are either adding to information related to hemibrain neurons, or FAFB neurons.}
 
 \item{top.nblast}{logical. Whether or not to also give the top NBLAST match for each entry.}
-
-\item{reorder}{logical. Whether or not to re-write the sheet so that it is ordered by hemilineage.}
 
 \item{flycircuit.ids}{flycircuit IDs to add to Google sheet if not already present.}
 }
