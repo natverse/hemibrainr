@@ -10,6 +10,7 @@ flywire_ids_update(
     "FAFB.xyz", "cell.type", "side", "ItoLee_Hemilineage", "Hartenstein_Hemilineage",
     "hemibrain_match"),
   work_sheets = NULL,
+  meta = NULL,
   numCores = 1,
   max.tries = 10
 )
@@ -22,6 +23,9 @@ If \code{NULL} then defaults to \code{option('hemibrainr_gsheets')}.}
 individual tabs, that have been updated. This argument specifies which column you want returned. Filled with NAs if it does not exist.}
 
 \item{work_sheets}{a character vector of work sheet, i.e. tab, names for the googlesheet. If given, this function will only update those tabs.}
+
+\item{meta}{meta data for flywire neurons, e.g. as retreived using \code{\link{flywire_meta}}. Used to efficiently input \code{flywire.xyz} column if only a \code{flywire.id} entry has been given.
+Only works if that id is also in this provided \code{data.frame}, \code{meta}.}
 
 \item{numCores}{if run in parallel, the number of cores to use. This is not necessary unless you have >10k points and want to see if you can get a speed up.}
 
