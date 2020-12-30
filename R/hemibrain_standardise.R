@@ -28,6 +28,7 @@ standard_transmitters <- function(x){
 #' @export
 #' @rdname standardise
 standard_statuses <- function(x, invert= FALSE){
+  x = tolower(x)
   standard_status <-function(z, invert = FALSE){
     if(invert){
       z[z=="incomplete"] = "i"
@@ -50,9 +51,9 @@ standard_statuses <- function(x, invert= FALSE){
     }
     paste(sort(z),collapse="/",sep="/")
   }
-  y = strsplit(x=x,split="/")
+  y = strsplit(x=x,split="/| / | /|/ ")
   z = sapply(y,standard_status)
-  x
+  z
 }
 # i = incomplete [very small fragment]
 # c = complete [well fleshed out neuron, may even have most medium/small branches]
