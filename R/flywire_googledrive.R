@@ -687,7 +687,7 @@ flywire_ids_update <- function(selected_sheets = NULL,
           if(length(fids) & length(write.cols)){
             gsheet_update_cols(
               write.cols = write.cols,
-              gs=gs.t,
+              gs=gs.t[,used.cols],
               selected_sheet = selected_sheet,
               sheet = tab)
           }
