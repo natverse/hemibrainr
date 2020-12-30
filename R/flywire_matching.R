@@ -85,12 +85,14 @@ flywire_matching_rewrite <- function(flywire.ids = names(flywire_neurons()),
   # Figure out duplicate entries
   fg = hemibrain_match_sheet(sheet = "FAFB", selected_file = selected_file)
   fg$index = 1:nrow(fg)+1
-  for(set in c("flywire.id",'skid')){
+  removals = data.frame()
+  for(set in c('skid',"flywire.xyz")){
     dupes = unique(fg[[set]][duplicated(fg[[set]])])
     dupes = id_okay(dupes)
-    sets = c("skid","flywire.id")
     for(dupe in dupes){
-      sub = fg[fg[[set]] == dupe,]
+      many = fg[[set]] == dupe
+      many[is.na(many)] = FALSE
+      sub = fg[many,]
       skd = unique(sub$skid)
       skd = id_okay(skd)
       if(length(skd)>1){
@@ -100,31 +102,16 @@ flywire_matching_rewrite <- function(flywire.ids = names(flywire_neurons()),
                                                                 "LM.match", "LM.match.quality",
                                                                 "FAFB.hemisphere.match", "FAFB.hemisphere.match.quality")]))))
       remove = sub[-best,]
-      if(nrow(remove)){
-        for(r in sort(remove$index,decreasing = TRUE)){
-          range.del = googlesheets4::cell_rows(r)
-          message("Removing a row for: ", dupe)
-          gsheet_manipulation(FUN = googlesheets4::range_delete,
-                              ss = selected_file,
-                              range = range.del,
-                              sheet = "FAFB")
-        }
-      }
+      removals = rbind(removals, remove)
     }
   }
-
-  # Add missing flywire information
-  all.ids = correct_id(unique(fg$flywire.id))
-  missing = setdiff(flywire.ids, all.ids)
-  if(length(missing)){
-    hemibrain_matching_add(ids = missing, meta = meta, dataset="flywire", selected_file = selected_file, ...)
-  }
-
-  # Reorder
-  if(reorder){
-    n = hemibrain_match_sheet(sheet = "FAFB", selected_file = selected_file)
+  if(reorder & nrow(removals)){
+    n = fg[!fg$index%in%removals$index,]
+    n = n[order(n$User),]
+    n = n[order(n$cell_body_fiber),]
     n = n[order(n$ItoLee_Hemilineage),]
-    n = n[!is.na(n$flywire.id)|!is.na(n$skid),]
+    n = n[!is.na(n$flywire.xyz)|!is.na(n$skid),]
+    n$index = NULL
     gsheet_manipulation(FUN = googlesheets4::write_sheet,
                         data = n[0,],
                         ss = selected_file,
@@ -136,7 +123,25 @@ flywire_matching_rewrite <- function(flywire.ids = names(flywire_neurons()),
                           ss = selected_file,
                           sheet = "FAFB")
     }
+  }else if (nrow(removals)){
+    for(r in sort(removals$index,decreasing = TRUE)){
+      range.del = googlesheets4::cell_rows(r)
+      message("Removing a row for: ", dupe)
+      gsheet_manipulation(FUN = googlesheets4::range_delete,
+                          ss = selected_file,
+                          range = range.del,
+                          sheet = "FAFB")
+    }
   }
+
+  # Add missing flywire information
+  all.ids = correct_id(unique(fg$flywire.id))
+  missing = setdiff(flywire.ids, all.ids)
+  if(length(missing)){
+    hemibrain_matching_add(ids = missing, meta = meta, dataset="flywire", selected_file = selected_file, ...)
+  }
+
+
 
   ## Read the LM Google Sheet
   lmg = hemibrain_match_sheet(sheet = "lm", selected_file = selected_file)
