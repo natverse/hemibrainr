@@ -726,6 +726,7 @@ get_idfield <- function(repository = c("hemibrain","CATMAID","flywire","LM","lm"
       match.quality = "LM.match.quality"
     }else if(repository=="hemibrain"){
       match.field = "hemibrain.match"
+      match.quality = "hemibrain.match.quality"
     }else if(repository=="flywire"){
       match.field = "flywire.xyz"
       match.quality = "FAFB.match.quality"
@@ -957,7 +958,8 @@ hemibrain_matches <- function(priority = c("FAFB","hemibrain"),
   }
 
   # Add cell body fiber infor for FAFB cells
-  fafb.matches$cellBodyFiber = hemibrain.matches$cellBodyFiber[match(fafb.matches$hemibrain.match,hemibrain.matches$bodyid)]
+  cbf.match = hemibrain.matches$cellBodyFiber[match(fafb.matches$hemibrain.match,hemibrain.matches$bodyid)]
+  fafb.matches$cellBodyFiber = ifelse(length(cbf.match),cbf.match,NA)
 
   # Rename cells
   fafb.matches = fafb.matches[order(fafb.matches$hemibrain.match,decreasing = TRUE),]
@@ -1403,123 +1405,44 @@ hemibrain_matching_transfers <- function(selected_file = options()$hemibrainr_ma
   #############
   # Transfers #
   #############
-
-  # Read the LM Google Sheet
-  lmg =  hemibrain_match_sheet(selected_file = selected_file, sheet = "lm")
-  # Read the FAFB Google Sheet
-  fg = hemibrain_match_sheet(selected_file = selected_file, sheet = "FAFB")
-  # Read the hemibrain Google Sheet
-  hg = hemibrain_match_sheet(selected_file = selected_file, sheet = "hemibrain")
-
-  ##############
-  # LM -> FAFB #
-  ##############
-  missing = is.na(fg$LM.match)
-  matches = lmg$id[match(fg$skid[missing],lmg$FAFB.match)]
-  quality = lmg$FAFB.match.quality[match(fg$skid[missing],lmg$FAFB.match)]
-  fg[missing,"LM.match"] = matches
-  fg[missing,"LM.match.quality"] = quality
-  sorted = which(missing)[!is.na(matches)]
-  if(length(sorted)){
-    update_gsheet(update = fg[sorted,],
-                  selected_file = selected_file,
-                gs = fg,
-                tab = "FAFB",
-                match = "lm",
-                id = "skid")
-  }
-
-  ###################
-  # LM -> Hemibrain #
-  ###################
-  missing = is.na(hg$LM.match)
-  matches = lmg$id[match(hg$bodyid[missing],lmg$hemibrain.match)]
-  quality = lmg$hemibrain.match.quality[match(hg$bodyid[missing],lmg$hemibrain.match)]
-  hg[missing,"LM.match"] = matches
-  hg[missing,"LM.match.quality"] = quality
-  sorted = which(missing)[!is.na(matches)]
-  if(length(sorted)){
-    update_gsheet(update = hg[sorted,],
-                  selected_file = selected_file,
-                gs = hg,
-                tab = "hemibrain",
-                match = "lm",
-                id = "bodyid")
-  }
-
-  ##############
-  # FAFB -> LM #
-  ##############
-  missing = is.na(lmg$FAFB.match)
-  matches = fg$skid[match(lmg$id[missing],fg$LM.match)]
-  quality = fg$LM.match.quality[match(lmg$id[missing],fg$LM.match)]
-  lmg[missing,"FAFB.match"] = matches
-  lmg[missing,"FAFB.match.quality"] = quality
-  sorted = which(missing)[!is.na(matches)]
-  if(length(sorted)){
-    update_gsheet(update = lmg[sorted,],
-                  selected_file = selected_file,
-                  gs = lmg,
-                  tab = "lm",
-                  match = "FAFB",
-                  id = "id")
-  }
-
-  #####################
-  # FAFB -> Hemibrain #
-  #####################
-  missing = is.na(hg$FAFB.match)
-  matches = fg$skid[match(hg$bodyid[missing],fg$hemibrain.match)]
-  quality = fg$hemibrain.match.quality[match(hg$bodyid[missing],fg$hemibrain.match)]
-  hg[missing,"FAFB.match"] = matches
-  hg[missing,"FAFB.match.quality"] = quality
-  sorted = which(missing)[!is.na(matches)]
-  if(length(sorted)){
-    update_gsheet(update = hg[sorted,],
-                  selected_file = selected_file,
-                gs = hg,
-                tab = "hemibrain",
-                match = "FAFB",
-                id = "bodyid")
-  }
-
-  ###################
-  # Hemibrain -> LM #
-  ###################
-  missing = is.na(lmg$hemibrain.match)
-  matches = hg$bodyid[match(lmg$id[missing],hg$LM.match)]
-  quality = hg$LM.match.quality[match(lmg$id[missing],hg$LM.match)]
-  lmg[missing,"hemibrain.match"] = matches
-  lmg[missing,"hemibrain.quality"] = quality
-  sorted = which(missing)[!is.na(matches)]
-  if(length(sorted)){
-    update_gsheet(update = lmg[sorted,],
-                  selected_file = selected_file,
-                gs = lmg,
-                tab = "lm",
-                match = "hemibrain",
-                id = "id")
-  }
-
-  #####################
-  # Hemibrain -> FAFB #
-  #####################
-  missing = is.na(fg$hemibrain.match)
-  matches = hg$bodyid[match(fg$skid[missing],hg$FAFB.match)]
-  quality = hg$FAFB.match.quality[match(fg$skid[missing],hg$FAFB.match)]
-  fg[missing,"hemibrain.match"] = matches
-  fg[missing,"hemibrain.match.quality"] = quality
-  sorted = which(missing)[!is.na(matches)]
-  if(length(sorted)){
-    update_gsheet(update = fg[sorted,],
-                  selected_file = selected_file,
-                gs = fg,
-                tab = "FAFB",
-                match = "hemibrain",
-                id = "skid")
+  for(repo1 in c("CATMAID","flywire","hemibrain","lm")){
+    for(repo2 in c("CATMAID","flywire","hemibrain","lm")){
+      ws.1 = get_idfield(repo1, return = "sheet")
+      ws.2 = get_idfield(repo2, return = "sheet")
+      if(repo==repo2|ws.1==ws.2){
+        next
+      }else{
+        gs.1 = hemibrain_match_sheet(selected_file = selected_file, sheet = ws.1)
+        gs.2 = hemibrain_match_sheet(selected_file = selected_file, sheet = ws.2)
+        used.cols = colnames(gs.1)
+        match.field.2 = get_idfield(repo2, return = "match.field")
+        match.quality.2 = get_idfield(repo2, return = "match.quality")
+        id.field.1 = get_idfield(repo1, return = "id.field")
+        match.field.1 = get_idfield(repo1, return = "match.field")
+        match.quality.1 = get_idfield(repo1, return = "match.quality")
+        id.field.2 = get_idfield(repo2, return = "id.field")
+        missing = is.na(gs.1[[match.field.2]])| (gs.1[[match.field.2]] %in% c("none"," ",""))
+        matches = gs.2[[id.field.2]][match(gs.1[[id.field.1]][missing],gs.2[[match.field.1]])]
+        if(length(matches)&sum(missing)){
+          quality = gs.2[[match.quality.1]][match(gs.1[[id.field.1]][missing],gs.2[[match.field.1]])]
+          matches[is.na(quality)] = NA
+          quality[is.na(matches)] = NA
+          gs.1[missing,match.field.2] = matches
+          gs.1[missing,match.quality.2] = quality
+          write.cols = intersect(c(match.field.2,match.quality.2),used.cols)
+          message("Updating ",ws.1," with ", sum(!is.na(matches))," ",match.field.2,"es for column: ", id.field.1)
+          if(length(quality)&sum(missing)){
+            gsheet_update_cols(
+              write.cols = write.cols,
+              gs=gs.1[,used.cols],
+              selected_sheet = selected_file,
+              sheet = ws.1)
+          }
+        }
+      }
+    }
   }
 }
-
 
 # Udate function
 update_gsheet <- function(update,
