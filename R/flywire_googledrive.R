@@ -290,6 +290,9 @@ flywire_basics <- function(flywire.neurons, ...){
   branchpoints.flywire.raw = scale(branchpoints, scale = c(4, 4, 40), center = FALSE)
   flywire.xyz = apply(branchpoints.flywire.raw, 1, paste_coords)
 
+  # Flywire svid
+  svids=fafbseg::flywire_xyz2id(nat::xyzmatrix(branchpoints.flywire.raw), root=FALSE, rawcoords = TRUE)
+
   # Get FAFBv14 nm coordinates
   FAFB.xyz = nat.templatebrains::xform_brain(branchpoints, sample = "FlyWire", reference = "FAFB14", ...)
   FAFB.xyz = apply(FAFB.xyz, 1, paste_coords)
@@ -298,6 +301,7 @@ flywire_basics <- function(flywire.neurons, ...){
   # Add
   flywire.neurons[,"flywire.id"] =  names(flywire.neurons)
   flywire.neurons[,"flywire.xyz"] = flywire.xyz
+  flywire.neurons[,"flywire.svid"] = svids
   flywire.neurons[,"FAFB.xyz"] = FAFB.xyz
   flywire.neurons[,"dataset"] = "flywire"
   flywire.neurons[,"id"] = NULL
@@ -589,7 +593,7 @@ flywire_ids_update <- function(selected_sheets = NULL,
   if(is.null(selected_sheets)){
     selected_sheets = getOption("hemibrainr_gsheets", stop("Please set option('hemibrainr_gsheets')"))
   }
-  fw.columns = c("flywire.id","fw.x","fw.y","fw.z","flywire.xyz")
+  fw.columns = c("flywire.id","fw.x","fw.y","fw.z","flywire.xyz", "flywire.svid")
   gs = data.frame(stringsAsFactors = FALSE)
   for(selected_sheet in selected_sheets){
     ## Read Google sheets and extract glywire neuron positions
@@ -680,6 +684,8 @@ flywire_ids_update <- function(selected_sheets = NULL,
           replacement[coordsmissing] = gs.t$flywire.id[coordsmissing]
           gs.t$flywire.id = replacement
           gs.t$flywire.xyz[gs.t$flywire.xyz==paste_coords(matrix(NA,ncol=3))] = NA
+          svids=fafbseg::flywire_xyz2id(nat::xyzmatrix( gs.t$flywire.xyz), root=FALSE, rawcoords = TRUE)
+          gs.t[,]$flywire.svid = svids
           if(nrow(gs.t)!=nrow(gs.t.current)){
             stop("Sheet processing corruption.")
           }

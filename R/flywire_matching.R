@@ -10,14 +10,14 @@ flywire_matching_rewrite <- function(flywire.ids = names(flywire_neurons()),
                                      ...){
   # Get the FAFB matching Google sheet
   gs = hemibrain_match_sheet(sheet = "FAFB", selected_file = selected_file)
-  skids = unique(gs$skid)
+  skids = as.character(unique(gs$skid))
 
   # Get FAFBv14 coordinates
   if(length(skids) & catmaid.update){
     cats = nat::neuronlist()
     batches = split(1:length(skids), round(seq(from = 1, to = 100, length.out = length(skids))))
     all.ids = c()
-    for(i in 1:10){
+    for(i in 1:length(batches)){
       # Read CATMAID neurons
       message("Batch:", i, "/10")
       search = skids[batches[[i]]]
@@ -38,18 +38,22 @@ flywire_matching_rewrite <- function(flywire.ids = names(flywire_neurons()),
       rownames(branchpoints.flywire) = rownames(branchpoints)
       branchpoints.flywire.raw = scale(branchpoints.flywire, scale = c(4, 4, 40), center = FALSE)
       fw.ids = fafbseg::flywire_xyz2id(branchpoints.flywire.raw, rawcoords = TRUE)
-      fw.ids[fw.ids=="0"] = NA
       flywire.xyz = apply(branchpoints.flywire.raw, 1, paste_coords)
 
       # Add
-      indices = match(rownames(branchpoints),names(cat))
+      indices = match(names(FAFB.xyz),gs$skid)
       if(length(indices)){
         gs[indices,]$FAFB.xyz = FAFB.xyz
         gs[indices,]$flywire.xyz = flywire.xyz
         gs[indices,]$flywire.id = fw.ids
+        gs[indices,]$flywire.svid = svids
       }
     }
   }
+
+  # flywire svids
+  svids=fafbseg::flywire_xyz2id(nat::xyzmatrix(gs$flywire.xyz), root=FALSE, rawcoords = TRUE)
+  gs[,]$flywire.svid = svids
 
   # Update FAFB.xyz column
   empty = is.na(gs$FAFB.xyz) & ! is.na(gs$flywire.xyz)
@@ -75,7 +79,7 @@ flywire_matching_rewrite <- function(flywire.ids = names(flywire_neurons()),
   }
 
   # Update
-  write.cols = intersect(c("FAFB.xyz", "flywire.xyz", "flywire.id", "side"),colnames(gs))
+  write.cols = intersect(c("FAFB.xyz", "flywire.xyz", "flywire.id", "flywire.svid", "side"),colnames(gs))
   gsheet_update_cols(
       write.cols = write.cols,
       gs=gs,
@@ -86,7 +90,7 @@ flywire_matching_rewrite <- function(flywire.ids = names(flywire_neurons()),
   fg = hemibrain_match_sheet(sheet = "FAFB", selected_file = selected_file)
   fg$index = 1:nrow(fg)+1
   removals = data.frame()
-  for(set in c('skid',"flywire.xyz")){
+  for(set in c('skid',"flywire.xyz","flywire.svid")){
     dupes = unique(fg[[set]][duplicated(fg[[set]])])
     dupes = id_okay(dupes)
     for(dupe in dupes){
@@ -140,8 +144,6 @@ flywire_matching_rewrite <- function(flywire.ids = names(flywire_neurons()),
   if(length(missing)){
     hemibrain_matching_add(ids = missing, meta = meta, dataset="flywire", selected_file = selected_file, ...)
   }
-
-
 
   ## Read the LM Google Sheet
   lmg = hemibrain_match_sheet(sheet = "lm", selected_file = selected_file)

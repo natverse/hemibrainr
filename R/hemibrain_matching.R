@@ -1532,7 +1532,8 @@ fafb_matching_rewrite <- function(selected_file  = options()$hemibrainr_matching
     }
   }else{
     # Update
-    write.cols = intersect(c("connectivity.type","cell.type","nblast.top","side","ItoLee_Hemilineage","Hartenstein_Hemilineage","cell_body_fiber"),
+    write.cols = intersect(c("connectivity.type","cell.type","nblast.top","side",
+                             "ItoLee_Hemilineage","Hartenstein_Hemilineage","cell_body_fiber"),
                            colnames(n))
     gsheet_update_cols(
       write.cols = write.cols,
