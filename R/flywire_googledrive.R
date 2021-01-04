@@ -684,8 +684,16 @@ flywire_ids_update <- function(selected_sheets = NULL,
           replacement[coordsmissing] = gs.t$flywire.id[coordsmissing]
           gs.t$flywire.id = replacement
           gs.t$flywire.xyz[gs.t$flywire.xyz==paste_coords(matrix(NA,ncol=3))] = NA
-          svids=fafbseg::flywire_xyz2id(nat::xyzmatrix( gs.t$flywire.xyz), root=FALSE, rawcoords = TRUE)
-          gs.t[,]$flywire.svid = svids
+          gs.t$flywire.svid = NA
+          if(!is.null(gs.t$flywire.xyz)){
+            pos = gs.t[,c("fw.x","fw.y",'fw.z')]
+            if(nrow(pos)){
+              svids=fafbseg::flywire_xyz2id(pos, root=FALSE, rawcoords = TRUE)
+              if(length(svids)==nrow(gs.t)){
+                gs.t[,]$flywire.svid = svids
+              }
+            }
+          }
           if(nrow(gs.t)!=nrow(gs.t.current)){
             stop("Sheet processing corruption.")
           }
