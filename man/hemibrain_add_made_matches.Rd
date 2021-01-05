@@ -16,6 +16,8 @@ flywire_matching_rewrite(
   catmaid.update = TRUE,
   selected_file = options()$hemibrainr_matching_gsheet,
   reorder = FALSE,
+  top.nblast = FALSE,
+  nblast = NULL,
   ...
 )
 
@@ -44,6 +46,7 @@ fafb_matching_rewrite(
   selected_file = options()$hemibrainr_matching_gsheet,
   top.nblast = FALSE,
   reorder = FALSE,
+  nblast = NULL,
   ...
 )
 
@@ -71,6 +74,10 @@ flycircuit_matching_rewrite(
 
 \item{reorder}{logical. Whether or not to re-write the sheet so that it is ordered by hemilineage.}
 
+\item{top.nblast}{logical. Whether or not to also give the top NBLAST match for each entry.}
+
+\item{nblast}{if \code{top.nblast} is \code{TRUE} this nblast matrix is used to update the column \code{top.nblast}. If set to \code{NULL} defaults to using \code{hemibrain_nblast}. Columns should be hemibrain neurons, and rows the other data set.}
+
 \item{...}{arguments passed to methods for, for example, \code{neuprintr::neuprint_get_meta} and \code{elmr::fafb_get_meta}.}
 
 \item{df}{a \code{data.frame} of pre-made matches that the user wants to transfer onto the Google Sheet. This will erase any extant matches for the specified neurons. This data frame
@@ -87,8 +94,6 @@ simply open this Google Sheet in your browser and add your initials to neurons o
 you can use, for example, \code{\link{hemibrain_matching}}.}
 
 \item{dataset}{the tab to which to add your new information. You are either adding to information related to hemibrain neurons, or FAFB neurons.}
-
-\item{top.nblast}{logical. Whether or not to also give the top NBLAST match for each entry.}
 
 \item{flycircuit.ids}{flycircuit IDs to add to Google sheet if not already present.}
 }
