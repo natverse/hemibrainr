@@ -7,6 +7,8 @@ flywire_matching_rewrite <- function(flywire.ids = names(flywire_neurons()),
                                      catmaid.update = TRUE,
                                      selected_file  = options()$hemibrainr_matching_gsheet, # 1_RXfVRw2nVjzk6yXOKiOr_JKwqk2dGSVG_Xe7_v8roU
                                      reorder = FALSE,
+                                     top.nblast = FALSE,
+                                     nblast = NULL,
                                      ...){
   # Get the FAFB matching Google sheet
   gs = hemibrain_match_sheet(sheet = "FAFB", selected_file = selected_file)
@@ -46,13 +48,26 @@ flywire_matching_rewrite <- function(flywire.ids = names(flywire_neurons()),
         gs[indices,]$FAFB.xyz = FAFB.xyz
         gs[indices,]$flywire.xyz = flywire.xyz
         gs[indices,]$flywire.id = fw.ids
-        gs[indices,]$flywire.svid = svids
       }
     }
   }
 
+  # Top NBLAST
+  if(top.nblast){
+    if(is.null(nblast)){
+      nblast = tryCatch(hemibrain_nblast('hemibrain-flywire'), error = function(e) NULL)
+    }
+    if(!is.null(nblast)){
+      nblast.top = nblast[match(gs$flywire.id,rownames(nblast)),]
+      tops = apply(nblast.top,1,function(r) which.max(r))
+      top = colnames(nblast)[unlist(tops)]
+      top[!gs$flywire.id%in%rownames(nblast)] = NA
+      gs$hemibrain.nblast.top = top
+    }
+  }
+
   # flywire svids
-  svids=fafbseg::flywire_xyz2id(nat::xyzmatrix(gs$flywire.xyz), root=FALSE, rawcoords = TRUE)
+  svids = fafbseg::flywire_xyz2id(nat::xyzmatrix(gs$flywire.xyz), root=FALSE, rawcoords = TRUE)
   gs[,]$flywire.svid = svids
 
   # Update FAFB.xyz column
@@ -79,7 +94,7 @@ flywire_matching_rewrite <- function(flywire.ids = names(flywire_neurons()),
   }
 
   # Update
-  write.cols = intersect(c("FAFB.xyz", "flywire.xyz", "flywire.id", "flywire.svid", "side"),colnames(gs))
+  write.cols = intersect(c("FAFB.xyz", "flywire.xyz", "flywire.id", "flywire.svid", "side", "nblast.top"),colnames(gs))
   gsheet_update_cols(
       write.cols = write.cols,
       gs=gs,
