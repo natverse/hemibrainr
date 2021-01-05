@@ -871,6 +871,38 @@ hemibrain_matches <- function(priority = c("FAFB","hemibrain"),
   fafb.matches$dataset = "FAFB"
   rownames(fafb.matches) = fafb.matches$skid
 
+  # Set unassigned matches to top.nblast
+  nblast.tops = c("CATMAID.nblast.top","flywire.nblast.top")
+  for(nt in nblast.tops){
+    if(!is.null(hemibrain.matches[[nt]])){
+      present = !is.na(hemibrain.matches[[nt]])
+      missing = is.na(hemibrain.matches$flywire.xyz)
+      replace = (present+missing)>1
+      if(nt=="CATMAID.nblast.top"){
+        hemibrain.matches$FAFB.match[replace] = hemibrain.matches[[nt]][replace]
+        hemibrain.matches$flywire.xyz[replace] = fafb.matches$flywire.xyz[match(hemibrain.matches$FAFB.match[replace],fafb.matches$skid)]
+        hemibrain.matches$flywire.id[replace] = fafb.matches$flywire.id[match(hemibrain.matches$FAFB.match[replace],fafb.matches$skid)]
+      }else{
+        hemibrain.matches$flywire.id[replace] = hemibrain.matches[[nt]][replace]
+        hemibrain.matches$flywire.xyz[replace] = fafb.matches$flywire.xyz[match(fafb.matches$flywire.id[replace],fafb.matches$flywire.id)]
+        hemibrain.matches$FAFB.match[replace] = fafb.matches$skid[match(hemibrain.matches$flywire.id[replace],fafb.matches$flywire.id)]
+      }
+      hemibrain.matches$FAFB.match.quality[replace] = "NBLAST"
+    }
+  }
+
+  # Set unassigned matches to top.nblast
+  nblast.tops = c("hemibrain.nblast.top")
+  for(nt in nblast.tops){
+    if(!is.null(fafb.matches[[nt]])){
+      present = !is.na(fafb.matches[[nt]])
+      missing = is.na(fafb.matches$hemibrain.match)
+      replace = (present+missing)>1
+      fafb.matches$hemibrain.match[replace] = fafb.matches[[nt]][replace]
+      fafb.matches$hemibrain.match.quality[replace] = "NBLAST"
+    }
+  }
+
   # Match to other side
   side.match = fafb.matches$FAFB.hemisphere.match[match(hemibrain.matches$flywire.xyz,fafb.matches$flywire.xyz)]
   side.quality = fafb.matches$FAFB.hemisphere.match.quality[match(hemibrain.matches$flywire.xyz,fafb.matches$flywire.xyz)]
@@ -1182,6 +1214,7 @@ lm_matches <- function(priority = c("hemibrain","lm"), selected_file = options()
 #' @param top.nblast logical. Whether or not to also give the top NBLAST match for each entry.
 #' @param catmaid.update logical. Whether or not to update \code{flywire.xyz} and \code{flywire.id} columns, based on e CATMAID neuron specified by a \code{skid} column.
 #' @param reorder logical. Whether or not to re-write the sheet so that it is ordered by hemilineage.
+#' @param nblast if \code{top.nblast} is \code{TRUE} this nblast matrix is used to update the column \code{top.nblast}. If set to \code{NULL} defaults to using \code{hemibrain_nblast}. Columns should be hemibrain neurons, and rows the other data set.
 #'
 #' @param ... arguments passed to methods for, for example, \code{neuprintr::neuprint_get_meta} and \code{elmr::fafb_get_meta}.
 #'
@@ -1482,9 +1515,10 @@ update_gsheet <- function(update,
 fafb_matching_rewrite <- function(selected_file  = options()$hemibrainr_matching_gsheet,
                                   top.nblast = FALSE,
                                   reorder = FALSE,
+                                  nblast = NULL,
                                    ...){
   n = hemibrain_match_sheet(sheet = "FAFB", selected_file = selected_file)
-  n1 = elmr::fafb_get_meta("annotation:Lineage_annotated", batch = TRUE, ...)
+  n1 = elmr::fafb_get_meta("annotation:Lineage_annotated", batch = 10, ...)
   n2 = subset(n1, n1$skid %in% n$skid)
   n[match(n2$skid,n$skid),c("skid","ItoLee_Hemilineage", "Hartenstein_Hemilineage", "cell_body_fiber")] = n2[,c("skid","ItoLee_Hemilineage", "Hartenstein_Hemilineage", "cell_body_fiber")]
   ids.missing = as.character(setdiff(n1$skid,n$skid))
@@ -1492,21 +1526,20 @@ fafb_matching_rewrite <- function(selected_file  = options()$hemibrainr_matching
     n3 = elmr::fafb_get_meta(unique(ids.missing), batch = TRUE, ...)
     n = plyr::rbind.fill(n, n3[,c("skid","ItoLee_Hemilineage", "Hartenstein_Hemilineage", "cell_body_fiber")])
   }
-  n = n[!duplicated(n),]
   matches = tryCatch(hemibrain_matches(selected_file=selected_file), error = function(e) NULL)
   if(!is.null(matches)){
-    n$cell.type = matches[as.character(n$skid),"connectivity.type"]
-    n = n[order(n$cell.type),]
+    n$cell.type = matches[match(n$skid, matches$id),"connectivity.type"]
   }else{
     n$cell.type = NULL
   }
   lskids = as.character(catmaid::catmaid_skids("annotation:side: left", ...))
-  n$side = "right"
+  n$side[is.na(n$side)] = "right"
   n[n$skid%in%lskids,"side"] = "left"
   if(top.nblast){
-    nblast = tryCatch(hemibrain_nblast('hemibrain-fafb14'), error = function(e) NULL)
+    if(is.null(nblast)){
+      nblast = tryCatch(hemibrain_nblast('hemibrain-fafb14'), error = function(e) NULL)
+    }
     if(!is.null(nblast)){
-      nblast = hemibrain_nblast('hemibrain-fafb14')
       nblast.top =nblast[match(n$skid,rownames(nblast)),]
       tops = apply(nblast.top,1,function(r) which.max(r))
       top = colnames(nblast)[unlist(tops)]
@@ -1517,8 +1550,9 @@ fafb_matching_rewrite <- function(selected_file  = options()$hemibrainr_matching
 
   # Write to google sheet
   if(reorder){
+    n = n[order(n$cell.type),]
     n = n[order(n$ItoLee_Hemilineage),]
-
+    n = n[!duplicated(n),]
     gsheet_manipulation(FUN = googlesheets4::write_sheet,
                         data = n[0,],
                         ss = selected_file,
