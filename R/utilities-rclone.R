@@ -17,7 +17,7 @@ hemibrainr_rclone <- function(Gdrive = "hemibrainr", path=paste0(getwd(),"hemibr
   if(os=="osx"){
     command = sprintf("rclone cmount %s: %s", Gdrive, path)
   }else{
-    command = sprintf("rclone mount %s: %", Gdrive, path)
+    command = sprintf("rclone mount %s: %s", Gdrive, path)
   }
   options(Gdrive_hemibrain_data = path)
   message("Google drive path set to: ", options()$Gdrive_hemibrain_data)
