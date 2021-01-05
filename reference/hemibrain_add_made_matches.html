@@ -178,6 +178,8 @@ locations in flywire space, based on CATMAID skids.</p>
   catmaid.update <span class='op'>=</span> <span class='cn'>TRUE</span>,
   selected_file <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>options</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>$</span><span class='va'>hemibrainr_matching_gsheet</span>,
   reorder <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  top.nblast <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  nblast <span class='op'>=</span> <span class='cn'>NULL</span>,
   <span class='va'>...</span>
 <span class='op'>)</span>
 
@@ -206,6 +208,7 @@ locations in flywire space, based on CATMAID skids.</p>
   selected_file <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>options</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>$</span><span class='va'>hemibrainr_matching_gsheet</span>,
   top.nblast <span class='op'>=</span> <span class='cn'>FALSE</span>,
   reorder <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  nblast <span class='op'>=</span> <span class='cn'>NULL</span>,
   <span class='va'>...</span>
 <span class='op'>)</span>
 
@@ -246,6 +249,14 @@ locations in flywire space, based on CATMAID skids.</p>
       <td><p>logical. Whether or not to re-write the sheet so that it is ordered by hemilineage.</p></td>
     </tr>
     <tr>
+      <th>top.nblast</th>
+      <td><p>logical. Whether or not to also give the top NBLAST match for each entry.</p></td>
+    </tr>
+    <tr>
+      <th>nblast</th>
+      <td><p>if <code>top.nblast</code> is <code>TRUE</code> this nblast matrix is used to update the column <code>top.nblast</code>. If set to <code>NULL</code> defaults to using <code>hemibrain_nblast</code>. Columns should be hemibrain neurons, and rows the other data set.</p></td>
+    </tr>
+    <tr>
       <th>...</th>
       <td><p>arguments passed to methods for, for example, <code><a href='https://rdrr.io/pkg/neuprintr/man/neuprint_get_meta.html'>neuprintr::neuprint_get_meta</a></code> and <code><a href='https://rdrr.io/pkg/elmr/man/read.neurons.fafb.html'>elmr::fafb_get_meta</a></code>.</p></td>
     </tr>
@@ -273,10 +284,6 @@ you can use, for example, <code><a href='LR_matching.html'>hemibrain_matching</a
     <tr>
       <th>dataset</th>
       <td><p>the tab to which to add your new information. You are either adding to information related to hemibrain neurons, or FAFB neurons.</p></td>
-    </tr>
-    <tr>
-      <th>top.nblast</th>
-      <td><p>logical. Whether or not to also give the top NBLAST match for each entry.</p></td>
     </tr>
     <tr>
       <th>flycircuit.ids</th>
