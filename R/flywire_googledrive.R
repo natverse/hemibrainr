@@ -791,6 +791,7 @@ matches_update <- function(matching_sheet = options()$hemibrainr_matching_gsheet
   match.field = match.arg(match.field)
   priority = match.arg(priority)
   matches = hemibrain_matches(selected_file = matching_sheet, priority = priority)
+  matches = subset(matches, ! matches$quality %in% "NBLAST")
   if(sum(selected_sheets%in%c(options()$hemibrainr_matching_gsheet,matching_sheet))>1){
     stop("selected_sheets should not indicate master matching sheets.
          I.e. in options()$hemibrainr_matching_gsheet.")
