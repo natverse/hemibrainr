@@ -54,6 +54,9 @@ hemibrain_matching_rewrite(
   ids = NULL,
   selected_file = options()$hemibrainr_matching_gsheet,
   top.nblast = FALSE,
+  meta = NULL,
+  nblast.hemibrain.catmaid = NULL,
+  nblast.hemibrain.flywire = NULL,
   ...
 )
 
@@ -94,6 +97,10 @@ simply open this Google Sheet in your browser and add your initials to neurons o
 you can use, for example, \code{\link{hemibrain_matching}}.}
 
 \item{dataset}{the tab to which to add your new information. You are either adding to information related to hemibrain neurons, or FAFB neurons.}
+
+\item{nblast.hemibrain.catmaid}{if \code{top.nblast} is \code{TRUE} this nblast matrix is used to update the column \code{top.nblast}. If set to \code{NULL} defaults to using \code{hemibrain_nblast}. Columns should be hemibrain neurons, and rows CATMAID neurons.}
+
+\item{nblast.hemibrain.flywire}{if \code{top.nblast} is \code{TRUE} this nblast matrix is used to update the column \code{top.nblast}. If set to \code{NULL} defaults to using \code{hemibrain_nblast}. Columns should be hemibrain neurons, and rows flywire neurons.}
 
 \item{flycircuit.ids}{flycircuit IDs to add to Google sheet if not already present.}
 }
