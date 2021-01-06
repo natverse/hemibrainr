@@ -1527,8 +1527,9 @@ fafb_matching_rewrite <- function(selected_file  = options()$hemibrainr_matching
   n[match(n2$skid,n$skid),c("skid","ItoLee_Hemilineage", "Hartenstein_Hemilineage", "cell_body_fiber")] = n2[,c("skid","ItoLee_Hemilineage", "Hartenstein_Hemilineage", "cell_body_fiber")]
   ids.missing = as.character(setdiff(n1$skid,n$skid))
   if(length(ids.missing)){
-    n3 = elmr::fafb_get_meta(unique(ids.missing), batch = TRUE, ...)
+    n3 = elmr::fafb_get_meta(unique(ids.missing), batch = 10, ...)
     n = plyr::rbind.fill(n, n3[,c("skid","ItoLee_Hemilineage", "Hartenstein_Hemilineage", "cell_body_fiber")])
+    reorder = TRUE
   }
   matches = tryCatch(hemibrain_matches(selected_file=selected_file), error = function(e) NULL)
   matches = subset(matches, ! matches$quality %in% "NBLAST")
