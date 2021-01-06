@@ -878,17 +878,19 @@ hemibrain_matches <- function(priority = c("FAFB","hemibrain"),
       present = !is.na(hemibrain.matches[[nt]])
       missing = is.na(hemibrain.matches$flywire.xyz)
       replace = (present+missing)>1
-      if(nt=="CATMAID.nblast.top"){
-        hemibrain.matches$FAFB.match[replace] = hemibrain.matches[[nt]][replace]
-        hemibrain.matches$flywire.xyz[replace] = fafb.matches$flywire.xyz[match(hemibrain.matches$FAFB.match[replace],fafb.matches$skid)]
-        hemibrain.matches$flywire.id[replace] = fafb.matches$flywire.id[match(hemibrain.matches$FAFB.match[replace],fafb.matches$skid)]
-      }else{
-        hemibrain.matches$flywire.id[replace] = hemibrain.matches[[nt]][replace]
-        hemibrain.matches$flywire.xyz[replace] = fafb.matches$flywire.xyz[match(fafb.matches$flywire.id[replace],fafb.matches$flywire.id)]
-        hemibrain.matches$FAFB.match[replace] = fafb.matches$skid[match(hemibrain.matches$flywire.id[replace],fafb.matches$flywire.id)]
+      if(sum(replace)){
+        if(nt=="CATMAID.nblast.top"){
+          hemibrain.matches$FAFB.match[replace] = hemibrain.matches[[nt]][replace]
+          hemibrain.matches$flywire.xyz[replace] = fafb.matches$flywire.xyz[match(hemibrain.matches$FAFB.match[replace],fafb.matches$skid)]
+          hemibrain.matches$flywire.id[replace] = fafb.matches$flywire.id[match(hemibrain.matches$FAFB.match[replace],fafb.matches$skid)]
+        }else{
+          hemibrain.matches$flywire.id[replace] = hemibrain.matches[[nt]][replace]
+          hemibrain.matches$flywire.xyz[replace] = fafb.matches$flywire.xyz[match(fafb.matches$flywire.id[replace],fafb.matches$flywire.id)]
+          hemibrain.matches$FAFB.match[replace] = fafb.matches$skid[match(hemibrain.matches$flywire.id[replace],fafb.matches$flywire.id)]
+        }
+        hemibrain.matches$FAFB.match.quality[replace] = "NBLAST"
       }
-      hemibrain.matches$FAFB.match.quality[replace] = "NBLAST"
-    }
+      }
   }
 
   # Set unassigned matches to top.nblast
@@ -898,8 +900,10 @@ hemibrain_matches <- function(priority = c("FAFB","hemibrain"),
       present = !is.na(fafb.matches[[nt]])
       missing = is.na(fafb.matches$hemibrain.match)
       replace = (present+missing)>1
-      fafb.matches$hemibrain.match[replace] = fafb.matches[[nt]][replace]
-      fafb.matches$hemibrain.match.quality[replace] = "NBLAST"
+      if(sum(replace)){
+        fafb.matches$hemibrain.match[replace] = fafb.matches[[nt]][replace]
+        fafb.matches$hemibrain.match.quality[replace] = "NBLAST"
+      }
     }
   }
 
@@ -1185,7 +1189,6 @@ lm_matches <- function(priority = c("hemibrain","lm"), selected_file = options()
 
 }
 
-
 #' Manage hemibrain-FAFB neuron matches
 #'
 #' @description We can match neurons in the hemibrain data with FAFB neurons (hemibrain->FAFB, hemibrain tab) and
@@ -1215,7 +1218,8 @@ lm_matches <- function(priority = c("hemibrain","lm"), selected_file = options()
 #' @param catmaid.update logical. Whether or not to update \code{flywire.xyz} and \code{flywire.id} columns, based on e CATMAID neuron specified by a \code{skid} column.
 #' @param reorder logical. Whether or not to re-write the sheet so that it is ordered by hemilineage.
 #' @param nblast if \code{top.nblast} is \code{TRUE} this nblast matrix is used to update the column \code{top.nblast}. If set to \code{NULL} defaults to using \code{hemibrain_nblast}. Columns should be hemibrain neurons, and rows the other data set.
-#'
+#' @param nblast.hemibrain.catmaid if \code{top.nblast} is \code{TRUE} this nblast matrix is used to update the column \code{top.nblast}. If set to \code{NULL} defaults to using \code{hemibrain_nblast}. Columns should be hemibrain neurons, and rows CATMAID neurons.
+#' @param nblast.hemibrain.flywire if \code{top.nblast} is \code{TRUE} this nblast matrix is used to update the column \code{top.nblast}. If set to \code{NULL} defaults to using \code{hemibrain_nblast}. Columns should be hemibrain neurons, and rows flywire neurons.
 #' @param ... arguments passed to methods for, for example, \code{neuprintr::neuprint_get_meta} and \code{elmr::fafb_get_meta}.
 #'
 #' @return  \code{NULL}. Updates the master Google sheet.
@@ -1527,6 +1531,7 @@ fafb_matching_rewrite <- function(selected_file  = options()$hemibrainr_matching
     n = plyr::rbind.fill(n, n3[,c("skid","ItoLee_Hemilineage", "Hartenstein_Hemilineage", "cell_body_fiber")])
   }
   matches = tryCatch(hemibrain_matches(selected_file=selected_file), error = function(e) NULL)
+  matches = subset(matches, ! matches$quality %in% "NBLAST")
   if(!is.null(matches)){
     n$cell.type = matches[match(n$skid, matches$id),"connectivity.type"]
   }else{
@@ -1604,6 +1609,9 @@ id_okay <- function(x, zero = TRUE, logical = FALSE){
 hemibrain_matching_rewrite <- function(ids = NULL,
                                        selected_file  = options()$hemibrainr_matching_gsheet,
                                        top.nblast = FALSE,
+                                       meta = NULL,
+                                       nblast.hemibrain.catmaid = NULL,
+                                       nblast.hemibrain.flywire = NULL,
                                   ...){
   gs = hemibrain_match_sheet(sheet = "hemibrain", selected_file = selected_file)
   if(is.null(ids)){
@@ -1631,22 +1639,21 @@ hemibrain_matching_rewrite <- function(ids = NULL,
   meta = meta[order(meta$cell.type),]
   meta = meta[order(meta$ItoLee_Hemilineage),]
   if(top.nblast){
-    nblast = tryCatch(hemibrain_nblast('hemibrain-fafb14'), error = function(e) NULL)
-    if(!is.null(nblast)){
-      nblast.top =nblast[,match(meta$bodyid,colnames(nblast))]
+    nblast.hemibrain.catmaid = tryCatch(hemibrain_nblast('hemibrain-fafb14'), error = function(e) NULL)
+    if(!is.null(nblast.hemibrain.catmaid)){
+      nblast.top = nblast.hemibrain.catmaid[,match(meta$bodyid,colnames(nblast.hemibrain.catmaid))]
       tops = apply(nblast.top,1,function(r) which.max(r))
-      top = rownames(nblast)[unlist(tops)]
-      top[!meta$bodyid%in%colnames(nblast)] = NA
-      meta$nblast.catmaid.top = top
+      top = rownames(nblast.hemibrain.catmaid)[unlist(tops)]
+      top[!meta$bodyid%in%colnames(nblast.hemibrain.catmaid)] = NA
+      meta$catmaid.nblast.top = top
     }
-    nblast = tryCatch(hemibrain_nblast('hemibrain-flywire'), error = function(e) NULL)
-    fw.neurons = tryCatch(flywire_neurons(), error = function(e) NULL)
-    if(!is.null(nblast) & !is.null(fw.neurons)){
-      nblast.top =nblast[,match(meta$bodyid,colnames(nblast))]
+    nblast.hemibrain.flywire = tryCatch(hemibrain_nblast('hemibrain-flywire'), error = function(e) NULL)
+    if(!is.null(nblast.hemibrain.flywire) & !is.null(meta)){
+      nblast.top =nblast.hemibrain.flywire[,match(meta$bodyid,colnames(nblast.hemibrain.flywire))]
       tops = apply(nblast.top,1,function(r) which.max(r))
-      top = rownames(nblast)[unlist(tops)]
-      top[!meta$bodyid%in%colnames(nblast)] = NA
-      meta$nblast.flywire.top = fw.neurons[unlist(top),"flywire.xyz"]
+      top = rownames(nblast.hemibrain.flywire)[unlist(tops)]
+      top[!meta$bodyid%in%colnames(nblast.hemibrain.flywire)] = NA
+      meta$flywire.nblast.top = meta[match(unlist(top),meta$flywire.id),"flywire.xyz"]
     }
   }
   if(!identical(gs,meta)){
@@ -1779,6 +1786,3 @@ id = '%s'; overwrite = '%s'; quality.field = '%s'; match.field = '%s'; initials 
   # return
   selected
 }
-
-
-
