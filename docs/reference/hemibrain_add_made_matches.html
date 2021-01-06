@@ -104,6 +104,9 @@ locations in flywire space, based on CATMAID skids." />
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="../articles/data.html">hemibrain and flywire meta data</a>
+    </li>
+    <li>
       <a href="../articles/flywire.html">flywire</a>
     </li>
     <li>
@@ -166,7 +169,11 @@ locations in flywire space, based on CATMAID skids.</p>
     <pre class="usage"><span class='fu'>flywire_matching_rewrite</span><span class='op'>(</span>
   flywire.ids <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span><span class='op'>(</span><span class='fu'><a href='flywire_neurons.html'>flywire_neurons</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>,
   meta <span class='op'>=</span> <span class='fu'><a href='flywire_neurons.html'>flywire_neurons</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>[</span>, <span class='op'>]</span>,
+  catmaid.update <span class='op'>=</span> <span class='cn'>TRUE</span>,
   selected_file <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>options</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>$</span><span class='va'>hemibrainr_matching_gsheet</span>,
+  reorder <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  top.nblast <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  nblast <span class='op'>=</span> <span class='cn'>NULL</span>,
   <span class='va'>...</span>
 <span class='op'>)</span>
 
@@ -194,6 +201,8 @@ locations in flywire space, based on CATMAID skids.</p>
 <span class='fu'>fafb_matching_rewrite</span><span class='op'>(</span>
   selected_file <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>options</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>$</span><span class='va'>hemibrainr_matching_gsheet</span>,
   top.nblast <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  reorder <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  nblast <span class='op'>=</span> <span class='cn'>NULL</span>,
   <span class='va'>...</span>
 <span class='op'>)</span>
 
@@ -201,6 +210,9 @@ locations in flywire space, based on CATMAID skids.</p>
   ids <span class='op'>=</span> <span class='cn'>NULL</span>,
   selected_file <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>options</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>$</span><span class='va'>hemibrainr_matching_gsheet</span>,
   top.nblast <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  meta <span class='op'>=</span> <span class='cn'>NULL</span>,
+  nblast.hemibrain.catmaid <span class='op'>=</span> <span class='cn'>NULL</span>,
+  nblast.hemibrain.flywire <span class='op'>=</span> <span class='cn'>NULL</span>,
   <span class='va'>...</span>
 <span class='op'>)</span>
 
@@ -222,8 +234,24 @@ locations in flywire space, based on CATMAID skids.</p>
       <td><p>meta data for the given flycircuit IDs.</p></td>
     </tr>
     <tr>
+      <th>catmaid.update</th>
+      <td><p>logical. Whether or not to update <code>flywire.xyz</code> and <code>flywire.id</code> columns, based on e CATMAID neuron specified by a <code>skid</code> column.</p></td>
+    </tr>
+    <tr>
       <th>selected_file</th>
       <td><p>Specifies which Google Sheet to use. Unless you are using a personal Google Sheet, this should be <code>options()$hemibrainr_matching_gsheet</code>.</p></td>
+    </tr>
+    <tr>
+      <th>reorder</th>
+      <td><p>logical. Whether or not to re-write the sheet so that it is ordered by hemilineage.</p></td>
+    </tr>
+    <tr>
+      <th>top.nblast</th>
+      <td><p>logical. Whether or not to also give the top NBLAST match for each entry.</p></td>
+    </tr>
+    <tr>
+      <th>nblast</th>
+      <td><p>if <code>top.nblast</code> is <code>TRUE</code> this nblast matrix is used to update the column <code>top.nblast</code>. If set to <code>NULL</code> defaults to using <code>hemibrain_nblast</code>. Columns should be hemibrain neurons, and rows the other data set.</p></td>
     </tr>
     <tr>
       <th>...</th>
@@ -255,8 +283,12 @@ you can use, for example, <code><a href='LR_matching.html'>hemibrain_matching</a
       <td><p>the tab to which to add your new information. You are either adding to information related to hemibrain neurons, or FAFB neurons.</p></td>
     </tr>
     <tr>
-      <th>top.nblast</th>
-      <td><p>logical. Whether or not to also give the top NBLAST match for each entry.</p></td>
+      <th>nblast.hemibrain.catmaid</th>
+      <td><p>if <code>top.nblast</code> is <code>TRUE</code> this nblast matrix is used to update the column <code>top.nblast</code>. If set to <code>NULL</code> defaults to using <code>hemibrain_nblast</code>. Columns should be hemibrain neurons, and rows CATMAID neurons.</p></td>
+    </tr>
+    <tr>
+      <th>nblast.hemibrain.flywire</th>
+      <td><p>if <code>top.nblast</code> is <code>TRUE</code> this nblast matrix is used to update the column <code>top.nblast</code>. If set to <code>NULL</code> defaults to using <code>hemibrain_nblast</code>. Columns should be hemibrain neurons, and rows flywire neurons.</p></td>
     </tr>
     <tr>
       <th>flycircuit.ids</th>

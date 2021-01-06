@@ -99,6 +99,9 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="../articles/data.html">hemibrain and flywire meta data</a>
+    </li>
+    <li>
       <a href="../articles/flywire.html">flywire</a>
     </li>
     <li>
@@ -212,9 +215,9 @@ If <code>NULL</code> (default) no cable type is treated as locked. Locked cable 
              <span class='st'>"326530038"</span>,  <span class='st'>"203253253"</span>, <span class='st'>"5813079341"</span><span class='op'>)</span>
 
 <span class='va'>neurons</span> <span class='op'>=</span> <span class='fu'>neuprintr</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/neuprintr/man/neuprint_read_neurons.html'>neuprint_read_neurons</a></span><span class='op'>(</span><span class='va'>exemplars</span><span class='op'>)</span>
-
+</div><div class='output co'>#&gt; <span class='error'>Error in neuprintr::neuprint_read_neurons(exemplars): Error reading bodyids</span></div><div class='input'>
 <span class='va'>neurons.flow</span> <span class='op'>=</span> <span class='fu'><a href='hemibrain_flow_centrality.html'>hemibrain_flow_centrality</a></span><span class='op'>(</span><span class='va'>neurons</span><span class='op'>)</span>
-
+</div><div class='output co'>#&gt; <span class='error'>Error in hemibrain_flow_centrality(neurons): object 'neurons' not found</span></div><div class='input'>
 <span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
 <span class='co'># Plot the split to check it, correcting any errors</span>
 <span class='fu'>nat</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/nat/man/nopen3d.html'>nopen3d</a></span><span class='op'>(</span><span class='op'>)</span>

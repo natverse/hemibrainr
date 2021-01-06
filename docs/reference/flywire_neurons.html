@@ -52,7 +52,8 @@
  without loading the entire, large neuronlist into memory. You will need access to the hemibrain Google Team Drive and
  have it mounted with Google filestream.The function flywire_neurons_update can be used to update the available data.
  If you want to flag flywire neurons that should be added to the Google drive, without doing this yourself, you can use
- flywire_request." />
+ flywire_request. The flywire_basics function will calculate some useful meta-data, namely
+a point in the primary neurite tract that can be used as a stable reference for this neuron." />
 <meta property="og:image" content="/logo.svg" />
 
 
@@ -101,6 +102,9 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/data.html">hemibrain and flywire meta data</a>
+    </li>
     <li>
       <a href="../articles/flywire.html">flywire</a>
     </li>
@@ -156,7 +160,8 @@
  without loading the entire, large <code>neuronlist</code> into memory. You will need access to the hemibrain Google Team Drive and
  have it mounted with Google filestream.The function <code>flywire_neurons_update</code> can be used to update the available data.
  If you want to flag flywire neurons that should be added to the Google drive, without doing this yourself, you can use
- <code>flywire_request</code>.</p>
+ <code>flywire_request</code>. The <code>flywire_basics</code> function will calculate some useful meta-data, namely
+a point in the primary neurite tract that can be used as a stable reference for this neuron.</p>
     </div>
 
     <pre class="usage"><span class='fu'>flywire_neurons</span><span class='op'>(</span>
@@ -180,6 +185,8 @@
   nblast <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"hemibrain-flywire"</span>, <span class='st'>"flywire"</span>, <span class='st'>"flywire-mirror"</span><span class='op'>)</span>,
   <span class='va'>...</span>
 <span class='op'>)</span>
+
+<span class='fu'>flywire_basics</span><span class='op'>(</span><span class='va'>flywire.neurons</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='fu'>flywire_request</span><span class='op'>(</span>
   <span class='va'>request</span>,
@@ -214,6 +221,11 @@
     <tr>
       <th>nblast</th>
       <td><p>which flywire NBLAST to update on Google drive.</p></td>
+    </tr>
+    <tr>
+      <th>flywire.neurons</th>
+      <td><p>a <code>neuronlist</code> of flywire neurons in FlyWire space. The <code>flywire_basics</code> function will calculate some useful meta-data, namely
+a point in the primary neurite tract that can be used as a stable reference for this neuron.</p></td>
     </tr>
     <tr>
       <th>request</th>
@@ -255,7 +267,31 @@ you will get:</p>
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
 <span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
+<span class='co'># Loads all processed flywire neurons as a neuronlistfh object</span>
 <span class='va'>fw.neurons</span> <span class='op'>=</span> <span class='fu'>flywire_neurons</span><span class='op'>(</span><span class='op'>)</span>
+
+<span class='co'># Get them already bridged to the JRC2018F brainsapce</span>
+<span class='co'>## (Bogovic et al. 2018, high performance brain space)</span>
+<span class='va'>fw.neurons.jrc2018f</span> <span class='op'>=</span> <span class='fu'>flywire_neurons</span><span class='op'>(</span>brain <span class='op'>=</span> <span class='st'>"JRC2018F"</span><span class='op'>)</span>
+
+<span class='co'># Get them already mirrored to the other hemispehre, i.e. flipped</span>
+<span class='va'>fw.neurons.jrc2018f.m</span> <span class='op'>=</span> <span class='fu'>flywire_neurons</span><span class='op'>(</span>brain <span class='op'>=</span> <span class='st'>"JRC2018F"</span>, mirror <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+
+<span class='co'># Now say you have some flywire ID~s you wants to add</span>
+<span class='co'>## to the nightly processing so they are available from Google drive.</span>
+<span class='co'>## And they are stored in a .csv:</span>
+<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://readr.tidyverse.org'>readr</a></span><span class='op'>)</span>
+<span class='va'>csv</span> <span class='op'>=</span> <span class='fu'><a href='https://readr.tidyverse.org/reference/read_delim.html'>read_csv</a></span><span class='op'>(</span><span class='st'>"/Users/abates/Downloads/FlyWire_list.txt"</span>,
+col_type <span class='op'>=</span> <span class='fu'><a href='https://readr.tidyverse.org/reference/cols.html'>cols</a></span><span class='op'>(</span>.default <span class='op'>=</span> <span class='st'>"c"</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>ids</span> <span class='op'>=</span> <span class='va'>csv</span><span class='op'>[</span>,<span class='fl'>1</span><span class='op'>]</span><span class='op'>[[</span><span class='fl'>1</span><span class='op'>]</span><span class='op'>]</span>
+<span class='va'>neurons</span> <span class='op'>=</span> <span class='fu'>skeletor</span><span class='op'>(</span><span class='va'>ids</span><span class='op'>)</span>
+<span class='va'>neurons.with.info</span> <span class='op'>=</span> <span class='fu'>hemibrainr</span><span class='fu'>:::</span><span class='fu'>flywire_basics</span><span class='op'>(</span><span class='va'>neurons</span><span class='op'>)</span>
+<span class='va'>new.points</span> <span class='op'>=</span> <span class='fu'>nat</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/nat/man/xyzmatrix.html'>xyzmatrix</a></span><span class='op'>(</span><span class='va'>neurons.with.info</span><span class='op'>[</span>,<span class='st'>"flywire.xyz"</span><span class='op'>]</span><span class='op'>)</span>
+<span class='fu'>flywire_request</span><span class='op'>(</span><span class='va'>new.points</span><span class='op'>)</span>
+<span class='co'>## Now they are added to a google sheet, and will be read and</span>
+<span class='co'>##  processed as part of this nightly pipeline:</span>
+<span class='co'>### https://github.com/flyconnectome/fafbpipeline</span>
+
 <span class='op'>}</span><span class='co'># }</span>
 </div></pre>
   </div>

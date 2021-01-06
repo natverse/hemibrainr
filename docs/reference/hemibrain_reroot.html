@@ -103,6 +103,9 @@ neurons the soma should be located in a cortex outside of the neuropil proper." 
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="../articles/data.html">hemibrain and flywire meta data</a>
+    </li>
+    <li>
       <a href="../articles/flywire.html">flywire</a>
     </li>
     <li>
@@ -216,10 +219,10 @@ from the hemibrain Google team drive overseen by the Drosophila Connectomics gro
 
 <span class='co'># Read in these neurons</span>
 <span class='va'>neurons.bs</span> <span class='op'>=</span> <span class='fu'>neuprintr</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/neuprintr/man/neuprint_read_neurons.html'>neuprint_read_neurons</a></span><span class='op'>(</span><span class='va'>bad.soma</span><span class='op'>)</span>
-
+</div><div class='output co'>#&gt; <span class='error'>Error in neuprintr::neuprint_read_neurons(bad.soma): Error reading bodyids</span></div><div class='input'>
 <span class='co'># Re-root</span>
 <span class='va'>neurons</span> <span class='op'>=</span> <span class='fu'>hemibrain_reroot</span><span class='op'>(</span><span class='va'>neurons.bs</span>, meshes <span class='op'>=</span> <span class='va'>hemibrain.surf</span><span class='op'>)</span>
-
+</div><div class='output co'>#&gt; <span class='error'>Error in hemibrain_reroot(neurons.bs, meshes = hemibrain.surf): object 'neurons.bs' not found</span></div><div class='input'>
 <span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
 <span class='co'># Let's check that this worked. Old root in red, new in green</span>
 <span class='fu'>nat</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/nat/man/nopen3d.html'>nopen3d</a></span><span class='op'>(</span><span class='op'>)</span>

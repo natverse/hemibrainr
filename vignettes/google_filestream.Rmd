@@ -29,6 +29,10 @@ The best option is to use google filestream. By default, this is what `hemibrain
 
 We have two [Google team drives](https://support.google.com/a/users/answer/9310156?hl=en) available for you to use, which contain similar data. One (`"hemibrain"`) is for internal use by the [Drosophila Connectomics Group](https://www.zoo.cam.ac.uk/research/groups/connectomics). The other one (`"hemibrainr"`) is shared with those who would like access. Contact us by email to request access.
 
+<center>
+![hemibrainr_googledrive](https://raw.githubusercontent.com/natverse/hemibrainr/master/inst/images/hemibrainr_googledrive.png)
+</center>
+
 ## Option 1: Google workspace, hemibrainr and R
 
 [Google drive](https://en.wikipedia.org/wiki/Google_Drive) is a data storage and synchronisation system. A Google team drive (shared drive) is a Google drive that is shared by a team of people, you can find them on your 'shared drives' in your Google authenticated account. Sharing and file ownership are managed for the entire team rather than one individual. Google Drive is a key component of [Google Workspace](https://workspace.google.com/pricing.html), Google's monthly subscription offering for businesses and organizations. As part of select Google Workspace plans, Drive offers unlimited storage, advanced file audit reporting, enhanced administration controls, and greater collaboration tools for teams.
