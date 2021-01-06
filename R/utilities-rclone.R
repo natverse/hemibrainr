@@ -2,7 +2,7 @@
 
 #' @name hemibrainr_set_drive
 #' @export
-hemibrainr_rclone <- function(Gdrive = "hemibrainr", path=paste0(getwd(),"hemibrainr_rclone/")){
+hemibrainr_rclone <- function(Gdrive = "hemibrainr", path=file.path(getwd(),"hemibrainr_rclone/")){
   os = get_os()
   if(!dir.exists(path)){
     dir.create(path)
@@ -26,7 +26,7 @@ hemibrainr_rclone <- function(Gdrive = "hemibrainr", path=paste0(getwd(),"hemibr
 
 #' @name hemibrainr_set_drive
 #' @export
-hemibrainr_rclone_unmount <- function(path=paste0(getwd(),"hemibrainr_rclone/")){
+hemibrainr_rclone_unmount <- function(path=file.path(getwd(),"hemibrainr_rclone/")){
   os = get_os()
   if(os=="osx"){
     # OS X
