@@ -2,7 +2,7 @@
 
 #' @name hemibrainr_set_drive
 #' @export
-hemibrainr_rclone <- function(Gdrive = "hemibrainr", path=file.path(getwd(),"hemibrainr_rclone/")){
+hemibrainr_rclone <- function(Gdrive = "hemibrainr", path=file.path(getwd(),"hemibrainr_data/")){
   os = get_os()
   if(!dir.exists(path)){
     dir.create(path)
@@ -10,9 +10,11 @@ hemibrainr_rclone <- function(Gdrive = "hemibrainr", path=file.path(getwd(),"hem
   empty=list.files(path)
   if(length(empty)){
     stop("path must lead to an empty directory.
-         This directory will be 'replaced' by the mounted drive.
-         You chose: ",
-         path)
+    This directory will be 'replaced' by the mounted drive.
+    You chose: ",
+    path,"
+    Perhaps try a new path, like: ",
+    file.path(getwd(),"hemibrainr_rclone/"))
   }
   if(os=="osx"){
     command = sprintf("rclone cmount %s: %s", Gdrive, path)
@@ -26,7 +28,7 @@ hemibrainr_rclone <- function(Gdrive = "hemibrainr", path=file.path(getwd(),"hem
 
 #' @name hemibrainr_set_drive
 #' @export
-hemibrainr_rclone_unmount <- function(path=file.path(getwd(),"hemibrainr_rclone/")){
+hemibrainr_rclone_unmount <- function(path=file.path(getwd(),"hemibrainr_data/")){
   os = get_os()
   if(os=="osx"){
     # OS X
@@ -35,7 +37,7 @@ hemibrainr_rclone_unmount <- function(path=file.path(getwd(),"hemibrainr_rclone/
     # Linux
     system(sprintf("fusermount -u %s", path))
   }
-  options(Gdrive_hemibrain_data = "/Volumes/GoogleDrive/Shared\ drives/hemibrain/")
+  options(Gdrive_hemibrain_data = "/Volumes/GoogleDrive/Shared\ drives/hemibrainr/")
 }
 
 # hidden

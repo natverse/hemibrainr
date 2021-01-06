@@ -1,6 +1,6 @@
 # set options
 .onAttach <- function(libname, pkgname){
-  options(hemibrain_data = paste0(getwd(),"/data-raw/hemibrainr_data/"))
+  options(hemibrain_data = file.path(getwd(),"hemibrainr_data"))
 
   paths=c(
     nullToNA(getOption("Gdrive_hemibrain_data")),
@@ -12,7 +12,7 @@
     options(Gdrive_hemibrain_data = paths[which(pathsok)[1]])
   }else{
     # fallback
-    options(Gdrive_hemibrain_data = paste0(getwd(),"/data-raw/hemibrainr_data/"))
+    options(Gdrive_hemibrain_data = file.path(getwd(),"hemibrainr_data"))
 
     packageStartupMessage("
   ####################### remote data ########################

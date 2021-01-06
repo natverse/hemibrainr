@@ -16,7 +16,7 @@
 #' @param path path to your 'hemibrainr Google drive', either a mounted remote or a local copy.
 #' For example on a Mac, \href{https://support.google.com/drive/answer/7329379?authuser=2}{Google filestream} mounts it at: \code{/Volumes/GoogleDrive/Shared\ drives/}.
 #' With \href{https://rclone.org/drive/}{rclone sheet} you can mount it wherever you like, by default hemibrainr expects it at:
-#' \code{paste0(getwd(),"hemibrainr_rclone/")}
+#' \code{file.path(getwd(),"hemibrainr_data/")}
 #'
 #' @details In order to use this package to its fullest,
 #' you need to get \code{hemibrainr} to read large amounts of data stored on a Google drive.

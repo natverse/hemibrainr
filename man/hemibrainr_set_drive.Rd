@@ -16,10 +16,10 @@ hemibrainr_team_drive()
 
 hemibrainr_rclone(
   Gdrive = "hemibrainr",
-  path = paste0(getwd(), "hemibrainr_rclone/")
+  path = file.path(getwd(), "hemibrainr_data/")
 )
 
-hemibrainr_rclone_unmount(path = paste0(getwd(), "hemibrainr_rclone/"))
+hemibrainr_rclone_unmount(path = file.path(getwd(), "hemibrainr_data/"))
 }
 \arguments{
 \item{Gdrive}{name of the mounted Google drive. Can just be the name of a team
@@ -28,7 +28,7 @@ drive to be found in the standard location: \code{"/Volumes/GoogleDrive/Shared\ 
 \item{path}{path to your 'hemibrainr Google drive', either a mounted remote or a local copy.
 For example on a Mac, \href{https://support.google.com/drive/answer/7329379?authuser=2}{Google filestream} mounts it at: \code{/Volumes/GoogleDrive/Shared\ drives/}.
 With \href{https://rclone.org/drive/}{rclone sheet} you can mount it wherever you like, by default hemibrainr expects it at:
-\code{paste0(getwd(),"hemibrainr_rclone/")}}
+\code{file.path(getwd(),"hemibrainr_data/")}}
 }
 \value{
 Sets options \code{Gdrive_hemibrain_data}
