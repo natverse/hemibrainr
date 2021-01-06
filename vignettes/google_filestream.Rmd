@@ -191,7 +191,7 @@ You can mount with rclone from your system's command line:
 
 ```{r rclone_mount, engine = 'bash', eval = FALSE}
 # unix/macosx
-rclone cmount hemibrainr: /path/to/local/mount
+rclone mount hemibrainr: /path/to/local/mount
 ```
 
 Try it somewhere like `/Documents` to see how it works. For `hemibrainr` there is an R function that will do the mounting for you in your working directory. So within R:
