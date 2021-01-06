@@ -341,7 +341,7 @@ hemibrain_nblast <- function(nblast = c("hemibrain",
     `hemibrain-fafb14` = "hemibrain.fafb14.mean.compressed.rda",
     `flywire-mirror` = "flywire.mirror.mean.compressed.rda",
     flywire = "flywire.mean.compressed.rda",
-    stop("Unrecognised value of nblast argument!")
+    stop("Unrecognised value for nblast argument!")
   )
   if(nblast=="hemibrain-fafb14" && file.exists("/Volumes/GoogleDrive/Shared drives/flyconnectome/fafbpipeline/fib.fafb.crossnblast.twigs5.mean.compress.rda")){
     gfile = "/Volumes/GoogleDrive/Shared drives/flyconnectome/fafbpipeline/fib.fafb.crossnblast.twigs5.mean.compress.rda"
@@ -358,7 +358,8 @@ hemibrain_nblast <- function(nblast = c("hemibrain",
 find_gfile <- function(savedir,
                        file,
                        folder = "hemibrain_neurons"){
-  glist = list.files(file.path(savedir,folder), recursive = FALSE,
+  glist = list.files(file.path(savedir,folder),
+                     recursive = FALSE,
                      full.names = TRUE)
   gfile = glist[grepl(file, glist)]
   gfile = sort(gfile)[1]
