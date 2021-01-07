@@ -39,6 +39,7 @@ standard_statuses <- function(x, invert= FALSE){
       z[z=="wrong_hemilineage"] = "w"
       z[z=="wrong_side"] = "s"
       z[z=="not_neuron"] = "n"
+      z[z=="tiny"] = "t"
     }else{
       z[z=="i"] = "incomplete"
       z[z=="c"] = "complete"
@@ -48,6 +49,7 @@ standard_statuses <- function(x, invert= FALSE){
       z[z=="w"] = "wrong_hemilineage"
       z[z=="s"] = "wrong_side"
       z[z=="n"] = "not_neuron"
+      z[z=="t"] = "tiny"
     }
     paste(sort(z),collapse="/",sep="/")
   }
