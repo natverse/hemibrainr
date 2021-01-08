@@ -9,10 +9,12 @@
 \title{Download a large set of well-traced skeletonised neurons from FlyWire}
 \usage{
 flywire_neurons(
+  x = NULL,
   local = FALSE,
   brain = c("FlyWire", "JRCFIB2018Fraw", "JRCFIB2018F", "FAFB", "FAFB14", "JFRC2",
     "JFRC2013", "JRC2018F", "FCWB"),
   mirror = FALSE,
+  swc = FALSE,
   ...
 )
 
@@ -40,15 +42,17 @@ flywire_request(
 )
 }
 \arguments{
+\item{x}{flywire IDs to update, for the saved Google drive \code{neuronlistfh} objects called with \code{flywire_neurons}.}
+
 \item{local}{\code{FALSE} or path. By default (\code{FALSE}) data is read from \code{options()$Drive_hemibrain_data}), but the user can specify an alternative path.}
 
 \item{brain}{the brainspace in which hemibrain neurons have been registered. Defaults to raw voxel space for the FlyWire project.}
 
 \item{mirror}{logical, whether or not to read neurons that have been mirrored (i.e. flipped to the 'other' brain hemisphere).}
 
-\item{...}{Additional arguments passed to \code{nat::nlapply}.and/or \code{fafbseg::skeletor}.}
+\item{swc}{logical. When using neurons with \code{flywire_neurons} from the Google drive, whether to read \code{.swc} files (if \code{TRUE}), or a neuronlistfh object (default).}
 
-\item{x}{flywire IDs to update, for the saved Google drive \code{neuronlistfh} objects called with \code{flywire_neurons}.}
+\item{...}{Additional arguments passed to \code{nat::nlapply}.and/or \code{fafbseg::skeletor}.}
 
 \item{nblast}{which flywire NBLAST to update on Google drive.}
 

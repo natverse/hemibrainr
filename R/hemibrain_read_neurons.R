@@ -27,6 +27,7 @@
 #' @param folder the sub-folder in which to look for a \code{nat::neuronlistfh} .rds file and its data, representing hemibrain neurons. The function will look for this
 #' folder in the location: \code{hemibrainr:::good_savedir(local=local)},
 #' by default the mounted Google drive (\code{options()$Gdrive_hemibrain_data}) or locally ((\code{options()$hemibrain_data}))
+#' @param swc logical. When using neurons with \code{hemibrain_neurons} from the Google drive, whether to read \code{.swc} files (if \code{TRUE}), or a neuronlistfh object (default).
 #' @param ... arguments passed to \code{neuprintr::neuprint_read_neurons}, \code{\link{hemibrain_remove_bad_synapses}}
 #'  and \code{\link{hemibrain_flow_centrality}}
 #'
@@ -358,30 +359,46 @@ googledrive_simpledownload <- function(id, file, overwrite = FALSE){
 
 #' @rdname hemibrain_read_neurons
 #' @export
-hemibrain_neurons <- function(local = FALSE,
+hemibrain_neurons <- function(x = NULL,
+                              local = FALSE,
                               brain = c("JRCFIB2018Fraw","JRCFIB2018F","FAFB14","JFRC2","JRC2018F","FCWB"),
                               mirror = FALSE,
                               dotprops = FALSE,
+                              swc = FALSE,
                               folder = "hemibrain_neurons/"){
   brain = match.arg(brain)
   savedir = good_savedir(local = local)
   neuronsdir = file.path(savedir,folder)
-  if(dotprops){
-    message("Vector cloud object only available for JRCFIB2018F")
-    brain = "JRCFIB2018F"
-    fhdir = file.path(neuronsdir,brain,"dotprops/")
+  if(swc){
+    swc.folder = file.path(options()$Gdrive_hemibrain_data,folder,"swc")
+    swc.list = list.files(swc.folder, full.names = TRUE, pattern = "swc")
+    if(!is.null(x)){
+      swc.list = swc.list[grepl(paste(x,collapse="|"),swc.list)]
+    }
+    neurons.flow.fh = nat::read.neurons(paths = swc.list)
+    hb.meta = hemibrain_meta(sql=FALSE)
+    neurons.flow.fh[,] = hb.meta[match(names(neurons.flow.fh),hb.meta$bodyid),]
   }else{
-    fhdir = file.path(neuronsdir,brain,"/")
+    if(dotprops){
+      message("Vector cloud object only available for JRCFIB2018F")
+      brain = "JRCFIB2018F"
+      fhdir = file.path(neuronsdir,brain,"dotprops/")
+    }else{
+      fhdir = file.path(neuronsdir,brain,"/")
+    }
+    filelist = list.files(path = fhdir, pattern = ".rds", full.names = TRUE)
+    filelist = filelist[grepl("mirror",filelist)==mirror]
+    filelist = sort(filelist,decreasing = TRUE)
+    if(length(filelist)){
+      fh.file = filelist[1]
+      neurons.flow.fh = nat::read.neuronlistfh(fh.file)
+    }else{
+      warning("neuronlistfh (.rds) file not found at: ", fhdir)
+      return(NULL)
+    }
   }
-  filelist = list.files(path = fhdir, pattern = ".rds", full.names = TRUE)
-  filelist = filelist[grepl("mirror",filelist)==mirror]
-  filelist = sort(filelist,decreasing = TRUE)
-  if(length(filelist)){
-    fh.file = filelist[1]
-    neurons.flow.fh = nat::read.neuronlistfh(fh.file)
-  }else{
-    warning("neuronlistfh (.rds) file not found at: ", fhdir)
-    return(NULL)
+  if(!is.null(x)){
+    neurons.flow.fh = neurons.flow.fh[names(neurons.flow.fh)%in%x,]
   }
   neurons.flow.fh
 }

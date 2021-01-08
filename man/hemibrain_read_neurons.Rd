@@ -21,10 +21,12 @@ hemibrain_read_neurons(
 scale_neurons(x, scaling = (8/1000), ...)
 
 hemibrain_neurons(
+  x = NULL,
   local = FALSE,
   brain = c("JRCFIB2018Fraw", "JRCFIB2018F", "FAFB14", "JFRC2", "JRC2018F", "FCWB"),
   mirror = FALSE,
   dotprops = FALSE,
+  swc = FALSE,
   folder = "hemibrain_neurons/"
 )
 }
@@ -57,6 +59,8 @@ and \code{\link{hemibrain_flow_centrality}}}
 
 \item{dotprops}{logical. Whether or not to retrieve a \code{nat::dotprops} object, i.e. vector cloud representations of neurons for NBLASTing.
 The dotprops object will be in JRC2018FIBF micron space.}
+
+\item{swc}{logical. When using neurons with \code{hemibrain_neurons} from the Google drive, whether to read \code{.swc} files (if \code{TRUE}), or a neuronlistfh object (default).}
 
 \item{folder}{the sub-folder in which to look for a \code{nat::neuronlistfh} .rds file and its data, representing hemibrain neurons. The function will look for this
 folder in the location: \code{hemibrainr:::good_savedir(local=local)},

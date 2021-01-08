@@ -9,6 +9,7 @@
 #' a point in the primary neurite tract that can be used as a stable reference for this neuron.
 #'
 #' @param brain the brainspace in which hemibrain neurons have been registered. Defaults to raw voxel space for the FlyWire project.
+#' @param x flywire IDs for desired. If left as \code{NULL}, all flywire neurons that can be summoned from the hemibrainr Google drive are summoned.
 #' @param local \code{FALSE} or path. By default (\code{FALSE}) data is read from \code{options()$Drive_hemibrain_data}), but the user can specify an alternative path.
 #' @param mirror logical, whether or not to read neurons that have been mirrored (i.e. flipped to the 'other' brain hemisphere).
 #' @param flywire.neurons a \code{neuronlist} of flywire neurons in FlyWire space. The \code{flywire_basics} function will calculate some useful meta-data, namely
@@ -20,6 +21,7 @@
 #' @param nblast which flywire NBLAST to update on Google drive.
 #' @param selected_file the Google sheet onto which to add new flywire coordinate. I.e. \href{https://docs.google.com/spreadsheets/d/1rzG1MuZYacM-vbW7100aK8HeA-BY6dWAVXQ7TB6E2cQ/edit#gid=0}{Google sheet}.
 #' @param sheet the tab onto which to add your requests.
+#' @param swc logical. When using neurons with \code{flywire_neurons} from the Google drive, whether to read \code{.swc} files (if \code{TRUE}), or a neuronlistfh object (default).
 #' @param ... Additional arguments passed to \code{nat::nlapply}.and/or \code{fafbseg::skeletor}.
 #'
 #' @examples
@@ -71,9 +73,11 @@
 #'@seealso \code{\link{hemibrain_read_neurons}}
 #'@importFrom utils download.file
 #'@importFrom googledrive drive_ls as_id
-flywire_neurons <- function(local = FALSE,
+flywire_neurons <- function(x = NULL,
+                            local = FALSE,
                             brain = c("FlyWire", "JRCFIB2018Fraw","JRCFIB2018F","FAFB","FAFB14","JFRC2", "JFRC2013","JRC2018F","FCWB"),
                             mirror = FALSE,
+                            swc = FALSE,
                             ...){
   brain = match.arg(brain)
   if(brain == "JRCFIB2018Fraw"){
@@ -92,17 +96,30 @@ flywire_neurons <- function(local = FALSE,
   fhdir = file.path(neuronsdir,brain,"/")
 
   # Read
-  filelist = list.files(path = fhdir, pattern = ".rds", full.names = TRUE)
-  filelist = filelist[grepl("mirror",filelist)==mirror]
-  filelist = sort(filelist,decreasing = TRUE)
-  if(length(filelist)){
-    fh.file = filelist[1]
-    neurons.fh = nat::read.neuronlistfh(fh.file)
-    attr(neurons.fh,"df") = neurons.fh[,]
+  if(swc){
+    warning("Only native flywire neurons in FlyWire space supported when swc = TRUE")
+    swc.folder = file.path(neuronsdir,"FlyWire","swc")
+    swc.list = list.files(swc.folder, full.names = TRUE, pattern = "swc")
+    if(!is.null(x)){
+      swc.list = swc.list[grepl(paste(x,collapse="|"),swc.list)]
+    }
+    neurons.fh = nat::read.neurons(paths = swc.list)
+    fw.meta = flywire_meta(sql=FALSE)
+    neurons.fh[,] = fw.meta[match(names(neurons.fh),fw.meta$flywire.id),]
   }else{
-    warning("neuronlistfh (.rds) file not found at: ", fhdir)
-    return(NULL)
+    filelist = list.files(path = fhdir, pattern = ".rds", full.names = TRUE)
+    filelist = filelist[grepl("mirror",filelist)==mirror]
+    filelist = sort(filelist,decreasing = TRUE)
+    if(length(filelist)){
+      fh.file = filelist[1]
+      neurons.fh = nat::read.neuronlistfh(fh.file)
+      attr(neurons.fh,"df") = neurons.fh[,]
+    }else{
+      warning("neuronlistfh (.rds) file not found at: ", fhdir)
+      return(NULL)
+    }
   }
+
 
   # Scale neurons if needs be
   if(scale){
@@ -110,6 +127,9 @@ flywire_neurons <- function(local = FALSE,
   }
 
   # Return
+  if(!is.null(x)){
+    neurons.fh = neurons.fh[names(neurons.fh)%in%x,]
+  }
   neurons.fh
 }
 
@@ -355,7 +375,6 @@ flywire_request <- function(request,
   }
   message("FlyWire positions added")
 }
-
 
 #' Read precomputed flywire data from the hemibrainr Google Drive
 #'

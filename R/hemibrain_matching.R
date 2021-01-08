@@ -1582,7 +1582,7 @@ fafb_matching_rewrite <- function(selected_file  = options()$hemibrainr_matching
       sheet = "FAFB")
   }
 
-  # Add any mising data
+  # Add any missing data
   if(!is.null(matches)){
     missing = setdiff(subset(matches,matches$dataset=="hemibrain" & matches$match.dataset == "CATMAID")$match,
                       subset(matches,matches$dataset=="CATMAID" & matches$match.dataset == "hemibrain")$id)

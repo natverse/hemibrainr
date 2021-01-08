@@ -6,9 +6,10 @@
 \usage{
 hemibrain_nblast(
   nblast = c("hemibrain", "flywire", "hemibrain-flywire", "hemibrain-fafb14",
-    "hemibrain-flycircuit", "flywire-mirror", "hemibrain-primary.neurites",
-    "hemibrain-primary.dendrites", "hemibrain-axons", "hemibrain-dendrites",
-    "hemibrain-spines", "hemibrain-tracts", "hemibrain-arbour", "hemibrain-simplified"),
+    "hemibrain-flycircuit", "flywire-mirror", "flywire-spine",
+    "hemibrain-primary.neurites", "hemibrain-primary.dendrites", "hemibrain-axons",
+    "hemibrain-dendrites", "hemibrain-spines", "hemibrain-tracts", "hemibrain-arbour",
+    "hemibrain-simplified"),
   local = FALSE
 )
 }
