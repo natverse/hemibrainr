@@ -1355,7 +1355,6 @@ hemibrain_match_sheet <- function(selected_file = options()$hemibrainr_matching_
   gs
 }
 
-
 #' @rdname hemibrain_add_made_matches
 #' @export
 hemibrain_matching_add <- function(ids = NULL,
