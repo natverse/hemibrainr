@@ -1394,7 +1394,11 @@ hemibrain_matching_add <- function(ids = NULL,
         meta = elmr::fafb_get_meta(add, ...)
       } else if (dataset == "flywire"){
         add = setdiff(ids, gs$flywire.id)
-        meta = flywire_neurons()[as.character(add),]
+        if(is.null(meta)){
+          meta = flywire_neurons()[as.character(add),]
+        }else{
+          meta = meta[meta$flywire.id%in%add,]
+        }
         meta = meta[!meta$flywire.xyz%in%gs$flywire.xyz,]
         if(!nrow(meta)){
           stop("Selected IDs could not be added. They must be among the neurons
@@ -1411,7 +1415,8 @@ hemibrain_matching_add <- function(ids = NULL,
       }else{
         "id"
       }
-      meta = meta[meta[[id]]%in%all,]
+      add = setdiff(ids, gs[[id]])
+      meta = meta[meta[[id]]%in%add,]
     }
     if(!nrow(meta)){
       warning("Given IDs already exist in sheet")
@@ -1446,7 +1451,7 @@ hemibrain_matching_transfers <- function(selected_file = options()$hemibrainr_ma
     for(repo2 in c("CATMAID","flywire","hemibrain","lm")){
       ws.1 = get_idfield(repo1, return = "sheet")
       ws.2 = get_idfield(repo2, return = "sheet")
-      if(repo==repo2|ws.1==ws.2){
+      if(repo1==repo2|ws.1==ws.2){
         next
       }else{
         gs.1 = hemibrain_match_sheet(selected_file = selected_file, sheet = ws.1)
