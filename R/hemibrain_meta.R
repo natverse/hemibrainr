@@ -96,66 +96,69 @@
 hemibrain_get_meta <- function(x, ...){
   # Get information from neuprint
   nmeta = neuprintr::neuprint_get_meta(x, ...)
+  if(!nrow(nmeta)){
+    warning("No meta data could be retieved, returning NULL")
+    NULL
+  }else{
+    # Add cell. type
+    nmeta$connectivity.type = nmeta$type
+    nmeta$cell.type = gsub("_[a-z]{1}$","",nmeta$type)
+    nmeta$cell.type[is.na(nmeta$cell.type)] = "uncertain"
+    nmeta$connectivity.type[is.na(nmeta$connectivity.type)] = "uncertain"
 
-  # Add cell. type
-  nmeta$connectivity.type = nmeta$type
-  nmeta$cell.type = gsub("_[a-z]{1}$","",nmeta$type)
-  nmeta$cell.type[is.na(nmeta$cell.type)] = "uncertain"
-  nmeta$connectivity.type[is.na(nmeta$connectivity.type)] = "uncertain"
+    # Add lineage information
+    nmeta2 = merge(nmeta,hemibrainr::hemibrain_hemilineages, all.x = TRUE, all.y = FALSE)
+    nmeta2$FAFB = NULL
 
-  # Add lineage information
-  nmeta2 = merge(nmeta,hemibrainr::hemibrain_hemilineages, all.x = TRUE, all.y = FALSE)
-  nmeta2$FAFB = NULL
+    # Neuron class
+    nmeta$class = NA
+    nmeta$class[nmeta$bodyid%in%hemibrainr::dn.ids] = "DN"
+    nmeta$class[nmeta$bodyid%in%hemibrainr::ton.ids] = "TOON"
+    nmeta$class[nmeta$bodyid%in%hemibrainr::lhn.ids] = "LHN"
+    nmeta$class[nmeta$bodyid%in%hemibrainr::rn.ids] = "ALRN"
+    nmeta$class[nmeta$bodyid%in%hemibrainr::orn.ids] = "ORN"
+    nmeta$class[nmeta$bodyid%in%hemibrainr::hrn.ids] = "HRN"
+    nmeta$class[nmeta$bodyid%in%hemibrainr::pn.ids] = "ALPN"
+    nmeta$class[nmeta$bodyid%in%hemibrainr::upn.ids] = "uPN"
+    nmeta$class[nmeta$bodyid%in%hemibrainr::mpn.ids] = "mPN"
+    nmeta$class[nmeta$bodyid%in%hemibrainr::vppn.ids] = "VPPN"
+    nmeta$class[nmeta$bodyid%in%hemibrainr::alln.ids] = "ALLN"
+    nmeta$class[nmeta$bodyid%in%hemibrainr::dan.ids] = "DAN"
+    nmeta$class[nmeta$bodyid%in%hemibrainr::mbon.ids] = "MBON"
+    nmeta$class[nmeta$bodyid%in%hemibrainr::kc.ids] = "KC"
+    nmeta$class[nmeta$bodyid%in%hemibrainr::apl.ids] = "APL"
+    nmeta$class[nmeta$bodyid%in%hemibrainr::cent.ids] = "LHCENT"
+    nmeta$class[nmeta$bodyid%in%hemibrainr::lc.ids] = "LCPN"
 
-  # Neuron class
-  nmeta$class = NA
-  nmeta$class[nmeta$bodyid%in%hemibrainr::dn.ids] = "DN"
-  nmeta$class[nmeta$bodyid%in%hemibrainr::ton.ids] = "TOON"
-  nmeta$class[nmeta$bodyid%in%hemibrainr::lhn.ids] = "LHN"
-  nmeta$class[nmeta$bodyid%in%hemibrainr::rn.ids] = "ALRN"
-  nmeta$class[nmeta$bodyid%in%hemibrainr::orn.ids] = "ORN"
-  nmeta$class[nmeta$bodyid%in%hemibrainr::hrn.ids] = "HRN"
-  nmeta$class[nmeta$bodyid%in%hemibrainr::pn.ids] = "ALPN"
-  nmeta$class[nmeta$bodyid%in%hemibrainr::upn.ids] = "uPN"
-  nmeta$class[nmeta$bodyid%in%hemibrainr::mpn.ids] = "mPN"
-  nmeta$class[nmeta$bodyid%in%hemibrainr::vppn.ids] = "VPPN"
-  nmeta$class[nmeta$bodyid%in%hemibrainr::alln.ids] = "ALLN"
-  nmeta$class[nmeta$bodyid%in%hemibrainr::dan.ids] = "DAN"
-  nmeta$class[nmeta$bodyid%in%hemibrainr::mbon.ids] = "MBON"
-  nmeta$class[nmeta$bodyid%in%hemibrainr::kc.ids] = "KC"
-  nmeta$class[nmeta$bodyid%in%hemibrainr::apl.ids] = "APL"
-  nmeta$class[nmeta$bodyid%in%hemibrainr::cent.ids] = "LHCENT"
-  nmeta$class[nmeta$bodyid%in%hemibrainr::lc.ids] = "LCPN"
+    # Add match information
+    nmeta2$FAFB.match = hemibrainr::hemibrain_matched[as.character(nmeta2$bodyid),"match"]
+    nmeta2$FAFB.match.quality = hemibrainr::hemibrain_matched[as.character(nmeta2$bodyid),"quality"]
 
-  # Add match information
-  nmeta2$FAFB.match = hemibrainr::hemibrain_matched[as.character(nmeta2$bodyid),"match"]
-  nmeta2$FAFB.match.quality = hemibrainr::hemibrain_matched[as.character(nmeta2$bodyid),"quality"]
+    # Add olfactory layer information
+    nmeta2$layer = hemibrainr::hemibrain_olfactory_layers[match(nmeta2$bodyid,hemibrainr::hemibrain_olfactory_layers$node),"layer_mean"]
+    nmeta2$ct.layer = NA
+    for(ct in unique(nmeta2$type)){
+      layer = round(mean(subset(nmeta2,nmeta2$type==ct)$layer))
+      nmeta2$ct.layer[nmeta2$type==ct] = layer
+    }
 
-  # Add olfactory layer information
-  nmeta2$layer = hemibrainr::hemibrain_olfactory_layers[match(nmeta2$bodyid,hemibrainr::hemibrain_olfactory_layers$node),"layer_mean"]
-  nmeta2$ct.layer = NA
-  for(ct in unique(nmeta2$type)){
-    layer = round(mean(subset(nmeta2,nmeta2$type==ct)$layer))
-    nmeta2$ct.layer[nmeta2$type==ct] = layer
+    # Add split information
+    selcols = c("soma.edit", "skeletonization", "edited.cable",
+                "axon.outputs", "dend.outputs", "axon.inputs",
+                "dend.inputs", "total.outputs.density", "total.inputs.density",
+                "axon.outputs.density", "dend.outputs.density", "axon.inputs.density",
+                "dend.inputs.density", "total.length", "axon.length", "dend.length",
+                "pd.length", "segregation_index")
+    selcols = intersect(selcols, colnames(hemibrainr::hemibrain_metrics))
+    #selcols=setdiff(colnames(hemibrainr::hemibrain_metrics), colnames(nmeta2))
+    hemibrain_metrics_sel = hemibrainr::hemibrain_metrics[as.character(nmeta2$bodyid), selcols]
+    nmeta2 = cbind(nmeta2, hemibrain_metrics_sel)
+    rownames(nmeta2) = nmeta2$bodyid
+
+    # Return
+    nmeta2
   }
-
-  # Add split information
-  selcols = c("soma.edit", "skeletonization", "edited.cable",
-              "axon.outputs", "dend.outputs", "axon.inputs",
-              "dend.inputs", "total.outputs.density", "total.inputs.density",
-              "axon.outputs.density", "dend.outputs.density", "axon.inputs.density",
-              "dend.inputs.density", "total.length", "axon.length", "dend.length",
-              "pd.length", "segregation_index")
-  selcols = intersect(selcols, colnames(hemibrainr::hemibrain_metrics))
-  #selcols=setdiff(colnames(hemibrainr::hemibrain_metrics), colnames(nmeta2))
-  hemibrain_metrics_sel = hemibrainr::hemibrain_metrics[as.character(nmeta2$bodyid), selcols]
-  nmeta2 = cbind(nmeta2, hemibrain_metrics_sel)
-  rownames(nmeta2) = nmeta2$bodyid
-
-  # Return
-  nmeta2
 }
-
 
 #' Set annotations for FAFB neurons in CATMAID based on hemibrain results
 #'
