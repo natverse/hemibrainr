@@ -154,6 +154,7 @@ flywire_matching_rewrite <- function(flywire.ids = names(flywire_neurons()),
   }
 
   # Add missing flywire information
+  fg = hemibrain_match_sheet(sheet = "FAFB", selected_file = selected_file)
   all.ids = correct_id(unique(fg$flywire.id))
   missing = setdiff(flywire.ids, all.ids)
   if(length(missing)){
