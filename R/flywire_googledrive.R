@@ -83,8 +83,8 @@ flywire_neurons <- function(x = NULL,
   if(brain == "JRCFIB2018Fraw"){
     brain = "JRCFIB2018F"
     scale = TRUE
-  }else if (brain %in% c("FAFB","FAFB14")){
-    brain = "FlyWire"
+  }else if (brain %in% c("FAFB")){
+    brain = "FAFB14"
     scale = FALSE
   }else{
     scale = FALSE
@@ -107,6 +107,7 @@ flywire_neurons <- function(x = NULL,
     fw.meta = flywire_meta(sql=FALSE)
     neurons.fh[,] = fw.meta[match(names(neurons.fh),fw.meta$flywire.id),]
   }else{
+    message("Loading ", fhdir)
     filelist = list.files(path = fhdir, pattern = ".rds", full.names = TRUE)
     filelist = filelist[grepl("mirror",filelist)==mirror]
     filelist = sort(filelist,decreasing = TRUE)
@@ -119,7 +120,6 @@ flywire_neurons <- function(x = NULL,
       return(NULL)
     }
   }
-
 
   # Scale neurons if needs be
   if(scale){

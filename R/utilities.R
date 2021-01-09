@@ -512,18 +512,29 @@ download_neuron_obj_batch <- function(ids, numCores = 1, ratio = 1, save.obj = "
 }
 
 # hidden
-update.neuronlistfh <- function(x, rds, ...){
-  data = file.path(dirname(rds),"data")
+update.neuronlistfh <- function(x,
+                                rds,
+                                dbClass = c("RDS", "RDS2", "DB1"),
+                                localdir = NULL,
+                                ...){
+  dbClass = match.arg(dbClass)
+  if(dbClass=="DB1"){
+    data = gsub("\\.rds","_datafile",rds)
+    WriteObjects = 'yes'
+  }else{
+    data = file.path(dirname(rds),"data")
+    WriteObjects = "missing"
+  }
   if(file.exists(rds)){
-    old.neurons = nat::read.neuronlistfh(rds)
+    old.neurons = nat::read.neuronlistfh(rds, localdir = localdir)
     if(!is.null(attr(old.neurons,"df"))){
       old.neurons = old.neurons[!sapply(old.neurons, function(x) isFALSE(x))]
       old.neurons = old.neurons[setdiff(names(old.neurons),names(x))]
-      x = nat::union(old.neurons, x)
+      x = nat::union(x, old.neurons)
     }
   }
   if(nat::is.neuronlist(x)){
-    given.neurons = nat::as.neuronlistfh(x, dbdir= data, WriteObjects = "missing", ...)
+    given.neurons = nat::as.neuronlistfh(x, dbdir = data, dbClass = dbClass, WriteObjects = WriteObjects, ...)
     nat::write.neuronlistfh(given.neurons, file=rds, overwrite=TRUE, ...)
   }else{
     warning("Could not create neuronlistfh object")

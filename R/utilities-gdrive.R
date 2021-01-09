@@ -9,10 +9,15 @@ googledrive_upload_neuronlistfh <- function(x,
                                             folder = "flywire_neurons",
                                             subfolder = NULL,
                                             WriteObjects = c("missing","yes"),
+                                            dbClass = c("RDS", "RDS2", "DB1"),
                                             numCores = 1){
   # don't exhaust rate limit
   WriteObjects = match.arg(WriteObjects)
+  dbClass = match.arg(dbClass)
   numCores = ifelse(numCores>10,10,numCores)
+  if(dbClass=="DB1"){
+    clean = FALSE
+  }
 
   # Get drive
   td = googledrive::team_drive_get(team_drive)
@@ -20,43 +25,65 @@ googledrive_upload_neuronlistfh <- function(x,
   gfolder= subset(drive_td,drive_td$name==folder)[1,]
   if(!is.null(subfolder)){
     sub = googledrive::drive_ls(path = gfolder, type = "folder", team_drive = td)
-    gfolder = subset(sub, sub$name ==subfolder )[1,]
+    gsubfolder = subset(sub, sub$name ==subfolder )[1,]
+    if(sum(is.na(gsubfolder$id))==length(gsubfolder$id)){
+      googledrive::drive_mkdir(name = subfolder,
+                               path = gfolder,
+                               overwrite = TRUE)
+      sub = googledrive::drive_ls(path = gfolder, type = "folder", team_drive = td)
+      gsubfolder = subset(sub, sub$name ==subfolder )[1,]
+    }
+    gfolder = gsubfolder
   }
   sub = googledrive::drive_ls(path = gfolder, team_drive = td)
 
   # Get data folder
-  t.folder.data = googledrive::drive_ls(path = gfolder, type = "folder", team_drive = td)
-  t.folder.data = subset(t.folder.data, t.folder.data$name == "data")[1,]
-  if(is.na(t.folder.data$name)){
-    googledrive::drive_mkdir(name = "data",
-                             path = gfolder,
-                             overwrite = TRUE)
+  if(dbClass!="DB1"){
     t.folder.data = googledrive::drive_ls(path = gfolder, type = "folder", team_drive = td)
     t.folder.data = subset(t.folder.data, t.folder.data$name == "data")[1,]
+    if(is.na(t.folder.data$name)){
+      googledrive::drive_mkdir(name = "data",
+                               path = gfolder,
+                               overwrite = TRUE)
+      t.folder.data = googledrive::drive_ls(path = gfolder, type = "folder", team_drive = td)
+      t.folder.data = subset(t.folder.data, t.folder.data$name == "data")[1,]
+    }
   }
 
   # Save locally
   if(nat::is.neuronlist(x)){
     temp = tempfile()
-    temp.data = file.path(temp,"data")
-    dir.create(temp.data)
-    on.exit(unlink(temp, recursive=TRUE))
+    if(dbClass!="DB1"){
+      temp.data = file.path(temp,"data")
+      dir.create(temp.data)
+      on.exit(unlink(temp, recursive=TRUE))
+    }else{
+      temp.data = NULL
+    }
     temp.rds = paste0(temp,"/",file_name)
-    nl = nat::as.neuronlistfh(x, dbdir= temp.data, WriteObjects = "yes")
-    nat::write.neuronlistfh(nl, file= temp.rds, overwrite=TRUE)
+    nl = nat::as.neuronlistfh(x, dbdir = temp.data, dbClass = dbClass, WriteObjects = "yes")
+    nat::write.neuronlistfh(nl, file = temp.rds, overwrite=TRUE)
     local.path = NULL
   }else{
-    temp.data = file.path(x,"data")
+    if(dbClass!="DB1"){
+      temp.data = file.path(x,"data")
+      message("data folder: ", temp.data)
+    }else{
+      temp.data = NULL
+    }
     temp.rds = list.files(x, pattern = ".rds$", full.names =TRUE)
-    message("data folder: ", temp.data)
     message(".rds files: ", paste(temp.rds,collapse=", "))
     local.path = x
   }
 
   # upload
-  t.list.master = list.files(temp.data,full.names = TRUE)
-  error.files = upload = c()
-  if(WriteObjects=="missing"){
+  if(dbClass!="DB1"){
+    t.list.master = list.files(temp.data,full.names = TRUE)
+    error.files = upload = c()
+  }else{
+    t.list.master = NULL
+  }
+  if(WriteObjects=="missing" & dbClass!="DB1"){
     sub.data = googledrive::drive_ls(path = t.folder.data, team_drive = td)
     t.list.master = t.list.master[! basename(t.list.master) %in% sub.data$name]
   }
@@ -116,6 +143,21 @@ googledrive_upload_neuronlistfh <- function(x,
     google_drive_place(media = rds,
                        path = save.position,
                        verbose = TRUE)
+    # upload db
+    if(dbClass=="DB1"){
+      nlfh = nat::read.neuronlistfh(rds)
+      datafile = attributes(nlfh)$db@datafile
+      file_name = basename(datafile)
+      gfile = subset(sub, sub$name == file_name )
+      if(nrow(gfile)){
+        save.position = googledrive::as_id(gfile[1,]$id)
+      }else{
+        save.position = gfolder
+      }
+      google_drive_place(media = datafile,
+                         path = save.position,
+                         verbose = TRUE)
+    }
   }
 
   # Clean
