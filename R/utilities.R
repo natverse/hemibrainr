@@ -437,28 +437,49 @@ saveit <- function(..., file) {
 }
 
 # remove filehash files
-remove_unused_filehash <- function(path){
+remove_unused_filehash <- function(path,
+                                   dbClass = c("RDS", "RDS2", "DB1"),
+                                   meta = NULL,
+                                   id = NULL){
+  dbClass = match.arg(dbClass)
   for(p in path){
-    data = file.path(p,"data")
-    if(!dir.exists(data)){
-      warning("data folder for neuronlistfh object does not exit at: ", data)
-    }else{
+    if(dbClass=="DB1"){
       files = list.files(path, pattern = ".rds$", full.names = TRUE)
-      if(!length(files)){
-        warning("No .rds files found at: ", path)
-      }else{
-        all.keys = c()
-        for(f in files){
-          a = readRDS(f)
-          b = attributes(a)
-          keys = b$keyfilemap
-          all.keys = c(all.keys,keys)
+      for(rds in files){
+        nlfh = nat::read.neuronlistfh(rds)
+        if(!is.null(id)&!is.null(meta)){
+          if(!is%in%colnames(meta)){
+            stop("id must be in colnames(meta)")
+          }
+          inmeta = names(nlfh)%in%meta[[id]]
+          nlfh = nlfh[inmeta]
+          update.neuronlistfh(nat::as.neuronlis(nlfh),
+                              rds=rds,
+                              dbClass = "DB1")
         }
-        all.fh = list.files(data)
-        delete = setdiff(all.fh,all.keys)
-        message("Deleting ", length(delete), " files")
-        delete = file.path(data,delete)
-        file.remove(delete)
+      }
+    }else{
+      data = file.path(p,"data")
+      if(!dir.exists(data)){
+        warning("data folder for neuronlistfh object does not exit at: ", data)
+      }else{
+        files = list.files(path, pattern = ".rds$", full.names = TRUE)
+        if(!length(files)){
+          warning("No .rds files found at: ", path)
+        }else{
+          all.keys = c()
+          for(f in files){
+            a = readRDS(f)
+            b = attributes(a)
+            keys = b$keyfilemap
+            all.keys = c(all.keys,keys)
+          }
+          all.fh = list.files(data)
+          delete = setdiff(all.fh,all.keys)
+          message("Deleting ", length(delete), " files")
+          delete = file.path(data,delete)
+          file.remove(delete)
+        }
       }
     }
   }
