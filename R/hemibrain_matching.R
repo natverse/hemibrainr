@@ -1530,6 +1530,7 @@ fafb_matching_rewrite <- function(selected_file  = options()$hemibrainr_matching
   n2 = subset(n1, n1$skid %in% n$skid)
   n[match(n2$skid,n$skid),c("skid","ItoLee_Hemilineage", "Hartenstein_Hemilineage", "cell_body_fiber")] = n2[,c("skid","ItoLee_Hemilineage", "Hartenstein_Hemilineage", "cell_body_fiber")]
   ids.missing = as.character(setdiff(n1$skid,n$skid))
+  ids.missing = id_okay(ids.missing)
   if(length(ids.missing)){
     n3 = elmr::fafb_get_meta(unique(ids.missing), batch = 10, ...)
     n = plyr::rbind.fill(n, n3[,c("skid","ItoLee_Hemilineage", "Hartenstein_Hemilineage", "cell_body_fiber")])
@@ -1560,6 +1561,7 @@ fafb_matching_rewrite <- function(selected_file  = options()$hemibrainr_matching
 
   # Write to google sheet
   if(reorder){
+    n$skid = correct_id(n$skid)
     n = n[order(n$cell.type),]
     n = n[order(n$ItoLee_Hemilineage),]
     n = n[!duplicated(n),]
@@ -1590,10 +1592,12 @@ fafb_matching_rewrite <- function(selected_file  = options()$hemibrainr_matching
   if(!is.null(matches)){
     missing = setdiff(subset(matches,matches$dataset=="hemibrain" & matches$match.dataset == "CATMAID")$match,
                       subset(matches,matches$dataset=="CATMAID" & matches$match.dataset == "hemibrain")$id)
+    missing = setdiff(missing, n$skid)
     missing = missing[!grepl("missing|none|NA|good|medium|poor|tract|,|;|)",missing)]
-    missing = missing[!is.na(missing)]
+    missing = id_okay(missing)
     if(length(missing)){
-      hemibrain_matching_add(ids = missing, dataset="FAFB", selected_file = selected_file, ...)
+      tryCatch(hemibrain_matching_add(ids = missing, dataset="FAFB", selected_file = selected_file, ...),
+               error = function(e) warning(e))
     }
   }
 }
@@ -1606,6 +1610,7 @@ id_okay <- function(x, zero = TRUE, logical = FALSE){
     x = x[x!="0"]
     x = x[x!=0]
   }
+  x = as.character(correct_id(x))
   x
 }
 
@@ -1747,6 +1752,7 @@ id_selector <- function(gs,
                         column = NULL,
                         entry = NULL){
   id = match.arg(id)
+  ids = id_okay(ids)
   overwrite = match.arg(overwrite)
   if(is.null(column)+is.null(entry)==1){
     stop("column and entry must both be NULL, or both be given")
