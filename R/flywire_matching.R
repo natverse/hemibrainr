@@ -13,6 +13,7 @@ flywire_matching_rewrite <- function(flywire.ids = names(flywire_neurons()),
   # Get the FAFB matching Google sheet
   gs = hemibrain_match_sheet(sheet = "FAFB", selected_file = selected_file)
   skids = as.character(unique(gs$skid))
+  skids = id_okay(skids)
 
   # Get FAFBv14 coordinates
   if(length(skids) & catmaid.update){
