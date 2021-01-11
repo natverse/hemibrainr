@@ -612,7 +612,7 @@ flywire_ids_update <- function(selected_sheets = NULL,
   if(is.null(selected_sheets)){
     selected_sheets = getOption("hemibrainr_gsheets", stop("Please set option('hemibrainr_gsheets')"))
   }
-  fw.columns = c("flywire.id","fw.x","fw.y","fw.z","flywire.xyz", "flywire.svid")
+  fw.columns = c("flywire.id","fw.x","fw.y","fw.z","flywire.xyz","flywire.svid")
   gs = data.frame(stringsAsFactors = FALSE)
   for(selected_sheet in selected_sheets){
     ## Read Google sheets and extract glywire neuron positions
@@ -643,12 +643,26 @@ flywire_ids_update <- function(selected_sheets = NULL,
         gs.t[!good.xyz,c("flywire.xyz")] = apply(gs.t[!good.xyz,c("fw.x","fw.y",'fw.z')],1,paste_coords)
         if(!is.null(meta)){
           justids = gs.t$flywire.xyz==paste_coords(matrix(NA,ncol=3))&!is.na(gs.t$flywire.id)
-          gs.t[justids,"flywire.xyz"] = meta[match(gs.t[justids,"flywire.id"],meta$flywire.id),"flywire.xyz"]
+          replacement.xyz = meta[match(gs.t[justids,"flywire.id"],meta$flywire.id),]$flywire.xyz
+          gs.t[justids,"flywire.xyz"] = replacement.xyz
+          needs.updating = is.na(replacement.xyz)
+          please.update = gs.t$flywire.id[justids][needs.updating]
+          if(length(please.update)){
+            message("Updating ", length(please.update)," out-of-date flywire.ids where there is no flywire.xyz")
+            updated.ids = sapply(please.update, fafbseg::flywire_latestid)
+            gs.t$flywire.id[justids][needs.updating] = updated.ids
+            good.xyz = sapply(gs.t$flywire.xyz,function(x) length(tryCatch(nat::xyzmatrix(x),error = function(e) NA))==3)
+            gs.t[!good.xyz,c("flywire.xyz")] = apply(gs.t[!good.xyz,c("fw.x","fw.y",'fw.z')],1,paste_coords)
+            justids = gs.t$flywire.xyz==paste_coords(matrix(NA,ncol=3))&!is.na(gs.t$flywire.id)
+            replacement.xyz = meta[match(gs.t[justids,"flywire.id"],meta$flywire.id),]$flywire.xyz
+            gs.t[justids,"flywire.xyz"] = replacement.xyz
+          }
         }
         good.xyz = sapply(gs.t$flywire.xyz,function(x) length(tryCatch(nat::xyzmatrix(x),error = function(e) NA))==3)
         if(sum(good.xyz)){
           gs.t[good.xyz,c("fw.x","fw.y","fw.z")] = nat::xyzmatrix(gs.t[good.xyz,"flywire.xyz"])
         }
+        message("Updating flywire.ids using cardinal points in flywire.xyz")
         if(!all(is.na(gs.t$flywire.xyz))){
           # Get flywire IDs from these positions
           bbx = matrix(c(5100, 1440, 16, 59200, 29600, 7062),ncol=3,byrow = TRUE)
