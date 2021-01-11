@@ -616,6 +616,7 @@ flywire_ids_update <- function(selected_sheets = NULL,
   gs = data.frame(stringsAsFactors = FALSE)
   for(selected_sheet in selected_sheets){
     ## Read Google sheets and extract glywire neuron positions
+    message("### Working on google sheet: ", selected_sheets)
     if(is.null(work_sheets)){
       tabs = gsheet_manipulation(FUN = googlesheets4::sheet_names,
                                  ss = selected_sheet,
@@ -705,11 +706,15 @@ flywire_ids_update <- function(selected_sheets = NULL,
           gs.t$flywire.xyz[gs.t$flywire.xyz==paste_coords(matrix(NA,ncol=3))] = NA
           gs.t$flywire.svid = NA
           if(!is.null(gs.t$flywire.xyz)){
+            fxyz = gs.t$flywire.xyz
             pos = gs.t[,c("fw.x","fw.y",'fw.z')]
+            p = nat::pointsinside(pos[,c("fw.x","fw.y",'fw.z')],bbx)
+            fxyz = fxyz[p]
+            pos = pos[p,]
             if(nrow(pos)){
               svids=fafbseg::flywire_xyz2id(pos, root=FALSE, rawcoords = TRUE)
               if(length(svids)==nrow(gs.t)){
-                gs.t[,]$flywire.svid = svids
+                gs.t[match(fxyz,gs.t$flywire.xyz),]$flywire.svid = svids
               }
             }
           }

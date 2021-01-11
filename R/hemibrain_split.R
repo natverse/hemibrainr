@@ -454,7 +454,6 @@ flow_centrality.neuronlist <- function(x,
   neurons
 }
 
-
 #' Get the positions of key points in a 'split' neuron
 #'
 #' @description Get the positions of key points, i.e. primary and secondary branchpoints and
@@ -494,7 +493,6 @@ hemibrain_splitpoints <- function(x){
   colnames(splits) = c("bodyid", "position", "point", "X", "Y", "Z")
   splits
 }
-
 
 #' Split a neuron using stored 'splitpoints'
 #'
