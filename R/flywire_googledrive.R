@@ -563,8 +563,10 @@ flywire_ids <-function(local = FALSE, folder = "flywire_neurons/", sql = FALSE, 
 #' @param numCores if run in parallel, the number of cores to use. This is not necessary unless you have >10k points and want to see if you can get a speed up.
 #' @param max.tries maximum number of attempts to write to/read from the google sheets before aborting. Sometimes attempts fail due to sporadic connections or API issues.
 #' @param work_sheets a character vector of work sheet, i.e. tab, names for the googlesheet. If given, this function will only update those tabs.
+#' @param match logical. If \code{TRUE}, hemibrain matches given.
 #' @param meta meta data for flywire neurons, e.g. as retreived using \code{\link{flywire_meta}}. Used to efficiently input \code{flywire.xyz} column if only a \code{flywire.id} entry has been given.
 #' Only works if that id is also in this provided \code{data.frame}, \code{meta}.
+#' @inheritParams matches_update
 #'
 #' @details For this function to work, the specified google sheet(s) must have either the column \code{flywire.xyz},
 #' which gives the xyz position of points in a format that can be read by \code{nat::xyzmatrix}, for example \code{"(135767,79463,5284)"} or \code{"(135767;79463;5284)"}.
@@ -603,10 +605,12 @@ flywire_ids_update <- function(selected_sheets = NULL,
                                chosen.columns = c("fw.x","fw.y",'fw.z', 'flywire.xyz',
                                                   "flywire.id", "skid",
                                                   "FAFB.xyz", "cell.type", "side",
-                                                  "ItoLee_Hemilineage", "Hartenstein_Hemilineage",
-                                                  "hemibrain_match"),
+                                                  "ItoLee_Hemilineage", "Hartenstein_Hemilineage"),
                                work_sheets = NULL,
                                meta = NULL,
+                               match = FALSE,
+                               matching_sheet = options()$hemibrainr_matching_gsheet,
+                               priority = c("FAFB","hemibrain"),
                                numCores = 1,
                                max.tries = 10){
   if(is.null(selected_sheets)){
@@ -767,6 +771,14 @@ flywire_ids_update <- function(selected_sheets = NULL,
   master = master[order(master$filled,decreasing = TRUE),]
   master = master[!duplicated(master$flywire.xyz),]
   rownames(master) = master$flywire.xyz
+  if(match){
+    matches = hemibrain_matches(selected_file = matching_sheet, priority = priority)
+    matches = subset(matches, matches$match.dataset == "hemibrain" &  matches$dataset == "flywire")
+    master$hemibrain.match = matches[match(master$flywire.id, matches$id), "match"]
+    master$hemibrain.match.quality = matches[match(master$flywire.id, matches$id),"quality"]
+    master$FAFB.hemisphere.match = matches[match(master$flywire.id, matches$id), "FAFB.hemisphere.match"]
+    master$FAFB.hemisphere.match.quality = matches[match(master$flywire.id, matches$id),"FAFB.hemisphere.match.quality"]
+  }
   master = subset(master, !is.na(master$flywire.id))
   master$filled = NULL
   master
