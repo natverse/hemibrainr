@@ -7,10 +7,12 @@
 flywire_ids_update(
   selected_sheets = NULL,
   chosen.columns = c("fw.x", "fw.y", "fw.z", "flywire.xyz", "flywire.id", "skid",
-    "FAFB.xyz", "cell.type", "side", "ItoLee_Hemilineage", "Hartenstein_Hemilineage",
-    "hemibrain_match"),
+    "FAFB.xyz", "cell.type", "side", "ItoLee_Hemilineage", "Hartenstein_Hemilineage"),
   work_sheets = NULL,
   meta = NULL,
+  match = FALSE,
+  matching_sheet = options()$hemibrainr_matching_gsheet,
+  priority = c("FAFB", "hemibrain"),
   numCores = 1,
   max.tries = 10
 )
@@ -26,6 +28,14 @@ individual tabs, that have been updated. This argument specifies which column yo
 
 \item{meta}{meta data for flywire neurons, e.g. as retreived using \code{\link{flywire_meta}}. Used to efficiently input \code{flywire.xyz} column if only a \code{flywire.id} entry has been given.
 Only works if that id is also in this provided \code{data.frame}, \code{meta}.}
+
+\item{match}{logical. If \code{TRUE}, hemibrain matches given.}
+
+\item{matching_sheet}{the master matching sheet. Cannot be in \code{selected_sheets}. This sheet will be processed using \code{\link{hemibrain_matches}} to produce a
+\code{data.frame} describing hemibrain-FAFB and FAFB-hemibrain matches.}
+
+\item{priority}{whether to use FAFB->hemibrain matches (FAFB) or hemibrain->FAFB matches (hemibrain) in order to ascribe
+cell type names to FAFB neurons. In both cases, cell type names are attached to hemibrain bodyids, and propagated to their FAFB matches.}
 
 \item{numCores}{if run in parallel, the number of cores to use. This is not necessary unless you have >10k points and want to see if you can get a speed up.}
 
