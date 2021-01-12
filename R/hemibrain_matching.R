@@ -862,14 +862,13 @@ hemibrain_matches <- function(priority = c("FAFB","hemibrain"),
                                                   ss = selected_file,
                                                   sheet = "FAFB",
                                                   return = TRUE)
+  fafb.matches = subset(fafb.matches, !is.na(fafb.matches$skid)|!is.na(fafb.matches$flywire.id))
+  fafb.matches = fafb.matches[!(duplicated(fafb.matches$skid)&duplicated(fafb.matches$flywire.id)),]
   fafb.matches$skid = correct_id(fafb.matches$skid)
-  fafb.matches = subset(fafb.matches, !grepl("l",fafb.matches$side))
-  fafb.matches = fafb.matches[!duplicated(fafb.matches$skid),]
-  fafb.matches = fafb.matches[fafb.matches$skid!="",]
-  fafb.matches = subset(fafb.matches, !is.na(fafb.matches$skid))
-  fafb.matches = fafb.matches[!duplicated(fafb.matches$skid),]
+  fafb.matches$flywire.id = correct_id(fafb.matches$flywire.id)
   fafb.matches$dataset = "FAFB"
-  rownames(fafb.matches) = fafb.matches$skid
+  fafb.matches$skid[is.na(fafb.matches$skid)] = "missing"
+  rownames(fafb.matches) = paste0(fafb.matches$skid,"#",ave(fafb.matches$skid,fafb.matches$skid,FUN= seq.int))
 
   # Set unassigned matches to top.nblast
   nblast.tops = c("CATMAID.nblast.top","flywire.nblast.top")
@@ -976,20 +975,26 @@ hemibrain_matches <- function(priority = c("FAFB","hemibrain"),
   fafb.matches[match(names(types),fafb.matches$hemibrain.match),"cell.type"] = types
 
   # Work out lineages
-  for(id in as.character(fafb.matches$skid)){
-    if(is.na(id)){
-      next
-    }
-    ct = fafb.matches[id,"cell.type"]
-    if(is.na(ct)){
-      fafb.matches[id,"cell.type"] = hemibrain.matches$cell.type[match(id,hemibrain.matches$FAFB.match)]
-      if(is.na(fafb.matches[id,"cell.type"])){
-        fafb.matches[id,"cell.type"] = "uncertain"
-      }else{
-        fafb.matches[id,"ItoLee_Hemilineage"] = hemibrain.matches$ItoLee_Hemilineage[match(id,hemibrain.matches$FAFB.match)]
+  for(repo in c("CATMAID","flywire")){
+    id.field = get_idfield(repository = repo, return = "match.field")
+    match.field = get_idfield(repository = repo, return = "match.field")
+    ids = id_okay(fafb.matches[[id.field]])
+    for(id in ids){
+      idx = match(id,fafb.matches[[id.field]])
+      idx2 = match(id,hemibrain.matches[[match.field]])
+      if(!is.na(idx2)){
+        ct = fafb.matches[idx,"cell.type"]
+        if(is.na(ct)){
+          fafb.matches[idx,"cell.type"] = hemibrain.matches$cell.type[idx2]
+          if(is.na(fafb.matches[idx,"cell.type"])){
+            fafb.matches[idx,"cell.type"] = "uncertain"
+          }else{
+            fafb.matches[idx,"ItoLee_Hemilineage"] = hemibrain.matches$ItoLee_Hemilineage[idx2]
+          }
+        }else{
+          fafb.matches[idx,"ItoLee_Hemilineage"] = hemibrain.matches$ItoLee_Hemilineage[match(ct,hemibrain.matches$cell.type)]
+        }
       }
-    }else{
-      fafb.matches[id,"ItoLee_Hemilineage"] = hemibrain.matches$ItoLee_Hemilineage[match(ct,hemibrain.matches$cell.type)]
     }
   }
 
