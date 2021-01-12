@@ -448,12 +448,12 @@ remove_unused_filehash <- function(path,
       for(rds in files){
         nlfh = nat::read.neuronlistfh(rds)
         if(!is.null(id)&!is.null(meta)){
-          if(!is%in%colnames(meta)){
+          if(!id%in%colnames(meta)){
             stop("id must be in colnames(meta)")
           }
           inmeta = names(nlfh)%in%meta[[id]]
           nlfh = nlfh[inmeta]
-          update.neuronlistfh(nat::as.neuronlis(nlfh),
+          update.neuronlistfh(nat::as.neuronlist(nlfh),
                               rds=rds,
                               dbClass = "DB1")
         }
