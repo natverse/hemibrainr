@@ -171,10 +171,12 @@ a point in the primary neurite tract that can be used as a stable reference for 
     </div>
 
     <pre class="usage"><span class='fu'>flywire_neurons</span><span class='op'>(</span>
+  x <span class='op'>=</span> <span class='cn'>NULL</span>,
   local <span class='op'>=</span> <span class='cn'>FALSE</span>,
   brain <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"FlyWire"</span>, <span class='st'>"JRCFIB2018Fraw"</span>, <span class='st'>"JRCFIB2018F"</span>, <span class='st'>"FAFB"</span>, <span class='st'>"FAFB14"</span>, <span class='st'>"JFRC2"</span>,
     <span class='st'>"JFRC2013"</span>, <span class='st'>"JRC2018F"</span>, <span class='st'>"FCWB"</span><span class='op'>)</span>,
   mirror <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  swc <span class='op'>=</span> <span class='cn'>FALSE</span>,
   <span class='va'>...</span>
 <span class='op'>)</span>
 
@@ -205,6 +207,10 @@ a point in the primary neurite tract that can be used as a stable reference for 
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
+      <th>x</th>
+      <td><p>flywire IDs to update, for the saved Google drive <code>neuronlistfh</code> objects called with <code>flywire_neurons</code>.</p></td>
+    </tr>
+    <tr>
       <th>local</th>
       <td><p><code>FALSE</code> or path. By default (<code>FALSE</code>) data is read from <code>options()$Drive_hemibrain_data</code>), but the user can specify an alternative path.</p></td>
     </tr>
@@ -217,12 +223,12 @@ a point in the primary neurite tract that can be used as a stable reference for 
       <td><p>logical, whether or not to read neurons that have been mirrored (i.e. flipped to the 'other' brain hemisphere).</p></td>
     </tr>
     <tr>
-      <th>...</th>
-      <td><p>Additional arguments passed to <code><a href='https://rdrr.io/pkg/nat/man/nlapply.html'>nat::nlapply</a></code>.and/or <code><a href='https://rdrr.io/pkg/fafbseg/man/skeletor.html'>fafbseg::skeletor</a></code>.</p></td>
+      <th>swc</th>
+      <td><p>logical. When using neurons with <code>flywire_neurons</code> from the Google drive, whether to read <code>.swc</code> files (if <code>TRUE</code>), or a neuronlistfh object (default).</p></td>
     </tr>
     <tr>
-      <th>x</th>
-      <td><p>flywire IDs to update, for the saved Google drive <code>neuronlistfh</code> objects called with <code>flywire_neurons</code>.</p></td>
+      <th>...</th>
+      <td><p>Additional arguments passed to <code><a href='https://rdrr.io/pkg/nat/man/nlapply.html'>nat::nlapply</a></code>.and/or <code><a href='https://rdrr.io/pkg/fafbseg/man/skeletor.html'>fafbseg::skeletor</a></code>.</p></td>
     </tr>
     <tr>
       <th>nblast</th>

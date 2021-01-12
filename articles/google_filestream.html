@@ -133,6 +133,9 @@
 </ol>
 <p>The best option is to use google filestream. By default, this is what <code>hemibrainr</code> expects. However, you need a <a href="https://workspace.google.com/pricing.html">Google Workspace</a> account (formerly G-Suite), which is a paid-for service. Without this, the best option is to use <a href="https://rclone.org/drive/">rclone</a>. You can also download to an external hard drive and use that.</p>
 <p>We have two <a href="https://support.google.com/a/users/answer/9310156?hl=en">Google team drives</a> available for you to use, which contain similar data. One (<code>"hemibrain"</code>) is for internal use by the <a href="https://www.zoo.cam.ac.uk/research/groups/connectomics">Drosophila Connectomics Group</a>. The other one (<code>"hemibrainr"</code>) is shared with those who would like access. Contact us by email to request access.</p>
+<center>
+<img src="https://raw.githubusercontent.com/natverse/hemibrainr/master/inst/images/hemibrainr_googledrive.png" alt="hemibrainr_googledrive">
+</center>
 <div id="option-1-google-workspace-hemibrainr-and-r" class="section level2">
 <h2 class="hasAnchor">
 <a href="#option-1-google-workspace-hemibrainr-and-r" class="anchor"></a>Option 1: Google workspace, hemibrainr and R</h2>
@@ -279,7 +282,7 @@
 <p>Once you have installed and configured rclone, you can use it to <a href="https://rclone.org/commands/rclone_mount/">mount</a> the google team drive. To do this, you create an empty directory wherever you want, named whatever you like, and then rclone ‘turns’ this directory into your mounted Google drive.</p>
 <p>You can mount with rclone from your system’s command line:</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="co"># unix/macosx</span></a>
-<a class="sourceLine" id="cb5-2" data-line-number="2"><span class="ex">rclone</span> cmount hemibrainr: /path/to/local/mount</a></code></pre></div>
+<a class="sourceLine" id="cb5-2" data-line-number="2"><span class="ex">rclone</span> mount hemibrainr: /path/to/local/mount</a></code></pre></div>
 <p>Try it somewhere like <code>/Documents</code> to see how it works. For <code>hemibrainr</code> there is an R function that will do the mounting for you in your working directory. So within R:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># mounts in working directory</span>

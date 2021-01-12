@@ -181,10 +181,12 @@ space (as they are stored in neuPrint) to microns.</p>
 <span class='fu'>scale_neurons</span><span class='op'>(</span><span class='va'>x</span>, scaling <span class='op'>=</span> <span class='op'>(</span><span class='fl'>8</span><span class='op'>/</span><span class='fl'>1000</span><span class='op'>)</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='fu'>hemibrain_neurons</span><span class='op'>(</span>
+  x <span class='op'>=</span> <span class='cn'>NULL</span>,
   local <span class='op'>=</span> <span class='cn'>FALSE</span>,
   brain <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"JRCFIB2018Fraw"</span>, <span class='st'>"JRCFIB2018F"</span>, <span class='st'>"FAFB14"</span>, <span class='st'>"JFRC2"</span>, <span class='st'>"JRC2018F"</span>, <span class='st'>"FCWB"</span><span class='op'>)</span>,
   mirror <span class='op'>=</span> <span class='cn'>FALSE</span>,
   dotprops <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  swc <span class='op'>=</span> <span class='cn'>FALSE</span>,
   folder <span class='op'>=</span> <span class='st'>"hemibrain_neurons/"</span>
 <span class='op'>)</span></pre>
 
@@ -245,6 +247,10 @@ and <code><a href='hemibrain_flow_centrality.html'>hemibrain_flow_centrality</a>
       <th>dotprops</th>
       <td><p>logical. Whether or not to retrieve a <code><a href='https://rdrr.io/pkg/nat/man/dotprops.html'>nat::dotprops</a></code> object, i.e. vector cloud representations of neurons for NBLASTing.
 The dotprops object will be in JRC2018FIBF micron space.</p></td>
+    </tr>
+    <tr>
+      <th>swc</th>
+      <td><p>logical. When using neurons with <code>hemibrain_neurons</code> from the Google drive, whether to read <code>.swc</code> files (if <code>TRUE</code>), or a neuronlistfh object (default).</p></td>
     </tr>
     <tr>
       <th>folder</th>

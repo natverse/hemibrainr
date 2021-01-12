@@ -167,10 +167,12 @@ then use this function to update and get the correct flywire ID whenever they wi
     <pre class="usage"><span class='fu'>flywire_ids_update</span><span class='op'>(</span>
   selected_sheets <span class='op'>=</span> <span class='cn'>NULL</span>,
   chosen.columns <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"fw.x"</span>, <span class='st'>"fw.y"</span>, <span class='st'>"fw.z"</span>, <span class='st'>"flywire.xyz"</span>, <span class='st'>"flywire.id"</span>, <span class='st'>"skid"</span>,
-    <span class='st'>"FAFB.xyz"</span>, <span class='st'>"cell.type"</span>, <span class='st'>"side"</span>, <span class='st'>"ItoLee_Hemilineage"</span>, <span class='st'>"Hartenstein_Hemilineage"</span>,
-    <span class='st'>"hemibrain_match"</span><span class='op'>)</span>,
+    <span class='st'>"FAFB.xyz"</span>, <span class='st'>"cell.type"</span>, <span class='st'>"side"</span>, <span class='st'>"ItoLee_Hemilineage"</span>, <span class='st'>"Hartenstein_Hemilineage"</span><span class='op'>)</span>,
   work_sheets <span class='op'>=</span> <span class='cn'>NULL</span>,
   meta <span class='op'>=</span> <span class='cn'>NULL</span>,
+  match <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  matching_sheet <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>options</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>$</span><span class='va'>hemibrainr_matching_gsheet</span>,
+  priority <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"FAFB"</span>, <span class='st'>"hemibrain"</span><span class='op'>)</span>,
   numCores <span class='op'>=</span> <span class='fl'>1</span>,
   max.tries <span class='op'>=</span> <span class='fl'>10</span>
 <span class='op'>)</span></pre>
@@ -196,6 +198,20 @@ individual tabs, that have been updated. This argument specifies which column yo
       <th>meta</th>
       <td><p>meta data for flywire neurons, e.g. as retreived using <code><a href='flywire_googledrive_data.html'>flywire_meta</a></code>. Used to efficiently input <code>flywire.xyz</code> column if only a <code>flywire.id</code> entry has been given.
 Only works if that id is also in this provided <code>data.frame</code>, <code>meta</code>.</p></td>
+    </tr>
+    <tr>
+      <th>match</th>
+      <td><p>logical. If <code>TRUE</code>, hemibrain matches given.</p></td>
+    </tr>
+    <tr>
+      <th>matching_sheet</th>
+      <td><p>the master matching sheet. Cannot be in <code>selected_sheets</code>. This sheet will be processed using <code><a href='hemibrain_matches.html'>hemibrain_matches</a></code> to produce a
+<code>data.frame</code> describing hemibrain-FAFB and FAFB-hemibrain matches.</p></td>
+    </tr>
+    <tr>
+      <th>priority</th>
+      <td><p>whether to use FAFB-&gt;hemibrain matches (FAFB) or hemibrain-&gt;FAFB matches (hemibrain) in order to ascribe
+cell type names to FAFB neurons. In both cases, cell type names are attached to hemibrain bodyids, and propagated to their FAFB matches.</p></td>
     </tr>
     <tr>
       <th>numCores</th>
