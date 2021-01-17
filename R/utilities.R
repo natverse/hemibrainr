@@ -125,7 +125,7 @@ which.consecutive <- function(Vec,
   Breaks <- c(0, which(diff(Vec) != 1), length(Vec))
   if(run!="all"){
     cons <- lapply(seq(length(Breaks) - 1),
-                  function(i) c(Vec[(Breaks[i] + 1):Breaks[i+1]]))
+                   function(i) c(Vec[(Breaks[i] + 1):Breaks[i+1]]))
     if(run=="minmax"){
       unlist(lapply(cons, function(c) c(min(c),max(c))))
     }else if (run=="min"){
@@ -366,10 +366,10 @@ xform_brain_parallel <- function(x,
   foreach.nl <- foreach::foreach (batch = 1:length(batches)) %dopar% {
     y = batches[[batch]]
     j = java_xform_brain(y,
-                    reference =reference,
-                    sample = sample,
-                    .parallel = FALSE,
-                    ...)
+                         reference =reference,
+                         sample = sample,
+                         .parallel = FALSE,
+                         ...)
   }
   neurons = do.call(c, foreach.nl)
   neurons
@@ -395,11 +395,11 @@ java_xform_brain <- function(x,
   # Transform treenodes
   points = nat::xyzmatrix(x)
   t = nat.templatebrains::xform_brain(points,
-                  reference = reference,
-                  sample = sample,
-                  method = method,
-                  progress.rjava=progress.rjava,
-                  ...)
+                                      reference = reference,
+                                      sample = sample,
+                                      method = method,
+                                      progress.rjava=progress.rjava,
+                                      ...)
   nat::xyzmatrix(x) = t
   # Transform synapses
   syns = lapply(names(x), function(n){
@@ -536,6 +536,7 @@ download_neuron_obj_batch <- function(ids, numCores = 1, ratio = 1, save.obj = "
 update.neuronlistfh <- function(x,
                                 rds,
                                 dbClass = c("RDS", "RDS2", "DB1"),
+                                remote = NULL,
                                 localdir = NULL,
                                 ...){
   dbClass = match.arg(dbClass)
@@ -547,15 +548,17 @@ update.neuronlistfh <- function(x,
     WriteObjects = "missing"
   }
   if(file.exists(rds)){
-    old.neurons = nat::read.neuronlistfh(rds, localdir = localdir)
-    if(!is.null(attr(old.neurons,"df"))){
-      old.neurons = old.neurons[!sapply(old.neurons, function(x) isFALSE(x))]
-      old.neurons = old.neurons[setdiff(names(old.neurons),names(x))]
-      x = nat::union(x, old.neurons)
+    old.neurons = tryCatch(nat::read.neuronlistfh(rds, localdir = localdir), error = function(e) NULL)
+    if(!is.null(old.neurons)){
+      if(!is.null(attr(old.neurons,"df"))){
+        old.neurons = old.neurons[!sapply(old.neurons, function(x) isFALSE(x))]
+        old.neurons = old.neurons[setdiff(names(old.neurons),names(x))]
+        x = nat::union(x, old.neurons)
+      }
     }
   }
   if(nat::is.neuronlist(x)){
-    given.neurons = nat::as.neuronlistfh(x, dbdir = data, dbClass = dbClass, WriteObjects = WriteObjects, ...)
+    given.neurons = nat::as.neuronlistfh(x, dbdir = data, dbClass = dbClass, WriteObjects = WriteObjects, remote = remote, ...)
     nat::write.neuronlistfh(given.neurons, file=rds, overwrite=TRUE, ...)
   }else{
     warning("Could not create neuronlistfh object")

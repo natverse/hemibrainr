@@ -400,9 +400,6 @@ hemibrain_skeleton_check <- function(x, # as read by neuprint_read_neurons
   x.goodsyn
 }
 
-
-
-
 #' Cut neurons to the hemibrain volume
 #'
 #' @description Cut neurons from another data source to the hemibrain volume.
