@@ -549,22 +549,25 @@ update.neuronlistfh <- function(x,
   }
   if(file.exists(rds)){
     old.neurons = tryCatch(nat::read.neuronlistfh(rds, localdir = localdir), error = function(e) NULL)
+    old.neurons = tryCatch(old.neurons[!sapply(old.neurons, function(x) isFALSE(x))], error = function(e) {
+      warning("Original .rds file cannot link to data, overwriting ...")
+      NULL
+    })
     if(!is.null(old.neurons)){
       if(!is.null(attr(old.neurons,"df"))){
-        old.neurons = old.neurons[!sapply(old.neurons, function(x) isFALSE(x))]
         old.neurons = old.neurons[setdiff(names(old.neurons),names(x))]
         x = nat::union(x, old.neurons)
       }
     }
   }
   if(nat::is.neuronlist(x)){
+    if(dbClass=="DB1"){file.remove(data)}
     given.neurons = nat::as.neuronlistfh(x, dbdir = data, dbClass = dbClass, WriteObjects = WriteObjects, remote = remote, ...)
     nat::write.neuronlistfh(given.neurons, file=rds, overwrite=TRUE, ...)
   }else{
     warning("Could not create neuronlistfh object")
   }
 }
-
 
 # hidden
 correct_id <-function(v){
