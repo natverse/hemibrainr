@@ -8,12 +8,15 @@
 \usage{
 plot3d_split(
   someneuronlist,
+  prepost = c("BOTH", "PRE", "POST"),
   col = c("#1BB6AF", "#EF7C12", "#C70E7B", "#8FDA04", "#4D4D4D", "#FC6882"),
   splitnode = FALSE,
   WithConnectors = TRUE,
   WithNodes = F,
   soma = NULL,
   soma.alpha = 1,
+  transmitters = FALSE,
+  transmitter.alpha = 0.3,
   highflow = FALSE,
   lwd = 1,
   radius = NULL,
@@ -25,12 +28,19 @@ plot3d_split(
 nlscan_split(
   someneuronlist,
   already_selected = NULL,
+  prepost = c("BOTH", "PRE", "POST"),
   col = c("#1BB6AF", "#EF7C12", "#C70E7B", "#8FDA04", "#4D4D4D", "#FC6882"),
+  splitnode = FALSE,
   WithConnectors = TRUE,
-  WithNodes = FALSE,
+  WithNodes = F,
   soma = NULL,
-  radius = NULL,
+  soma.alpha = 1,
+  transmitters = FALSE,
+  transmitter.alpha = 0.3,
   highflow = FALSE,
+  lwd = 1,
+  radius = NULL,
+  check.template = FALSE,
   Verbose = TRUE,
   Wait = TRUE,
   sleep = 0.1,
@@ -53,21 +63,28 @@ plot3d_somas(
 \arguments{
 \item{someneuronlist}{a neuronlist or neuron object that has been modified by flow.centrality.}
 
+\item{prepost}{whether to plot input (POST-) or output (PRE-) synapses, or both (default).}
+
 \item{col}{colours of sections. Defaults to orange or axons, green for primary dendrite, blue for dendrites and pink for nodes with no flow.}
 
 \item{splitnode}{if TRUE, a magenta sphere is placed at the location of the axon-dendrite split. Possible a putative action potential initiation site?}
 
 \item{WithConnectors}{whether to plot the anatomical location of pre (red) and post (cyan) synapses.}
 
-\item{WithNodes}{whether to plot branch points}
+\item{WithNodes}{whether to plot branch points.}
 
 \item{soma}{whether to plot a soma, and what the radius should be. If \code{NULL}, an appropriate value is guessed.}
 
 \item{soma.alpha}{numeric, alpha transparency value for plotting the soma. Passed to \code{rgl::spheres3d}}
 
-\item{highflow}{whether to plot the nodes of highest (with in one standard deviation less than maximum) flow centrality (pink points)}
+\item{transmitters}{logical. If \code{TRUE}, and transmitter identities are given in each neuron's meta data at neuron$connectors, then synapses.
+are plotted in their transmitter colours. Transmitter identity is given by the colour of a hlow around each synapse. The colours correspond to entries in \code{\link{paper_colours}}.}
 
-\item{lwd}{Line width (default 1)}
+\item{transmitter.alpha}{numeric, alpha transparency value for a coloured halo indicative of transmitter identity around synapses. Passed to \code{rgl::spheres3d}.}
+
+\item{highflow}{whether to plot the nodes of highest (with in one standard deviation less than maximum) flow centrality (pink points).}
+
+\item{lwd}{Line width (default 1).}
 
 \item{radius}{For connectors and axon-dendrite split node (default 1). If \code{NULL}, an appropriate value is guessed.}
 

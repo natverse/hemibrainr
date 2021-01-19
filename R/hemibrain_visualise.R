@@ -9,15 +9,17 @@
 #' @param col colours of sections. Defaults to orange or axons, green for primary dendrite, blue for dendrites and pink for nodes with no flow.
 #' @param splitnode if TRUE, a magenta sphere is placed at the location of the axon-dendrite split. Possible a putative action potential initiation site?
 #' @param WithConnectors whether to plot the anatomical location of pre (red) and post (cyan) synapses.
+#' @param prepost whether to plot input (POST-) or output (PRE-) synapses, or both (default).
 #' @param soma whether to plot a soma, and what the radius should be. If \code{NULL}, an appropriate value is guessed.
 #' @param soma.alpha numeric, alpha transparency value for plotting the soma. Passed to \code{rgl::spheres3d}
-#' @param WithNodes whether to plot branch points
-#' @param lwd Line width (default 1)
+#' @param WithNodes whether to plot branch points.
+#' @param lwd Line width (default 1).
 #' @param radius For connectors and axon-dendrite split node (default 1). If \code{NULL}, an appropriate value is guessed.
 #' @param brain a template brain to plot. \code{FALSE} results in no brain plotted.
-#' @param highflow whether to plot the nodes of highest (with in one standard deviation less than maximum) flow centrality (pink points)
-#' @param transmitters logical. If TRUE, and transmitter identities are given in each neuron's meta data at neuron$connectors, then synapses
-#' are plotted in their transmitter colours. In this case, input and output synapses are told apart as spheres for output and icosahedrons for input.
+#' @param highflow whether to plot the nodes of highest (with in one standard deviation less than maximum) flow centrality (pink points).
+#' @param transmitters logical. If \code{TRUE}, and transmitter identities are given in each neuron's meta data at neuron$connectors, then synapses.
+#' are plotted in their transmitter colours. Transmitter identity is given by the colour of a hlow around each synapse. The colours correspond to entries in \code{\link{paper_colours}}.
+#' @param transmitter.alpha numeric, alpha transparency value for a coloured halo indicative of transmitter identity around synapses. Passed to \code{rgl::spheres3d}.
 #' @param volume a \code{mesh3d} or \code{hxsurf} object. Only somas outside this volume will be plotted.
 #' @param check.template check which template space \code{someneuronlist} is in, in order to set default plotting settings.
 #' @param invert logical, if \code{TRUE} only somas outside \code{volume} will be plotted, if \code{FALSE}, only those inside.
@@ -35,12 +37,15 @@
 #' @importFrom stats sd
 #' @importFrom nat xyzmatrix
 plot3d_split = function(someneuronlist,
+                        prepost = c("BOTH","PRE","POST"),
                         col = c("#1BB6AF", "#EF7C12", "#C70E7B", "#8FDA04", "#4D4D4D", "#FC6882"),
                         splitnode = FALSE,
                         WithConnectors = TRUE,
                         WithNodes = F,
                         soma = NULL,
                         soma.alpha = 1,
+                        transmitters = FALSE,
+                        transmitter.alpha = 0.3,
                         highflow = FALSE,
                         lwd = 1,
                         radius = NULL,
@@ -48,6 +53,7 @@ plot3d_split = function(someneuronlist,
                         check.template = FALSE,
                         ...){
   someneuronlist = nat::as.neuronlist(someneuronlist)
+  prepost = match.arg(prepost)
   if(check.template){
     temps = nat.templatebrains::all_templatebrains()
     temps.microns = c(temps[temps$W<2000,"name"],"JRCFIB2018F")
@@ -88,43 +94,59 @@ plot3d_split = function(someneuronlist,
                     error = function(e) NULL)
     p.n = tryCatch( nat::prune_vertices(neuron, verticestoprune = as.integer(c(axon.v, dendrites.v, p.d.v, null.v))),
                     error = function(e) NULL)
-    tryCatch(rgl::plot3d(dendrites, col = col[1], WithNodes = WithNodes, lwd = lwd, add = TRUE, ...),
+    tryCatch(rgl::plot3d(dendrites, col = col[1], WithNodes = WithNodes, lwd = lwd, add = TRUE),
              error = function(e) NULL)
-    tryCatch(rgl::plot3d(axon, col = col[2], WithNodes = WithNodes, soma = FALSE, lwd = lwd, add = TRUE, ...),
+    tryCatch(rgl::plot3d(axon, col = col[2], WithNodes = WithNodes, soma = FALSE, lwd = lwd, add = TRUE),
              error = function(e) NULL)
-    tryCatch(rgl::plot3d(p.n, col = col[3], WithNodes = WithNodes, soma = FALSE, lwd = lwd, add = TRUE, ...),
+    tryCatch(rgl::plot3d(p.n, col = col[3], WithNodes = WithNodes, soma = FALSE, lwd = lwd, add = TRUE),
     error = function(e) NULL)
-    tryCatch(rgl::plot3d(p.d, col = col[4], WithNodes = WithNodes, soma = FALSE, lwd = lwd, add = TRUE,...),
+    tryCatch(rgl::plot3d(p.d, col = col[4], WithNodes = WithNodes, soma = FALSE, lwd = lwd, add = TRUE),
     error = function(e) NULL)
-    tryCatch(rgl::plot3d(neuron, col = "grey30", WithNodes = WithNodes, soma = FALSE, add = TRUE, ...), error = function(e) NULL)
+    tryCatch(rgl::plot3d(neuron, col = "grey30", WithNodes = WithNodes, soma = FALSE, add = TRUE), error = function(e) NULL)
     if(soma){
       rgl::spheres3d(nat::xyzmatrix(neuron)[neuron$StartPoint,], radius = soma, col = col[3], alpha = soma.alpha)
     }
     if(WithConnectors){
       conns=neuron$connectors
+      if("BOTH"%in%prepost){
+        plot.prepost = c("PRE","POST")
+      }else{
+        plot.prepost = prepost
+      }
       if(transmitters){
         input.synapses = conns[conns$prepost==1,,drop=FALSE]
         output.synapses = conns[conns$prepost==0,,drop=FALSE]
         cols1 = hemibrainr::paper_colours[input.synapses$top.nt]
         cols1[is.na(cols1)] = "black"
-        cols2 = hemibrainr::paper_colours[input.synapses$top.nt]
+        cols2 = hemibrainr::paper_colours[output.synapses$top.nt]
         cols2[is.na(cols2)] = "black"
-        tryCatch(rgl::tetrahedron3d(nat::xyzmatrix(input.synapses),
-                                col = cols1, radius = radius/2, add = TRUE, ...),
-                 error = function(e) NULL)
-        tryCatch(rgl::spheres3d(nat::xyzmatrix(input.synapses),
-                                col = cols2, radius = radius, add = TRUE, ...), #"#EE4244"
-                 error = function(e) NULL)
-        tryCatch(rgl::points3d(nat::xyzmatrix(input.synapses),
-                                col = hemibrainr::paper_colours["pre"], radius = radius+(radius*0.1), add = TRUE, ...), #"#EE4244"
-                 error = function(e) NULL)
+        if("PRE"%in%plot.prepost){
+          tryCatch(rgl::spheres3d(nat::xyzmatrix(output.synapses),
+                                  col = cols2, radius = radius, add = TRUE, alpha = transmitter.alpha), #"#EE4244"
+                   error = function(e) NULL)
+          tryCatch(rgl::points3d(nat::xyzmatrix(output.synapses),
+                                 col = hemibrainr::paper_colours["pre"], radius = radius+(radius*0.1), add = TRUE), #"#EE4244"
+                   error = function(e) NULL)
+        }
+        if("POST"%in%plot.prepost){
+          tryCatch(rgl::spheres3d(nat::xyzmatrix(input.synapses),
+                                  col = cols1, radius = radius/2, add = TRUE, alpha = transmitter.alpha),
+                   error = function(e) NULL)
+          tryCatch(rgl::points3d(nat::xyzmatrix(input.synapses),
+                                 col = hemibrainr::paper_colours["post"], radius = (radius/2)+(radius*0.05), add = TRUE),
+                   error = function(e) NULL)
+        }
       }else{
-        tryCatch(rgl::spheres3d(xyzmatrix(conns[conns$prepost==1,,drop=FALSE]),
-                                col = hemibrainr::paper_colours["post"], radius = radius/2, add = TRUE, ...),
-                 error = function(e) NULL)
-        tryCatch(rgl::spheres3d(xyzmatrix(conns[conns$prepost==0,,drop=FALSE]),
-                                col = hemibrainr::paper_colours["pre"], radius = radius, add = TRUE, ...), #"#EE4244"
-                 error = function(e) NULL)
+        if("POST"%in%plot.prepost){
+          tryCatch(rgl::spheres3d(xyzmatrix(conns[conns$prepost==1,,drop=FALSE]),
+                                  col = hemibrainr::paper_colours["post"], radius = radius/2, add = TRUE),
+                   error = function(e) NULL)
+        }
+        if("PRE"%in%plot.prepost){
+          tryCatch(rgl::spheres3d(xyzmatrix(conns[conns$prepost==0,,drop=FALSE]),
+                                  col = hemibrainr::paper_colours["pre"], radius = radius, add = TRUE), #"#EE4244"
+                   error = function(e) NULL)
+        }
       }
     }
     if(isTRUE(highflow)){
@@ -145,12 +167,19 @@ plot3d_split = function(someneuronlist,
 #' @rdname plot3d_split
 nlscan_split <- function (someneuronlist,
                           already_selected = NULL,
+                          prepost = c("BOTH","PRE","POST"),
                           col = c("#1BB6AF", "#EF7C12", "#C70E7B", "#8FDA04", "#4D4D4D", "#FC6882"),
+                          splitnode = FALSE,
                           WithConnectors = TRUE,
-                          WithNodes = FALSE,
+                          WithNodes = F,
                           soma = NULL,
-                          radius = NULL,
+                          soma.alpha = 1,
+                          transmitters = FALSE,
+                          transmitter.alpha = 0.3,
                           highflow = FALSE,
+                          lwd = 1,
+                          radius = NULL,
+                          check.template = FALSE,
                           Verbose = TRUE,
                           Wait = TRUE,
                           sleep = 0.1,
@@ -158,6 +187,7 @@ nlscan_split <- function (someneuronlist,
                           selected_col = "#fadadd",
                           yaml = TRUE,
                           brain = FALSE, ...){
+  prepost = match.arg(prepost)
   if(!requireNamespace('yaml', quietly = TRUE))
     stop("Suggested package yaml is required to use this function!")
   if (nat::is.neuronlist(someneuronlist)) {
@@ -234,7 +264,23 @@ nlscan_split <- function (someneuronlist,
     if (!isFALSE(brain)){
       rgl::plot3d(brain, col = "grey70", alpha = 0.1)
     }
-    pl <- plot3d_split(someneuronlist[i], col = col, WithConnectors = WithConnectors, WithNodes = WithNodes, soma = soma, highflow = highflow, radius = radius, ...)
+    pl <- plot3d_split(someneuronlist[i],
+                       col = col,
+                       WithConnectors = WithConnectors,
+                       WithNodes = WithNodes,
+                       highflow = highflow,
+                       radius = radius,
+                       prepost = prepost,
+                       splitnode = splitnode,
+                       WithConnectors = WithConnectors,
+                       WithNodes = WithNodes,
+                       soma = soma,
+                       soma.alpha = soma.alpha,
+                       transmitters = transmitters,
+                       transmitter.alpha = transmitter.alpha,
+                       lwd = lwd,
+                       check.template = check.template,
+                       ...)
     if (Wait) {
       chc <- readline("Return to continue, b to go back, s to (de)select, d [save to disk], t to stop, c to cancel (without returning a selection): ")
       if (chc == "c" || chc == "t") {
@@ -270,7 +316,6 @@ nlscan_split <- function (someneuronlist,
   }
   selected
 }
-
 
 #' @export
 #' @rdname plot3d_split
