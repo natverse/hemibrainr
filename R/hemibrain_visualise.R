@@ -16,6 +16,8 @@
 #' @param radius For connectors and axon-dendrite split node (default 1). If \code{NULL}, an appropriate value is guessed.
 #' @param brain a template brain to plot. \code{FALSE} results in no brain plotted.
 #' @param highflow whether to plot the nodes of highest (with in one standard deviation less than maximum) flow centrality (pink points)
+#' @param transmitters logical. If TRUE, and transmitter identities are given in each neuron's meta data at neuron$connectors, then synapses
+#' are plotted in their transmitter colours. In this case, input and output synapses are told apart as spheres for output and icosahedrons for input.
 #' @param volume a \code{mesh3d} or \code{hxsurf} object. Only somas outside this volume will be plotted.
 #' @param check.template check which template space \code{someneuronlist} is in, in order to set default plotting settings.
 #' @param invert logical, if \code{TRUE} only somas outside \code{volume} will be plotted, if \code{FALSE}, only those inside.
@@ -98,22 +100,40 @@ plot3d_split = function(someneuronlist,
     if(soma){
       rgl::spheres3d(nat::xyzmatrix(neuron)[neuron$StartPoint,], radius = soma, col = col[3], alpha = soma.alpha)
     }
-    if (WithConnectors){
+    if(WithConnectors){
       conns=neuron$connectors
-      tryCatch(rgl::spheres3d(xyzmatrix(conns[conns$prepost==1,,drop=FALSE]),
-                              col = "#132157", radius = radius/2, add = TRUE, ...),
-               error = function(e) NULL)
-      tryCatch(rgl::spheres3d(xyzmatrix(conns[conns$prepost==0,,drop=FALSE]),
-                              col = "#EE4244", radius = radius, add = TRUE, ...),
-               error = function(e) NULL)
+      if(transmitters){
+        input.synapses = conns[conns$prepost==1,,drop=FALSE]
+        output.synapses = conns[conns$prepost==0,,drop=FALSE]
+        cols1 = hemibrainr::paper_colours[input.synapses$top.nt]
+        cols1[is.na(cols1)] = "black"
+        cols2 = hemibrainr::paper_colours[input.synapses$top.nt]
+        cols2[is.na(cols2)] = "black"
+        tryCatch(rgl::tetrahedron3d(nat::xyzmatrix(input.synapses),
+                                col = cols1, radius = radius/2, add = TRUE, ...),
+                 error = function(e) NULL)
+        tryCatch(rgl::spheres3d(nat::xyzmatrix(input.synapses),
+                                col = cols2, radius = radius, add = TRUE, ...), #"#EE4244"
+                 error = function(e) NULL)
+        tryCatch(rgl::points3d(nat::xyzmatrix(input.synapses),
+                                col = hemibrainr::paper_colours["pre"], radius = radius+(radius*0.1), add = TRUE, ...), #"#EE4244"
+                 error = function(e) NULL)
+      }else{
+        tryCatch(rgl::spheres3d(xyzmatrix(conns[conns$prepost==1,,drop=FALSE]),
+                                col = hemibrainr::paper_colours["post"], radius = radius/2, add = TRUE, ...),
+                 error = function(e) NULL)
+        tryCatch(rgl::spheres3d(xyzmatrix(conns[conns$prepost==0,,drop=FALSE]),
+                                col = hemibrainr::paper_colours["pre"], radius = radius, add = TRUE, ...), #"#EE4244"
+                 error = function(e) NULL)
+      }
     }
-    if (highflow == T){
+    if(isTRUE(highflow)){
       highest = max(neuron$d[,"flow.cent"])
       s.d = sd(neuron$d[,"flow.cent"], na.rm = T)
       high = subset(neuron$d, neuron$d[,"flow.cent"] > (highest - s.d))
       rgl::points3d(nat::xyzmatrix(high), col = col[6],...)
     }
-    if(splitnode==T){
+    if(isTRUE(splitnode)){
       ais = which(apply(neuron$d, 1, function(x) x["flow.cent"] == max(neuron$d[,"flow.cent"])))
       rgl::spheres3d(nat::xyzmatrix(neuron$d[ais,]),radius=radius,col="magenta", add = TRUE, ...)
     }
