@@ -542,6 +542,9 @@ update.neuronlistfh <- function(x,
   dbClass = match.arg(dbClass)
   if(dbClass=="DB1"){
     data = gsub("\\.rds","_datafile",rds)
+    if(file.exists(paste0(data,"___LOCK"))){
+      file.remove(paste0(data,"___LOCK"))
+    }
     WriteObjects = 'yes'
   }else{
     data = file.path(dirname(rds),"data")
