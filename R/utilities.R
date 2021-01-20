@@ -538,6 +538,7 @@ update.neuronlistfh <- function(x,
                                 dbClass = c("RDS", "RDS2", "DB1"),
                                 remote = NULL,
                                 localdir = NULL,
+                                pref.meta = NULL,
                                 ...){
   dbClass = match.arg(dbClass)
   if(dbClass=="DB1"){
@@ -565,6 +566,10 @@ update.neuronlistfh <- function(x,
   }
   if(nat::is.neuronlist(x)){
     if(dbClass=="DB1"){file.remove(data)}
+    if(!is.null(pref.meta)){
+      shared.cols = intersect(pref.meta,colnames(x[,]))
+      x[,] = x[,shared.cols]
+    }
     given.neurons = nat::as.neuronlistfh(x, dbdir = data, dbClass = dbClass, WriteObjects = WriteObjects, remote = remote, ...)
     nat::write.neuronlistfh(given.neurons, file=rds, overwrite=TRUE, ...)
   }else{
