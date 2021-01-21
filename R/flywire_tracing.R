@@ -5,11 +5,11 @@
 #' @description These functions can help you
 #' either go to or read the right tab (\code{flywire_tracing_sheet}) on a large google sheet, or read the whole sheet and all of its tabs ((\code{flywire_tracing_sheets}),
 #' note, memoised for 30 minutes).
-#' You can also see if a flywire neuron of interest in in a google sheet (\code{flywire_in()}),
-#' and see if a flywire neuron of interest is among the data stored on the hemibrainr drive, i.e. (\code{flywire_in(\link{flywire_meta()})}).
+#' You can also see if a flywire neuron of interest in in a google sheet (\code{flywire_in(fw.meta = flywire_tracing_sheets())}),
+#' and see if a flywire neuron of interest is among the data stored on the hemibrainr drive, i.e. (\code{flywire_in(fw.meta = flywire_meta())}).
 #'
-#' @param regex character vector. the google sheet(s) to update. Each entry is a unique google sheet ID. You can find these in a sheet's URL.
-#' If \code{NULL} then defaults to \code{option('hemibrainr_gsheets')}.
+#' @param regex character vector, tabs (i.e. work sheets) on the google sheet to query/read. This works with regex, so you only need to give the name partially.
+#' If set to \code{NULL} for \code{flywire_tracing_sheets}, the whole google sheet is read and all tabs are combined using \code{plyr::rbind.fill}.
 #' @param open logial, if \code{TRUE} the relevant google sheet tab is opened in your browser. Else, a \code{data.frame} of the tab is returned.
 #' @param selected_sheet character vector indicating the a flywire tracing google sheet. This defaults to the master 'lineage' tracing sheet used by the Drosphila Connectomics Group to
 #' store annotations on flywire neurons in different developmental lineages. Note: You may not have access.
@@ -17,9 +17,9 @@
 #' flywire root IDs or flywire supervoxel IDs. These are used to get the most up to date root IDs from FlyWire, which are then matched to the
 #' results from \code{flywire_tracing_sheets}.
 #' @param query.type  wtherh the qurey is a vector of xyz positions, flywire supervoxel IDs or flywire IDs ("flywire.xyz"/"flywire.svid"/"flywire.id").
-#' @param flywire_tracing_sheets a \code{data.frame} that is representative of the FAFB hemilineage survey google sheet, as produced by \code{flywire_tracing_sheets}.
-#' @param work_sheets a character vector of work sheet, i.e. tab, names for the googlesheet. If given, this function will only update those tabs.
+#' @param fw.meta a \code{data.frame} of meta data on flywire neurons, e.g. as produced by \code{flywire_tracing_sheets}.or read by \code{flywire_meta}.
 #' @param cloudvolume.url URL for CloudVolume to fetch segmentation image data. The default value of NULL choose
+#' @param Verbose logical, if \code{TRUE} then \code{hemibrainr} communicates what it has found.
 #' @param ... methods passed to \code{googlesheets4} functions.
 #'.
 #' @details flywire tracing google sheets should have the columns: flywire.xyz (a single cardinal position for each neuron in raw FlyWire voxel space),
@@ -77,14 +77,10 @@ flywire_tracing_sheet <- function(regex,
     open = interactive()
   }
   u= sprintf("https://docs.google.com/spreadsheets/d/%s/edit", selected_sheet)
-  props=sheet_properties.memo(u)
-  m=grepl(regex, props$name, ...)
-  sel=props[m,]
+  sel=regex_tab_names(regex=regex,selected_sheet=selected_sheet,...)
   if(nrow(sel)>1) {
     warning("Multiple matches. Keeping first: ", paste(sel$name, collapse = ','))
     sel=sel[1,,drop=F]
-  } else if(nrow(sel)==0) {
-    stop("No matches!")
   }
   uu=paste0(u, "#gid=", sel$id)
   if(open){
@@ -100,24 +96,36 @@ flywire_tracing_sheet <- function(regex,
   }
 }
 
+# hidden
+regex_tab_names <- function(regex, selected_sheet, ...){
+  u=sprintf("https://docs.google.com/spreadsheets/d/%s/edit", selected_sheet)
+  props=sheet_properties.memo(u)
+  m=grepl(regex, props$name, ...)
+  sel=props[m,]
+  if(nrow(sel)==0){
+    stop("No matches for ", regex)
+  }
+  sel
+}
+
 #' @export
 #' @rdname flywire_tracing_sheet
-flywire_tracing_sheets <- memoise::memoise(function(work_sheets = NULL,
+flywire_tracing_sheets <- memoise::memoise(function(regex = NULL,
                                                     selected_sheet = options()$flywire_lineages_gsheet){
-  flywire_tracing_sheets.now(work_sheets = work_sheets, selected_sheet=selected_sheet)
+  flywire_tracing_sheets.now(regex = regex, selected_sheet=selected_sheet)
 },  ~memoise::timeout(30*60))
 
 # hidden
-flywire_tracing_sheets.now <- function(work_sheets = NULL,
+flywire_tracing_sheets.now <- function(regex = NULL,
                                         selected_sheet = options()$flywire_lineages_gsheet){
-  wss = hemibrainr:::gsheet_manipulation(FUN = googlesheets4::sheet_names,
-                                          ss = selected_sheet,
-                                          return = TRUE)
   gs.lineages  = data.frame(stringsAsFactors = FALSE)
-  if(!is.null(work_sheets)){
-    tabs = intersect(work_sheets,wss)
+  if(!is.null(regex)){
+    sel=regex_tab_names(regex=regex,selected_sheet=selected_sheet,...)
+    tabs=sel$name
   }else{
-    tabs = wss
+    tabs=hemibrainr:::gsheet_manipulation(FUN = googlesheets4::sheet_names,
+                                                    ss = selected_sheet,
+                                                    return = TRUE)
   }
   for(tab in unique(tabs)){
     gs.lin = hemibrainr:::gsheet_manipulation(FUN = googlesheets4::read_sheet,
@@ -136,7 +144,7 @@ flywire_tracing_sheets.now <- function(work_sheets = NULL,
 #' @rdname flywire_tracing_sheet
 flywire_in <- function(query,
                              query.type = c("flywire.id","flywire.xyz","flywire.svid"),
-                             work_sheets = NULL,
+                             regex = NULL,
                              fw.meta = flywire_meta(),
                              cloudvolume.url = NULL,
                              Verbose = TRUE){
