@@ -634,12 +634,7 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
       tabs = work_sheets
     }
     for(tab in tabs){
-      gs.t = gs.t.current = gsheet_manipulation(FUN = googlesheets4::read_sheet,
-                                                wait = 20,
-                                                ss = selected_sheet,
-                                                sheet = tab,
-                                                guess_max = 3000,
-                                                return = TRUE)
+      gs.t = gs.t.current = flywire_tracing_sheet(regex = tab, selected_sheet=selected_sheet)
       used.cols = colnames(gs.t.current)
       if(nrow(gs.t)&&ncol(gs.t)&&sum(grepl("fw.x|flywire.xyz",used.cols))>0){
         # Separate x,y,z positions
@@ -865,12 +860,7 @@ matches_update <- function(matching_sheet = options()$hemibrainr_matching_gsheet
                                ss = selected_sheet,
                                return = TRUE)
     for(tab in tabs){
-      gs.t = gs.t.current = gsheet_manipulation(FUN = googlesheets4::read_sheet,
-                                                wait = 20,
-                                                ss = selected_sheet,
-                                                sheet = tab,
-                                                guess_max = 3000,
-                                                return = TRUE)
+      gs.t = gs.t.current = flywire_tracing_sheet(regex = tab, selected_sheet=selected_sheet)
       used.cols = colnames(gs.t.current)
       field = match.field
       if(field=="CATMAID"){ # for historic reasons. Chould fix.
