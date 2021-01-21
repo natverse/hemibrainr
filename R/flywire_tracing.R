@@ -57,7 +57,7 @@
 #' # See if we have a certain flywire neuron in our sheets
 #' in.lin = flywire_in(query = "111437.5,21121.25,2661",
 #' query.type = "flywire.xyz", Verbose = TRUE,
-#' fw.meta = flywire_tracing_sheet())
+#' fw.meta = flywire_tracing_sheets())
 #'
 #' # And in the meta data for neurons on the google drive
 #' in.meta = flywire_in(query = "111437.5,21121.25,2661",
@@ -123,17 +123,21 @@ flywire_tracing_sheets.now <- function(regex = NULL,
     sel=regex_tab_names(regex=regex,selected_sheet=selected_sheet)
     tabs=sel$name
   }else{
-    tabs= gsheet_manipulation(FUN = googlesheets4::sheet_names,
+    tabs=gsheet_manipulation(FUN = googlesheets4::sheet_names,
                                                     ss = selected_sheet,
                                                     return = TRUE)
   }
-  for(tab in unique(tabs)){
-    gs.lin = gsheet_manipulation(FUN = googlesheets4::read_sheet,
+  pb = progress::progress_bar$new(
+    format = "  downloading :what [:bar] :percent eta: :eta",
+    clear = FALSE, total = length(tabs))
+  for(tab in tabs){
+    pb$tick(tokens = list(what = tab))
+    gs.lin = suppressMessages(gsheet_manipulation(FUN = googlesheets4::read_sheet,
                                               wait = 20,
                                               ss = selected_sheet,
                                               sheet = tab,
                                               guess_max = 3000,
-                                              return = TRUE)
+                                              return = TRUE))
     gs.lin$ws = tab
     gs.lineages = plyr::rbind.fill(gs.lineages, gs.lin)
   }
