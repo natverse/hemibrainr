@@ -181,7 +181,7 @@ flywire_in <- function(query,
     message(sprintf("%s of %s queries found:",sum(query%in%df$query),length(query)))
     key.cols = c("query", "flywire.xyz", "flywire.svid","flywire.id", "status", "cell.type", "ItoLee_Hemilineage",
                  "side", "hemibrain.match", "hemibrain.match.quality", "tab", "ws")
-    knitr::kable(df[,intersect(key.cols,colnames(df))])
+    print(knitr::kable(df[,intersect(key.cols,colnames(df))]))
   }
   df
 }
