@@ -222,10 +222,12 @@ hemibrain_matching <- function(ids = NULL,
       say_encouragement(initials)
       # Read!
       gs2 = hemibrain_match_sheet(selected_file = selected_file, sheet = "hemibrain")
-      gs2[match(gs[[id]],gs2[[id]]),match.field]= selected[[match.field]][match(gs2[[id]],selected[[id]])]
-      gs2[match(gs[[id]],gs2[[id]]),quality.field]=selected[[quality.field]][match(gs2[[id]],selected[[id]])]
-      gs2[match(gs[[id]],gs2[[id]]),"note"]=selected[["note"]][match(gs2[[id]],selected[[id]])]
-      gs2[match(gs[[id]],gs2[[id]]),"User"]= initials
+      selected.unsaved = subset(selected, selected[[id]]%in%unsaved)
+      gs2[match(selected.unsaved[[id]],gs2[[id]]),match.field]= selected.unsaved[[match.field]]
+      gs2[match(selected.unsaved[[id]],gs2[[id]]),quality.field]= selected.unsaved[[quality.field]]
+      gs2[match(selected.unsaved[[id]],gs2[[id]]),"flywire.id"]= selected.unsaved[["flywire.id"]]
+      gs2[match(selected.unsaved[[id]],gs2[[id]]),"note"]= selected.unsaved[["note"]]
+      gs2[match(selected.unsaved[[id]],gs2[[id]]),"User"]= initials
       # Write!
       write_matches(gs=gs2,
                     ids = unsaved,
@@ -249,6 +251,12 @@ hemibrain_matching <- function(ids = NULL,
                     ids = unsaved,
                     id.field = id,
                     column = "User",
+                    selected_file = selected_file,
+                    ws = "hemibrain")
+      write_matches(gs=gs2,
+                    ids = unsaved,
+                    id.field = id,
+                    column = "flywire.id",
                     selected_file = selected_file,
                     ws = "hemibrain")
       saved = c(unsaved, saved)
@@ -656,11 +664,12 @@ fafb_matching <- function(ids = NULL,
       plot_inspirobot()
       say_encouragement(initials)
       # Read!
-      gs2 = hemibrain_match_sheet(selected_file = selected_file, sheet = repository)
-      gs2[match(gs[[id]],gs2[[id]]),match.field]= selected[[match.field]][match(gs2[[id]],selected[[id]])]
-      gs2[match(gs[[id]],gs2[[id]]),quality.field]=selected[[quality.field]][match(gs2[[id]],selected[[id]])]
-      gs2[match(gs[[id]],gs2[[id]]),"note"]= selected[["note"]][match(gs2[[id]],selected[[id]])]
-      gs2[match(gs[[id]],gs2[[id]]),"User"]= initials
+      gs2 = hemibrain_match_sheet(selected_file = selected_file, sheet = "hemibrain")
+      selected.unsaved = subset(selected, selected[[id]]%in%unsaved)
+      gs2[match(selected.unsaved[[id]],gs2[[id]]),match.field]= selected.unsaved[[match.field]]
+      gs2[match(selected.unsaved[[id]],gs2[[id]]),quality.field]= selected.unsaved[[quality.field]]
+      gs2[match(selected.unsaved[[id]],gs2[[id]]),"note"]= selected.unsaved[["note"]]
+      gs2[match(selected.unsaved[[id]],gs2[[id]]),"User"]= initials
       # Write!
       write_matches(gs=gs2,
                     ids = unsaved,
