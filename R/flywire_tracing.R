@@ -120,7 +120,7 @@ flywire_tracing_sheets.now <- function(regex = NULL,
                                         selected_sheet = options()$flywire_lineages_gsheet){
   gs.lineages  = data.frame(stringsAsFactors = FALSE)
   if(!is.null(regex)){
-    sel=regex_tab_names(regex=regex,selected_sheet=selected_sheet,...)
+    sel=regex_tab_names(regex=regex,selected_sheet=selected_sheet)
     tabs=sel$name
   }else{
     tabs=hemibrainr:::gsheet_manipulation(FUN = googlesheets4::sheet_names,
