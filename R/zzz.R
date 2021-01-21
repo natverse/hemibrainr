@@ -34,7 +34,7 @@
 
   # Set Google sheets of interest
   hemibrainr_matching_gsheet = ifelse(!is.null(getOption("hemibrainr_matching_gsheet")),getOption("hemibrainr_matching_gsheet"),"1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw")
-  flywire_lineages_gsheet = ifelse(!is.null(getOption("flywire_lineages_gsheet")),getOption("flywire_lineages_gsheet"),"1spGSuhUX6Hhn-8HH0U_ArIWUuPpMBFNjIjeSSh_MFVY")
+  flywire_lineages_gsheet = ifelse(!is.null(getOption("flywire_lineages_gsheet")),getOption("flywire_lineages_gsheet"),"1QyuHFdqz705OSxXNynD9moIsLvZGjjBjylx5sGZP2Yg")
   flywire_flagged_gsheet = ifelse(!is.null(getOption("flywire_flagged_gsheet")),getOption("flywire_flagged_gsheet"),"1rzG1MuZYacM-vbW7100aK8HeA-BY6dWAVXQ7TB6E2cQ")
   options(hemibrainr_matching_gsheet = hemibrainr_matching_gsheet)
   options(flywire_lineages_gsheet = flywire_lineages_gsheet)
