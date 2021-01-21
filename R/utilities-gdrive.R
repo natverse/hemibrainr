@@ -377,16 +377,23 @@ gsheet_manipulation <- function(FUN,
                                 ...,
                                 wait = 10,
                                 max.tries = 25,
-                                return = FALSE){
+                                return = FALSE,
+                                Verbose = TRUE){
   sleep = wait
   success = FALSE
   tries = 0
   while(!success){
-    g = tryCatch(FUN(...),
-                 error = function(e){
-                   cat(as.character(e))
-                   return(NULL)
-                 })
+    if(Verbose){
+      g = tryCatch(FUN(...),
+                   error = function(e){
+                     cat(as.character(e))
+                     return({message(e);NULL})})
+    }else{
+      g = tryCatch(suppressMessages(FUN(...)),
+                   error = function(e){
+                     cat(as.character(e))
+                     return({warning(e);NULL})})
+    }
     if(!is.null(g)){
       success = TRUE
     }else{
@@ -394,7 +401,9 @@ gsheet_manipulation <- function(FUN,
       if(tries>max.tries){
         stop("Could not make google manipulation")
       }
-      message("Google read/write failure(s), re-trying in ", sleep," seconds ...")
+      if(Verbose){
+        message("Google read/write failure(s), re-trying in ", sleep," seconds ...")
+      }
       Sys.sleep(sleep)
       sleep = sleep + wait
       if(sleep > 600){
@@ -420,6 +429,7 @@ gsheet_update_cols <- function(write.cols,
                                 gs,
                                 selected_sheet,
                                 sheet = NULL,
+                               Verbose = TRUE,
                                 ...
                        ){
   shared = setdiff(write.cols,colnames(write.cols))
@@ -448,6 +458,7 @@ gsheet_update_cols <- function(write.cols,
                                      data = update,
                                      sheet = sheet,
                                      col_names = TRUE,
+                        Verbose=Verbose,
                                      ...)
   }
 }

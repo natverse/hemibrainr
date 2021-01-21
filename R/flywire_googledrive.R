@@ -567,7 +567,8 @@ flywire_ids <-function(local = FALSE, folder = "flywire_neurons/", sql = FALSE, 
 #' individual tabs, that have been updated. This argument specifies which column you want returned. Filled with NAs if it does not exist.
 #' @param numCores if run in parallel, the number of cores to use. This is not necessary unless you have >10k points and want to see if you can get a speed up.
 #' @param max.tries maximum number of attempts to write to/read from the google sheets before aborting. Sometimes attempts fail due to sporadic connections or API issues.
-#' @param work_sheets a character vector of work sheet, i.e. tab, names for the googlesheet. If given, this function will only update those tabs.
+#' @param regex character vector, tabs (i.e. work sheets) on the google sheet to query/read. This works with regex, so you only need to give the name partially.
+#' If set to \code{NULL} for \code{flywire_tracing_sheets}, the whole google sheet is read and all tabs are combined using \code{plyr::rbind.fill}.
 #' @param match logical. If \code{TRUE}, hemibrain matches given.
 #' @param meta meta data for flywire neurons, e.g. as retreived using \code{\link{flywire_meta}}. Used to efficiently input \code{flywire.xyz} column if only a \code{flywire.id} entry has been given.
 #' Only works if that id is also in this provided \code{data.frame}, \code{meta}.
@@ -611,7 +612,7 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
                                                   "flywire.id", "skid",
                                                   "FAFB.xyz", "cell.type", "side",
                                                   "ItoLee_Hemilineage", "Hartenstein_Hemilineage"),
-                               work_sheets = NULL,
+                               regex = NULL,
                                meta = NULL,
                                match = FALSE,
                                matching_sheet = options()$hemibrainr_matching_gsheet,
@@ -626,15 +627,20 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
   for(selected_sheet in selected_sheets){
     ## Read Google sheets and extract glywire neuron positions
     message("### Working on google sheet: ", selected_sheet)
-    if(is.null(work_sheets)){
+    if(is.null(regex)){
       tabs = gsheet_manipulation(FUN = googlesheets4::sheet_names,
                                  ss = selected_sheet,
                                  return = TRUE)
     }else{
+      work_sheets=regex_tab_names(regex=regex,selected_sheet=selected_sheet)$name
       tabs = work_sheets
     }
+    pb = progress::progress_bar$new(
+      format = "  downloading :what [:bar] :percent eta: :eta",
+      clear = FALSE, total = length(tabs))
     for(tab in tabs){
-      gs.t = gs.t.current = flywire_tracing_sheet(regex = tab, selected_sheet=selected_sheet)
+      pb$tick(tokens = list(what = tab))
+      gs.t = gs.t.current = flywire_tracing_sheet(regex = tab, selected_sheet=selected_sheet, Verbose = FALSE)
       used.cols = colnames(gs.t.current)
       if(nrow(gs.t)&&ncol(gs.t)&&sum(grepl("fw.x|flywire.xyz",used.cols))>0){
         # Separate x,y,z positions
@@ -652,7 +658,6 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
           needs.updating = is.na(replacement.xyz)
           please.update = gs.t$flywire.id[justids][needs.updating]
           if(length(please.update)){
-            message("Updating ", length(please.update)," out-of-date flywire.ids where there is no flywire.xyz")
             updated.ids = tryCatch(sapply(please.update, fafbseg::flywire_latestid), error = function(e) NULL)
             if(!is.null(updated.ids)){
               gs.t$flywire.id[justids][needs.updating] = updated.ids
@@ -669,7 +674,6 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
         if(sum(good.xyz)){
           gs.t[good.xyz,c("fw.x","fw.y","fw.z")] = nat::xyzmatrix(gs.t[good.xyz,"flywire.xyz"])
         }
-        message("Updating flywire.ids using cardinal points in flywire.xyz")
         if(!all(is.na(gs.t$flywire.xyz))){
           # Get flywire IDs from these positions
           bbx = matrix(c(5100, 1440, 16, 59200, 29600, 7062),ncol=3,byrow = TRUE)
@@ -748,7 +752,8 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
               write.cols = write.cols,
               gs=gs.t[,used.cols],
               selected_sheet = selected_sheet,
-              sheet = tab)
+              sheet = tab,
+              Verbose = FALSE)
           }
         }
         # Now continue processing

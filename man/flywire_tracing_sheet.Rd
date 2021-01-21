@@ -10,6 +10,7 @@ flywire_tracing_sheet(
   regex,
   open = FALSE,
   selected_sheet = options()$flywire_lineages_gsheet,
+  Verbose = TRUE,
   ...
 )
 
@@ -36,6 +37,8 @@ If set to \code{NULL} for \code{flywire_tracing_sheets}, the whole google sheet 
 \item{selected_sheet}{character vector indicating the a flywire tracing google sheet. This defaults to the master 'lineage' tracing sheet used by the Drosphila Connectomics Group to
 store annotations on flywire neurons in different developmental lineages. Note: You may not have access.}
 
+\item{Verbose}{logical, if \code{TRUE} then \code{hemibrainr} communicates what it has found.}
+
 \item{...}{methods passed to \code{googlesheets4} functions.
 .}
 
@@ -48,8 +51,6 @@ results from \code{flywire_tracing_sheets}.}
 \item{fw.meta}{a \code{data.frame} of meta data on flywire neurons, e.g. as produced by \code{flywire_tracing_sheets}.or read by \code{flywire_meta}.}
 
 \item{cloudvolume.url}{URL for CloudVolume to fetch segmentation image data. The default value of NULL choose}
-
-\item{Verbose}{logical, if \code{TRUE} then \code{hemibrainr} communicates what it has found.}
 }
 \value{
 a \code{data.frame} with columns from the right tab, chosen using \code{regex}, from the given google sheet(s) \code{selected_sheet},
@@ -95,7 +96,7 @@ flywire.lineage.sheet = flywire_tracing_sheets()
 # See if we have a certain flywire neuron in our sheets
 in.lin = flywire_in(query = "111437.5,21121.25,2661",
 query.type = "flywire.xyz", Verbose = TRUE,
-fw.meta = flywire_tracing_sheet())
+fw.meta = flywire_tracing_sheets())
 
 # And in the meta data for neurons on the google drive
 in.meta = flywire_in(query = "111437.5,21121.25,2661",

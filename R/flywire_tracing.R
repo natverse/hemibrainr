@@ -72,6 +72,7 @@
 flywire_tracing_sheet <- function(regex,
                                   open=FALSE,
                                   selected_sheet = options()$flywire_lineages_gsheet,
+                                  Verbose = TRUE,
                                   ...) {
   if(open){
     open = interactive()
@@ -86,13 +87,14 @@ flywire_tracing_sheet <- function(regex,
   if(open){
     utils::browseURL(uu)
   }else{
-    gsheet_manipulation(FUN = googlesheets4::read_sheet,
-                                     wait = 20,
-                                     ss = selected_sheet,
-                                     guess_max = 3000,
-                                     sheet = sel$name,
-                                     return = TRUE,
-                        ...)
+      gsheet_manipulation(FUN = googlesheets4::read_sheet,
+                          wait = 20,
+                          ss = selected_sheet,
+                          guess_max = 3000,
+                          sheet = sel$name,
+                          return = TRUE,
+                          Verbose = Verbose,
+                          ...)
   }
 }
 
@@ -132,12 +134,7 @@ flywire_tracing_sheets.now <- function(regex = NULL,
     clear = FALSE, total = length(tabs))
   for(tab in tabs){
     pb$tick(tokens = list(what = tab))
-    gs.lin = suppressMessages(gsheet_manipulation(FUN = googlesheets4::read_sheet,
-                                              wait = 20,
-                                              ss = selected_sheet,
-                                              sheet = tab,
-                                              guess_max = 3000,
-                                              return = TRUE))
+    gs.lin = flywire_tracing_sheet(regex = tab, selected_sheet=selected_sheet, Verbose = FALSE)
     gs.lin$ws = tab
     gs.lineages = plyr::rbind.fill(gs.lineages, gs.lin)
   }
