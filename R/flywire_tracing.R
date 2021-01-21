@@ -84,7 +84,7 @@ flywire_tracing_sheet <- function(regex,
   }
   uu=paste0(u, "#gid=", sel$id)
   if(open){
-    browseURL(uu)
+    utils::browseURL(uu)
   }else{
     gsheet_manipulation(FUN = googlesheets4::read_sheet,
                                      wait = 20,
@@ -123,12 +123,12 @@ flywire_tracing_sheets.now <- function(regex = NULL,
     sel=regex_tab_names(regex=regex,selected_sheet=selected_sheet)
     tabs=sel$name
   }else{
-    tabs=hemibrainr:::gsheet_manipulation(FUN = googlesheets4::sheet_names,
+    tabs= gsheet_manipulation(FUN = googlesheets4::sheet_names,
                                                     ss = selected_sheet,
                                                     return = TRUE)
   }
   for(tab in unique(tabs)){
-    gs.lin = hemibrainr:::gsheet_manipulation(FUN = googlesheets4::read_sheet,
+    gs.lin = gsheet_manipulation(FUN = googlesheets4::read_sheet,
                                               wait = 20,
                                               ss = selected_sheet,
                                               sheet = tab,
