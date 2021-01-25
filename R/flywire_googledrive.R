@@ -363,6 +363,9 @@ flywire_request <- function(request,
                                     Verbose = FALSE), silent = TRUE)
         xyz = unique(c(xyz,fts$flywire.id))
       }
+      if(!length(xyz)){
+        stop("No flywire positions to add")
+      }
     }
   }else{
     type = if(nat::is.neuronlist(request)){
@@ -377,9 +380,6 @@ flywire_request <- function(request,
       }
     }
   }
-  if(!length(fw.xyz)){
-    stop("No flywire positions to add")
-  }
   message("Request is ", type)
 
   # Get coordinates
@@ -392,7 +392,7 @@ flywire_request <- function(request,
   }else if(type!="googlesheet"){
     xyz = as.data.frame(nat::xyzmatrix(request), stringsAsFactors =FALSE)
   }
-  fw.xyz = paste_coords(xyz)
+  fw.xyz = paste_coords(nat::xyzmatrix(xyz))
   fw.xyz = fw.xyz[fw.xyz!="(NA,NA,NA)"]
 
   # Add to Google sheet
