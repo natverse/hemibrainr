@@ -426,11 +426,11 @@ paste_coords <- function(xyz){
 
 # write columns to gsheet
 gsheet_update_cols <- function(write.cols,
-                                gs,
-                                selected_sheet,
-                                sheet = NULL,
+                               gs,
+                               selected_sheet,
+                               sheet = NULL,
                                Verbose = TRUE,
-                                ...
+                               ...
                        ){
   shared = setdiff(write.cols,colnames(write.cols))
   if(!length(shared)){
@@ -439,7 +439,13 @@ gsheet_update_cols <- function(write.cols,
   if(!nrow(gs)){
     stop("No rows in given data frame, gs")
   }
+  if(Verbose){
+    pb = progress::progress_bar$new(
+      format = "  updated :what [:bar] :percent eta: :eta",
+      clear = FALSE, total = length(write.cols))
+  }
   for(wc in write.cols){
+    if(Verbose) pb$tick(tokens = list(what = wc))
     index = match(wc,colnames(gs))
     if(index>26){
       letter = paste0("A",LETTERS[match(wc,colnames(gs))-26])
@@ -452,13 +458,16 @@ gsheet_update_cols <- function(write.cols,
     update = tryCatch(as.data.frame(nullToNA(gs[,wc]), stringsAsFactors = FALSE),
                       error = function(e) data.frame(rep(NA,nrow(gs)), stringsAsFactors = FALSE))
     colnames(update) = wc
+    if(Verbose){
+      message("Column: ", wc)
+    }
     gsheet_manipulation(FUN = googlesheets4::range_write,
                                      ss = selected_sheet,
                                      range = range,
                                      data = update,
                                      sheet = sheet,
                                      col_names = TRUE,
-                        Verbose=Verbose,
+                                     Verbose=FALSE,
                                      ...)
   }
 }
