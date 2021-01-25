@@ -8,7 +8,8 @@ flywire_ids_update(
   selected_sheets = NULL,
   chosen.columns = c("flywire.xyz", "flywire.svid", "flywire.id", "skid", "FAFB.xyz",
     "cell.type", "side", "ItoLee_Hemilineage", "Hartenstein_Hemilineage", "status"),
-  regex = NULL,
+  ws = NULL,
+  regex = FALSE,
   meta = NULL,
   match = FALSE,
   matching_sheet = options()$hemibrainr_matching_gsheet,
@@ -22,8 +23,10 @@ If \code{NULL} then defaults to \code{option('hemibrainr_gsheets')}.}
 \item{chosen.columns}{as well as writing column updates to the specified google sheets, this function returns a \code{data.frame} built from all given sheets and their
 individual tabs, that have been updated. This argument specifies which column you want returned. Filled with NAs if it does not exist.}
 
-\item{regex}{character vector, tabs (i.e. work sheets) on the google sheet to query/read. This works with regex, so you only need to give the name partially.
+\item{ws}{character vector, tabs (i.e. work sheets) on the google sheet to query/read. This works with regex, so you only need to give the name partially.
 If set to \code{NULL} for \code{flywire_tracing_sheets}, the whole google sheet is read and all tabs are combined using \code{plyr::rbind.fill}.}
+
+\item{regex}{logical, use \code{ws} with regex.}
 
 \item{meta}{meta data for flywire neurons, e.g. as retreived using \code{\link{flywire_meta}}. Used to efficiently input \code{flywire.xyz} column if only a \code{flywire.id} entry has been given.
 Only works if that id is also in this provided \code{data.frame}, \code{meta}.}

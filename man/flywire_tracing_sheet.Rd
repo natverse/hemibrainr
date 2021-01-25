@@ -8,7 +8,8 @@
 \title{Retrieve or go to a specific google sheet describing flywire neurons.}
 \usage{
 flywire_tracing_sheet(
-  regex,
+  ws,
+  regex = FALSE,
   open = FALSE,
   selected_sheet = options()$flywire_lineages_gsheet,
   Verbose = TRUE,
@@ -16,14 +17,14 @@ flywire_tracing_sheet(
 )
 
 flywire_tracing_sheets(
-  regex = NULL,
+  ws = NULL,
   selected_sheet = options()$flywire_lineages_gsheet
 )
 
 flywire_in(
   query,
   query.type = c("flywire.id", "flywire.xyz", "flywire.svid"),
-  regex = NULL,
+  ws = NULL,
   fw.meta = flywire_meta(),
   cloudvolume.url = NULL,
   Verbose = TRUE
@@ -40,8 +41,10 @@ flywire_tracing_update(
 )
 }
 \arguments{
-\item{regex}{character vector, tabs (i.e. work sheets) on the google sheet to query/read. This works with regex, so you only need to give the name partially.
+\item{ws}{character vector, tabs (i.e. work sheets) on the google sheet to query/read. This works with regex, if \code{regex==TRUE}, so you only need to give the name partially.
 If set to \code{NULL} for \code{flywire_tracing_sheets}, the whole google sheet is read and all tabs are combined using \code{plyr::rbind.fill}.}
+
+\item{regex}{logical, use \code{ws} with regex.}
 
 \item{open}{logial, if \code{TRUE} the relevant google sheet tab is opened in your browser. Else, a \code{data.frame} of the tab is returned.}
 

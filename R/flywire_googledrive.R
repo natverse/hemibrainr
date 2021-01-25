@@ -351,17 +351,17 @@ flywire_request <- function(request,
   }
   # What kind of request is it?
   if(gsheet){
-    fw.xyz = c()
+    xyz = c()
     type = "googlesheet"
     for(sheet in request){
       tabs = hemibrainr:::gsheet_manipulation(FUN = googlesheets4::sheet_names,
                                               ss = sheet,
                                               return = TRUE)
       for(tab in tabs){
-        fts = flywire_tracing_sheet(regex = tab,
+        fts = try(flywire_tracing_sheet(ws = tab,
                                     selected_sheet=sheet,
-                                    Verbose = FALSE)
-        fw.xyz = unique(c(fw.xyz,fts$flywire.id))
+                                    Verbose = FALSE), silent = TRUE)
+        xyz = unique(c(fw.xyz,fts$flywire.id))
       }
     }
   }else{
@@ -389,14 +389,14 @@ flywire_request <- function(request,
   if(nat::is.neuronlist(request)){
     fb = flywire_basics(request)
     xyz = do.call(rbind, lapply(fb[,"flywire.xyz"], function(y) strsplit(y,",| |;|:")))
-  }else{
+  }else if(type!="googlesheet"){
     xyz = as.data.frame(nat::xyzmatrix(request), stringsAsFactors =FALSE)
   }
   fw.xyz = paste_coords(xyz)
   fw.xyz = fw.xyz[fw.xyz!="(NA,NA,NA)"]
 
   # Add to Google sheet
-  gs = try(flywire_tracing_sheet(regex=tab,open=FALSE,selected_sheet=selected_sheet), silent = FALSE)
+  gs = try(flywire_tracing_sheet(ws=tab,open=FALSE,selected_sheet=selected_sheet), silent = FALSE)
   if(class(gs)!="try-error"){
     fw.xyz = setdiff(fw.xyz,gs$flywire.xyz)
     update = data.frame(User = "flywire", flywire.xyz = fw.xyz)
@@ -601,8 +601,9 @@ flywire_ids <-function(local = FALSE, folder = "flywire_neurons/", sql = FALSE, 
 #' If \code{NULL} then defaults to \code{option('hemibrainr_gsheets')}.
 #' @param chosen.columns as well as writing column updates to the specified google sheets, this function returns a \code{data.frame} built from all given sheets and their
 #' individual tabs, that have been updated. This argument specifies which column you want returned. Filled with NAs if it does not exist.
-#' @param regex character vector, tabs (i.e. work sheets) on the google sheet to query/read. This works with regex, so you only need to give the name partially.
+#' @param ws character vector, tabs (i.e. work sheets) on the google sheet to query/read. This works with regex, so you only need to give the name partially.
 #' If set to \code{NULL} for \code{flywire_tracing_sheets}, the whole google sheet is read and all tabs are combined using \code{plyr::rbind.fill}.
+#' @param regex logical, use \code{ws} with regex.
 #' @param match logical. If \code{TRUE}, hemibrain matches given.
 #' @param meta meta data for flywire neurons, e.g. as retreived using \code{\link{flywire_meta}}. Used to efficiently input \code{flywire.xyz} column if only a \code{flywire.id} entry has been given.
 #' Only works if that id is also in this provided \code{data.frame}, \code{meta}.
@@ -647,7 +648,8 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
                                                   "FAFB.xyz", "cell.type", "side",
                                                   "ItoLee_Hemilineage", "Hartenstein_Hemilineage",
                                                   "status"),
-                               regex = NULL,
+                               ws = NULL,
+                               regex = FALSE,
                                meta = NULL,
                                match = FALSE,
                                matching_sheet = options()$hemibrainr_matching_gsheet,
@@ -660,20 +662,22 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
   for(selected_sheet in selected_sheets){
     ## Read Google sheets and extract glywire neuron positions
     message("### Working on google sheet: ", selected_sheet)
-    if(is.null(regex)){
+    if(is.null(ws)){
       tabs = gsheet_manipulation(FUN = googlesheets4::sheet_names,
                                  ss = selected_sheet,
                                  return = TRUE)
     }else{
-      work_sheets=regex_tab_names(regex=regex,selected_sheet=selected_sheet)$name
-      tabs = work_sheets
+      if(regex){
+        ws=regex_tab_names(regex=ws,selected_sheet=selected_sheet)$name
+      }
+      tabs=ws
     }
     pb = progress::progress_bar$new(
       format = "  updating tab :what [:bar] :percent eta: :eta",
       clear = FALSE, total = length(tabs))
     for(tab in tabs){
       pb$tick(tokens = list(what = tab))
-      gs.t = gs.t.current = flywire_tracing_sheet(regex = tab, selected_sheet=selected_sheet, Verbose = FALSE)
+      gs.t = gs.t.current = flywire_tracing_sheet(ws = tab, selected_sheet=selected_sheet, Verbose = FALSE)
       used.cols = colnames(gs.t.current)
       if(nrow(gs.t)&&ncol(gs.t)&&sum(grepl("fw.x|flywire.xyz",used.cols))>0){
         # Separate x,y,z positions
@@ -768,9 +772,7 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
   }
   # Make this unique, but keep row with most information
   master = gs
-  master = master[!is.na(master$fw.x),]
-  master = master[!is.na(master$fw.y),]
-  master = master[!is.na(master$fw.z),]
+  master = master[!is.na(master$fw.xyz),]
   master$filled = apply(master, 1, function(r) sum(!is.na(r)))
   master = master[order(master$filled,decreasing = TRUE),]
   master = master[!duplicated(master$flywire.xyz),]
@@ -862,7 +864,7 @@ matches_update <- function(matching_sheet = options()$hemibrainr_matching_gsheet
                                ss = selected_sheet,
                                return = TRUE)
     for(tab in tabs){
-      gs.t = gs.t.current = flywire_tracing_sheet(regex = tab, selected_sheet=selected_sheet)
+      gs.t = gs.t.current = flywire_tracing_sheet(ws = tab, selected_sheet=selected_sheet)
       used.cols = colnames(gs.t.current)
       field = match.field
       if(field=="CATMAID"){ # for historic reasons. Chould fix.

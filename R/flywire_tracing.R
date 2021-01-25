@@ -8,8 +8,9 @@
 #' You can also see if a flywire neuron of interest in in a google sheet (\code{flywire_in(fw.meta = flywire_tracing_sheets())}),
 #' and see if a flywire neuron of interest is among the data stored on the hemibrainr drive, i.e. (\code{flywire_in(fw.meta = flywire_meta())}).
 #'
-#' @param regex character vector, tabs (i.e. work sheets) on the google sheet to query/read. This works with regex, so you only need to give the name partially.
+#' @param ws character vector, tabs (i.e. work sheets) on the google sheet to query/read. This works with regex, if \code{regex==TRUE}, so you only need to give the name partially.
 #' If set to \code{NULL} for \code{flywire_tracing_sheets}, the whole google sheet is read and all tabs are combined using \code{plyr::rbind.fill}.
+#' @param regex logical, use \code{ws} with regex.
 #' @param open logial, if \code{TRUE} the relevant google sheet tab is opened in your browser. Else, a \code{data.frame} of the tab is returned.
 #' @param selected_sheet character vector indicating the a flywire tracing google sheet. This defaults to the master 'lineage' tracing sheet used by the Drosphila Connectomics Group to
 #' store annotations on flywire neurons in different developmental lineages. Note: You may not have access.
@@ -69,29 +70,35 @@
 #'   \code{\link{flywire_neurons}}
 #' @name flywire_tracing_sheet
 #' @export
-flywire_tracing_sheet <- function(regex,
+flywire_tracing_sheet <- function(ws,
+                                  regex = FALSE,
                                   open=FALSE,
                                   selected_sheet = options()$flywire_lineages_gsheet,
                                   Verbose = TRUE,
                                   ...) {
-  if(open){
-    open = interactive()
-  }
-  u= sprintf("https://docs.google.com/spreadsheets/d/%s/edit", selected_sheet)
-  sel=regex_tab_names(regex=regex,selected_sheet=selected_sheet,...)
-  if(nrow(sel)>1) {
-    warning("Multiple matches. Keeping first: ", paste(sel$name, collapse = ','))
-    sel=sel[1,,drop=F]
-  }
-  uu=paste0(u, "#gid=", sel$id)
-  if(open){
+  if(open&interactive()){
+    u= sprintf("https://docs.google.com/spreadsheets/d/%s/edit", selected_sheet)
+    sel=regex_tab_names(regex=ws,selected_sheet=selected_sheet,...)
+    if(nrow(sel)>1) {
+      warning("Multiple matches. Keeping first: ", paste(sel$name, collapse = ','))
+      sel=sel[1,,drop=F]
+    }
+    uu=paste0(u, "#gid=", sel$id)
     utils::browseURL(uu)
   }else{
-      gsheet_manipulation(FUN = googlesheets4::read_sheet,
+    if(regex){
+      sel=regex_tab_names(regex=ws,selected_sheet=selected_sheet,...)
+      if(nrow(sel)>1) {
+        warning("Multiple matches. Keeping first: ", paste(sel$name, collapse = ','))
+        sel=sel[1,,drop=F]
+      }
+      ws = sel$name
+    }
+    gsheet_manipulation(FUN = googlesheets4::read_sheet,
                           wait = 20,
                           ss = selected_sheet,
                           guess_max = 3000,
-                          sheet = sel$name,
+                          sheet = ws,
                           return = TRUE,
                           Verbose = Verbose,
                           ...)
@@ -112,17 +119,17 @@ regex_tab_names <- function(regex, selected_sheet, ...){
 
 #' @export
 #' @rdname flywire_tracing_sheet
-flywire_tracing_sheets <- memoise::memoise(function(regex = NULL,
+flywire_tracing_sheets <- memoise::memoise(function(ws = NULL,
                                                     selected_sheet = options()$flywire_lineages_gsheet){
-  flywire_tracing_sheets.now(regex = regex, selected_sheet=selected_sheet)
+  flywire_tracing_sheets.now(ws = ws, selected_sheet=selected_sheet)
 },  ~memoise::timeout(30*60))
 
 # hidden
-flywire_tracing_sheets.now <- function(regex = NULL,
+flywire_tracing_sheets.now <- function(ws = NULL,
                                         selected_sheet = options()$flywire_lineages_gsheet){
   gs.lineages  = data.frame(stringsAsFactors = FALSE)
-  if(!is.null(regex)){
-    sel=regex_tab_names(regex=regex,selected_sheet=selected_sheet)
+  if(!is.null(ws)){
+    sel=regex_tab_names(regex=ws,selected_sheet=selected_sheet)
     tabs=sel$name
   }else{
     tabs=gsheet_manipulation(FUN = googlesheets4::sheet_names,
@@ -134,7 +141,7 @@ flywire_tracing_sheets.now <- function(regex = NULL,
     clear = FALSE, total = length(tabs))
   for(tab in tabs){
     pb$tick(tokens = list(what = tab))
-    gs.lin = flywire_tracing_sheet(regex = tab, selected_sheet=selected_sheet, Verbose = FALSE)
+    gs.lin = flywire_tracing_sheet(ws = tab, selected_sheet=selected_sheet, Verbose = FALSE)
     gs.lin$ws = tab
     gs.lineages = plyr::rbind.fill(gs.lineages, gs.lin)
   }
@@ -145,7 +152,7 @@ flywire_tracing_sheets.now <- function(regex = NULL,
 #' @rdname flywire_tracing_sheet
 flywire_in <- function(query,
                              query.type = c("flywire.id","flywire.xyz","flywire.svid"),
-                             regex = NULL,
+                             ws = NULL,
                              fw.meta = flywire_meta(),
                              cloudvolume.url = NULL,
                              Verbose = TRUE){
@@ -204,7 +211,7 @@ flywire_tracing_update <- function(tab,
                                    Verbose = TRUE,
                                    return = FALSE){
   # Read sheet
-  gs = try(flywire_tracing_sheet(regex=tab,open=FALSE,selected_sheet=selected_sheet, Verbose=Verbose), silent = TRUE)
+  gs = try(flywire_tracing_sheet(ws=tab,open=FALSE,selected_sheet=selected_sheet, Verbose=Verbose), silent = TRUE)
 
   # Add new tab if needed
   if(class(gs)=="try-error"){
@@ -251,7 +258,7 @@ flywire_tracing_update <- function(tab,
                         ss = selected_sheet,
                         sheet = tab,
                         Verbose = Verbose)
-    gs = try(flywire_tracing_sheet(regex=tab,open=FALSE,selected_sheet=selected_sheet, Verbose=Verbose), silent = TRUE)
+    gs = try(flywire_tracing_sheet(ws=tab,open=FALSE,selected_sheet=selected_sheet, Verbose=Verbose), silent = TRUE)
   }
 
   # Merge gs and update
@@ -272,7 +279,7 @@ flywire_tracing_update <- function(tab,
 
   # Return a data.frame that represents new sheet
   if(return){
-    try(flywire_tracing_sheet(regex=tab,open=FALSE,selected_sheet=selected_sheet), silent = FALSE)
+    try(flywire_tracing_sheet(ws=tab,open=FALSE,selected_sheet=selected_sheet), silent = FALSE)
   }else{
     invisible()
   }
