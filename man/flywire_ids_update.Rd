@@ -6,14 +6,13 @@
 \usage{
 flywire_ids_update(
   selected_sheets = NULL,
-  chosen.columns = c("fw.x", "fw.y", "fw.z", "flywire.xyz", "flywire.id", "skid",
-    "FAFB.xyz", "cell.type", "side", "ItoLee_Hemilineage", "Hartenstein_Hemilineage"),
+  chosen.columns = c("flywire.xyz", "flywire.id", "skid", "FAFB.xyz", "cell.type",
+    "side", "ItoLee_Hemilineage", "Hartenstein_Hemilineage"),
   regex = NULL,
   meta = NULL,
   match = FALSE,
   matching_sheet = options()$hemibrainr_matching_gsheet,
   priority = c("FAFB", "hemibrain"),
-  numCores = 1,
   max.tries = 10
 )
 }
@@ -37,8 +36,6 @@ Only works if that id is also in this provided \code{data.frame}, \code{meta}.}
 
 \item{priority}{whether to use FAFB->hemibrain matches (FAFB) or hemibrain->FAFB matches (hemibrain) in order to ascribe
 cell type names to FAFB neurons. In both cases, cell type names are attached to hemibrain bodyids, and propagated to their FAFB matches.}
-
-\item{numCores}{if run in parallel, the number of cores to use. This is not necessary unless you have >10k points and want to see if you can get a speed up.}
 
 \item{max.tries}{maximum number of attempts to write to/read from the google sheets before aborting. Sometimes attempts fail due to sporadic connections or API issues.}
 }
