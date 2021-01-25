@@ -20,6 +20,7 @@
 #' flagged to be processed into neuron skeletons that can be called by \code{flywire_neurons}.
 #' @param nblast which flywire NBLAST to update on Google drive.
 #' @param selected_file the Google sheet onto which to add new flywire coordinate. I.e. \href{https://docs.google.com/spreadsheets/d/1rzG1MuZYacM-vbW7100aK8HeA-BY6dWAVXQ7TB6E2cQ/edit#gid=0}{Google sheet}.
+#' @param selected_sheet the Google sheet onto which to add new flywire coordinate. I.e. \href{https://docs.google.com/spreadsheets/d/1rzG1MuZYacM-vbW7100aK8HeA-BY6dWAVXQ7TB6E2cQ/edit#gid=0}{Google sheet}.
 #' @param sheet the tab onto which to add your requests.
 #' @param swc logical. When using neurons with \code{flywire_neurons} from the Google drive, whether to read \code{.swc} files (if \code{TRUE}), or a neuronlistfh object (default).
 #' @param ... Additional arguments passed to \code{nat::nlapply}.and/or \code{fafbseg::skeletor}.
@@ -338,7 +339,7 @@ flywire_basics <- function(flywire.neurons, ...){
 #' @rdname flywire_neurons
 #' @export
 flywire_request <- function(request,
-                            selected_file = options()$flywire_flagged_gsheet,
+                            selected_sheet = options()$flywire_flagged_gsheet,
                             sheet = "flywire",
                             ...){
   if(!requireNamespace("fafbseg", quietly = TRUE)) {
@@ -369,13 +370,26 @@ flywire_request <- function(request,
   }else{
     xyz = as.data.frame(nat::xyzmatrix(request), stringsAsFactors =FALSE)
   }
+  fw.xyz = paste_coords(xyz)
+  fw.xyz = fw.xyz[fw.xyz!="(NA,NA,NA)"]
 
   # Add to Google sheet
-  batches = split(1:nrow(xyz), ceiling(seq_along(1:nrow(xyz))/500))
+  gs = try(flywire_tracing_sheet(regex=tab,open=FALSE,selected_sheet=selected_sheet), silent = FALSE)
+  if(class(gs)!="try-error"){
+    fw.xyz = setdiff(fw.xyz,gs$flywire.xyz)
+    update = data.frame(User = "flywire", flywire.xyz = fw.xyz)
+    for(col in setdiff(colnames(gs),colnames(update))){
+      update[[col]] = NA
+    }
+    update = update[,colnames(gs)]
+  }else{
+    update = data.frame(User = "flywire", flywire.xyz = fw.xyz)
+  }
+  batches = split(1:nrow(update), ceiling(seq_along(1:nrow(update))/500))
   for(i in batches){
     gsheet_manipulation(FUN = googlesheets4::sheet_append,
-                        data = xyz[min(i):max(i),],
-                        ss = selected_file,
+                        data = update[min(i):max(i),],
+                        ss = selected_sheet,
                         sheet = sheet)
   }
   message("FlyWire positions added")
