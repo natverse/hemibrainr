@@ -565,7 +565,6 @@ flywire_ids <-function(local = FALSE, folder = "flywire_neurons/", sql = FALSE, 
 #' If \code{NULL} then defaults to \code{option('hemibrainr_gsheets')}.
 #' @param chosen.columns as well as writing column updates to the specified google sheets, this function returns a \code{data.frame} built from all given sheets and their
 #' individual tabs, that have been updated. This argument specifies which column you want returned. Filled with NAs if it does not exist.
-#' @param numCores if run in parallel, the number of cores to use. This is not necessary unless you have >10k points and want to see if you can get a speed up.
 #' @param max.tries maximum number of attempts to write to/read from the google sheets before aborting. Sometimes attempts fail due to sporadic connections or API issues.
 #' @param regex character vector, tabs (i.e. work sheets) on the google sheet to query/read. This works with regex, so you only need to give the name partially.
 #' If set to \code{NULL} for \code{flywire_tracing_sheets}, the whole google sheet is read and all tabs are combined using \code{plyr::rbind.fill}.
@@ -608,7 +607,7 @@ flywire_ids <-function(local = FALSE, folder = "flywire_neurons/", sql = FALSE, 
 #' @name flywire_ids_update
 #' @export
 flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK8HeA-BY6dWAVXQ7TB6E2cQ"
-                               chosen.columns = c("fw.x","fw.y",'fw.z', 'flywire.xyz',
+                               chosen.columns = c('flywire.xyz',
                                                   "flywire.id", "skid",
                                                   "FAFB.xyz", "cell.type", "side",
                                                   "ItoLee_Hemilineage", "Hartenstein_Hemilineage"),
@@ -617,7 +616,6 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
                                match = FALSE,
                                matching_sheet = options()$hemibrainr_matching_gsheet,
                                priority = c("FAFB","hemibrain"),
-                               numCores = 1,
                                max.tries = 10){
   if(is.null(selected_sheets)){
     selected_sheets = getOption("hemibrainr_gsheets", stop("Please set option('hemibrainr_gsheets')"))
@@ -636,7 +634,7 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
       tabs = work_sheets
     }
     pb = progress::progress_bar$new(
-      format = "  downloading :what [:bar] :percent eta: :eta",
+      format = "  updating tab :what [:bar] :percent eta: :eta",
       clear = FALSE, total = length(tabs))
     for(tab in tabs){
       pb$tick(tokens = list(what = tab))
@@ -681,34 +679,6 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
           gs.t$fw.x = as.numeric(gs.t$fw.x)
           gs.t$fw.y = as.numeric(gs.t$fw.y)
           gs.t$fw.z = as.numeric(gs.t$fw.z)
-          if(numCores>1){
-            batch = 1
-            batches = split(1:nrow(gs.t), round(seq(from = 1, to = numCores, length.out = nrow(gs.t))))
-            foreach.ids <- foreach::foreach (batch = 1:length(batches)) %dopar% {
-              pos = gs.t[batches[[batch]],]
-              pos = pos[apply(pos, 1, function(row) sum(is.na(row[c("fw.x","fw.y",'fw.z')]))==0),]
-              p = nat::pointsinside(pos[,c("fw.x","fw.y",'fw.z')],bbx)
-              pos = pos[p,]
-              pos = pos[!is.na(pos$fw.x),]
-              if(nrow(pos)){
-                tries = 0
-                try.again = TRUE
-                while(try.again){
-                  tries = tries+1
-                  i <- tryCatch(fafbseg::flywire_xyz2id(pos[,c("fw.x","fw.y",'fw.z')], rawcoords = TRUE),
-                                error = function(e){cat(as.character(e));rep("failed",nrow(pos))})
-                  names(i) = pos$flywire.xyz
-                  i[is.na(i)|is.nan(i)] = "failed"
-                  if(all(i%in%c("failed"))&tries<max.tries){
-                    try.again = TRUE
-                  }else{
-                    try.again = FALSE
-                  }
-                }
-                i
-              }
-            }
-          }else{
             pos = gs.t[apply(gs.t, 1, function(row) sum(is.na(row[c("fw.x","fw.y",'fw.z')]))==0),]
             p = nat::pointsinside(pos[,c("fw.x","fw.y",'fw.z')],bbx)
             pos = pos[p,]
@@ -719,7 +689,6 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
             }else{
               foreach.ids = NULL
             }
-          }
           fids = unlist(foreach.ids)
           fids[is.na(fids)|is.nan(fids)] = "0"
           replacement = fids[match(gs.t$flywire.xyz ,names(fids))]
