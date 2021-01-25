@@ -361,7 +361,7 @@ flywire_request <- function(request,
         fts = try(flywire_tracing_sheet(ws = tab,
                                     selected_sheet=sheet,
                                     Verbose = FALSE), silent = TRUE)
-        xyz = unique(c(fw.xyz,fts$flywire.id))
+        xyz = unique(c(xyz,fts$flywire.id))
       }
     }
   }else{
