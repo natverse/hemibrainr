@@ -22,6 +22,8 @@
 #' @param selected_file the Google sheet onto which to add new flywire coordinate. I.e. \href{https://docs.google.com/spreadsheets/d/1rzG1MuZYacM-vbW7100aK8HeA-BY6dWAVXQ7TB6E2cQ/edit#gid=0}{Google sheet}.
 #' @param selected_sheet the Google sheet onto which to add new flywire coordinate. I.e. \href{https://docs.google.com/spreadsheets/d/1rzG1MuZYacM-vbW7100aK8HeA-BY6dWAVXQ7TB6E2cQ/edit#gid=0}{Google sheet}.
 #' @param sheet the tab onto which to add your requests.
+#' @param gsheet logical, whether or not the request is are googlesheet keys. If they are, every item in their \code{flywire.xyz} columns is added to
+#' the sheet specified by \code{selected_sheet}.
 #' @param swc logical. When using neurons with \code{flywire_neurons} from the Google drive, whether to read \code{.swc} files (if \code{TRUE}), or a neuronlistfh object (default).
 #' @param ... Additional arguments passed to \code{nat::nlapply}.and/or \code{fafbseg::skeletor}.
 #'
@@ -339,6 +341,7 @@ flywire_basics <- function(flywire.neurons, ...){
 #' @rdname flywire_neurons
 #' @export
 flywire_request <- function(request,
+                            gsheet = FALSE,
                             selected_sheet = options()$flywire_flagged_gsheet,
                             sheet = "flywire",
                             ...){
@@ -347,16 +350,35 @@ flywire_request <- function(request,
          "remotes::install_github('natverse/fafbseg')")
   }
   # What kind of request is it?
-  type = if(nat::is.neuronlist(request)){
-    "neuronlist"
-  }else if(is.data.frame(request)|is.matrix(request)){
-    "xyz"
+  if(gsheet){
+    fw.xyz = c()
+    type = "googlesheet"
+    for(sheet in request){
+      tabs = hemibrainr:::gsheet_manipulation(FUN = googlesheets4::sheet_names,
+                                              ss = sheet,
+                                              return = TRUE)
+      for(tab in tabs){
+        fts = flywire_tracing_sheet(regex = tab,
+                                    selected_sheet=sheet,
+                                    Verbose = FALSE)
+        fw.xyz = unique(c(fw.xyz,fts$flywire.id))
+      }
+    }
   }else{
-    if(nrow(nat::xyzmatrix(request))){
+    type = if(nat::is.neuronlist(request)){
+      "neuronlist"
+    }else if(is.data.frame(request)|is.matrix(request)){
       "xyz"
     }else{
-      "ids"
+      if(nrow(nat::xyzmatrix(request))){
+        "xyz"
+      }else{
+        "ids"
+      }
     }
+  }
+  if(!length(fw.xyz)){
+    stop("No flywire positions to add")
   }
   message("Request is ", type)
 

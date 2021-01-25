@@ -36,7 +36,8 @@ flywire_basics(flywire.neurons, ...)
 
 flywire_request(
   request,
-  selected_file = options()$flywire_flagged_gsheet,
+  gsheet = FALSE,
+  selected_sheet = options()$flywire_flagged_gsheet,
   sheet = "flywire",
   ...
 )
@@ -63,9 +64,14 @@ a point in the primary neurite tract that can be used as a stable reference for 
 \href{https://docs.google.com/spreadsheets/d/1rzG1MuZYacM-vbW7100aK8HeA-BY6dWAVXQ7TB6E2cQ/edit#gid=0}{Google sheet} that records flywire positions
 flagged to be processed into neuron skeletons that can be called by \code{flywire_neurons}.}
 
-\item{selected_file}{the Google sheet onto which to add new flywire coordinate. I.e. \href{https://docs.google.com/spreadsheets/d/1rzG1MuZYacM-vbW7100aK8HeA-BY6dWAVXQ7TB6E2cQ/edit#gid=0}{Google sheet}.}
+\item{gsheet}{logical, whether or not the request is are googlesheet keys. If they are, every item in their \code{flywire.xyz} columns is added to
+the sheet specified by \code{selected_sheet}.}
+
+\item{selected_sheet}{the Google sheet onto which to add new flywire coordinate. I.e. \href{https://docs.google.com/spreadsheets/d/1rzG1MuZYacM-vbW7100aK8HeA-BY6dWAVXQ7TB6E2cQ/edit#gid=0}{Google sheet}.}
 
 \item{sheet}{the tab onto which to add your requests.}
+
+\item{selected_file}{the Google sheet onto which to add new flywire coordinate. I.e. \href{https://docs.google.com/spreadsheets/d/1rzG1MuZYacM-vbW7100aK8HeA-BY6dWAVXQ7TB6E2cQ/edit#gid=0}{Google sheet}.}
 }
 \value{
 A \code{neuronlist} object containing flywire skeletons. In the meta-data, it might be useful for some users to note that
