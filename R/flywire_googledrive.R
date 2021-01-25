@@ -771,8 +771,7 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
     }
   }
   # Make this unique, but keep row with most information
-  master = gs
-  master = master[!is.na(master$fw.xyz),]
+  master = gs[!is.na(gs$flywire.xyz),]
   master$filled = apply(master, 1, function(r) sum(!is.na(r)))
   master = master[order(master$filled,decreasing = TRUE),]
   master = master[!duplicated(master$flywire.xyz),]
