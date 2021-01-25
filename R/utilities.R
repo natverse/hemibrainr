@@ -582,4 +582,71 @@ correct_id <-function(v){
   gsub(" ","",v)
 }
 
+# hidden
+nblast_big <-function(query.neurons, target.neurons,
+                      query.neurons.addition = NULL,
+                      query.batch = 100,
+                      target.batch = 100){
+
+  # Get batches to iterate over
+  query = names(query.neurons)
+  target = names(target.neurons)
+  batches.query = split(sample(query), round(seq(from = 1, to = min(query.batch,length(query)), length.out = length(query))))
+  batches.target = split(sample(target), round(seq(from = 1, to = min(target.batch,length(target)), length.out = length(target))))
+  nblast.mat = matrix(ncol = length(query), nrow = length(target), dimnames =list(target,query))
+
+  # Foreach loop
+  by.query <- foreach::foreach (chosen.query = batches.query) %do% {
+    by.targets <- foreach::foreach (chosen.target = batches.target) %do% {
+      ### NBLAST native
+      nblast.res.1 = nat.nblast::nblast(query = query.neurons[chosen.query],
+                                        target = target.neurons[chosen.target],
+                                        .parallel=TRUE,
+                                        normalised = TRUE)
+      nblast.res.2 = nat.nblast::nblast(query = target.neurons[chosen.target],
+                                        target = query.neurons[chosen.query],
+                                        .parallel=TRUE,
+                                        normalised = TRUE)
+      nblast.res.native = (nblast.res.1+t(nblast.res.2))/2
+      ### NBLAST mirrored
+      if(!is.null(query.neurons.addition)){
+        nblast.res.3 = nat.nblast::nblast(query = query.neurons.addition[chosen.query],
+                                          target = target.neurons[chosen.target],
+                                          .parallel=TRUE,
+                                          normalised = TRUE)
+        nblast.res.4 = nat.nblast::nblast(query = target.neurons[chosen.target],
+                                          target = query.neurons.addition[chosen.query],
+                                          .parallel=TRUE,
+                                          normalised = TRUE)
+        nblast.res.m = (nblast.res.3+t(nblast.res.4))/2
+        nblast.res.sub = plyr::rbind.fill.matrix(t(nblast.res.native), t(nblast.res.m))
+        rownames(nblast.res.sub) = c(colnames(nblast.res.native), colnames(nblast.res.sub))
+        nblast.res.sub = collapse_matrix_by_names(nblast.res.sub, FUN = max)
+      }else{
+        nblast.res.sub = nblast.res.native
+      }
+      nblast.res.sub
+    }
+    section <- do.call(rbind,by.targets)
+  }
+  nblast.mat = do.call(cbind,by.targets)
+  nblast.mat
+}
+
+# hidden
+is64ToChar <- function(res){
+  # convert 64 bit ints to char (safer but bigger)
+  is64=sapply(res, bit64::is.integer64)
+  if(any(is64)) {
+    for(i in which(is64)) {
+      res[[i]]=as.character(res[[i]])
+    }
+  }
+  res
+}
+
+
+
+
+
 
