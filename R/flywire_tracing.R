@@ -187,6 +187,97 @@ flywire_in <- function(query,
   df
 }
 
+#' @param tab the tab on \code{selected_sheet} to update.
+#' @param update a \code{data.frame} to use to update columns or add rows to the google sheet tab specified. This item must have at least
+#' the same number of entries as the google sheet tab.
+#' @param write.cols character vector, the columns from update that will be used to replace the column in the google sheet.
+#' @param by character, the column by which to join the old google sheet tab and \code{update} using \code{dplyr::inner_join}. This column
+#' must be in both the google sheet tab and \code{update}.
+#' @param return logical, whether or not to return the updated googlesheet tab as a \code{data.frame}.
+#' @name flywire_tracing_sheet
+#' @export
+flywire_tracing_update <- function(tab,
+                                   selected_sheet,
+                                   update,
+                                   write.cols = colnames(update),
+                                   by = "flywire.id",
+                                   Verbose = TRUE,
+                                   return = FALSE){
+  # Read sheet
+  gs = try(flywire_tracing_sheet(regex=tab,open=FALSE,selected_sheet=selected_sheet, Verbose=Verbose), silent = TRUE)
+
+  # Add new tab if needed
+  if(class(gs)=="try-error"){
+    tabs = gsheet_manipulation(FUN = googlesheets4::sheet_names,
+                                            ss = selected_sheet,
+                                            return = TRUE)
+    if(!tab%in%tabs){
+      warning("Adding new tab ", tab)
+      gs.added = gsheet_manipulation(FUN = googlesheets4::sheet_add,
+                                     ss = selected_sheet,
+                                     sheet = tab)
+      gs.added = gsheet_manipulation(FUN = googlesheets4::sheet_write,
+                                     data = update,
+                                     ss = selected_sheet,
+                                     sheet = tab)
+    }
+    return(invisible())
+  }
+
+  # Make sure write.cols in update
+  update = unlist_df(update)
+  missing.cols = setdiff(write.cols,colnames(update))
+  if(length(missing.cols)){
+    stop("write.cols missing from update")
+  }
+  missing.ids = setdiff(gs[[by]],update[[by]])
+  if(length(missing.cols)){
+    warning("entries from ", by," missing in update")
+  }
+
+  # Append missing rows
+  if(nrow(update)>nrow(gs)){
+    missing.rows = subset(update, !updated[[by]]%in%gs[[by]])
+    if(Verbose){
+      message("Adding ", nrow(update)," new rows")
+    }
+    missing.cols = setdiff(colnames(gs),colnames(update))
+    for(mc in missing.cols){
+      missing.rows[[mc]] = NA
+    }
+    missing.rows = missing.rows[,colnames(gs)]
+    gsheet_manipulation(FUN = googlesheets4::sheet_append,
+                        data = missing.rows,
+                        ss = selected_sheet,
+                        sheet = tab,
+                        Verbose = Verbose)
+    gs = try(flywire_tracing_sheet(regex=tab,open=FALSE,selected_sheet=selected_sheet, Verbose=Verbose), silent = TRUE)
+  }
+
+  # Merge gs and update
+  gs[,write.cols] = update[match(gs[[by]],update[[by]]),write.cols]
+  if(!nrow(update)){
+    stop("nothing to update")
+  }
+
+  #  Update columns
+  if(!identical(gs,update)){
+    gsheet_update_cols(
+      write.cols = write.cols,
+      gs=gs,
+      selected_sheet=selected_sheet,
+      sheet = tab,
+      Verbose = Verbose)
+  }
+
+  # Return a data.frame that represents new sheet
+  if(return){
+    try(flywire_tracing_sheet(regex=tab,open=FALSE,selected_sheet=selected_sheet), silent = FALSE)
+  }else{
+    invisible()
+  }
+}
+
 # hidden, caches result for 5min in current session
 sheet_properties.memo <- memoise::memoise(googlesheets4::sheet_properties, ~memoise::timeout(5*60))
 

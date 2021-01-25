@@ -4,6 +4,7 @@
 \alias{flywire_tracing_sheet}
 \alias{flywire_tracing_sheets}
 \alias{flywire_in}
+\alias{flywire_tracing_update}
 \title{Retrieve or go to a specific google sheet describing flywire neurons.}
 \usage{
 flywire_tracing_sheet(
@@ -26,6 +27,16 @@ flywire_in(
   fw.meta = flywire_meta(),
   cloudvolume.url = NULL,
   Verbose = TRUE
+)
+
+flywire_tracing_update(
+  tab,
+  selected_sheet,
+  update,
+  write.cols = colnames(update),
+  by = "flywire.id",
+  Verbose = TRUE,
+  return = FALSE
 )
 }
 \arguments{
@@ -51,6 +62,18 @@ results from \code{flywire_tracing_sheets}.}
 \item{fw.meta}{a \code{data.frame} of meta data on flywire neurons, e.g. as produced by \code{flywire_tracing_sheets}.or read by \code{flywire_meta}.}
 
 \item{cloudvolume.url}{URL for CloudVolume to fetch segmentation image data. The default value of NULL choose}
+
+\item{tab}{the tab on \code{selected_sheet} to update.}
+
+\item{update}{a \code{data.frame} to use to update columns or add rows to the google sheet tab specified. This item must have at least
+the same number of entries as the google sheet tab.}
+
+\item{write.cols}{character vector, the columns from update that will be used to replace the column in the google sheet.}
+
+\item{by}{character, the column by which to join the old google sheet tab and \code{update} using \code{dplyr::inner_join}. This column
+must be in both the google sheet tab and \code{update}.}
+
+\item{return}{logical, whether or not to return the updated googlesheet tab as a \code{data.frame}.}
 }
 \value{
 a \code{data.frame} with columns from the right tab, chosen using \code{regex}, from the given google sheet(s) \code{selected_sheet},

@@ -349,13 +349,13 @@ flywire_request <- function(request,
   type = if(nat::is.neuronlist(request)){
     "neuronlist"
   }else if(is.data.frame(request)|is.matrix(request)){
+    "xyz"
+  }else{
     if(nrow(nat::xyzmatrix(request))){
       "xyz"
     }else{
       "ids"
     }
-  }else{
-    "ids"
   }
   message("Request is ", type)
 
@@ -565,7 +565,6 @@ flywire_ids <-function(local = FALSE, folder = "flywire_neurons/", sql = FALSE, 
 #' If \code{NULL} then defaults to \code{option('hemibrainr_gsheets')}.
 #' @param chosen.columns as well as writing column updates to the specified google sheets, this function returns a \code{data.frame} built from all given sheets and their
 #' individual tabs, that have been updated. This argument specifies which column you want returned. Filled with NAs if it does not exist.
-#' @param max.tries maximum number of attempts to write to/read from the google sheets before aborting. Sometimes attempts fail due to sporadic connections or API issues.
 #' @param regex character vector, tabs (i.e. work sheets) on the google sheet to query/read. This works with regex, so you only need to give the name partially.
 #' If set to \code{NULL} for \code{flywire_tracing_sheets}, the whole google sheet is read and all tabs are combined using \code{plyr::rbind.fill}.
 #' @param match logical. If \code{TRUE}, hemibrain matches given.
@@ -607,16 +606,16 @@ flywire_ids <-function(local = FALSE, folder = "flywire_neurons/", sql = FALSE, 
 #' @name flywire_ids_update
 #' @export
 flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK8HeA-BY6dWAVXQ7TB6E2cQ"
-                               chosen.columns = c('flywire.xyz',
+                               chosen.columns = c('flywire.xyz', "flywire.svid",
                                                   "flywire.id", "skid",
                                                   "FAFB.xyz", "cell.type", "side",
-                                                  "ItoLee_Hemilineage", "Hartenstein_Hemilineage"),
+                                                  "ItoLee_Hemilineage", "Hartenstein_Hemilineage",
+                                                  "status"),
                                regex = NULL,
                                meta = NULL,
                                match = FALSE,
                                matching_sheet = options()$hemibrainr_matching_gsheet,
-                               priority = c("FAFB","hemibrain"),
-                               max.tries = 10){
+                               priority = c("FAFB","hemibrain")){
   if(is.null(selected_sheets)){
     selected_sheets = getOption("hemibrainr_gsheets", stop("Please set option('hemibrainr_gsheets')"))
   }
@@ -672,6 +671,12 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
         if(sum(good.xyz)){
           gs.t[good.xyz,c("fw.x","fw.y","fw.z")] = nat::xyzmatrix(gs.t[good.xyz,"flywire.xyz"])
         }
+        bad.svids = is.na(gs.t$flywire.svid)|gs.t$flywire.svid=="0"
+        if(sum(bad.svids)>0){
+          gs.t$flywire.svid[bad.svids] = fafbseg::flywire_xyz2id(nat::xyzmatrix(gs.t$flywire.xyz[bad.svids]),
+                                                                 root=FALSE,
+                                                                 rawcoords = TRUE)
+        }
         if(!all(is.na(gs.t$flywire.xyz))){
           # Get flywire IDs from these positions
           bbx = matrix(c(5100, 1440, 16, 59200, 29600, 7062),ncol=3,byrow = TRUE)
@@ -698,20 +703,6 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
           replacement[coordsmissing] = gs.t$flywire.id[coordsmissing]
           gs.t$flywire.id = replacement
           gs.t$flywire.xyz[gs.t$flywire.xyz==paste_coords(matrix(NA,ncol=3))] = NA
-          gs.t$flywire.svid = NA
-          if(!is.null(gs.t$flywire.xyz)){
-            fxyz = gs.t$flywire.xyz
-            pos = gs.t[,c("fw.x","fw.y",'fw.z')]
-            p = nat::pointsinside(pos[,c("fw.x","fw.y",'fw.z')],bbx)
-            fxyz = fxyz[p]
-            pos = pos[p,]
-            if(nrow(pos)){
-              svids=fafbseg::flywire_xyz2id(pos, root=FALSE, rawcoords = TRUE)
-              if(length(svids)==nrow(gs.t)){
-                gs.t[match(fxyz,gs.t$flywire.xyz),]$flywire.svid = svids
-              }
-            }
-          }
           if(nrow(gs.t)!=nrow(gs.t.current)){
             stop("Sheet processing corruption.")
           }
@@ -755,6 +746,7 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
     master$hemibrain.match.quality = matches[match(master$flywire.id, matches$id),"quality"]
     master$FAFB.hemisphere.match = matches[match(master$flywire.id, matches$id), "FAFB.hemisphere.match"]
     master$FAFB.hemisphere.match.quality = matches[match(master$flywire.id, matches$id),"FAFB.hemisphere.match.quality"]
+    master$cell.type = matches[match(master$flywire.id, matches$id), "cell.type"]
   }
   master = subset(master, !is.na(master$flywire.id))
   master$filled = NULL
