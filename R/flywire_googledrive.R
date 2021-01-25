@@ -685,7 +685,7 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
         if(sum(good.xyz)){
           gs.t[good.xyz,c("fw.x","fw.y","fw.z")] = nat::xyzmatrix(gs.t[good.xyz,"flywire.xyz"])
         }
-        bad.svids = is.na(gs.t$flywire.svid)|gs.t$flywire.svid=="0"
+        bad.svids = (is.na(gs.t$flywire.svid)|gs.t$flywire.svid=="0")&!is.na(gs.t$flywire.xyz)
         if(sum(bad.svids)>0){
           gs.t$flywire.svid[bad.svids] = fafbseg::flywire_xyz2id(nat::xyzmatrix(gs.t$flywire.xyz[bad.svids]),
                                                                  root=FALSE,
