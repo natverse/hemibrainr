@@ -123,7 +123,7 @@ hemibrain_matching <- function(ids = NULL,
           ")
   ## Get NBLAST
   if(is.null(hemibrain.nblast) & repository == "CATMAID"){
-    hemibrain.nblast = hemibrain_nblast("hemibrain-fafb14")
+    hemibrain.nblast = t(hemibrain_nblast("hemibrain-fafb14"))
   }
   if(is.null(hemibrain.nblast) & repository == "flywire"){
     hemibrain.nblast = t(hemibrain_nblast("hemibrain-flywire"))
@@ -135,7 +135,7 @@ hemibrain_matching <- function(ids = NULL,
             " from hemibrain Google Team Drive using Google Filestream: ")
     load(sprintf("/Volumes/GoogleDrive/Shared\ drives/hemibrain/hemibrain_nblast/%s.rda", matname))
     hemibrain.nblast = get(matname)
-    hemibrain.nblast = t(hemibrain.nblast)
+    hemibrain.nblast = hemibrain.nblast
     rm("hemibrain.lhns.mean.compressed")
   }
   # Read the Google Sheet
@@ -144,7 +144,7 @@ hemibrain_matching <- function(ids = NULL,
   # Get hemibrain neurons
   if(missing(query)) {
     query=tryCatch(force(query), error=function(e) {
-        message("Unable to use `hemibrain_neurons()`. ",
+        message("Unable to use `hemibrain_neurons(brain = 'FAFB14')`. ",
                 "I will read neurons from neuPrint, but this will be slower!")
       })
   }else if(is.character(query)) {
@@ -152,13 +152,13 @@ hemibrain_matching <- function(ids = NULL,
   }
   if(repository=="flywire" & is.null(db)){
     db=tryCatch(flywire_neurons(), error=function(e) {
-      message("Unable to use `hemibrain_neurons()`. ",
-              "I will read neurons from neuPrint, but this will be slower!")
+      message("Unable to use `flywire_neurons()`. ",
+              "I will read neurons from FlyWire, but this will be slower!")
     })
   }else if(repository=="LM"){
-    db=tryCatch(lm_lhns(brainspace = c("JRCFIB2018F")), error=function(e) {
-      message("Unable to use `hemibrain_neurons()`. ",
-              "I will read neurons from neuPrint, but this will be slower!")
+    db=tryCatch(lm_lhns(brainspace = c("FAFB14")), error=function(e) {
+      message("Unable to use `lm_lhns()`. ",
+              "I will read neurons from package lhns, but this will be slower!")
     })
   }else{
     db = NULL
@@ -185,9 +185,7 @@ hemibrain_matching <- function(ids = NULL,
   message("Neuron matches: ", nrow(done))
   print(table(gs[[quality.field]]))
   # Choose user
-  message("Users: ", paste(sort(unique(gs$User)),collapse = " "))
-  initials = must_be("Choose a user : ", answers = sort(unique(gs$User)))
-  say_hello(initials)
+  initials = choose_user(gs)
   rgl::bg3d("white")
   # choose ids
   selected = id_selector(gs=gs, ids=ids, id = id, overwrite = overwrite,
@@ -370,9 +368,7 @@ lm_matching <- function(ids = NULL,
   message("Neuron matches: ", nrow(done), "/", nrow(gs))
   print(table(gs[[quality.field]]))
   # Choose user
-  message("Users: ", paste(sort(unique(gs$User)),collapse = " "))
-  initials = must_be("Choose a user : ", answers = sort(unique(gs$User)))
-  say_hello(initials)
+  initials = choose_user(gs)
   rgl::bg3d("white")
   # choose ids
   selected = id_selector(gs=gs, ids=ids, id=id, overwrite = overwrite,
@@ -629,9 +625,7 @@ fafb_matching <- function(ids = NULL,
   message("Neuron matches: ", nrow(done), "/", nrow(gs))
   print(table(gs[[quality.field]]))
   # Choose user
-  message("Users: ", paste(sort(unique(gs$User)),collapse = " "))
-  initials = must_be("Choose a user : ", answers = unique(gs$User))
-  say_hello(initials)
+  initials = choose_user(gs)
   # choose ids
   selected = id_selector(gs=gs, ids=ids, id=id, overwrite = overwrite,
                          quality.field = quality.field, match.field = match.field,
@@ -1785,7 +1779,7 @@ id_selector <- function(gs,
   }else if(overwrite=="FALSE"){
     doit = subset(gs, gs$User == initials & (is.na(gs[[match.field]]) | is.na(gs[[quality.field]])) )
   }
-  if(is.null(ids)){
+  if(is.null(ids)||!length(ids)){
     ids = doit[[id]]
   }else{
     ids = intersect(ids,doit[[id]])
@@ -1811,3 +1805,17 @@ id = '%s'; overwrite = '%s'; quality.field = '%s'; match.field = '%s'; initials 
   # return
   selected
 }
+
+# hidden
+choose_user <- function(gs){
+  message("Users: ", paste(sort(unique(gs$User)),collapse = " "))
+  initials = must_be("Enter for new user. Or else, choose a user : ", answers = c(sort(unique(gs$User)),""))
+  if(initials==""){
+    initials = readline(prompt="Please give your initials : ")
+  }
+  say_hello(initials)
+  initials
+}
+
+
+
