@@ -594,6 +594,7 @@ nblast_big <-function(query.neurons, target.neurons,
   batches.query = split(sample(query), round(seq(from = 1, to = min(query.batch,length(query)), length.out = length(query))))
   batches.target = split(sample(target), round(seq(from = 1, to = min(target.batch,length(target)), length.out = length(target))))
   nblast.mat = matrix(ncol = length(query), nrow = length(target), dimnames =list(target,query))
+  chosen.query = chosen.target = NULL
 
   # Foreach loop
   by.query <- foreach::foreach (chosen.query = batches.query) %do% {

@@ -19,7 +19,6 @@
 #' \href{https://docs.google.com/spreadsheets/d/1rzG1MuZYacM-vbW7100aK8HeA-BY6dWAVXQ7TB6E2cQ/edit#gid=0}{Google sheet} that records flywire positions
 #' flagged to be processed into neuron skeletons that can be called by \code{flywire_neurons}.
 #' @param nblast which flywire NBLAST to update on Google drive.
-#' @param selected_file the Google sheet onto which to add new flywire coordinate. I.e. \href{https://docs.google.com/spreadsheets/d/1rzG1MuZYacM-vbW7100aK8HeA-BY6dWAVXQ7TB6E2cQ/edit#gid=0}{Google sheet}.
 #' @param selected_sheet the Google sheet onto which to add new flywire coordinate. I.e. \href{https://docs.google.com/spreadsheets/d/1rzG1MuZYacM-vbW7100aK8HeA-BY6dWAVXQ7TB6E2cQ/edit#gid=0}{Google sheet}.
 #' @param sheet the tab onto which to add your requests.
 #' @param gsheet logical, whether or not the request is are googlesheet keys. If they are, every item in their \code{flywire.xyz} columns is added to

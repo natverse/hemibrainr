@@ -249,7 +249,7 @@ flywire_tracing_update <- function(tab,
 
   # Append missing rows
   if(nrow(update)>nrow(gs)){
-    missing.rows = subset(update, !updated[[by]]%in%gs[[by]])
+    missing.rows = subset(update, !update[[by]]%in%gs[[by]])
     if(Verbose){
       message("Adding ", nrow(update)," new rows")
     }
