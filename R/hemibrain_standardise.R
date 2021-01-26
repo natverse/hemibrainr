@@ -59,6 +59,7 @@ standard_statuses <- function(x, invert= FALSE){
   z = sapply(y,standard_status)
   z
 }
+# u = not yet examined by a trusted human
 # i = incomplete [very small fragment]
 # c = complete [well fleshed out neuron, may even have most medium/small branches]
 # a = adequate [there is a cell body fibre, axon and dendrite]
