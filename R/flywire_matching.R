@@ -585,10 +585,3 @@ neuron_match_scanner <- function(brain,
   }
   list(selected = selected, unsaved = unsaved)
 }
-
-
-
-
-
-
-
