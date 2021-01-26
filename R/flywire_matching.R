@@ -292,30 +292,14 @@ LR_matching <- function(ids = NULL,
       gs2[match(gs[[id]],gs2[[id]]),"note"]=selected[["note"]][match(gs2[[id]],selected[[id]])]
       gs2[match(gs[[id]],gs2[[id]]),"User"]= initials
       # Write!
-      write_matches(gs=gs2,
-                    ids = unsaved,
-                    id.field = id,
-                    column = match.field,
-                    selected_file = selected_file,
-                    ws = "FAFB")
-      write_matches(gs=gs2,
-                    ids = unsaved,
-                    id.field = id,
-                    column = quality.field,
-                    selected_file = selected_file,
-                    ws = "FAFB")
-      write_matches(gs=gs2,
-                    ids = unsaved,
-                    id.field = id,
-                    column = "note",
-                    selected_file = selected_file,
-                    ws = "FAFB")
-      write_matches(gs=gs2,
-                    ids = unsaved,
-                    id.field = id,
-                    column = "User",
-                    selected_file = selected_file,
-                    ws = "FAFB")
+      if(!identical(gs,gs2)){
+        gsheet_update_cols(
+          write.cols = c(match.field,quality.field,"note","User"),
+          gs=gs2,
+          selected_sheet = selected_sheet,
+          sheet = "hemibrain",
+          Verbose = TRUE)
+      }
       saved = c(unsaved, saved)
       unsaved = c()
     }
@@ -573,8 +557,10 @@ neuron_match_scanner <- function(brain,
         hit = names(targets[sel])
       }
     }else{
-      hit = selected[selected[[id]]%in%n,match.field]
+      hit = selected[selected[[id]]%in%n,chosen.field]
+      hit[is.na(hit)] = "none"
       quality = old.quality
+      quality[is.na(quality)] = "none"
     }
     message("You chose: ", hit)
     selected[selected[[id]]%in%n,match.field] = hit
@@ -586,6 +572,7 @@ neuron_match_scanner <- function(brain,
     }
     quality = standardise_quality(quality)
     selected[selected[[id]]%in%n,quality.field] = quality
+    message("At quality: ", quality)
     # Make a note?
     orig.note = selected[selected[[id]]%in%n,'note']
     if(!is.issue(orig.note)){

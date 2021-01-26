@@ -235,36 +235,6 @@ hemibrain_matching <- function(ids = NULL,
           sheet = "hemibrain",
           Verbose = TRUE)
       }
-      # write_matches(gs=gs2,
-      #               ids = unsaved,
-      #               id.field = id,
-      #               column = match.field,
-      #               selected_file = selected_file,
-      #               ws = "hemibrain")
-      # write_matches(gs=gs2,
-      #               ids = unsaved,
-      #               id.field = id,
-      #               column = quality.field,
-      #               selected_file = selected_file,
-      #               ws = "hemibrain")
-      # write_matches(gs=gs2,
-      #               ids = unsaved,
-      #               id.field = id,
-      #               column = "note",
-      #               selected_file = selected_file,
-      #               ws = "hemibrain")
-      # write_matches(gs=gs2,
-      #               ids = unsaved,
-      #               id.field = id,
-      #               column = "User",
-      #               selected_file = selected_file,
-      #               ws = "hemibrain")
-      # write_matches(gs=gs2,
-      #               ids = unsaved,
-      #               id.field = id,
-      #               column = "flywire.id",
-      #               selected_file = selected_file,
-      #               ws = "hemibrain")
       saved = c(unsaved, saved)
       unsaved = c()
     }
@@ -673,30 +643,14 @@ fafb_matching <- function(ids = NULL,
       gs2[match(selected.unsaved[[id]],gs2[[id]]),"note"]= selected.unsaved[["note"]]
       gs2[match(selected.unsaved[[id]],gs2[[id]]),"User"]= initials
       # Write!
-      write_matches(gs=gs2,
-                    ids = unsaved,
-                    id.field = id,
-                    column = match.field,
-                    selected_file = selected_file,
-                    ws = "FAFB")
-      write_matches(gs=gs2,
-                    ids = unsaved,
-                    id.field = id,
-                    column = quality.field,
-                    selected_file = selected_file,
-                    ws = "FAFB")
-      write_matches(gs=gs2,
-                    ids = unsaved,
-                    id.field = id,
-                    column = "note",
-                    selected_file = selected_file,
-                    ws = "FAFB")
-      write_matches(gs=gs2,
-                    ids = unsaved,
-                    id.field = id,
-                    column = "User",
-                    selected_file = selected_file,
-                    ws = "FAFB")
+      if(!identical(gs,gs2)){
+        gsheet_update_cols(
+          write.cols = c(match.field,quality.field,"note","User"),
+          gs=gs2,
+          selected_sheet = selected_sheet,
+          sheet = "hemibrain",
+          Verbose = TRUE)
+      }
       saved = c(unsaved, saved)
       unsaved = c()
     }
