@@ -94,14 +94,19 @@ flywire_tracing_sheet <- function(ws,
       }
       ws = sel$name
     }
-    gsheet_manipulation(FUN = googlesheets4::read_sheet,
+    gs = data.frame(strstringsAsFactors = FALSE)
+    for(w in ws){
+      gm = gsheet_manipulation(FUN = googlesheets4::read_sheet,
                           wait = 20,
                           ss = selected_sheet,
                           guess_max = 3000,
-                          sheet = ws,
+                          sheet = w,
                           return = TRUE,
                           Verbose = Verbose,
                           ...)
+      gs = plyr::rbind.fill(gs, gm)
+    }
+    gs
   }
 }
 
