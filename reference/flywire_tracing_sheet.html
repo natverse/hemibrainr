@@ -167,7 +167,8 @@ and see if a flywire neuron of interest is among the data stored on the hemibrai
     </div>
 
     <pre class="usage"><span class='fu'>flywire_tracing_sheet</span><span class='op'>(</span>
-  <span class='va'>regex</span>,
+  <span class='va'>ws</span>,
+  regex <span class='op'>=</span> <span class='cn'>FALSE</span>,
   open <span class='op'>=</span> <span class='cn'>FALSE</span>,
   selected_sheet <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>options</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>$</span><span class='va'>flywire_lineages_gsheet</span>,
   Verbose <span class='op'>=</span> <span class='cn'>TRUE</span>,
@@ -175,26 +176,40 @@ and see if a flywire neuron of interest is among the data stored on the hemibrai
 <span class='op'>)</span>
 
 <span class='fu'>flywire_tracing_sheets</span><span class='op'>(</span>
-  regex <span class='op'>=</span> <span class='cn'>NULL</span>,
+  ws <span class='op'>=</span> <span class='cn'>NULL</span>,
   selected_sheet <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>options</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>$</span><span class='va'>flywire_lineages_gsheet</span>
 <span class='op'>)</span>
 
 <span class='fu'>flywire_in</span><span class='op'>(</span>
   <span class='va'>query</span>,
   query.type <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"flywire.id"</span>, <span class='st'>"flywire.xyz"</span>, <span class='st'>"flywire.svid"</span><span class='op'>)</span>,
-  regex <span class='op'>=</span> <span class='cn'>NULL</span>,
+  ws <span class='op'>=</span> <span class='cn'>NULL</span>,
   fw.meta <span class='op'>=</span> <span class='fu'><a href='flywire_googledrive_data.html'>flywire_meta</a></span><span class='op'>(</span><span class='op'>)</span>,
   cloudvolume.url <span class='op'>=</span> <span class='cn'>NULL</span>,
   Verbose <span class='op'>=</span> <span class='cn'>TRUE</span>
+<span class='op'>)</span>
+
+<span class='fu'>flywire_tracing_update</span><span class='op'>(</span>
+  <span class='va'>tab</span>,
+  <span class='va'>selected_sheet</span>,
+  <span class='va'>update</span>,
+  write.cols <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span><span class='op'>(</span><span class='va'>update</span><span class='op'>)</span>,
+  by <span class='op'>=</span> <span class='st'>"flywire.id"</span>,
+  Verbose <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  return <span class='op'>=</span> <span class='cn'>FALSE</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>regex</th>
-      <td><p>character vector, tabs (i.e. work sheets) on the google sheet to query/read. This works with regex, so you only need to give the name partially.
+      <th>ws</th>
+      <td><p>character vector, tabs (i.e. work sheets) on the google sheet to query/read. This works with regex, if <code>regex==TRUE</code>, so you only need to give the name partially.
 If set to <code>NULL</code> for <code>flywire_tracing_sheets</code>, the whole google sheet is read and all tabs are combined using <code><a href='https://rdrr.io/pkg/plyr/man/rbind.fill.html'>plyr::rbind.fill</a></code>.</p></td>
+    </tr>
+    <tr>
+      <th>regex</th>
+      <td><p>logical, use <code>ws</code> with regex.</p></td>
     </tr>
     <tr>
       <th>open</th>
@@ -231,6 +246,28 @@ results from <code>flywire_tracing_sheets</code>.</p></td>
     <tr>
       <th>cloudvolume.url</th>
       <td><p>URL for CloudVolume to fetch segmentation image data. The default value of NULL choose</p></td>
+    </tr>
+    <tr>
+      <th>tab</th>
+      <td><p>the tab on <code>selected_sheet</code> to update.</p></td>
+    </tr>
+    <tr>
+      <th>update</th>
+      <td><p>a <code>data.frame</code> to use to update columns or add rows to the google sheet tab specified. This item must have at least
+the same number of entries as the google sheet tab.</p></td>
+    </tr>
+    <tr>
+      <th>write.cols</th>
+      <td><p>character vector, the columns from update that will be used to replace the column in the google sheet.</p></td>
+    </tr>
+    <tr>
+      <th>by</th>
+      <td><p>character, the column by which to join the old google sheet tab and <code>update</code> using <code><a href='https://dplyr.tidyverse.org/reference/mutate-joins.html'>dplyr::inner_join</a></code>. This column
+must be in both the google sheet tab and <code>update</code>.</p></td>
+    </tr>
+    <tr>
+      <th>return</th>
+      <td><p>logical, whether or not to return the updated googlesheet tab as a <code>data.frame</code>.</p></td>
     </tr>
     </table>
 

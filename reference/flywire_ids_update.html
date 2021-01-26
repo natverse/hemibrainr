@@ -166,15 +166,14 @@ then use this function to update and get the correct flywire ID whenever they wi
 
     <pre class="usage"><span class='fu'>flywire_ids_update</span><span class='op'>(</span>
   selected_sheets <span class='op'>=</span> <span class='cn'>NULL</span>,
-  chosen.columns <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"fw.x"</span>, <span class='st'>"fw.y"</span>, <span class='st'>"fw.z"</span>, <span class='st'>"flywire.xyz"</span>, <span class='st'>"flywire.id"</span>, <span class='st'>"skid"</span>,
-    <span class='st'>"FAFB.xyz"</span>, <span class='st'>"cell.type"</span>, <span class='st'>"side"</span>, <span class='st'>"ItoLee_Hemilineage"</span>, <span class='st'>"Hartenstein_Hemilineage"</span><span class='op'>)</span>,
-  regex <span class='op'>=</span> <span class='cn'>NULL</span>,
+  chosen.columns <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"flywire.xyz"</span>, <span class='st'>"flywire.svid"</span>, <span class='st'>"flywire.id"</span>, <span class='st'>"skid"</span>, <span class='st'>"FAFB.xyz"</span>,
+    <span class='st'>"cell.type"</span>, <span class='st'>"side"</span>, <span class='st'>"ItoLee_Hemilineage"</span>, <span class='st'>"Hartenstein_Hemilineage"</span>, <span class='st'>"status"</span><span class='op'>)</span>,
+  ws <span class='op'>=</span> <span class='cn'>NULL</span>,
+  regex <span class='op'>=</span> <span class='cn'>FALSE</span>,
   meta <span class='op'>=</span> <span class='cn'>NULL</span>,
   match <span class='op'>=</span> <span class='cn'>FALSE</span>,
   matching_sheet <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>options</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>$</span><span class='va'>hemibrainr_matching_gsheet</span>,
-  priority <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"FAFB"</span>, <span class='st'>"hemibrain"</span><span class='op'>)</span>,
-  numCores <span class='op'>=</span> <span class='fl'>1</span>,
-  max.tries <span class='op'>=</span> <span class='fl'>10</span>
+  priority <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"FAFB"</span>, <span class='st'>"hemibrain"</span><span class='op'>)</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -191,9 +190,13 @@ If <code>NULL</code> then defaults to <code><a href='https://rdrr.io/r/base/opti
 individual tabs, that have been updated. This argument specifies which column you want returned. Filled with NAs if it does not exist.</p></td>
     </tr>
     <tr>
-      <th>regex</th>
+      <th>ws</th>
       <td><p>character vector, tabs (i.e. work sheets) on the google sheet to query/read. This works with regex, so you only need to give the name partially.
 If set to <code>NULL</code> for <code>flywire_tracing_sheets</code>, the whole google sheet is read and all tabs are combined using <code><a href='https://rdrr.io/pkg/plyr/man/rbind.fill.html'>plyr::rbind.fill</a></code>.</p></td>
+    </tr>
+    <tr>
+      <th>regex</th>
+      <td><p>logical, use <code>ws</code> with regex.</p></td>
     </tr>
     <tr>
       <th>meta</th>
@@ -213,14 +216,6 @@ Only works if that id is also in this provided <code>data.frame</code>, <code>me
       <th>priority</th>
       <td><p>whether to use FAFB-&gt;hemibrain matches (FAFB) or hemibrain-&gt;FAFB matches (hemibrain) in order to ascribe
 cell type names to FAFB neurons. In both cases, cell type names are attached to hemibrain bodyids, and propagated to their FAFB matches.</p></td>
-    </tr>
-    <tr>
-      <th>numCores</th>
-      <td><p>if run in parallel, the number of cores to use. This is not necessary unless you have &gt;10k points and want to see if you can get a speed up.</p></td>
-    </tr>
-    <tr>
-      <th>max.tries</th>
-      <td><p>maximum number of attempts to write to/read from the google sheets before aborting. Sometimes attempts fail due to sporadic connections or API issues.</p></td>
     </tr>
     </table>
 

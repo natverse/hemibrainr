@@ -198,7 +198,8 @@ a point in the primary neurite tract that can be used as a stable reference for 
 
 <span class='fu'>flywire_request</span><span class='op'>(</span>
   <span class='va'>request</span>,
-  selected_file <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>options</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>$</span><span class='va'>flywire_flagged_gsheet</span>,
+  gsheet <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  selected_sheet <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>options</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>$</span><span class='va'>flywire_flagged_gsheet</span>,
   sheet <span class='op'>=</span> <span class='st'>"flywire"</span>,
   <span class='va'>...</span>
 <span class='op'>)</span></pre>
@@ -246,7 +247,12 @@ a point in the primary neurite tract that can be used as a stable reference for 
 flagged to be processed into neuron skeletons that can be called by <code>flywire_neurons</code>.</p></td>
     </tr>
     <tr>
-      <th>selected_file</th>
+      <th>gsheet</th>
+      <td><p>logical, whether or not the request is are googlesheet keys. If they are, every item in their <code>flywire.xyz</code> columns is added to
+the sheet specified by <code>selected_sheet</code>.</p></td>
+    </tr>
+    <tr>
+      <th>selected_sheet</th>
       <td><p>the Google sheet onto which to add new flywire coordinate. I.e. <a href='https://docs.google.com/spreadsheets/d/1rzG1MuZYacM-vbW7100aK8HeA-BY6dWAVXQ7TB6E2cQ/edit#gid=0'>Google sheet</a>.</p></td>
     </tr>
     <tr>
