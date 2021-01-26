@@ -31,6 +31,7 @@ standard_statuses <- function(x, invert= FALSE){
   x = tolower(x)
   standard_status <-function(z, invert = FALSE){
     if(invert){
+      z[z=="unassessed"] = "u"
       z[z=="incomplete"] = "i"
       z[z=="complete"] = "c"
       z[z=="adequate"] = "a"
@@ -41,6 +42,7 @@ standard_statuses <- function(x, invert= FALSE){
       z[z=="not_neuron"] = "n"
       z[z=="tiny"] = "t"
     }else{
+      z[z=="u"] = "unassessed"
       z[z=="i"] = "incomplete"
       z[z=="c"] = "complete"
       z[z=="a"] = "adequate"

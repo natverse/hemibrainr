@@ -131,7 +131,7 @@ flywire_tracing_sheets <- memoise::memoise(function(ws = NULL,
 
 # hidden
 flywire_tracing_sheets.now <- function(ws = NULL,
-                                        selected_sheet = options()$flywire_lineages_gsheet){
+                                      selected_sheet = options()$flywire_lineages_gsheet){
   gs.lineages  = data.frame(stringsAsFactors = FALSE)
   if(!is.null(ws)){
     sel=regex_tab_names(regex=ws,selected_sheet=selected_sheet)
