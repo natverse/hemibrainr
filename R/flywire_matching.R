@@ -195,7 +195,7 @@ LR_matching <- function(ids = NULL,
                         batch_size = 50,
                         db = flywire_neurons(),
                         query = flywire_neurons(mirror=TRUE),
-                        overwrite = c("FALSE","mine","mine_empty","TRUE"),
+                        overwrite = c("FALSE","mine","mine_empty","TRUE", "review"),
                         column = NULL,
                         entry = NULL){
   message("Matching mirrored flywire neurons (blue) to non-mirrored flywire neurons (red)")
@@ -278,8 +278,8 @@ LR_matching <- function(ids = NULL,
                                        extra.repository = "CATMAID",
                                        match.field = match.field,
                                        quality.field = quality.field,
-                                       soma.size = 400,
-                                       show.columns = c("cell.type","ItoLee_Hemilineage","note"))
+                                       soma.size = 4000,
+                                       show.columns = c("cell.type","ItoLee_Hemilineage","status", match.field, quality.field,"note"))
     selected = match_cycle[["selected"]]
     unsaved = match_cycle[["unsaved"]]
     if(length(unsaved)){
@@ -342,8 +342,9 @@ neuron_match_scanner <- function(brain,
                                  quality.field,
                                  unsaved = c(),
                                  saved = c(),
-                                 soma.size = 400,
-                                 show.columns = c("cell.type","ItoLee_Hemilineage","note")){
+                                 soma.size = 4000,
+                                 show.columns = c("cell.type","ItoLee_Hemilineage","status", match.field, quality.field,"note")
+                                 ){
   targets.repository = match.arg(targets.repository)
   extra.repository = match.arg(extra.repository)
   query.repository = match.arg(query.repository)
@@ -438,6 +439,20 @@ neuron_match_scanner <- function(brain,
     }else{
       another.n = NULL
     }
+    ### Get old matches
+    if(match.field=="flywire.xyz"){
+      old.match = selected[selected[[id]]%in%n,"flywire.id"]
+    }else{
+      old.match = selected[selected[[id]]%in%n,match.field]
+    }
+    old.quality = selected[selected[[id]]%in%n,match.field]
+    if(!is.na(old.match)&&!old.match%in%c(""," ")){
+      match.n =  tryCatch(targets[old.match], error = function(e){
+        message("Could not immediately load match neuron: ", old.match)
+        NULL})
+    }else{
+      match.n = NULL
+    }
     ### Plot in 3D
     if(!length(extra.n)){
       extra.n=NULL
@@ -448,10 +463,15 @@ neuron_match_scanner <- function(brain,
     if(!is.null(query.n)){plot3d(query.n, lwd = 3, soma = soma.size, col = "#1BB6AF")}
     if(!is.null(extra.n)){plot3d(extra.n, lwd = 2, soma = soma.size, col = "black")}
     if(!is.null(another.n)){plot3d(another.n, lwd = 3, soma = soma.size, col = "grey50")}
+    if(!is.null(match.n)){plot3d(match.n, lwd = 2, soma = soma.size, col = "#348E53")}
     message("ID: ", n)
     show.columns = intersect(show.columns,colnames(query.n[,]))
     for(sc in show.columns){
-      message(sc," : ", query.n[n,sc])
+      if(sc%in%colnames(selected)){
+        message(sc," : ", selected[match(n,selected[[id]]),sc])
+      }else{
+        message(sc," : ", query.n[n,sc])
+      }
     }
     # Read database neurons
     message(sprintf("Reading the top %s %s hits",batch.size, targets.repository))
@@ -480,7 +500,9 @@ neuron_match_scanner <- function(brain,
     j = batch.size
     # Cycle through potential matches
     while(length(sel)>1){
-      sel = sel.orig = tryCatch(nat::nlscan(native[names(r)[1:j]], col = "#EE4244", lwd = 3, soma = soma.size),
+      plot.order = match(names(r)[1:j],names(native))
+      plot.order = plot.order[!is.na(plot.order)]
+      sel = sel.orig = tryCatch(nat::nlscan(native[plot.order], col = "#EE4244", lwd = 3, soma = soma.size),
                                 error = function(e) NULL)
       if(is.null(sel)){
         next
@@ -526,7 +548,9 @@ neuron_match_scanner <- function(brain,
       }else{
         while(length(sel)>1){
           message("Choose single best match: ")
-          sel = nat::nlscan(native[as.character(sel.orig)], col = hemibrain_bright_colours["orange"], lwd = 2, soma = TRUE)
+          plot.order = match(sel.orig,names(native))
+          plot.order = plot.order[!is.na(plot.order)]
+          sel = nat::nlscan(native[plot.order], col = hemibrain_bright_colours["orange"], lwd = 2, soma = TRUE)
           message(sprintf("You selected %s neurons", length(sel)))
           if(!length(sel)){
             noselection = hemibrain_choice("You selected no neurons. Are you happy with that? ")
@@ -549,7 +573,8 @@ neuron_match_scanner <- function(brain,
         hit = names(targets[sel])
       }
     }else{
-      hit = "none"
+      hit = selected[selected[[id]]%in%n,match.field]
+      quality = old.quality
     }
     message("You chose: ", hit)
     selected[selected[[id]]%in%n,match.field] = hit
@@ -573,11 +598,12 @@ neuron_match_scanner <- function(brain,
       note[note%in%c(" ","","NA")] = NA
       selected[selected[[id]]%in%n,'note'] = note
       make.note = !hemibrain_choice("Happy with this note? y/n ")
+      show.columns = unique(c(show.columns,"note"))
     }
     unsaved = unique(c(unsaved, n))
     message(length(unsaved), " unsaved matches")
     show.columns = intersect(show.columns,colnames(selected))
-    print(knitr::kable(selected[unsaved,c(id,show.columns,match.field,quality.field)]))
+    print(knitr::kable(selected[selected[[id]]%in%unsaved,c(id,show.columns,match.field,quality.field)]))
     p = must_be("Continue (enter) or save (s)? ", answers = c("","s"))
     if(p=="s"|end){
       break

@@ -15,7 +15,7 @@ LR_matching(
   batch_size = 50,
   db = flywire_neurons(),
   query = flywire_neurons(mirror = TRUE),
-  overwrite = c("FALSE", "mine", "mine_empty", "TRUE"),
+  overwrite = c("FALSE", "mine", "mine_empty", "TRUE", "review"),
   column = NULL,
   entry = NULL
 )
@@ -29,7 +29,7 @@ hemibrain_matching(
   db = NULL,
   repository = c("flywire", "CATMAID", "lm"),
   query = hemibrain_neurons(brain = "FAFB14"),
-  overwrite = c("FALSE", "mine", "mine_empty", "TRUE"),
+  overwrite = c("FALSE", "mine", "mine_empty", "TRUE", "review"),
   column = NULL,
   entry = NULL
 )
@@ -41,7 +41,7 @@ lm_matching(
   batch_size = 50,
   db = hemibrain_neurons(),
   query = NULL,
-  overwrite = c("FALSE", "mine", "mine_empty", "TRUE"),
+  overwrite = c("FALSE", "mine", "mine_empty", "TRUE", "review"),
   column = NULL,
   entry = NULL
 )
@@ -55,7 +55,7 @@ fafb_matching(
   batch_size = 20,
   db = hemibrain_neurons(brain = "FAFB14"),
   query = NULL,
-  overwrite = c("FALSE", "mine", "mine_empty", "TRUE"),
+  overwrite = c("FALSE", "mine", "mine_empty", "TRUE", "review"),
   column = NULL,
   entry = NULL
 )

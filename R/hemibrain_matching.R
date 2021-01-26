@@ -95,7 +95,7 @@ hemibrain_matching <- function(ids = NULL,
                          db=NULL, # brain="FAFB"
                          repository = c("flywire", "CATMAID", "lm"),
                          query = hemibrain_neurons(brain = "FAFB14"), # brain="FAFB"
-                         overwrite = c("FALSE","mine","mine_empty","TRUE"),
+                         overwrite = c("FALSE","mine","mine_empty","TRUE", "review"),
                          column = NULL,
                          entry = NULL){
   repository = match.arg(repository)
@@ -211,8 +211,8 @@ hemibrain_matching <- function(ids = NULL,
                                        extra.repository = "none",
                                        match.field = match.field,
                                        quality.field = quality.field,
-                                       soma.size = 400,
-                                       show.columns = c("cell.type","ItoLee_Hemilineage","note"))
+                                       soma.size = 4000,
+                                       show.columns = c("cell.type","ItoLee_Hemilineage","status", match.field, quality.field,"note"))
     selected = match_cycle[["selected"]]
     unsaved = match_cycle[["unsaved"]]
     if(length(unsaved)){
@@ -227,36 +227,44 @@ hemibrain_matching <- function(ids = NULL,
       gs2[match(selected.unsaved[[id]],gs2[[id]]),"note"]= selected.unsaved[["note"]]
       gs2[match(selected.unsaved[[id]],gs2[[id]]),"User"]= initials
       # Write!
-      write_matches(gs=gs2,
-                    ids = unsaved,
-                    id.field = id,
-                    column = match.field,
-                    selected_file = selected_file,
-                    ws = "hemibrain")
-      write_matches(gs=gs2,
-                    ids = unsaved,
-                    id.field = id,
-                    column = quality.field,
-                    selected_file = selected_file,
-                    ws = "hemibrain")
-      write_matches(gs=gs2,
-                    ids = unsaved,
-                    id.field = id,
-                    column = "note",
-                    selected_file = selected_file,
-                    ws = "hemibrain")
-      write_matches(gs=gs2,
-                    ids = unsaved,
-                    id.field = id,
-                    column = "User",
-                    selected_file = selected_file,
-                    ws = "hemibrain")
-      write_matches(gs=gs2,
-                    ids = unsaved,
-                    id.field = id,
-                    column = "flywire.id",
-                    selected_file = selected_file,
-                    ws = "hemibrain")
+      if(!identical(gs,gs2)){
+        gsheet_update_cols(
+          write.cols = c(match.field,quality.field,"note","User","flywire.id"),
+          gs=gs2,
+          selected_sheet = selected_sheet,
+          sheet = "hemibrain",
+          Verbose = TRUE)
+      }
+      # write_matches(gs=gs2,
+      #               ids = unsaved,
+      #               id.field = id,
+      #               column = match.field,
+      #               selected_file = selected_file,
+      #               ws = "hemibrain")
+      # write_matches(gs=gs2,
+      #               ids = unsaved,
+      #               id.field = id,
+      #               column = quality.field,
+      #               selected_file = selected_file,
+      #               ws = "hemibrain")
+      # write_matches(gs=gs2,
+      #               ids = unsaved,
+      #               id.field = id,
+      #               column = "note",
+      #               selected_file = selected_file,
+      #               ws = "hemibrain")
+      # write_matches(gs=gs2,
+      #               ids = unsaved,
+      #               id.field = id,
+      #               column = "User",
+      #               selected_file = selected_file,
+      #               ws = "hemibrain")
+      # write_matches(gs=gs2,
+      #               ids = unsaved,
+      #               id.field = id,
+      #               column = "flywire.id",
+      #               selected_file = selected_file,
+      #               ws = "hemibrain")
       saved = c(unsaved, saved)
       unsaved = c()
     }
@@ -309,7 +317,7 @@ lm_matching <- function(ids = NULL,
                         batch_size = 50,
                         db=hemibrain_neurons(),
                         query = NULL,
-                        overwrite = c("FALSE","mine","mine_empty","TRUE"),
+                        overwrite = c("FALSE","mine","mine_empty","TRUE", "review"),
                         column = NULL,
                         entry = NULL){
   # Motivate!
@@ -555,7 +563,7 @@ fafb_matching <- function(ids = NULL,
                         batch_size = 20,
                         db=hemibrain_neurons(brain="FAFB14"),
                         query = NULL,
-                        overwrite = c("FALSE","mine","mine_empty","TRUE"),
+                        overwrite = c("FALSE","mine","mine_empty","TRUE", "review"),
                         column = NULL,
                         entry = NULL){
   repository = match.arg(repository)
@@ -650,8 +658,8 @@ fafb_matching <- function(ids = NULL,
                                        extra.repository = setdiff(c("flywire","CATMAID"),repository),
                                        match.field = match.field,
                                        quality.field = quality.field,
-                                       soma.size = 400,
-                                       show.columns = c("cell.type","ItoLee_Hemilineage","note"))
+                                       soma.size = 4000,
+                                       show.columns = c("cell.type","ItoLee_Hemilineage","status", match.field, quality.field,"note"))
     selected = match_cycle[["selected"]]
     unsaved = match_cycle[["unsaved"]]
     if(length(unsaved)){
@@ -1753,7 +1761,7 @@ flycircuit_matching_rewrite <- function(flycircuit.ids = names(flycircuit_neuron
 id_selector <- function(gs,
                         ids = NULL,
                         id = c("bodyid","flywire.id","skid","id","flywire.xyz","FAFB.match","hemibrain.match","LM.match"),
-                        overwrite = c("FALSE","mine","mine_empty","TRUE"),
+                        overwrite = c("FALSE","mine","mine_empty","TRUE","review"),
                         quality.field,
                         match.field,
                         initials = NULL,
@@ -1766,18 +1774,29 @@ id_selector <- function(gs,
     stop("column and entry must both be NULL, or both be given")
   }
   # choose possible ids
-  if(overwrite %in% c("TRUE") | is.null(initials)){
+  id.len = ifelse(length(ids),length(ids),"all")
+  if((overwrite %in% c("TRUE") & is.null(ids)) | is.null(initials)){
+    message(sprintf("Looking at %s %ss, with overwrite enabled",id.len,id))
+    doit = gs
+  }else if(overwrite %in% c("TRUE") & !is.null(initials)){
+    message(sprintf("Looking at %s %ss for user %s and others, with overwrite enabled",id.len,id,initials))
     doit = gs
   }else if(overwrite=="mine"){
+    message(sprintf("Looking at %s %ss for user %s, with overwrite enabled",id.len,id,initials))
     doit = subset(gs, gs$User == initials)
   } else if(overwrite=="mine_empty"){
+    message(sprintf("Looking at %s %ss for user %s, and others for where no match is already made",id.len,id,initials))
     doit = subset(gs, gs$User == initials
                   | (is.na(gs[[quality.field]])
                   | is.na(gs[[quality.field]])
                   | gs[[quality.field]] %in% c("none","n","tract","t",""," ","NA")
                   | gs[[match.field]] %in% c("none","n","tract","t",""," ","NA")))
   }else if(overwrite=="FALSE"){
+    message(sprintf("Looking at %s %ss for user %s, with overwrite disabled",id.len,id,initials))
     doit = subset(gs, gs$User == initials & (is.na(gs[[match.field]]) | is.na(gs[[quality.field]])) )
+  }else{ # review
+    message(sprintf("Reviewing made matches among %s %ss for user %s, with overwrite enabled",id.len,id,initials))
+    doit = subset(gs, gs$User == initials & (!is.na(gs[[match.field]]) | !is.na(gs[[quality.field]])) )
   }
   if(is.null(ids)||!length(ids)){
     ids = doit[[id]]
@@ -1801,7 +1820,16 @@ id = '%s'; overwrite = '%s'; quality.field = '%s'; match.field = '%s'; initials 
                  initials,
                  nullToNA(column),
                  nullToNA(entry)))
+  }else{
+    message(sprintf("Out of %s %ss there are %s valid ones to examine",id.len,id,length(ids)))
   }
+  # order selected
+  user.order = unique(c(initials,sort(selected$User)))
+  if(length(user.order)>1){
+    message(sprintf("We will go through matches in this User order: ", initials, paste(user.order,collapse=", ")))
+    print(table(selected$User)[user.order])
+  }
+  selected = selected[order(match(selected$User,user.order)),]
   # return
   selected
 }
