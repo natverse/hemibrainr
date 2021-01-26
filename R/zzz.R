@@ -32,6 +32,14 @@
   ")
   }
 
+  # Set googlesheets API key
+  key = options()$hemibrainr_ghseets_api_key
+  if(!is.null(key)){
+    message("Setting goglesheets API key for hemibrainr_ghseets")
+    googlesheets4::gs4_auth_configure(api_key = key)
+    googlesheets4::gs4_deauth()
+  }
+
   # Set Google sheets of interest
   hemibrainr_matching_gsheet = ifelse(!is.null(getOption("hemibrainr_matching_gsheet")),getOption("hemibrainr_matching_gsheet"),"1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw")
   flywire_lineages_gsheet = ifelse(!is.null(getOption("flywire_lineages_gsheet")),getOption("flywire_lineages_gsheet"),"1QyuHFdqz705OSxXNynD9moIsLvZGjjBjylx5sGZP2Yg")
@@ -43,5 +51,8 @@
                                  options()$flywire_lineages_gsheet,
                                  options()$flywire_flagged_gsheet))
 }
+
+
+
 
 
