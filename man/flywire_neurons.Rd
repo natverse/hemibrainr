@@ -2,33 +2,18 @@
 % Please edit documentation in R/flywire_googledrive.R
 \name{flywire_neurons}
 \alias{flywire_neurons}
-\alias{flywire_neurons_update}
-\alias{flywire_nblast_update}
 \alias{flywire_basics}
 \alias{flywire_request}
 \title{Download a large set of well-traced skeletonised neurons from FlyWire}
 \usage{
 flywire_neurons(
   x = NULL,
+  WithConnectors = FALSE,
   local = FALSE,
   brain = c("FlyWire", "JRCFIB2018Fraw", "JRCFIB2018F", "FAFB", "FAFB14", "JFRC2",
     "JFRC2013", "JRC2018F", "FCWB"),
   mirror = FALSE,
   swc = FALSE,
-  ...
-)
-
-flywire_neurons_update(
-  x,
-  brain = c("FlyWire", "JRCFIB2018F", "FAFB14", "JFRC2", "JFRC2013", "JRC2018F",
-    "FCWB"),
-  mirror = FALSE,
-  ...
-)
-
-flywire_nblast_update(
-  x = NULL,
-  nblast = c("hemibrain-flywire", "flywire", "flywire-mirror"),
   ...
 )
 
@@ -43,7 +28,10 @@ flywire_request(
 )
 }
 \arguments{
-\item{x}{flywire IDs to update, for the saved Google drive \code{neuronlistfh} objects called with \code{flywire_neurons}.}
+\item{x}{flywire IDs for desired. If left as \code{NULL}, all flywire neurons that can be summoned from the hemibrainr Google drive are summoned.}
+
+\item{WithConnectors}{logical, if \code{TRUE} the neuron fetched have predicted synapses located within each neuron at \code{neuron$connectors} and
+have a predicted axon/dendrite split at \code{neuron$d$Label} for each point in its skeleton, created using \code{\link{flow_centrality}}.}
 
 \item{local}{\code{FALSE} or path. By default (\code{FALSE}) data is read from \code{options()$Drive_hemibrain_data}), but the user can specify an alternative path.}
 
@@ -54,8 +42,6 @@ flywire_request(
 \item{swc}{logical. When using neurons with \code{flywire_neurons} from the Google drive, whether to read \code{.swc} files (if \code{TRUE}), or a neuronlistfh object (default).}
 
 \item{...}{Additional arguments passed to \code{nat::nlapply}.and/or \code{fafbseg::skeletor}.}
-
-\item{nblast}{which flywire NBLAST to update on Google drive.}
 
 \item{flywire.neurons}{a \code{neuronlist} of flywire neurons in FlyWire space. The \code{flywire_basics} function will calculate some useful meta-data, namely
 a point in the primary neurite tract that can be used as a stable reference for this neuron.}
@@ -92,7 +78,7 @@ you will get:
 Get a large number of skeletonised neurons from FlyWire. The neuronlist is saved as a
  \code{nat::neuronlistfh} object so certain neurons may be read from it
  without loading the entire, large \code{neuronlist} into memory. You will need access to the hemibrain Google Team Drive and
- have it mounted with Google filestream.The function \code{flywire_neurons_update} can be used to update the available data.
+ have it mounted with Google filestream.
  If you want to flag flywire neurons that should be added to the Google drive, without doing this yourself, you can use
  \code{flywire_request}. The \code{flywire_basics} function will calculate some useful meta-data, namely
 a point in the primary neurite tract that can be used as a stable reference for this neuron.
@@ -124,6 +110,11 @@ flywire_request(new.points)
 ## Now they are added to a google sheet, and will be read and
 ##  processed as part of this nightly pipeline:
 ### https://github.com/flyconnectome/fafbpipeline
+
+# Now get some split neurons with synapses
+fw.split = flywire_neurons(WithConnectors=TRUE)
+nopen3d()
+nlscan_split(fw.split[sample(length(fw.split),15)])
 
 }}
 }

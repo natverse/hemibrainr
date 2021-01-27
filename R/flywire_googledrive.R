@@ -3,22 +3,22 @@
 #'@description Get a large number of skeletonised neurons from FlyWire. The neuronlist is saved as a
 #'  \code{nat::neuronlistfh} object so certain neurons may be read from it
 #'  without loading the entire, large \code{neuronlist} into memory. You will need access to the hemibrain Google Team Drive and
-#'  have it mounted with Google filestream.The function \code{flywire_neurons_update} can be used to update the available data.
+#'  have it mounted with Google filestream.
 #'  If you want to flag flywire neurons that should be added to the Google drive, without doing this yourself, you can use
 #'  \code{flywire_request}. The \code{flywire_basics} function will calculate some useful meta-data, namely
 #' a point in the primary neurite tract that can be used as a stable reference for this neuron.
 #'
 #' @param brain the brainspace in which hemibrain neurons have been registered. Defaults to raw voxel space for the FlyWire project.
 #' @param x flywire IDs for desired. If left as \code{NULL}, all flywire neurons that can be summoned from the hemibrainr Google drive are summoned.
+#' @param WithConnectors logical, if \code{TRUE} the neuron fetched have predicted synapses located within each neuron at \code{neuron$connectors} and
+#' have a predicted axon/dendrite split at \code{neuron$d$Label} for each point in its skeleton, created using \code{\link{flow_centrality}}.
 #' @param local \code{FALSE} or path. By default (\code{FALSE}) data is read from \code{options()$Drive_hemibrain_data}), but the user can specify an alternative path.
 #' @param mirror logical, whether or not to read neurons that have been mirrored (i.e. flipped to the 'other' brain hemisphere).
 #' @param flywire.neurons a \code{neuronlist} of flywire neurons in FlyWire space. The \code{flywire_basics} function will calculate some useful meta-data, namely
 #' a point in the primary neurite tract that can be used as a stable reference for this neuron.
-#' @param x flywire IDs to update, for the saved Google drive \code{neuronlistfh} objects called with \code{flywire_neurons}.
 #' @param request a neuronlist, matrix of x,y,z position or flywire ID to add to a
 #' \href{https://docs.google.com/spreadsheets/d/1rzG1MuZYacM-vbW7100aK8HeA-BY6dWAVXQ7TB6E2cQ/edit#gid=0}{Google sheet} that records flywire positions
 #' flagged to be processed into neuron skeletons that can be called by \code{flywire_neurons}.
-#' @param nblast which flywire NBLAST to update on Google drive.
 #' @param selected_sheet the Google sheet onto which to add new flywire coordinate. I.e. \href{https://docs.google.com/spreadsheets/d/1rzG1MuZYacM-vbW7100aK8HeA-BY6dWAVXQ7TB6E2cQ/edit#gid=0}{Google sheet}.
 #' @param sheet the tab onto which to add your requests.
 #' @param gsheet logical, whether or not the request is are googlesheet keys. If they are, every item in their \code{flywire.xyz} columns is added to
@@ -54,6 +54,11 @@
 #' ##  processed as part of this nightly pipeline:
 #' ### https://github.com/flyconnectome/fafbpipeline
 #'
+#' # Now get some split neurons with synapses
+#' fw.split = flywire_neurons(WithConnectors=TRUE)
+#' nopen3d()
+#' nlscan_split(fw.split[sample(length(fw.split),15)])
+#'
 #'}}
 #'@return A \code{neuronlist} object containing flywire skeletons. In the meta-data, it might be useful for some users to note that
 #'you will get:
@@ -76,6 +81,7 @@
 #'@importFrom utils download.file
 #'@importFrom googledrive drive_ls as_id
 flywire_neurons <- function(x = NULL,
+                            WithConnectors = FALSE,
                             local = FALSE,
                             brain = c("FlyWire", "JRCFIB2018Fraw","JRCFIB2018F","FAFB","FAFB14","JFRC2", "JFRC2013","JRC2018F","FCWB"),
                             mirror = FALSE,
@@ -97,6 +103,21 @@ flywire_neurons <- function(x = NULL,
   neuronsdir = file.path(savedir,"flywire_neurons/")
   fhdir = file.path(neuronsdir,brain,"/")
 
+  # Get synapses from private drive
+  if(WithConnectors){
+    swc = FALSE; local = FALSE; mirror = FALSE
+    if(brain!="FlyWire"){
+      warning("When WithConnectors = TRUE only FlyWire brainspace supported from hemibrain google drive")
+    }
+    neuronsdir = file.path(savedir,"fafbsynapses/")
+    fhdir = gsub("hemibrainr","hemibrain",neuronsdir)
+  }
+
+  # Exists?
+  if(!file.exists(fhdir)){
+    stop("Cannot find file: ", fhdir)
+  }
+
   # Read
   if(swc){
     warning("Only native flywire neurons in FlyWire space supported when swc = TRUE")
@@ -116,6 +137,10 @@ flywire_neurons <- function(x = NULL,
     if(length(filelist)){
       fh.file = filelist[1]
       neurons.fh = nat::read.neuronlistfh(fh.file)
+      test = tryCatch(neurons.fh[[1]], error = function(e){
+        warning(e)
+        try(file.remove(paste0(attributes(neurons.fh)$db@datafile,"___LOCK")), silent = TRUE)
+      })
       attr(neurons.fh,"df") = neurons.fh[,]
     }else{
       warning("neuronlistfh (.rds) file not found at: ", fhdir)
@@ -198,8 +223,8 @@ flywire_request <- function(request,
                                               return = TRUE)
       for(tab in tabs){
         fts = try(flywire_tracing_sheet(ws = tab,
-                                    selected_sheet=sheet,
-                                    Verbose = FALSE), silent = TRUE)
+                                        selected_sheet=sheet,
+                                        Verbose = FALSE), silent = TRUE)
         xyz = unique(c(xyz,fts$flywire.xyz))
       }
       if(!length(xyz)){
@@ -339,69 +364,69 @@ flywire_failed <-function(local = FALSE, folder = "flywire_neurons/", sql = FALS
 
 # hidden
 sql_col_types = readr::cols(.default = "c",
-                 edits = "i",
-                 total.edits = "i",
-                 pre = "i",
-                 post = "i",
-                 upstream = "i",
-                 downstream = "i",
-                 voxels = "i",
-                 layer = "n",
-                 ct.layer = "n",
-                 orig.soma = "?",
-                 soma = "?",
-                 soma.edit = "?",
-                 truncated = "?",
-                 splittable = "?",
-                 checked = "?",
-                 edited.cable = "?",
-                 skeletonization = "?",
-                 time = "?",
-                 total.outputs = "n",
-                 axon.outputs = "n",
-                 dend.outputs = "n",
-                 total.inputs = "n",
-                 axon.inputs = "n",
-                 dend.inputs = "n",
-                 axon.outputs = "n",
-                 dend.outputs = "n",
-                 axon.inputs = "n",
-                 dend.inputs = "n",
-                 total.outputs.density = "n",
-                 total.inputs.density = "n",
-                 axon.outputs.density = "n",
-                 dend.outputs.density = "n",
-                 axon.inputs.density = "n",
-                 dend.inputs.density = "n",
-                 total.length = "n",
-                 axon.length = "n",
-                 dend.length = "n",
-                 pd.length = "n",
-                 length = "?",
-                 segregation_index = "n",
-                 X = "n",
-                 Y = "n",
-                 Z = "n",
-                 x = "n",
-                 x = "n",
-                 z = "n",
-                 fw.x ="n",
-                 fw.y = "n",
-                 fw.z = "n",
-                 cable.length = "n",
-                 proportion = "n",
-                 count = "n",
-                 weight = "n",
-                 norm = "n",
-                 synapses = "n",
-                 syn = "n",
-                 syns = "n",
-                 n.syn = "n",
-                 nodes = "n",
-                 endpoints = "n",
-                 segments = "n",
-                 branchpoints = "n",
-                 root = "i")
+                            edits = "i",
+                            total.edits = "i",
+                            pre = "i",
+                            post = "i",
+                            upstream = "i",
+                            downstream = "i",
+                            voxels = "i",
+                            layer = "n",
+                            ct.layer = "n",
+                            orig.soma = "?",
+                            soma = "?",
+                            soma.edit = "?",
+                            truncated = "?",
+                            splittable = "?",
+                            checked = "?",
+                            edited.cable = "?",
+                            skeletonization = "?",
+                            time = "?",
+                            total.outputs = "n",
+                            axon.outputs = "n",
+                            dend.outputs = "n",
+                            total.inputs = "n",
+                            axon.inputs = "n",
+                            dend.inputs = "n",
+                            axon.outputs = "n",
+                            dend.outputs = "n",
+                            axon.inputs = "n",
+                            dend.inputs = "n",
+                            total.outputs.density = "n",
+                            total.inputs.density = "n",
+                            axon.outputs.density = "n",
+                            dend.outputs.density = "n",
+                            axon.inputs.density = "n",
+                            dend.inputs.density = "n",
+                            total.length = "n",
+                            axon.length = "n",
+                            dend.length = "n",
+                            pd.length = "n",
+                            length = "?",
+                            segregation_index = "n",
+                            X = "n",
+                            Y = "n",
+                            Z = "n",
+                            x = "n",
+                            x = "n",
+                            z = "n",
+                            fw.x ="n",
+                            fw.y = "n",
+                            fw.z = "n",
+                            cable.length = "n",
+                            proportion = "n",
+                            count = "n",
+                            weight = "n",
+                            norm = "n",
+                            synapses = "n",
+                            syn = "n",
+                            syns = "n",
+                            n.syn = "n",
+                            nodes = "n",
+                            endpoints = "n",
+                            segments = "n",
+                            branchpoints = "n",
+                            root = "i")
 
 #' @rdname flywire_googledrive_data
 #' @export
@@ -563,16 +588,16 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
           gs.t$fw.x = as.numeric(gs.t$fw.x)
           gs.t$fw.y = as.numeric(gs.t$fw.y)
           gs.t$fw.z = as.numeric(gs.t$fw.z)
-            pos = gs.t[apply(gs.t, 1, function(row) sum(is.na(row[c("fw.x","fw.y",'fw.z')]))==0),]
-            p = nat::pointsinside(pos[,c("fw.x","fw.y",'fw.z')],bbx)
-            pos = pos[p,]
-            pos = pos[!is.na(pos$fw.x),]
-            if(nrow(pos)){
-              foreach.ids = fafbseg::flywire_xyz2id(pos[,c("fw.x","fw.y",'fw.z')], rawcoords = TRUE)
-              names(foreach.ids) = pos[,"flywire.xyz"]
-            }else{
-              foreach.ids = NULL
-            }
+          pos = gs.t[apply(gs.t, 1, function(row) sum(is.na(row[c("fw.x","fw.y",'fw.z')]))==0),]
+          p = nat::pointsinside(pos[,c("fw.x","fw.y",'fw.z')],bbx)
+          pos = pos[p,]
+          pos = pos[!is.na(pos$fw.x),]
+          if(nrow(pos)){
+            foreach.ids = fafbseg::flywire_xyz2id(pos[,c("fw.x","fw.y",'fw.z')], rawcoords = TRUE)
+            names(foreach.ids) = pos[,"flywire.xyz"]
+          }else{
+            foreach.ids = NULL
+          }
           fids = unlist(foreach.ids)
           fids[is.na(fids)|is.nan(fids)] = "0"
           replacement = fids[match(gs.t$flywire.xyz ,names(fids))]
