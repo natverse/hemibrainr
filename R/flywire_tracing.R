@@ -94,7 +94,7 @@ flywire_tracing_sheet <- function(ws,
       }
       ws = sel$name
     }
-    gs = data.frame(strstringsAsFactors = FALSE)
+    gs = data.frame(stringsAsFactors = FALSE)
     for(w in ws){
       gm = gsheet_manipulation(FUN = googlesheets4::read_sheet,
                           wait = 20,
