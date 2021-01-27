@@ -296,8 +296,8 @@ LR_matching <- function(ids = NULL,
         gsheet_update_cols(
           write.cols = c(match.field,quality.field,"note","User"),
           gs=gs2,
-          selected_sheet = selected_sheet,
-          sheet = "hemibrain",
+          selected_sheet = selected_file,
+          sheet = "FAFB",
           Verbose = TRUE)
       }
       saved = c(unsaved, saved)
@@ -367,6 +367,8 @@ neuron_match_scanner <- function(brain,
     # Get data
     query.n = tryCatch(query[n], error = function(e){
       message("Could not immediately load query neuron: ", n)
+      try(file.remove(paste0(attributes(query)$db@datafile,"___LOCK")), silent = TRUE)
+      message(e)
       NULL
     })
     if(is.null(query.n)){ # in FAFB14 space.
@@ -378,7 +380,8 @@ neuron_match_scanner <- function(brain,
         }
         if(query.repository == "flywire"){
           fafbseg::choose_segmentation("flywire")
-          query.n = fafbseg::skeletor(n)
+          # query.n = fafbseg::skeletor(n)
+          query.n = fafbseg::read_cloudvolume_meshes(n)
         }else if(query.repository == "hemibrain"){
           query.n  = neuprintr::neuprint_read_neurons(n, all_segments = TRUE, heal = FALSE)
           query.n = scale_neurons.neuronlist(query.n, scaling = (8/1000))
@@ -425,11 +428,11 @@ neuron_match_scanner <- function(brain,
     }
     ### Get old matches
     if(match.field=="flywire.xyz"){
-      old.match = selected[selected[[id]]%in%n,"flywire.id"]
+      old.match = selected[selected[[id]]%in%n,"flywire.id"][1]
     }else{
-      old.match = selected[selected[[id]]%in%n,match.field]
+      old.match = selected[selected[[id]]%in%n,match.field][1]
     }
-    old.quality = selected[selected[[id]]%in%n,match.field]
+    old.quality = selected[selected[[id]]%in%n,quality.field][1]
     if(!is.na(old.match)&&!old.match%in%c(""," ")){
       match.n =  tryCatch(targets[old.match], error = function(e){
         message("Could not immediately load match neuron: ", old.match)
@@ -473,7 +476,11 @@ neuron_match_scanner <- function(brain,
       }
     } else {
       batch.in = intersect(batch, names(targets))
-      native = tryCatch(targets[match(batch.in,names(targets))], error = function(e) NULL)
+      native = tryCatch(targets[match(batch.in,names(targets))], error = function(e){
+        try(file.remove(paste0(attributes(targets)$db@datafile,"___LOCK")), silent = TRUE)
+        message(e)
+        NULL
+      })
       if(is.null(native)|length(batch.in)!=length(batch)){
         message("Dropping ",length(batch)-length(batch.in) ," neuron missing from targets" )
         batch = intersect(batch, batch.in)
@@ -557,10 +564,10 @@ neuron_match_scanner <- function(brain,
         hit = names(targets[sel])
       }
     }else{
-      hit = selected[selected[[id]]%in%n,chosen.field]
-      hit[is.na(hit)] = "none"
+      hit = selected[selected[[id]]%in%n,match.field]
+      hit[is.issue(hit)] = "none"
       quality = old.quality
-      quality[is.na(quality)] = "none"
+      quality[is.issue(quality)] = "none"
     }
     message("You chose: ", hit)
     selected[selected[[id]]%in%n,match.field] = hit

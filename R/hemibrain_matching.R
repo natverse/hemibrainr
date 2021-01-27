@@ -231,7 +231,7 @@ hemibrain_matching <- function(ids = NULL,
         gsheet_update_cols(
           write.cols = c(match.field,quality.field,"note","User","flywire.id"),
           gs=gs2,
-          selected_sheet = selected_sheet,
+          selected_sheet = selected_file,
           sheet = "hemibrain",
           Verbose = TRUE)
       }
@@ -636,7 +636,7 @@ fafb_matching <- function(ids = NULL,
       plot_inspirobot()
       say_encouragement(initials)
       # Read!
-      gs2 = hemibrain_match_sheet(selected_file = selected_file, sheet = "hemibrain")
+      gs2 = hemibrain_match_sheet(selected_file = selected_file, sheet = repository)
       selected.unsaved = subset(selected, selected[[id]]%in%unsaved)
       gs2[match(selected.unsaved[[id]],gs2[[id]]),match.field]= selected.unsaved[[match.field]]
       gs2[match(selected.unsaved[[id]],gs2[[id]]),quality.field]= selected.unsaved[[quality.field]]
@@ -647,8 +647,8 @@ fafb_matching <- function(ids = NULL,
         gsheet_update_cols(
           write.cols = c(match.field,quality.field,"note","User"),
           gs=gs2,
-          selected_sheet = selected_sheet,
-          sheet = "hemibrain",
+          selected_sheet = selected_file,
+          sheet = "FAFB",
           Verbose = TRUE)
       }
       saved = c(unsaved, saved)
@@ -1749,8 +1749,13 @@ id_selector <- function(gs,
     message(sprintf("Looking at %s %ss for user %s, with overwrite disabled",id.len,id,initials))
     doit = subset(gs, gs$User == initials & (is.na(gs[[match.field]]) | is.na(gs[[quality.field]])) )
   }else{ # review
-    message(sprintf("Reviewing made matches among %s %ss for user %s, with overwrite enabled",id.len,id,initials))
-    doit = subset(gs, gs$User == initials & (!is.na(gs[[match.field]]) | !is.na(gs[[quality.field]])) )
+    if(is.null(ids)){
+      message(sprintf("Reviewing made matches for %s %ss for user %s, with overwrite enabled",id.len,id,initials))
+      doit = subset(gs, gs$User == initials & (!is.na(gs[[match.field]]) | !is.na(gs[[quality.field]])) )
+    }else{
+      message(sprintf("Reviewing made matches for %s %ss over all users, with overwrite enabled",id.len,id,initials))
+      doit = subset(gs, (!is.na(gs[[match.field]]) | !is.na(gs[[quality.field]])) )
+    }
   }
   if(is.null(ids)||!length(ids)){
     ids = doit[[id]]
