@@ -360,7 +360,7 @@ flywire_request <- function(request,
         fts = try(flywire_tracing_sheet(ws = tab,
                                     selected_sheet=sheet,
                                     Verbose = FALSE), silent = TRUE)
-        xyz = unique(c(xyz,fts$flywire.id))
+        xyz = unique(c(xyz,fts$flywire.xyz))
       }
       if(!length(xyz)){
         stop("No flywire positions to add")
