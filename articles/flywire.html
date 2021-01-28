@@ -267,11 +267,11 @@
 <a href="#add-flywire-neurons-to-the-google-drive" class="anchor"></a>Add flywire neurons to the Google Drive</h3>
 <p>If you had to go to the hassle of skeletonising some flywire neurons that were not on the Google Drive, you don’t want to have to do this again. To that end, you can add them to the Google Drive as so:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/flywire_neurons.html">flywire_neurons_update</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">ids</span>, .parallel <span class="op">=</span> <span class="cn">TRUE</span>, OmitFailures <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<code class="sourceCode R"><span class="fu">flywire_neurons_update</span><span class="op">(</span>x <span class="op">=</span> <span class="va">ids</span>, .parallel <span class="op">=</span> <span class="cn">TRUE</span>, OmitFailures <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="co"># This can take a little while</span></code></pre></div>
 <p>You can also add flywire neurons to precomputed NBLASTs.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/flywire_neurons.html">flywire_nblast_update</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">neurons</span>, nblast <span class="op">=</span> <span class="st">"hemibrain-flywire"</span><span class="op">)</span>
+<code class="sourceCode R"><span class="fu">flywire_nblast_update</span><span class="op">(</span>x <span class="op">=</span> <span class="va">neurons</span>, nblast <span class="op">=</span> <span class="st">"hemibrain-flywire"</span><span class="op">)</span>
 <span class="co"># This can take a long while</span></code></pre></div>
 <p>These functions can take a long time to run. For example, if adding to the hemibrain-flywire NBLAST, all ~25k flywire neurons need to be read in order to calculate the NBLAST. You can also request that your flywire neurons are added to the precomputations we try to make en mass periodically for the Google drive, if you do not need your answer ASAP. You can do this as so:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">

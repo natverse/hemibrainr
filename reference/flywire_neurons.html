@@ -50,7 +50,7 @@
 <meta property="og:description" content="Get a large number of skeletonised neurons from FlyWire. The neuronlist is saved as a
  nat::neuronlistfh object so certain neurons may be read from it
  without loading the entire, large neuronlist into memory. You will need access to the hemibrain Google Team Drive and
- have it mounted with Google filestream.The function flywire_neurons_update can be used to update the available data.
+ have it mounted with Google filestream.
  If you want to flag flywire neurons that should be added to the Google drive, without doing this yourself, you can use
  flywire_request. The flywire_basics function will calculate some useful meta-data, namely
 a point in the primary neurite tract that can be used as a stable reference for this neuron." />
@@ -164,7 +164,7 @@ a point in the primary neurite tract that can be used as a stable reference for 
     <p>Get a large number of skeletonised neurons from FlyWire. The neuronlist is saved as a
  <code><a href='https://rdrr.io/pkg/nat/man/neuronlistfh.html'>nat::neuronlistfh</a></code> object so certain neurons may be read from it
  without loading the entire, large <code>neuronlist</code> into memory. You will need access to the hemibrain Google Team Drive and
- have it mounted with Google filestream.The function <code>flywire_neurons_update</code> can be used to update the available data.
+ have it mounted with Google filestream.
  If you want to flag flywire neurons that should be added to the Google drive, without doing this yourself, you can use
  <code>flywire_request</code>. The <code>flywire_basics</code> function will calculate some useful meta-data, namely
 a point in the primary neurite tract that can be used as a stable reference for this neuron.</p>
@@ -172,25 +172,12 @@ a point in the primary neurite tract that can be used as a stable reference for 
 
     <pre class="usage"><span class='fu'>flywire_neurons</span><span class='op'>(</span>
   x <span class='op'>=</span> <span class='cn'>NULL</span>,
+  WithConnectors <span class='op'>=</span> <span class='cn'>FALSE</span>,
   local <span class='op'>=</span> <span class='cn'>FALSE</span>,
   brain <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"FlyWire"</span>, <span class='st'>"JRCFIB2018Fraw"</span>, <span class='st'>"JRCFIB2018F"</span>, <span class='st'>"FAFB"</span>, <span class='st'>"FAFB14"</span>, <span class='st'>"JFRC2"</span>,
     <span class='st'>"JFRC2013"</span>, <span class='st'>"JRC2018F"</span>, <span class='st'>"FCWB"</span><span class='op'>)</span>,
   mirror <span class='op'>=</span> <span class='cn'>FALSE</span>,
   swc <span class='op'>=</span> <span class='cn'>FALSE</span>,
-  <span class='va'>...</span>
-<span class='op'>)</span>
-
-<span class='fu'>flywire_neurons_update</span><span class='op'>(</span>
-  <span class='va'>x</span>,
-  brain <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"FlyWire"</span>, <span class='st'>"JRCFIB2018F"</span>, <span class='st'>"FAFB14"</span>, <span class='st'>"JFRC2"</span>, <span class='st'>"JFRC2013"</span>, <span class='st'>"JRC2018F"</span>,
-    <span class='st'>"FCWB"</span><span class='op'>)</span>,
-  mirror <span class='op'>=</span> <span class='cn'>FALSE</span>,
-  <span class='va'>...</span>
-<span class='op'>)</span>
-
-<span class='fu'>flywire_nblast_update</span><span class='op'>(</span>
-  x <span class='op'>=</span> <span class='cn'>NULL</span>,
-  nblast <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"hemibrain-flywire"</span>, <span class='st'>"flywire"</span>, <span class='st'>"flywire-mirror"</span><span class='op'>)</span>,
   <span class='va'>...</span>
 <span class='op'>)</span>
 
@@ -209,7 +196,12 @@ a point in the primary neurite tract that can be used as a stable reference for 
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>x</th>
-      <td><p>flywire IDs to update, for the saved Google drive <code>neuronlistfh</code> objects called with <code>flywire_neurons</code>.</p></td>
+      <td><p>flywire IDs for desired. If left as <code>NULL</code>, all flywire neurons that can be summoned from the hemibrainr Google drive are summoned.</p></td>
+    </tr>
+    <tr>
+      <th>WithConnectors</th>
+      <td><p>logical, if <code>TRUE</code> the neuron fetched have predicted synapses located within each neuron at <code>neuron$connectors</code> and
+have a predicted axon/dendrite split at <code>neuron$d$Label</code> for each point in its skeleton, created using <code><a href='flow_centrality.html'>flow_centrality</a></code>.</p></td>
     </tr>
     <tr>
       <th>local</th>
@@ -230,10 +222,6 @@ a point in the primary neurite tract that can be used as a stable reference for 
     <tr>
       <th>...</th>
       <td><p>Additional arguments passed to <code><a href='https://rdrr.io/pkg/nat/man/nlapply.html'>nat::nlapply</a></code>.and/or <code><a href='https://rdrr.io/pkg/fafbseg/man/skeletor.html'>fafbseg::skeletor</a></code>.</p></td>
-    </tr>
-    <tr>
-      <th>nblast</th>
-      <td><p>which flywire NBLAST to update on Google drive.</p></td>
     </tr>
     <tr>
       <th>flywire.neurons</th>
@@ -309,6 +297,11 @@ col_type <span class='op'>=</span> <span class='fu'><a href='https://readr.tidyv
 <span class='co'>## Now they are added to a google sheet, and will be read and</span>
 <span class='co'>##  processed as part of this nightly pipeline:</span>
 <span class='co'>### https://github.com/flyconnectome/fafbpipeline</span>
+
+<span class='co'># Now get some split neurons with synapses</span>
+<span class='va'>fw.split</span> <span class='op'>=</span> <span class='fu'>flywire_neurons</span><span class='op'>(</span>WithConnectors<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
+<span class='fu'>nopen3d</span><span class='op'>(</span><span class='op'>)</span>
+<span class='fu'><a href='plot3d_split.html'>nlscan_split</a></span><span class='op'>(</span><span class='va'>fw.split</span><span class='op'>[</span><span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span><span class='op'>(</span><span class='va'>fw.split</span><span class='op'>)</span>,<span class='fl'>15</span><span class='op'>)</span><span class='op'>]</span><span class='op'>)</span>
 
 <span class='op'>}</span><span class='co'># }</span>
 </div></pre>
