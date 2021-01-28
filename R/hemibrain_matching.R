@@ -1757,7 +1757,7 @@ id_selector <- function(gs,
                   | gs[[match.field]] %in% c("none","n","tract","t",""," ","NA")))
   }else if(overwrite=="FALSE"){
     message(sprintf("Looking at %s %ss for user %s, with overwrite disabled",id.len,id,initials))
-    doit = subset(gs, gs$User == initials & (is.na(gs[[match.field]]) | is.na(gs[[quality.field]])) )
+    doit = subset(gs, gs$User == initials & (is.na(gs[[match.field]]) & is.na(gs[[quality.field]])) )
   }else{ # review
     if(is.null(ids)){
       message(sprintf("Reviewing made matches for %s %ss for user %s, with overwrite enabled",id.len,id,initials))
