@@ -27,7 +27,8 @@ VignetteBuilder: knitr
 Depends:
     R (>= 3.1),
     neuprintr (>= 0.4),
-    nat (>= 1.10.2.9)
+    nat (>= 1.10.2.9),
+    fafbseg (>= 0.9.0.9000)
 Imports:
     utils,
     googlesheets4 (>= 0.1.1.9100),
@@ -53,7 +54,6 @@ Imports:
     catmaid,
     progress,
     nat.nblast,
-    fafbseg,
     readr,
     bit64
 Remotes: 
