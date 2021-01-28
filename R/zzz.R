@@ -33,7 +33,10 @@
   }
 
   # Set googlesheets API key
-  key = options()$hemibrainr_ghseets_api_key
+  key = Sys.getenv("hemibrainr_ghseets_api_key")
+  if(is.null(key)||key==""){
+    key = options()$hemibrainr_ghseets_api_key
+  }
   if(!is.null(key)){
     message("Setting goglesheets API key for hemibrainr_ghseets")
     googlesheets4::gs4_auth_configure(api_key = key)
