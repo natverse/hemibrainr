@@ -550,26 +550,13 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
             gs.t[[fw.c]] = NA
           }
         }
+        gs.t$flywire.id = fafbseg::flywire_latestid(gs.t$flywire.id)
         good.xyz = sapply(gs.t$flywire.xyz,function(x) length(tryCatch(nat::xyzmatrix(x),error = function(e) NA))==3)
         gs.t[!good.xyz,c("flywire.xyz")] = apply(gs.t[!good.xyz,c("fw.x","fw.y",'fw.z')],1,paste_coords)
         if(!is.null(meta)){
           justids = gs.t$flywire.xyz==paste_coords(matrix(NA,ncol=3))&!is.na(gs.t$flywire.id)
           replacement.xyz = meta[match(gs.t[justids,"flywire.id"],meta$flywire.id),]$flywire.xyz
           gs.t[justids,"flywire.xyz"] = replacement.xyz
-          needs.updating = is.na(replacement.xyz)
-          please.update = gs.t$flywire.id[justids][needs.updating]
-          if(length(please.update)){
-            updated.ids = tryCatch(sapply(please.update, fafbseg::flywire_latestid), error = function(e) NULL)
-            if(!is.null(updated.ids)){
-              gs.t$flywire.id[justids][needs.updating] = updated.ids
-              good.xyz = sapply(gs.t$flywire.xyz,function(x) length(tryCatch(nat::xyzmatrix(x),error = function(e) NA))==3)
-              gs.t[!good.xyz,c("flywire.xyz")] = apply(gs.t[!good.xyz,c("fw.x","fw.y",'fw.z')],1,paste_coords)
-              justids = gs.t$flywire.xyz==paste_coords(matrix(NA,ncol=3))&!is.na(gs.t$flywire.id)
-              replacement.xyz = meta[match(gs.t[justids,"flywire.id"],meta$flywire.id),]$flywire.xyz
-              # replacement.xyz[is.na(replacement.xyz)] = "(NA,NA,NA)"
-              gs.t[justids,"flywire.xyz"] = replacement.xyz
-            }
-          }
         }
         good.xyz = sapply(gs.t$flywire.xyz,function(x) length(tryCatch(nat::xyzmatrix(x),error = function(e) NA))==3)
         if(sum(good.xyz)){
