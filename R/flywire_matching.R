@@ -195,10 +195,11 @@ LR_matching <- function(ids = NULL,
                         batch_size = 50,
                         db = flywire_neurons(),
                         query = flywire_neurons(mirror=TRUE),
-                        overwrite = c("FALSE","mine","mine_empty","TRUE", "review"),
+                        overwrite = c("FALSE","bad","TRUE","review"),
                         column = NULL,
                         entry = NULL,
-                        User = NULL){
+                        User = NULL,
+                        superUser = FALSE){
   message("Matching mirrored flywire neurons (blue) to non-mirrored flywire neurons (red)")
   # Packages
   if(!requireNamespace("elmr", quietly = TRUE)) {
@@ -252,11 +253,11 @@ LR_matching <- function(ids = NULL,
   message("Neuron matches: ", nrow(done), "/", nrow(gs))
   print(table(gs[[quality.field]]))
   # choose user
-  initials = choose_user(gs, User = User)
+  initials = choose_user(gs, User = Use)
   # choose ids
   selected = id_selector(gs=gs, ids=ids, id=id, overwrite = overwrite,
                          quality.field = quality.field, match.field = match.field,
-                         initials = initials, column = column, entry = entry)
+                         initials = initials, column = column, entry = entry, superUser = superUser)
   # choose brain
   brain = elmr::FAFB.surf
   # Make matches!
@@ -366,63 +367,27 @@ neuron_match_scanner <- function(brain,
     rgl::bg3d("white")
     plot3d(brain, alpha = 0.1, col ="grey")
     # Get data
-    query.n = tryCatch(query[n], error = function(e){
-      message("Could not immediately load query neuron: ", n)
-      try(file.remove(paste0(attributes(query)$db@datafile,"___LOCK")), silent = TRUE)
-      message(e)
-      NULL
-    })
-    if(is.null(query.n)){ # in FAFB14 space.
-      query.n = tryCatch({
-        message("Neuron not found on Google drive, attempting to read ...")
-        if(!requireNamespace("fafbseg", quietly = TRUE)) {
-          stop("Please install fafbseg using:\n", call. = FALSE,
-               "remotes::install_github('natverse/fafbseg')")
-        }
-        if(query.repository == "flywire"){
-          fafbseg::choose_segmentation("flywire")
-          # query.n = fafbseg::skeletor(n)
-          query.n = fafbseg::read_cloudvolume_meshes(n)
-        }else if(query.repository == "hemibrain"){
-          query.n  = neuprintr::neuprint_read_neurons(n, all_segments = TRUE, heal = FALSE)
-          query.n = scale_neurons.neuronlist(query.n, scaling = (8/1000))
-          query.n = suppressWarnings(nat.templatebrains::xform_brain(query.n, reference = "FAFB14", sample = "JRCFIB2018F"))
-        }else if (query.repository=="CATMAID"){
-          query.n = catmaid::read.neurons.catmaid(query.n)
-        }else{
-          NULL
-        }
-      }, error = function(e) {NULL})
-    }
+    query.n = get_match_neuron(query = query, n = n, query.repository = query.repository)
     # Other neurons to always plot
     if(extra.repository!="none"){
       if(extra.repository=="CATMAID"){
         sk = selected[n,]$skid[1]
-        if(!is.na(sk)){
-          extra.n = tryCatch(catmaid::read.neurons.catmaid(sk, OmitFailures = TRUE), error = function(e) NULL)
-        }else{
-          extra.n = NULL
-        }
-      }else if(extra.repository=="flywire"){
-        fw.id = selected[n,]$flywire.id[1]
-        if(!is.na(fw.id)){
-          extra.n = tryCatch(flywire_neurons()[as.character(fw.id)], error = function(e) NULL)
-        }else{
-          extra.n = NULL
-        }
+        extra.n = try(get_match_neuron(query = NULL, n = sk, query.repository = extra.repository), silent = FALSE)
       }else{
-        extra.n = NULL
+        fw.id = selected[n,]$flywire.id[1]
+        extra.n = try(get_match_neuron(query = flywire_neurons(), n = fw.id, query.repository = extra.repository), silent = FALSE)
       }
     }else{
       extra.n = NULL
     }
     if(!is.null(extra.neurons)){
       another.n = tryCatch(extra.neurons[n], error = function(e){
+        message(e)
         NULL
       })
       if(is.null(another.n)){
         fw.id = selected[n,]$flywire.id[1]
-        extra.n = tryCatch(flywire_neurons()[as.character(fw.id)], error = function(e) NULL)
+        another.n = get_match_neuron(query = flywire_neurons(), n = fw.id, query.repository = query.repository)
       }
     }else{
       another.n = NULL
@@ -437,6 +402,7 @@ neuron_match_scanner <- function(brain,
     if(!is.na(old.match)&&!old.match%in%c(""," ")){
       match.n =  tryCatch(targets[old.match], error = function(e){
         message("Could not immediately load match neuron: ", old.match)
+        message(e)
         NULL})
     }else{
       match.n = NULL
@@ -454,13 +420,15 @@ neuron_match_scanner <- function(brain,
     if(!is.null(match.n)){plot3d(match.n, lwd = 2, soma = soma.size, col = "#348E53")}
     message("ID: ", n)
     show.columns = intersect(show.columns,colnames(query.n[,]))
+    display = c()
     for(sc in show.columns){
       if(sc%in%colnames(selected)){
-        message(sc," : ", selected[match(n,selected[[id]]),sc])
+        display = c(display,paste0(sc," : ", selected[match(n,selected[[id]]),sc]))
       }else{
-        message(sc," : ", query.n[n,sc])
+        display = c(display,paste0(sc," : ", query.n[n,sc]))
       }
     }
+    message(paste(display,collapse="  |  "))
     # Read database neurons
     message(sprintf("Reading the top %s %s hits",batch.size, targets.repository))
     batch = names(r)[1:batch.size]
@@ -495,7 +463,13 @@ neuron_match_scanner <- function(brain,
       plot.order = match(names(r)[1:j],names(native))
       plot.order = plot.order[!is.na(plot.order)]
       sel = sel.orig = tryCatch(nat::nlscan(native[plot.order], col = "#EE4244", lwd = 3, soma = soma.size),
-                                error = function(e) NULL)
+                                error = function(e){
+                                  message(e)
+                                  NULL
+                                })
+      if(!is.issue(old.match)){
+        sel = union(old.match,sel)
+      }
       if(is.null(sel)){
         next
       }
@@ -503,7 +477,13 @@ neuron_match_scanner <- function(brain,
         message("Note: You selected more than one neuron")
       }
       if(length(sel) > 0){
-        rgl::plot3d(native[sel], lwd = 2, soma = soma.size, col = hemibrain_bright_colour_ramp(length(sel)))
+        missing = setdiff(names(native), sel)
+        if(length(missing)){
+          missed = get_match_neuron(query = NULL, n = fw.id, query.repository = query.repository)
+          names(missed) = missing
+          native = nat::union(missed, native)
+        }
+        rgl::plot3d(native[sel], lwd = 2, soma = soma.size, col = hemibrain_colour_ramp(length(sel)))
       }
       prog = hemibrain_choice(sprintf("You selected %s neurons. Are you happy with that? ",length(sel)))
       if(length(sel)>0){
@@ -518,7 +498,8 @@ neuron_match_scanner <- function(brain,
             j = j + batch_size
             if(!is.null(targets)){
               native2 = tryCatch(targets[(names(r)[(k+1):j])], error = function(e) {
-                warning("Cannot read neuron: ", n, " from local targets, fetching from remote!")
+                message("Cannot read neuron: ", n, " from local targets, fetching from remote!")
+                message(e)
                 NULL
               })
             }
@@ -606,3 +587,43 @@ neuron_match_scanner <- function(brain,
   }
   list(selected = selected, unsaved = unsaved)
 }
+
+# hidden
+get_match_neuron <- function(query = NULL, n, query.repository){
+  if(!is.null(query)){
+    query.n = tryCatch(query[n], error = function(e){
+      message("Could not immediately load query neuron: ", n)
+      try(file.remove(paste0(attributes(query)$db@datafile,"___LOCK")), silent = TRUE)
+      message(e)
+      NULL
+    })
+  }else{
+    query.n = NULL
+  }
+  if(is.null(query.n)){ # in FAFB14 space.
+    query.n = tryCatch({
+      message("Neuron not found on Google drive, attempting to read ...")
+      if(!requireNamespace("fafbseg", quietly = TRUE)) {
+        stop("Please install fafbseg using:\n", call. = FALSE,
+             "remotes::install_github('natverse/fafbseg')")
+      }
+      if(query.repository == "flywire"){
+        fafbseg::choose_segmentation("flywire")
+        # query.n = fafbseg::skeletor(n)
+        query.n = fafbseg::read_cloudvolume_meshes(n)
+      }else if(query.repository == "hemibrain"){
+        query.n  = neuprintr::neuprint_read_neurons(n, all_segments = TRUE, heal = FALSE)
+        query.n = scale_neurons.neuronlist(query.n, scaling = (8/1000))
+        query.n = suppressWarnings(nat.templatebrains::xform_brain(query.n, reference = "FAFB14", sample = "JRCFIB2018F"))
+      }else if (query.repository=="CATMAID"){
+        query.n = catmaid::read.neurons.catmaid(n)
+      }else{
+        NULL
+      }
+    }, error = function(e) {NULL})
+  }
+  query.n
+}
+
+
+

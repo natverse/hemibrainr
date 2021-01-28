@@ -14,7 +14,10 @@
 #'   Filestream application or rclone, which should be installed on your machine. Further,
 #'   note that neurons are read from the FAFB CATMAID project when \code{repository=="CATMAID"}, and you must have
 #'   login details for this project recorded in your .Renviron for these
-#'   functions to work.
+#'   functions to work. You are given neurons assigned to your initials on the matching google sheet (the \code{User} column)
+#'   though you can look at other's assigned matches using \code{superUser=TRUE}. Your selection is further narrowed
+#'   by ommitting neurons whose matches have already been made, when using the default \code{overwrite="TRUE"}. However, you
+#'   can change this to overwrite matches, and to review made matches.
 #'
 #' @param ids body IDs for hemibrain neurons present in the
 #'   \href{https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit#gid=0}{Google
@@ -43,18 +46,22 @@
 #' The neurons you could possibly be looking at are selected through
 #' the arguments: \code{ids}, \code{column}, \code{entry}. If \code{ids} is \code{NULL} you will be given all neurons that have been assigned to your user on the
 #' \href{https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit#gid=0}{Google sheet}.
-#' If \code{overwrite} is set to \code{FALSE}, you will not overwrite any matches that have already been made from among the selected neurons.
-#' If \code{'mine'} you will re-examine and overwrite any matches you have made out of the selected neurons.
-#' With \code{'mine_empty'} the same happens, but you will also retain neurons that have no match, and have been assigned to any other user.
-#' If \code{FALSE} (be careful!) then you overwrite made matches among the selected neurons. If \code{"review"} then you will
-#' only be shown already-matched neurons, which appear in green. If you make no new selection (hit 't' to exit selection mode) then
-#' the made selection will persist. If \code{ids} is not \code{NULL},
-#' then the selected neurons will be further sub-setted by their unique id.
+#' If \code{overwrite} is set to \code{"FALSE"}, you will not overwrite any matches that have already been made from among the selected neurons.
+#' If \code{"TRUE"} (be careful!) then you overwrite made matches among the selected neurons.
+#' If \code{"bad"} then you can overwrite made matches that are 'tract-only' or 'none'.
+#' If \code{"review"} then you will only be shown already-matched neurons, which appear in green.
+#' If you make no new selection (hit 't' to exit selection mode) then the made selection will persist.
+#' If \code{ids} is not \code{NULL}, then the selected neurons will be further sub-setted by their unique id. Note that selection
+#' also works with \code{superUser}, the default is to only take neurons allocated to you. In order to change this,
+#' you can user \code{superUser=TRUE}.
 #' @param column defaults to \code{NULL}, no further subsetting. Else, you can select a column from the Google sheet.
 #' Only  neurons with a certain value (\code{entry}) in that column will be chosen for matching.
 #' @param entry defaults to \code{NULL}, no further subsetting. Else, it is a value in \code{column}.
 #' @param User the initials of the matching 'Users', i.e. you, which should also be recorded on the master matching google sheet. However, you can enter a new user
-#' for the matches you make in R.
+#' for the matches you make in R. If set to \code{NULL} then all Users are 'selected'.
+#' @param superUser if \code{FALSE} then you will only be given neurons flagged for your user. If \code{TRUE} then
+#' you will be given neurons flagged for any user. To select whether or not you want to look at neurons with no match, neurons with a match
+#' or either, use the \code{overwrite} argument.
 #'
 #' @details Currently, the
 #'   \href{https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit#gid=0}{Google
@@ -91,7 +98,12 @@
 #'
 #' # And example of matching neurons in a flywire tracing sheet
 #' sheet = flywire_tracing_sheet("SLPal2_dorsal", regex = TRUE)
-#' fafb_matching(ids = unique(sheet$flywire.id), repository="flywire", overwrite = "mine", User = "AJ")
+#' fafb_matching(ids = unique(sheet$flywire.id), repository="flywire",
+#' overwrite = "bad", User = "AJ", superUser = TRUE)
+#'
+#' # Look at all poorly made matches
+#' fafb_matching(repository="flywire", column = "hemibrain.match.quality",
+#' entry = "poor", overwrite = "TRUE", User = "AJ", superUser = TRUE)
 #' }}
 #' @rdname hemibrain_matching
 #' @export
@@ -104,10 +116,11 @@ hemibrain_matching <- function(ids = NULL,
                          db=NULL, # brain="FAFB"
                          repository = c("flywire", "CATMAID", "lm"),
                          query = hemibrain_neurons(brain = "FAFB14"), # brain="FAFB"
-                         overwrite = c("FALSE","mine","mine_empty","TRUE", "review"),
+                         overwrite = c("FALSE","bad","TRUE","review"),
                          column = NULL,
                          entry = NULL,
-                         User = NULL){
+                         User = NULL,
+                         superUser = FALSE){
   repository = match.arg(repository)
   message("Matching hemibrain neurons (blue) to ", repository," neurons (red)")
   # Other packages
@@ -200,7 +213,7 @@ hemibrain_matching <- function(ids = NULL,
   # choose ids
   selected = id_selector(gs=gs, ids=ids, id = id, overwrite = overwrite,
                          quality.field = quality.field, match.field = match.field,
-                         initials = initials, column = column, entry = entry)
+                         initials = initials, column = column, entry = entry, superUser = superUser)
   # Make matches!
   match.more = TRUE
   while(match.more){
@@ -297,10 +310,11 @@ lm_matching <- function(ids = NULL,
                         batch_size = 50,
                         db=hemibrain_neurons(),
                         query = NULL,
-                        overwrite = c("FALSE","mine","mine_empty","TRUE", "review"),
+                        overwrite = c("FALSE","bad","TRUE","review"),
                         column = NULL,
                         entry = NULL,
-                        User = NULL){
+                        User = NULL,
+                        superUser = FALSE){
   # Motivate!
   nat::nopen3d()
   plot_inspirobot()
@@ -362,7 +376,7 @@ lm_matching <- function(ids = NULL,
   # choose ids
   selected = id_selector(gs=gs, ids=ids, id=id, overwrite = overwrite,
                          quality.field = quality.field, match.field = match.field,
-                         initials = initials, column = column, entry = entry)
+                         initials = initials, column = column, entry = entry, superUser = superUser)
   ids = unique(selected[[id]])
   # choose brain
   brain = hemibrainr::hemibrain.surf
@@ -544,10 +558,11 @@ fafb_matching <- function(ids = NULL,
                         batch_size = 20,
                         db=hemibrain_neurons(brain="FAFB14"),
                         query = NULL,
-                        overwrite = c("FALSE","mine","mine_empty","TRUE", "review"),
+                        overwrite = c("FALSE","bad","TRUE","review"),
                         column = NULL,
                         entry = NULL,
-                        User = NULL){
+                        User = NULL,
+                        superUser = FALSE){
   repository = match.arg(repository)
   message("Matching ",repository," FAFB neurons (blue) to hemibrain neurons (red)")
   # Packages
@@ -584,17 +599,29 @@ fafb_matching <- function(ids = NULL,
   if(repository=="CATMAID"){
     id = "skid"
     brain = elmr::FAFB14.surf
-    extra.neurons = tryCatch(flywire_neurons(), error = function(e) NULL)
+    extra.neurons = tryCatch(flywire_neurons(), error = function(e){
+      message(e)
+      NULL
+    })
   }else if(repository == "flywire"){
     id = "flywire.id"
     brain = elmr::FAFB14.surf
     if(is.null(ids)){
-      ids = tryCatch(names(flywire_neurons()), error = function(e) NULL)
+      ids = tryCatch(names(flywire_neurons()), error = function(e){
+        message(e)
+        NULL
+      })
     }
     if(is.null(query)){
-      query = tryCatch(flywire_neurons(), error = function(e) NULL)
+      query = tryCatch(flywire_neurons(), error = function(e){
+        message(e)
+        NULL
+      })
     }
-    extra.neurons = tryCatch(flywire_neurons(mirror=TRUE), error = function(e) NULL)
+    extra.neurons = tryCatch(flywire_neurons(mirror=TRUE), error = function(e){
+      message(e)
+      NULL
+    })
   }
   chosen.field = "bodyid"
   match.field = search.id = paste0("hemibrain",".match")
@@ -619,7 +646,7 @@ fafb_matching <- function(ids = NULL,
   # choose ids
   selected = id_selector(gs=gs, ids=ids, id=id, overwrite = overwrite,
                          quality.field = quality.field, match.field = match.field,
-                         initials = initials, column = column, entry = entry)
+                         initials = initials, column = column, entry = entry, superUser = superUser)
   # Make matches!
   match.more = TRUE
   while(match.more){
@@ -1727,13 +1754,13 @@ flycircuit_matching_rewrite <- function(flycircuit.ids = names(flycircuit_neuron
 id_selector <- function(gs,
                         ids = NULL,
                         id = c("bodyid","flywire.id","skid","id","flywire.xyz","FAFB.match","hemibrain.match","LM.match"),
-                        overwrite = c("FALSE","mine","mine_empty","TRUE","review"),
+                        overwrite = c("FALSE","bad","TRUE","review"),
                         quality.field,
                         match.field,
                         initials = NULL,
                         column = NULL,
                         entry = NULL,
-                        User = NULL){
+                        superUser = FALSE){
   id = match.arg(id)
   ids = id_okay(ids)
   overwrite = match.arg(overwrite)
@@ -1742,34 +1769,35 @@ id_selector <- function(gs,
   }
   # choose possible ids
   id.len = ifelse(length(ids),length(ids),"all")
-  if((overwrite %in% c("TRUE") & is.null(ids)) | is.null(initials)){
-    message(sprintf("Looking at %s %ss, with overwrite enabled",id.len,id))
+  if((overwrite %in% c("TRUE") & is.null(ids))){
     doit = gs
-  }else if(overwrite %in% c("TRUE") & !is.null(initials)){
-    message(sprintf("Looking at %s %ss for user %s and others, with overwrite enabled",id.len,id,initials))
-    doit = gs
-  }else if(overwrite=="mine"){
-    message(sprintf("Looking at %s %ss for user %s, with overwrite enabled",id.len,id,initials))
-    doit = subset(gs, gs$User == initials)
-  } else if(overwrite=="mine_empty"){
-    message(sprintf("Looking at %s %ss for user %s, and others for where no match is already made",id.len,id,initials))
-    doit = subset(gs, gs$User == initials
-                  | (is.na(gs[[quality.field]])
-                  | is.na(gs[[quality.field]])
+  }else if(overwrite=="bad"){
+    doit = subset(gs, (is.na(gs[[match.field]]) & is.na(gs[[quality.field]]))
                   | gs[[quality.field]] %in% c("none","n","tract","t",""," ","NA")
-                  | gs[[match.field]] %in% c("none","n","tract","t",""," ","NA")))
+                  | gs[[match.field]] %in% c("none","n","tract","t",""," ","NA"))
   }else if(overwrite=="FALSE"){
-    message(sprintf("Looking at %s %ss for user %s, with overwrite disabled",id.len,id,initials))
-    doit = subset(gs, gs$User == initials & (is.na(gs[[match.field]]) & is.na(gs[[quality.field]])) )
+    doit = subset(gs, (is.na(gs[[match.field]]) & is.na(gs[[quality.field]])) )
   }else{ # review
-    if(is.null(ids)){
-      message(sprintf("Reviewing made matches for %s %ss for user %s, with overwrite enabled",id.len,id,initials))
-      doit = subset(gs, gs$User == initials & (!is.na(gs[[match.field]]) | !is.na(gs[[quality.field]])) )
-    }else{
-      message(sprintf("Reviewing made matches for %s %ss over all users, with overwrite enabled",id.len,id,initials))
-      doit = subset(gs, (!is.na(gs[[match.field]]) | !is.na(gs[[quality.field]])) )
-    }
+    doit = subset(gs, (!is.na(gs[[match.field]]) | !is.na(gs[[quality.field]])) )
   }
+  if(!superUser){
+    doit = subset(doit, doit$User==initials)
+    users = paste0("for matches flagged for user ", initials)
+  }else{
+    users = "for any match"
+  }
+  able = if(overwrite%in%c("bad","TRUE")){
+    "enabled"
+  }else{
+    "disabled"
+  }
+  message(sprintf("Reviewing made matches for %s %ss for user %s, with overwrite %s %s",
+                  id.len,
+                  id,
+                  initials,
+                  able,
+                  users
+                  ))
   if(is.null(ids)||!length(ids)){
     ids = doit[[id]]
   }else{

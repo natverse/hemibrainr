@@ -15,10 +15,11 @@ LR_matching(
   batch_size = 50,
   db = flywire_neurons(),
   query = flywire_neurons(mirror = TRUE),
-  overwrite = c("FALSE", "mine", "mine_empty", "TRUE", "review"),
+  overwrite = c("FALSE", "bad", "TRUE", "review"),
   column = NULL,
   entry = NULL,
-  User = NULL
+  User = NULL,
+  superUser = FALSE
 )
 
 hemibrain_matching(
@@ -30,10 +31,11 @@ hemibrain_matching(
   db = NULL,
   repository = c("flywire", "CATMAID", "lm"),
   query = hemibrain_neurons(brain = "FAFB14"),
-  overwrite = c("FALSE", "mine", "mine_empty", "TRUE", "review"),
+  overwrite = c("FALSE", "bad", "TRUE", "review"),
   column = NULL,
   entry = NULL,
-  User = NULL
+  User = NULL,
+  superUser = FALSE
 )
 
 lm_matching(
@@ -43,10 +45,11 @@ lm_matching(
   batch_size = 50,
   db = hemibrain_neurons(),
   query = NULL,
-  overwrite = c("FALSE", "mine", "mine_empty", "TRUE", "review"),
+  overwrite = c("FALSE", "bad", "TRUE", "review"),
   column = NULL,
   entry = NULL,
-  User = NULL
+  User = NULL,
+  superUser = FALSE
 )
 
 fafb_matching(
@@ -58,10 +61,11 @@ fafb_matching(
   batch_size = 20,
   db = hemibrain_neurons(brain = "FAFB14"),
   query = NULL,
-  overwrite = c("FALSE", "mine", "mine_empty", "TRUE", "review"),
+  overwrite = c("FALSE", "bad", "TRUE", "review"),
   column = NULL,
   entry = NULL,
-  User = NULL
+  User = NULL,
+  superUser = FALSE
 )
 }
 \arguments{
@@ -93,10 +97,14 @@ Defaults to reading a transformed \code{most.lhns} from the Hemibrain Google Tea
 The neurons you could possibly be looking at are selected through
 the arguments: \code{ids}, \code{column}, \code{entry}. If \code{ids} is \code{NULL} you will be given all neurons that have been assigned to your user on the
 \href{https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit#gid=0}{Google sheet}.
-If \code{overwrite} is set to \code{FALSE}, you will not overwrite any matches that have already been made from among the selected neurons.
-If \code{'mine'} you will re-examine and overwrite any matches you have made out of the selected neurons.
-With \code{'mine_empty'} the same happens, but you will also retain neurons that have no match, and have been assigned to any other user.
-If \code{FALSE} (be careful!) then you overwrite made matches among the selected neurons.}
+If \code{overwrite} is set to \code{"FALSE"}, you will not overwrite any matches that have already been made from among the selected neurons.
+If \code{"TRUE"} (be careful!) then you overwrite made matches among the selected neurons.
+If \code{"bad"} then you can overwrite made matches that are 'tract-only' or 'none'.
+If \code{"review"} then you will only be shown already-matched neurons, which appear in green.
+If you make no new selection (hit 't' to exit selection mode) then the made selection will persist.
+If \code{ids} is not \code{NULL}, then the selected neurons will be further sub-setted by their unique id. Note that selection
+also works with \code{superUser}, the default is to only take neurons allocated to you. In order to change this,
+you can user \code{superUser=TRUE}.}
 
 \item{column}{defaults to \code{NULL}, no further subsetting. Else, you can select a column from the Google sheet.
 Only  neurons with a certain value (\code{entry}) in that column will be chosen for matching.}
@@ -104,7 +112,11 @@ Only  neurons with a certain value (\code{entry}) in that column will be chosen 
 \item{entry}{defaults to \code{NULL}, no further subsetting. Else, it is a value in \code{column}.}
 
 \item{User}{the initials of the matching 'Users', i.e. you, which should also be recorded on the master matching google sheet. However, you can enter a new user
-for the matches you make in R.}
+for the matches you make in R. If set to \code{NULL} then all Users are 'selected'.}
+
+\item{superUser}{if \code{FALSE} then you will only be given neurons flagged for your user. If \code{TRUE} then
+you will be given neurons flagged for any user. To select whether or not you want to look at neurons with no match, neurons with a match
+or either, use the \code{overwrite} argument.}
 
 \item{hemibrain.nblast}{a FAFB (rows) - hemibrain (columns) normalised
 NBLAST matrix. By default this is read from the flyconnectome Team Drive.}
@@ -125,7 +137,10 @@ Match up neurons between the hemibrain, FAFB and light level data and save the
   Filestream application or rclone, which should be installed on your machine. Further,
   note that neurons are read from the FAFB CATMAID project when \code{repository=="CATMAID"}, and you must have
   login details for this project recorded in your .Renviron for these
-  functions to work.
+  functions to work. You are given neurons assigned to your initials on the matching google sheet (the \code{User} column)
+  though you can look at other's assigned matches using \code{superUser=TRUE}. Your selection is further narrowed
+  by ommitting neurons whose matches have already been made, when using the default \code{overwrite="TRUE"}. However, you
+  can change this to overwrite matches, and to review made matches.
 }
 \details{
 Currently, the
@@ -163,7 +178,12 @@ hemibrain_matching(hemibrain.nblast = fib.fafb.crossnblast.twigs5.mean.compress)
 
 # And example of matching neurons in a flywire tracing sheet
 sheet = flywire_tracing_sheet("SLPal2_dorsal", regex = TRUE)
-fafb_matching(ids = unique(sheet$flywire.id), repository="flywire", overwrite = "mine", User = "AJ")
+fafb_matching(ids = unique(sheet$flywire.id), repository="flywire",
+overwrite = "bad", User = "AJ", superUser = TRUE)
+
+# Look at all poorly made matches
+fafb_matching(repository="flywire", column = "hemibrain.match.quality",
+entry = "poor", overwrite = "TRUE", User = "AJ", superUser = TRUE)
 }}
 }
 \seealso{
