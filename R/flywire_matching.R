@@ -197,7 +197,8 @@ LR_matching <- function(ids = NULL,
                         query = flywire_neurons(mirror=TRUE),
                         overwrite = c("FALSE","mine","mine_empty","TRUE", "review"),
                         column = NULL,
-                        entry = NULL){
+                        entry = NULL,
+                        User = NULL){
   message("Matching mirrored flywire neurons (blue) to non-mirrored flywire neurons (red)")
   # Packages
   if(!requireNamespace("elmr", quietly = TRUE)) {
@@ -251,7 +252,7 @@ LR_matching <- function(ids = NULL,
   message("Neuron matches: ", nrow(done), "/", nrow(gs))
   print(table(gs[[quality.field]]))
   # choose user
-  initials = choose_user(gs)
+  initials = choose_user(gs, User = User)
   # choose ids
   selected = id_selector(gs=gs, ids=ids, id=id, overwrite = overwrite,
                          quality.field = quality.field, match.field = match.field,

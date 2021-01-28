@@ -50,6 +50,8 @@
 #' @param column defaults to \code{NULL}, no further subsetting. Else, you can select a column from the Google sheet.
 #' Only  neurons with a certain value (\code{entry}) in that column will be chosen for matching.
 #' @param entry defaults to \code{NULL}, no further subsetting. Else, it is a value in \code{column}.
+#' @param User the initials of the matching 'Users', i.e. you, which should also be recorded on the master matching google sheet. However, you can enter a new user
+#' for the matches you make in R.
 #'
 #' @details Currently, the
 #'   \href{https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit#gid=0}{Google
@@ -83,6 +85,10 @@
 #'
 #' # Match!
 #' hemibrain_matching(hemibrain.nblast = fib.fafb.crossnblast.twigs5.mean.compress)
+#'
+#' # And example of matching neurons in a flywire tracing sheet
+#' sheet = flywire_tracing_sheet("SLPal2_dorsal", regex = TRUE)
+#' fafb_matching(ids = unique(sheet$flywire.id), repository="flywire", overwrite = "mine", User = "AJ")
 #' }}
 #' @rdname hemibrain_matching
 #' @export
@@ -97,7 +103,8 @@ hemibrain_matching <- function(ids = NULL,
                          query = hemibrain_neurons(brain = "FAFB14"), # brain="FAFB"
                          overwrite = c("FALSE","mine","mine_empty","TRUE", "review"),
                          column = NULL,
-                         entry = NULL){
+                         entry = NULL,
+                         User = NULL){
   repository = match.arg(repository)
   message("Matching hemibrain neurons (blue) to ", repository," neurons (red)")
   # Other packages
@@ -185,7 +192,7 @@ hemibrain_matching <- function(ids = NULL,
   message("Neuron matches: ", nrow(done))
   print(table(gs[[quality.field]]))
   # Choose user
-  initials = choose_user(gs)
+  initials = choose_user(gs, User = User)
   rgl::bg3d("white")
   # choose ids
   selected = id_selector(gs=gs, ids=ids, id = id, overwrite = overwrite,
@@ -289,7 +296,8 @@ lm_matching <- function(ids = NULL,
                         query = NULL,
                         overwrite = c("FALSE","mine","mine_empty","TRUE", "review"),
                         column = NULL,
-                        entry = NULL){
+                        entry = NULL,
+                        User = NULL){
   # Motivate!
   nat::nopen3d()
   plot_inspirobot()
@@ -346,7 +354,7 @@ lm_matching <- function(ids = NULL,
   message("Neuron matches: ", nrow(done), "/", nrow(gs))
   print(table(gs[[quality.field]]))
   # Choose user
-  initials = choose_user(gs)
+  initials = choose_user(gs, User = User)
   rgl::bg3d("white")
   # choose ids
   selected = id_selector(gs=gs, ids=ids, id=id, overwrite = overwrite,
@@ -535,7 +543,8 @@ fafb_matching <- function(ids = NULL,
                         query = NULL,
                         overwrite = c("FALSE","mine","mine_empty","TRUE", "review"),
                         column = NULL,
-                        entry = NULL){
+                        entry = NULL,
+                        User = NULL){
   repository = match.arg(repository)
   message("Matching ",repository," FAFB neurons (blue) to hemibrain neurons (red)")
   # Packages
@@ -603,7 +612,7 @@ fafb_matching <- function(ids = NULL,
   message("Neuron matches: ", nrow(done), "/", nrow(gs))
   print(table(gs[[quality.field]]))
   # Choose user
-  initials = choose_user(gs)
+  initials = choose_user(gs, User = User)
   # choose ids
   selected = id_selector(gs=gs, ids=ids, id=id, overwrite = overwrite,
                          quality.field = quality.field, match.field = match.field,
@@ -1720,7 +1729,8 @@ id_selector <- function(gs,
                         match.field,
                         initials = NULL,
                         column = NULL,
-                        entry = NULL){
+                        entry = NULL,
+                        User = NULL){
   id = match.arg(id)
   ids = id_okay(ids)
   overwrite = match.arg(overwrite)
@@ -1794,11 +1804,15 @@ id = '%s'; overwrite = '%s'; quality.field = '%s'; match.field = '%s'; initials 
 }
 
 # hidden
-choose_user <- function(gs){
-  message("Users: ", paste(sort(unique(gs$User)),collapse = " "))
-  initials = must_be("Enter for new user. Or else, choose a user : ", answers = c(sort(unique(gs$User)),""))
+choose_user <- function(gs, User = NULL){
+  users = sort(unique(gs$User))
+  message("Users: ", paste(users,collapse = " "))
+  if(if.null(User)||!User%in%users)
+  initials = must_be("Enter for new user. Or else, choose a user : ", answers = c(users,""))
   if(initials==""){
     initials = readline(prompt="Please give your initials : ")
+  }else{
+    initials = User
   }
   say_hello(initials)
   initials

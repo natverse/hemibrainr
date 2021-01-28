@@ -17,7 +17,8 @@ LR_matching(
   query = flywire_neurons(mirror = TRUE),
   overwrite = c("FALSE", "mine", "mine_empty", "TRUE", "review"),
   column = NULL,
-  entry = NULL
+  entry = NULL,
+  User = NULL
 )
 
 hemibrain_matching(
@@ -31,7 +32,8 @@ hemibrain_matching(
   query = hemibrain_neurons(brain = "FAFB14"),
   overwrite = c("FALSE", "mine", "mine_empty", "TRUE", "review"),
   column = NULL,
-  entry = NULL
+  entry = NULL,
+  User = NULL
 )
 
 lm_matching(
@@ -43,7 +45,8 @@ lm_matching(
   query = NULL,
   overwrite = c("FALSE", "mine", "mine_empty", "TRUE", "review"),
   column = NULL,
-  entry = NULL
+  entry = NULL,
+  User = NULL
 )
 
 fafb_matching(
@@ -57,7 +60,8 @@ fafb_matching(
   query = NULL,
   overwrite = c("FALSE", "mine", "mine_empty", "TRUE", "review"),
   column = NULL,
-  entry = NULL
+  entry = NULL,
+  User = NULL
 )
 }
 \arguments{
@@ -98,6 +102,9 @@ If \code{FALSE} (be careful!) then you overwrite made matches among the selected
 Only  neurons with a certain value (\code{entry}) in that column will be chosen for matching.}
 
 \item{entry}{defaults to \code{NULL}, no further subsetting. Else, it is a value in \code{column}.}
+
+\item{User}{the initials of the matching 'Users', i.e. you, which should also be recorded on the master matching google sheet. However, you can enter a new user
+for the matches you make in R.}
 
 \item{hemibrain.nblast}{a FAFB (rows) - hemibrain (columns) normalised
 NBLAST matrix. By default this is read from the flyconnectome Team Drive.}
@@ -153,6 +160,10 @@ load(file.path("/Volumes/GoogleDrive/Shared drives/flyconnectome/",
 
 # Match!
 hemibrain_matching(hemibrain.nblast = fib.fafb.crossnblast.twigs5.mean.compress)
+
+# And example of matching neurons in a flywire tracing sheet
+sheet = flywire_tracing_sheet("SLPal2_dorsal", regex = TRUE)
+fafb_matching(ids = unique(sheet$flywire.id), repository="flywire", overwrite = "mine", User = "AJ")
 }}
 }
 \seealso{
