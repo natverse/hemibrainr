@@ -46,7 +46,10 @@
 #' If \code{overwrite} is set to \code{FALSE}, you will not overwrite any matches that have already been made from among the selected neurons.
 #' If \code{'mine'} you will re-examine and overwrite any matches you have made out of the selected neurons.
 #' With \code{'mine_empty'} the same happens, but you will also retain neurons that have no match, and have been assigned to any other user.
-#' If \code{FALSE} (be careful!) then you overwrite made matches among the selected neurons.
+#' If \code{FALSE} (be careful!) then you overwrite made matches among the selected neurons. If \code{"review"} then you will
+#' only be shown already-matched neurons, which appear in green. If you make no new selection (hit 't' to exit selection mode) then
+#' the made selection will persist. If \code{ids} is not \code{NULL},
+#' then the selected neurons will be further sub-setted by their unique id.
 #' @param column defaults to \code{NULL}, no further subsetting. Else, you can select a column from the Google sheet.
 #' Only  neurons with a certain value (\code{entry}) in that column will be chosen for matching.
 #' @param entry defaults to \code{NULL}, no further subsetting. Else, it is a value in \code{column}.
@@ -1818,6 +1821,3 @@ choose_user <- function(gs, User = NULL){
   say_hello(initials)
   initials
 }
-
-
-
