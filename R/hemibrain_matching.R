@@ -1807,7 +1807,7 @@ id = '%s'; overwrite = '%s'; quality.field = '%s'; match.field = '%s'; initials 
 choose_user <- function(gs, User = NULL){
   users = sort(unique(gs$User))
   message("Users: ", paste(users,collapse = " "))
-  if(if.null(User)||!User%in%users)
+  if(is.null(User)||!User%in%users)
   initials = must_be("Enter for new user. Or else, choose a user : ", answers = c(users,""))
   if(initials==""){
     initials = readline(prompt="Please give your initials : ")
