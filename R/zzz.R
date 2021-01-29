@@ -38,7 +38,8 @@
     googledrive::drive_auth(path = hemibrainr_service_account_key)
     googlesheets4::gs4_auth(
       scopes = 'https://www.googleapis.com/auth/spreadsheets',
-      path = hemibrainr_service_account_key
+      path = hemibrainr_service_account_key,
+      use_oob = TRUE
     )
   }else{
     hemibrainr_ghseets_api_key = Sys.getenv("hemibrainr_ghseets_api_key")
@@ -62,6 +63,7 @@
         )
         googlesheets4::gs4_auth_configure(app = google_app, api_key = key)
         googledrive::drive_auth_configure(app = google_app, api_key = key)
+        options(gargle_oob_default=TRUE)
         # googlesheets4::gs4_oauth_app()
         # googlesheets4::gs4_api_key()
       }
