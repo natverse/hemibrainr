@@ -33,14 +33,39 @@
   }
 
   # Set googlesheets API key
-  # googledrive::drive_auth(scopes = "https://www.googleapis.com/auth/drive.readonly") # read only
-  key = Sys.getenv("hemibrainr_ghseets_api_key")
-  if(is.null(key)||key==""){
-    key = options()$hemibrainr_ghseets_api_key
-  }
-  if(!is.null(key)){
-    message("Setting goglesheets API key for hemibrainr_ghseets")
-    googlesheets4::gs4_auth_configure(api_key = key)
+  hemibrainr_service_account_key = file.path(options()$Gdrive_hemibrain_data,"annotations/hemibrainr-571dd013f664.json")
+  if(file.exists(hemibrainr_service_account_key)){
+    googledrive::drive_auth(path = hemibrainr_service_account_key)
+    googlesheets4::gs4_auth(
+      scopes = 'https://www.googleapis.com/auth/spreadsheets',
+      path = hemibrainr_service_account_key
+    )
+  }else{
+    hemibrainr_ghseets_api_key = Sys.getenv("hemibrainr_ghseets_api_key")
+    hemibrainr_clientid = Sys.getenv("hemibrainr_clientid")
+    hemibrainr_secret = Sys.getenv("hemibrainr_secret")
+    if(is.null(hemibrainr_ghseets_api_key)||hemibrainr_ghseets_api_key==""){
+      hemibrainr_ghseets_api_key = options()$hemibrainr_ghseets_api_key
+      hemibrainr_clientid = options()$hemibrainr_clientid
+      hemibrainr_secret = options()$hemibrainr_secret
+    }
+    if(all(sapply(c(hemibrainr_ghseets_api_key,
+                    hemibrainr_clientid,
+                    hemibrainr_secret),is.null))){
+      if (require(httr)) {
+        message("We can access Google resources using the Google Cloud  Platform app 'hemibrainr'")
+        # bring your own app via client id (aka key) and secret
+        google_app <- httr::oauth_app(
+          "hemibrainr",
+          key = hemibrainr_clientid,
+          secret = hemibrainr_secret
+        )
+        googlesheets4::gs4_auth_configure(app = google_app, api_key = key)
+        googledrive::drive_auth_configure(app = google_app, api_key = key)
+        # googlesheets4::gs4_oauth_app()
+        # googlesheets4::gs4_api_key()
+      }
+    }
   }
 
   # Set Google sheets of interest
