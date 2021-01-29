@@ -33,42 +33,7 @@
   }
 
   # Set googlesheets API key
-  hemibrainr_service_account_key = file.path(options()$Gdrive_hemibrain_data,"annotations/hemibrainr-571dd013f664.json")
-  if(file.exists(hemibrainr_service_account_key)){
-    googledrive::drive_auth(path = hemibrainr_service_account_key)
-    googlesheets4::gs4_auth(
-      scopes = 'https://www.googleapis.com/auth/spreadsheets',
-      path = hemibrainr_service_account_key,
-      use_oob = TRUE
-    )
-  }else{
-    hemibrainr_ghseets_api_key = Sys.getenv("hemibrainr_ghseets_api_key")
-    hemibrainr_clientid = Sys.getenv("hemibrainr_clientid")
-    hemibrainr_secret = Sys.getenv("hemibrainr_secret")
-    if(is.null(hemibrainr_ghseets_api_key)||hemibrainr_ghseets_api_key==""){
-      hemibrainr_ghseets_api_key = options()$hemibrainr_ghseets_api_key
-      hemibrainr_clientid = options()$hemibrainr_clientid
-      hemibrainr_secret = options()$hemibrainr_secret
-    }
-    if(all(sapply(c(hemibrainr_ghseets_api_key,
-                    hemibrainr_clientid,
-                    hemibrainr_secret),is.null))){
-      if (require(httr)) {
-        message("We can access Google resources using the Google Cloud  Platform app 'hemibrainr'")
-        # bring your own app via client id (aka key) and secret
-        google_app <- httr::oauth_app(
-          "hemibrainr",
-          key = hemibrainr_clientid,
-          secret = hemibrainr_secret
-        )
-        googlesheets4::gs4_auth_configure(app = google_app, api_key = key)
-        googledrive::drive_auth_configure(app = google_app, api_key = key)
-        options(gargle_oob_default=TRUE)
-        # googlesheets4::gs4_oauth_app()
-        # googlesheets4::gs4_api_key()
-      }
-    }
-  }
+  hemibrainr_google_login()
 
   # Set Google sheets of interest
   hemibrainr_matching_gsheet = ifelse(!is.null(getOption("hemibrainr_matching_gsheet")),getOption("hemibrainr_matching_gsheet"),"1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw")

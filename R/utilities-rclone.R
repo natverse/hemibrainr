@@ -56,3 +56,45 @@ get_os <- function(){
   }
   tolower(os)
 }
+
+# hidden
+hemibrainr_google_login <- function(path = NULL){
+  if(is.null(path)){
+    path = file.path(options()$Gdrive_hemibrain_data,"annotations")
+  }
+  hemibrainr_service_account_key = file.path(path,"hemibrainr-571dd013f664.json")
+  if(file.exists(hemibrainr_service_account_key)){
+    googledrive::drive_auth(path = hemibrainr_service_account_key)
+    googlesheets4::gs4_auth(
+      scopes = 'https://www.googleapis.com/auth/spreadsheets',
+      path = hemibrainr_service_account_key,
+      use_oob = TRUE
+    )
+  }else{
+    hemibrainr_ghseets_api_key = Sys.getenv("hemibrainr_ghseets_api_key")
+    hemibrainr_clientid = Sys.getenv("hemibrainr_clientid")
+    hemibrainr_secret = Sys.getenv("hemibrainr_secret")
+    if(is.null(hemibrainr_ghseets_api_key)||hemibrainr_ghseets_api_key==""){
+      hemibrainr_ghseets_api_key = options()$hemibrainr_ghseets_api_key
+      hemibrainr_clientid = options()$hemibrainr_clientid
+      hemibrainr_secret = options()$hemibrainr_secret
+    }
+    if(all(sapply(c(hemibrainr_ghseets_api_key,
+                    hemibrainr_clientid,
+                    hemibrainr_secret),is.null))){
+      if (require(httr)) {
+        message("We can access Google resources using the Google Cloud  Platform app 'hemibrainr'")
+        # bring your own app via client id (aka key) and secret
+        google_app <- httr::oauth_app(
+          "hemibrainr",
+          key = hemibrainr_clientid,
+          secret = hemibrainr_secret
+        )
+        googlesheets4::gs4_auth_configure(app = google_app, api_key = key)
+        googledrive::drive_auth_configure(app = google_app, api_key = key)
+        # googlesheets4::gs4_oauth_app()
+        # googlesheets4::gs4_api_key()
+      }
+    }
+  }
+}
