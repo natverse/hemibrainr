@@ -129,14 +129,14 @@ standard_workflow <- function(x, invert= FALSE){
   standard_work <-function(z, invert = FALSE){
     if(invert){
       z[z=="trace"] = "t"
-      z[z=="upstream"] = "upstream"
-      z[z=="down"] = "downstream"
+      z[z=="inputs"] = "i"
+      z[z=="outputs"] = "o"
       z[z=="match"] = "m"
       z[z=="find_line"] = "l"
     }else{
       z[z=="t"] = "trace"
-      z[z=="up"] = "upstream"
-      z[z=="down"] = "down"
+      z[z=="in"] = "i"
+      z[z=="out"] = "o"
       z[z=="m"] = "match"
       z[z=="l"] = "find_line"
     }
