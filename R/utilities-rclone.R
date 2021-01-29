@@ -23,6 +23,7 @@ hemibrainr_rclone <- function(Gdrive = "hemibrainr", path=file.path(getwd(),"hem
   }
   options(Gdrive_hemibrain_data = path)
   message("Google drive path set to: ", options()$Gdrive_hemibrain_data)
+  try(hemibrainr_google_login(),silent=TRUE)
   system(command, wait = FALSE)
 }
 
