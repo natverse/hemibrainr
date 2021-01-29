@@ -6,6 +6,7 @@
 \alias{standard_lineages}
 \alias{standard_compartments}
 \alias{standardise}
+\alias{standard_workflow}
 \title{Use standard names and spellings}
 \usage{
 standard_transmitters(x)
@@ -17,6 +18,8 @@ standard_lineages(x)
 standard_compartments(x, invert = FALSE)
 
 standardise(x)
+
+standard_workflow(x, invert = FALSE)
 }
 \arguments{
 \item{x}{a character vector to be standardised.}
