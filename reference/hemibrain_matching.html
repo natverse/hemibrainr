@@ -57,7 +57,10 @@
   Filestream application or rclone, which should be installed on your machine. Further,
   note that neurons are read from the FAFB CATMAID project when repository==&quot;CATMAID&quot;, and you must have
   login details for this project recorded in your .Renviron for these
-  functions to work." />
+  functions to work. You are given neurons assigned to your initials on the matching google sheet (the User column)
+  though you can look at other's assigned matches using superUser=TRUE. Your selection is further narrowed
+  by ommitting neurons whose matches have already been made, when using the default overwrite=&quot;TRUE&quot;. However, you
+  can change this to overwrite matches, and to review made matches." />
 <meta property="og:image" content="/logo.svg" />
 
 
@@ -175,7 +178,10 @@
   Filestream application or rclone, which should be installed on your machine. Further,
   note that neurons are read from the FAFB CATMAID project when <code>repository=="CATMAID"</code>, and you must have
   login details for this project recorded in your .Renviron for these
-  functions to work.</p>
+  functions to work. You are given neurons assigned to your initials on the matching google sheet (the <code>User</code> column)
+  though you can look at other's assigned matches using <code>superUser=TRUE</code>. Your selection is further narrowed
+  by ommitting neurons whose matches have already been made, when using the default <code>overwrite="TRUE"</code>. However, you
+  can change this to overwrite matches, and to review made matches.</p>
     </div>
 
     <pre class="usage"><span class='fu'>LR_matching</span><span class='op'>(</span>
@@ -186,9 +192,11 @@
   batch_size <span class='op'>=</span> <span class='fl'>50</span>,
   db <span class='op'>=</span> <span class='fu'><a href='flywire_neurons.html'>flywire_neurons</a></span><span class='op'>(</span><span class='op'>)</span>,
   query <span class='op'>=</span> <span class='fu'><a href='flywire_neurons.html'>flywire_neurons</a></span><span class='op'>(</span>mirror <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>,
-  overwrite <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"FALSE"</span>, <span class='st'>"mine"</span>, <span class='st'>"mine_empty"</span>, <span class='st'>"TRUE"</span>, <span class='st'>"review"</span><span class='op'>)</span>,
+  overwrite <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"FALSE"</span>, <span class='st'>"bad"</span>, <span class='st'>"TRUE"</span>, <span class='st'>"review"</span><span class='op'>)</span>,
   column <span class='op'>=</span> <span class='cn'>NULL</span>,
-  entry <span class='op'>=</span> <span class='cn'>NULL</span>
+  entry <span class='op'>=</span> <span class='cn'>NULL</span>,
+  User <span class='op'>=</span> <span class='cn'>NULL</span>,
+  superUser <span class='op'>=</span> <span class='cn'>FALSE</span>
 <span class='op'>)</span>
 
 <span class='fu'>hemibrain_matching</span><span class='op'>(</span>
@@ -200,9 +208,11 @@
   db <span class='op'>=</span> <span class='cn'>NULL</span>,
   repository <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"flywire"</span>, <span class='st'>"CATMAID"</span>, <span class='st'>"lm"</span><span class='op'>)</span>,
   query <span class='op'>=</span> <span class='fu'><a href='hemibrain_read_neurons.html'>hemibrain_neurons</a></span><span class='op'>(</span>brain <span class='op'>=</span> <span class='st'>"FAFB14"</span><span class='op'>)</span>,
-  overwrite <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"FALSE"</span>, <span class='st'>"mine"</span>, <span class='st'>"mine_empty"</span>, <span class='st'>"TRUE"</span>, <span class='st'>"review"</span><span class='op'>)</span>,
+  overwrite <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"FALSE"</span>, <span class='st'>"bad"</span>, <span class='st'>"TRUE"</span>, <span class='st'>"review"</span><span class='op'>)</span>,
   column <span class='op'>=</span> <span class='cn'>NULL</span>,
-  entry <span class='op'>=</span> <span class='cn'>NULL</span>
+  entry <span class='op'>=</span> <span class='cn'>NULL</span>,
+  User <span class='op'>=</span> <span class='cn'>NULL</span>,
+  superUser <span class='op'>=</span> <span class='cn'>FALSE</span>
 <span class='op'>)</span>
 
 <span class='fu'>lm_matching</span><span class='op'>(</span>
@@ -212,9 +222,11 @@
   batch_size <span class='op'>=</span> <span class='fl'>50</span>,
   db <span class='op'>=</span> <span class='fu'><a href='hemibrain_read_neurons.html'>hemibrain_neurons</a></span><span class='op'>(</span><span class='op'>)</span>,
   query <span class='op'>=</span> <span class='cn'>NULL</span>,
-  overwrite <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"FALSE"</span>, <span class='st'>"mine"</span>, <span class='st'>"mine_empty"</span>, <span class='st'>"TRUE"</span>, <span class='st'>"review"</span><span class='op'>)</span>,
+  overwrite <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"FALSE"</span>, <span class='st'>"bad"</span>, <span class='st'>"TRUE"</span>, <span class='st'>"review"</span><span class='op'>)</span>,
   column <span class='op'>=</span> <span class='cn'>NULL</span>,
-  entry <span class='op'>=</span> <span class='cn'>NULL</span>
+  entry <span class='op'>=</span> <span class='cn'>NULL</span>,
+  User <span class='op'>=</span> <span class='cn'>NULL</span>,
+  superUser <span class='op'>=</span> <span class='cn'>FALSE</span>
 <span class='op'>)</span>
 
 <span class='fu'>fafb_matching</span><span class='op'>(</span>
@@ -226,9 +238,11 @@
   batch_size <span class='op'>=</span> <span class='fl'>20</span>,
   db <span class='op'>=</span> <span class='fu'><a href='hemibrain_read_neurons.html'>hemibrain_neurons</a></span><span class='op'>(</span>brain <span class='op'>=</span> <span class='st'>"FAFB14"</span><span class='op'>)</span>,
   query <span class='op'>=</span> <span class='cn'>NULL</span>,
-  overwrite <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"FALSE"</span>, <span class='st'>"mine"</span>, <span class='st'>"mine_empty"</span>, <span class='st'>"TRUE"</span>, <span class='st'>"review"</span><span class='op'>)</span>,
+  overwrite <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"FALSE"</span>, <span class='st'>"bad"</span>, <span class='st'>"TRUE"</span>, <span class='st'>"review"</span><span class='op'>)</span>,
   column <span class='op'>=</span> <span class='cn'>NULL</span>,
-  entry <span class='op'>=</span> <span class='cn'>NULL</span>
+  entry <span class='op'>=</span> <span class='cn'>NULL</span>,
+  User <span class='op'>=</span> <span class='cn'>NULL</span>,
+  superUser <span class='op'>=</span> <span class='cn'>FALSE</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -278,10 +292,14 @@ Defaults to reading a transformed <code>most.lhns</code> from the Hemibrain Goog
 The neurons you could possibly be looking at are selected through
 the arguments: <code>ids</code>, <code>column</code>, <code>entry</code>. If <code>ids</code> is <code>NULL</code> you will be given all neurons that have been assigned to your user on the
 <a href='https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit#gid=0'>Google sheet</a>.
-If <code>overwrite</code> is set to <code>FALSE</code>, you will not overwrite any matches that have already been made from among the selected neurons.
-If <code>'mine'</code> you will re-examine and overwrite any matches you have made out of the selected neurons.
-With <code>'mine_empty'</code> the same happens, but you will also retain neurons that have no match, and have been assigned to any other user.
-If <code>FALSE</code> (be careful!) then you overwrite made matches among the selected neurons.</p></td>
+If <code>overwrite</code> is set to <code>"FALSE"</code>, you will not overwrite any matches that have already been made from among the selected neurons.
+If <code>"TRUE"</code> (be careful!) then you overwrite made matches among the selected neurons.
+If <code>"bad"</code> then you can overwrite made matches that are 'tract-only' or 'none'.
+If <code>"review"</code> then you will only be shown already-matched neurons, which appear in green.
+If you make no new selection (hit 't' to exit selection mode) then the made selection will persist.
+If <code>ids</code> is not <code>NULL</code>, then the selected neurons will be further sub-setted by their unique id. Note that selection
+also works with <code>superUser</code>, the default is to only take neurons allocated to you. In order to change this,
+you can user <code>superUser=TRUE</code>.</p></td>
     </tr>
     <tr>
       <th>column</th>
@@ -291,6 +309,17 @@ Only  neurons with a certain value (<code>entry</code>) in that column will be c
     <tr>
       <th>entry</th>
       <td><p>defaults to <code>NULL</code>, no further subsetting. Else, it is a value in <code>column</code>.</p></td>
+    </tr>
+    <tr>
+      <th>User</th>
+      <td><p>the initials of the matching 'Users', i.e. you, which should also be recorded on the master matching google sheet. However, you can enter a new user
+for the matches you make in R. If set to <code>NULL</code> then all Users are 'selected'.</p></td>
+    </tr>
+    <tr>
+      <th>superUser</th>
+      <td><p>if <code>FALSE</code> then you will only be given neurons flagged for your user. If <code>TRUE</code> then
+you will be given neurons flagged for any user. To select whether or not you want to look at neurons with no match, neurons with a match
+or either, use the <code>overwrite</code> argument.</p></td>
     </tr>
     <tr>
       <th>hemibrain.nblast</th>
@@ -343,6 +372,15 @@ skeletons  (<code>"lm"</code>) from Dolan et al. and Frechter et al. 2019 (eLife
 
 <span class='co'># Match!</span>
 <span class='fu'>hemibrain_matching</span><span class='op'>(</span>hemibrain.nblast <span class='op'>=</span> <span class='va'>fib.fafb.crossnblast.twigs5.mean.compress</span><span class='op'>)</span>
+
+<span class='co'># And example of matching neurons in a flywire tracing sheet</span>
+<span class='va'>sheet</span> <span class='op'>=</span> <span class='fu'><a href='flywire_tracing_sheet.html'>flywire_tracing_sheet</a></span><span class='op'>(</span><span class='st'>"SLPal2_dorsal"</span>, regex <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+<span class='fu'>fafb_matching</span><span class='op'>(</span>ids <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/unique.html'>unique</a></span><span class='op'>(</span><span class='va'>sheet</span><span class='op'>$</span><span class='va'>flywire.id</span><span class='op'>)</span>, repository<span class='op'>=</span><span class='st'>"flywire"</span>,
+overwrite <span class='op'>=</span> <span class='st'>"bad"</span>, User <span class='op'>=</span> <span class='st'>"AJ"</span>, superUser <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+
+<span class='co'># Look at all poorly made matches</span>
+<span class='fu'>fafb_matching</span><span class='op'>(</span>repository<span class='op'>=</span><span class='st'>"flywire"</span>, column <span class='op'>=</span> <span class='st'>"hemibrain.match.quality"</span>,
+entry <span class='op'>=</span> <span class='st'>"poor"</span>, overwrite <span class='op'>=</span> <span class='st'>"TRUE"</span>, User <span class='op'>=</span> <span class='st'>"AJ"</span>, superUser <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
 <span class='op'>}</span><span class='co'># }</span>
 </div></pre>
   </div>
