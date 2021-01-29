@@ -550,6 +550,7 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
             gs.t[[fw.c]] = NA
           }
         }
+        gs.t$flywire.id[is.na(gs.t$flywire.id)] = "0"
         gs.t$flywire.id = fafbseg::flywire_latestid(gs.t$flywire.id)
         good.xyz = sapply(gs.t$flywire.xyz,function(x) length(tryCatch(nat::xyzmatrix(x),error = function(e) NA))==3)
         gs.t[!good.xyz,c("flywire.xyz")] = apply(gs.t[!good.xyz,c("fw.x","fw.y",'fw.z')],1,paste_coords)
