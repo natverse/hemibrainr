@@ -31,6 +31,7 @@ standard_statuses <- function(x, invert= FALSE){
   x = tolower(x)
   standard_status <-function(z, invert = FALSE){
     if(invert){
+      z[is.na(z)] = "u"
       z[z=="unassessed"] = "u"
       z[z=="incomplete"] = "i"
       z[z=="complete"] = "c"
@@ -42,6 +43,7 @@ standard_statuses <- function(x, invert= FALSE){
       z[z=="not_neuron"] = "n"
       z[z=="tiny"] = "t"
     }else{
+      z[is.na(z)] = "unassessed"
       z[z=="u"] = "unassessed"
       z[z=="i"] = "incomplete"
       z[z=="c"] = "complete"
@@ -128,15 +130,17 @@ standard_workflow <- function(x, invert= FALSE){
   x = tolower(x)
   standard_work <-function(z, invert = FALSE){
     if(invert){
+      z[is.na(z)] = "t"
       z[z=="trace"] = "t"
       z[z=="inputs"] = "i"
       z[z=="outputs"] = "o"
       z[z=="match"] = "m"
       z[z=="find_line"] = "l"
     }else{
+      z[is.na(z)] = "trace"
       z[z=="t"] = "trace"
-      z[z=="in"] = "i"
-      z[z=="out"] = "o"
+      z[z=="i"] = "inputs"
+      z[z=="o"] = "outputs"
       z[z=="m"] = "match"
       z[z=="l"] = "find_line"
     }

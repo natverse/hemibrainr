@@ -290,6 +290,209 @@ flywire_tracing_update <- function(tab,
   }
 }
 
+# Standardise flywire sheet
+#' @name flywire_tracing_sheet
+#' @export
+flywire_tracing_standardise <- function(ws = NULL,
+                                        regex = FALSE,
+                                        selected_sheet = options()$flywire_lineages_gsheet,
+                                        Verbose = TRUE){
+  if(is.null(ws)){
+    tabs = hemibrainr:::gsheet_manipulation(FUN = googlesheets4::sheet_names,
+                                            ss = selected_sheet,
+                                            return = TRUE)
+    pb = progress::progress_bar$new(
+      format = "  standardising :what [:bar] :percent eta: :eta",
+      clear = FALSE, total = length(tabs))
+    for(tab in tabs){
+      pb$tick(tokens = list(what = tab))
+      flywire_tracing_standardise(ws=tab,regex=FALSE,selected_sheet,Verbose=FALSE)
+    }
+  }else{
+    tab = ws
+  }
+  gs = update = flywire_tracing_sheet(ws=tab,regex=regex,open=FALSE,selected_sheet,Verbose=Verbose)
+  if(!is.null(gs.l$status)){
+    update$status = standard_statuses(update$status)
+  }
+  if(!is.null(gs.l$workflow)){
+    update$workflow = standard_workflow(update$workflow)
+  }
+  write.cols = intersect(c("status","workflow"),colnames(gs))
+  if(!identical(fts,update)){
+    gsheet_update_cols(
+      write.cols = write.cols,
+      gs = gs,
+      selected_sheet=selected_sheet,
+      sheet = tab,
+      Verbose = Verbose)
+  }
+}
+
+# create workflow
+flywire_administer_workflow <-function(ws = "flywire",
+                                      target_sheet, # "1WI7ri9yHkCGXDZ68PM5PnwAL6mw2keW7QYcxtz9Fwtw"
+                                      regex = FALSE,
+                                      main_sheet, # "1nVEkC-WBcRMODhkKAp5KW5OWIRHzdxpY2ipFOV7r7k4"
+                                      threshold = 10,
+                                      cleft.threshold = 100,
+                                      transmitters = FALSE,
+                                      local = NULL,
+                                      cloudvolume.url = NULL,
+                                      Verbose = TRUE){
+  gs = flywire_tracing_sheet(ws=ws,regex=regex,open=FALSE,selected_sheet=main_sheet,Verbose=Verbose)
+  if(!all(c("whimsy","workflow")%in%colnames(gs))){
+    stop("Please give a column named 'whimsy' with human-memorable names for neurons\n Make sure there is a flywire.id column with valid entires.")
+  }
+  gs$workflow = standard_workflow(gs$workflow)
+  to.work = subset(gs, gs$workflow %in% c("inputs","outputs", "outputs/inputs","inputs/outputs"))
+  if(!nrow(to.work)){
+    stop("No neurons in need of a tracing workflow")
+  }
+  gs = gs[!duplicated(gs$whimsy),]
+  tasks = sapply(strsplit(to.work$workflow,"/"), function(x) x[x%in%c("inputs","outputs")])
+  indices = unlist(sapply(seq_along(tasks), function(x) rep(x,length((tasks[[x]])))))
+  main = to.work[indices,]
+  main$workflow = unlist(tasks)
+  main$tab = workflow.tabs = paste(main$whimsy,main$workflow,sep="_")
+  tabs = hemibrainr:::gsheet_manipulation(FUN = googlesheets4::sheet_names,
+                                          ss = target_sheet,
+                                          return = TRUE)
+  workflow.tabs.missing = setdiff(workflow.tabs,tabs)
+  workflow.tabs.there= intersect(workflow.tabs,tabs)
+  pb = progress::progress_bar$new(
+    format = "  adding new tab :what [:bar] :percent eta: :eta",
+    clear = FALSE, total = length(tabs))
+  for(missing in workflow.tabs.missing){
+    pb$tick(tokens = list(what = missing))
+    please.add = subset(main, main$tab == missing)
+    fw = flywire_workflow(flywire.id = please.add$flywire.id,
+                          status = please.add$status,
+                          ws=missing,
+                          threshold = threshold,
+                          cleft.threshold = cleft.threshold,
+                          transmitters=transmitters,
+                          local = local,
+                          cloudvolume.url = cloudvolume.url,
+                          Verbose = Verbose)
+    gs.added = hemibrainr:::gsheet_manipulation(FUN = googlesheets4::sheet_add,
+                                                ss = target_sheet,
+                                                sheet = missing,
+                                                Verbose = Verbose)
+    gs.added = hemibrainr:::gsheet_manipulation(FUN = googlesheets4::sheet_write,
+                                                data = fw,
+                                                ss = target_sheet,
+                                                sheet = missing,
+                                                Verbose = Verbose)
+  }
+  if(length(workflow.tabs.there)){
+    flywire_update_workflow(
+      main = main,
+      ws=workflow.tabs.there,
+                            target_sheet=target_sheet,
+                            Verbose = Verbose,
+                            threshold = threshold,
+                            cleft.threshold = cleft.threshold,
+                            transmitters=transmitters,
+                            local = local,
+                            cloudvolume.url = cloudvolume.url)
+  }
+}
+
+# hidden
+flywire_update_workflow <-function(main,
+                                   ws,
+                                   target_sheet, # "1WI7ri9yHkCGXDZ68PM5PnwAL6mw2keW7QYcxtz9Fwtw"
+                                   Verbose = TRUE,
+                                   threshold = 10,
+                                   cleft.threshold = 100,
+                                   transmitters = FALSE,
+                                   local = NULL,
+                                   cloudvolume.url = NULL){
+  if(length(ws)>1){
+    pb = progress::progress_bar$new(
+      format = "  updating tab :what [:bar] :percent eta: :eta",
+      clear = FALSE, total = length(ws))
+    for(item in ws){
+      pb$tick(tokens = list(what = item))
+      flywire_update_workflow(main = subset(main, main$tab == item),
+                                         ws=item,
+                                         target_sheet=target_sheet,
+                                         Verbose = FALSE,
+                                         threshold = threshold,
+                                         cleft.threshold = cleft.threshold,
+                                         transmitters=transmitters,
+                                         local = local,
+                                         cloudvolume.url = cloudvolume.url)
+    }
+  }else{
+    gs = update = flywire_tracing_sheet(ws=ws,regex=FALSE,open=FALSE,selected_sheet=target_sheet,Verbose=Verbose)
+    gs$status = standard_statuses(gs$status)
+    id = ifelse("pre_id"%in%colnames(gs),"pre_id","post_id")
+    gs[[id]][is.na(gs[[id]])] = "0"
+    gs[[id]] = fafbseg::flywire_latestid(gs[[id]])
+    if(!nrow(gs)){
+      stop("Workflow sheet has no rows")
+    }
+    fw = flywire_workflow(flywire.id = main$flywire.id,
+                          status = main$status,
+                          ws=ws,
+                          threshold = threshold,
+                          cleft.threshold = cleft.threshold,
+                          transmitters=transmitters,
+                          local = local,
+                          cloudvolume.url = cloudvolume.url,
+                          Verbose = Verbose)
+    shared.cols = setdiff(intersect(colnames(fw),colnames(gs)),id)
+    for(sc in shared.cols){
+      fw[[sc]] = gs[[sc]][match(fw[[id]],gs[[id]])]
+    }
+    hemibrainr:::gsheet_manipulation(FUN = googlesheets4::sheet_write,
+                                     data = fw,
+                                     ss = target_sheet,
+                                     sheet = ws,
+                                     Verbose = Verbose)
+  }
+}
+
+# hidden
+flywire_workflow <- function(flywire.id,
+                             status = "unassessed",
+                              ws,
+                              threshold = 10,
+                              cleft.threshold = 100,
+                             transmitters = FALSE,
+                              local = NULL,
+                              cloudvolume.url = NULL,
+                             Verbose = TRUE){
+  partners = ifelse(grepl("outputs",ws),"outputs","inputs")
+  syn.partners = flywire_partner_summary(flywire.id,
+                                     partners = partners,
+                                     threshold = threshold,
+                                     remove_autapses = TRUE,
+                                     cleft.threshold = cleft.threshold,
+                                     details = FALSE,
+                                     roots = TRUE,
+                                     Verbose = Verbose,
+                                     local = local,
+                                     cloudvolume.url=cloudvolume.url)[,1:2]
+  ntpredictions=try(fafbseg:::ntpredictions_tbl(local=local),silent=TRUE)
+  if(is.null(ntpredictions)){
+    warning("Cannot find transmitter predictions")
+  }else if(transmitters){
+    nts = fafbseg::flywire_ntpred(syn.partners[,1],
+                                  local = local,
+                                  cleft.threshold=cleft.threshold,
+                                  cloudvolume.url=cloudvolume.url)
+  }
+  syn.partners$status = "unassessed"
+  syn.partners$note = NA
+  main = data.frame(flywire.id,weight = "main", status = status, note = gsub("_.*","",ws), stringsAsFactors = FALSE)
+  colnames(main) = colnames(syn.partners)
+  syn.partners = as.data.frame(syn.partners, stringsAsFactors = FALSE)
+  plyr::rbind.fill(main, syn.partners)
+}
+
 # hidden, caches result for 5min in current session
 sheet_properties.memo <- memoise::memoise(googlesheets4::sheet_properties, ~memoise::timeout(5*60))
 

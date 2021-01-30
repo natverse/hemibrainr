@@ -5,6 +5,7 @@
 \alias{flywire_tracing_sheets}
 \alias{flywire_in}
 \alias{flywire_tracing_update}
+\alias{flywire_tracing_standardise}
 \title{Retrieve or go to a specific google sheet describing flywire neurons.}
 \usage{
 flywire_tracing_sheet(
@@ -38,6 +39,13 @@ flywire_tracing_update(
   by = "flywire.id",
   Verbose = TRUE,
   return = FALSE
+)
+
+flywire_tracing_standardise(
+  ws = NULL,
+  regex = FALSE,
+  selected_sheet = options()$flywire_lineages_gsheet,
+  Verbose = TRUE
 )
 }
 \arguments{
