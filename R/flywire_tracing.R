@@ -344,12 +344,14 @@ flywire_administer_workflow <-function(ws = "flywire",
   if(!all(c("whimsy","workflow")%in%colnames(gs))){
     stop("Please give a column named 'whimsy' with human-memorable names for neurons\n Make sure there is a flywire.id column with valid entires.")
   }
+  gs = gs[!is.na(gs$whimsy),]
+  gs = gs[!duplicated(gs$whimsy),]
   gs$workflow = standard_workflow(gs$workflow)
   to.work = subset(gs, gs$workflow %in% c("inputs","outputs", "outputs/inputs","inputs/outputs"))
   if(!nrow(to.work)){
-    stop("No neurons in need of a tracing workflow")
+    message("No neurons in need of a tracing workflow")
+    return(invisible())
   }
-  gs = gs[!duplicated(gs$whimsy),]
   tasks = sapply(strsplit(to.work$workflow,"/"), function(x) x[x%in%c("inputs","outputs")])
   indices = unlist(sapply(seq_along(tasks), function(x) rep(x,length((tasks[[x]])))))
   main = to.work[indices,]
@@ -432,7 +434,8 @@ flywire_update_workflow <-function(main,
     gs[[id]][is.na(gs[[id]])] = "0"
     gs[[id]] = fafbseg::flywire_latestid(gs[[id]])
     if(!nrow(gs)){
-      stop("Workflow sheet has no rows")
+      warning("Workflow sheet has no rows: ", ws)
+      return(invisible())
     }
     fw = flywire_workflow(flywire.id = main$flywire.id,
                           status = main$status,
