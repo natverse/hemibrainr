@@ -550,15 +550,8 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
             gs.t[[fw.c]] = NA
           }
         }
-        gs.t$flywire.id[is.na(gs.t$flywire.id)] = "0"
-        gs.t$flywire.id = fafbseg::flywire_latestid(gs.t$flywire.id)
         good.xyz = sapply(gs.t$flywire.xyz,function(x) length(tryCatch(nat::xyzmatrix(x),error = function(e) NA))==3)
         gs.t[!good.xyz,c("flywire.xyz")] = apply(gs.t[!good.xyz,c("fw.x","fw.y",'fw.z')],1,paste_coords)
-        if(!is.null(meta)){
-          justids = gs.t$flywire.xyz==paste_coords(matrix(NA,ncol=3))&!is.na(gs.t$flywire.id)
-          replacement.xyz = meta[match(gs.t[justids,"flywire.id"],meta$flywire.id),]$flywire.xyz
-          gs.t[justids,"flywire.xyz"] = replacement.xyz
-        }
         good.xyz = sapply(gs.t$flywire.xyz,function(x) length(tryCatch(nat::xyzmatrix(x),error = function(e) NA))==3)
         if(sum(good.xyz)){
           gs.t[good.xyz,c("fw.x","fw.y","fw.z")] = nat::xyzmatrix(gs.t[good.xyz,"flywire.xyz"])
@@ -595,6 +588,13 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
           replacement[coordsmissing] = gs.t$flywire.id[coordsmissing]
           gs.t$flywire.id = replacement
           gs.t$flywire.xyz[gs.t$flywire.xyz==paste_coords(matrix(NA,ncol=3))] = NA
+          gs.t$flywire.id[is.na(gs.t$flywire.id)] = "0"
+          gs.t$flywire.id = fafbseg::flywire_latestid(gs.t$flywire.id)
+          if(!is.null(meta)){
+            justids = gs.t$flywire.xyz==paste_coords(matrix(NA,ncol=3))&!is.na(gs.t$flywire.id)
+            replacement.xyz = meta[match(gs.t[justids,"flywire.id"],meta$flywire.id),]$flywire.xyz
+            gs.t[justids,"flywire.xyz"] = replacement.xyz
+          }
           if(nrow(gs.t)!=nrow(gs.t.current)){
             stop("Sheet processing corruption.")
           }
