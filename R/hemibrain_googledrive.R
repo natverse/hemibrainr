@@ -70,17 +70,19 @@
 #' @name hemibrainr_set_drive
 #' @export
 hemibrainr_set_drive <- function(Gdrive = "hemibrainr",
-                                 path = "/Volumes/GoogleDrive/Shared\ drives/"){
-  if(!grepl("/",Gdrive)){
-    Gdrive = sprintf("/Volumes/GoogleDrive/Shared\ drives/%s/", Gdrive)
+                                 path = "/Volumes/GoogleDrive/Shared drives"){
+  if(!dir.exists(Gdrive)){
+    Gdrive = file.path(path, Gdrive)
   }
-  options(Gdrive_hemibrain_data = paste0(path,Gdrive))
-  message("Google drive path set to: ", options()$Gdrive_hemibrain_data)
-  if(file.exists(options()$Gdrive_hemibrain_data)){
-    message("Google drive found")
+  options(Gdrive_hemibrain_data = file.path(Gdrive))
+  if(dir.exists(options()$Gdrive_hemibrain_data)){
+    found = "found"
   }else{
-    message("Google drive not found")
+    found = "not found"
   }
+  try(hemibrainr_google_login(),silent=TRUE)
+  msg = sprintf("Google drive %s, path set to: %s", found, options()$Gdrive_hemibrain_data)
+  message(msg)
 }
 
 #' @name hemibrainr_set_drive

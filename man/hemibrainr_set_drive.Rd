@@ -9,7 +9,7 @@
 \usage{
 hemibrainr_set_drive(
   Gdrive = "hemibrainr",
-  path = "/Volumes/GoogleDrive/Shared drives/"
+  path = "/Volumes/GoogleDrive/Shared drives"
 )
 
 hemibrainr_team_drive()
