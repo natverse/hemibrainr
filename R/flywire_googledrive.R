@@ -540,22 +540,30 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
       format = "  updating tab :what [:bar] :percent eta: :eta",
       clear = FALSE, total = length(tabs))
     for(tab in tabs){
+      # Update progress bar
       pb$tick(tokens = list(what = tab))
+      # Get google sheet tab as data frame
       gs.t = gs.t.current = flywire_tracing_sheet(ws = tab, selected_sheet=selected_sheet, Verbose = FALSE)
+      # Get original columns for later
       used.cols = colnames(gs.t.current)
-      if(nrow(gs.t)&&ncol(gs.t)&&sum(grepl("fw.x|flywire.xyz",used.cols))>0){
+      ## if valid data frame with flywire columnes
+      if(nrow(gs.t)&&ncol(gs.t)&&sum(fw.columns%in%used.cols)>0){
         # Separate x,y,z positions
         for(fw.c in fw.columns){
           if(is.null(gs.t[[fw.c]])){
             gs.t[[fw.c]] = NA
           }
         }
+        # Get seemingly good xyz flywire positions
         good.xyz = sapply(gs.t$flywire.xyz,function(x) length(tryCatch(nat::xyzmatrix(x),error = function(e) NA))==3)
+        # If coordinates separately given, combine
         gs.t[!good.xyz,c("flywire.xyz")] = apply(gs.t[!good.xyz,c("fw.x","fw.y",'fw.z')],1,paste_coords)
         good.xyz = sapply(gs.t$flywire.xyz,function(x) length(tryCatch(nat::xyzmatrix(x),error = function(e) NA))==3)
+        # Provide separate columns for x,y,z positions
         if(sum(good.xyz)){
           gs.t[good.xyz,c("fw.x","fw.y","fw.z")] = nat::xyzmatrix(gs.t[good.xyz,"flywire.xyz"])
         }
+        # If flywire.svid missing, update
         bad.svids = (is.na(gs.t$flywire.svid)|gs.t$flywire.svid=="0")&!is.na(gs.t$flywire.xyz)
         if(sum(bad.svids)>0){
           gs.t$flywire.svid[bad.svids] = fafbseg::flywire_xyz2id(nat::xyzmatrix(gs.t$flywire.xyz[bad.svids]),
@@ -595,18 +603,44 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
             replacement.xyz = meta[match(gs.t[justids,"flywire.id"],meta$flywire.id),]$flywire.xyz
             gs.t[justids,"flywire.xyz"] = replacement.xyz
           }
-          if(nrow(gs.t)!=nrow(gs.t.current)){
-            stop("Sheet processing corruption.")
+        }
+        # If only skid given try and guess flywire.id
+        if("skid"%in%used.cols){
+          justskids=(gs.t$flywire.xyz==paste_coords(matrix(NA,ncol=3))
+                     |is.na(gs.t$flywire.xyz)
+                     &is.na(gs.t$flywire.id)
+                     &!is.na(gs.t$skid))
+          justskids[is.na(justskids)] = FALSE
+          if(sum(justskids)>0){
+            replacement.ids = try(fafbseg::fafb14_to_flywire_ids(gs.t[justskids,"flywire.id"], only.biggest = TRUE), silent= TRUE)
+            if(class(replacement.ids)=="try-error"){
+              warning(replacement.ids)
+            }else{
+              gs.t[justskids,"flywire.id"] = replacement.ids
+            }
           }
-          write.cols = intersect(fw.columns,used.cols)
-          if(length(fids) & length(write.cols)){
-            gsheet_update_cols(
-              write.cols = write.cols,
-              gs=gs.t[,used.cols],
-              selected_sheet = selected_sheet,
-              sheet = tab,
-              Verbose = FALSE)
-          }
+        }
+        # update with flywire.xyz if possible
+        if(!is.null(meta)){
+          justids=(gs.t$flywire.xyz==paste_coords(matrix(NA,ncol=3))
+                  |is.na(gs.t$flywire.xyz)
+                  &!is.na(gs.t$flywire.id))
+          justids[is.na(justids)] = FALSE
+          replacement.xyz = meta[match(gs.t[justids,"flywire.id"],meta$flywire.id),]$flywire.xyz
+          gs.t[justids,"flywire.xyz"] = replacement.xyz
+        }
+        # Write to google sheet
+        if(nrow(gs.t)!=nrow(gs.t.current)){
+          stop("Sheet processing corruption. Flywire.id update failed.")
+        }
+        write.cols = intersect(fw.columns,used.cols)
+        if(length(fids) & length(write.cols)){
+          gsheet_update_cols(
+            write.cols = write.cols,
+            gs=gs.t[,used.cols],
+            selected_sheet = selected_sheet,
+            sheet = tab,
+            Verbose = FALSE)
         }
         # Now continue processing
         gs.t = gs.t[,colnames(gs.t)%in%chosen.columns]
