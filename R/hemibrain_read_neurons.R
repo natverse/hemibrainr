@@ -402,21 +402,3 @@ hemibrain_neurons <- function(x = NULL,
   }
   neurons.flow.fh
 }
-
-# hidden
-good_savedir <- function(local=FALSE){
-  if(isFALSE(local)){
-    if(is.null(options()$Gdrive_hemibrain_data)){
-      options(Gdrive_hemibrain_data = "/Volumes/GoogleDrive/Shared\ drives/hemibrain/")
-    }
-    savedir = options()$hemibrain_data
-    if(dir.exists(options()$Gdrive_hemibrain_data) & !local){
-      message("Using Google Team Drive: ", hemibrainr_team_drive())
-      savedir = options()$Gdrive_hemibrain_data
-    }
-  }else{
-    message("Looking for data in ", local)
-    savedir = local
-  }
-  savedir
-}

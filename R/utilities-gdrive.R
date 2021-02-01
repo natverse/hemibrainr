@@ -1,5 +1,24 @@
 # Gooogle drive based utilities
 
+# hidden
+good_savedir <- function(local=FALSE, Verbose = TRUE){
+  if(isFALSE(local)){
+    if(is.null(options()$Gdrive_hemibrain_data)){
+      hemibrainr_set_drive()
+    }
+    savedir = options()$hemibrain_data
+    if(dir.exists(options()$Gdrive_hemibrain_data)){
+      if(Verbose) message("Reading from Google Team Drive: ", hemibrainr_team_drive())
+    }else{
+      stop("Could not find hemibrainr data folder. Do you have Google Filestream or rclone active?: ", savedir)
+    }
+  }else{
+    if(Verbose) message("Looking for data in local folder: ", local)
+    savedir = local
+  }
+  savedir
+}
+
 # google upload neuronlistfh
 ## x is a neuronlist or a path to folder with saved neuronlistfh
 googledrive_upload_neuronlistfh <- function(x,
