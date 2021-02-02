@@ -598,11 +598,6 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
           gs.t$flywire.xyz[gs.t$flywire.xyz==paste_coords(matrix(NA,ncol=3))] = NA
           gs.t$flywire.id[is.na(gs.t$flywire.id)] = "0"
           gs.t$flywire.id = fafbseg::flywire_latestid(gs.t$flywire.id)
-          if(!is.null(meta)){
-            justids = gs.t$flywire.xyz==paste_coords(matrix(NA,ncol=3))&!is.na(gs.t$flywire.id)
-            replacement.xyz = meta[match(gs.t[justids,"flywire.id"],meta$flywire.id),]$flywire.xyz
-            gs.t[justids,"flywire.xyz"] = replacement.xyz
-          }
         }
         # If only skid given try and guess flywire.id
         if("skid"%in%used.cols){
