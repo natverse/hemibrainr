@@ -557,7 +557,7 @@ update.neuronlistfh <- function(x,
       warning("Original .rds file cannot link to data, overwriting ...")
       NULL
     })
-    if(!is.null(old.neurons)){
+    if(!is.null(old.neurons)||!length(old.neurons)){
       if(!is.null(attr(old.neurons,"df"))){
         old.neurons = old.neurons[setdiff(names(old.neurons),names(x))]
         x = nat::union(x, old.neurons)
@@ -571,7 +571,11 @@ update.neuronlistfh <- function(x,
       x[,] = x[,shared.cols]
     }
     given.neurons = nat::as.neuronlistfh(x, dbdir = data, dbClass = dbClass, WriteObjects = WriteObjects, remote = remote, ...)
-    nat::write.neuronlistfh(given.neurons, file=rds, overwrite=TRUE, ...)
+    if(dbClass=="DB1"){
+      saveRDS(given.neurons, file = rds, ...)
+    }else{
+      nat::write.neuronlistfh(given.neurons, file=rds, overwrite=TRUE, ...)
+    }
   }else{
     warning("Could not create neuronlistfh object")
   }
