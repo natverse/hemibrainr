@@ -634,8 +634,8 @@ nblast_big <-function(query.neuronlistfh, target.neuronlistfh,
         return(NULL)
       }
       ### This is a slightly more inefficient way
-      query.neuronlist = query.neuronlist[unlist(sapply(query.neuronlist,is_big_dps,no.points=no.points))]
-      target.neuronlist = target.neuronlist[unlist(sapply(target.neuronlist,is_big_dps,no.points=no.points))]
+      query.neuronlist = query.neuronlist[unlist(sapply(query.neuronlist,hemibrainr:::is_big_dps,no.points=no.points))]
+      target.neuronlist = target.neuronlist[unlist(sapply(target.neuronlist,hemibrainr:::is_big_dps,no.points=no.points))]
       chosen.query = names(query.neuronlist)
       chosen.target = names(target.neuronlist)
 
