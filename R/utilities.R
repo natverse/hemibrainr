@@ -583,42 +583,80 @@ correct_id <-function(v){
 }
 
 # hidden
+`%dopar%` <- foreach::`%dopar%`
+`%:%` <- foreach::`%:%`
 nblast_big <-function(query.neurons, target.neurons,
                       query.neurons.addition = NULL,
-                      query.batch = 100,
-                      target.batch = 100){
+                      numCores=1,
+                      smat = NULL,
+                      sd = 3,
+                      version = c(2, 1),
+                      normalised = TRUE,
+                      UseAlpha = TRUE){
 
-  # Get batches to iterate over
+  # Register cores
+  cl = parallel::makeForkCluster(numCores)
+  doParallel::registerDoParallel(cl)
+
+  # What are our query and target neurons
   query = names(query.neurons)
   target = names(target.neurons)
-  batches.query = split(sample(query), round(seq(from = 1, to = min(query.batch,length(query)), length.out = length(query))))
-  batches.target = split(sample(target), round(seq(from = 1, to = min(target.batch,length(target)), length.out = length(target))))
-  nblast.mat = matrix(ncol = length(query), nrow = length(target), dimnames =list(target,query))
+
+  # Make matrix to fill
+  nblast.mat = bigstatsr::FBM(length(query.neurons), length(target.neurons))
+  batch.size = numCores #floor(sqrt(numCores))
+
+  # Get batches to iterate over
+  batches.query = split(sample(query), round(seq(from = 1, to = batch.size, length.out = length(query))))
+  batches.target = split(sample(target), round(seq(from = 1, to = batch.size, length.out = length(target))))
   chosen.query = chosen.target = NULL
 
   # Foreach loop
-  by.query <- foreach::foreach (chosen.query = batches.query) %do% {
-    by.targets <- foreach::foreach (chosen.target = batches.target) %do% {
+  by.query <- foreach::foreach (chosen.query = batches.query, .combine = 'c') %:%
+    foreach::foreach (chosen.target = batches.target, .combine = 'c') %dopar% {
+      if(is.null(chosen.target)||is.null(chosen.query)){
+        return(NULL)
+      }
       ### NBLAST native
       nblast.res.1 = nat.nblast::nblast(query = query.neurons[chosen.query],
                                         target = target.neurons[chosen.target],
-                                        .parallel=TRUE,
-                                        normalised = TRUE)
+                                        .parallel=FALSE,
+                                        normalised = normalised,
+                                        smat = smat,
+                                        sd = sd,
+                                        version = version,
+                                        UseAlpha = UseAlpha,
+                                        OmitFailures = FALSE)
       nblast.res.2 = nat.nblast::nblast(query = target.neurons[chosen.target],
                                         target = query.neurons[chosen.query],
-                                        .parallel=TRUE,
-                                        normalised = TRUE)
+                                        .parallel=FALSE,
+                                        normalised = normalised,
+                                        smat = smat,
+                                        sd = sd,
+                                        version = version,
+                                        UseAlpha = UseAlpha,
+                                        OmitFailures = FALSE)
       nblast.res.native = (nblast.res.1+t(nblast.res.2))/2
       ### NBLAST mirrored
       if(!is.null(query.neurons.addition)){
-        nblast.res.3 = nat.nblast::nblast(query = query.neurons.addition[chosen.query],
+        nblast.res.3 = nat.nblast::nblast(query = query.neurons.addition[names(query.neurons.addition)%in%chosen.query],
                                           target = target.neurons[chosen.target],
-                                          .parallel=TRUE,
-                                          normalised = TRUE)
+                                          .parallel=FALSE,
+                                          normalised = normalised,
+                                          smat = smat,
+                                          sd = sd,
+                                          version = version,
+                                          UseAlpha = UseAlpha,
+                                          OmitFailures = FALSE)
         nblast.res.4 = nat.nblast::nblast(query = target.neurons[chosen.target],
-                                          target = query.neurons.addition[chosen.query],
-                                          .parallel=TRUE,
-                                          normalised = TRUE)
+                                          target = query.neurons.addition[names(query.neurons.addition)%in%chosen.query],
+                                          .parallel=FALSE,
+                                          normalised = normalised,
+                                          smat = smat,
+                                          sd = sd,
+                                          version = version,
+                                          UseAlpha = UseAlpha,
+                                          OmitFailures = FALSE)
         nblast.res.m = (nblast.res.3+t(nblast.res.4))/2
         nblast.res.sub = plyr::rbind.fill.matrix(t(nblast.res.native), t(nblast.res.m))
         rownames(nblast.res.sub) = c(colnames(nblast.res.native), colnames(nblast.res.sub))
@@ -626,12 +664,13 @@ nblast_big <-function(query.neurons, target.neurons,
       }else{
         nblast.res.sub = nblast.res.native
       }
-      nblast.res.sub
-    }
-    section <- do.call(rbind,by.targets)
+      nblast.mat[match(chosen.target, target),match(chosen.query,query)] = nblast.res.sub
+      NULL
   }
-  nblast.mat = do.call(cbind,by.targets)
-  nblast.mat
+  parallel::stopCluster(cl)
+  nmat = nblast.mat[,]
+  dimnames(nmat) = list(target,query)
+  nmat
 }
 
 # hidden

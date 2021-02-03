@@ -55,7 +55,8 @@ Imports:
     progress,
     nat.nblast,
     readr,
-    bit64
+    bit64,
+    bigstatsr
 Remotes: 
     natverse/neuprintr,
     tidyverse/googlesheets4,
