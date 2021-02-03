@@ -484,10 +484,17 @@ flywire_workflow <- function(flywire.id,
   if(is.null(ntpredictions)){
     warning("Cannot find transmitter predictions")
   }else if(transmitters){
-    nts = fafbseg::flywire_ntpred(syn.partners,
-                                  local = local,
-                                  cleft.threshold=cleft.threshold,
-                                  cloudvolume.url=cloudvolume.url)
+    nts.all = list()
+    for(i in syn.partners[,1]){
+      nt = fafbseg::flywire_ntpred(i,
+                                   local = local,
+                                   cleft.threshold=cleft.threshold,
+                                   cloudvolume.url=cloudvolume.url)
+      top.nt = names(sort(table(nt$top.nt),decreasing = TRUE))[1]
+      nts.all[[i]] = data.frame(id = i, top.nt = top.nt)
+    }
+    nts = do.call(plyr::rbind.fill, nts.all)
+    syn.partners$top.nt = nts$top.nt[match(syn.partners[,1],nts$id)]
   }
   syn.partners$status = "unassessed"
   syn.partners$note = NA
