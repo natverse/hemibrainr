@@ -587,10 +587,12 @@ correct_id <-function(v){
 }
 
 # hidden
+# nb = nblast_big(kcs20,kcs20[1:10],numCores = 2)
 `%dopar%` <- foreach::`%dopar%`
 `%:%` <- foreach::`%:%`
-nblast_big <-function(query.neurons, target.neurons,
-                      query.neurons.addition = NULL,
+nblast_big <-function(query.neuronlistfh, target.neuronlistfh,
+                      query.neuronlistfh.addition = NULL,
+                      query = names(query.neuronlistfh),
                       numCores=1,
                       smat = NULL,
                       sd = 3,
@@ -603,27 +605,42 @@ nblast_big <-function(query.neurons, target.neurons,
   doParallel::registerDoParallel(cl)
 
   # What are our query and target neurons
-  query = names(query.neurons)
-  target = names(target.neurons)
+  target = names(target.neuronlistfh)
 
   # Make matrix to fill
-  nblast.mat = bigstatsr::FBM(length(query.neurons), length(target.neurons))
+  nblast.mat = bigstatsr::FBM(length(target),length(query))
   batch.size = numCores #floor(sqrt(numCores))
 
   # Get batches to iterate over
-  batches.query = split(sample(query), round(seq(from = 1, to = batch.size, length.out = length(query))))
-  batches.target = split(sample(target), round(seq(from = 1, to = batch.size, length.out = length(target))))
+  ## this would be a better way of doing it, but at the moment thwarted by DB1 lock files
+  # batches.query = split(sample(query), round(seq(from = 1, to = batch.size, length.out = length(query))))
+  # batches.target = split(sample(target), round(seq(from = 1, to = batch.size, length.out = length(target))))
   chosen.query = chosen.target = NULL
 
   # Foreach loop
-  by.query <- foreach::foreach (chosen.query = batches.query, .combine = 'c') %:%
-    foreach::foreach (chosen.target = batches.target, .combine = 'c') %dopar% {
-      if(is.null(chosen.target)||is.null(chosen.query)){
+  ## this would be a better way of doing it, but at the moment thwarted by DB1 lock files
+  # by.query <- foreach::foreach (chosen.query = batches.query, .combine = 'c') %:%
+  #   foreach::foreach (chosen.target = batches.target, .combine = 'c') %dopar% {
+  ### This is a slightly more inefficient way
+  batches.query = split(sample(query.neuronlistfh), round(seq(from = 1, to = batch.size, length.out = length(query.neuronlistfh))))
+  batches.target = split(sample(target.neuronlistfh), round(seq(from = 1, to = batch.size, length.out = length(target.neuronlistfh))))
+  by.query <- foreach::foreach (query.neuronlist = batches.query, .combine = 'c') %:%
+    foreach::foreach (target.neuronlist = batches.target, .combine = 'c') %dopar% {
+      ## this would be a better way of doing it, but at the moment thwarted by DB1 lock files
+      # query.neuronlist = query.neuronlistfh[chosen.query]
+      # target.neuronlist = target.neuronlistfh[chosen.target]
+      if(is.null(query.neuronlist)||!length(query.neuronlist)){
         return(NULL)
       }
+      ### This is a slightly more inefficient way
+      chosen.query = names(query.neuronlist)
+      chosen.target = names(target.neuronlist)
+
+      # Delete from memory in main
+
       ### NBLAST native
-      nblast.res.1 = nat.nblast::nblast(query = query.neurons[chosen.query],
-                                        target = target.neurons[chosen.target],
+      nblast.res.1 = nat.nblast::nblast(query = query.neuronlist,
+                                        target = target.neuronlist,
                                         .parallel=FALSE,
                                         normalised = normalised,
                                         smat = smat,
@@ -631,8 +648,8 @@ nblast_big <-function(query.neurons, target.neurons,
                                         version = version,
                                         UseAlpha = UseAlpha,
                                         OmitFailures = FALSE)
-      nblast.res.2 = nat.nblast::nblast(query = target.neurons[chosen.target],
-                                        target = query.neurons[chosen.query],
+      nblast.res.2 = nat.nblast::nblast(query = target.neuronlist,
+                                        target = query.neuronlist,
                                         .parallel=FALSE,
                                         normalised = normalised,
                                         smat = smat,
@@ -642,9 +659,10 @@ nblast_big <-function(query.neurons, target.neurons,
                                         OmitFailures = FALSE)
       nblast.res.native = (nblast.res.1+t(nblast.res.2))/2
       ### NBLAST mirrored
-      if(!is.null(query.neurons.addition)){
-        nblast.res.3 = nat.nblast::nblast(query = query.neurons.addition[names(query.neurons.addition)%in%chosen.query],
-                                          target = target.neurons[chosen.target],
+      if(!is.null(query.neuronlistfh.addition)){
+        query.neuronlist = query.neuronlistfh.addition[names(query.neuronlistfh.addition)%in%chosen.query]
+        nblast.res.3 = nat.nblast::nblast(query = query.neuronlist,
+                                          target = target.neuronlist,
                                           .parallel=FALSE,
                                           normalised = normalised,
                                           smat = smat,
@@ -652,8 +670,8 @@ nblast_big <-function(query.neurons, target.neurons,
                                           version = version,
                                           UseAlpha = UseAlpha,
                                           OmitFailures = FALSE)
-        nblast.res.4 = nat.nblast::nblast(query = target.neurons[chosen.target],
-                                          target = query.neurons.addition[names(query.neurons.addition)%in%chosen.query],
+        nblast.res.4 = nat.nblast::nblast(query = target.neuronlist,
+                                          target = query.neuronlist,
                                           .parallel=FALSE,
                                           normalised = normalised,
                                           smat = smat,
@@ -673,7 +691,7 @@ nblast_big <-function(query.neurons, target.neurons,
   }
   parallel::stopCluster(cl)
   nmat = nblast.mat[,]
-  dimnames(nmat) = list(target,query)
+  dimnames(nmat) = list(target, query)
   nmat
 }
 
