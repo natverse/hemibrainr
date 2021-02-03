@@ -319,7 +319,7 @@ flywire_tracing_standardise <- function(ws = NULL,
     update$workflow = standard_workflow(update$workflow)
   }
   write.cols = intersect(c("status","workflow"),colnames(gs))
-  if(!identical(fts,update)){
+  if(!identical(gs,update)){
     gsheet_update_cols(
       write.cols = write.cols,
       gs = gs,
