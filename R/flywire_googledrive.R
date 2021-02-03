@@ -522,7 +522,7 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
     selected_sheets = getOption("hemibrainr_gsheets", stop("Please set option('hemibrainr_gsheets')"))
   }
   fw.columns = c("flywire.id","fw.x","fw.y","fw.z","flywire.xyz","flywire.svid")
-  gs = data.frame(stringsAsFactors = FALSE)
+  tracing.list = list()
   for(selected_sheet in selected_sheets){
     ## Read Google sheets and extract glywire neuron positions
     message("### Working on google sheet: ", selected_sheet)
@@ -646,12 +646,14 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
         }
         if(nrow(gs.t)){
           gs.t$gsheet = selected_sheet
-          gs = plyr::rbind.fill(gs.t,gs)
+          entry = paste0(selected_sheet,"_",tab)
+          tracing.list[[entry]] = gs.t
         }
       }
     }
   }
   # Make this unique, but keep row with most information
+  master = do.call(plyr::rbind, tracing.list)
   master = gs[!is.na(gs$flywire.xyz),]
   master$filled = apply(master, 1, function(r) sum(!is.na(r)))
   master = master[order(master$filled,decreasing = TRUE),]

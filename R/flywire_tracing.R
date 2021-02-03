@@ -132,7 +132,6 @@ flywire_tracing_sheets <- memoise::memoise(function(ws = NULL,
 # hidden
 flywire_tracing_sheets.now <- function(ws = NULL,
                                       selected_sheet = options()$flywire_lineages_gsheet){
-  gs.lineages  = data.frame(stringsAsFactors = FALSE)
   if(!is.null(ws)){
     sel=regex_tab_names(regex=ws,selected_sheet=selected_sheet)
     tabs=sel$name
@@ -144,13 +143,14 @@ flywire_tracing_sheets.now <- function(ws = NULL,
   pb = progress::progress_bar$new(
     format = "  downloading :what [:bar] :percent eta: :eta",
     clear = FALSE, total = length(tabs))
+  tracing.list = list()
   for(tab in tabs){
     pb$tick(tokens = list(what = tab))
     gs.lin = flywire_tracing_sheet(ws = tab, selected_sheet=selected_sheet, Verbose = FALSE)
     gs.lin$ws = tab
-    gs.lineages = plyr::rbind.fill(gs.lineages, gs.lin)
+    tracing.list[[tab]] = gs.lin
   }
-  gs.lineages
+  do.call(plyr::rbind.fill,tracing.list)
 }
 
 #' @export
@@ -347,6 +347,7 @@ flywire_administer_workflow <-function(ws = "flywire",
   gs = gs[!is.na(gs$whimsy),]
   gs = gs[!duplicated(gs$whimsy),]
   gs$workflow = standard_workflow(gs$workflow)
+  gs$workflow = standard_statuses(gs$status)
   to.work = subset(gs, gs$workflow %in% c("inputs","outputs", "outputs/inputs","inputs/outputs"))
   if(!nrow(to.work)){
     message("No neurons in need of a tracing workflow")
@@ -450,7 +451,7 @@ flywire_update_workflow <-function(main,
     for(sc in shared.cols){
       fw[[sc]] = gs[[sc]][match(fw[[id]],gs[[id]])]
     }
-    hemibrainr:::gsheet_manipulation(FUN = googlesheets4::sheet_write,
+    gsheet_manipulation(FUN = googlesheets4::sheet_write,
                                      data = fw,
                                      ss = target_sheet,
                                      sheet = ws,
@@ -469,7 +470,7 @@ flywire_workflow <- function(flywire.id,
                               cloudvolume.url = NULL,
                              Verbose = TRUE){
   partners = ifelse(grepl("outputs",ws),"outputs","inputs")
-  syn.partners = flywire_partner_summary(flywire.id,
+  syn.partners = fafbseg::flywire_partner_summary(flywire.id,
                                      partners = partners,
                                      threshold = threshold,
                                      remove_autapses = TRUE,
@@ -483,7 +484,7 @@ flywire_workflow <- function(flywire.id,
   if(is.null(ntpredictions)){
     warning("Cannot find transmitter predictions")
   }else if(transmitters){
-    nts = fafbseg::flywire_ntpred(syn.partners[,1],
+    nts = fafbseg::flywire_ntpred(syn.partners,
                                   local = local,
                                   cleft.threshold=cleft.threshold,
                                   cloudvolume.url=cloudvolume.url)
