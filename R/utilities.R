@@ -587,7 +587,7 @@ correct_id <-function(v){
 }
 
 # hidden
-# nb = nblast_big(kcs20,kcs20[1:10],numCores = 2)
+# nb = nblast_big(kcs20,kcs20[1:10],numCores = 4)
 `%dopar%` <- foreach::`%dopar%`
 `%:%` <- foreach::`%:%`
 nblast_big <-function(query.neuronlistfh, target.neuronlistfh,
@@ -598,7 +598,8 @@ nblast_big <-function(query.neuronlistfh, target.neuronlistfh,
                       sd = 3,
                       version = c(2, 1),
                       normalised = TRUE,
-                      UseAlpha = TRUE){
+                      UseAlpha = TRUE,
+                      no.points = 2){
 
   # Register cores
   cl = parallel::makeForkCluster(numCores)
@@ -622,7 +623,7 @@ nblast_big <-function(query.neuronlistfh, target.neuronlistfh,
   # by.query <- foreach::foreach (chosen.query = batches.query, .combine = 'c') %:%
   #   foreach::foreach (chosen.target = batches.target, .combine = 'c') %dopar% {
   ### This is a slightly more inefficient way
-  batches.query = split(sample(query.neuronlistfh), round(seq(from = 1, to = batch.size, length.out = length(query.neuronlistfh))))
+  batches.query = split(sample(query.neuronlistfh[query]), round(seq(from = 1, to = batch.size, length.out = length(query))))
   batches.target = split(sample(target.neuronlistfh), round(seq(from = 1, to = batch.size, length.out = length(target.neuronlistfh))))
   by.query <- foreach::foreach (query.neuronlist = batches.query, .combine = 'c') %:%
     foreach::foreach (target.neuronlist = batches.target, .combine = 'c') %dopar% {
@@ -633,10 +634,10 @@ nblast_big <-function(query.neuronlistfh, target.neuronlistfh,
         return(NULL)
       }
       ### This is a slightly more inefficient way
+      query.neuronlist = query.neuronlist[unlist(sapply(query.neuronlist,is_big_dps,no.points=no.points))]
+      target.neuronlist = target.neuronlist[unlist(sapply(target.neuronlist,is_big_dps,no.points=no.points))]
       chosen.query = names(query.neuronlist)
       chosen.target = names(target.neuronlist)
-
-      # Delete from memory in main
 
       ### NBLAST native
       nblast.res.1 = nat.nblast::nblast(query = query.neuronlist,
@@ -693,6 +694,11 @@ nblast_big <-function(query.neuronlistfh, target.neuronlistfh,
   nmat = nblast.mat[,]
   dimnames(nmat) = list(target, query)
   nmat
+}
+
+# hidden
+is_big_dps <- function(dps, no.points = 5){
+  !is.null(dps$points)&&"matrix"%in%class(dps$points)&&nrow(dps$points)>=no.points
 }
 
 # hidden
