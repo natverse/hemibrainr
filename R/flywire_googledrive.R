@@ -217,13 +217,13 @@ flywire_request <- function(request,
   if(gsheet){
     xyz = c()
     type = "googlesheet"
-    for(sheet in request){
+    for(req in request){
       tabs = hemibrainr:::gsheet_manipulation(FUN = googlesheets4::sheet_names,
-                                              ss = sheet,
+                                              ss = req,
                                               return = TRUE)
       for(tab in tabs){
         fts = try(flywire_tracing_sheet(ws = tab,
-                                        selected_sheet=sheet,
+                                        selected_sheet=req,
                                         Verbose = FALSE), silent = TRUE)
         xyz = unique(c(xyz,fts$flywire.xyz))
       }
@@ -653,7 +653,7 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
     }
   }
   # Make this unique, but keep row with most information
-  master = do.call(plyr::rbind, tracing.list)
+  master = do.call(plyr::rbind.fill, tracing.list)
   master = gs[!is.na(gs$flywire.xyz),]
   master$filled = apply(master, 1, function(r) sum(!is.na(r)))
   master = master[order(master$filled,decreasing = TRUE),]

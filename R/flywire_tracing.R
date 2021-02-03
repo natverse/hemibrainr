@@ -312,10 +312,10 @@ flywire_tracing_standardise <- function(ws = NULL,
     tab = ws
   }
   gs = update = flywire_tracing_sheet(ws=tab,regex=regex,open=FALSE,selected_sheet,Verbose=Verbose)
-  if(!is.null(gs.l$status)){
+  if(!is.null(gs$status)){
     update$status = standard_statuses(update$status)
   }
-  if(!is.null(gs.l$workflow)){
+  if(!is.null(gs$workflow)){
     update$workflow = standard_workflow(update$workflow)
   }
   write.cols = intersect(c("status","workflow"),colnames(gs))
@@ -347,7 +347,7 @@ flywire_administer_workflow <-function(ws = "flywire",
   gs = gs[!is.na(gs$whimsy),]
   gs = gs[!duplicated(gs$whimsy),]
   gs$workflow = standard_workflow(gs$workflow)
-  gs$workflow = standard_statuses(gs$status)
+  gs$status = standard_statuses(gs$status)
   to.work = subset(gs, gs$workflow %in% c("inputs","outputs", "outputs/inputs","inputs/outputs"))
   if(!nrow(to.work)){
     message("No neurons in need of a tracing workflow")
