@@ -264,6 +264,10 @@ flywire_request <- function(request,
   # Add to Google sheet
   gs = try(flywire_tracing_sheet(ws=sheet,open=FALSE,selected_sheet=selected_sheet,Verbose=FALSE), silent = FALSE)
   fw.xyz = setdiff(fw.xyz,gs$flywire.xyz)
+  if(is.null(fw.xyz)||!length(fw.xyz)){
+    warning("No new flywire positions to add")
+    return(NULL)
+  }
   if(class(gs)!="try-error"){
     fw.xyz = setdiff(fw.xyz,gs$flywire.xyz)
     update = data.frame(User = "flywire", flywire.xyz = fw.xyz)
