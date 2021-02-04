@@ -466,6 +466,9 @@ gsheet_update_cols <- function(write.cols,
   for(wc in write.cols){
     if(Verbose) pb$tick(tokens = list(what = wc))
     index = match(wc,colnames(gs))
+    if(is.na(index)){
+      stop("Column ",wc," could not be matched to sheet with columns: ", paste(colnames(gs),collapse=","))
+    }
     if(index>26){
       letter = paste0("A",LETTERS[match(wc,colnames(gs))-26])
     }else if(index>52){
@@ -477,9 +480,6 @@ gsheet_update_cols <- function(write.cols,
     update = tryCatch(as.data.frame(nullToNA(gs[,wc]), stringsAsFactors = FALSE),
                       error = function(e) data.frame(rep(NA,nrow(gs)), stringsAsFactors = FALSE))
     colnames(update) = wc
-    if(Verbose){
-      message("Column: ", wc)
-    }
     gsheet_manipulation(FUN = googlesheets4::range_write,
                                      ss = selected_sheet,
                                      range = range,
