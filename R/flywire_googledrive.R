@@ -791,12 +791,12 @@ matches_update <- function(matching_sheet = options()$hemibrainr_matching_gsheet
         }
         write.cols = intersect(c(match.column,quality.column,"cell.type"),used.cols)
         if(nrow(matches.sel) & length(write.cols)){
-          gsheet_update_cols(
+          suppressMessages(gsheet_update_cols(
             write.cols = write.cols,
             gs=gs.t[,used.cols],
             selected_sheet = selected_sheet,
             sheet = tab,
-            Verbose = FALSE)
+            Verbose = FALSE))
         }
         gs.t = gs.t[,colnames(gs.t)%in%chosen.columns]
         for(col in chosen.columns){
