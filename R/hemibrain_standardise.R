@@ -32,6 +32,7 @@ standard_statuses <- function(x, invert= FALSE){
   standard_status <-function(z, invert = FALSE){
     if(invert){
       z[is.na(z)] = "u"
+      z[z=="done"] = "d"
       z[z=="unassessed"] = "u"
       z[z=="incomplete"] = "i"
       z[z=="complete"] = "c"
@@ -44,6 +45,7 @@ standard_statuses <- function(x, invert= FALSE){
       z[z=="tiny"] = "t"
     }else{
       z[is.na(z)] = "unassessed"
+      z[z=="d"] = "done"
       z[z=="u"] = "unassessed"
       z[z=="i"] = "incomplete"
       z[z=="c"] = "complete"

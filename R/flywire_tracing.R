@@ -12,8 +12,9 @@
 #' If set to \code{NULL} for \code{flywire_tracing_sheets}, the whole google sheet is read and all tabs are combined using \code{plyr::rbind.fill}.
 #' @param regex logical, use \code{ws} with regex.
 #' @param open logial, if \code{TRUE} the relevant google sheet tab is opened in your browser. Else, a \code{data.frame} of the tab is returned.
-#' @param selected_sheet character vector indicating the a flywire tracing google sheet. This defaults to the master 'lineage' tracing sheet used by the Drosphila Connectomics Group to
+#' @param selected_sheet character indicating the a flywire tracing google sheet. This defaults to the master 'lineage' tracing sheet used by the Drosphila Connectomics Group to
 #' store annotations on flywire neurons in different developmental lineages. Note: You may not have access.
+#' @param selected_sheets a character vector of multiple google sheet IDs, as for \code{selected_sheet}.
 #' @param query a vector of data indicating flywire neurons. These can be a vector of flywire XYZ positions (readable by \code{nat::xyzmatrix}),
 #' flywire root IDs or flywire supervoxel IDs. These are used to get the most up to date root IDs from FlyWire, which are then matched to the
 #' results from \code{flywire_tracing_sheets}.
@@ -222,16 +223,19 @@ flywire_tracing_update <- function(tab,
   if(class(gs)=="try-error"){
     tabs = gsheet_manipulation(FUN = googlesheets4::sheet_names,
                                             ss = selected_sheet,
-                                            return = TRUE)
+                                            return = TRUE,
+                               Verbose = Verbose)
     if(!tab%in%tabs){
       warning("Adding new tab ", tab)
       gs.added = gsheet_manipulation(FUN = googlesheets4::sheet_add,
                                      ss = selected_sheet,
-                                     sheet = tab)
+                                     sheet = tab,
+                                     Verbose = Verbose)
       gs.added = gsheet_manipulation(FUN = googlesheets4::sheet_write,
                                      data = update,
                                      ss = selected_sheet,
-                                     sheet = tab)
+                                     sheet = tab,
+                                     Verbose = Verbose)
     }
     return(invisible())
   }
@@ -284,62 +288,94 @@ flywire_tracing_update <- function(tab,
 
   # Return a data.frame that represents new sheet
   if(return){
-    try(flywire_tracing_sheet(ws=tab,open=FALSE,selected_sheet=selected_sheet), silent = FALSE)
+    try(flywire_tracing_sheet(ws=tab,open=FALSE,selected_sheet=selected_sheet, Verbose = Verbose), silent = FALSE)
   }else{
     invisible()
   }
 }
 
 # Standardise flywire sheet
+#' @param whimsy logical. If TRUE then a column with randomly generated 'whimsical' names
+#' is generated (unless there is already a name in this column).
 #' @name flywire_tracing_sheet
 #' @export
 flywire_tracing_standardise <- function(ws = NULL,
                                         regex = FALSE,
-                                        selected_sheet = options()$flywire_lineages_gsheet,
-                                        Verbose = TRUE){
+                                        selected_sheets = options()$flywire_lineages_gsheet,
+                                        Verbose = TRUE,
+                                        whimsy = FALSE){
+  if(length(selected_sheets)>1){
+    for(selected_sheet in selected_sheets){
+      if(!is.null(ws)) warning("examining all tabs on each sheet")
+      flywire_tracing_standardise(regex=FALSE,selected_sheets=selected_sheet,Vebose=FALSE)
+    }
+  }
   if(is.null(ws)){
     tabs = hemibrainr:::gsheet_manipulation(FUN = googlesheets4::sheet_names,
-                                            ss = selected_sheet,
+                                            ss = selected_sheets,
                                             return = TRUE)
     pb = progress::progress_bar$new(
       format = "  standardising :what [:bar] :percent eta: :eta",
       clear = FALSE, total = length(tabs))
     for(tab in tabs){
       pb$tick(tokens = list(what = tab))
-      flywire_tracing_standardise(ws=tab,regex=FALSE,selected_sheet,Verbose=FALSE)
+      flywire_tracing_standardise(ws=tab,regex=FALSE,selected_sheets=selected_sheets,Verbose=FALSE)
     }
   }else{
     tab = ws
   }
-  gs = update = flywire_tracing_sheet(ws=tab,regex=regex,open=FALSE,selected_sheet,Verbose=Verbose)
+  gs = update = flywire_tracing_sheet(ws=tab,regex=regex,open=FALSE,selected_sheets=selected_sheets,Verbose=Verbose)
+  write.cols = union("status","workflow",colnames(gs))
   if(!is.null(gs$status)){
     update$status = standard_statuses(update$status)
   }
   if(!is.null(gs$workflow)){
     update$workflow = standard_workflow(update$workflow)
   }
-  write.cols = intersect(c("status","workflow"),colnames(gs))
+  if(whimsy){
+    write.cols = union(write.cols,"whimsy")
+    if(is.null(update$whimsy)){
+      update$whimsy  = randomwords(n=nrow(update),words= 2,collapse = "_")
+    }else{
+      whismy.na = is.na(update$whimsy)
+      if(sum(whismy.na)){
+        update$whimsy[whismy.na] = randomwords(n=sum(whismy.na),words= 2,collapse = "_")
+      }
+    }
+  }
   if(!identical(gs,update)){
     gsheet_update_cols(
       write.cols = write.cols,
       gs = gs,
-      selected_sheet=selected_sheet,
+      selected_sheet=selected_sheets,
       sheet = tab,
       Verbose = Verbose)
   }
 }
 
-# create workflow
-flywire_administer_workflow <-function(ws = "flywire",
-                                      target_sheet, # "1WI7ri9yHkCGXDZ68PM5PnwAL6mw2keW7QYcxtz9Fwtw"
-                                      regex = FALSE,
+#' @param main_sheet a google sheet of flywire neurons with columns: \code{workflow}, \code{whimsy}, \code{flywire.id}. See \code{\link{standard_workflow}}.
+#' This sheet is ead, and a separate tab in \code{target_sheet} is made for each workflow.
+#' @param target_sheet a sheet to which to add 'workflow' tabs. Workflow tabs are lists of flywire neurons up/downstream of neurons
+#' entered into the \code{main_sheet}. Accepted workflows: inputs, outputs, matches.
+#' @param transmitters logical, if \code{TRUE} then inputs/outputs workflows include transmitter predictions for partners.
+#' @inheritParams fafbseg::flywire_ntpred
+#' @inheritParams fafbseg::flywire_partner_summary
+#' @name flywire_tracing_sheet
+#' @export
+flywire_deploy_workflows <-function(ws = "flywire",
                                       main_sheet, # "1nVEkC-WBcRMODhkKAp5KW5OWIRHzdxpY2ipFOV7r7k4"
+                                      target_sheet = main_sheet, # "1WI7ri9yHkCGXDZ68PM5PnwAL6mw2keW7QYcxtz9Fwtw"
+                                      regex = FALSE,
                                       threshold = 10,
                                       cleft.threshold = 100,
                                       transmitters = FALSE,
                                       local = NULL,
                                       cloudvolume.url = NULL,
-                                      Verbose = TRUE){
+                                      Verbose = TRUE,
+                                      work.flows = c("inputs","outputs","matches")){
+  if(length(setdiff(work.flows,c("inputs","outputs","matches")))){
+    stop("The only supported workflows are: inputs, outputs and matches")
+  }
   gs = flywire_tracing_sheet(ws=ws,regex=regex,open=FALSE,selected_sheet=main_sheet,Verbose=Verbose)
   if(!all(c("whimsy","workflow")%in%colnames(gs))){
     stop("Please give a column named 'whimsy' with human-memorable names for neurons\n Make sure there is a flywire.id column with valid entires.")
@@ -348,12 +384,12 @@ flywire_administer_workflow <-function(ws = "flywire",
   gs = gs[!duplicated(gs$whimsy),]
   gs$workflow = standard_workflow(gs$workflow)
   gs$status = standard_statuses(gs$status)
-  to.work = subset(gs, gs$workflow %in% c("inputs","outputs", "outputs/inputs","inputs/outputs"))
+  to.work = subset(gs, grepl(paste(work.flows,collapse="|"),gs$workflow))
   if(!nrow(to.work)){
     message("No neurons in need of a tracing workflow")
     return(invisible())
   }
-  tasks = sapply(strsplit(to.work$workflow,"/"), function(x) x[x%in%c("inputs","outputs")])
+  tasks = sapply(strsplit(to.work$workflow,"/"), function(x) x[x%in%work.flows])
   indices = unlist(sapply(seq_along(tasks), function(x) rep(x,length((tasks[[x]])))))
   main = to.work[indices,]
   main$workflow = unlist(tasks)

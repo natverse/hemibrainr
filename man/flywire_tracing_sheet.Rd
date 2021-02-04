@@ -6,6 +6,7 @@
 \alias{flywire_in}
 \alias{flywire_tracing_update}
 \alias{flywire_tracing_standardise}
+\alias{flywire_deploy_workflows}
 \title{Retrieve or go to a specific google sheet describing flywire neurons.}
 \usage{
 flywire_tracing_sheet(
@@ -44,8 +45,23 @@ flywire_tracing_update(
 flywire_tracing_standardise(
   ws = NULL,
   regex = FALSE,
-  selected_sheet = options()$flywire_lineages_gsheet,
-  Verbose = TRUE
+  selected_sheets = options()$flywire_lineages_gsheet,
+  Verbose = TRUE,
+  whimsy = FALSE
+)
+
+flywire_deploy_workflows(
+  ws = "flywire",
+  main_sheet,
+  target_sheet = main_sheet,
+  regex = FALSE,
+  threshold = 10,
+  cleft.threshold = 100,
+  transmitters = FALSE,
+  local = NULL,
+  cloudvolume.url = NULL,
+  Verbose = TRUE,
+  work.flows = c("inputs", "outputs", "matches")
 )
 }
 \arguments{
@@ -56,7 +72,7 @@ If set to \code{NULL} for \code{flywire_tracing_sheets}, the whole google sheet 
 
 \item{open}{logial, if \code{TRUE} the relevant google sheet tab is opened in your browser. Else, a \code{data.frame} of the tab is returned.}
 
-\item{selected_sheet}{character vector indicating the a flywire tracing google sheet. This defaults to the master 'lineage' tracing sheet used by the Drosphila Connectomics Group to
+\item{selected_sheet}{character indicating the a flywire tracing google sheet. This defaults to the master 'lineage' tracing sheet used by the Drosphila Connectomics Group to
 store annotations on flywire neurons in different developmental lineages. Note: You may not have access.}
 
 \item{Verbose}{logical, if \code{TRUE} then \code{hemibrainr} communicates what it has found.}
@@ -85,6 +101,30 @@ the same number of entries as the google sheet tab.}
 must be in both the google sheet tab and \code{update}.}
 
 \item{return}{logical, whether or not to return the updated googlesheet tab as a \code{data.frame}.}
+
+\item{selected_sheets}{a character vector of multiple google sheet IDs, as for \code{selected_sheet}.}
+
+\item{whimsy}{logical. If TRUE then a column with randomly generated 'whimsical' names
+is generated (unless there is already a name in this column).}
+
+\item{main_sheet}{a google sheet of flywire neurons with columns: \code{workflow}, \code{whimsy}, \code{flywire.id}. See \code{\link{standard_workflow}}.
+This sheet is ead, and a separate tab in \code{target_sheet} is made for each workflow.}
+
+\item{target_sheet}{a sheet to which to add 'workflow' tabs. Workflow tabs are lists of flywire neurons up/downstream of neurons
+entered into the \code{main_sheet}. Accepted workflows: inputs, outputs, matches.}
+
+\item{threshold}{For \code{flywire_partner_summary} only return partners with
+greater than this number of connections to the query neuron(s) (default of
+0 returns all connections)}
+
+\item{cleft.threshold}{A threshold for the cleft score calculated by Buhmann
+et al 2019 (default 0, we have used 30-100 to increase specificity)}
+
+\item{transmitters}{logical, if \code{TRUE} then inputs/outputs workflows include transmitter predictions for partners.}
+
+\item{local}{path to SQLite synapse data. Evaluated by
+\code{fafbseg:::local_or_google}. Work in progress. Default is to download
+this data and place it in \code{~/projects/JanFunke}.}
 }
 \value{
 a \code{data.frame} with columns from the right tab, chosen using \code{regex}, from the given google sheet(s) \code{selected_sheet},

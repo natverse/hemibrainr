@@ -74,9 +74,54 @@ plot_inspirobot <- function(cycle = NULL){
   tryCatch(inspiroplot(cycle=cycle),error = function(e) NULL)
 }
 
+#' Generate random words
+#'
+#' @description Generate random words. Wordlist from
+#' \href{https://www.randomlists.com/random-words}{randomlists}.
+#'
+#' @param n number of random word/word combinations to generate.
+#' @param words integer, number of words in each combination.
+#' @param collapse Whether to combine into one charcter vector. Words
+#' will be separated by the character entered here. Default \code{NULL}, is not to combine.
+#' @examples
+#' randomwords(10, 2, collapse = "_")
+#' @references https://www.randomlists.com/random-words
+#' @return returns a character vector
+#' @seealso \code{\link{plot_inspirobot}}
+randomwords <- function(n = 1L, words = 1L, collapse = NULL){
+  wl = wordlist()
+  if(words>1){
+    randwords = lapply(1:n, function(x) randomwords(n=words, words=1, collapse = collapse))
+    if(!is.null(combine)){
+      randwords = sapply(randwords, paste, collapse = collapse)
+    }
+  }else{
+    randwords = sample(wl,n)
+    if(!is.null(combine)){
+      paste(unlist(randwords), collapse = collapse)
+    }
+  }
+  randwords
+}
+
+# hidden
+wordlist <- memoise::memoise(function(){
+  req = httr::GET(url = "https://www.randomlists.com/data/words.json")
+  if(isTRUE(httr::status_code(req) %in% c(400L, 500L))) {
+    text <- httr::content(req, as = "text", encoding = "UTF-8")
+    parsed=jsonlite::fromJSON(text, simplifyVector = FALSE)
+    warning("randomlists error: ", parsed$error, call. = F)
+    return(NULL)
+  }
+  text = httr::content(req, as = "text", encoding = "UTF-8")
+  parsed = jsonlite::fromJSON(text, simplifyVector = FALSE)
+  unname(unlist(parsed))
+})
+
 # hidden
 say_encouragement <- function(greet = "user"){
   encouragements = c(
+    paste0("%s, You are ", randomwords()),
     "I hope you're okay %s",
     "This seems to be going well %s",
     "Quarantine won't last forever %s",

@@ -502,13 +502,12 @@ skeletor_batch <- function(obj, swc, numCores = 1, max.file.size = 1000000000, .
   foreach.skeletons <- foreach::foreach (batch = seq_along(batches)) %dopar% {
     neuron.ids = batches[[batch]]
     j = tryCatch({
-      skels = fafbseg::skeletor(neuron.ids, save.obj = NULL, mesh3d = FALSE, ...)
+      skels = suppressMessages(fafbseg::skeletor(neuron.ids, save.obj = NULL, mesh3d = FALSE, ...))
       skels[,"id"] = names(skels) = basename(gsub("\\.obj","",names(skels)))
       nat::write.neurons(skels, dir=swc, format='swc', Force = FALSE)
       skels},
       error = function(e){
-        cat(as.character(e))
-        message(paste(neuron.ids,collapse=","))
+        warning(paste(as.character(e), neuron.ids,collapse=",") )
         NULL
       })
   }
@@ -522,13 +521,14 @@ download_neuron_obj_batch <- function(ids, numCores = 1, ratio = 1, save.obj = "
   batch = 0
   foreach.skeletons <- foreach::foreach (batch = seq_along(batches)) %dopar% {
     neuron.ids = batches[[batch]]
-    j = tryCatch(fafbseg::download_neuron_obj(segments = neuron.ids,
+    j = tryCatch(suppressMessages(fafbseg::download_neuron_obj(segments = neuron.ids,
                                               ratio = ratio,
-                                              save.obj = save.obj),
+                                              save.obj = save.obj)),
                  error = function(e){
-                   cat(as.character(e))
+                   warning(as.character(e))
                    NULL
                  })
+    NULL
   }
 }
 
@@ -712,8 +712,6 @@ is64ToChar <- function(res){
   }
   res
 }
-
-
 
 
 
