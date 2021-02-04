@@ -231,6 +231,8 @@ flywire_request <- function(request,
         stop("No flywire positions to add")
       }
     }
+    xyz=xyz[!is.na(xyz)]
+    xyz = nat::xyzmatrix(xyz)
   }else{
     type = if(nat::is.neuronlist(request)){
       "neuronlist"
@@ -252,15 +254,16 @@ flywire_request <- function(request,
   }
   if(nat::is.neuronlist(request)){
     fb = flywire_basics(request)
-    xyz = do.call(rbind, lapply(fb[,"flywire.xyz"], function(y) strsplit(y,",| |;|:")))
+    xyz = do.call(rbind, lapply(fb[,"flywire.xyz"], nat::xyzmatrix))
   }else if(type!="googlesheet"){
     xyz = as.data.frame(nat::xyzmatrix(request), stringsAsFactors =FALSE)
   }
-  fw.xyz = paste_coords(nat::xyzmatrix(xyz))
+  fw.xyz = apply(xyz,1,paste_coords)
   fw.xyz = fw.xyz[fw.xyz!="(NA,NA,NA)"]
 
   # Add to Google sheet
-  gs = try(flywire_tracing_sheet(ws=tab,open=FALSE,selected_sheet=selected_sheet), silent = FALSE)
+  gs = try(flywire_tracing_sheet(ws=sheet,open=FALSE,selected_sheet=selected_sheet,Verbose=FALSE), silent = FALSE)
+  fw.xyz = setdiff(fw.xyz,gs$flywire.xyz)
   if(class(gs)!="try-error"){
     fw.xyz = setdiff(fw.xyz,gs$flywire.xyz)
     update = data.frame(User = "flywire", flywire.xyz = fw.xyz)
