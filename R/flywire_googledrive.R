@@ -746,14 +746,15 @@ matches_update <- function(matching_sheet = options()$hemibrainr_matching_gsheet
   if(is.null(selected_sheets)){
     selected_sheets = getOption("hemibrainr_gsheets", stop("Please set option('hemibrainr_gsheets')"))
   }
-  gs = data.frame(stringsAsFactors = FALSE)
+  tracing.list = list()
   for(selected_sheet in selected_sheets){
     ## Read Google sheets and extract glywire neuron positions
     tabs = gsheet_manipulation(FUN = googlesheets4::sheet_names,
                                ss = selected_sheet,
-                               return = TRUE)
+                               return = TRUE,
+                               Verbose = FALSE)
     for(tab in tabs){
-      gs.t = gs.t.current = flywire_tracing_sheet(ws = tab, selected_sheet=selected_sheet)
+      gs.t = gs.t.current = flywire_tracing_sheet(ws = tab, selected_sheet=selected_sheet, Verbose = FALSE)
       used.cols = colnames(gs.t.current)
       field = match.field
       if(field=="CATMAID"){ # for historic reasons. Chould fix.
@@ -794,7 +795,8 @@ matches_update <- function(matching_sheet = options()$hemibrainr_matching_gsheet
             write.cols = write.cols,
             gs=gs.t[,used.cols],
             selected_sheet = selected_sheet,
-            sheet = tab)
+            sheet = tab,
+            Verbose = FALSE)
         }
         gs.t = gs.t[,colnames(gs.t)%in%chosen.columns]
         for(col in chosen.columns){
@@ -802,11 +804,12 @@ matches_update <- function(matching_sheet = options()$hemibrainr_matching_gsheet
             gs.t[[col]] = NA
           }
         }
-        gs = plyr::rbind.fill(gs,gs.t)
+        entry = paste(selected_sheet,tab,collapse ="_")
+        tracing.list[[entry]] = gs.t
       }
     }
   }
-  gs
+  do.call(plyr::rbind.fill, tracing.list)
 }
 
 

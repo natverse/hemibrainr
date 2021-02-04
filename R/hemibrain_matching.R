@@ -851,7 +851,8 @@ hemibrain_matches <- function(priority = c("FAFB","hemibrain"),
   hemibrain.matches = gsheet_manipulation(FUN = googlesheets4::read_sheet,
                                                        ss = selected_file,
                                                        sheet = "hemibrain",
-                                                       return = TRUE)
+                                                       return = TRUE,
+                                          Verbose = FALSE)
   hemibrain.matches$bodyid = correct_id(hemibrain.matches$bodyid)
   hemibrain.matches = hemibrain.matches[!duplicated(hemibrain.matches$bodyid),]
   hemibrain.matches = hemibrain.matches[hemibrain.matches$bodyid!="",]
@@ -865,7 +866,8 @@ hemibrain_matches <- function(priority = c("FAFB","hemibrain"),
   fafb.matches = gsheet_manipulation(FUN = googlesheets4::read_sheet,
                                                   ss = selected_file,
                                                   sheet = "FAFB",
-                                                  return = TRUE)
+                                                  return = TRUE,
+                                     Verbose = FALSE)
   fafb.matches = subset(fafb.matches, !is.na(fafb.matches$skid)|!is.na(fafb.matches$flywire.id))
   fafb.matches = fafb.matches[!(duplicated(fafb.matches$skid)&duplicated(fafb.matches$flywire.id)),]
   fafb.matches$skid = correct_id(fafb.matches$skid)
@@ -1071,7 +1073,8 @@ lm_matches <- function(priority = c("hemibrain","lm"), selected_file = options()
   hemibrain.matches = gsheet_manipulation(FUN = googlesheets4::read_sheet,
                                           ss = selected_file,
                                           sheet = "hemibrain",
-                                          return = TRUE)
+                                          return = TRUE,
+                                          Verbose = FALSE)
   hemibrain.matches$bodyid = correct_id(hemibrain.matches$bodyid)
   hemibrain.matches = hemibrain.matches[!duplicated(hemibrain.matches$bodyid),]
   hemibrain.matches = hemibrain.matches[hemibrain.matches$bodyid!="",]
@@ -1086,7 +1089,8 @@ lm_matches <- function(priority = c("hemibrain","lm"), selected_file = options()
   lm.matches = gsheet_manipulation(FUN = googlesheets4::read_sheet,
                                      ss = selected_file,
                                      sheet = "lm",
-                                     return = TRUE)
+                                     return = TRUE,
+                                   Verbose = FALSEs)
   lm.matches$id = correct_id(lm.matches$id)
   lm.matches = lm.matches[!duplicated(lm.matches$id),]
   lm.matches = lm.matches[lm.matches$id!="",]
@@ -1352,7 +1356,8 @@ hemibrain_match_sheet <- function(selected_file = options()$hemibrainr_matching_
   gs = gsheet_manipulation(FUN = googlesheets4::read_sheet,
                                         ss = selected_file,
                                         sheet = ws,
-                                        return = TRUE)
+                                        return = TRUE,
+                           Verbose = FALSE)
   if(nrow(gs)){
     gs[[id.field]] = correct_id(gs[[id.field]])
     ids = gs[[id.field]]
@@ -1521,7 +1526,8 @@ update_gsheet <- function(update,
                           range = range,
                           data = as.data.frame(update[row,column], stringsAsFactors = FALSE),
                           sheet = tab,
-                          col_names = FALSE)
+                          col_names = FALSE,
+                          Verbose = TRUE)
     }
   }
 
