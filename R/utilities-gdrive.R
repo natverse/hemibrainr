@@ -491,5 +491,38 @@ gsheet_update_cols <- function(write.cols,
   }
 }
 
-
+# Reorder sheets and remove duplicates
+gsheet_reorder <- function(gs, tab, selected_sheet, remove.duplicates = TRUE, field = "flywire.id"){
+  if(remove.duplicates){
+    gs = gs[!duplicated(gs),]
+    if(!field%in%colnames(gs)){
+      warning(field, " must be a valid column")
+    }else{
+      gs[[field]] = correct_id(gs[[field]])
+      keep = !duplicated(gs[[field]]) | is.na(gs[[field]]) | gs[[field]]==0 | gs[[field]]== "(NA,NA,NA)"
+      gs = gs[keep,]
+    }
+  }
+  for(column in c(field, "status","whimsy","connectivity.type","cell.type","type","cbf","cell_body_fiber","ItoLee_Hemilineage","User","added_by","tracer","last_updated_by")){
+    if(column %in% colnames(gs)){
+      gs = gs[order(gs[[column]]),]
+    }
+  }
+  gsheet_manipulation(FUN = googlesheets4::write_sheet,
+                      data = gs[0,],
+                      ss = selected_sheet,
+                      sheet = tab)
+  batches = split(1:nrow(gs), ceiling(seq_along(1:nrow(gs))/500))
+  pb = progress::progress_bar$new(
+    format = "  appending rows :what [:bar] :percent eta: :eta",
+    clear = FALSE, total = length(length(batches)))
+  for(i in batches){
+    pb$tick(tokens = list(what = paste0(min(i),":",max(i))))
+    gsheet_manipulation(FUN = googlesheets4::sheet_append,
+                        data = gs[min(i):max(i),],
+                        ss = selected_sheet,
+                        sheet = tab,
+                        Verbose = TRUE)
+  }
+}
 

@@ -1577,20 +1577,7 @@ fafb_matching_rewrite <- function(selected_file  = options()$hemibrainr_matching
   # Write to google sheet
   if(reorder){
     n$skid = correct_id(n$skid)
-    n = n[order(n$cell.type),]
-    n = n[order(n$ItoLee_Hemilineage),]
-    n = n[!duplicated(n),]
-    gsheet_manipulation(FUN = googlesheets4::write_sheet,
-                        data = n[0,],
-                        ss = selected_file,
-                        sheet = "FAFB")
-    batches = split(1:nrow(n), ceiling(seq_along(1:nrow(n))/500))
-    for(i in batches){
-      gsheet_manipulation(FUN = googlesheets4::sheet_append,
-                          data = n[min(i):max(i),],
-                          ss = selected_file,
-                          sheet = "FAFB")
-    }
+    gsheet_reorder(gs=n,tab="FAFB",selected_sheet=selected_file,field = "flywire.xyz")
   }else{
     # Update
     write.cols = intersect(c("connectivity.type","cell.type","nblast.top","side",
@@ -1600,7 +1587,8 @@ fafb_matching_rewrite <- function(selected_file  = options()$hemibrainr_matching
       write.cols = write.cols,
       gs=n,
       selected_sheet = selected_file,
-      sheet = "FAFB")
+      sheet = "FAFB",
+      Verbose = FALSE)
   }
 
   # Add any missing data

@@ -303,11 +303,13 @@ flywire_tracing_standardise <- function(ws = NULL,
                                         regex = FALSE,
                                         selected_sheets = options()$flywire_lineages_gsheet,
                                         Verbose = TRUE,
-                                        whimsy = FALSE){
+                                        whimsy = FALSE,
+                                        reorder = TRUE,
+                                        remove.duplicates = TRUE){
   if(length(selected_sheets)>1){
     for(selected_sheet in selected_sheets){
       if(!is.null(ws)) warning("examining all tabs on each sheet")
-      flywire_tracing_standardise(regex=FALSE,selected_sheets=selected_sheet,Vebose=FALSE)
+      flywire_tracing_standardise(regex=FALSE,selected_sheets=selected_sheet,Verbose=FALSE)
     }
   }
   if(is.null(ws)){
@@ -324,8 +326,8 @@ flywire_tracing_standardise <- function(ws = NULL,
   }else{
     tab = ws
   }
-  gs = update = flywire_tracing_sheet(ws=tab,regex=regex,open=FALSE,selected_sheets=selected_sheets,Verbose=Verbose)
-  write.cols = union("status","workflow",colnames(gs))
+  gs = update = flywire_tracing_sheet(ws=tab,regex=regex,open=FALSE,selected_sheet=selected_sheets,Verbose=Verbose)
+  write.cols = union(c("status","workflow"),colnames(gs))
   if(!is.null(gs$status)){
     update$status = standard_statuses(update$status)
   }
@@ -342,14 +344,19 @@ flywire_tracing_standardise <- function(ws = NULL,
         update$whimsy[whismy.na] = randomwords(n=sum(whismy.na),words= 2,collapse = "_")
       }
     }
+    update$whimsy = gsub(" ","_",update$whimsy)
   }
-  if(!identical(gs,update)){
-    gsheet_update_cols(
-      write.cols = write.cols,
-      gs = gs,
-      selected_sheet=selected_sheets,
-      sheet = tab,
-      Verbose = Verbose)
+  if(reorder){
+    gsheet_reorder(gs=update,tab=tab,selected_sheet=selected_sheets,field = "flywire.id", remove.duplicates = remove.duplicates)
+  }else{
+    if(!identical(gs,update)){
+      gsheet_update_cols(
+        write.cols = write.cols,
+        gs = gs,
+        selected_sheet=selected_sheets,
+        sheet = tab,
+        Verbose = Verbose)
+    }
   }
 }
 

@@ -753,7 +753,11 @@ matches_update <- function(matching_sheet = options()$hemibrainr_matching_gsheet
                                ss = selected_sheet,
                                return = TRUE,
                                Verbose = FALSE)
+    pb = progress::progress_bar$new(
+      format = "  updating :what [:bar] :percent eta: :eta",
+      clear = FALSE, total = length(tabs))
     for(tab in tabs){
+      pb$tick(tokens = list(what = tab))
       gs.t = gs.t.current = flywire_tracing_sheet(ws = tab, selected_sheet=selected_sheet, Verbose = FALSE)
       used.cols = colnames(gs.t.current)
       field = match.field
