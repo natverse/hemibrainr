@@ -125,24 +125,13 @@ flywire_matching_rewrite <- function(flywire.ids = names(flywire_neurons()),
       removals = rbind(removals, remove)
     }
   }
-  if(reorder & nrow(removals)){
-    n = fg[!fg$index%in%removals$index,]
-    n = n[order(n$User),]
-    n = n[order(n$cell_body_fiber),]
-    n = n[order(n$ItoLee_Hemilineage),]
-    n = n[!is.na(n$flywire.xyz)|!is.na(n$skid),]
-    n$index = NULL
-    gsheet_manipulation(FUN = googlesheets4::write_sheet,
-                        data = n[0,],
-                        ss = selected_file,
-                        sheet = "FAFB")
-    batches = split(1:nrow(n), ceiling(seq_along(1:nrow(n))/500))
-    for(i in batches){
-      gsheet_manipulation(FUN = googlesheets4::sheet_append,
-                          data = n[min(i):max(i),],
-                          ss = selected_file,
-                          sheet = "FAFB")
+  if(reorder){
+    if(nrow(removals)){
+      n = fg[!fg$index%in%removals$index,]
     }
+    n$index = NULL
+    n = n[!is.na(n$flywire.xyz)|!is.na(n$skid),]
+    gsheet_reorder(gs=n,tab="FAFB",selected_sheet=selected_file,field = "flywire.xyz", remove.duplicates = FALSE)
   }else if (nrow(removals)){
     for(r in sort(removals$index,decreasing = TRUE)){
       range.del = googlesheets4::cell_rows(r)

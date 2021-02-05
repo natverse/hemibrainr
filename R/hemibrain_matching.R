@@ -1577,7 +1577,7 @@ fafb_matching_rewrite <- function(selected_file  = options()$hemibrainr_matching
   # Write to google sheet
   if(reorder){
     n$skid = correct_id(n$skid)
-    gsheet_reorder(gs=n,tab="FAFB",selected_sheet=selected_file,field = "flywire.xyz")
+    gsheet_reorder(gs=n,tab="FAFB",selected_sheet=selected_file,field = "flywire.xyz", remove.duplicates = FALSE)
   }else{
     # Update
     write.cols = intersect(c("connectivity.type","cell.type","nblast.top","side",

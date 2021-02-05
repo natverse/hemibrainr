@@ -503,7 +503,7 @@ gsheet_reorder <- function(gs, tab, selected_sheet, remove.duplicates = TRUE, fi
       gs = gs[keep,]
     }
   }
-  for(column in c(field, "status","whimsy","connectivity.type","cell.type","type","cbf","cell_body_fiber","ItoLee_Hemilineage","User","added_by","tracer","last_updated_by")){
+  for(column in c(field, "status","whimsy","connectivity.type","cell.type","type","cbf","cell_body_fiber","ItoLee_Hemilineage","User","added_by","tracer","last_updated_by","weight","count","score","NBLAST","nblast")){
     if(column %in% colnames(gs)){
       gs = gs[order(gs[[column]]),]
     }

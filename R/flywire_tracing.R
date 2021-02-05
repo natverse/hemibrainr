@@ -1,6 +1,6 @@
 # lineage google sheets
 
-#' Retrieve or go to a specific google sheet describing flywire neurons.
+#' @title Retrieve or go to a specific google sheet describing flywire neurons.
 #'
 #' @description These functions can help you
 #' either go to or read the right tab (\code{flywire_tracing_sheet}) on a large google sheet, or read the whole sheet and all of its tabs ((\code{flywire_tracing_sheets}),
@@ -297,10 +297,16 @@ flywire_tracing_update <- function(tab,
 # Standardise flywire sheet
 #' @param whimsy logical. If TRUE then a column with randomly generated 'whimsical' names
 #' is generated (unless there is already a name in this column).
+#' @param field character, the the colum in the google sheet that you wish to have unique,
+#' when \code{remove.duplicates} is \code{TRUE}.
+#' @param remove.duplicates logical, whether or not to remvoe duplicate rows from google sheet. Currently,
+#' this will also trigger \code{reorder} even if it is set to \code{FALSE}.
+#' @param reorder logical, if \code{TRUE} then the googlesheet is reordered by cell type, connection weight and users.
 #' @name flywire_tracing_sheet
 #' @export
 flywire_tracing_standardise <- function(ws = NULL,
                                         regex = FALSE,
+                                        field = "flywire.id",
                                         selected_sheets = options()$flywire_lineages_gsheet,
                                         Verbose = TRUE,
                                         whimsy = FALSE,
@@ -308,22 +314,39 @@ flywire_tracing_standardise <- function(ws = NULL,
                                         remove.duplicates = TRUE){
   if(length(selected_sheets)>1){
     for(selected_sheet in selected_sheets){
-      if(!is.null(ws)) warning("examining all tabs on each sheet")
-      flywire_tracing_standardise(regex=FALSE,selected_sheets=selected_sheet,Verbose=FALSE)
+      if(!is.null(ws)){ warning("examining all tabs on each sheet")}
+      flywire_tracing_standardise(ws = NULL,
+                                  field = field,
+                                  regex=FALSE,
+                                  whimsy=whimsy,
+                                  selected_sheets=selected_sheet,
+                                  Verbose=Verbose,
+                                  reorder = reorder,
+                                  remove.duplicates = remove.duplicates)
     }
+    return(invisible())
   }
   if(is.null(ws)){
+    if(Verbose){ message("### Working on google sheet: ", selected_sheets) }
     tabs = hemibrainr:::gsheet_manipulation(FUN = googlesheets4::sheet_names,
                                             ss = selected_sheets,
                                             return = TRUE,
                                             Verbose = FALSE)
     pb = progress::progress_bar$new(
       format = "  standardising :what [:bar] :percent eta: :eta",
-      clear = FALSE, total = length(tabs))
+      clear = !Verbose, total = length(tabs))
     for(tab in tabs){
       pb$tick(tokens = list(what = tab))
-      flywire_tracing_standardise(ws=tab,regex=FALSE,selected_sheets=selected_sheets,Verbose=FALSE)
+      flywire_tracing_standardise(ws=tab,
+                                  field = field,
+                                  regex=FALSE,
+                                  whimsy=whimsy,
+                                  selected_sheets=selected_sheets,
+                                  Verbose=Verbose,
+                                  reorder = reorder,
+                                  remove.duplicates = remove.duplicates)
     }
+    return(invisible())
   }else{
     tab = ws
   }
@@ -349,15 +372,20 @@ flywire_tracing_standardise <- function(ws = NULL,
     }
     update$whimsy = gsub(" ","_",update$whimsy)
   }
-  if(reorder){
-    gsheet_reorder(gs=update,tab=tab,selected_sheet=selected_sheets,
-                   field = "flywire.id", remove.duplicates = remove.duplicates,
-                   Verbose = Verbose)
+  if(reorder||remove.duplicates){
+    if(!identical(gs,update)|reorder){
+      gsheet_reorder(gs=update,
+                     tab=tab,
+                     selected_sheet=selected_sheets,
+                     field = field,
+                     remove.duplicates = remove.duplicates,
+                     Verbose = Verbose)
+    }
   }else{
     if(!identical(gs,update)){
       gsheet_update_cols(
         write.cols = write.cols,
-        gs = gs,
+        gs = update,
         selected_sheet=selected_sheets,
         sheet = tab,
         Verbose = Verbose)

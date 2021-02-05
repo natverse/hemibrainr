@@ -45,9 +45,12 @@ flywire_tracing_update(
 flywire_tracing_standardise(
   ws = NULL,
   regex = FALSE,
+  field = "flywire.id",
   selected_sheets = options()$flywire_lineages_gsheet,
   Verbose = TRUE,
-  whimsy = FALSE
+  whimsy = FALSE,
+  reorder = TRUE,
+  remove.duplicates = TRUE
 )
 
 flywire_deploy_workflows(
@@ -102,10 +105,18 @@ must be in both the google sheet tab and \code{update}.}
 
 \item{return}{logical, whether or not to return the updated googlesheet tab as a \code{data.frame}.}
 
+\item{field}{character, the the colum in the google sheet that you wish to have unique,
+when \code{remove.duplicates} is \code{TRUE}.}
+
 \item{selected_sheets}{a character vector of multiple google sheet IDs, as for \code{selected_sheet}.}
 
 \item{whimsy}{logical. If TRUE then a column with randomly generated 'whimsical' names
 is generated (unless there is already a name in this column).}
+
+\item{reorder}{logical, if \code{TRUE} then the googlesheet is reordered by cell type, connection weight and users.}
+
+\item{remove.duplicates}{logical, whether or not to remvoe duplicate rows from google sheet. Currently,
+this will also trigger \code{reorder} even if it is set to \code{FALSE}.}
 
 \item{main_sheet}{a google sheet of flywire neurons with columns: \code{workflow}, \code{whimsy}, \code{flywire.id}. See \code{\link{standard_workflow}}.
 This sheet is ead, and a separate tab in \code{target_sheet} is made for each workflow.}
