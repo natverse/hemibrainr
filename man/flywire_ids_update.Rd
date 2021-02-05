@@ -13,7 +13,8 @@ flywire_ids_update(
   meta = NULL,
   match = FALSE,
   matching_sheet = options()$hemibrainr_matching_gsheet,
-  priority = c("FAFB", "hemibrain")
+  priority = c("FAFB", "hemibrain"),
+  Verbose = TRUE
 )
 }
 \arguments{
@@ -38,6 +39,8 @@ Only works if that id is also in this provided \code{data.frame}, \code{meta}.}
 
 \item{priority}{whether to use FAFB->hemibrain matches (FAFB) or hemibrain->FAFB matches (hemibrain) in order to ascribe
 cell type names to FAFB neurons. In both cases, cell type names are attached to hemibrain bodyids, and propagated to their FAFB matches.}
+
+\item{Verbose}{logical, whether or not to supply you with messages.}
 }
 \value{
 a \code{data.frame} with columns from the given google sheet(s), specified using the argument \code{chosen.columns}.
