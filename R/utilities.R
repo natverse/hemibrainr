@@ -606,6 +606,10 @@ nblast_big <-function(query.neuronlistfh, target.neuronlistfh,
   doParallel::registerDoParallel(cl)
 
   # What are our query and target neurons
+  query = intersect(names(query.neuronlistfh),query)
+  if(!length(query)){
+    stop("query neurons not in query.neuronlistfh")
+  }
   target = names(target.neuronlistfh)
 
   # Make matrix to fill
