@@ -452,10 +452,12 @@ remove_unused_filehash <- function(path,
             stop("id must be in colnames(meta)")
           }
           inmeta = names(nlfh)%in%meta[[id]]
-          nlfh = nlfh[inmeta]
-          update.neuronlistfh(nat::as.neuronlist(nlfh),
-                              rds=rds,
-                              dbClass = "DB1")
+          if(sum(!inmeta)){
+            nlfh = nlfh[inmeta]
+            update.neuronlistfh(nat::as.neuronlist(nlfh),
+                                rds=rds,
+                                dbClass = "DB1")
+          }
         }
       }
     }else{
