@@ -478,6 +478,7 @@ flywire_ids <-function(local = FALSE, folder = "flywire_neurons/", sql = FALSE, 
 #' @param match logical. If \code{TRUE}, hemibrain matches given.
 #' @param meta meta data for flywire neurons, e.g. as retreived using \code{\link{flywire_meta}}. Used to efficiently input \code{flywire.xyz} column if only a \code{flywire.id} entry has been given.
 #' Only works if that id is also in this provided \code{data.frame}, \code{meta}.
+#' @param Verbose logical, whether or not to supply you with messages.
 #' @inheritParams matches_update
 #'
 #' @details For this function to work, the specified google sheet(s) must have either the column \code{flywire.xyz},
@@ -524,7 +525,8 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
                                meta = NULL,
                                match = FALSE,
                                matching_sheet = options()$hemibrainr_matching_gsheet,
-                               priority = c("FAFB","hemibrain")){
+                               priority = c("FAFB","hemibrain"),
+                               Verbose = TRUE){
   if(is.null(selected_sheets)){
     selected_sheets = getOption("hemibrainr_gsheets", stop("Please set option('hemibrainr_gsheets')"))
   }
@@ -532,11 +534,12 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
   tracing.list = list()
   for(selected_sheet in selected_sheets){
     ## Read Google sheets and extract glywire neuron positions
-    message("### Working on google sheet: ", selected_sheet)
+    if(Verbose) { message("### Working on google sheet: ", selected_sheet) }
     if(is.null(ws)){
       tabs = gsheet_manipulation(FUN = googlesheets4::sheet_names,
                                  ss = selected_sheet,
-                                 return = TRUE)
+                                 return = TRUE,
+                                 Verbose = FALSE)
     }else{
       if(regex){
         ws=regex_tab_names(regex=ws,selected_sheet=selected_sheet)$name
@@ -545,7 +548,7 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
     }
     pb = progress::progress_bar$new(
       format = "  updating tab :what [:bar] :percent eta: :eta",
-      clear = FALSE, total = length(tabs))
+      clear = !Verbose, total = length(tabs))
     for(tab in tabs){
       # Update progress bar
       pb$tick(tokens = list(what = tab))
@@ -604,7 +607,12 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
           gs.t$flywire.id = replacement
           gs.t$flywire.xyz[gs.t$flywire.xyz==paste_coords(matrix(NA,ncol=3))] = NA
           gs.t$flywire.id[is.na(gs.t$flywire.id)] = "0"
-          gs.t$flywire.id = fafbseg::flywire_latestid(gs.t$flywire.id)
+          ids.fresh = try(fafbseg::flywire_latestid(gs.t$flywire.id),silent = TRUE)
+          if(!"try-error"%in%class(ids.fresh)){
+            gs.t$flywire.id = ids.fresh
+          }else{
+            warning(ids.fresh)
+          }
         }
         # If only skid given try and guess flywire.id
         if("skid"%in%used.cols){
