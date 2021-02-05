@@ -315,7 +315,8 @@ flywire_tracing_standardise <- function(ws = NULL,
   if(is.null(ws)){
     tabs = hemibrainr:::gsheet_manipulation(FUN = googlesheets4::sheet_names,
                                             ss = selected_sheets,
-                                            return = TRUE)
+                                            return = TRUE,
+                                            Verbose = FALSE)
     pb = progress::progress_bar$new(
       format = "  standardising :what [:bar] :percent eta: :eta",
       clear = FALSE, total = length(tabs))
@@ -327,12 +328,14 @@ flywire_tracing_standardise <- function(ws = NULL,
     tab = ws
   }
   gs = update = flywire_tracing_sheet(ws=tab,regex=regex,open=FALSE,selected_sheet=selected_sheets,Verbose=Verbose)
-  write.cols = union(c("status","workflow"),colnames(gs))
+  write.cols = colnames(gs)
   if(!is.null(gs$status)){
     update$status = standard_statuses(update$status)
+    write.cols = union("status",write.cols)
   }
   if(!is.null(gs$workflow)){
     update$workflow = standard_workflow(update$workflow)
+    write.cols = union("workflow",write.cols)
   }
   if(whimsy){
     write.cols = union(write.cols,"whimsy")
@@ -347,7 +350,9 @@ flywire_tracing_standardise <- function(ws = NULL,
     update$whimsy = gsub(" ","_",update$whimsy)
   }
   if(reorder){
-    gsheet_reorder(gs=update,tab=tab,selected_sheet=selected_sheets,field = "flywire.id", remove.duplicates = remove.duplicates)
+    gsheet_reorder(gs=update,tab=tab,selected_sheet=selected_sheets,
+                   field = "flywire.id", remove.duplicates = remove.duplicates,
+                   Verbose = Verbose)
   }else{
     if(!identical(gs,update)){
       gsheet_update_cols(

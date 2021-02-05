@@ -492,7 +492,7 @@ gsheet_update_cols <- function(write.cols,
 }
 
 # Reorder sheets and remove duplicates
-gsheet_reorder <- function(gs, tab, selected_sheet, remove.duplicates = TRUE, field = "flywire.id"){
+gsheet_reorder <- function(gs, tab, selected_sheet, remove.duplicates = TRUE, field = "flywire.id", Verbose = TRUE){
   if(remove.duplicates){
     gs = gs[!duplicated(gs),]
     if(!field%in%colnames(gs)){
@@ -508,21 +508,28 @@ gsheet_reorder <- function(gs, tab, selected_sheet, remove.duplicates = TRUE, fi
       gs = gs[order(gs[[column]]),]
     }
   }
+  if(!nrow(gs)||!ncol(gs)){
+    warning("Nothing to re-write for ",tab," of ",selected_sheet)
+    return(NULL)
+  }
   gsheet_manipulation(FUN = googlesheets4::write_sheet,
                       data = gs[0,],
                       ss = selected_sheet,
-                      sheet = tab)
+                      sheet = tab,
+                      Verbose = Verbose)
   batches = split(1:nrow(gs), ceiling(seq_along(1:nrow(gs))/500))
-  pb = progress::progress_bar$new(
-    format = "  appending rows :what [:bar] :percent eta: :eta",
-    clear = FALSE, total = length(length(batches)))
+  if(Verbose){
+    pb = progress::progress_bar$new(
+      format = "  appending rows :what [:bar] :percent eta: :eta",
+      clear = FALSE, total = length(length(batches)))
+  }
   for(i in batches){
-    pb$tick(tokens = list(what = paste0(min(i),":",max(i))))
+    if(Verbose) { pb$tick(tokens = list(what = paste0(min(i),":",max(i)))) }
     gsheet_manipulation(FUN = googlesheets4::sheet_append,
                         data = gs[min(i):max(i),],
                         ss = selected_sheet,
                         sheet = tab,
-                        Verbose = TRUE)
+                        Verbose = FALSE)
   }
 }
 
