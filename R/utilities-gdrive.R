@@ -464,7 +464,7 @@ gsheet_update_cols <- function(write.cols,
       clear = FALSE, total = length(write.cols))
   }
   for(wc in write.cols){
-    if(Verbose) pb$tick(tokens = list(what = wc))
+    if(Verbose){ pb$tick(tokens = list(what = wc))}
     index = match(wc,colnames(gs))
     if(is.na(index)){
       stop("Column ",wc," could not be matched to sheet with columns: ", paste(colnames(gs),collapse=","))
@@ -521,7 +521,7 @@ gsheet_reorder <- function(gs, tab, selected_sheet, remove.duplicates = TRUE, fi
   if(Verbose){
     pb = progress::progress_bar$new(
       format = "  appending rows :what [:bar] :percent eta: :eta",
-      clear = FALSE, total = length(length(batches)))
+      clear = FALSE, total = length(batches))
   }
   for(i in batches){
     if(Verbose) { pb$tick(tokens = list(what = paste0(min(i),":",max(i)))) }
