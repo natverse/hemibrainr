@@ -54,6 +54,9 @@ nblast_big <-function(query.neuronlistfh, target.neuronlistfh,
       target.neuronlist = target.neuronlist[unlist(sapply(target.neuronlist,hemibrainr:::is_big_dps,no.points=no.points))]
       chosen.query = names(query.neuronlist)
       chosen.target = names(target.neuronlist)
+      if(!length(chosen.query)||!length(chosen.target)){
+        return(NULL)
+      }
 
       ### NBLAST native
       nblast.res.1 = nat.nblast::nblast(query = query.neuronlist,
