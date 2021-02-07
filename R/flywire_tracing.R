@@ -542,42 +542,65 @@ flywire_workflow <- function(flywire.id,
                               threshold = 10,
                               cleft.threshold = 100,
                              transmitters = FALSE,
+                             nblast = NULL,
                               local = NULL,
                               cloudvolume.url = NULL,
-                             Verbose = TRUE){
-  partners = ifelse(grepl("outputs",ws),"outputs","inputs")
-  syn.partners = fafbseg::flywire_partner_summary(flywire.id,
-                                     partners = partners,
-                                     threshold = threshold,
-                                     remove_autapses = TRUE,
-                                     cleft.threshold = cleft.threshold,
-                                     details = FALSE,
-                                     roots = TRUE,
-                                     Verbose = Verbose,
-                                     local = local,
-                                     cloudvolume.url=cloudvolume.url)[,1:2]
-  ntpredictions=try(fafbseg:::ntpredictions_tbl(local=local),silent=TRUE)
-  if(is.null(ntpredictions)){
-    warning("Cannot find transmitter predictions")
-  }else if(transmitters){
-    nts.all = list()
-    for(i in syn.partners[,1]){
-      nt = fafbseg::flywire_ntpred(i,
-                                   local = local,
-                                   cleft.threshold=cleft.threshold,
-                                   cloudvolume.url=cloudvolume.url)
-      top.nt = names(sort(table(nt$top.nt),decreasing = TRUE))[1]
-      nts.all[[i]] = data.frame(id = i, top.nt = top.nt)
-    }
-    nts = do.call(plyr::rbind.fill, nts.all)
-    syn.partners$top.nt = nts$top.nt[match(syn.partners[,1],nts$id)]
+                             Verbose = TRUE,
+                             max.hits = 50){
+  if(length(flywire.id)>1){
+    stop("Only one flywire.id at a time please")
   }
-  syn.partners$status = "unassessed"
-  syn.partners$note = NA
-  main = data.frame(flywire.id,weight = "main", status = status, note = gsub("_.*","",ws), stringsAsFactors = FALSE)
-  colnames(main) = colnames(syn.partners)
-  syn.partners = as.data.frame(syn.partners, stringsAsFactors = FALSE)
-  plyr::rbind.fill(main, syn.partners)
+  match = grepl("match",ws)
+  if(match){
+    if(is.null(nblast)){
+      nblast = hemibrain_nblast("hemibrain-flywire")
+    }
+    entries = tab.entries[,colnames(nblast)%in%flywire.id]
+    entries = sort(entries[entries>0],decreasing = TRUE)
+    entries = entries[1:min(max.hits,length(entries))]
+    tab.entries = as.data.frame(bodyid = names(entries),
+                                nblast = unname(entries),
+                                quality = "none",
+                                note = NA,
+                                stringsAsFactors = FALSE)
+    main = data.frame(flywire.id, nblast = "main", quality = "none", note = gsub("_.*","",ws), stringsAsFactors = FALSE)
+  }else{
+    partners = ifelse(grepl("outputs",ws),"outputs","inputs")
+    tab.entries = fafbseg::flywire_partner_summary(flywire.id,
+                                                    partners = partners,
+                                                    threshold = threshold,
+                                                    remove_autapses = TRUE,
+                                                    cleft.threshold = cleft.threshold,
+                                                    details = FALSE,
+                                                    roots = TRUE,
+                                                    Verbose = Verbose,
+                                                    local = local,
+                                                    cloudvolume.url=cloudvolume.url)[,1:2]
+    if(transmitters){
+      ntpredictions=try(fafbseg:::ntpredictions_tbl(local=local),silent=TRUE)
+      if(is.null(ntpredictions)){
+        warning("Cannot find transmitter predictions")
+        break
+      }
+      nts.all = list()
+      for(i in tab.entries[,1]){
+        nt = fafbseg::flywire_ntpred(i,
+                                     local = local,
+                                     cleft.threshold=cleft.threshold,
+                                     cloudvolume.url=cloudvolume.url)
+        top.nt = names(sort(table(nt$top.nt),decreasing = TRUE))[1]
+        nts.all[[i]] = data.frame(id = i, top.nt = top.nt)
+      }
+      nts = do.call(plyr::rbind.fill, nts.all)
+      tab.entries$top.nt = nts$top.nt[match(tab.entries[,1],nts$id)]
+    }
+    tab.entries$status = "unassessed"
+    tab.entries$note = NA
+    main = data.frame(flywire.id,weight = "main", status = status, note = gsub("_.*","",ws), stringsAsFactors = FALSE)
+  }
+  colnames(main) = colnames(tab.entries)
+  tab.entries = as.data.frame(tab.entries, stringsAsFactors = FALSE)
+  plyr::rbind.fill(main, tab.entries)
 }
 
 # hidden, caches result for 5min in current session
