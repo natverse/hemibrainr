@@ -77,11 +77,17 @@ nblast_big <-function(query.neuronlistfh, target.neuronlistfh,
                                         version = version,
                                         UseAlpha = UseAlpha,
                                         OmitFailures = FALSE)
+      if(is.null(dim(nblast.res.2))){
+        nblast.res.2 = matrix(nblast.res.2, nrow = 1, ncol = length(nblast.res.2), dimnames = list(chosen.query,chosen.target))
+      }
       nblast.res.native = (nblast.res.1+t(nblast.res.2))/2
       ### NBLAST mirrored
       if(!is.null(query.neuronlistfh.addition)){
-        query.neuronlist = query.neuronlistfh.addition[names(query.neuronlistfh.addition)%in%chosen.query]
-        nblast.res.3 = nat.nblast::nblast(query = query.neuronlist,
+        query.addition.neuronlist = query.neuronlistfh.addition[names(query.neuronlistfh.addition)%in%chosen.query]
+        if(length(query.addition.neuronlist)!=length(query.neuronlist)){
+          break
+        }
+        nblast.res.3 = nat.nblast::nblast(query = query.addition.neuronlist,
                                           target = target.neuronlist,
                                           .parallel=FALSE,
                                           normalised = normalised,
@@ -91,7 +97,7 @@ nblast_big <-function(query.neuronlistfh, target.neuronlistfh,
                                           UseAlpha = UseAlpha,
                                           OmitFailures = FALSE)
         nblast.res.4 = nat.nblast::nblast(query = target.neuronlist,
-                                          target = query.neuronlist,
+                                          target = query.addition.neuronlist,
                                           .parallel=FALSE,
                                           normalised = normalised,
                                           smat = smat,
@@ -99,6 +105,9 @@ nblast_big <-function(query.neuronlistfh, target.neuronlistfh,
                                           version = version,
                                           UseAlpha = UseAlpha,
                                           OmitFailures = FALSE)
+        if(is.null(dim(nblast.res.2))){
+          nblast.res.4 = matrix(nblast.res.4, nrow = 1, ncol = length(nblast.res.2), dimnames = list(names(query.addition.neuronlist),chosen.target))
+        }
         nblast.res.m = (nblast.res.3+t(nblast.res.4))/2
         nblast.res.sub = plyr::rbind.fill.matrix(t(nblast.res.native), t(nblast.res.m))
         rownames(nblast.res.sub) = c(colnames(nblast.res.native), colnames(nblast.res.sub))
