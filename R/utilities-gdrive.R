@@ -6,15 +6,18 @@ good_savedir <- function(local=FALSE, Verbose = TRUE){
     if(is.null(options()$Gdrive_hemibrain_data)){
       hemibrainr_set_drive()
     }
-    savedir = options()$hemibrain_data
     if(dir.exists(options()$Gdrive_hemibrain_data)){
       if(Verbose) message("Reading from Google Team Drive: ", hemibrainr_team_drive())
+      savedir = options()$Gdrive_hemibrain_data
     }else{
       stop("Could not find hemibrainr data folder. Do you have Google Filestream or rclone active?: ", savedir)
     }
+  }else if(isTRUE(local)){
+    savedir = options()$hemibrain_data
+    if(Verbose) message("Looking for data in local folder: ", savedir)
   }else{
-    if(Verbose) message("Looking for data in local folder: ", local)
     savedir = local
+    if(Verbose) message("Looking for data in local folder: ", savedir)
   }
   savedir
 }
