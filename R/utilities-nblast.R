@@ -3,7 +3,7 @@
 `%dopar%` <- foreach::`%dopar%`
 `%:%` <- foreach::`%:%`
 nblast_big <-function(query.neuronlistfh, target.neuronlistfh,
-                      query.neuronlistfh.addition = NULL,
+                      query.addition.neuronlistfh = NULL,
                       query = names(query.neuronlistfh),
                       numCores=1,
                       smat = NULL,
@@ -52,8 +52,10 @@ nblast_big <-function(query.neuronlistfh, target.neuronlistfh,
       ### This is a slightly more inefficient way
       query.neuronlist = query.neuronlist[unlist(sapply(query.neuronlist,hemibrainr:::is_big_dps,no.points=no.points))]
       target.neuronlist = target.neuronlist[unlist(sapply(target.neuronlist,hemibrainr:::is_big_dps,no.points=no.points))]
-      if(!is.null(query.neuronlistfh.addition)){
-        query.addition.neuronlist = query.neuronlistfh.addition[names(query.neuronlistfh.addition)%in%chosen.query]
+      if(!is.null(query.addition.neuronlistfh)){
+        query.addition.neuronlist = query.addition.neuronlistfh[names(query.addition.neuronlistfh)%in%chosen.query]
+      }else{
+        query.addition.neuronlist = NULL
       }
       chosen.query = union(names(query.neuronlist),names(query.addition.neuronlist))
       chosen.target = names(target.neuronlist)
@@ -85,7 +87,7 @@ nblast_big <-function(query.neuronlistfh, target.neuronlistfh,
       }
       nblast.res.native = (nblast.res.1+t(nblast.res.2))/2
       ### NBLAST mirrored
-      if(!is.null(query.neuronlistfh.addition)){
+      if(!is.null(query.addition.neuronlist)&&!length(query.addition.neuronlist)){
         nblast.res.3 = nat.nblast::nblast(query = query.addition.neuronlist,
                                           target = target.neuronlist,
                                           .parallel=FALSE,
