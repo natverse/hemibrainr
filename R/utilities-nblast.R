@@ -11,7 +11,10 @@ nblast_big <-function(query.neuronlistfh, target.neuronlistfh,
                       version = c(2, 1),
                       normalised = TRUE,
                       UseAlpha = TRUE,
-                      no.points = 2){
+                      no.points = 2,
+                      compress = TRUE,
+                      threshold = 0, # or -0.5?
+                      digits = 3){
 
   # Register cores
   cl = parallel::makeForkCluster(numCores)
@@ -41,54 +44,28 @@ nblast_big <-function(query.neuronlistfh, target.neuronlistfh,
   ### This is a slightly more inefficient way
   batches.query = split(sample(query.neuronlistfh[query]), round(seq(from = 1, to = batch.size, length.out = length(query))))
   batches.target = split(sample(target.neuronlistfh), round(seq(from = 1, to = batch.size, length.out = length(target.neuronlistfh))))
-  by.query <- foreach::foreach (query.neuronlist = batches.query, .combine = 'c') %:%
-    foreach::foreach (target.neuronlist = batches.target, .combine = 'c') %dopar% {
+  by.query <- foreach::foreach (query.neuronlist = batches.query, .combine = 'c', .errorhandling='pass') %:%
+    foreach::foreach (target.neuronlist = batches.target, .combine = 'c', .errorhandling='pass') %dopar% {
       ## this would be a better way of doing it, but at the moment thwarted by DB1 lock files
       # query.neuronlist = query.neuronlistfh[chosen.query]
       # target.neuronlist = target.neuronlistfh[chosen.target]
-      if(is.null(query.neuronlist)||!length(query.neuronlist)){
-        return(NULL)
-      }
-      ### This is a slightly more inefficient way
-      query.neuronlist = query.neuronlist[unlist(sapply(query.neuronlist,hemibrainr:::is_big_dps,no.points=no.points))]
-      target.neuronlist = target.neuronlist[unlist(sapply(target.neuronlist,hemibrainr:::is_big_dps,no.points=no.points))]
-      if(!is.null(query.addition.neuronlistfh)){
-        query.addition.neuronlist = query.addition.neuronlistfh[names(query.addition.neuronlistfh)%in%chosen.query]
-      }else{
-        query.addition.neuronlist = NULL
-      }
-      chosen.query = union(names(query.neuronlist),names(query.addition.neuronlist))
-      chosen.target = names(target.neuronlist)
-      if(!length(chosen.query)||!length(chosen.target)){
-        return(NULL)
+      if(!is.null(query.neuronlist)&&length(query.neuronlist)){
+        ### This is a slightly more inefficient way
+        query.neuronlist = query.neuronlist[unlist(sapply(query.neuronlist,hemibrainr:::is_big_dps,no.points=no.points))]
+        target.neuronlist = target.neuronlist[unlist(sapply(target.neuronlist,hemibrainr:::is_big_dps,no.points=no.points))]
+        if(!is.null(query.addition.neuronlistfh)){
+          query.addition.neuronlist = query.addition.neuronlistfh[names(query.addition.neuronlistfh)%in%chosen.query]
+        }else{
+          query.addition.neuronlist = NULL
+        }
+        chosen.query = union(names(query.neuronlist),names(query.addition.neuronlist))
+        chosen.target = names(target.neuronlist)
       }
 
-      ### NBLAST native
-      nblast.res.1 = nat.nblast::nblast(query = query.neuronlist,
-                                        target = target.neuronlist,
-                                        .parallel=FALSE,
-                                        normalised = normalised,
-                                        smat = smat,
-                                        sd = sd,
-                                        version = version,
-                                        UseAlpha = UseAlpha,
-                                        OmitFailures = FALSE)
-      nblast.res.2 = nat.nblast::nblast(query = target.neuronlist,
-                                        target = query.neuronlist,
-                                        .parallel=FALSE,
-                                        normalised = normalised,
-                                        smat = smat,
-                                        sd = sd,
-                                        version = version,
-                                        UseAlpha = UseAlpha,
-                                        OmitFailures = FALSE)
-      if(is.null(dim(nblast.res.2))){
-        nblast.res.2 = matrix(nblast.res.2, nrow = 1, ncol = length(nblast.res.2), dimnames = list(chosen.query,chosen.target))
-      }
-      nblast.res.native = (nblast.res.1+t(nblast.res.2))/2
-      ### NBLAST mirrored
-      if(!is.null(query.addition.neuronlist)&&!length(query.addition.neuronlist)){
-        nblast.res.3 = nat.nblast::nblast(query = query.addition.neuronlist,
+      # Run NBLASTs
+      if(length(chosen.query)&&length(chosen.target)){
+        ### NBLAST native
+        nblast.res.1 = nat.nblast::nblast(query = query.neuronlist,
                                           target = target.neuronlist,
                                           .parallel=FALSE,
                                           normalised = normalised,
@@ -97,8 +74,8 @@ nblast_big <-function(query.neuronlistfh, target.neuronlistfh,
                                           version = version,
                                           UseAlpha = UseAlpha,
                                           OmitFailures = FALSE)
-        nblast.res.4 = nat.nblast::nblast(query = target.neuronlist,
-                                          target = query.addition.neuronlist,
+        nblast.res.2 = nat.nblast::nblast(query = target.neuronlist,
+                                          target = query.neuronlist,
                                           .parallel=FALSE,
                                           normalised = normalised,
                                           smat = smat,
@@ -107,17 +84,47 @@ nblast_big <-function(query.neuronlistfh, target.neuronlistfh,
                                           UseAlpha = UseAlpha,
                                           OmitFailures = FALSE)
         if(is.null(dim(nblast.res.2))){
-          nblast.res.4 = matrix(nblast.res.4, nrow = 1, ncol = length(nblast.res.2), dimnames = list(names(query.addition.neuronlist),chosen.target))
+          nblast.res.2 = matrix(nblast.res.2, nrow = 1, ncol = length(nblast.res.2), dimnames = list(chosen.query,chosen.target))
         }
-        nblast.res.m = (nblast.res.3+t(nblast.res.4))/2
-        nblast.res.sub = plyr::rbind.fill.matrix(t(nblast.res.native), t(nblast.res.m))
-        rownames(nblast.res.sub) = c(colnames(nblast.res.native), colnames(nblast.res.sub))
-        nblast.res.sub = collapse_matrix_by_names(nblast.res.sub, FUN = max)
-      }else{
-        nblast.res.sub = nblast.res.native
+        nblast.res.native = (nblast.res.1+t(nblast.res.2))/2
+        ### NBLAST mirrored
+        if(!is.null(query.addition.neuronlist)&&!length(query.addition.neuronlist)){
+          nblast.res.3 = nat.nblast::nblast(query = query.addition.neuronlist,
+                                            target = target.neuronlist,
+                                            .parallel=FALSE,
+                                            normalised = normalised,
+                                            smat = smat,
+                                            sd = sd,
+                                            version = version,
+                                            UseAlpha = UseAlpha,
+                                            OmitFailures = FALSE)
+          nblast.res.4 = nat.nblast::nblast(query = target.neuronlist,
+                                            target = query.addition.neuronlist,
+                                            .parallel=FALSE,
+                                            normalised = normalised,
+                                            smat = smat,
+                                            sd = sd,
+                                            version = version,
+                                            UseAlpha = UseAlpha,
+                                            OmitFailures = FALSE)
+          if(is.null(dim(nblast.res.2))){
+            nblast.res.4 = matrix(nblast.res.4, nrow = 1, ncol = length(nblast.res.2), dimnames = list(names(query.addition.neuronlist),chosen.target))
+          }
+          nblast.res.m = (nblast.res.3+t(nblast.res.4))/2
+          nblast.res.sub = plyr::rbind.fill.matrix(t(nblast.res.native), t(nblast.res.m))
+          rownames(nblast.res.sub) = c(colnames(nblast.res.native), colnames(nblast.res.sub))
+          nblast.res.sub = collapse_matrix_by_names(nblast.res.sub, FUN = max)
+        }else{
+          nblast.res.sub = nblast.res.native
+        }
+        # Compress
+        if(compress){
+          nblast.res.sub[nblast.res.sub<threshold] = threshold
+          nblast.res.sub = round(nblast.res.sub, digits=digits)
+        }
+        nblast.mat[match(chosen.target, target),match(chosen.query,query)] = nblast.res.sub
+        NULL
       }
-      nblast.mat[match(chosen.target, target),match(chosen.query,query)] = nblast.res.sub
-      NULL
     }
   parallel::stopCluster(cl)
   nmat = nblast.mat[,]
@@ -125,7 +132,80 @@ nblast_big <-function(query.neuronlistfh, target.neuronlistfh,
   nmat
 }
 
+
 # hidden
 is_big_dps <- function(dps, no.points = 5){
   !is.null(dps$points)&&"matrix"%in%class(dps$points)&&nrow(dps$points)>=no.points
+}
+
+# We can make another version of the matrix that contains essentially all
+# the useful information, but compresses much smaller (~16x at time of writing)
+save_compressed_nblast_mat <- function(x,
+                                       overwrite = c("combine","yes","no"),
+                                       file = NULL,
+                                       threshold= 0, # or -0.5?
+                                       digits=3,
+                                       format=c("rda", "rds"),
+                                       remove = NULL,
+                                       ...) {
+  format=match.arg(format)
+  overwrite=match.arg(overwrite)
+  objname=deparse(substitute(x))
+  newobjname <- paste0(objname, ".compressed")
+  fname <- paste0(file.path(file, newobjname), ".", format)
+  combine = FALSE
+  if(file.exists(fname)){
+    if(overwrite=="no"){
+      stop(fname, " already exists")
+    }else if(overwrite=="combine"){
+      combine = TRUE
+      if(format=="rds"){
+        old = tryCatch(readRDS(fname), error = function(e) NULL)
+      }else{
+        old = tryCatch(load_assign(fname), error = function(e) NULL)
+      }
+    }
+  }
+  if(is.null(old)){
+    warning("No extant NBLAST at ", fname)
+  }
+  colnames(x) = gsub("_m$","",colnames(x)) # factor in mirrored hemibrain neurons
+  rownames(x) = gsub("_m$","",rownames(x))
+  x = apply(x, 2, function(i) tapply(i, rownames(x), sum, na.rm = TRUE))
+  x = t(apply(t(x), 2, function(i) tapply(i, colnames(x), sum, na.rm = TRUE)))
+  x[x<threshold]=threshold
+  x=round(x, digits=digits)
+  y = x
+  if(combine){
+    old = old[!rownames(old)%in%rownames(x),]
+    if(!is.null(remove)){
+      old = old[!rownames(old)%in%remove,!colnames(old)%in%remove]
+    }
+    if(!is.null(old)){
+      if(nrow(old)){
+        warning("combining with extant file: ", fname)
+        y = plyr::rbind.fill.matrix(old, x)
+        rownames(y) = c(rownames(old), rownames(x))
+      }else{
+        warning("original NBLAST depleted")
+        y = x
+      }
+    }
+  }
+  message("Saving a compressed version of ", objname, " to ", fname)
+  if(format=="rds") {
+    saveRDS(y, file=fname, ...)
+  } else {
+    # the object being saved must have the name that you would like it
+    # to have when it is loaded again
+    assign(newobjname, y)
+    save(list = newobjname, file = fname, ...)
+  }
+}
+
+# hidden
+load_assign <- function(f){
+  env <- new.env()
+  nm <- load(f, env)[1]
+  env[[nm]]
 }
