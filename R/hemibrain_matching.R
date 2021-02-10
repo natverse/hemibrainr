@@ -167,7 +167,8 @@ hemibrain_matching <- function(ids = NULL,
   # Get hemibrain neurons
   if(missing(query)) {
     query=tryCatch(force(query), error=function(e) {
-        message("Unable to use `hemibrain_neurons(brain = 'FAFB14')`. ",
+      message(e)
+      message("Unable to use `hemibrain_neurons(brain = 'FAFB14')`. ",
                 "I will read neurons from neuPrint, but this will be slower!")
       })
   }else if(is.character(query)) {
@@ -175,11 +176,13 @@ hemibrain_matching <- function(ids = NULL,
   }
   if(repository=="flywire" & is.null(db)){
     db=tryCatch(flywire_neurons(), error=function(e) {
+      message(e)
       message("Unable to use `flywire_neurons()`. ",
               "I will read neurons from FlyWire, but this will be slower!")
     })
   }else if(repository=="LM"){
     db=tryCatch(lm_lhns(brainspace = c("FAFB14")), error=function(e) {
+      message(e)
       message("Unable to use `lm_lhns()`. ",
               "I will read neurons from package lhns, but this will be slower!")
     })

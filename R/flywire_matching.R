@@ -459,21 +459,26 @@ neuron_match_scanner <- function(brain,
       if(!is.issue(old.match)){
         sel = union(old.match,sel)
       }
-      if(is.null(sel)){
-        next
-      }
       if(length(sel)>1){
         message("Note: You selected more than one neuron")
       }
       if(length(sel) > 0){
-        missing = setdiff(names(native), sel)
-        if(length(missing)){
-          missed = get_match_neuron(query = NULL, n = fw.id, query.repository = query.repository)
-          names(missed) = missing
-          native = nat::union(missed, native)
+        missing = setdiff(sel,names(native))
+        if(length(missing)&missing!="0"){
+          missed = get_match_neuron(query = NULL, n = missing, query.repository = targets.repository)
+          if(is.null(missed)){
+            message("Could not fetch selection: ", paste0(missing,collapse=", "))
+            sel = NULL
+          }else{
+            names(missed) = missing
+            native = nat::union(missed, native)
+          }
         }
-        rgl::plot3d(native[sel], lwd = 2, soma = soma.size, col = hemibrain_colour_ramp(length(sel)))
       }
+      if(!length(sel)){
+        next
+      }
+      rgl::plot3d(native[sel], lwd = 2, soma = soma.size, col = hemibrain_colour_ramp(length(sel)))
       prog = hemibrain_choice(sprintf("You selected %s neurons. Are you happy with that? ",length(sel)))
       if(length(sel)>0){
         nat::npop3d()
