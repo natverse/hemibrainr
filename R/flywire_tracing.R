@@ -606,3 +606,7 @@ flywire_workflow <- function(flywire.id,
 # hidden, caches result for 5min in current session
 sheet_properties.memo <- memoise::memoise(googlesheets4::sheet_properties, ~memoise::timeout(5*60))
 
+
+library(fafbseg)
+id = fafb14_to_flywire_ids("10655926",only.biggest = TRUE)
+flywire_ntplot(id$flywire.id, cleft.threshold = 30, local = local)

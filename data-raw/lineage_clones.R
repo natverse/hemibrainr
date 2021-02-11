@@ -1,0 +1,1 @@
+# Make dotprops objects for lineage clones
