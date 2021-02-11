@@ -160,4 +160,3 @@ say_encouragement <- function(greet = "user"){
                      encodeIfNeeded = FALSE)
   }
 }
-

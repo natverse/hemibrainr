@@ -52,18 +52,18 @@ plot3d(FAFB)
 # Plot WEDd1
 lee.lins.wedd1 = subset(lee.lins, ItoLee_Lineage == "WEDd1")
 plot3d(xyzmatrix(lee.lins.wedd1),
-add = TRUE, col = hemibrain_bright_colors["blue"])
+add = TRUE, col = hemibrain_bright_colors["green"])
 
 # Plot WEDd1 from the other clonal data set
 ito.lins.wedd1 = subset(ito.lins, ItoLee_Lineage == "WEDd1")
 plot3d(xyzmatrix(ito.lins.wedd1),
-add = TRUE, col = hemibrain_bright_colors["cyan"])
+add = TRUE, col = hemibrain_bright_colors["darkgreen"])
 
 # Get flywire neurons
 fw.neurons = flywire_neurons()
 fw.neurons.wedd1 = subset(fw.neurons, ItoLee_Hemilineage == "WEDd1")
 plot3d(fw.neurons.wedd1,
-col = hemibrain_bright_colors["red"], soma = 4000)
+col = hemibrain_bright_colors["marine"], soma = 4000)
 
 # What are the equivalent hemibrain neurons?
 cbf.hl = subset(hemibrain_hemilineages, ItoLee_Lineage == "WEDd1")
