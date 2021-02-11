@@ -92,8 +92,8 @@ hemibrainr_google_login <- function(path = NULL){
           key = hemibrainr_clientid,
           secret = hemibrainr_secret
         )
-        googlesheets4::gs4_auth_configure(app = google_app, api_key = key)
-        googledrive::drive_auth_configure(app = google_app, api_key = key)
+        googlesheets4::gs4_auth_configure(app = google_app, api_key = hemibrainr_ghseets_api_key)
+        googledrive::drive_auth_configure(app = google_app, api_key = hemibrainr_ghseets_api_key)
         # googlesheets4::gs4_oauth_app()
         # googlesheets4::gs4_api_key()
       }

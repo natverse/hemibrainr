@@ -1093,7 +1093,7 @@ lm_matches <- function(priority = c("hemibrain","lm"), selected_file = options()
                                      ss = selected_file,
                                      sheet = "lm",
                                      return = TRUE,
-                                   Verbose = FALSEs)
+                                   Verbose = FALSE)
   lm.matches$id = correct_id(lm.matches$id)
   lm.matches = lm.matches[!duplicated(lm.matches$id),]
   lm.matches = lm.matches[lm.matches$id!="",]

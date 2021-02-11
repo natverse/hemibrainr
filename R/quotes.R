@@ -92,12 +92,12 @@ randomwords <- function(n = 1L, words = 1L, collapse = NULL){
   wl = wordlist()
   if(words>1){
     randwords = lapply(1:n, function(x) randomwords(n=words, words=1, collapse = collapse))
-    if(!is.null(combine)){
+    if(!is.null(collapse)){
       randwords = sapply(randwords, paste, collapse = collapse)
     }
   }else{
     randwords = sample(wl,n)
-    if(!is.null(combine)){
+    if(!is.null(collapse)){
       paste(unlist(randwords), collapse = collapse)
     }
   }

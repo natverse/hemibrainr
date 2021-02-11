@@ -242,7 +242,7 @@ LR_matching <- function(ids = NULL,
   message("Neuron matches: ", nrow(done), "/", nrow(gs))
   print(table(gs[[quality.field]]))
   # choose user
-  initials = choose_user(gs, User = Use)
+  initials = choose_user(gs, User = User)
   # choose ids
   selected = id_selector(gs=gs, ids=ids, id=id, overwrite = overwrite,
                          quality.field = quality.field, match.field = match.field,
