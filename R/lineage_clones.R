@@ -1,4 +1,4 @@
-
+# Lineage-related light-level data
 
 #' Download light-level lineage clone data from Ito et al. 2013 or Yu et al. 2013
 #'
@@ -25,47 +25,46 @@
 #' lee.lins = lineage_clones(brain = "FAFB14", dataset = "Lee")
 #' ito.lins = lineage_clones(brain = "FAFB14", dataset = "Ito")
 #'
+#' # Set the scene
+#' library(elmr)
+#' nopen3d()
+#' plot3d(FAFB)
+#'
 #' # Plot WEDd1
 #' lee.lins.wedd1 = subset(lee.lins, ItoLee_Lineage == "WEDd1")
-#' nopen3d()
 #' plot3d(xyzmatrix(lee.lins.wedd1),
-#' add = TRUE, col = hemibrain_bright_colors["blue"])
+#' add = TRUE, col = hemibrain_bright_colors["green"])
 #'
 #' # Plot WEDd1 from the other clonal data set
 #' ito.lins.wedd1 = subset(ito.lins, ItoLee_Lineage == "WEDd1")
-#' nopen3d()
 #' plot3d(xyzmatrix(ito.lins.wedd1),
-#' add = TRUE, col = hemibrain_bright_colors["cyan"])
+#' add = TRUE, col = hemibrain_bright_colors["darkgreen"])
 #'
 #' # Get flywire neurons
 #' fw.neurons = flywire_neurons()
 #' fw.neurons.wedd1 = subset(fw.neurons, ItoLee_Hemilineage == "WEDd1")
 #' plot3d(fw.neurons.wedd1,
-#' col = hemibrain_bright_colors["red"], soma = 4000)
+#' col = hemibrain_bright_colors["marine"], soma = 4000)
 #'
 #' # What are the equivalent hemibrain neurons?
 #' cbf.hl = subset(hemibrain_hemilineages, ItoLee_Lineage == "WEDd1")
 #' hb.neurons = hemibrain_neurons(brain="FAFB14")
 #' hb.neurons.wedd1 = subset(hb.neurons,cellBodyFiber%in%cbf.hl$cellBodyFiber)
-#' plot3d(hb.neurons.wedd1, col = hemibrain_bright_colors["orange"], soma = 4000)
+#' plot3d(hb.neurons.wedd1,
+#' col = hemibrain_bright_colors["orange"], soma = 4000)
 #'
 #'}}
-#'@return A \code{neuronlist} object containing flywire skeletons. In the meta-data, it might be useful for some users to note that
-#'you will get:
+#'@return A \code{neuronlist} object containing point clouds for neuron lineage clones. In the meta-data, it might be useful for some users to note that
+#' you will get:
 #'
 ##' \itemize{
-##'  \item{"flywire.id"}{ The ID given to the corresponding volumetric body in flywire.
-##'  These are used to do things like fetch volumes and are the input to the \code{skeletor} function. However, they are highly volatile and
-##'  change a lot with active tracing.}
-##'  \item{"flywire.xyz"}{ The voxel coordinate of a single point in this neuron, usually a cell body fiber tract position. This is a more accurate way
-##'  of keeping tract of neuron as it will always correspond to the same 'neuron' even though its related flywire.id will change with merge/split events in flywire.}
-##'  \item{"hemilineage"}{ An estimated hemilineage identity from both of two naming systems, Ito et al. 2013 and Wong et al. 2013}
-##'  \item{"side"}{ An estimate as to the 'side', i.e. brain hemisphere, in which the neuron lies}
-##'  \item{"skid"}{ The 'skeleton ID' of this neuron's match in CATMAID for FAFBv14}
-##'  \item{"FAFB.xyz"}{ The coordinates in nanometres of a point in the neuron, in FAFBv14 space}
-##'  \item{"hemibrain_match"}{ The bodyid of an estimated hemibrain match}
+##'  \item{"Harenstein_Lineage"}{ The Hartenstein lineage name based on expert review of light level data from the V. Hartenstein group (Wong 2013, Lovick 2013).
+#'    See \code{\link{hemibrain_hemilineages}}.}
+##'  \item{"ItoLee_Lineage"}{ Lineage name, data from the K. Ito and T. Lee groups (Yu 2013, Ito 2013).
+#'    See \code{\link{hemibrain_hemilineages}}}
+##'  \item{"side"}{ The hemisphere of the brain onto which thisa clone is registered}
 ##' }
-#'
+#'@name lineage_clones
 #'@export
 #'@seealso \code{\link{hemibrain_neurons}}, \code{\link{flywire_neurons}}
 lineage_clones <- function(x = NULL,

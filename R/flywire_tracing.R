@@ -398,6 +398,7 @@ flywire_tracing_standardise <- function(ws = NULL,
 #' @param target_sheet a sheet to which to add 'workflow' tabs. Workflow tabs are lists of flywire neurons up/downstream of neurons
 #' entered into the \code{main_sheet}. Accepted workflows: inputs, outputs, matches.
 #' @param transmitters logical, if \code{TRUE} then inputs/outputs workflows include transmitter predictions for partners.
+#' @param work.flows a workflow for a flywire neuron. Either we want to trace upstream of it, downstream of it, or match it to a hemibrain neuron.
 #' @inheritParams fafbseg::flywire_ntpred
 #' @inheritParams fafbseg::flywire_partner_summary
 #' @name flywire_tracing_sheet
@@ -605,8 +606,3 @@ flywire_workflow <- function(flywire.id,
 
 # hidden, caches result for 5min in current session
 sheet_properties.memo <- memoise::memoise(googlesheets4::sheet_properties, ~memoise::timeout(5*60))
-
-
-library(fafbseg)
-id = fafb14_to_flywire_ids("10655926",only.biggest = TRUE)
-flywire_ntplot(id$flywire.id, cleft.threshold = 30, local = local)

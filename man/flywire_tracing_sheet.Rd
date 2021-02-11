@@ -136,6 +136,8 @@ et al 2019 (default 0, we have used 30-100 to increase specificity)}
 \item{local}{path to SQLite synapse data. Evaluated by
 \code{fafbseg:::local_or_google}. Work in progress. Default is to download
 this data and place it in \code{~/projects/JanFunke}.}
+
+\item{work.flows}{a workflow for a flywire neuron. Either we want to trace upstream of it, downstream of it, or match it to a hemibrain neuron.}
 }
 \value{
 a \code{data.frame} with columns from the right tab, chosen using \code{regex}, from the given google sheet(s) \code{selected_sheet},
