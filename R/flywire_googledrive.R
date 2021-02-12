@@ -433,7 +433,9 @@ sql_col_types = readr::cols(.default = "c",
                             endpoints = "n",
                             segments = "n",
                             branchpoints = "n",
-                            root = "i")
+                            root = "i",
+                            top.p = "n",
+                            top.nt = "c")
 
 #' @rdname flywire_googledrive_data
 #' @export

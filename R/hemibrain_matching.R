@@ -1818,7 +1818,7 @@ id = '%s'; overwrite = '%s'; quality.field = '%s'; match.field = '%s'; initials 
                  nullToNA(column),
                  nullToNA(entry)))
   }else{
-    message(sprintf("Out of %s %ss there are %s valid ones to examine",id.len,id,length(ids)))
+    message(sprintf("Out of %s possible %ss there are %s valid ones considering arguments User + superUser + overwrite",id.len,id,length(ids)))
   }
   # order selected
   user.order = unique(c(initials,sort(selected$User)))
