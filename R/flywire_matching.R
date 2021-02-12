@@ -464,7 +464,7 @@ neuron_match_scanner <- function(brain,
       }
       if(length(sel) > 0){
         missing = setdiff(sel,names(native))
-        if(length(missing)&missing!="0"){
+        if(length(missing)&&missing!="0"){
           missed = get_match_neuron(query = NULL, n = missing, query.repository = targets.repository)
           if(is.null(missed)){
             message("Could not fetch selection: ", paste0(missing,collapse=", "))
