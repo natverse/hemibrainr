@@ -481,7 +481,7 @@ update.neuronlistfh <- function(x,
   }else if (dbClass == "HDF5"){
     data =  file
   }else{
-    data = dirname(file)
+    data = paste0(dirname(file),"/","data/")
     WriteObjects = "missing"
   }
   if(file.exists(file)){
