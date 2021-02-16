@@ -462,7 +462,7 @@ neuron_match_scanner <- function(brain,
       if(length(sel)>1){
         message("Note: You selected more than one neuron")
       }
-      sel[sel==0] = NULL
+      sel = sel[sel!=0]
       if(length(sel) > 0){
         missing = setdiff(sel,names(native))
         if(length(missing)&&missing!="0"){
