@@ -462,6 +462,7 @@ neuron_match_scanner <- function(brain,
       if(length(sel)>1){
         message("Note: You selected more than one neuron")
       }
+      sel[sel==0] = NULL
       if(length(sel) > 0){
         missing = setdiff(sel,names(native))
         if(length(missing)&&missing!="0"){
@@ -475,57 +476,58 @@ neuron_match_scanner <- function(brain,
           }
         }
       }
-      if(!length(sel)){
-        next
-      }
-      rgl::plot3d(native[sel], lwd = 2, soma = soma.size, col = hemibrain_colour_ramp(length(sel)))
-      prog = hemibrain_choice(sprintf("You selected %s neurons. Are you happy with that? ",length(sel)))
-      if(length(sel)>0){
-        nat::npop3d()
-      }
-      if(!prog){
-        sel = c("go","for","it")
-        if(batch.size < length(r)){
-          prog = hemibrain_choice(sprintf("Do you want to read %s more neurons? ", batch.size))
-          if(prog){
-            k = j
-            j = j + batch_size
-            if(!is.null(targets)){
-              native2 = tryCatch(targets[(names(r)[(k+1):j])], error = function(e) {
-                message("Cannot read neuron: ", n, " from local targets, fetching from remote!")
-                message(e)
-                NULL
-              })
+      if(length(sel)){
+        rgl::plot3d(native[sel], lwd = 2, soma = soma.size, col = hemibrain_colour_ramp(length(sel)))
+        prog = hemibrain_choice(sprintf("You selected %s neurons. Are you happy with that? ",length(sel)))
+        if(length(sel)>0){
+          nat::npop3d()
+        }
+        if(!prog){
+          sel = c("go","for","it")
+          if(batch.size < length(r)){
+            prog = hemibrain_choice(sprintf("Do you want to read %s more neurons? ", batch.size))
+            if(prog){
+              k = j
+              j = j + batch_size
+              if(!is.null(targets)){
+                native2 = tryCatch(targets[(names(r)[(k+1):j])], error = function(e) {
+                  message("Cannot read neuron: ", n, " from local targets, fetching from remote!")
+                  message(e)
+                  NULL
+                })
+              }
+              if(is.null(targets)|is.null(native2)){
+                if(targets.repository=="flywire"){
+                  fafbseg::choose_segmentation("flywire")
+                  native2  = fafbseg::skeletor((names(r)[1:batch.size]), mesh3d = FALSE, clean = FALSE)
+                }else if (targets.repository == "hemibrain"){
+                  native2  = neuprintr::neuprint_read_neurons((names(r)[1:batch.size]), all_segments = TRUE, heal = FALSE)
+                  native = scale_neurons.neuronlist(native2, scaling = (8/1000))
+                  native2 = suppressWarnings(nat.templatebrains::xform_brain(native2, reference = "FAFB14", sample = "JRCFIB2018F"))
+                }else if (targets.repository == "CATMAID"){
+                  native2  = catmaid::read.neurons.catmaid((names(r)[1:batch.size]), .progress = TRUE, OmitFailures = TRUE)
+                }
+              }
+              native = nat::union(native, native2)
             }
-            if(is.null(targets)|is.null(native2)){
-              if(targets.repository=="flywire"){
-                fafbseg::choose_segmentation("flywire")
-                native2  = fafbseg::skeletor((names(r)[1:batch.size]), mesh3d = FALSE, clean = FALSE)
-              }else if (targets.repository == "hemibrain"){
-                native2  = neuprintr::neuprint_read_neurons((names(r)[1:batch.size]), all_segments = TRUE, heal = FALSE)
-                native = scale_neurons.neuronlist(native2, scaling = (8/1000))
-                native2 = suppressWarnings(nat.templatebrains::xform_brain(native2, reference = "FAFB14", sample = "JRCFIB2018F"))
-              }else if (targets.repository == "CATMAID"){
-                native2  = catmaid::read.neurons.catmaid((names(r)[1:batch.size]), .progress = TRUE, OmitFailures = TRUE)
+          }
+        }else{
+          while(length(sel)>1){
+            message("Choose single best match: ")
+            plot.order = match(sel.orig,names(native))
+            plot.order = plot.order[!is.na(plot.order)]
+            sel = nat::nlscan(native[plot.order], col = hemibrain_bright_colours["orange"], lwd = 2, soma = TRUE)
+            message(sprintf("You selected %s neurons", length(sel)))
+            if(!length(sel)){
+              noselection = hemibrain_choice("You selected no neurons. Are you happy with that? ")
+              if(!noselection){
+                sel = sel.orig
               }
             }
-            native = nat::union(native, native2)
           }
         }
       }else{
-        while(length(sel)>1){
-          message("Choose single best match: ")
-          plot.order = match(sel.orig,names(native))
-          plot.order = plot.order[!is.na(plot.order)]
-          sel = nat::nlscan(native[plot.order], col = hemibrain_bright_colours["orange"], lwd = 2, soma = TRUE)
-          message(sprintf("You selected %s neurons", length(sel)))
-          if(!length(sel)){
-            noselection = hemibrain_choice("You selected no neurons. Are you happy with that? ")
-            if(!noselection){
-              sel = sel.orig
-            }
-          }
-        }
+        sel = NULL
       }
     }
     # Assign match and its quality
