@@ -534,7 +534,11 @@ neuron_match_scanner <- function(brain,
       if(!is.na(native[sel,chosen.field])){
         hit = as.character(native[sel,chosen.field])
       }else if(targets.repository=="flywire"){
-        fixed = flywire_basics(native[sel])
+        theone = native[sel]
+        if("mesh3d"%in%class(theone[[1]])){
+          theone = fafbseg::skeletor(sel)
+        }
+        fixed = flywire_basics(theone)
         hit = as.character(fixed[,chosen.field])
       }else{
         hit = names(targets[sel])
