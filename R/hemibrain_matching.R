@@ -1769,13 +1769,14 @@ id_selector <- function(gs,
   if((overwrite %in% c("TRUE") & is.null(ids))){
     doit = gs
   }else if(overwrite=="bad"){
-    doit = subset(gs, (is.na(gs[[match.field]]) & is.na(gs[[quality.field]]))
-                  | gs[[quality.field]] %in% c("none","n","tract","t",""," ","NA")
-                  | gs[[match.field]] %in% c("none","n","tract","t",""," ","NA"))
+    doit = subset(gs, ( (is.na(gs[[match.field]]) | gs[[match.field]] == 0)
+                  & is.na(gs[[quality.field]]))
+                  | gs[[quality.field]] %in% c("none","n","tract","t",""," ","NA","0")
+                  | gs[[match.field]] %in% c("none","n","tract","t",""," ","NA","0"))
   }else if(overwrite=="FALSE"){
-    doit = subset(gs, (is.na(gs[[match.field]]) & is.na(gs[[quality.field]])) )
+    doit = subset(gs, ( (is.na(gs[[match.field]]) | gs[[match.field]] == 0) & is.na(gs[[quality.field]])) )
   }else{ # review
-    doit = subset(gs, (!is.na(gs[[match.field]]) | !is.na(gs[[quality.field]])) )
+    doit = subset(gs, ( (!is.na(gs[[match.field]]) | gs[[match.field]] != 0) | !is.na(gs[[quality.field]])) )
   }
   if(!superUser){
     doit = subset(doit, doit$User==initials)

@@ -618,13 +618,14 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
         }
         # If only skid given try and guess flywire.id
         if("skid"%in%used.cols){
-          justskids=(gs.t$flywire.xyz==paste_coords(matrix(NA,ncol=3))
-                     |is.na(gs.t$flywire.xyz)
-                     &is.na(gs.t$flywire.id)
+          justskids=((gs.t$flywire.xyz==paste_coords(matrix(NA,ncol=3))|is.na(gs.t$flywire.xyz))
+                     &(is.na(gs.t$flywire.id)|gs.t$flywire.id==0)
                      &!is.na(gs.t$skid))
           justskids[is.na(justskids)] = FALSE
           if(sum(justskids)>0){
-            replacement.ids = try(fafbseg::fafb14_to_flywire_ids(gs.t[justskids,"flywire.id"], only.biggest = TRUE), silent= TRUE)
+            if(Verbose) message("Geting flywire IDs for skids")
+            replacement.ids = unlist(pbapply::pbsapply(gs.t[justskids,"skid"], function(x)
+              tryCatch(suppress(fafbseg::fafb14_to_flywire_ids(x, only.biggest = TRUE))$flywire.id,error=function(e) NA)))
             if(class(replacement.ids)=="try-error"){
               warning(replacement.ids)
             }else{
@@ -641,6 +642,8 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
           replacement.xyz = meta[match(gs.t[justids,"flywire.id"],meta$flywire.id),]$flywire.xyz
           gs.t[justids,"flywire.xyz"] = replacement.xyz
         }
+        # Change 0 to NA
+        gs.t$flywire.id[gs.t$flywire.id==0]=NA
         # Write to google sheet
         if(nrow(gs.t)!=nrow(gs.t.current)){
           stop("Sheet processing corruption. Flywire.id update failed.")
