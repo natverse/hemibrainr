@@ -22,6 +22,7 @@ standard_transmitters <- function(x){
   x[grepl("^Oct|^oct|^OCT",x)] = "octopamine"
   x[grepl("^Unknow|NA|unknow|^None|^none",x)] = "unknown"
   x[is.na(x)] = "unknown"
+  x = tolower(x)
   x
 }
 
@@ -89,6 +90,7 @@ standard_lineages <- function(x){
 #' @export
 #' @rdname standardise
 standard_compartments <- function(x, invert = FALSE){
+  x = tolower(x)
   if(invert){
     x[x=="dendrite"] = 3
     x[x=="axon"] = 2
@@ -118,6 +120,7 @@ standardise <- standardize <- function(x){
 
 # hidden
 standardise_quality <- function(x){
+  x = tolower(x)
   x[x=="e"] = "good"
   x[x=="o"] = "medium"
   x[x=="p"] = "poor"
