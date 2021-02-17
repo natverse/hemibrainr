@@ -151,11 +151,14 @@ add_field_seq <- function(x, entries, field = "bodyid", ...){
     stop("The length of the entries to add must be the same as the length of the neuronlist, x")
   }
   nl = nat::neuronlist()
+  nams = names(x)
   for(i in 1:length(x)){
     y = x[[i]]
     entry = entries[i]
     y = add_field(y, entry = entry, field = field, ...)
-    nl = c(nl, nat::as.neuronlist(y))
+    y = nat::as.neuronlist(y)
+    names(y) = nams[i]
+    nl = c(nl, y)
   }
   names(nl) = names(x)
   nl[,] = x[,]

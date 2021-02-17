@@ -91,10 +91,14 @@ hemibrain_extract_synapses <- function(x,
                                        ...){
   x = nat::as.neuronlist(x)
   prepost = match.arg(prepost)
-  if("bodyid"%in%colnames(x[,])){
+  if(!is.null(names(x))){
+    x = add_field_seq(x,names(x),field="id")
+  }else if("bodyid"%in%colnames(x[,])){
     x = add_field_seq(x,x[,"bodyid"],field="bodyid")
   }else if("skid"%in%colnames(x[,])){
     x = add_field_seq(x,x[,"skid"],field="skid")
+  }else if("flywire.id"%in%colnames(x[,])){
+    x = add_field_seq(x,x[,"flywire.id"],field="flywire.id")
   }
   if(is.neuronlist(x)){
     syns = nat::nlapply(x,extract_synapses, unitary = FALSE, ...)
@@ -133,9 +137,11 @@ hemibrain_extract_connections <- function(x,
   }else if (prepost=="POST"){
     syns = syns[syns$prepost==1,]
   }
-  syns$Label = standard_compartments(syns$Label)
-  rownames(syns) = 1:nrow(syns)
-  syns = syns[order(syns$count, decreasing = TRUE),]
+  if(nrow(syns)){
+    syns$Label = standard_compartments(syns$Label)
+    rownames(syns) = 1:nrow(syns)
+    syns = syns[order(syns$count, decreasing = TRUE),]
+  }
   syns
 }
 
@@ -152,7 +158,9 @@ extract_synapses <-function(x, unitary = FALSE){
   }
   if(!is.null(x$bodyid)){
     id = "bodyid"
-  }else if(!is.null(x$skid)){
+  }else if(!is.null(x$flywire.id)){
+    id = "flywire.id"
+  } else if(!is.null(x$skid)){
     id = "skid"
   }else{
     id = "id"
@@ -161,17 +169,43 @@ extract_synapses <-function(x, unitary = FALSE){
   syn[[id]] = gsub(" ","",syn[[id]])
   syn$Label = nullToNA(x$d$Label[match(syn$treenode_id,x$d$PointNo)])
   if(unitary){ # connections, rather than synapses
-    syn %>%
-      dplyr::mutate(prepost = dplyr::case_when(
-        .data$prepost==0 ~ 1,
-        .data$prepost==1  ~ 0
-      )) %>% # i.e. switch perspective, presynapses connect to postsynaptic partners
-      dplyr::group_by(.data[[id]], .data$partner, .data$prepost, .data$Label) %>%
-      dplyr::mutate(count = dplyr::n()) %>%
-      dplyr::distinct(.data[[id]], .data$partner, .data$prepost, .data$Label, .data$count) %>%
-      dplyr::select(.data[[id]], .data$partner, .data$prepost, .data$Label, .data$count) %>%
-      as.data.frame(stringsAsFactors = FALSE) ->
-      syn
+    if(id == "flywire.id"){
+      poss.nts=c("gaba", "acetylcholine", "glutamate", "octopamine", "serotonin", "dopamine")
+      if(!all(c(poss.nts,"top.nt")%in%colnames(syn))){
+        for(pnt in setdiff(poss.nts,colnames(syn))){
+          syn[[pnt]] = 0
+        }
+        syn$top.nt = "unknown"
+      }
+      syn %>%
+        dplyr::mutate(partner = dplyr::case_when(
+          .data$prepost==0 ~ .data$post_id,
+          .data$prepost==1  ~ .data$pre_id
+        ))
+        dplyr::mutate(prepost = dplyr::case_when(
+          .data$prepost==0 ~ 1,
+          .data$prepost==1  ~ 0
+        )) %>% # i.e. switch perspective, presynapses connect to postsynaptic partners
+        dplyr::group_by(.data[[id]], .data$partner, .data$prepost, .data$Label) %>%
+        dplyr::mutate(top.nt=apply(.[,poss.nts], 1, function(x) names(x)[which.max(x)])) %>%
+        dplyr::mutate(count = dplyr::n()) %>%
+        dplyr::distinct(.data[[id]], .data$partner, .data$prepost, .data$Label, .data$count, .data$top.nt) %>%
+        dplyr::select(.data[[id]], .data$partner, .data$prepost, .data$Label, .data$count, .data$top.nt) %>%
+        as.data.frame(stringsAsFactors = FALSE) ->
+        syn
+    }else{
+      syn %>%
+        dplyr::mutate(prepost = dplyr::case_when(
+          .data$prepost==0 ~ 1,
+          .data$prepost==1  ~ 0
+        )) %>% # i.e. switch perspective, presynapses connect to postsynaptic partners
+        dplyr::group_by(.data[[id]], .data$partner, .data$prepost, .data$Label) %>%
+        dplyr::mutate(count = dplyr::n()) %>%
+        dplyr::distinct(.data[[id]], .data$partner, .data$prepost, .data$Label, .data$count) %>%
+        dplyr::select(.data[[id]], .data$partner, .data$prepost, .data$Label, .data$count) %>%
+        as.data.frame(stringsAsFactors = FALSE) ->
+        syn
+    }
   }
   syn$Label = standard_compartments(syn$Label)
   syn
