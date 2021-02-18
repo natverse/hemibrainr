@@ -578,9 +578,13 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
         # If flywire.svid missing, update
         bad.svids = (is.na(gs.t$flywire.svid)|gs.t$flywire.svid=="0")&!is.na(gs.t$flywire.xyz)
         if(sum(bad.svids)>0){
-          gs.t$flywire.svid[bad.svids] = fafbseg::flywire_xyz2id(nat::xyzmatrix(gs.t$flywire.xyz[bad.svids]),
+          gs.t$flywire.svid[bad.svids] = tryCatch(fafbseg::flywire_xyz2id(nat::xyzmatrix(gs.t$flywire.xyz[bad.svids]),
                                                                  root=FALSE,
-                                                                 rawcoords = TRUE)
+                                                                 rawcoords = TRUE),
+                                                  error = function(e){
+                                                    NA
+                                                    warning(e)
+                                                  })
         }
         if(!all(is.na(gs.t$flywire.xyz))){
           # Get flywire IDs from these positions
@@ -657,6 +661,7 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
             sheet = tab,
             Verbose = FALSE)
         }
+        Sys.sleep(5)
         # Now continue processing
         gs.t = gs.t[,colnames(gs.t)%in%chosen.columns]
         for(col in chosen.columns){
