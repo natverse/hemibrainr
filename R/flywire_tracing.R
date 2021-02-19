@@ -510,7 +510,10 @@ flywire_update_workflow <-function(main,
     gs$status = standard_statuses(gs$status)
     id = ifelse("pre_id"%in%colnames(gs),"pre_id","post_id")
     gs[[id]][is.na(gs[[id]])] = "0"
-    gs[[id]] = fafbseg::flywire_latestid(gs[[id]])
+    gs[[id]] = tryCatch(fafbseg::flywire_latestid(gs[[id]]), error = function(e){
+      warning(e)
+     unlist(sapply(gs[[id]], function(x) tryCatch(fafbseg::flywire_latestid(x), error = function(e) NA)))
+    })
     if(!nrow(gs)){
       warning("Workflow sheet has no rows: ", ws)
       return(invisible())
