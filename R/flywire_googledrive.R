@@ -23,7 +23,8 @@
 #' @param sheet the tab onto which to add your requests.
 #' @param gsheet logical, whether or not the request is are googlesheet keys. If they are, every item in their \code{flywire.xyz} columns is added to
 #' the sheet specified by \code{selected_sheet}.
-#' @param swc logical. When using neurons with \code{flywire_neurons} from the Google drive, whether to read \code{.swc} files (if \code{TRUE}), or a neuronlistfh object (default).
+#' @param type When using neurons with \code{flywire_neurons} from the Google drive a neuronlistfh object of neuron skeletons (default),
+#' the saved \code{.swc} files, a \code{nat::dotprops} objects or a \code{nat::dotprops object} cut to the hemibrain volume. Not all brainspaces supported.
 #' @param ... Additional arguments passed to \code{nat::nlapply}.and/or \code{fafbseg::skeletor}.
 #'
 #' @examples
@@ -59,6 +60,10 @@
 #' nopen3d()
 #' nlscan_split(fw.split[sample(length(fw.split),15)])
 #'
+#' # Get neuron dotprops object in hemibrain brainspace,
+#' ## ready for NBLAST with hemibrain neurons
+#' fw.dps.cut = flywire_neurons(type="cut_dotprops", brain = "JRCFIB2018F")
+#'
 #'}}
 #'@return A \code{neuronlist} object containing flywire skeletons. In the meta-data, it might be useful for some users to note that
 #'you will get:
@@ -85,9 +90,13 @@ flywire_neurons <- function(x = NULL,
                             local = FALSE,
                             brain = c("FlyWire", "JRCFIB2018Fraw","JRCFIB2018F","FAFB","FAFB14","JFRC2", "JFRC2013","JRC2018F","FCWB"),
                             mirror = FALSE,
-                            swc = FALSE,
+                            type = c("neurons", "swc","dotprops","cut_dotprops"),
                             ...){
   brain = match.arg(brain)
+  type = match.arg(type)
+  if(type=="neurons"){
+    type=""
+  }
   if(brain == "JRCFIB2018Fraw"){
     brain = "JRCFIB2018F"
     scale = TRUE
@@ -107,10 +116,27 @@ flywire_neurons <- function(x = NULL,
   if(WithConnectors){
     swc = FALSE; local = FALSE; mirror = FALSE
     if(brain!="FlyWire"){
+      brain = "FlyWire"
       warning("When WithConnectors = TRUE only FlyWire brainspace supported from hemibrain google drive")
     }
     neuronsdir = file.path(savedir,"fafbsynapses/")
     fhdir = gsub("hemibrainr","hemibrain",neuronsdir)
+  }
+  if(type%in%c("dotprops","cut_dotprops")){
+    if(brain!="JRCFIB2018F"){
+      brain = "JRCFIB2018F"
+      fhdir = file.path(neuronsdir,brain,"/")
+      warning("When type = 'dotprops' only JRCFIB2018F brainspace supported from hemibrain google drive")
+    }
+  }else{
+    if(WithConnectors){
+      type = ""; local = FALSE; mirror = FALSE
+      if(brain!="FlyWire"){
+        warning("When WithConnectors = TRUE only FlyWire brainspace supported from hemibrain google drive")
+      }
+      neuronsdir = file.path(savedir,"fafbsynapses/")
+      fhdir = gsub("hemibrainr","hemibrain",neuronsdir)
+    }
   }
 
   # Exists?
@@ -119,7 +145,7 @@ flywire_neurons <- function(x = NULL,
   }
 
   # Read
-  if(swc){
+  if(type=="swc"){
     warning("Only native flywire neurons in FlyWire space supported when swc = TRUE")
     swc.folder = file.path(neuronsdir,"FlyWire","swc")
     swc.list = list.files(swc.folder, full.names = TRUE, pattern = "swc")
@@ -132,6 +158,12 @@ flywire_neurons <- function(x = NULL,
   }else{
     message("Loading ", fhdir)
     filelist = list.files(path = fhdir, pattern = ".rds", full.names = TRUE)
+    if(type=="cut_dotprops"){
+      filelist = filelist[grepl(type,filelist)]
+    }else{
+      filelist = filelist[!grepl("cut_dotprops",filelist)]
+      filelist = filelist[grepl(type,filelist)]
+    }
     filelist = filelist[grepl("mirror",filelist)==mirror]
     filelist = sort(filelist,decreasing = TRUE)
     if(length(filelist)){

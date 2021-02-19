@@ -13,7 +13,7 @@ flywire_neurons(
   brain = c("FlyWire", "JRCFIB2018Fraw", "JRCFIB2018F", "FAFB", "FAFB14", "JFRC2",
     "JFRC2013", "JRC2018F", "FCWB"),
   mirror = FALSE,
-  swc = FALSE,
+  type = c("neurons", "swc", "dotprops", "cut_dotprops"),
   ...
 )
 
@@ -39,7 +39,8 @@ have a predicted axon/dendrite split at \code{neuron$d$Label} for each point in 
 
 \item{mirror}{logical, whether or not to read neurons that have been mirrored (i.e. flipped to the 'other' brain hemisphere).}
 
-\item{swc}{logical. When using neurons with \code{flywire_neurons} from the Google drive, whether to read \code{.swc} files (if \code{TRUE}), or a neuronlistfh object (default).}
+\item{type}{When using neurons with \code{flywire_neurons} from the Google drive a neuronlistfh object of neuron skeletons (default),
+the saved \code{.swc} files, a \code{nat::dotprops} objects or a \code{nat::dotprops object} cut to the hemibrain volume. Not all brainspaces supported.}
 
 \item{...}{Additional arguments passed to \code{nat::nlapply}.and/or \code{fafbseg::skeletor}.}
 
@@ -115,6 +116,10 @@ flywire_request(new.points)
 fw.split = flywire_neurons(WithConnectors=TRUE)
 nopen3d()
 nlscan_split(fw.split[sample(length(fw.split),15)])
+
+# Get neuron dotprops object in hemibrain brainspace,
+## ready for NBLAST with hemibrain neurons
+fw.dps.cut = flywire_neurons(type="cut_dotprops")
 
 }}
 }
