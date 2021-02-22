@@ -461,6 +461,11 @@ gsheet_update_cols <- function(write.cols,
   if(!nrow(gs)){
     stop("No rows in given data frame, gs")
   }
+  for(wc in write.cols){
+    if(is.null(gs[[ws]])){
+      gs[[wc]] = NA
+    }
+  }
   if(Verbose){
     pb = progress::progress_bar$new(
       format = "  updated :what [:bar] :percent eta: :eta",
