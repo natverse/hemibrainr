@@ -113,7 +113,9 @@ hemibrain_extract_synapses <- function(x,
   }else if (prepost=="POST"){
     syns = syns[syns$prepost==1,]
   }
-  rownames(syns) = 1:nrow(syns)
+  if(!is.null(syns)){
+    rownames(syns) = 1:nrow(syns)
+  }
   syns
 }
 
