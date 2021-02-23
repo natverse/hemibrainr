@@ -462,7 +462,7 @@ gsheet_update_cols <- function(write.cols,
     stop("No rows in given data frame, gs")
   }
   for(wc in write.cols){
-    if(is.null(gs[[ws]])){
+    if(is.null(gs[[wc]])){
       gs[[wc]] = NA
     }
   }
