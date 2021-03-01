@@ -495,6 +495,7 @@ flywire_update_workflow <-function(main,
       clear = FALSE, total = length(ws))
     for(item in ws){
       pb$tick(tokens = list(what = item))
+      Sys.sleep(5) # to prevent server overload
       flywire_update_workflow(main = subset(main, main$tab == item),
                                          ws=item,
                                          target_sheet=target_sheet,
@@ -607,5 +608,5 @@ flywire_workflow <- function(flywire.id,
   plyr::rbind.fill(main, tab.entries)
 }
 
-# hidden, caches result for 5min in current session
+# hidden, caches result for  5min in current session
 sheet_properties.memo <- memoise::memoise(googlesheets4::sheet_properties, ~memoise::timeout(5*60))
