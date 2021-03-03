@@ -513,6 +513,7 @@ flywire_ids <-function(local = FALSE, folder = "flywire_neurons/", sql = FALSE, 
 #' @param meta meta data for flywire neurons, e.g. as retreived using \code{\link{flywire_meta}}. Used to efficiently input \code{flywire.xyz} column if only a \code{flywire.id} entry has been given.
 #' Only works if that id is also in this provided \code{data.frame}, \code{meta}.
 #' @param Verbose logical, whether or not to supply you with messages.
+#' @param retry integer, sometimes \code{fafbseg::flywire_xyz2id} fails due to a server timeout. This is the number of times to re-arrempt failed calls before accepting defeat.
 #' @inheritParams matches_update
 #'
 #' @details For this function to work, the specified google sheet(s) must have either the column \code{flywire.xyz},
@@ -560,7 +561,8 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
                                match = FALSE,
                                matching_sheet = options()$hemibrainr_matching_gsheet,
                                priority = c("FAFB","hemibrain"),
-                               Verbose = TRUE){
+                               Verbose = TRUE,
+                               retry = 1){
   if(is.null(selected_sheets)){
     selected_sheets = getOption("hemibrainr_gsheets", stop("Please set option('hemibrainr_gsheets')"))
   }
@@ -630,7 +632,18 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
           pos = pos[p,]
           pos = pos[!is.na(pos$fw.x),]
           if(nrow(pos)){
-            foreach.ids = fafbseg::flywire_xyz2id(pos[,c("fw.x","fw.y",'fw.z')], rawcoords = TRUE)
+            foreach.ids = try(fafbseg::flywire_xyz2id(pos[,c("fw.x","fw.y",'fw.z')], rawcoords = TRUE), silent = TRUE)
+            if(class(foreach.ids)=="try-error" & retry>0){
+              retry = as.integer(retry)
+              Sys.sleep(5)
+              while(retry>0|class(foreach.ids)!="try-error"){
+                retry=retry-1
+                foreach.ids = try(fafbseg::flywire_xyz2id(pos[,c("fw.x","fw.y",'fw.z')], rawcoords = TRUE), silent = TRUE)
+              }
+            }
+            if(class(foreach.ids)=="try-error"){
+              stop("fafbseg::flywire_xyz2id could not be used")
+            }
             names(foreach.ids) = pos[,"flywire.xyz"]
           }else{
             foreach.ids = NULL

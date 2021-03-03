@@ -119,7 +119,7 @@ nlscan_split(fw.split[sample(length(fw.split),15)])
 
 # Get neuron dotprops object in hemibrain brainspace,
 ## ready for NBLAST with hemibrain neurons
-fw.dps.cut = flywire_neurons(type="cut_dotprops")
+fw.dps.cut = flywire_neurons(type="cut_dotprops", brain = "JRCFIB2018F")
 
 }}
 }
