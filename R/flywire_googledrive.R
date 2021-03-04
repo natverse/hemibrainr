@@ -644,7 +644,7 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
               sleep = sleep+10
             }
             if(class(foreach.ids)=="try-error"){
-              stop("fafbseg::flywire_xyz2id could not be used")
+              stop(paste0("fafbseg::flywire_xyz2id could not be used for ", tab," in sheet ", selected_sheet))
             }
             names(foreach.ids) = pos[,"flywire.xyz"]
           }else{
