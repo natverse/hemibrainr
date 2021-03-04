@@ -633,13 +633,15 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
           pos = pos[!is.na(pos$fw.x),]
           if(nrow(pos)){
             foreach.ids = try(fafbseg::flywire_xyz2id(pos[,c("fw.x","fw.y",'fw.z')], rawcoords = TRUE), silent = TRUE)
+            sleep = 10
             if(class(foreach.ids)=="try-error" & retry>0){
               retry = as.integer(retry)
-              Sys.sleep(5)
+              Sys.sleep(sleep)
               while(retry>0|class(foreach.ids)!="try-error"){
                 retry=retry-1
                 foreach.ids = try(fafbseg::flywire_xyz2id(pos[,c("fw.x","fw.y",'fw.z')], rawcoords = TRUE), silent = TRUE)
               }
+              sleep = sleep+10
             }
             if(class(foreach.ids)=="try-error"){
               stop("fafbseg::flywire_xyz2id could not be used")
