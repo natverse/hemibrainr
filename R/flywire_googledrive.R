@@ -113,15 +113,6 @@ flywire_neurons <- function(x = NULL,
   fhdir = file.path(neuronsdir,brain,"/")
 
   # Get synapses from private drive
-  if(WithConnectors){
-    swc = FALSE; local = FALSE; mirror = FALSE
-    if(brain!="FlyWire"){
-      brain = "FlyWire"
-      warning("When WithConnectors = TRUE only FlyWire brainspace supported from hemibrain google drive")
-    }
-    neuronsdir = file.path(savedir,"fafbsynapses/")
-    fhdir = gsub("hemibrainr","hemibrain",neuronsdir)
-  }
   if(type%in%c("dotprops","cut_dotprops")){
     if(brain!="JRCFIB2018F"){
       brain = "JRCFIB2018F"
@@ -130,12 +121,10 @@ flywire_neurons <- function(x = NULL,
     }
   }else{
     if(WithConnectors){
-      type = ""; local = FALSE; mirror = FALSE
+      type = ""; local = FALSE; mirror = FALSE; brain = "FlyWire"
       if(brain!="FlyWire"){
         warning("When WithConnectors = TRUE only FlyWire brainspace supported from hemibrain google drive")
       }
-      neuronsdir = file.path(savedir,"fafbsynapses/")
-      fhdir = gsub("hemibrainr","hemibrain",neuronsdir)
     }
   }
 
@@ -160,6 +149,8 @@ flywire_neurons <- function(x = NULL,
     filelist = list.files(path = fhdir, pattern = ".rds", full.names = TRUE)
     if(type=="cut_dotprops"){
       filelist = filelist[grepl(type,filelist)]
+    }else if (WithConnectors){
+      filelist = filelist[grepl('flow',filelist)]
     }else{
       filelist = filelist[!grepl("cut_dotprops",filelist)]
       filelist = filelist[grepl(type,filelist)]
