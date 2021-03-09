@@ -1,6 +1,7 @@
 # set options
 .onAttach <- function(libname, pkgname){
   options(hemibrain_data = file.path(getwd(),"hemibrainr_data"))
+  options("fafbseg.cloudvolume.url"="graphene://https://prodv1.flywire-daf.com/segmentation_proc/table/fly_v31") # for programmatic access to flywire
 
   paths=c(
     nullToNA(getOption("Gdrive_hemibrain_data")),
