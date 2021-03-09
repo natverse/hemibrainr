@@ -98,7 +98,7 @@ googledrive_upload_neuronlistfh <- function(x,
     local.path = x
   }
 
-  # upload
+  # Upload
   if(dbClass!="DB1"){
     t.list.master = list.files(temp.data,full.names = TRUE)
     error.files = upload = c()
@@ -109,7 +109,8 @@ googledrive_upload_neuronlistfh <- function(x,
     sub.data = googledrive::drive_ls(path = t.folder.data, team_drive = td)
     t.list.master = t.list.master[! basename(t.list.master) %in% sub.data$name]
   }
-  if(length(t.list.master)){
+  retry = 1
+  while(length(t.list.master)&retry<=5){
     if(numCores>1){
       batch = 1
       batches = split(t.list.master, round(seq(from = 1, to = numCores, length.out = length(t.list.master))))
@@ -123,7 +124,7 @@ googledrive_upload_neuronlistfh <- function(x,
                                                  path = save.data,
                                                  verbose = FALSE)},
                             error = function(e){
-                              cat(as.character(e))
+                              message(e)
                               error.files <<- c(error.files,t.neuron.fh.data.file)
                               NA
                             } )
@@ -142,14 +143,20 @@ googledrive_upload_neuronlistfh <- function(x,
                                                path = save.data,
                                                verbose = FALSE)},
                           error = function(e){
-                            cat(as.character(e))
+                            message(e)
                             error.files <<- c(error.files,t.neuron.fh.data.file)
                             NA
                           } )
       }
     }
     if(length(error.files)){
-      warning("Failed to upload: ", length(error.files)," files")
+      if(retry==5){
+        message("Failed to upload: ", length(error.files), ' retries exhausted')
+      }else{
+        message("Failed to upload: ", length(error.files)," files, retry: ", retry)
+        t.list.master = error.files
+      }
+      retry = retry + 1
     }
   }
 
