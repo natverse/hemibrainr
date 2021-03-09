@@ -126,7 +126,7 @@
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/flyconnectome/hemibrainr/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -208,7 +208,7 @@ If x is a <code>neuronlist</code> then tags may be supplied of <code><a href='ht
 
 <span class='co'># Get neurons</span>
 <span class='va'>neurons</span> <span class='op'>=</span> <span class='fu'><a href='hemibrain_read_neurons.html'>hemibrain_read_neurons</a></span><span class='op'>(</span><span class='va'>al.local.neurons</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'>Using Google Team Drive: hemibrainr</span></div><div class='output co'>#&gt; <span class='error'>Error in neuprintr::neuprint_read_neurons(x, ...): Error reading bodyids</span></div><div class='input'>
+</div><div class='output co'>#&gt; <span class='message'>Reading from Google Team Drive: hemibrainr</span></div><div class='output co'>#&gt; <span class='warning'>Warning: 1 neurons cropped, split likely to be inaccurate for: 2068966051</span></div><div class='output co'>#&gt; <span class='warning'>Warning: 1 neurons have no soma tagged, split could be inaccurate for: 2068966051</span></div><div class='output co'>#&gt; <span class='warning'>Warning: No meta data could be retieved, returning NULL</span></div><div class='output co'>#&gt; <span class='error'>Error in neurons.flow[, ] &lt;- hemibrain_get_meta(names(neurons.flow)): incorrect number of subscripts on matrix</span></div><div class='input'>
 <span class='co'># Tag</span>
 <span class='va'>neurons</span> <span class='op'>=</span> <span class='fu'>hemibrain_settags</span><span class='op'>(</span><span class='va'>neurons</span>, antennal.lobe <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; <span class='error'>Error in hemibrain_settags(neurons, antennal.lobe = TRUE): object 'neurons' not found</span></div><div class='input'>

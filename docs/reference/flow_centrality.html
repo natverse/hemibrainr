@@ -130,7 +130,7 @@
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/flyconnectome/hemibrainr/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -284,18 +284,18 @@ most usually the dendrite (Bates &amp; Schlegel 2020).</p></td>
 
 <span class='co'># Get neurons</span>
 <span class='va'>neurons</span> <span class='op'>=</span> <span class='fu'>neuprintr</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/neuprintr/man/neuprint_read_neurons.html'>neuprint_read_neurons</a></span><span class='op'>(</span><span class='va'>tough</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='error'>Error in neuprintr::neuprint_read_neurons(tough): Error reading bodyids</span></div><div class='input'>
+</div><div class='output co'>#&gt; <span class='warning'>Warning: Please supply a `dataset` argument or set a default one at login or using the neuprint_dataset environment variable! See ?neuprint_login for details. For now we will use 'hemibrain:v1.2'.</span></div><div class='input'>
 <span class='co'># Now make sure the neurons have a soma marked</span>
 <span class='co'>## Some hemibrain neurons do not, as the soma was chopped off</span>
 <span class='va'>neurons.checked</span> <span class='op'>=</span> <span class='fu'><a href='hemibrain_skeleton_check.html'>hemibrain_skeleton_check</a></span><span class='op'>(</span><span class='va'>neurons</span>, meshes <span class='op'>=</span> <span class='va'>hemibrain.surf</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='error'>Error in nat::as.neuronlist(x): object 'neurons' not found</span></div><div class='input'>
+</div><div class='output co'>#&gt; <span class='message'>Re-rooting 2 neurons without a soma</span></div><div class='output co'>#&gt; <span class='message'>Removing synapses outside the hemibrain neuropil volume for 5 neurons</span></div><div class='output co'>#&gt; <span class='warning'>Warning: invalid factor level, NA generated</span></div><div class='output co'>#&gt; <span class='warning'>Warning: invalid factor level, NA generated</span></div><div class='output co'>#&gt; <span class='warning'>Warning: invalid factor level, NA generated</span></div><div class='output co'>#&gt; <span class='warning'>Warning: invalid factor level, NA generated</span></div><div class='output co'>#&gt; <span class='warning'>Warning: invalid factor level, NA generated</span></div><div class='output co'>#&gt; <span class='warning'>Warning: invalid factor level, NA generated</span></div><div class='input'>
 <span class='co'># Split neuron</span>
 <span class='co'>## These are the recommended parameters for hemibrain neurons</span>
 <span class='va'>neurons.flow</span> <span class='op'>=</span> <span class='fu'>flow_centrality</span><span class='op'>(</span><span class='va'>neurons.checked</span>,
 polypre <span class='op'>=</span> <span class='cn'>TRUE</span>,
 mode <span class='op'>=</span> <span class='st'>"centrifugal"</span>,
 split <span class='op'>=</span> <span class='st'>"distance"</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='error'>Error in flow_centrality(neurons.checked, polypre = TRUE, mode = "centrifugal",     split = "distance"): object 'neurons.checked' not found</span></div><div class='input'>
+
 <span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
 <span class='co'># Plot the split to check it</span>
 <span class='fu'>nat</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/nat/man/nopen3d.html'>nopen3d</a></span><span class='op'>(</span><span class='op'>)</span>

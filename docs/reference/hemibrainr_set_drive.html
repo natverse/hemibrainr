@@ -131,7 +131,7 @@
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/flyconnectome/hemibrainr/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -164,17 +164,17 @@
 
     <pre class="usage"><span class='fu'>hemibrainr_set_drive</span><span class='op'>(</span>
   Gdrive <span class='op'>=</span> <span class='st'>"hemibrainr"</span>,
-  path <span class='op'>=</span> <span class='st'>"/Volumes/GoogleDrive/Shared drives/"</span>
+  path <span class='op'>=</span> <span class='st'>"/Volumes/GoogleDrive/Shared drives"</span>
 <span class='op'>)</span>
 
 <span class='fu'>hemibrainr_team_drive</span><span class='op'>(</span><span class='op'>)</span>
 
 <span class='fu'>hemibrainr_rclone</span><span class='op'>(</span>
   Gdrive <span class='op'>=</span> <span class='st'>"hemibrainr"</span>,
-  path <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste0</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/getwd.html'>getwd</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='st'>"hemibrainr_rclone/"</span><span class='op'>)</span>
+  path <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/file.path.html'>file.path</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/getwd.html'>getwd</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='st'>"hemibrainr_data/"</span><span class='op'>)</span>
 <span class='op'>)</span>
 
-<span class='fu'>hemibrainr_rclone_unmount</span><span class='op'>(</span>path <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste0</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/getwd.html'>getwd</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='st'>"hemibrainr_rclone/"</span><span class='op'>)</span><span class='op'>)</span></pre>
+<span class='fu'>hemibrainr_rclone_unmount</span><span class='op'>(</span>path <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/file.path.html'>file.path</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/getwd.html'>getwd</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='st'>"hemibrainr_data/"</span><span class='op'>)</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -189,7 +189,7 @@ drive to be found in the standard location: <code>"/Volumes/GoogleDrive/Shared\ 
       <td><p>path to your 'hemibrainr Google drive', either a mounted remote or a local copy.
 For example on a Mac, <a href='https://support.google.com/drive/answer/7329379?authuser=2'>Google filestream</a> mounts it at: <code>/Volumes/GoogleDrive/Shared\ drives/</code>.
 With <a href='https://rclone.org/drive/'>rclone sheet</a> you can mount it wherever you like, by default hemibrainr expects it at:
-<code><a href='https://rdrr.io/r/base/paste.html'>paste0(getwd(),"hemibrainr_rclone/")</a></code></p></td>
+<code><a href='https://rdrr.io/r/base/file.path.html'>file.path(getwd(),"hemibrainr_data/")</a></code></p></td>
     </tr>
     </table>
 

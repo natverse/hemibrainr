@@ -133,7 +133,7 @@ Synapses are used when available, leaf nodes if not." />
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/flyconnectome/hemibrainr/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -238,10 +238,10 @@ have small dendrites distributed off of the main body of the neuron, such as Ken
     <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
 <span class='co'># Get neuron</span>
 <span class='va'>neuron</span> <span class='op'>=</span> <span class='fu'>neuprintr</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/neuprintr/man/neuprint_read_neurons.html'>neuprint_read_neurons</a></span><span class='op'>(</span><span class='st'>"451987038"</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='error'>Error in neuprintr::neuprint_read_neurons("451987038"): Error reading bodyids</span></div><div class='input'>
+
 <span class='co'># Extract primary neurite</span>
 <span class='va'>pnt</span> <span class='op'>=</span> <span class='fu'>primary_neurite</span><span class='op'>(</span><span class='va'>neuron</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='error'>Error in UseMethod("primary_neurite"): no applicable method for 'primary_neurite' applied to an object of class "function"</span></div><div class='input'>
+
 <span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
 <span class='co'># Plot the primary neurite</span>
 <span class='fu'>nat</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/nat/man/nopen3d.html'>nopen3d</a></span><span class='op'>(</span><span class='op'>)</span>

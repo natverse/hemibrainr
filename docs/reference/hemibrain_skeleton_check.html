@@ -130,7 +130,7 @@ of the hemibrain volume." />
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/flyconnectome/hemibrainr/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -232,7 +232,7 @@ message the moment there is an error.</p></td>
 
 <span class='co'># Read in these neurons</span>
 <span class='va'>neurons</span> <span class='op'>=</span> <span class='fu'>neuprintr</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/neuprintr/man/neuprint_read_neurons.html'>neuprint_read_neurons</a></span><span class='op'>(</span><span class='va'>ids</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='error'>Error in neuprintr::neuprint_read_neurons(ids): Error reading bodyids</span></div><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
+<span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
 <span class='co'># Get all the roi meshes</span>
 <span class='va'>hemibrain.rois</span> <span class='op'>=</span> <span class='fu'><a href='hemibrain_roi_meshes.html'>hemibrain_roi_meshes</a></span><span class='op'>(</span><span class='op'>)</span>
 <span class='co'>## Using this as the argument for 'meshes' will also</span>
@@ -246,7 +246,7 @@ message the moment there is an error.</p></td>
 <span class='co'># whole hemibrain</span>
 
 <span class='va'>neurons.checked</span> <span class='op'>=</span> <span class='fu'>hemibrain_skeleton_check</span><span class='op'>(</span><span class='va'>neurons</span>, meshes <span class='op'>=</span> <span class='va'>hemibrain.surf</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='error'>Error in nat::as.neuronlist(x): object 'neurons' not found</span></div><div class='input'>
+</div><div class='output co'>#&gt; <span class='message'>Re-rooting 1 neurons without a soma</span></div><div class='output co'>#&gt; <span class='message'>Removing synapses outside the hemibrain neuropil volume for 3 neurons</span></div><div class='output co'>#&gt; <span class='warning'>Warning: invalid factor level, NA generated</span></div><div class='output co'>#&gt; <span class='warning'>Warning: invalid factor level, NA generated</span></div><div class='output co'>#&gt; <span class='warning'>Warning: invalid factor level, NA generated</span></div><div class='output co'>#&gt; <span class='warning'>Warning: invalid factor level, NA generated</span></div><div class='input'>
 <span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
 <span class='co'># Let's check that this worked</span>
 <span class='fu'>nat</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/nat/man/nopen3d.html'>nopen3d</a></span><span class='op'>(</span><span class='op'>)</span>

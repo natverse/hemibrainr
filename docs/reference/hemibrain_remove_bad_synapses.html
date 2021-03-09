@@ -132,7 +132,7 @@
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/flyconnectome/hemibrainr/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -232,7 +232,7 @@ when <code>soma = TRUE</code>. See the <code>first</code> argument in
     <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
 <span class='co'># Read in a problematic neuron</span>
 <span class='va'>neuron</span> <span class='op'>=</span> <span class='fu'>neuprint_read_neurons</span><span class='op'>(</span><span class='fl'>5813020793</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='error'>Error in neuprint_read_neurons(5813020793): Error reading bodyids</span></div><div class='input'>
+
 <span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
 <span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://github.com/natverse/nat'>nat</a></span><span class='op'>)</span>
 <span class='fu'><a href='https://rdrr.io/pkg/nat/man/plot3d.html'>plot3d</a></span><span class='op'>(</span><span class='va'>neuron</span><span class='op'>)</span>
@@ -241,7 +241,7 @@ when <code>soma = TRUE</code>. See the <code>first</code> argument in
 
 <span class='co'># remove any synapses outside of this surface (or on the cell body fibre)</span>
 <span class='va'>neuron.fixed</span> <span class='op'>=</span> <span class='fu'>hemibrain_remove_bad_synapses</span><span class='op'>(</span><span class='va'>neuron</span>, meshes<span class='op'>=</span><span class='va'>hemibrain.surf</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='error'>Error in UseMethod("hemibrain_remove_bad_synapses"): no applicable method for 'hemibrain_remove_bad_synapses' applied to an object of class "function"</span></div><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
+<span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
 <span class='co'># previously we used all the individual hemibrain meshes. This may produce</span>
 <span class='co'># slightly different results but using *hemibrain.surf* is much faster</span>
 <span class='va'>neuron.fixed</span> <span class='op'>=</span> <span class='fu'>hemibrain_remove_bad_synapses</span><span class='op'>(</span><span class='va'>neuron</span>, meshes<span class='op'>=</span><span class='fu'><a href='hemibrain_roi_meshes.html'>hemibrain_roi_meshes</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>

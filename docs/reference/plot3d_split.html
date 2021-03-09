@@ -126,7 +126,7 @@
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/flyconnectome/hemibrainr/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -154,12 +154,15 @@
 
     <pre class="usage"><span class='fu'>plot3d_split</span><span class='op'>(</span>
   <span class='va'>someneuronlist</span>,
+  prepost <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"BOTH"</span>, <span class='st'>"PRE"</span>, <span class='st'>"POST"</span><span class='op'>)</span>,
   col <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"#1BB6AF"</span>, <span class='st'>"#EF7C12"</span>, <span class='st'>"#C70E7B"</span>, <span class='st'>"#8FDA04"</span>, <span class='st'>"#4D4D4D"</span>, <span class='st'>"#FC6882"</span><span class='op'>)</span>,
   splitnode <span class='op'>=</span> <span class='cn'>FALSE</span>,
   WithConnectors <span class='op'>=</span> <span class='cn'>TRUE</span>,
   WithNodes <span class='op'>=</span> <span class='cn'>F</span>,
   soma <span class='op'>=</span> <span class='cn'>NULL</span>,
   soma.alpha <span class='op'>=</span> <span class='fl'>1</span>,
+  transmitters <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  transmitter.alpha <span class='op'>=</span> <span class='fl'>0.3</span>,
   highflow <span class='op'>=</span> <span class='cn'>FALSE</span>,
   lwd <span class='op'>=</span> <span class='fl'>1</span>,
   radius <span class='op'>=</span> <span class='cn'>NULL</span>,
@@ -171,12 +174,19 @@
 <span class='fu'>nlscan_split</span><span class='op'>(</span>
   <span class='va'>someneuronlist</span>,
   already_selected <span class='op'>=</span> <span class='cn'>NULL</span>,
+  prepost <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"BOTH"</span>, <span class='st'>"PRE"</span>, <span class='st'>"POST"</span><span class='op'>)</span>,
   col <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"#1BB6AF"</span>, <span class='st'>"#EF7C12"</span>, <span class='st'>"#C70E7B"</span>, <span class='st'>"#8FDA04"</span>, <span class='st'>"#4D4D4D"</span>, <span class='st'>"#FC6882"</span><span class='op'>)</span>,
+  splitnode <span class='op'>=</span> <span class='cn'>FALSE</span>,
   WithConnectors <span class='op'>=</span> <span class='cn'>TRUE</span>,
-  WithNodes <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  WithNodes <span class='op'>=</span> <span class='cn'>F</span>,
   soma <span class='op'>=</span> <span class='cn'>NULL</span>,
-  radius <span class='op'>=</span> <span class='cn'>NULL</span>,
+  soma.alpha <span class='op'>=</span> <span class='fl'>1</span>,
+  transmitters <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  transmitter.alpha <span class='op'>=</span> <span class='fl'>0.3</span>,
   highflow <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  lwd <span class='op'>=</span> <span class='fl'>1</span>,
+  radius <span class='op'>=</span> <span class='cn'>NULL</span>,
+  check.template <span class='op'>=</span> <span class='cn'>FALSE</span>,
   Verbose <span class='op'>=</span> <span class='cn'>TRUE</span>,
   Wait <span class='op'>=</span> <span class='cn'>TRUE</span>,
   sleep <span class='op'>=</span> <span class='fl'>0.1</span>,
@@ -204,6 +214,10 @@
       <td><p>a neuronlist or neuron object that has been modified by flow.centrality.</p></td>
     </tr>
     <tr>
+      <th>prepost</th>
+      <td><p>whether to plot input (POST-) or output (PRE-) synapses, or both (default).</p></td>
+    </tr>
+    <tr>
       <th>col</th>
       <td><p>colours of sections. Defaults to orange or axons, green for primary dendrite, blue for dendrites and pink for nodes with no flow.</p></td>
     </tr>
@@ -217,7 +231,7 @@
     </tr>
     <tr>
       <th>WithNodes</th>
-      <td><p>whether to plot branch points</p></td>
+      <td><p>whether to plot branch points.</p></td>
     </tr>
     <tr>
       <th>soma</th>
@@ -228,12 +242,21 @@
       <td><p>numeric, alpha transparency value for plotting the soma. Passed to <code><a href='https://rdrr.io/pkg/rgl/man/spheres.html'>rgl::spheres3d</a></code></p></td>
     </tr>
     <tr>
+      <th>transmitters</th>
+      <td><p>logical. If <code>TRUE</code>, and transmitter identities are given in each neuron's meta data at neuron$connectors, then synapses.
+are plotted in their transmitter colours. Transmitter identity is given by the colour of a hlow around each synapse. The colours correspond to entries in <code><a href='paper_colours.html'>paper_colours</a></code>.</p></td>
+    </tr>
+    <tr>
+      <th>transmitter.alpha</th>
+      <td><p>numeric, alpha transparency value for a coloured halo indicative of transmitter identity around synapses. Passed to <code><a href='https://rdrr.io/pkg/rgl/man/spheres.html'>rgl::spheres3d</a></code>.</p></td>
+    </tr>
+    <tr>
       <th>highflow</th>
-      <td><p>whether to plot the nodes of highest (with in one standard deviation less than maximum) flow centrality (pink points)</p></td>
+      <td><p>whether to plot the nodes of highest (with in one standard deviation less than maximum) flow centrality (pink points).</p></td>
     </tr>
     <tr>
       <th>lwd</th>
-      <td><p>Line width (default 1)</p></td>
+      <td><p>Line width (default 1).</p></td>
     </tr>
     <tr>
       <th>radius</th>
