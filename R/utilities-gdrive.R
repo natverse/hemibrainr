@@ -126,6 +126,7 @@ googledrive_upload_neuronlistfh <- function(x,
                             error = function(e){
                               message(e)
                               error.files <<- c(error.files,t.neuron.fh.data.file)
+                              Sys.sleep(5)
                               NA
                             } )
         }
@@ -157,6 +158,7 @@ googledrive_upload_neuronlistfh <- function(x,
         t.list.master = error.files
       }
       retry = retry + 1
+      Sys.sleep(60)
     }
   }
 
