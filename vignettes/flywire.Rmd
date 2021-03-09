@@ -111,7 +111,7 @@ length(fw.neurons) # That's a lot of neurons!
 head(fw.neurons) # There is some meta data already attached
 
 # Let's see a selection. All the neurons in the DL1_dorsal lineage
-x = subset(fw.neurons, ItoLee_Hemilineage == "DL1_dorsal")
+dl1.dorsal = subset(fw.neurons, ItoLee_Hemilineage == "DL1_dorsal")
 ## There may be some mistakes early on here
 ### As the project develops, they should get ironed out ....
 
