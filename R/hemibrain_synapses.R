@@ -265,7 +265,7 @@ hemibrain_extract_compartment_edgelist <- function(x, meta = NULL, ...){
   }
   comp.meta = mets[,colnames(mets)%in%c("total.outputs", "total.inputs", "axon.outputs",
                    "dend.outputs", "axon.inputs", "dend.inputs","top.nt")]
-  elists = nat::nlapply(syns.list, extract_elist, lookup = lookup, meta = comp.meta, ...)
+  elists = nat::nlapply(syns.list, extract_elist, lookup = lookup, id = id, partner = partner, meta = comp.meta, ...)
   elist = do.call(rbind, elists)
   rownames(elist) = 1:nrow(elist)
   elist = elist[order(elist$norm, decreasing = TRUE),]
