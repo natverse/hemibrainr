@@ -440,7 +440,7 @@ sql_col_types = readr::cols(.default = "c",
                             Y = "n",
                             Z = "n",
                             x = "n",
-                            x = "n",
+                            y = "n",
                             z = "n",
                             fw.x ="n",
                             fw.y = "n",
@@ -460,7 +460,17 @@ sql_col_types = readr::cols(.default = "c",
                             branchpoints = "n",
                             root = "i",
                             top.p = "n",
-                            top.nt = "c")
+                            top.nt = "c",
+                            scores = 'n',
+                            cleft_scores = 'n',
+                            top.nt = "c",
+                            gaba  = "n",
+                            acetylcholine  = "n",
+                            glutamate  = "n",
+                            octopamine  = "n",
+                            serotonin  = "n",
+                            dopamine  = "n",
+                            prepost = "i")
 
 #' @rdname flywire_googledrive_data
 #' @export
