@@ -321,6 +321,8 @@ flywire_request <- function(request,
 #'   scores retrieved using \code{\link{hemibrain_nblast}}.
 #'
 #' @inheritParams hemibrainr_googledrive_data
+#' @param simplified flywire synapses, where nearby Buhmann predicted synapses (often multiple per real synapses) are algorithmically combined into approximate single synapses
+#' using \code{hemibrainr:::flywire_synapse_simplify}.
 #'
 #' @return a \code{data.frame}. Depending on which synapse function was called, it can contain the columns:
 #'

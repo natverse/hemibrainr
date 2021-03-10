@@ -1,46 +1,48 @@
-#
-#
-#
-#
-# # Get flywire connectivty matrix
-# flywire_elist <- function(x,
-#                                          local = FALSE,
-#                                          cloudvolume.url = NULL){
-#   method = match.arg(method)
-#
-#   # Get Google drive folder
-#   savedir = good_savedir(local = local)
-#
-#   # we need the hemibrain, not hemibrainr drive
-#   # this is a temporary trick to get it
-#   savedir = gsub("hemibrainr","hemibrain",savedir)
-#
-#   # Fetch
-#   fw.syns = find_gsql(savedir,
-#                       sql.db = "flywire_synapses.db",
-#                       tab = NULL,
-#                       folder = "fafbsynapses")
-#
-#   # Get rootids
-#   rootids = x[,"flywire.id"]
-#
-#   # Assemble synapses
-#   for(rootid in unique(rootids)){
-#     message("Fetching supervoxel ids for id: ", rootid)
-#     svids = get_flywire_svids(rootid)
-#     syn.map = flywire_svid_synapses(svids = svids,
-#                                     partners = "both",
-#                                     method = method,
-#                                     Verbose = TRUE)
-#
-#   }
-#
-#
-#
-# }
-#
-#
+#' @rdname flywire_googledrive_data
+#' @export
+flywire_elist <- function(local = FALSE, folder = "flywire_neurons/", sql = TRUE, ...){
+  savedir = good_savedir(local = local)
+  if(sql){
+    gcsv = find_gsql(savedir = savedir, tab = "flywire_edgelist", sql.db = "flywire_data.sqlite", folder = folder, ...)
+  }else{
+    gfile = find_gfile(savedir = savedir, file = "flywire_edgelist", folder = folder)
+    gcsv = suppressWarnings(readr::read_csv(gfile, col_types = sql_col_types))
+  }
+  gcsv
+}
 
+#' @rdname flywire_googledrive_data
+#' @export
+flywire_connections <- function(local = FALSE, folder = "flywire_neurons/", sql = TRUE, ...){
+  savedir = good_savedir(local = local)
+  if(sql){
+    gcsv = find_gsql(savedir = savedir, tab = "flywire_connections", sql.db = "flywire_data.sqlite", folder = folder, ...)
+  }else{
+    gfile = find_gfile(savedir = savedir, file = "flywire_connections", folder = folder)
+    gcsv = suppressWarnings(readr::read_csv(gfile, col_types = sql_col_types))
+  }
+}
+
+#' @rdname flywire_googledrive_data
+#' @export
+flywire_synapses <- function(local = FALSE, folder = "flywire_neurons/", simplified = FALSE, sql = TRUE, ...){
+  savedir = good_savedir(local = local)
+  if(sql){
+    if(simplified){
+      gcsv = find_gsql(savedir = savedir, tab = "flywire_simplified_synapses", sql.db = "flywire_data.sqlite", folder = folder, ...)
+    }else{
+      gcsv = find_gsql(savedir = savedir, tab = "flywire_synapses", sql.db = "flywire_data.sqlite", folder = folder, ...)
+    }
+  }else{
+    if(simplified){
+      gfile = find_gfile(savedir = savedir, file = "flywire_simplified_synapses", folder = folder)
+    }else{
+      gfile = find_gfile(savedir = savedir, file = "flywire_synapses", folder = folder)
+    }
+    gcsv = suppressWarnings(readr::read_csv(gfile, col_types = sql_col_types))
+  }
+  gcsv
+}
 
 # Simplify synapses spatially
 flywire_synapse_simplify <- function(x, method = c("cleft_scores","scores","mean")){
@@ -89,6 +91,7 @@ flywire_synapse_simplify <- function(x, method = c("cleft_scores","scores","mean
       nl = unlist(lapply(np,class))%in%c("numeric","integer")
       collap = as.data.frame(t(colMeans(np[,nl], na.rm = TRUE)))
       collap$offset = np$offset[1]
+      collap$Label = np$Label[1]
       poss.nts=c("gaba", "acetylcholine", "glutamate", "octopamine", "serotonin","dopamine")
       tops = colSums(collap[,poss.nts])
       collap$top.p = max(tops)

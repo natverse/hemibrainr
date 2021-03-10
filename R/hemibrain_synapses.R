@@ -158,38 +158,46 @@ extract_synapses <-function(x, unitary = FALSE){
   if(!nrow(syn)){
     warning("Neuron ", x$bodyid," has no synapses")
   }
-  if(!is.null(x$bodyid)){
-    id = "bodyid"
-  }else if(!is.null(x$flywire.id)){
+  if(!is.null(x$flywire.id)){
     id = "flywire.id"
   } else if(!is.null(x$skid)){
     id = "skid"
+  } else if(!is.null(x$bodyid)){
+      id = "bodyid"
   }else{
     id = "id"
   }
   syn[[id]] = nullToNA(as.character(x[[id]]))
   syn[[id]] = gsub(" ","",syn[[id]])
-  syn$Label = nullToNA(x$d$Label[match(syn$treenode_id,x$d$PointNo)])
+  if(is.null(syn$Label)){
+    syn$Label = nullToNA(x$d$Label[match(syn$treenode_id,x$d$PointNo)])
+  }
+  poss.nts=c("gaba", "acetylcholine", "glutamate", "octopamine", "serotonin", "dopamine")
+  if(!all(c(poss.nts,"top.nt")%in%colnames(syn))){
+    for(pnt in setdiff(poss.nts,colnames(syn))){
+      syn[[pnt]] = 0
+    }
+    syn$top.nt = "unknown"
+  }
+  poss.nts = intersect(poss.nts, colnames(syn))
+  if(length(poss.nts)){
+    syn$top.nt = apply(syn[,colnames(syn)%in%poss.nts], 1, function(x) names(x)[which.max(x)])
+  }else{
+    syn$top.nt = "unknown"
+  }
   if(unitary){ # connections, rather than synapses
+    #syn[,syn$prepost==0]$top.nt = names(sort(table(syn[,syn$prepost==0]$top.nt),decreasing=TRUE))[1]
     if(id == "flywire.id"){
-      poss.nts=c("gaba", "acetylcholine", "glutamate", "octopamine", "serotonin", "dopamine")
-      if(!all(c(poss.nts,"top.nt")%in%colnames(syn))){
-        for(pnt in setdiff(poss.nts,colnames(syn))){
-          syn[[pnt]] = 0
-        }
-        syn$top.nt = "unknown"
-      }
       syn %>%
         dplyr::mutate(partner = dplyr::case_when(
           .data$prepost==0 ~ .data$post_id,
           .data$prepost==1  ~ .data$pre_id
-        ))
+        )) %>%
         dplyr::mutate(prepost = dplyr::case_when(
           .data$prepost==0 ~ 1,
           .data$prepost==1  ~ 0
         )) %>% # i.e. switch perspective, presynapses connect to postsynaptic partners
         dplyr::group_by(.data[[id]], .data$partner, .data$prepost, .data$Label) %>%
-        dplyr::mutate(top.nt=apply(.[,poss.nts], 1, function(x) names(x)[which.max(x)])) %>%
         dplyr::mutate(count = dplyr::n()) %>%
         dplyr::distinct(.data[[id]], .data$partner, .data$prepost, .data$Label, .data$count, .data$top.nt) %>%
         dplyr::select(.data[[id]], .data$partner, .data$prepost, .data$Label, .data$count, .data$top.nt) %>%
@@ -203,8 +211,8 @@ extract_synapses <-function(x, unitary = FALSE){
         )) %>% # i.e. switch perspective, presynapses connect to postsynaptic partners
         dplyr::group_by(.data[[id]], .data$partner, .data$prepost, .data$Label) %>%
         dplyr::mutate(count = dplyr::n()) %>%
-        dplyr::distinct(.data[[id]], .data$partner, .data$prepost, .data$Label, .data$count) %>%
-        dplyr::select(.data[[id]], .data$partner, .data$prepost, .data$Label, .data$count) %>%
+        dplyr::distinct(.data[[id]], .data$partner, .data$prepost, .data$Label, .data$count, .data$top.nt) %>%
+        dplyr::select(.data[[id]], .data$partner, .data$prepost, .data$Label, .data$count, .data$top.nt) %>%
         as.data.frame(stringsAsFactors = FALSE) ->
         syn
     }
@@ -215,26 +223,48 @@ extract_synapses <-function(x, unitary = FALSE){
 
 #' @export
 #' @rdname hemibrain_extract_connections
-hemibrain_extract_compartment_edgelist <- function(x, ...){
+hemibrain_extract_compartment_edgelist <- function(x, meta = NULL, ...){
   x = add_field_seq(x,names(x),field="bodyid")
+  y = x[[1]]
+  if(!is.null(y$flywire.id)){
+    id = "flywire.id"
+    partner = "post_id"
+  } else if(!is.null(y$skid)){
+    id = "skid"
+    partner = "partner"
+  } else if(!is.null(y$bodyid)){
+    id = "bodyid"
+    partner = "partner"
+  }else{
+    id = "id"
+    partner = "partner"
+  }
   if(nat::is.neuronlist(x)){
     syns.list = nat::nlapply(x, extract_synapses, unitary = FALSE, ...)
+    # syns.list = nat::nlapply(syns.list, function(syn){
+    #   syn[,syn$prepost==0]$top.nt = names(sort(table(syn[,syn$prepost==0]$top.nt),decreasing=TRUE))[1]
+    #   syn
+    # })
   }else{
     stop("x must be a neuronlist object")
   }
   names(syns.list) = NULL
-  lookup = nat::nlapply(syns.list, extract_lookup, ...)
+  lookup = nat::nlapply(syns.list, extract_lookup, id = id, partner = partner, ...)
   lookup = unlist(lookup)
   sel.cols = c("total.outputs", "total.inputs", "axon.outputs",
                "dend.outputs", "axon.inputs", "dend.inputs")
   if(sum(sel.cols%in%colnames(x[,]))!=length(sel.cols)){
-    mets = hemibrain_compartment_metrics(x, OmitFailures = TRUE, delta = 5, resample = NULL, locality = FALSE)
-    mets[is.na(mets)] = 0
+    if(is.null(meta)){
+      mets = hemibrain_compartment_metrics(x, OmitFailures = TRUE, delta = 5, resample = NULL, locality = FALSE)
+      mets[is.na(mets)] = 0
+    }else{
+      mets = meta
+    }
   }else{
     mets = x[,]
   }
-  comp.meta = mets[,c("total.outputs", "total.inputs", "axon.outputs",
-                   "dend.outputs", "axon.inputs", "dend.inputs")]
+  comp.meta = mets[,colnames(mets)%in%c("total.outputs", "total.inputs", "axon.outputs",
+                   "dend.outputs", "axon.inputs", "dend.inputs","top.nt")]
   elists = nat::nlapply(syns.list, extract_elist, lookup = lookup, meta = comp.meta, ...)
   elist = do.call(rbind, elists)
   rownames(elist) = 1:nrow(elist)
@@ -244,17 +274,28 @@ hemibrain_extract_compartment_edgelist <- function(x, ...){
 }
 
 # hidden, for one pre neuron
-extract_elist <- function(syns, lookup, meta = NULL){
-  bodyid = unique(nullToNA(as.character(syns$bodyid)))
+extract_elist <- function(syns, lookup, meta = NULL, id = "bodyid", partner = "partner"){
+  ids = unique(nullToNA(as.character(syns[[id]])))
   if(!is.null(meta)){
-    if(!bodyid%in%rownames(meta)){
-      stop(bodyid, " not in rownames of meta")
+    if(!ids%in%rownames(meta)){
+      stop(ids, " not in rownames of meta")
     }
-    d.post = nullToNA(as.numeric(meta[bodyid,"dend.inputs"]))
-    a.post = nullToNA(as.numeric(meta[bodyid,"axon.inputs"]))
+    d.post = nullToNA(as.numeric(meta[ids,"dend.inputs"]))
+    a.post = nullToNA(as.numeric(meta[ids,"axon.inputs"]))
+    if(is.null(meta[[id]])){
+      meta[[id]]=rownames(meta)
+    }
+    if(is.null(meta[["top.nt"]])){
+      meta[["top.nt"]]="unknown"
+    }
+    syns = dplyr::inner_join(syns, meta[,c(id,"top.nt")],
+                              by = id,
+                              copy = TRUE,
+                              auto_index = TRUE)
   }else{
     d.post = nrow(subset(syns, syns$prepost==1 & syns$Label==3))
     a.post = nrow(subset(syns, syns$prepost==1 & syns$Label==2))
+    syns$top.nt = "unknown"
     warning("Argument 'meta' not given. norm column represents normalisation by the total number of pre-post connections
     in the final data.frame, not necessarily the total number of postsynapses for
     the 'post' neuron.")
@@ -262,8 +303,8 @@ extract_elist <- function(syns, lookup, meta = NULL){
   syns %>%
     # Re-name for clarity
     dplyr::filter(.data$prepost==1) %>%
-    dplyr::rename(post = .data$bodyid) %>%
-    dplyr::rename(pre = .data$partner) %>%
+    dplyr::rename(post = .data[[id]]) %>%
+    dplyr::rename(pre = .data[[partner]]) %>%
     dplyr::rename(post.Label = .data$Label) %>%
     # Compartment labels
     dplyr::mutate(pre.Label = lookup[as.character(.data$connector_id)]) %>%
@@ -277,7 +318,7 @@ extract_elist <- function(syns, lookup, meta = NULL){
     dplyr::mutate(norm = .data$count/ifelse(.data$post.Label%in%c(3,"dendrite","dendrites","dend"),d.post,a.post)) %>%
     # Clean up
     dplyr::distinct(.data$post, .data$pre,.data$post.Label, .data$pre.Label, .data$count, .data$norm) %>%
-    dplyr::select(.data$post, .data$pre, .data$post.Label, .data$pre.Label, .data$count, .data$norm) %>%
+    dplyr::select(.data$post, .data$pre, .data$post.Label, .data$pre.Label, .data$count, .data$norm, .data$top.nt) %>%
     dplyr::filter(!is.na(.data$pre.Label) & .data$count > 0) %>%
     as.data.frame(stringsAsFactors = FALSE) ->
     elist
@@ -289,10 +330,10 @@ extract_elist <- function(syns, lookup, meta = NULL){
 }
 
 # hidden
-extract_lookup <- function(syns){
+extract_lookup <- function(syns, id = "bodyid", partner = "partner"){
   syns %>%
     dplyr::filter(.data$prepost==0) %>%
-    dplyr::distinct(.data$bodyid, .data$partner, .data$connector_id, .data$Label) %>%
+    dplyr::distinct(.data[[id]], .data[[partner]], .data$connector_id, .data$Label) %>%
     as.data.frame(stringsAsFactors = FALSE) ->
     conn.lookup
   lookup = conn.lookup$Label

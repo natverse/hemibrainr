@@ -222,6 +222,7 @@ hemibrain_synapses <- function(local = FALSE, folder = "hemibrain_neurons/", sql
     gfile = find_gfile(savedir = savedir, file = "hemibrain_all_neurons_synapses", folder = folder)
     gcsv = suppressWarnings(readr::read_csv(gfile, col_types = sql_col_types))
   }
+  gcsv
 }
 
 #' @rdname hemibrainr_googledrive_data
