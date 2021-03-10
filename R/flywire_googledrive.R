@@ -162,7 +162,7 @@ flywire_neurons <- function(x = NULL,
       neurons.fh = nat::read.neuronlistfh(fh.file)
       test = tryCatch(neurons.fh[[1]], error = function(e){
         warning(e)
-        try(file.remove(paste0(attributes(neurons.fh)$db@datafile,"___LOCK")), silent = FALSE)
+        try(file.remove(paste0(attributes(neurons.fh)$db@datafile,"___LOCK")), silent = TRUE)
       })
       attr(neurons.fh,"df") = neurons.fh[,]
     }else{
