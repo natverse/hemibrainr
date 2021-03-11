@@ -306,9 +306,9 @@ extract_elist <- function(syns, lookup, meta = NULL, id = "bodyid", partner = "p
       meta[["top.nt"]]="unknown"
     }
     meta$pre_id  = meta[[id]]
-    if(bit64::is.integer64(syn$pre_id)){
+    if(bit64::is.integer64(syns$pre_id)){
       meta$pre_id = bit64::as.integer64(meta$pre_id)
-    }else if(is.character(syn$pre_id)){
+    }else if(is.character(syns$pre_id)){
       meta$pre_id = as.character(meta$pre_id)
     }
     syns = dplyr::inner_join(syns, meta[,c("pre_id","top.nt")],
