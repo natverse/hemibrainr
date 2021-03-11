@@ -59,23 +59,11 @@ googledrive_upload_neuronlistfh <- function(x,
   }
   sub = googledrive::drive_ls(path = gfolder, team_drive = td)
 
-  # Get data folder
-  if(dbClass!="DB1"){
-    t.folder.data = googledrive::drive_ls(path = gfolder, type = "folder", team_drive = td)
-    t.folder.data = subset(t.folder.data, t.folder.data$name == "data")[1,]
-    if(is.na(t.folder.data$name)){
-      googledrive::drive_mkdir(name = "data",
-                               path = gfolder,
-                               overwrite = TRUE)
-      t.folder.data = googledrive::drive_ls(path = gfolder, type = "folder", team_drive = td)
-      t.folder.data = subset(t.folder.data, t.folder.data$name == "data")[1,]
-    }
-  }
-
   # Save locally
   if(nat::is.neuronlist(x)){
     temp = tempfile()
     if(dbClass!="DB1"){
+      temp.data.csv = paste0(temp,"/data.csv")
       temp.data = file.path(temp,"data")
       dir.create(temp.data)
       on.exit(unlink(temp, recursive=TRUE))
@@ -98,6 +86,27 @@ googledrive_upload_neuronlistfh <- function(x,
     local.path = x
   }
 
+  # Get data folder
+  if(dbClass!="DB1"){
+    t.folder.data = googledrive::drive_ls(path = gfolder, type = "folder", team_drive = td)
+    t.folder.data = subset(t.folder.data, t.folder.data$name == "data")[1,]
+    if(is.na(t.folder.data$name)){
+      googledrive::drive_mkdir(name = "data",
+                               path = gfolder,
+                               overwrite = TRUE)
+      t.folder.data = googledrive::drive_ls(path = gfolder, type = "folder", team_drive = td)
+      t.folder.data = subset(t.folder.data, t.folder.data$name == "data")[1,]
+    }
+    t.folder.csv= googledrive::drive_ls(path = gfolder, type = "csv", team_drive = td)
+    t.folder.csv = subset(t.folder.csv, t.folder.csv$name == "data.csv")[1,]
+    if(is.na(t.folder.csv)){
+      data.csv = data.frame()
+    }else{
+      googledrive::drive_download(file = t.folder.csv, path = temp.data.csv, type = "csv", overwrite = TRUE, verbose = FALSE)
+      data.csv = readr::read_csv(temp.data.csv)
+    }
+  }
+
   # Upload
   if(dbClass!="DB1"){
     t.list.master = list.files(temp.data,full.names = TRUE)
@@ -106,8 +115,12 @@ googledrive_upload_neuronlistfh <- function(x,
     t.list.master = NULL
   }
   if(WriteObjects=="missing" & dbClass!="DB1"){
-    sub.data = googledrive::drive_ls(path = t.folder.data, team_drive = td)
-    t.list.master = t.list.master[! basename(t.list.master) %in% sub.data$name]
+    if(nrow(data.csv)){
+      t.list.master = t.list.master[! basename(t.list.master) %in% data.csv$data]
+    }else{
+      sub.data = googledrive::drive_ls(path = t.folder.data, team_drive = td)
+      t.list.master = t.list.master[! basename(t.list.master) %in% sub.data$name]
+    }
   }
   retry = 1
   while(length(t.list.master)&retry<=5){
@@ -146,10 +159,13 @@ googledrive_upload_neuronlistfh <- function(x,
                           error = function(e){
                             message(e)
                             error.files <<- c(error.files,t.neuron.fh.data.file)
+                            Sys.sleep(5)
                             NA
                           } )
       }
     }
+    success = basename(setdiff(t.list.master,error.files))
+    data.csv = rbind(data.csv, data = success)
     if(length(error.files)){
       if(retry==5){
         message("Failed to upload: ", length(error.files), ' retries exhausted')
@@ -160,6 +176,7 @@ googledrive_upload_neuronlistfh <- function(x,
       retry = retry + 1
       Sys.sleep(60)
     }
+    readr::write_csv(x = data.csv, file = temp.data.csv)
   }
 
   # upload .rds
@@ -188,11 +205,15 @@ googledrive_upload_neuronlistfh <- function(x,
       google_drive_place(media = datafile,
                          path = save.position,
                          verbose = TRUE)
+    }else{
+      google_drive_place(media = temp.data.csv,
+                         path = gfolder,
+                         verbose = TRUE)
     }
   }
 
   # Clean
-  if(clean){
+  if(clean & dbClass!="DB1"){
     message("Deleting unused file hash files for neurons ...")
     googledrive_clean_neuronlistfh(local.path = local.path,
                                    team_drive = hemibrainr_team_drive(),
@@ -251,6 +272,31 @@ googledrive_clean_neuronlistfh <- function(team_drive = hemibrainr_team_drive(),
          that match your local.path: ", local.path)
   }
 
+  # Get csv of data entries
+  temp = tempdir(check = FALSE)
+  temp.data.csv = paste0(temp,"/data.csv")
+  on.exit(unlink(temp, recursive=TRUE))
+
+  # Get drive
+  td = googledrive::team_drive_get(team_drive)
+  drive_td = googledrive::drive_find(type = "folder", team_drive = td)
+  if(!is.null(folder)){
+    gfolder= subset(drive_td,drive_td$name==folder)[1,]
+    if(!is.null(subfolder)){
+      sub = googledrive::drive_ls(path = gfolder, type = "folder", team_drive = td)
+      gfolder = subset(sub, sub$name ==subfolder )[1,]
+    }
+    drive_td = googledrive::drive_ls(path = gfolder, team_drive = td)
+    t.folder.csv= googledrive::drive_ls(path = gfolder, type = "csv", team_drive = td)
+    t.folder.csv = subset(t.folder.csv, t.folder.csv$name == "data.csv")[1,]
+    if(is.na(t.folder.csv)){
+      data.csv = data.frame()
+    }else{
+      googledrive::drive_download(file = t.folder.csv, path = temp.data.csv, type = "csv", overwrite = TRUE, verbose = FALSE)
+      data.csv = readr::read_csv(temp.data.csv)
+    }
+  }
+
   # Save .rds files locally, and find excess filehash
   find_excess <- function(sub,
                           local.path = NULL,
@@ -286,26 +332,19 @@ googledrive_clean_neuronlistfh <- function(team_drive = hemibrainr_team_drive(),
           all.keys = c(all.keys,keys)
         }
       }
-      data = googledrive::drive_ls(path = googledrive::as_id(fdata$id), team_drive = team_drive)
-      data = data[!grepl("\\.",data$name),]
-      delete = data[!data$name%in%all.keys,]
-      remove = rbind(remove, delete)
-      message("Cleaning out ", nrow(remove), " files")
+      if(nrow(data.csv)){
+        remove = setdiff(data$data, all.keys)
+        message("Cleaning out ", length(remove), " files")
+      }else{
+        data = googledrive::drive_ls(path = googledrive::as_id(fdata$id), team_drive = team_drive)
+        data = data[!grepl("\\.",data$name),]
+        delete = data[!data$name%in%all.keys,]
+        remove = rbind(remove, delete)
+        remove = remove[!duplicated(remove$id),]
+        message("Cleaning out ", nrow(remove), " files")
+      }
     }
-    remove = remove[!duplicated(remove$id),]
     remove
-  }
-
-  # Get drive
-  td = googledrive::team_drive_get(team_drive)
-  drive_td = googledrive::drive_find(type = "folder", team_drive = td)
-  if(!is.null(folder)){
-    gfolder= subset(drive_td,drive_td$name==folder)[1,]
-    if(!is.null(subfolder)){
-      sub = googledrive::drive_ls(path = gfolder, type = "folder", team_drive = td)
-      gfolder = subset(sub, sub$name ==subfolder )[1,]
-    }
-    drive_td = googledrive::drive_ls(path = gfolder, team_drive = td)
   }
 
   # Find files to delete
@@ -329,6 +368,27 @@ googledrive_clean_neuronlistfh <- function(team_drive = hemibrainr_team_drive(),
   }
 
   # rm
+  if(nrow(data.csv)){
+    if(length(remove)){
+      fail = c()
+      pb <- progress::progress_bar$new(
+        format = "  deleting [:bar] :current/:total eta: :eta",
+        total = length(remove$id), clear = FALSE, show_after = 1)
+      for(r in remove){
+        pb$tick()
+        e = tryCatch(googledrive::drive_rm(r,  verbose = FALSE),
+                     error = function(e){
+                       fail <<- c(fail, r)
+                       message(e)
+                     } )
+      }
+      data.csv = subset(data.csv, !data.csv$data%in%setdiff(remove,fail))
+      readr::write_csv(x = data.csv, file = temp.data.csv)
+      google_drive_place(media = temp.data.csv,
+                         path = gfolder,
+                         verbose = TRUE)
+    }
+  }
   if(nrow(remove)){
     pb <- progress::progress_bar$new(
         format = "  deleting [:bar] :current/:total eta: :eta",
@@ -337,8 +397,7 @@ googledrive_clean_neuronlistfh <- function(team_drive = hemibrainr_team_drive(),
         pb$tick()
         e = tryCatch(googledrive::drive_rm(googledrive::as_id(r), verbose = FALSE),
                      error = function(e){
-                       cat(as.character(e))
-                       NULL
+                       message(e)
                      } )
     }
   }
