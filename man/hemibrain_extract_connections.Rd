@@ -8,9 +8,14 @@
 \usage{
 hemibrain_extract_synapses(x, prepost = c("BOTH", "PRE", "POST"), ...)
 
-hemibrain_extract_connections(x, prepost = c("BOTH", "PRE", "POST"), ...)
+hemibrain_extract_connections(
+  x,
+  prepost = c("BOTH", "PRE", "POST"),
+  meta = NULL,
+  ...
+)
 
-hemibrain_extract_compartment_edgelist(x, ...)
+hemibrain_extract_compartment_edgelist(x, meta = NULL, ...)
 }
 \arguments{
 \item{x}{a \code{nat::neuronlist} or \code{nat::neuron} object. It is assumed
@@ -55,7 +60,7 @@ a \code{data.frame}. Depending on which synapse function was called, it can cont
   \item{"Label"}{ - The compartment of the \code{bodyid} neuron on which the synapse is placed / which receives/makes the given connection.
   See \code{?standardise}.}
 
-  \item{"partner.Label"}{ - The compartment of the \code{partner} neuron on which the synapse is placed / which receives/makes the given connection.}
+  \item{"partner_Label"}{ - The compartment of the \code{partner} neuron on which the synapse is placed / which receives/makes the given connection.}
 
   \item{"count"}{ - The number of synapses that make the given connection. Sometimes referred to as 'weight'.}
 
