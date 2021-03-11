@@ -183,7 +183,10 @@ extract_synapses <-function(x, unitary = FALSE, meta = NULL){
   }
   poss.nts = intersect(poss.nts, colnames(syn))
   if(!is.null(meta)){
-    syn$top.nt = NULL
+    if(!is.null(syn$top.nt)){
+      syn$syn.top.nt = syn$top.nt
+      syn$top.nt = NULL
+    }
     if(all(c(id,"top.nt")%in%colnames(meta))){
       meta$pre_id  = meta[[id]]
       if(bit64::is.integer64(syn$pre_id)){
@@ -217,8 +220,7 @@ extract_synapses <-function(x, unitary = FALSE, meta = NULL){
         )) %>% # i.e. switch perspective, presynapses connect to postsynaptic partners
         dplyr::group_by(.data[[id]], .data$partner, .data$prepost, .data$Label) %>%
         dplyr::mutate(count = dplyr::n()) %>%
-        dplyr::distinct(.data[[id]], .data$partner, .data$prepost, .data$Label, .data$count, .data$top.nt) %>%
-        dplyr::select(.data[[id]], .data$partner, .data$prepost, .data$Label, .data$count, .data$top.nt) %>%
+        dplyr::distinct(.data[[id]], .data$partner, .data$prepost, .data$Label, .data$count, .data$top.nt, .keep_all = FALSE) %>%
         as.data.frame(stringsAsFactors = FALSE) ->
         syn
     }else{
@@ -229,8 +231,7 @@ extract_synapses <-function(x, unitary = FALSE, meta = NULL){
         )) %>% # i.e. switch perspective, presynapses connect to postsynaptic partners
         dplyr::group_by(.data[[id]], .data$partner, .data$prepost, .data$Label) %>%
         dplyr::mutate(count = dplyr::n()) %>%
-        dplyr::distinct(.data[[id]], .data$partner, .data$prepost, .data$Label, .data$count, .data$top.nt) %>%
-        dplyr::select(.data[[id]], .data$partner, .data$prepost, .data$Label, .data$count, .data$top.nt) %>%
+        dplyr::distinct(.data[[id]], .data$partner, .data$prepost, .data$Label, .data$count, .data$top.nt, .keep_all = FALSE) %>%
         as.data.frame(stringsAsFactors = FALSE) ->
         syn
     }
