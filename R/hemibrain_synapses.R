@@ -247,7 +247,7 @@ hemibrain_extract_compartment_edgelist <- function(x, meta = NULL, ...){
   y = x[[1]]
   if(!is.null(y$flywire.id)){
     id = "flywire.id"
-    partner = "post_id"
+    partner = "pre_id"
   } else if(!is.null(y$skid)){
     id = "skid"
     partner = "partner"
@@ -264,7 +264,7 @@ hemibrain_extract_compartment_edgelist <- function(x, meta = NULL, ...){
     stop("x must be a neuronlist object")
   }
   names(syns.list) = NULL
-  lookup = nat::nlapply(syns.list, extract_lookup, id = id, partner = partner, ...)
+  lookup = nat::nlapply(syns.list, extract_lookup,  ...)
   lookup = unlist(lookup)
   sel.cols = c("total.outputs", "total.inputs", "axon.outputs",
                "dend.outputs", "axon.inputs", "dend.inputs")
@@ -311,6 +311,7 @@ extract_elist <- function(syns, lookup, meta = NULL, id = "bodyid", partner = "p
     }else if(is.character(syns$pre_id)){
       meta$pre_id = as.character(meta$pre_id)
     }
+    syns$top.nt = NULL
     syns = dplyr::inner_join(syns, meta[,c("pre_id","top.nt")],
                             by = "pre_id",
                             copy = TRUE,
@@ -326,23 +327,22 @@ extract_elist <- function(syns, lookup, meta = NULL, id = "bodyid", partner = "p
   syns %>%
     # Re-name for clarity
     dplyr::filter(.data$prepost==1) %>%
-    dplyr::rename(post_id = .data[[id]]) %>%
-    dplyr::rename(pre_id = .data[[partner]]) %>%
+    dplyr::rename(post = .data[[id]]) %>%
+    dplyr::rename(pre = .data[[partner]]) %>%
     dplyr::rename(post_Label = .data$Label) %>%
     # Compartment labels
     dplyr::mutate(pre_Label = lookup[as.character(.data$connector_id)]) %>%
     dplyr::mutate(pre_Label = ifelse(is.na(.data$pre_Label),"error",.data$pre_Label)) %>%
     # Synapse counts
-    dplyr::group_by(.data$post_id, .data$pre_id, .data$post_Label, .data$pre_Label) %>%
+    dplyr::group_by(.data$post, .data$pre, .data$post_Label, .data$pre_Label) %>%
     dplyr::mutate(count = dplyr::n()) %>%
     # Normalised synapses, by compartment
     dplyr::ungroup() %>%
-    dplyr::group_by(.data$post_id,.data$post_Label) %>%
+    dplyr::group_by(.data$post,.data$post_Label) %>%
     dplyr::mutate(norm = .data$count/ifelse(.data$post_Label%in%c(3,"dendrite","dendrites","dend"),d.post,a.post)) %>%
     # Clean up
-    dplyr::distinct(.data$post_id, .data$pre_id,.data$post_Label, .data$pre_Label, .data$count, .data$norm, .data$top.nt) %>%
-    dplyr::select(.data$post_id, .data$pre_id, .data$post_Label, .data$pre_Label, .data$count, .data$norm, .data$top.nt) %>%
-    dplyr::filter(!is.na(.data$pre_Label) & .data$count > 0 & .data$post_id!=.data$pre_id & .data$pre_Label!="error") %>%
+    dplyr::distinct(.data$post, .data$pre,.data$post_Label, .data$pre_Label, .data$count, .data$norm, .data$top.nt, .keep_all = FALSE) %>%
+    dplyr::filter(!is.na(.data$pre_Label) & .data$count > 0  & .data$pre_Label!="error") %>%
     as.data.frame(stringsAsFactors = FALSE) ->
     elist
   if(nrow(elist)){
@@ -350,20 +350,21 @@ extract_elist <- function(syns, lookup, meta = NULL, id = "bodyid", partner = "p
     elist$post_Label = standard_compartments(elist$post_Label)
     elist$pre_Label = standard_compartments(elist$pre_Label)
     elist$connection = paste(elist$pre_Label,elist$post_Labell,sep="-")
-    elist
+    elist[,c("pre", "post", "pre_Label", "post_Label", "count", "norm", "top.nt")]
   }else{
     NULL
   }
 }
 
 # hidden
-extract_lookup <- function(syns, id = "bodyid", partner = "partner"){
+extract_lookup <- function(syns){
   syns %>%
     dplyr::filter(.data$prepost==0) %>%
-    dplyr::distinct(.data[[id]], .data[[partner]], .data$connector_id, .data$Label) %>%
+    dplyr::distinct(.data$connector_id, .data$Label, .keep_all = FALSE) %>%
     as.data.frame(stringsAsFactors = FALSE) ->
     conn.lookup
   lookup = conn.lookup$Label
-  names(lookup) = conn.lookup$connector_id
+  names(lookup) = as.character(conn.lookup$connector_id)
+  lookup = lookup[!names(lookup)%in%c("0","NA")]
   lookup
 }
