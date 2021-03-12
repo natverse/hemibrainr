@@ -33,11 +33,12 @@ reference:
     - 'hemibrain_somas'
     - '`hemibrain_reroot`'
     - 'hemilineages'
-  - title: Synapses and meshes
+  - title: Synapses and neuron and ROI meshes
     desc: ~
     contents:
     - '`hemibrain_extract_synapses`'
     - '`hemibrain_remove_bad_synapses`'
+    - '`hemibrain_neuron_meshes`'
     - '`hemibrain_roi_meshes`'
     - 'hemibrain.surf'
     - 'hemibrain_al.surf'

@@ -23,7 +23,8 @@ Suggests:
     elmr,
     dbscan,
     RColorBrewer,
-    nat.hdf5
+    nat.hdf5,
+    Rvcg
 VignetteBuilder: knitr
 Depends:
     R (>= 3.1),
