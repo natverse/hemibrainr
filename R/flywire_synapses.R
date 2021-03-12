@@ -53,6 +53,7 @@ flywire_synapses <- function(local = FALSE, folder = "flywire_neurons/", simplif
 #' @param method when synapses are collapsed, they are either represented by the predicted synapse amongst them with the best score, cleft_score or a mean of
 #' the meat data for each of these predicted synapses.
 #' @param collapse logical, whether or not to collapse synapses in the same cluster to a single synapse. If \code{FALSE} then cluster groupings are given in the returned \code{data.frame}.
+#' @param fast logical, whether or not to use \code{fastcluster::hclust} rather than \code{stats::hclust} to cluster synapses.
 #'
 #' @return a \code{data.frame} of collapsed synapses.
 #'
@@ -65,8 +66,9 @@ flywire_synapses <- function(local = FALSE, folder = "flywire_neurons/", simplif
 #' }}
 #' @seealso \code{\link{flywire_googledrive_data}}
 #' @export
-flywire_synapse_simplify <- function(x, method = c("cleft_scores","scores","mean"), collapse = TRUE){
+flywire_synapse_simplify <- function(x, method = c("cleft_scores","scores","mean"), collapse = TRUE, fast = TRUE){
   method = match.arg(method)
+  h_clust = ifelse(fast, fastcluster::hclust, stats::hclust)
 
   # for each neuron
   if("pre_id"%in%colnames(x)){
@@ -102,7 +104,7 @@ flywire_synapse_simplify <- function(x, method = c("cleft_scores","scores","mean
   })
 
   # Filter synapses
-  near = try(nabor::knn(query = xyz, data = xyz, k = min(100,nrow(xyz)), radius = 5000),silent = TRUE)
+  near = try(nabor::knn(query = xyz, data = xyz, k = min(50,nrow(xyz)), radius = 5000),silent = TRUE)
   if('try-error'%in%class(near)){
     syns = plyr::rbind.fill(pre,post)
     syns$cluster = NA
@@ -110,7 +112,7 @@ flywire_synapse_simplify <- function(x, method = c("cleft_scores","scores","mean
   }
   near$nn.dists[is.infinite(near$nn.dists)] = 5000
   near$nn.dists[is.na(near$nn.dists)] = 5000
-  hc = stats::hclust(dist(near$nn.dists))
+  hc = h_clust(dist(near$nn.dists))
   ct = dendextend::cutree(tree=hc, h = 2500)
   pre$cluster = ct
 

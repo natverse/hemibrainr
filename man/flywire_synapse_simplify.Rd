@@ -7,7 +7,8 @@
 flywire_synapse_simplify(
   x,
   method = c("cleft_scores", "scores", "mean"),
-  collapse = TRUE
+  collapse = TRUE,
+  fast = TRUE
 )
 }
 \arguments{
@@ -17,6 +18,8 @@ flywire_synapse_simplify(
 the meat data for each of these predicted synapses.}
 
 \item{collapse}{logical, whether or not to collapse synapses in the same cluster to a single synapse. If \code{FALSE} then cluster groupings are given in the returned \code{data.frame}.}
+
+\item{fast}{logical, whether or not to use \code{fastcluster::hclust} rather than \code{stats::hclust} to cluster synapses.}
 }
 \value{
 a \code{data.frame} of collapsed synapses.
