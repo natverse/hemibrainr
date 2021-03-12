@@ -118,7 +118,7 @@ googledrive_upload_neuronlistfh <- function(x,
     if(nrow(data.csv)){
       t.list.master = t.list.master[! basename(t.list.master) %in% data.csv$data]
     }else{
-      sub.data = googledrive::drive_ls(path = t.folder.data, team_drive = td)
+      sub.data = googledrive::drive_ls(path = t.folder.data, team_drive = td, n_max = 50000)
       t.list.master = t.list.master[! basename(t.list.master) %in% sub.data$name]
     }
   }
