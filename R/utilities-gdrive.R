@@ -476,12 +476,10 @@ gsheet_manipulation <- function(FUN,
     if(Verbose){
       g = tryCatch(FUN(...),
                    error = function(e){
-                     cat(as.character(e))
                      return({message(e);NULL})})
     }else{
       g = tryCatch(suppressMessages(FUN(...)),
                    error = function(e){
-                     cat(as.character(e))
                      return({warning(e);NULL})})
     }
     if(!is.null(g)){
