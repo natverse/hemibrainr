@@ -550,6 +550,24 @@ is64ToChar <- function(res){
   res
 }
 
+# hidden
+try_with_time_limit <- function(expr, cpu = Inf, elapsed = Inf, error = NULL, sleep = 0){
+  y <- try({setTimeLimit(cpu, elapsed); expr}, silent = TRUE)
+  if(inherits(y, "try-error")){
+    Sys.sleep(sleep)
+    error
+  }else{
+    y
+  }
+}
+
+# hidden
+fafb14_to_flywire_ids_timed <function(x, only.biggest = FALSE){
+  try_with_time_limit(fafbseg::fafb14_to_flywire_ids(x=x, only.biggest=only.biggest), elapsed = 1800, sleep =1)
+}
+
+
+
 
 
 

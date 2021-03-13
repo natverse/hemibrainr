@@ -501,6 +501,7 @@ gsheet_manipulation <- function(FUN,
       }
     }
   }
+  Sys.sleep(1)
   if(return){
     if(is.data.frame(g)){
       g = unlist_df(g)

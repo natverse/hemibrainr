@@ -679,7 +679,7 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
           if(sum(justskids)>0){
             if(Verbose) message("Geting flywire IDs for skids")
             replacement.ids = unlist(pbapply::pbsapply(gs.t[justskids,"skid"], function(x)
-              tryCatch(suppress(fafbseg::fafb14_to_flywire_ids(x, only.biggest = TRUE))$flywire.id,error=function(e) NA)))
+              tryCatch(suppress(fafb14_to_flywire_ids_timed(x, only.biggest = TRUE))$flywire.id,error=function(e) NA)))
             if(class(replacement.ids)=="try-error"){
               warning(replacement.ids)
             }else{
