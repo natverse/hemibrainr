@@ -114,6 +114,7 @@ flywire_synapse_simplify <- function(x, method = c("cleft_scores","scores","mean
   near$nn.dists[is.na(near$nn.dists)] = 5000
   hc = try(h_clust(dist(near$nn.dists)), silent = TRUE)
   if(inherits(hc, "try-error")){
+    ct = 1
     pre$cluster = 1
   }else{
     ct = dendextend::cutree(tree=hc, h = 2500)
