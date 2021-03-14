@@ -63,7 +63,7 @@ googledrive_upload_neuronlistfh <- function(x,
   if(nat::is.neuronlist(x)){
     temp = tempfile()
     if(dbClass!="DB1"){
-      temp.data.csv = paste0(temp,"/data.csv")
+      temp.data.csv = file.path(temp,"data.csv")
       temp.data = file.path(temp,"data")
       dir.create(temp.data)
       on.exit(unlink(temp, recursive=TRUE))
@@ -77,6 +77,7 @@ googledrive_upload_neuronlistfh <- function(x,
   }else{
     if(dbClass!="DB1"){
       temp.data = file.path(x,"data")
+      temp.data.csv = file.path(x,"/data.csv")
       message("data folder: ", temp.data)
     }else{
       temp.data = NULL
@@ -103,7 +104,7 @@ googledrive_upload_neuronlistfh <- function(x,
       data.csv = data.frame()
     }else{
       googledrive::drive_download(file = t.folder.csv, path = temp.data.csv, type = "csv", overwrite = TRUE, verbose = FALSE)
-      data.csv = readr::read_csv(temp.data.csv)
+      data.csv = tryCatch(readr::read_csv(temp.data.csv), error = function(e){message(e); data.frame()})
     }
   }
 
