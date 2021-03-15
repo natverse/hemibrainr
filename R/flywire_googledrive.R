@@ -711,7 +711,7 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
             sheet = tab,
             Verbose = FALSE)
         }
-        Sys.sleep(5)
+        try(Sys.sleep(5))
         # Now continue processing
         gs.t = gs.t[,colnames(gs.t)%in%chosen.columns]
         for(col in chosen.columns){

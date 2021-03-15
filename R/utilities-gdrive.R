@@ -140,7 +140,7 @@ googledrive_upload_neuronlistfh <- function(x,
                             error = function(e){
                               message(e)
                               error.files <<- c(error.files,t.neuron.fh.data.file)
-                              Sys.sleep(5)
+                              try(Sys.sleep(5))
                               NA
                             } )
         }
@@ -160,7 +160,7 @@ googledrive_upload_neuronlistfh <- function(x,
                           error = function(e){
                             message(e)
                             error.files <<- c(error.files,t.neuron.fh.data.file)
-                            Sys.sleep(5)
+                            try(Sys.sleep(5))
                             NA
                           } )
       }
@@ -175,7 +175,7 @@ googledrive_upload_neuronlistfh <- function(x,
         t.list.master = error.files
       }
       retry = retry + 1
-      Sys.sleep(60)
+      try(Sys.sleep(60))
     }
     readr::write_csv(x = data.csv, file = temp.data.csv)
   }
@@ -493,14 +493,14 @@ gsheet_manipulation <- function(FUN,
       if(Verbose){
         message("Google read/write failure(s), re-trying in ", sleep," seconds ...")
       }
-      Sys.sleep(sleep)
+      try(Sys.sleep(sleep))
       sleep = sleep + wait
       if(sleep > 600){
         slep <- 600
       }
     }
   }
-  Sys.sleep(1)
+  try(Sys.sleep(1))
   if(return){
     if(is.data.frame(g)){
       g = unlist_df(g)
