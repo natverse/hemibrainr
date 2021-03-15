@@ -62,6 +62,8 @@
 #' @param superUser if \code{FALSE} then you will only be given neurons flagged for your user. If \code{TRUE} then
 #' you will be given neurons flagged for any user. To select whether or not you want to look at neurons with no match, neurons with a match
 #' or either, use the \code{overwrite} argument.
+#' @param flywire.good logical, whether or not to only take 'well traced' flywire neurons, as annotated by the Drosophila Connectomics Group. This relies on the status column retreived
+#' by \ccode{flywire_meta}.
 #'
 #' @details Currently, the
 #'   \href{https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit#gid=0}{Google
@@ -565,7 +567,8 @@ fafb_matching <- function(ids = NULL,
                         column = NULL,
                         entry = NULL,
                         User = NULL,
-                        superUser = FALSE){
+                        superUser = FALSE,
+                        flywire.good = FALSE){
   repository = match.arg(repository)
   message("Matching ",repository," FAFB neurons (blue) to hemibrain neurons (red)")
   # Packages
@@ -649,7 +652,8 @@ fafb_matching <- function(ids = NULL,
   # choose ids
   selected = id_selector(gs=gs, ids=ids, id=id, overwrite = overwrite,
                          quality.field = quality.field, match.field = match.field,
-                         initials = initials, column = column, entry = entry, superUser = superUser)
+                         initials = initials, column = column, entry = entry, superUser = superUser,
+                         flywire.good = FALSE)
   # Make matches!
   match.more = TRUE
   while(match.more){
@@ -1757,7 +1761,8 @@ id_selector <- function(gs,
                         initials = NULL,
                         column = NULL,
                         entry = NULL,
-                        superUser = FALSE){
+                        superUser = FALSE,
+                        flywire.good = FALSE){
   id = match.arg(id)
   ids = id_okay(ids)
   overwrite = match.arg(overwrite)
@@ -1788,6 +1793,12 @@ id_selector <- function(gs,
     "enabled"
   }else{
     "disabled"
+  }
+  if(flywire.good & id%in%c("flywire.id","flywire.xyz")){
+    message("Only taking flywire neurons of completion status adequate/complete")
+    fw.meta = flywire_meta(sql=FALSE)
+    good.ids = subset(fw.meta, grepl("adequate|complete",fw.meta$status))
+    doit = subset(doit, doit[[id]]==good.ids)
   }
   message(sprintf("Reviewing made matches for %s %ss for user %s, with overwrite %s %s",
                   id.len,
