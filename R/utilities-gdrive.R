@@ -100,7 +100,7 @@ googledrive_upload_neuronlistfh <- function(x,
     }
     t.folder.csv= googledrive::drive_ls(path = gfolder, type = "csv", team_drive = td)
     t.folder.csv = subset(t.folder.csv, t.folder.csv$name == "data.csv")[1,]
-    if(is.na(t.folder.csv)){
+    if(is.na(t.folder.csv)[1]){
       data.csv = data.frame()
     }else{
       googledrive::drive_download(file = t.folder.csv, path = temp.data.csv, type = "csv", overwrite = TRUE, verbose = FALSE)

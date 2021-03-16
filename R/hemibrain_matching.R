@@ -677,6 +677,7 @@ fafb_matching <- function(ids = NULL,
                                        soma.size = 4000,
                                        show.columns = c("cell.type","ItoLee_Hemilineage","status", match.field, quality.field,"note"))
     selected = match_cycle[["selected"]]
+    selected$User = initials
     unsaved = match_cycle[["unsaved"]]
     if(length(unsaved)){
       plot_inspirobot()
@@ -684,10 +685,9 @@ fafb_matching <- function(ids = NULL,
       # Read!
       gs2 = hemibrain_match_sheet(selected_file = selected_file, sheet = repository)
       selected.unsaved = subset(selected, selected[[id]]%in%unsaved)
-      gs2[match(selected.unsaved[[id]],gs2[[id]]),match.field]= selected.unsaved[[match.field]]
-      gs2[match(selected.unsaved[[id]],gs2[[id]]),quality.field]= selected.unsaved[[quality.field]]
-      gs2[match(selected.unsaved[[id]],gs2[[id]]),"note"]= selected.unsaved[["note"]]
-      gs2[match(selected.unsaved[[id]],gs2[[id]]),"User"]= initials
+      for(i in unsaved){
+        gs2[gs2[[id]]%in%i,c(match.field,quality.field,"note","User")] = selected.unsaved[match(i,selected.unsaved[[id]]),c(match.field,quality.field,"note","User")]
+      }
       # Write!
       if(!identical(gs,gs2)){
         gsheet_update_cols(
@@ -1800,6 +1800,11 @@ id_selector <- function(gs,
     good.ids = subset(fw.meta, grepl("adequate|complete",fw.meta$status))
     doit = subset(doit, doit[[id]]==good.ids)
   }
+  if(!is.null(column)){
+    if(!is.null(entry)){
+      doit = subset(doit, doit[[column]]%in%entry)
+    }
+  }
   message(sprintf("Reviewing made matches for %s %ss for user %s, with overwrite %s %s",
                   id.len,
                   id,
@@ -1814,12 +1819,7 @@ id_selector <- function(gs,
   }
   ids = ids[!grepl("missing",ids)]
   ids = ids[!is.na(ids)]
-  # further narrow
-  selected = subset(doit, doit[[id]] %in% ids)
-  if(!is.null(column)+!is.null(entry)==2){
-    selected = subset(selected, selected[[column]]%in%entry)
-  }
-  if(!nrow(selected)){
+  if(!nrow(doit)){
     stop(sprintf("No matches to be made with the given IDs and parameters -
 id = '%s'; overwrite = '%s'; quality.field = '%s'; match.field = '%s'; initials = '%s'; column = '%s'; entry = '%s'",
                  id,
@@ -1830,17 +1830,17 @@ id = '%s'; overwrite = '%s'; quality.field = '%s'; match.field = '%s'; initials 
                  nullToNA(column),
                  nullToNA(entry)))
   }else{
-    message(sprintf("Out of %s possible %ss there are %s valid ones considering arguments User + superUser + overwrite",id.len,id,length(ids)))
+    message(sprintf("Out of %s possible %ss there are %s valid ones considering arguments User + superUser + overwrite + column + entry",id.len,id,length(ids)))
   }
-  # order selected
-  user.order = unique(c(initials,sort(selected$User)))
+  # order doit
+  user.order = unique(c(initials,sort(doit$User)))
   if(length(user.order)>1){
     message(sprintf("We will go through matches in this User order: ", initials, paste(user.order,collapse=", ")))
-    print(table(selected$User)[user.order])
+    print(table(doit$User)[user.order])
   }
-  selected = selected[order(match(selected$User,user.order)),]
+  doit = doit[order(match(doit$User,user.order)),]
   # return
-  selected
+  doit
 }
 
 # hidden
