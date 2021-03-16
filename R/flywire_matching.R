@@ -188,7 +188,8 @@ LR_matching <- function(ids = NULL,
                         column = NULL,
                         entry = NULL,
                         User = NULL,
-                        superUser = FALSE){
+                        superUser = FALSE,
+                        flywire.good = FALSE){
   message("Matching mirrored flywire neurons (blue) to non-mirrored flywire neurons (red)")
   # Packages
   if(!requireNamespace("elmr", quietly = TRUE)) {
@@ -246,7 +247,7 @@ LR_matching <- function(ids = NULL,
   # choose ids
   selected = id_selector(gs=gs, ids=ids, id=id, overwrite = overwrite,
                          quality.field = quality.field, match.field = match.field,
-                         initials = initials, column = column, entry = entry, superUser = superUser)
+                         initials = initials, column = column, entry = entry, superUser = superUser, flywire.good)
   # choose brain
   brain = elmr::FAFB.surf
   # Make matches!
@@ -273,15 +274,16 @@ LR_matching <- function(ids = NULL,
                                        show.columns = c("cell.type","ItoLee_Hemilineage","status", match.field, quality.field,"note"))
     selected = match_cycle[["selected"]]
     unsaved = match_cycle[["unsaved"]]
+    selected$User = initials
     if(length(unsaved)){
       plot_inspirobot()
       say_encouragement(initials)
       # Read!
       gs2 = hemibrain_match_sheet(selected_file = selected_file, sheet = "flywire")
-      gs2[match(gs[[id]],gs2[[id]]),match.field]= selected[[match.field]][match(gs2[[id]],selected[[id]])]
-      gs2[match(gs[[id]],gs2[[id]]),quality.field]=selected[[quality.field]][match(gs2[[id]],selected[[id]])]
-      gs2[match(gs[[id]],gs2[[id]]),"note"]=selected[["note"]][match(gs2[[id]],selected[[id]])]
-      gs2[match(gs[[id]],gs2[[id]]),"User"]= initials
+      selected.unsaved = subset(selected, selected[[id]]%in%unsaved)
+      for(i in unsaved){
+        gs2[gs2[[id]]%in%i,c(match.field,quality.field,"note","User")] = selected.unsaved[match(i,selected.unsaved[[id]]),c(match.field,quality.field,"note","User")]
+      }
       # Write!
       if(!identical(gs,gs2)){
         gsheet_update_cols(

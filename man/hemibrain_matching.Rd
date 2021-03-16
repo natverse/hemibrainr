@@ -19,7 +19,8 @@ LR_matching(
   column = NULL,
   entry = NULL,
   User = NULL,
-  superUser = FALSE
+  superUser = FALSE,
+  flywire.good = FALSE
 )
 
 hemibrain_matching(
@@ -119,6 +120,9 @@ for the matches you make in R. If set to \code{NULL} then all Users are 'selecte
 you will be given neurons flagged for any user. To select whether or not you want to look at neurons with no match, neurons with a match
 or either, use the \code{overwrite} argument.}
 
+\item{flywire.good}{logical, whether or not to only take 'well traced' flywire neurons, as annotated by the Drosophila Connectomics Group. This relies on the status column retreived
+by \ccode{flywire_meta}.}
+
 \item{hemibrain.nblast}{a FAFB (rows) - hemibrain (columns) normalised
 NBLAST matrix. By default this is read from the flyconnectome Team Drive.}
 
@@ -126,9 +130,6 @@ NBLAST matrix. By default this is read from the flyconnectome Team Drive.}
 CATMAID (using \code{catmaid::read.neurons.catmaid}) or flywire (using \code{flywire_neurons}) for matching. Alternatively,light level
 skeletons  (\code{"lm"}) from Dolan et al. and Frechter et al. 2019 (eLife), stored in the package \code{lhns} as
 \code{most.lhns}.}
-
-\item{flywire.good}{logical, whether or not to only take 'well traced' flywire neurons, as annotated by the Drosophila Connectomics Group. This relies on the status column retreived
-by \ccode{flywire_meta}.}
 }
 \description{
 Match up neurons between the hemibrain, FAFB and light level data and save the

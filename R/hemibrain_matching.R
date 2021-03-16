@@ -677,8 +677,8 @@ fafb_matching <- function(ids = NULL,
                                        soma.size = 4000,
                                        show.columns = c("cell.type","ItoLee_Hemilineage","status", match.field, quality.field,"note"))
     selected = match_cycle[["selected"]]
-    selected$User = initials
     unsaved = match_cycle[["unsaved"]]
+    selected$User = initials
     if(length(unsaved)){
       plot_inspirobot()
       say_encouragement(initials)
