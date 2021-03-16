@@ -1778,6 +1778,9 @@ id_selector <- function(gs,
                   & is.na(gs[[quality.field]]))
                   | gs[[quality.field]] %in% c("none","n","tract","t",""," ","NA","0")
                   | gs[[match.field]] %in% c("none","n","tract","t",""," ","NA","0"))
+    if(!nrow(doit)){
+      stop("No valid 'bad' neurons for matching could be found. Try a different set of arguments")
+    }
   }else if(overwrite=="FALSE"){
     doit = subset(gs, ( (is.na(gs[[match.field]]) | gs[[match.field]] == 0) & is.na(gs[[quality.field]])) )
   }else{ # review
@@ -1798,11 +1801,17 @@ id_selector <- function(gs,
     message("Only taking flywire neurons of completion status adequate/complete")
     fw.meta = flywire_meta(sql=FALSE)
     good.ids = subset(fw.meta, grepl("adequate|complete",fw.meta$status))
-    doit = subset(doit, doit[[id]]==good.ids)
+    doit = subset(doit, doit[[id]]%in%good.ids$flywire.id)
+    if(!nrow(doit)){
+      stop("No valid neurons for matching could be found adequate/complete in our flywire meta data (flywire_meta()). Try a different set of arguments, e.g. flywire.good = FALSE")
+    }
   }
   if(!is.null(column)){
     if(!is.null(entry)){
       doit = subset(doit, doit[[column]]%in%entry)
+      if(!nrow(doit)){
+        stop("No valid neurons for matching could be found with column: ", column, " with entry: ", entry," . Try a different set of arguments.")
+      }
     }
   }
   message(sprintf("Reviewing made matches for %s %ss for user %s, with overwrite %s %s",

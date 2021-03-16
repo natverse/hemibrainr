@@ -103,7 +103,7 @@ googledrive_upload_neuronlistfh <- function(x,
     if(is.na(t.folder.csv)[1]){
       data.csv = data.frame()
     }else{
-      googledrive::drive_download(file = t.folder.csv, path = temp.data.csv, type = "csv", overwrite = TRUE, verbose = FALSE)
+      googledrive::drive_download(file = t.folder.csv, path = temp.data.csv, overwrite = TRUE, verbose = FALSE)
       data.csv = tryCatch(readr::read_csv(temp.data.csv), error = function(e){message(e); data.frame()})
     }
   }
@@ -166,7 +166,7 @@ googledrive_upload_neuronlistfh <- function(x,
       }
     }
     success = basename(setdiff(t.list.master,error.files))
-    data.csv = rbind(data.csv, data = success)
+    data.csv = rbind(data.csv, data.frame(data = success))
     if(length(error.files)){
       if(retry==5){
         message("Failed to upload: ", length(error.files), ' retries exhausted')
@@ -274,7 +274,7 @@ googledrive_clean_neuronlistfh <- function(team_drive = hemibrainr_team_drive(),
   }
 
   # Get csv of data entries
-  temp = tempdir(check = FALSE)
+  temp = tempdir(check = TRUE)
   temp.data.csv = paste0(temp,"/data.csv")
   on.exit(unlink(temp, recursive=TRUE))
 
@@ -293,7 +293,7 @@ googledrive_clean_neuronlistfh <- function(team_drive = hemibrainr_team_drive(),
     if(is.na(t.folder.csv)){
       data.csv = data.frame()
     }else{
-      googledrive::drive_download(file = t.folder.csv, path = temp.data.csv, type = "csv", overwrite = TRUE, verbose = FALSE)
+      googledrive::drive_download(file = t.folder.csv, path = temp.data.csv,  overwrite = TRUE, verbose = FALSE)
       data.csv = readr::read_csv(temp.data.csv)
     }
   }
@@ -334,15 +334,17 @@ googledrive_clean_neuronlistfh <- function(team_drive = hemibrainr_team_drive(),
         }
       }
       if(nrow(data.csv)){
-        remove = setdiff(data$data, all.keys)
-        message("Cleaning out ", length(remove), " files")
-      }else{
+        remove = try(setdiff(data$data, all.keys))
+      }
+      if(!nrow(data.csv)||inherits("try-error",remove)){
         data = googledrive::drive_ls(path = googledrive::as_id(fdata$id), team_drive = team_drive)
         data = data[!grepl("\\.",data$name),]
         delete = data[!data$name%in%all.keys,]
         remove = rbind(remove, delete)
         remove = remove[!duplicated(remove$id),]
         message("Cleaning out ", nrow(remove), " files")
+      }else{
+        message("Cleaning out ", length(remove), " files")
       }
     }
     remove
