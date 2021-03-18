@@ -182,20 +182,6 @@ plot3d(nx, col="black", lwd  =2) # note, in flywire space
 
 ### Add flywire neurons to the Google Drive
 
-If you had to go to the hassle of skeletonising some flywire neurons that were not on the Google Drive, you don't want to have to do this again. To that end, you can add them to the Google Drive as so:
-
-```{r flywire_neurons_update, eval = FALSE}
-flywire_neurons_update(x = ids, .parallel = TRUE, OmitFailures = TRUE)
-# This can take a little while
-```
-
-You can also add flywire neurons to precomputed NBLASTs.
-
-```{r flywire_nblast_update, eval = FALSE}
-flywire_nblast_update(x = neurons, nblast = "hemibrain-flywire")
-# This can take a long while
-```
-
 These functions can take a long time to run. For example, if adding to the hemibrain-flywire NBLAST, all ~25k flywire neurons need to be read in order to calculate the NBLAST. You can also request that your flywire neurons are added to the precomputations we try to make en mass periodically for the Google drive, if you do not need your answer ASAP. You can do this as so:
 
 ```{r flywire_request, eval  = FALSE}
@@ -232,7 +218,7 @@ fafb_matching(repository = "flywire", overwrite = "mine_empty")
 LR_matching(overwrite = "mine_empty")
 
 # See the results of matching
-hemibrain_matched_new <- hemibrain_matches() 
+hemibrain_matched_new = hemibrain_matches() 
 ```
 
 What if the flywire neuron you want, is not available to match?

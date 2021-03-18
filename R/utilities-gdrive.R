@@ -166,7 +166,11 @@ googledrive_upload_neuronlistfh <- function(x,
       }
     }
     success = basename(setdiff(t.list.master,error.files))
-    data.csv = rbind(data.csv, data.frame(data = success))
+    if(nrow(data.csv)){
+      data.csv = rbind(data.csv, data.frame(data = success))
+    }else{
+      data.csv =  data.frame(data = success)
+    }
     if(length(error.files)){
       if(retry==5){
         message("Failed to upload: ", length(error.files), ' retries exhausted')
@@ -334,7 +338,7 @@ googledrive_clean_neuronlistfh <- function(team_drive = hemibrainr_team_drive(),
         }
       }
       if(nrow(data.csv)){
-        remove = try(setdiff(data$data, all.keys))
+        remove = try(setdiff(data.csv$data, all.keys))
       }
       if(!nrow(data.csv)||inherits("try-error",remove)){
         data = googledrive::drive_ls(path = googledrive::as_id(fdata$id), team_drive = team_drive)
@@ -342,16 +346,16 @@ googledrive_clean_neuronlistfh <- function(team_drive = hemibrainr_team_drive(),
         delete = data[!data$name%in%all.keys,]
         remove = rbind(remove, delete)
         remove = remove[!duplicated(remove$id),]
-        message("Cleaning out ", nrow(remove), " files")
+        message("cleaning out ", nrow(remove), " files")
       }else{
-        message("Cleaning out ", length(remove), " files")
+        message("cleaning out ", length(remove), " files")
       }
     }
     remove
   }
 
   # Find files to delete
-  message("Searching for files we might want to remove ...")
+  message("searching for files we might want to remove ...")
   if(is.null(local.path)&is.null(subfolder)){
     # Iterate to find .rds files
     remove = googledrive::as_dribble()
