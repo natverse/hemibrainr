@@ -63,7 +63,7 @@
 #' you will be given neurons flagged for any user. To select whether or not you want to look at neurons with no match, neurons with a match
 #' or either, use the \code{overwrite} argument.
 #' @param flywire.good logical, whether or not to only take 'well traced' flywire neurons, as annotated by the Drosophila Connectomics Group. This relies on the status column retreived
-#' by \ccode{flywire_meta}.
+#' by \code{flywire_meta}.
 #'
 #' @details Currently, the
 #'   \href{https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit#gid=0}{Google

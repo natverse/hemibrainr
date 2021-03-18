@@ -36,7 +36,7 @@ googledrive_upload_neuronlistfh <- function(x,
   # don't exhaust rate limit
   WriteObjects = match.arg(WriteObjects)
   dbClass = match.arg(dbClass)
-  if(grepl("\\.zip$",file)){
+  if(grepl("\\.zip$",file_name)){
     dbClass = "ZIP"
   }
   numCores = ifelse(numCores>10,10,numCores)
@@ -75,7 +75,7 @@ googledrive_upload_neuronlistfh <- function(x,
     }
     temp.nl = paste0(temp,"/",file_name)
     if(dbClass=="ZIP"){
-      nat::write.neurons(nl, file= temp.nl, format='qs', include.data.frame = TRUE)
+      nat::write.neurons(nl, dir= temp.nl, format='qs', include.data.frame = TRUE)
     }else{
       nl = nat::as.neuronlistfh(x, dbdir = temp.data, dbClass = dbClass, WriteObjects = "yes")
       nat::write.neuronlistfh(nl, file = temp.nl, overwrite=TRUE)

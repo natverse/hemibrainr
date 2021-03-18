@@ -121,7 +121,7 @@ you will be given neurons flagged for any user. To select whether or not you wan
 or either, use the \code{overwrite} argument.}
 
 \item{flywire.good}{logical, whether or not to only take 'well traced' flywire neurons, as annotated by the Drosophila Connectomics Group. This relies on the status column retreived
-by \ccode{flywire_meta}.}
+by \code{flywire_meta}.}
 
 \item{hemibrain.nblast}{a FAFB (rows) - hemibrain (columns) normalised
 NBLAST matrix. By default this is read from the flyconnectome Team Drive.}

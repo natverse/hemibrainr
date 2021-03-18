@@ -708,6 +708,7 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
           gs.t[justids,"flywire.xyz"] = replacement.xyz
         }
         # Change 0 to NA
+        gs.t$flywire.xyz = try(apply(nat::xyzmatrix(gs.t$flywire.xyz),1,paste_coords), silent = TRUE)
         gs.t$flywire.xyz[gs.t$flywire.xyz==paste_coords(matrix(NA,ncol=3))] = NA
         gs.t$flywire.id[gs.t$flywire.id==0]=NA
         # Write to google sheet
