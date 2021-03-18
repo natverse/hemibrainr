@@ -366,10 +366,14 @@ saveit <- function(..., file) {
 
 # remove filehash files
 remove_unused_filehash <- function(path,
-                                   dbClass = c("RDS", "RDS2", "DB1"),
+                                   dbClass = c("RDS", "RDS2", "DB1", "ZIP"),
                                    meta = NULL,
                                    id = NULL){
   dbClass = match.arg(dbClass)
+  if(dbClass=="ZIP"){
+    message("remove_unused_filehash not implemented fot .zip files supporting neuronlistz objects")
+    return(invisible())
+  }
   for(p in path){
     if(dbClass=="DB1"){
       files = list.files(path, pattern = ".rds$", full.names = TRUE)
@@ -465,13 +469,16 @@ download_neuron_obj_batch <- function(ids, numCores = 1, ratio = 1, save.obj = "
 # hidden
 update.neuronlistfh <- function(x,
                                 file,
-                                dbClass = c("RDS", "RDS2", "DB1","HDF5"),
+                                dbClass = c("RDS", "RDS2", "DB1","HDF5", "ZIP"),
                                 remote = NULL,
                                 localdir = NULL,
                                 pref.meta = NULL,
                                 meta = NULL,
                                 ...){
   dbClass = match.arg(dbClass)
+  if(grepl("\\.zip$",file)){
+    dbClass = "ZIP"
+  }
   if(dbClass=="DB1"){
     data = gsub("\\.rds","_datafile",rds)
     if(file.exists(paste0(data,"___LOCK"))){
@@ -488,15 +495,25 @@ update.neuronlistfh <- function(x,
     if(dbClass == "HDF5"){
       old.neurons = tryCatch(nat.hdf5::read.neurons.hdf5(file), error = function(e) {
         warning(e)
-        warning("Original neuron file cannot link to data, overwriting ...")
+        warning("original neuron file cannot link to data, overwriting ...")
+        NULL
+      })
+    }else if(dbClass == "ZIP"){
+      old.neurons = tryCatch(nat::neuronlistz(file), error = function(e) {
+        warning(e)
+        warning("original neuron file cannot link to data, overwriting ...")
         NULL
       })
     }else{
-      old.neurons = tryCatch(nat::read.neuronlistfh(file, localdir = localdir), error = function(e) NULL)
+      old.neurons = tryCatch(nat::read.neuronlistfh(file, localdir = localdir), error = function(e){
+        warning(e)
+        warning("original neuron file cannot link to data, overwriting ...")
+        NULL
+      })
     }
     old.neurons = tryCatch(old.neurons[!sapply(old.neurons, function(x) isFALSE(x))], error = function(e) {
       warning(e)
-      warning("Original neuron file cannot link to data, overwriting ...")
+      warning("original neuron file cannot link to data, overwriting ...")
       NULL
     })
     if(!is.null(old.neurons)||!length(old.neurons)){
@@ -507,7 +524,7 @@ update.neuronlistfh <- function(x,
     }
   }
   if(nat::is.neuronlist(x)){
-    if(dbClass=="DB1"){file.remove(data)}
+    if(dbClass=="DB1"){try(file.remove(data))}
     if(!is.null(meta)){
       if(!all(names(x)%in%rownames(meta))){
         stop("Each neuron name in x must be a rowname in meta")
@@ -518,8 +535,10 @@ update.neuronlistfh <- function(x,
       shared.cols = intersect(pref.meta,colnames(x[,]))
       x[,] = x[,shared.cols]
     }
-    if (dbClass == "HDF5"){
+    if(dbClass == "HDF5"){
       given.neurons = nat.hdf5::write.neurons.hdf5(x, file = data, ...)
+    }else if(dbClass == "ZIP"){
+      nat::write.neurons(given.neurons, file=file, format='qs', include.data.frame = TRUE, ...)
     }else{
       given.neurons = nat::as.neuronlistfh(x, dbdir = data, dbClass = dbClass, WriteObjects = WriteObjects, remote = remote, ...)
       if(dbClass=="DB1"){
@@ -529,7 +548,7 @@ update.neuronlistfh <- function(x,
       }
     }
   }else{
-    warning("Could not create neuronlistfh object")
+    warning("could not create neuronlistfh/z object")
   }
 }
 

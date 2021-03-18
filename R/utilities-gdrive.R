@@ -31,11 +31,14 @@ googledrive_upload_neuronlistfh <- function(x,
                                             folder = "flywire_neurons",
                                             subfolder = NULL,
                                             WriteObjects = c("missing","yes"),
-                                            dbClass = c("RDS", "RDS2", "DB1"),
+                                            dbClass = c("RDS", "RDS2", "DB1", "ZIP"),
                                             numCores = 1){
   # don't exhaust rate limit
   WriteObjects = match.arg(WriteObjects)
   dbClass = match.arg(dbClass)
+  if(grepl("\\.zip$",file)){
+    dbClass = "ZIP"
+  }
   numCores = ifelse(numCores>10,10,numCores)
   if(dbClass=="DB1"){
     clean = FALSE
@@ -62,7 +65,7 @@ googledrive_upload_neuronlistfh <- function(x,
   # Save locally
   if(nat::is.neuronlist(x)){
     temp = tempfile()
-    if(dbClass!="DB1"){
+    if(!dbClass%in%c("DB1","ZIP")){
       temp.data.csv = file.path(temp,"data.csv")
       temp.data = file.path(temp,"data")
       dir.create(temp.data)
@@ -70,25 +73,29 @@ googledrive_upload_neuronlistfh <- function(x,
     }else{
       temp.data = NULL
     }
-    temp.rds = paste0(temp,"/",file_name)
-    nl = nat::as.neuronlistfh(x, dbdir = temp.data, dbClass = dbClass, WriteObjects = "yes")
-    nat::write.neuronlistfh(nl, file = temp.rds, overwrite=TRUE)
+    temp.nl = paste0(temp,"/",file_name)
+    if(dbClass=="ZIP"){
+      nat::write.neurons(nl, file= temp.nl, format='qs', include.data.frame = TRUE)
+    }else{
+      nl = nat::as.neuronlistfh(x, dbdir = temp.data, dbClass = dbClass, WriteObjects = "yes")
+      nat::write.neuronlistfh(nl, file = temp.nl, overwrite=TRUE)
+    }
     local.path = NULL
   }else{
-    if(dbClass!="DB1"){
+    if(!dbClass%in%c("DB1","ZIP")){
       temp.data = file.path(x,"data")
       temp.data.csv = file.path(x,"/data.csv")
       message("data folder: ", temp.data)
     }else{
       temp.data = NULL
     }
-    temp.rds = list.files(x, pattern = ".rds$", full.names =TRUE)
-    message(".rds files: ", paste(temp.rds,collapse=", "))
+    temp.nl = list.files(x, pattern = ifelse(dbClass=="ZIP",".zip$",".rds$"), full.names =TRUE)
+    message(".rds files: ", paste(temp.nl,collapse=", "))
     local.path = x
   }
 
   # Get data folder
-  if(dbClass!="DB1"){
+  if(!dbClass%in%c("DB1","ZIP")){
     t.folder.data = googledrive::drive_ls(path = gfolder, type = "folder", team_drive = td)
     t.folder.data = subset(t.folder.data, t.folder.data$name == "data")[1,]
     if(is.na(t.folder.data$name)){
@@ -109,13 +116,13 @@ googledrive_upload_neuronlistfh <- function(x,
   }
 
   # Upload
-  if(dbClass!="DB1"){
+  if(!dbClass%in%c("DB1","ZIP")){
     t.list.master = list.files(temp.data,full.names = TRUE)
     error.files = upload = c()
   }else{
     t.list.master = NULL
   }
-  if(WriteObjects=="missing" & dbClass!="DB1"){
+  if(WriteObjects=="missing" & !dbClass%in%c("DB1","ZIP")){
     if(nrow(data.csv)){
       t.list.master = t.list.master[! basename(t.list.master) %in% data.csv$data]
     }else{
@@ -184,21 +191,21 @@ googledrive_upload_neuronlistfh <- function(x,
     readr::write_csv(x = data.csv, file = temp.data.csv)
   }
 
-  # upload .rds
-  for(rds in temp.rds){
-    file_name = basename(rds)
+  # upload neuronlist
+  for(nl.save in temp.nl){
+    file_name = basename(nl.save)
     gfile = subset(sub, sub$name == file_name )
     if(nrow(gfile)){
       save.position = googledrive::as_id(gfile[1,]$id)
     }else{
       save.position = gfolder
     }
-    google_drive_place(media = rds,
+    google_drive_place(media = nl.save,
                        path = save.position,
                        verbose = TRUE)
     # upload db
     if(dbClass=="DB1"){
-      nlfh = nat::read.neuronlistfh(rds)
+      nlfh = nat::read.neuronlistfh(nl.save)
       datafile = attributes(nlfh)$db@datafile
       file_name = basename(datafile)
       gfile = subset(sub, sub$name == file_name )
@@ -218,7 +225,7 @@ googledrive_upload_neuronlistfh <- function(x,
   }
 
   # Clean
-  if(clean & dbClass!="DB1"){
+  if(clean & !dbClass%in%c("DB1","ZIP")){
     message("Deleting unused file hash files for neurons ...")
     googledrive_clean_neuronlistfh(local.path = local.path,
                                    team_drive = hemibrainr_team_drive(),

@@ -93,7 +93,7 @@ elist = hemibrain_elist()
 # Let's count a strong connection as one that is 10-synapses strong and/or account for at least 1% of the downstream arbour's postsynapses:
 elist.strong = subset(elist, elist$count >= 10 | elist$norm >= 0.01)
 
-# Get a lot of meyta data for each hemibrain neuron
+# Get a lot of meta data for each hemibrain neuron
 hemi.meta = hemibrain_meta()
 ```
 
