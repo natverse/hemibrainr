@@ -218,9 +218,11 @@ googledrive_upload_neuronlistfh <- function(x,
                          path = save.position,
                          verbose = TRUE)
     }else{
-      google_drive_place(media = temp.data.csv,
-                         path = gfolder,
-                         verbose = TRUE)
+      if(file.exists(temp.data.csv)){
+        google_drive_place(media = temp.data.csv,
+                           path = gfolder,
+                           verbose = TRUE)
+      }
     }
   }
 
@@ -304,8 +306,12 @@ googledrive_clean_neuronlistfh <- function(team_drive = hemibrainr_team_drive(),
     if(is.na(t.folder.csv)){
       data.csv = data.frame()
     }else{
-      googledrive::drive_download(file = t.folder.csv, path = temp.data.csv,  overwrite = TRUE, verbose = FALSE)
-      data.csv = readr::read_csv(temp.data.csv)
+      if(file.exists(temp.data.csv)){
+        googledrive::drive_download(file = t.folder.csv, path = temp.data.csv,  overwrite = TRUE, verbose = FALSE)
+        data.csv = readr::read_csv(temp.data.csv)
+      }else{
+        data.csv = data.frame()
+      }
     }
   }
 
@@ -523,8 +529,8 @@ gsheet_manipulation <- function(FUN,
 }
 
 # hidden
-paste_coords <- function(xyz){
-  paste0("(",paste(xyz,sep=",",collapse=","),")")
+paste_coords <- function(xyz, sep = ", ", brackets = TRUE){
+  paste0(ifelse(brackets,"(",NULL),paste(xyz,sep=sep,collapse=sep),ifelse(brackets,")",NULL))
 }
 
 # write columns to gsheet
