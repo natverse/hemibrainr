@@ -582,7 +582,7 @@ try_with_time_limit <- function(expr, cpu = Inf, elapsed = Inf, error = NULL){
 
 # hidden
 fafb14_to_flywire_ids_timed <- function(x, only.biggest = FALSE){
-  try_with_time_limit(fafbseg::fafb14_to_flywire_ids(x=x, only.biggest=only.biggest), elapsed = 1800, error = NA)
+  try_with_time_limit(fafbseg::fafb14_to_flywire_ids(search=x, only.biggest=only.biggest), elapsed = 1800, error = NA)
 }
 
 
