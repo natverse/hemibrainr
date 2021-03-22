@@ -27,6 +27,7 @@ hemibrain_neurons(
   mirror = FALSE,
   dotprops = FALSE,
   swc = FALSE,
+  zip = FALSE,
   folder = "hemibrain_neurons/"
 )
 }
@@ -61,6 +62,9 @@ and \code{\link{hemibrain_flow_centrality}}}
 The dotprops object will be in JRC2018FIBF micron space.}
 
 \item{swc}{logical. When using neurons with \code{hemibrain_neurons} from the Google drive, whether to read \code{.swc} files (if \code{TRUE}), or a neuronlistfh object (default).}
+
+\item{zip}{logical. If \code{TRUE} then \code{nat::neuronlistz} is used to resad neurons from a \code{.zip} archive. Otherwise, \code{nat::neuronlistfh} is used to read neurons from a \code{.rds} file with a linked 'data' folder.
+The \code{.zip} method is preffered. Both methods load a dynamic neuronlist, which only loads skeleton data into memroy at the point where it is processed.}
 
 \item{folder}{the sub-folder in which to look for a \code{nat::neuronlistfh} .rds file and its data, representing hemibrain neurons. The function will look for this
 folder in the location: \code{hemibrainr:::good_savedir(local=local)},

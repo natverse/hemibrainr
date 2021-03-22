@@ -14,6 +14,7 @@ flywire_neurons(
     "JFRC2013", "JRC2018F", "FCWB"),
   mirror = FALSE,
   type = c("neurons", "swc", "dotprops", "cut_dotprops"),
+  zip = FALSE,
   ...
 )
 
@@ -24,6 +25,7 @@ flywire_request(
   gsheet = FALSE,
   selected_sheet = options()$flywire_flagged_gsheet,
   sheet = "flywire",
+  User = "hemibrainr",
   ...
 )
 }
@@ -42,6 +44,9 @@ have a predicted axon/dendrite split at \code{neuron$d$Label} for each point in 
 \item{type}{When using neurons with \code{flywire_neurons} from the Google drive a neuronlistfh object of neuron skeletons (default),
 the saved \code{.swc} files, a \code{nat::dotprops} objects or a \code{nat::dotprops object} cut to the hemibrain volume. Not all brainspaces supported.}
 
+\item{zip}{logical. If \code{TRUE} then \code{nat::neuronlistz} is used to resad neurons from a \code{.zip} archive. Otherwise, \code{nat::neuronlistfh} is used to read neurons from a \code{.rds} file with a linked 'data' folder.
+The \code{.zip} method is preffered. Both methods load a dynamic neuronlist, which only loads skeleton data into memroy at the point where it is processed.}
+
 \item{...}{Additional arguments passed to \code{nat::nlapply}.and/or \code{fafbseg::skeletor}.}
 
 \item{flywire.neurons}{a \code{neuronlist} of flywire neurons in FlyWire space. The \code{flywire_basics} function will calculate some useful meta-data, namely
@@ -57,6 +62,8 @@ the sheet specified by \code{selected_sheet}.}
 \item{selected_sheet}{the Google sheet onto which to add new flywire coordinate. I.e. \href{https://docs.google.com/spreadsheets/d/1rzG1MuZYacM-vbW7100aK8HeA-BY6dWAVXQ7TB6E2cQ/edit#gid=0}{Google sheet}.}
 
 \item{sheet}{the tab onto which to add your requests.}
+
+\item{User}{character, the user who is added new data.}
 }
 \value{
 A \code{neuronlist} object containing flywire skeletons. In the meta-data, it might be useful for some users to note that

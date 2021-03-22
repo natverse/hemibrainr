@@ -14,6 +14,8 @@
 #' have a predicted axon/dendrite split at \code{neuron$d$Label} for each point in its skeleton, created using \code{\link{flow_centrality}}.
 #' @param local \code{FALSE} or path. By default (\code{FALSE}) data is read from \code{options()$Drive_hemibrain_data}), but the user can specify an alternative path.
 #' @param mirror logical, whether or not to read neurons that have been mirrored (i.e. flipped to the 'other' brain hemisphere).
+#' @param zip logical. If \code{TRUE} then \code{nat::neuronlistz} is used to resad neurons from a \code{.zip} archive. Otherwise, \code{nat::neuronlistfh} is used to read neurons from a \code{.rds} file with a linked 'data' folder.
+#' The \code{.zip} method is preffered. Both methods load a dynamic neuronlist, which only loads skeleton data into memroy at the point where it is processed.
 #' @param flywire.neurons a \code{neuronlist} of flywire neurons in FlyWire space. The \code{flywire_basics} function will calculate some useful meta-data, namely
 #' a point in the primary neurite tract that can be used as a stable reference for this neuron.
 #' @param request a neuronlist, matrix of x,y,z position or flywire ID to add to a
@@ -25,6 +27,7 @@
 #' the sheet specified by \code{selected_sheet}.
 #' @param type When using neurons with \code{flywire_neurons} from the Google drive a neuronlistfh object of neuron skeletons (default),
 #' the saved \code{.swc} files, a \code{nat::dotprops} objects or a \code{nat::dotprops object} cut to the hemibrain volume. Not all brainspaces supported.
+#' @param User character, the user who is added new data.
 #' @param ... Additional arguments passed to \code{nat::nlapply}.and/or \code{fafbseg::skeletor}.
 #'
 #' @examples
@@ -91,9 +94,11 @@ flywire_neurons <- function(x = NULL,
                             brain = c("FlyWire", "JRCFIB2018Fraw","JRCFIB2018F","FAFB","FAFB14","JFRC2", "JFRC2013","JRC2018F","FCWB"),
                             mirror = FALSE,
                             type = c("neurons", "swc","dotprops","cut_dotprops"),
+                            zip = FALSE,
                             ...){
   brain = match.arg(brain)
   type = match.arg(type)
+  pattern = ifelse(zip,"zip","rds")
   if(type=="neurons"){
     type=""
   }
@@ -135,7 +140,14 @@ flywire_neurons <- function(x = NULL,
 
   # Read
   if(type=="swc"){
-    warning("Only native flywire neurons in FlyWire space supported when swc = TRUE")
+    if(brain!="FlyWire"){
+      brain = "FlyWire"
+      warning("Only native flywire neurons in FlyWire space supported when swc = TRUE")
+    }
+    if(zip){
+      warning("zip set to FALSE, when swc is TRUE")
+      zip = FALSE
+    }
     swc.folder = file.path(neuronsdir,"FlyWire","swc")
     swc.list = list.files(swc.folder, full.names = TRUE, pattern = "swc")
     if(!is.null(x)){
@@ -146,7 +158,7 @@ flywire_neurons <- function(x = NULL,
     neurons.fh[,] = fw.meta[match(names(neurons.fh),fw.meta$flywire.id),]
   }else{
     message("Loading ", fhdir)
-    filelist = list.files(path = fhdir, pattern = ".rds", full.names = TRUE)
+    filelist = list.files(path = fhdir, pattern = pattern, full.names = TRUE)
     if(type=="cut_dotprops"){
       filelist = filelist[grepl(type,filelist)]
     }else if (WithConnectors){
@@ -159,14 +171,18 @@ flywire_neurons <- function(x = NULL,
     filelist = sort(filelist,decreasing = TRUE)
     if(length(filelist)){
       fh.file = filelist[1]
-      neurons.fh = nat::read.neuronlistfh(fh.file)
+      if(zip){
+        neurons.flow.fh = nat::neuronlistz(fh.file)
+      }else{
+        neurons.flow.fh = nat::read.neuronlistfh(fh.file)
+      }
       test = tryCatch(neurons.fh[[1]], error = function(e){
         warning(e)
         try(file.remove(paste0(attributes(neurons.fh)$db@datafile,"___LOCK")), silent = TRUE)
       })
       attr(neurons.fh,"df") = neurons.fh[,]
     }else{
-      warning("neuronlistfh (.rds) file not found at: ", fhdir)
+      warning(pattern, " file for neuronlist not found at: ", fhdir)
       return(NULL)
     }
   }
@@ -231,6 +247,7 @@ flywire_request <- function(request,
                             gsheet = FALSE,
                             selected_sheet = options()$flywire_flagged_gsheet,
                             sheet = "flywire",
+                            User = "hemibrainr",
                             ...){
   if(!requireNamespace("fafbseg", quietly = TRUE)) {
     stop("Please install fafbseg using:\n", call. = FALSE,
@@ -295,7 +312,19 @@ flywire_request <- function(request,
     fw.xyz = setdiff(fw.xyz,gs$flywire.xyz)
     update = data.frame(User = "flywire", flywire.xyz = fw.xyz)
     for(col in setdiff(colnames(gs),colnames(update))){
-      update[[col]] = NA
+      if(col=="status"){
+        update[[col]] = "unassessed"
+      }else if(col=="workflow"){
+        update[[col]] = "trace"
+      }else if(col=="added_by"){
+        update[[col]] = User
+      }else if(col=="User"){
+        update[[col]] = User
+      }else if(col=="User"){
+        update[[col]] = randomwords(n=nrow(update),words= 2,collapse = "_")
+      }else{
+        update[[col]] = NA
+      }
     }
     update = update[,colnames(gs)]
   }else{
@@ -308,7 +337,7 @@ flywire_request <- function(request,
                         ss = selected_sheet,
                         sheet = sheet)
   }
-  message("FlyWire positions added")
+  message(sheet, ": ", nrow(update), " FlyWire positions added")
 }
 
 #' Read precomputed flywire data from the hemibrainr Google Drive
@@ -614,7 +643,7 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
         }
         # If flywire.svid missing, update
         bad.svids = (is.na(gs.t$flywire.svid)|gs.t$flywire.svid=="0")&!is.na(gs.t$flywire.xyz)
-        if(sum(bad.svids)>0){
+        if(sum(bad.svids)>0 & "flywire.svid"%in%colnames(gs.t)){
           gs.t$flywire.svid[bad.svids] = tryCatch(fafbseg::flywire_xyz2id(nat::xyzmatrix(gs.t$flywire.xyz[bad.svids]),
                                                                  root=FALSE,
                                                                  rawcoords = TRUE),
@@ -690,8 +719,8 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
           if(sum(justskids)>0){
             if(Verbose) message("Geting flywire IDs for skids")
             replacement.ids = unlist(pbapply::pbsapply(gs.t[justskids,"skid"], function(x)
-              tryCatch(suppress(fafb14_to_flywire_ids_timed(x, only.biggest = TRUE))$flywire.id,error=function(e) NA)))
-            if(class(replacement.ids)=="try-error"){
+              tryCatch(suppress(fafb14_to_flywire_ids_timed(x, only.biggest = TRUE))$flywire.id,error=function(e){message(e);NA})))
+            if(inherits(replacement.ids,"try-error")){
               warning(replacement.ids)
             }else{
               gs.t[justskids,"flywire.id"] = replacement.ids
@@ -704,11 +733,14 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
                   |is.na(gs.t$flywire.xyz)
                   &!is.na(gs.t$flywire.id))
           justids[is.na(justids)] = FALSE
-          replacement.xyz = meta[match(gs.t[justids,"flywire.id"],meta$flywire.id),]$flywire.xyz
-          gs.t[justids,"flywire.xyz"] = replacement.xyz
+          if(sum(justids)>0){
+            replacement.xyz = meta[match(gs.t[justids,"flywire.id"],meta$flywire.id),]$flywire.xyz
+            gs.t[justids,"flywire.xyz"] = replacement.xyz
+          }
         }
         # Change 0 to NA
-        gs.t$flywire.xyz = try(apply(nat::xyzmatrix(gs.t$flywire.xyz),1,paste_coords), silent = TRUE)
+        good.xyz = sapply(gs.t$flywire.xyz,function(x) length(tryCatch(nat::xyzmatrix(x),error = function(e) NA))==3)
+        gs.t$flywire.xyz[good.xyz] = try(apply(nat::xyzmatrix(gs.t$flywire.xyz[good.xyz]),1,paste_coords), silent = TRUE)
         gs.t$flywire.xyz[gs.t$flywire.xyz==paste_coords(matrix(NA,ncol=3))] = NA
         gs.t$flywire.id[gs.t$flywire.id==0]=NA
         # Write to google sheet

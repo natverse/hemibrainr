@@ -28,6 +28,8 @@
 #' folder in the location: \code{hemibrainr:::good_savedir(local=local)},
 #' by default the mounted Google drive (\code{options()$Gdrive_hemibrain_data}) or locally ((\code{options()$hemibrain_data}))
 #' @param swc logical. When using neurons with \code{hemibrain_neurons} from the Google drive, whether to read \code{.swc} files (if \code{TRUE}), or a neuronlistfh object (default).
+#' @param zip logical. If \code{TRUE} then \code{nat::neuronlistz} is used to resad neurons from a \code{.zip} archive. Otherwise, \code{nat::neuronlistfh} is used to read neurons from a \code{.rds} file with a linked 'data' folder.
+#' The \code{.zip} method is preffered. Both methods load a dynamic neuronlist, which only loads skeleton data into memroy at the point where it is processed.
 #' @param ... arguments passed to \code{neuprintr::neuprint_read_neurons}, \code{\link{hemibrain_remove_bad_synapses}}
 #'  and \code{\link{hemibrain_flow_centrality}}
 #'
@@ -365,11 +367,17 @@ hemibrain_neurons <- function(x = NULL,
                               mirror = FALSE,
                               dotprops = FALSE,
                               swc = FALSE,
+                              zip = FALSE,
                               folder = "hemibrain_neurons/"){
   brain = match.arg(brain)
   savedir = good_savedir(local = local)
   neuronsdir = file.path(savedir,folder)
+  pattern = ifelse(zip,"zip","rds")
   if(swc){
+    if(zip){
+      warning("zip set to FALSE, when swc is TRUE")
+      zip = FALSE
+    }
     swc.folder = file.path(options()$Gdrive_hemibrain_data,folder,"swc")
     swc.list = list.files(swc.folder, full.names = TRUE, pattern = "swc")
     if(!is.null(x)){
@@ -386,14 +394,18 @@ hemibrain_neurons <- function(x = NULL,
     }else{
       fhdir = file.path(neuronsdir,brain,"/")
     }
-    filelist = list.files(path = fhdir, pattern = ".rds", full.names = TRUE)
+    filelist = list.files(path = fhdir, pattern = pattern, full.names = TRUE)
     filelist = filelist[grepl("mirror",filelist)==mirror]
     filelist = sort(filelist,decreasing = TRUE)
     if(length(filelist)){
       fh.file = filelist[1]
-      neurons.flow.fh = nat::read.neuronlistfh(fh.file)
+      if(zip){
+        neurons.flow.fh = nat::neuronlistz(fh.file)
+      }else{
+        neurons.flow.fh = nat::read.neuronlistfh(fh.file)
+      }
     }else{
-      warning("neuronlistfh (.rds) file not found at: ", fhdir)
+      warning(pattern, " file for neuronlist not found at: ", fhdir)
       return(NULL)
     }
   }
