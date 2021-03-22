@@ -652,6 +652,7 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
                                                     warning(e)
                                                   })
         }
+        fids = NULL
         if(!all(is.na(gs.t$flywire.xyz))){
           # Get the ids that need to be updated
           fwids.old = gs.t$flywire.id
