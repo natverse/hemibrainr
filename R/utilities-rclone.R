@@ -2,7 +2,7 @@
 
 #' @name hemibrainr_set_drive
 #' @export
-hemibrainr_rclone <- function(Gdrive = "hemibrainr", path=file.path(getwd(),"hemibrainr_data/")){
+hemibrainr_rclone <- function(drive = "hemibrainr", path=file.path(getwd(),"hemibrainr_data/")){
   os = get_os()
   if(!dir.exists(path)){
     dir.create(path)

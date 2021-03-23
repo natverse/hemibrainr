@@ -11,10 +11,12 @@
 #'   data set are also available, including ones broken down by neuron
 #'   compartment.
 #'
-#' @param Gdrive name of the mounted Google drive. Can just be the name of a team
+#' @param drive name of the mounted Google or DropBox drive. Can just be the name of a team
 #' drive to be found in the standard location: \code{"/Volumes/GoogleDrive/Shared\ drives/"}.
 #' @param path path to your 'hemibrainr Google drive', either a mounted remote or a local copy.
 #' For example on a Mac, \href{https://support.google.com/drive/answer/7329379?authuser=2}{Google filestream} mounts it at: \code{/Volumes/GoogleDrive/Shared\ drives/}.
+#' @param drive.type the type of network drive to use. This must be a mounted drive, either a googledrive or dropbox, or soemthing configured with rclone. This is used when path is not given
+#' to try to find the path to hemibrainr data. If in doubt, try the googledrive option. Access to dropbox version of data available at special request.
 #' With \href{https://rclone.org/drive/}{rclone sheet} you can mount it wherever you like, by default hemibrainr expects it at:
 #' \code{file.path(getwd(),"hemibrainr_data/")}
 #'
@@ -69,12 +71,33 @@
 #' @seealso \code{\link{hemibrainr_googledrive_data}}
 #' @name hemibrainr_set_drive
 #' @export
-hemibrainr_set_drive <- function(Gdrive = "hemibrainr",
-                                 path = "/Volumes/GoogleDrive/Shared drives"){
-  if(!dir.exists(Gdrive)){
-    Gdrive = file.path(path, Gdrive)
+hemibrainr_set_drive <- function(drive = "hemibrainr",
+                                 path = NULL,
+                                 drive.type = c("googledrive","dropbox","rclone")){
+  drive.type = match.arg(drive.type)
+  os = get_os()
+  user = Sys.info()["user"]
+  if(is.null(path)){
+    if(drive.type=="googledrive"){
+      path = "/Volumes/GoogleDrive/Shared drives"
+    }else if(drive.type=="dropbox"){
+      dirs = list.dirs(sprintf("/Users/%s",user), recursive = FALSE)
+      boxes = dirs[grepl("\\/Dropbox",dirs)]
+      if(!length(boxes)){
+        stop("No Dropbox detected")
+      }
+      path = boxes[1]
+      if(length(boxes)>1){
+        warning("multiple Dropboxes detected. Use the argument 'path' to specify the desired Dropbox, for now we will use: ", path)
+      }
+    }else if(drive.type=="rclone"){
+      hemibrainr_rclone(drive=drive)
+    }
   }
-  options(Gdrive_hemibrain_data = file.path(Gdrive))
+  drive = file.path(path, drive)
+  if(drive.type!="rclone"){
+    options(Gdrive_hemibrain_data = file.path(drive))
+  }
   if(dir.exists(options()$Gdrive_hemibrain_data)){
     found = "found"
   }else{
