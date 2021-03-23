@@ -692,13 +692,15 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
               foreach.ids = NULL
             }
             fids = unlist(foreach.ids)
-            fids[is.na(fids)|is.nan(fids)] = "0"
-            replacement = fids[match(gs.n$flywire.xyz ,names(fids))]
-            coordsmissing = gs.n$flywire.xyz==paste_coords(matrix(NA,ncol=3))
-            coordsmissing[is.na(gs.n$flywire.xyz)] = TRUE
-            coordsmissing[is.na(replacement)] = TRUE
-            replacement[coordsmissing] = gs.n$flywire.id[coordsmissing]
-            gs.t$flywire.id[fwids.need.a.look] = replacement
+            if(!is.null(fids)){
+              fids[is.na(fids)|is.nan(fids)] = "0"
+              replacement = fids[match(gs.n$flywire.xyz ,names(fids))]
+              coordsmissing = gs.n$flywire.xyz==paste_coords(matrix(NA,ncol=3))
+              coordsmissing[is.na(gs.n$flywire.xyz)] = TRUE
+              coordsmissing[is.na(replacement)] = TRUE
+              replacement[coordsmissing] = gs.n$flywire.id[coordsmissing]
+              gs.t$flywire.id[fwids.need.a.look] = replacement
+            }
           }
         }
         # If ID is given and no xyz
@@ -720,7 +722,7 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
           if(sum(justskids)>0){
             if(Verbose) message("Geting flywire IDs for skids")
             replacement.ids = unlist(pbapply::pbsapply(gs.t[justskids,"skid"], function(x)
-              tryCatch(suppress(fafb14_to_flywire_ids_timed(x, only.biggest = TRUE))$flywire.id,error=function(e){message(e);NA})))
+              tryCatch(fafb14_to_flywire_ids_timed(x, only.biggest = TRUE)$flywire.id,error=function(e){warning(e);NA})))
             if(inherits(replacement.ids,"try-error")){
               warning(replacement.ids)
             }else{
@@ -741,7 +743,9 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
         }
         # Change 0 to NA
         good.xyz = sapply(gs.t$flywire.xyz,function(x) length(tryCatch(nat::xyzmatrix(x),error = function(e) NA))==3)
-        gs.t$flywire.xyz[good.xyz] = try(apply(nat::xyzmatrix(gs.t$flywire.xyz[good.xyz]),1,paste_coords), silent = TRUE)
+        if(sum(good.xyz)){
+          gs.t$flywire.xyz[good.xyz] = try(apply(nat::xyzmatrix(gs.t$flywire.xyz[good.xyz]),1,paste_coords), silent = TRUE)
+        }
         gs.t$flywire.xyz[gs.t$flywire.xyz==paste_coords(matrix(NA,ncol=3))] = NA
         gs.t$flywire.id[gs.t$flywire.id==0]=NA
         # Write to google sheet
