@@ -75,7 +75,7 @@ googledrive_upload_neuronlistfh <- function(x,
     }
     temp.nl = paste0(temp,"/",file_name)
     if(dbClass=="ZIP"){
-      nat::write.neurons(nl, dir= temp.nl, format='qs', include.data.frame = TRUE)
+      nat::write.neurons(nl, dir= temp.nl, format='qs', include.data.frame = TRUE, Force = TRUE)
     }else{
       nl = nat::as.neuronlistfh(x, dbdir = temp.data, dbClass = dbClass, WriteObjects = "yes")
       nat::write.neuronlistfh(nl, file = temp.nl, overwrite=TRUE)
