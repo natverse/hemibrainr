@@ -177,7 +177,7 @@ flywire_neurons <- function(x = NULL,
         neurons.flow.fh = nat::read.neuronlistfh(fh.file)
       }
       test = tryCatch(neurons.fh[[1]], error = function(e){
-        warning(e)
+        warning(as.character(e))
         try(file.remove(paste0(attributes(neurons.fh)$db@datafile,"___LOCK")), silent = TRUE)
       })
       attr(neurons.fh,"df") = neurons.fh[,]
@@ -648,8 +648,8 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
                                                                  root=FALSE,
                                                                  rawcoords = TRUE),
                                                   error = function(e){
+                                                    warning(as.character(e))
                                                     NA
-                                                    warning(e)
                                                   })
         }
         fids = NULL
@@ -722,7 +722,7 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
           if(sum(justskids)>0){
             if(Verbose) message("Geting flywire IDs for skids")
             replacement.ids = unlist(pbapply::pbsapply(gs.t[justskids,"skid"], function(x)
-              tryCatch(fafb14_to_flywire_ids_timed(x, only.biggest = TRUE)$flywire.id,error=function(e){warning(e);NA})))
+              tryCatch(suppress(fafb14_to_flywire_ids_timed(x, only.biggest = TRUE)$flywire.id),error=function(e){warning(as.character(e));NA})))
             if(inherits(replacement.ids,"try-error")){
               warning(replacement.ids)
             }else{
