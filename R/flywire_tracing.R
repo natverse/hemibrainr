@@ -74,41 +74,45 @@
 flywire_tracing_sheet <- function(ws,
                                   regex = FALSE,
                                   open=FALSE,
-                                  selected_sheet = options()$flywire_lineages_gsheet,
+                                  selected_sheet = options()$flywire_lineages_gsheets,
                                   Verbose = TRUE,
                                   ...) {
-  if(open&interactive()){
-    u= sprintf("https://docs.google.com/spreadsheets/d/%s/edit", selected_sheet)
-    sel=regex_tab_names(regex=ws,selected_sheet=selected_sheet,...)
-    if(nrow(sel)>1) {
-      warning("Multiple matches. Keeping first: ", paste(sel$name, collapse = ','))
-      sel=sel[1,,drop=F]
-    }
-    uu=paste0(u, "#gid=", sel$id)
-    utils::browseURL(uu)
-  }else{
-    if(regex){
+  data = data.frame()
+  for(ss in selected_sheet){
+    if(open&interactive()){
+      u= sprintf("https://docs.google.com/spreadsheets/d/%s/edit", selected_sheet)
       sel=regex_tab_names(regex=ws,selected_sheet=selected_sheet,...)
       if(nrow(sel)>1) {
         warning("Multiple matches. Keeping first: ", paste(sel$name, collapse = ','))
         sel=sel[1,,drop=F]
       }
-      ws = sel$name
+      uu=paste0(u, "#gid=", sel$id)
+      utils::browseURL(uu)
+    }else{
+      if(regex){
+        sel=regex_tab_names(regex=ws,selected_sheet=selected_sheet,...)
+        if(nrow(sel)>1) {
+          warning("Multiple matches. Keeping first: ", paste(sel$name, collapse = ','))
+          sel=sel[1,,drop=F]
+        }
+        ws = sel$name
+      }
+      gs = data.frame(stringsAsFactors = FALSE)
+      for(w in ws){
+        gm = gsheet_manipulation(FUN = googlesheets4::read_sheet,
+                                 wait = 20,
+                                 ss = selected_sheet,
+                                 guess_max = 3000,
+                                 sheet = w,
+                                 return = TRUE,
+                                 Verbose = Verbose,
+                                 ...)
+        gs = plyr::rbind.fill(gs, gm)
+      }
+      data = plyr::rbind.fill(data, gs)
     }
-    gs = data.frame(stringsAsFactors = FALSE)
-    for(w in ws){
-      gm = gsheet_manipulation(FUN = googlesheets4::read_sheet,
-                          wait = 20,
-                          ss = selected_sheet,
-                          guess_max = 3000,
-                          sheet = w,
-                          return = TRUE,
-                          Verbose = Verbose,
-                          ...)
-      gs = plyr::rbind.fill(gs, gm)
-    }
-    gs
   }
+  data
 }
 
 # hidden
@@ -126,32 +130,38 @@ regex_tab_names <- function(regex, selected_sheet, ...){
 #' @export
 #' @rdname flywire_tracing_sheet
 flywire_tracing_sheets <- memoise::memoise(function(ws = NULL,
-                                                    selected_sheet = options()$flywire_lineages_gsheet){
+                                                    selected_sheet = options()$flywire_lineages_gsheets){
   flywire_tracing_sheets.now(ws = ws, selected_sheet=selected_sheet)
 },  ~memoise::timeout(30*60))
 
 # hidden
 flywire_tracing_sheets.now <- function(ws = NULL,
-                                      selected_sheet = options()$flywire_lineages_gsheet){
-  if(!is.null(ws)){
-    sel=regex_tab_names(regex=ws,selected_sheet=selected_sheet)
-    tabs=sel$name
-  }else{
-    tabs=gsheet_manipulation(FUN = googlesheets4::sheet_names,
-                                                    ss = selected_sheet,
-                                                    return = TRUE)
+                                      selected_sheet = options()$flywire_lineages_gsheets){
+
+  data = data.frame()
+  for(ss in selected_sheet){
+    if(!is.null(ws)){
+      sel=regex_tab_names(regex=ws,selected_sheet=ss)
+      tabs=sel$name
+    }else{
+      tabs=gsheet_manipulation(FUN = googlesheets4::sheet_names,
+                               ss = selected_sheet,
+                               return = TRUE)
+    }
+    pb = progress::progress_bar$new(
+      format = "  downloading :what [:bar] :percent eta: :eta",
+      clear = FALSE, total = length(tabs))
+    tracing.list = list()
+    for(tab in tabs){
+      pb$tick(tokens = list(what = paste0(ss,": ", tab)))
+      gs.lin = flywire_tracing_sheet(ws = tab, selected_sheet=ss, Verbose = FALSE)
+      gs.lin$ws = tab
+      tracing.list[[tab]] = gs.lin
+    }
+    df = do.call(plyr::rbind.fill,tracing.list)
+    data = plyr::rbind(data,df)
   }
-  pb = progress::progress_bar$new(
-    format = "  downloading :what [:bar] :percent eta: :eta",
-    clear = FALSE, total = length(tabs))
-  tracing.list = list()
-  for(tab in tabs){
-    pb$tick(tokens = list(what = tab))
-    gs.lin = flywire_tracing_sheet(ws = tab, selected_sheet=selected_sheet, Verbose = FALSE)
-    gs.lin$ws = tab
-    tracing.list[[tab]] = gs.lin
-  }
-  do.call(plyr::rbind.fill,tracing.list)
+  data
 }
 
 #' @export
@@ -307,7 +317,7 @@ flywire_tracing_update <- function(tab,
 flywire_tracing_standardise <- function(ws = NULL,
                                         regex = FALSE,
                                         field = "flywire.id",
-                                        selected_sheets = options()$flywire_lineages_gsheet,
+                                        selected_sheets = options()$flywire_lineages_gsheets,
                                         Verbose = TRUE,
                                         whimsy = FALSE,
                                         reorder = TRUE,
