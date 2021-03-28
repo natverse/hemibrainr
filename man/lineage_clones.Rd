@@ -2,6 +2,7 @@
 % Please edit documentation in R/lineage_clones.R
 \name{lineage_clones}
 \alias{lineage_clones}
+\alias{lineage_converter}
 \title{Download light-level lineage clone data from Ito et al. 2013 or Yu et al. 2013}
 \usage{
 lineage_clones(
@@ -10,6 +11,13 @@ lineage_clones(
   brain = c("FAFB14", "FlyWire", "JRCFIB2018Fraw", "JRCFIB2018F", "FAFB", "JFRC2",
     "JFRC2013", "JRC2018F", "FCWB"),
   dataset = c("Ito", "Lee")
+)
+
+lineage_converter(
+  x,
+  from = c("ItoLee_Hemilineage", "cellBodyFiber", "ItoLee_Lineage",
+    "Hartenstein_Lineage", "Hartenstein_Hemilineage"),
+  to = "Hartenstein_Hemilineage"
 )
 }
 \arguments{
