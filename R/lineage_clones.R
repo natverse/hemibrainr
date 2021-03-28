@@ -126,6 +126,7 @@ lineage_clones <- function(x = NULL,
 }
 
 #'@export
+#'@rdname lineage_clones
 lineage_converter <- function(x, from = c("ItoLee_Hemilineage", "cellBodyFiber", "ItoLee_Lineage", "Hartenstein_Lineage", "Hartenstein_Hemilineage"), to = 'Hartenstein_Hemilineage'){
   from = match.arg(from)
   hemibrainr::hemibrain_hemilineages[match(x, hemibrainr::hemibrain_hemilineages[[from]]),colnames(hemibrainr::hemibrain_hemilineages)%in%to]
