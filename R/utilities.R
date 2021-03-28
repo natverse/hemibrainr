@@ -371,7 +371,7 @@ remove_unused_filehash <- function(path,
                                    id = NULL){
   dbClass = match.arg(dbClass)
   if(dbClass=="ZIP"){
-    message("remove_unused_filehash not implemented fot .zip files supporting neuronlistz objects")
+    message("remove_unused_filehash not implemented for .zip files supporting neuronlistz objects")
     return(invisible())
   }
   for(p in path){
@@ -529,7 +529,8 @@ update.neuronlistfh <- function(x,
       if(!all(names(x)%in%rownames(meta))){
         stop("Each neuron name in x must be a rowname in meta")
       }
-      x[,] = meta[names(x),]
+      in.meta = names(x) %in% rownames(meta)
+      x[in.meta,] = meta[names(x)[in.meta],]
     }
     if(!is.null(pref.meta)){
       shared.cols = intersect(pref.meta,colnames(x[,]))

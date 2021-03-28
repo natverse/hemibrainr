@@ -865,7 +865,7 @@ matches_update <- function(matching_sheet = options()$hemibrainr_matching_gsheet
   }
   tracing.list = list()
   for(selected_sheet in selected_sheets){
-    ## Read Google sheets and extract glywire neuron positions
+    ## Read Google sheets and extract flywire neuron positions
     tabs = gsheet_manipulation(FUN = googlesheets4::sheet_names,
                                ss = selected_sheet,
                                return = TRUE,
@@ -878,7 +878,7 @@ matches_update <- function(matching_sheet = options()$hemibrainr_matching_gsheet
       gs.t = gs.t.current = flywire_tracing_sheet(ws = tab, selected_sheet=selected_sheet, Verbose = FALSE)
       used.cols = colnames(gs.t.current)
       field = match.field
-      if(field=="CATMAID"){ # for historic reasons. Chould fix.
+      if(field=="CATMAID"){ # for historic reasons. Should fix.
         field = "FAFB"
       }
       match.column = paste0(field,".match")

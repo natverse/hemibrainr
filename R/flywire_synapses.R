@@ -84,7 +84,7 @@ flywire_synapse_simplify <- function(x, method = c("cleft_scores","scores","mean
         y = flywire_synapse_simplify(x=z, method=method)
         res[[preid]]=y
       }
-      return(do.call(plyr::rbind,res))
+      return(do.call(plyr::rbind.fill,res))
     }
   }
 

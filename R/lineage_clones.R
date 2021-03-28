@@ -9,6 +9,8 @@
 #' @param brain the brainspace in which hemibrain neurons have been registered. Defaults to raw voxel space for the FlyWire project.
 #' @param dataset whether to get clonal data from Ito et al. 2013 \code{"Ito"} or Yu et al. 2013 \code{"Lee"}.
 #' @param local \code{FALSE} or path. By default (\code{FALSE}) data is read from \code{options()$Drive_hemibrain_data}), but the user can specify an alternative path.
+#' @param from the name system in which you can find \code{x}. One of: cellBodyFiber, ItoLee_Lineage, ItoLee_Hemilineage, Hartenstein_Lineage, Hartenstein_Hemilineage
+#' @param to the lineage name system you want to move to, can be multiple of: cellBodyFiber, ItoLee_Lineage, ItoLee_Hemilineage, Hartenstein_Lineage, Hartenstein_Hemilineage
 #'
 #' @references Ito M, Masuda N, Shinomiya K, Endo K, Ito K.
 #' Systematic analysis of neural projections reveals clonal composition of the Drosophila brain.
@@ -66,7 +68,7 @@
 ##' }
 #'@name lineage_clones
 #'@export
-#'@seealso \code{\link{hemibrain_neurons}}, \code{\link{flywire_neurons}}
+#'@seealso \code{\link{hemibrain_neurons}}, \code{\link{flywire_neurons}}, \code{\link{hemibrain_hemilineages}}
 lineage_clones <- function(x = NULL,
                            local = FALSE,
                            brain = c("FAFB14", "FlyWire", "JRCFIB2018Fraw","JRCFIB2018F","FAFB","JFRC2", "JFRC2013","JRC2018F","FCWB"),
@@ -122,3 +124,12 @@ lineage_clones <- function(x = NULL,
   }
   neurons.fh
 }
+
+#'@export
+lineage_converter <- function(x, from = c("ItoLee_Hemilineage", "cellBodyFiber", "ItoLee_Lineage", "Hartenstein_Lineage", "Hartenstein_Hemilineage"), to = 'Hartenstein_Hemilineage'){
+  from = match.arg(from)
+  hemibrainr::hemibrain_hemilineages[match(x, hemibrainr::hemibrain_hemilineages[[from]]),colnames(hemibrainr::hemibrain_hemilineages)%in%to]
+}
+
+
+

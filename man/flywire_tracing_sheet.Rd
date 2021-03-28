@@ -13,14 +13,14 @@ flywire_tracing_sheet(
   ws,
   regex = FALSE,
   open = FALSE,
-  selected_sheet = options()$flywire_lineages_gsheet,
+  selected_sheet = options()$flywire_lineages_gsheets,
   Verbose = TRUE,
   ...
 )
 
 flywire_tracing_sheets(
   ws = NULL,
-  selected_sheet = options()$flywire_lineages_gsheet
+  selected_sheet = options()$flywire_lineages_gsheets
 )
 
 flywire_in(
@@ -46,7 +46,7 @@ flywire_tracing_standardise(
   ws = NULL,
   regex = FALSE,
   field = "flywire.id",
-  selected_sheets = options()$flywire_lineages_gsheet,
+  selected_sheets = options()$flywire_lineages_gsheets,
   Verbose = TRUE,
   whimsy = FALSE,
   reorder = TRUE,

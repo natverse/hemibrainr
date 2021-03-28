@@ -20,6 +20,10 @@ lineage_clones(
 \item{brain}{the brainspace in which hemibrain neurons have been registered. Defaults to raw voxel space for the FlyWire project.}
 
 \item{dataset}{whether to get clonal data from Ito et al. 2013 \code{"Ito"} or Yu et al. 2013 \code{"Lee"}.}
+
+\item{from}{the name system in which you can find \code{x}. One of: cellBodyFiber, ItoLee_Lineage, ItoLee_Hemilineage, Hartenstein_Lineage, Hartenstein_Hemilineage}
+
+\item{to}{the lineage name system you want to move to, can be multiple of: cellBodyFiber, ItoLee_Lineage, ItoLee_Hemilineage, Hartenstein_Lineage, Hartenstein_Hemilineage}
 }
 \value{
 A \code{neuronlist} object containing point clouds for neuron lineage clones. In the meta-data, it might be useful for some users to note that
@@ -84,5 +88,5 @@ Clonal development and organization of the adult Drosophila central brain. Curr 
 doi: 10.1016/j.cub.2013.02.057. Epub 2013 Mar 28. PMID: 23541733; PMCID: PMC3637848.
 }
 \seealso{
-\code{\link{hemibrain_neurons}}, \code{\link{flywire_neurons}}
+\code{\link{hemibrain_neurons}}, \code{\link{flywire_neurons}}, \code{\link{hemibrain_hemilineages}}
 }

@@ -159,7 +159,7 @@ flywire_tracing_sheets.now <- function(ws = NULL,
       tracing.list[[tab]] = gs.lin
     }
     df = do.call(plyr::rbind.fill,tracing.list)
-    data = plyr::rbind(data,df)
+    data = plyr::rbind.fill(data,df)
   }
   data
 }

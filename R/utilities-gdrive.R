@@ -63,6 +63,7 @@ googledrive_upload_neuronlistfh <- function(x,
   sub = googledrive::drive_ls(path = gfolder, team_drive = td)
 
   # Save locally
+  temp.data.csv = "no_data"
   if(nat::is.neuronlist(x)){
     temp = tempfile()
     if(!dbClass%in%c("DB1","ZIP")){
