@@ -7,6 +7,7 @@
 #' @param Label defaults to 1, so distances to soma are chiosen. If 7, then distance from primary neurite's branchpoint.
 #' @param graph.distance logical, whether to use geodesic distance in terms of node number (\code{TRUE}) or real unit distance.
 #' @param ... methods passed to \code{nat::nlapply}
+#' @export
 #' @name geodesic_distance
 geodesic_distance <- function(x, graph.distance=TRUE, Label = 1, ...) UseMethod("geodesic_distance")
 
