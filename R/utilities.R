@@ -527,7 +527,7 @@ update.neuronlistfh <- function(x,
     if(dbClass=="DB1"){try(file.remove(data))}
     if(!is.null(meta)){
       if(!all(names(x)%in%rownames(meta))){
-        stop("Each neuron name in x must be a rowname in meta")
+        warning("Each neuron name in x should be a rowname in meta")
       }
       in.meta = names(x) %in% rownames(meta)
       x[in.meta,] = meta[names(x)[in.meta],]
