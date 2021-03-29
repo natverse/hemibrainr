@@ -4,7 +4,7 @@
 \alias{geodesic_distance}
 \alias{geodesic_distance.neuron}
 \alias{geodesic_distance.neuronlist}
-\title{Calculate a connectivity similarity score between two connectivity profiles}
+\title{Calculate the geodesic distance through an arbour between synapses.}
 \usage{
 geodesic_distance(x, graph.distance = TRUE, Label = 1, ...)
 
@@ -22,5 +22,5 @@ geodesic_distance(x, graph.distance = TRUE, Label = 1, ...)
 \item{...}{methods passed to \code{nat::nlapply}}
 }
 \description{
-Calculate a similarity score between connectivity matrices that penalises small differences between low and does not heavily penalise large differences between high weights. Algorithm from Jarrell et al. 2012.
+Calculate the geodesic distance through an arbour between synapses.
 }
