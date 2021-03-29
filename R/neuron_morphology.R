@@ -1,8 +1,8 @@
 # function to do with neuron morphology
 
-#' Calculate a connectivity similarity score between two connectivity profiles
+#' Calculate the geodesic distance through an arbour between synapses.
 #'
-#' @description Calculate a similarity score between connectivity matrices that penalises small differences between low and does not heavily penalise large differences between high weights. Algorithm from Jarrell et al. 2012.
+#' @description Calculate the geodesic distance through an arbour between synapses.
 #' @param x a \code{neuron} or \code{neuronlist} object.
 #' @param Label defaults to 1, so distances to soma are chiosen. If 7, then distance from primary neurite's branchpoint.
 #' @param graph.distance logical, whether to use geodesic distance in terms of node number (\code{TRUE}) or real unit distance.
