@@ -145,7 +145,7 @@ flywire_tracing_sheets.now <- function(ws = NULL,
       tabs=sel$name
     }else{
       tabs=gsheet_manipulation(FUN = googlesheets4::sheet_names,
-                               ss = selected_sheet,
+                               ss = ss,
                                return = TRUE)
     }
     pb = progress::progress_bar$new(
