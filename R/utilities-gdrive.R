@@ -40,7 +40,7 @@ googledrive_upload_neuronlistfh <- function(x,
     dbClass = "ZIP"
   }
   numCores = ifelse(numCores>10,10,numCores)
-  if(dbClass=="DB1"){
+  if(dbClass%in%c("DB1","ZIP")){
     clean = FALSE
   }
 
