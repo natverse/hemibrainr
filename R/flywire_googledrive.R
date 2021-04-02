@@ -699,7 +699,7 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
               coordsmissing[is.na(gs.n$flywire.xyz)] = TRUE
               coordsmissing[is.na(replacement)] = TRUE
               replacement[coordsmissing] = gs.n$flywire.id[coordsmissing]
-              gs.t$flywire.id[fwids.need.a.look] = replacement
+              gs.t$flywire.id[fwids.need.a.look] = as.character(replacement)
             }
           }
         }
@@ -708,7 +708,7 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
         if(sum(bad.xyz)>0){
           ids.fresh = try(fafbseg::flywire_latestid(gs.t$flywire.id[bad.xyz]),silent = TRUE)
           if(!"try-error"%in%class(ids.fresh)){
-            gs.t$flywire.id[bad.xyz] = ids.fresh
+            gs.t$flywire.id[bad.xyz] = as.character(ids.fresh)
           }else{
             warning(ids.fresh)
           }
@@ -716,7 +716,7 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
         # If only skid given try and guess flywire.id
         if("skid"%in%used.cols){
           justskids=((gs.t$flywire.xyz==paste_coords(matrix(NA,ncol=3))|is.na(gs.t$flywire.xyz))
-                     &(is.na(gs.t$flywire.id)|gs.t$flywire.id==0)
+                     &(is.na(gs.t$flywire.id)|gs.t$flywire.id=='0')
                      &!is.na(gs.t$skid))
           justskids[is.na(justskids)] = FALSE
           if(sum(justskids)>0){
@@ -726,7 +726,7 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
             if(inherits(replacement.ids,"try-error")){
               warning(replacement.ids)
             }else{
-              gs.t[justskids,"flywire.id"] = replacement.ids
+              gs.t[justskids,"flywire.id"] = as.character(replacement.ids)
             }
           }
         }
@@ -752,6 +752,7 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
         if(nrow(gs.t)!=nrow(gs.t.current)){
           stop("Sheet processing corruption. Flywire.id update failed.")
         }
+        gs.t$flywire.id = as.character(gs.t$flywire.id)
         write.cols = intersect(fw.columns,used.cols)
         if(length(fids) & length(write.cols)){
           gsheet_update_cols(
