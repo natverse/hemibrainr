@@ -409,6 +409,7 @@ remove_unused_filehash <- function(path,
             all.keys = c(all.keys,keys)
           }
           all.fh = list.files(data)
+          all.fh = all.fh[!grepl("zip$|csv$|swc$|rds$",all.fh)]
           delete = setdiff(all.fh,all.keys)
           message("Deleting ", length(delete), " files")
           delete = file.path(data,delete)
