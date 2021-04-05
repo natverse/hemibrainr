@@ -14,10 +14,12 @@ nblast_big <-function(query.neuronlistfh, target.neuronlistfh,
                       no.points = 2,
                       compress = TRUE,
                       threshold = 0, # or -0.5?
-                      digits = 3){
+                      digits = 3,
+                      update.old = NULL){
 
   # Register cores
-  cl = parallel::makeForkCluster(numCores)
+  batch.size = numCores #floor(sqrt(numCores))
+  cl = parallel::makeForkCluster(batch.size)
   doParallel::registerDoParallel(cl)
 
   # What are our query and target neurons
@@ -28,8 +30,26 @@ nblast_big <-function(query.neuronlistfh, target.neuronlistfh,
   target = names(target.neuronlistfh)
 
   # Make matrix to fill
-  nblast.mat = bigstatsr::FBM(length(target),length(query))
-  batch.size = numCores #floor(sqrt(numCores))
+  ## Get old matrix
+  if(!is.null(update.old)){
+    if(grepl("rds$",update.old)){
+      old = t(readRDS(update.old))
+    }else{
+      old = t(load_assign(update.old))  # historically, I had the matrix the other way around :(
+    }
+    old = old[apply(old, 1, function(r) sum(is.na(r))==0),apply(old, 2, function(c) sum(is.na(c))==0)]
+    old = old[colnames(old)%in%query,rownames(old)%in%target]
+    if(nrow(old)&&ncol(old)){
+      query = c(sort(colnames(old)), setdiff(query,colnames(old)))
+      target = c(sort(rownames(old)), setdiff(target,rownames(old)))
+      nblast.mat = bigstatsr::FBM(length(target),length(query))
+      nblast.mat[match(rownames(old), target),match(colnames(old),query)] = old
+    }else{
+      nblast.mat = bigstatsr::FBM(length(target),length(query))
+    }
+  }else{
+    nblast.mat = bigstatsr::FBM(length(target),length(query))
+  }
 
   # Get batches to iterate over
   ## this would be a better way of doing it, but at the moment thwarted by DB1 lock files
@@ -59,6 +79,11 @@ nblast_big <-function(query.neuronlistfh, target.neuronlistfh,
           query.addition.neuronlist = NULL
         }
         chosen.query = union(names(query.neuronlist),names(query.addition.neuronlist))
+        if(!is.null(update.old)){ # Do not re-calculate calculated scores for the most part
+          if(all(chosen.query%in%colnames(old))){
+            target.neuronlist = target.neuronlist[setdiff(names(target.neuronlist),rownames(old))]
+          }
+        }
         chosen.target = names(target.neuronlist)
       }
 
@@ -127,6 +152,7 @@ nblast_big <-function(query.neuronlistfh, target.neuronlistfh,
       }
     }
   parallel::stopCluster(cl)
+  clear = gc()
   nmat = nblast.mat[,]
   dimnames(nmat) = list(target, query)
   nmat
