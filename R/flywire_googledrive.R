@@ -655,10 +655,13 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
         fids = NULL
         if(!all(is.na(gs.t$flywire.xyz))){
           # Get the ids that need to be updated
-          fwids.old = gs.t$flywire.id
+          fwids.old = latest = gs.t$flywire.id
           fwids.old.not.good = is.na(gs.t$flywire.id)|gs.t$flywire.id%in%c("0","NA",""," ","\n")|!grepl("^[0-9]{1,}$", gs.t$flywire.id)
-          fwids.old[fwids.old.not.good] = 0
-          latest = fafbseg::flywire_islatest(fwids.old)
+          latest[fwids.old.not.good] = FALSE
+          latest[!fwids.old.not.good] = tryCatch(fafbseg::flywire_islatest(latest[!fwids.old.not.good]), error = function(e){
+            sapply(latest[!fwids.old.not.good], function(fo) tryCatch(fafbseg::flywire_islatest(fo), error = function(e) FALSE))
+            }
+          )
           fwids.need.a.look = (fwids.old.not.good+!latest)>0
           gs.n = gs.t[fwids.need.a.look,]
           if(sum(fwids.need.a.look)>0){
