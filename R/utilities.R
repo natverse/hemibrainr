@@ -517,10 +517,11 @@ update.neuronlistfh <- function(x,
       warning("original neuron file cannot link to data, overwriting ...")
       NULL
     })
-    if(!is.null(old.neurons)||!length(old.neurons)){
+    if(!is.null(old.neurons)&&length(old.neurons)){
       if(!is.null(attr(old.neurons,"df"))){
         old.neurons = old.neurons[setdiff(names(old.neurons),names(x))]
         x = nat::union(x, old.neurons)
+        message("x combined with ", length(old.neurons), " old neurons from extant: ", file)
       }
     }
   }
@@ -548,6 +549,7 @@ update.neuronlistfh <- function(x,
       if(inherits("try-class",given.neurons)){
         try(file.copy(to = file, from = temp.zip, overwrite = TRUE))
         try(file.remove(temp.zip), silent = TRUE)
+        warning("could not create neuronlistz object")
         return(given.neurons)
       }
       try(file.remove(temp.zip), silent = TRUE)
