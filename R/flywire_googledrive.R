@@ -701,7 +701,7 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
               coordsmissing[is.na(gs.n$flywire.xyz)] = TRUE
               coordsmissing[is.na(replacement)] = TRUE
               replacement[coordsmissing] = gs.n$flywire.id[coordsmissing]
-              gs.t$flywire.id[fwids.need.a.look] = as.character(replacement)
+              gs.t$flywire.id[!latest] = as.character(replacement)
             }
           }
         }
