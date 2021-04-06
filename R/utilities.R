@@ -540,7 +540,17 @@ update.neuronlistfh <- function(x,
     if(dbClass == "HDF5"){
       given.neurons = nat.hdf5::write.neurons.hdf5(x, file = data, ...)
     }else if(dbClass == "ZIP"){
-      given.neurons = nat::write.neurons(x, dir=file, format='qs', include.data.frame = TRUE, Force = TRUE, ...)
+      temp.zip =  file.path(dirname(file),"temp_neuronlist_archive.zip")
+      if(file.exists(file)){
+        file.copy(from = file, to = temp.zip, overwrite = TRUE)
+      }
+      given.neurons = try(nat::write.neurons(x, dir = file, format='qs', include.data.frame = TRUE, Force = TRUE, ...), silent = FALSE)
+      if(inherits("try-class",given.neurons)){
+        try(file.copy(to = file, from = temp.zip, overwrite = TRUE))
+        try(file.remove(temp.zip), silent = TRUE)
+        return(given.neurons)
+      }
+      try(file.remove(temp.zip), silent = TRUE)
     }else{
       given.neurons = nat::as.neuronlistfh(x, dbdir = data, dbClass = dbClass, WriteObjects = WriteObjects, remote = remote, ...)
       if(dbClass=="DB1"){
