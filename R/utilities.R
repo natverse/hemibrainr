@@ -496,25 +496,25 @@ update.neuronlistfh <- function(x,
     if(dbClass == "HDF5"){
       old.neurons = tryCatch(nat.hdf5::read.neurons.hdf5(file), error = function(e) {
         warning(e)
-        warning("original neuron file cannot link to data, overwriting ...")
+        message("original neuron file cannot link to data, overwriting ", file)
         NULL
       })
     }else if(dbClass == "ZIP"){
       old.neurons = tryCatch(nat::neuronlistz(file), error = function(e) {
         warning(e)
-        warning("original neuron file cannot link to data, overwriting ...")
+        message("original neuron file cannot link to data, overwriting ", file)
         NULL
       })
     }else{
       old.neurons = tryCatch(nat::read.neuronlistfh(file, localdir = localdir), error = function(e){
         warning(e)
-        warning("original neuron file cannot link to data, overwriting ...")
+        message("original neuron file cannot link to data, overwriting ", file)
         NULL
       })
     }
     old.neurons = tryCatch(old.neurons[!sapply(old.neurons, function(x) isFALSE(x))], error = function(e) {
       warning(e)
-      warning("original neuron file cannot link to data, overwriting ...")
+      message("original neuron file cannot link to data, overwriting ", file)
       NULL
     })
     if(!is.null(old.neurons)&&length(old.neurons)){
