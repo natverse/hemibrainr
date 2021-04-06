@@ -23,11 +23,11 @@
 \alias{rn.info}
 \title{Bodyids for neuron classes}
 \format{
-An object of class \code{character} of length 2654.
+An object of class \code{character} of length 2653.
 
-An object of class \code{character} of length 2579.
+An object of class \code{character} of length 2577.
 
-An object of class \code{character} of length 56.
+An object of class \code{character} of length 57.
 
 An object of class \code{character} of length 338.
 
@@ -41,15 +41,15 @@ An object of class \code{character} of length 318.
 
 An object of class \code{character} of length 67.
 
-An object of class \code{character} of length 307.
+An object of class \code{character} of length 306.
 
 An object of class \code{character} of length 2383.
 
 An object of class \code{character} of length 1428.
 
-An object of class \code{character} of length 345.
+An object of class \code{character} of length 346.
 
-An object of class \code{character} of length 1927.
+An object of class \code{character} of length 2035.
 
 An object of class \code{character} of length 5.
 

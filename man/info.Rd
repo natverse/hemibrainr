@@ -13,9 +13,9 @@
 \alias{dn.info}
 \title{Meta information of certain neuron classes}
 \format{
-An object of class \code{data.frame} with 379 rows and 58 columns.
+An object of class \code{data.frame} with 379 rows and 57 columns.
 
-An object of class \code{data.frame} with 70 rows and 58 columns.
+An object of class \code{data.frame} with 71 rows and 58 columns.
 
 An object of class \code{data.frame} with 2383 rows and 48 columns.
 

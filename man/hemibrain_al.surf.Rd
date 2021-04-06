@@ -11,7 +11,7 @@ An object of class \code{hxsurf} of length 4.
 
 An object of class \code{hxsurf} of length 4.
 
-An object of class \code{data.frame} with 58 rows and 11 columns.
+An object of class \code{data.frame} with 59 rows and 11 columns.
 }
 \source{
 \url{https://neuprint.janelia.org/}
