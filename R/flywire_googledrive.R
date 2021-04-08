@@ -730,8 +730,8 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
             if(inherits(replacement.ids,"try-error")){
               warning(replacement.ids)
             }else{
-              replacement.ids = replacement.ids$flywire.id
-              gs.t[justskids,"flywire.id"] = as.character(replacement.ids)
+              replacement.ids = tryCatch(as.character(replacement.ids$flywire.id), error = function(e) NA)
+              gs.t[justskids,"flywire.id"] = replacement.ids
             }
           }
         }
