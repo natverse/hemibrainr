@@ -585,6 +585,9 @@ is64ToChar <- function(res){
 
 # hidden
 try_with_time_limit <- function(expr, cpu = Inf, elapsed = Inf, error = NULL){
+  on.exit({
+    setTimeLimit(cpu = Inf, elapsed = Inf, transient = FALSE)
+  })
   y <- try({setTimeLimit(cpu, elapsed, transient = TRUE); expr}, silent = TRUE)
   clear <- gc()
   if(inherits(y, "try-error")){
