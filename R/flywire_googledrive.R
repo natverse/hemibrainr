@@ -662,6 +662,8 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
             sapply(fwids.old[latest], function(fo) tryCatch(fafbseg::flywire_islatest(fo), error = function(e) FALSE))
             }
           )
+          latest = as.logical(latest)
+          latest[is.na(latest)] = FALSE
           gs.n = gs.t[!latest,]
           if(sum(!latest)>0){
             # Get flywire IDs from these positions
@@ -724,10 +726,11 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
           if(sum(justskids)>0){
             if(Verbose) message("Geting flywire IDs for skids")
             replacement.ids = unlist(pbapply::pbsapply(gs.t[justskids,"skid"], function(x)
-              tryCatch(suppress(fafb14_to_flywire_ids_timed(x, only.biggest = TRUE)$flywire.id),error=function(e){warning(as.character(e));NA})))
+              tryCatch(fafb14_to_flywire_ids_timed(x, only.biggest = TRUE),error=function(e){warning(as.character(e));NA})))
             if(inherits(replacement.ids,"try-error")){
               warning(replacement.ids)
             }else{
+              replacement.ids = replacement.ids$flywire.id
               gs.t[justskids,"flywire.id"] = as.character(replacement.ids)
             }
           }
