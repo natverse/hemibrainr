@@ -194,7 +194,7 @@ flywire_neurons <- function(x = NULL,
 
   # Return
   if(!is.null(x)){
-    neurons.fh = neurons.fh[names(neurons.fh)%in%x,]
+    neurons.fh = neurons.fh[names(neurons.fh)%in%x]
   }
   neurons.fh
 }
