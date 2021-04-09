@@ -512,7 +512,7 @@ update.neuronlistfh <- function(x,
         NULL
       })
     }
-    old.neurons = tryCatch(old.neurons[!sapply(old.neurons, function(x) isFALSE(x))], error = function(e) {
+    old.neurons = tryCatch(old.neurons[sapply(old.neurons, function(x) nat::is.neuron(x))], error = function(e) {
       warning(e)
       message("original neuron file cannot link to data, overwriting ", file)
       NULL
