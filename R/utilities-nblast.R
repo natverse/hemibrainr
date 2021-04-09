@@ -18,6 +18,8 @@ nblast_big <-function(query.neuronlistfh, target.neuronlistfh,
                       update.old = NULL){
 
   # Register cores
+  if(!requireNamespace('nat.nblast'))
+    stop("Please install suggested nat.nblast package!")
   batch.size = numCores #floor(sqrt(numCores))
   cl = parallel::makeForkCluster(batch.size)
   doParallel::registerDoParallel(cl)
@@ -38,12 +40,16 @@ nblast_big <-function(query.neuronlistfh, target.neuronlistfh,
       old = t(load_assign(update.old))  # historically, I had the matrix the other way around :(
     }
     old = old[apply(old, 1, function(r) sum(is.na(r))==0),apply(old, 2, function(c) sum(is.na(c))==0)]
-    old = old[colnames(old)%in%query,rownames(old)%in%target]
-    if(nrow(old)&&ncol(old)){
-      query = c(sort(colnames(old)), setdiff(query,colnames(old)))
-      target = c(sort(rownames(old)), setdiff(target,rownames(old)))
-      nblast.mat = bigstatsr::FBM(length(target),length(query))
-      nblast.mat[match(rownames(old), target),match(colnames(old),query)] = old
+    old = old[!colnames(old)%in%query,!rownames(old)%in%target]
+    if(length(old)){
+      if(nrow(old)&ncol(old)){
+        query = c(sort(colnames(old)), setdiff(query,colnames(old)))
+        target = c(sort(rownames(old)), setdiff(target,rownames(old)))
+        nblast.mat = bigstatsr::FBM(length(target),length(query))
+        nblast.mat[match(rownames(old), target),match(colnames(old),query)] = old
+      }else{
+        nblast.mat = bigstatsr::FBM(length(target),length(query))
+      }
     }else{
       nblast.mat = bigstatsr::FBM(length(target),length(query))
     }
@@ -153,7 +159,7 @@ nblast_big <-function(query.neuronlistfh, target.neuronlistfh,
     }
   parallel::stopCluster(cl)
   clear = gc()
-  nmat = nblast.mat[,]
+  nmat = matrix(nblast.mat[,], nrow = length(target), ncol = length(query))
   dimnames(nmat) = list(target, query)
   nmat
 }
