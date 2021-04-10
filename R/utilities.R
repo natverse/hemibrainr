@@ -532,7 +532,10 @@ update.neuronlistfh <- function(x,
         warning("Each neuron name in x should be a rowname in meta")
       }
       in.meta = names(x) %in% rownames(meta)
-      x[in.meta,] = meta[names(x)[in.meta],]
+      m.df = x[,]
+      shared = intersect(colnames(m.df),colnames(meta))
+      m.df[in.meta,shared] = meta[names(x)[in.meta],shared]
+      attr(x,"df") = m.df
     }
     if(!is.null(pref.meta)){
       shared.cols = intersect(pref.meta,colnames(x[,]))
