@@ -344,6 +344,15 @@ neuron_match_scanner <- function(brain,
       r = r[r>threshold]
       if(!length(r)){
         message(" no normalised NBLAST score greater or equal to ", threshold," for neuron ", n," ...")
+        rgl::clear3d()
+        rgl::rgl.viewpoint(userMatrix = structure(c(0.990777730941772, 0.049733679741621,
+                                                    -0.126039981842041, 0, 0.060652956366539, -0.994590044021606,
+                                                    0.084330290555954, 0, -0.121164083480835, -0.091197244822979,
+                                                    -0.988434314727783, 0, 0, 0, 0, 1), .Dim = c(4L, 4L)), zoom = 0.644609212875366) # FAFB14 view
+        rgl::bg3d("white")
+        plot3d(brain, alpha = 0.1, col ="grey")
+        query.n = get_match_neuron(query = query, n = n, query.repository = query.repository)
+        if(!is.null(query.n)){plot3d(query.n, lwd = 3, soma = soma.size, col = "#1BB6AF")}
         progress = readline(prompt = "This neuron will be skipped. Press any key to continue ")
         next
       }
