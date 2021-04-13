@@ -153,7 +153,7 @@ nblast_big <-function(query.neuronlistfh, target.neuronlistfh,
           nblast.res.sub[nblast.res.sub<threshold] = threshold
           nblast.res.sub = round(nblast.res.sub, digits=digits)
         }
-        nblast.mat[match(chosen.target, target),match(chosen.query,query)] = nblast.res.sub
+        try({nblast.mat[match(chosen.target, target),match(chosen.query, query)] = nblast.res.sub}, silent = FALSE)
         NULL
       }
     }
