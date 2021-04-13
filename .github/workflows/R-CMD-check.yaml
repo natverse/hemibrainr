@@ -22,7 +22,7 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          - {os: windows-latest, r: 'release'}
+          # - {os: windows-latest, r: 'release'}
           - {os: macOS-latest, r: 'release'}
           - {os: ubuntu-20.04, r: 'release', rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"}
           - {os: ubuntu-20.04, r: 'devel', rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"}
@@ -31,6 +31,12 @@ jobs:
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
       RSPM: ${{ matrix.config.rspm }}
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      CHUNKEDGRAPH_SECRET: ${{ secrets.CHUNKEDGRAPH_SECRET }}
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+      RETICULATE_MINICONDA_PYTHON_VERSION: 3.8
+      RGL_USE_NULL: TRUE
+      _R_CHECK_DONTTEST_EXAMPLES_: FALSE
+      _R_CHECK_TESTS_NLINES_: 0
 
     steps:
       - uses: actions/checkout@v2
@@ -64,10 +70,30 @@ jobs:
             eval sudo $cmd
           done < <(Rscript -e 'writeLines(remotes::system_requirements("ubuntu", "20.04"))')
 
+      - name: Install Custom Dependencies (Linux)
+        if: runner.os == 'Linux'
+        run: sudo apt-get install libhdf5-dev
+      - name: Install Custom Dependencies (macOS)
+        if: runner.os == 'macOS'
+        run: brew install --cc clang --build-from-source hdf5
+
       - name: Install dependencies
         run: |
           remotes::install_deps(dependencies = TRUE)
           remotes::install_cran("rcmdcheck")
+          remotes::install_cran("covr")
+        shell: Rscript {0}
+
+      - name: Fix Conda permissions on macOS
+        if: runner.os == 'macOS'
+        run: sudo chown -R $UID $CONDA
+
+      - name: Install fafbseg + python
+        run: |
+          remotes::install_local()
+          library(fafbseg)
+          simple_python()
+          dr_fafbseg()
         shell: Rscript {0}
 
       - name: Check
@@ -78,9 +104,19 @@ jobs:
           rcmdcheck::rcmdcheck(args = c("--no-manual", "--as-cran"), error_on = "warning", check_dir = "check")
         shell: Rscript {0}
 
+      - name: Show testthat output
+        if: always()
+        run: find check -name 'testthat.Rout*' -exec cat '{}' \; || true
+        shell: bash
+
       - name: Upload check results
         if: failure()
         uses: actions/upload-artifact@main
         with:
           name: ${{ runner.os }}-r${{ matrix.config.r }}-results
           path: check
+
+      - name: Test coverage
+        if: ${{ runner.os == 'Linux' && matrix.config.r == 'release'}}
+        run: covr::codecov()
+        shell: Rscript {0}
