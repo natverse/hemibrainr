@@ -69,6 +69,7 @@ Remotes:
     natverse/elmr,
     natverse/fafbseg,
     natverse/nat.nblast,
+    natverse/nat,
     schlegelp/nat.hdf5
 Language: en-GB
 RoxygenNote: 7.1.1
