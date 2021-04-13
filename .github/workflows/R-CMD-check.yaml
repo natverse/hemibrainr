@@ -89,7 +89,6 @@ jobs:
         run: sudo chown -R $UID $CONDA
 
       - name: Install fafbseg + python
-        if: {{ !always() }}
         run: |
           remotes::install_cran("fafbseg")
           library(fafbseg)
