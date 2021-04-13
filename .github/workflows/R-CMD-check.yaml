@@ -90,6 +90,7 @@ jobs:
 
       - name: Install fafbseg + python
         run: |
+          remotes::install_cran("reticulate")
           remotes::install_cran("fafbseg")
           library(fafbseg)
           # installs cloudvolume to allow mesh downloads
