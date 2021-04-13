@@ -73,10 +73,9 @@ jobs:
       - name: Install Custom Dependencies (Linux)
         if: runner.os == 'Linux'
         run: sudo apt-get install libhdf5-dev
-      - name: Install Custom Dependencies (macOS)
+      # - name: Install Custom Dependencies (macOS)
         # if: {{ runner.os == 'macOS' }}
-        if: {{ !always() }}
-        run: brew install --cc clang --build-from-source hdf5
+        # run: brew install --cc clang --build-from-source hdf5
 
       - name: Install dependencies
         run: |
