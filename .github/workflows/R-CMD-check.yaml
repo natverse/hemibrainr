@@ -90,8 +90,9 @@ jobs:
 
       - name: Install fafbseg + python
         run: |
-          remotes::install_local()
+          remotes::install_cran("fafbseg")
           library(fafbseg)
+          # installs cloudvolume to allow mesh downloads
           simple_python()
           dr_fafbseg()
         shell: Rscript {0}
