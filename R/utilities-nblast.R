@@ -22,6 +22,7 @@ nblast_big <-function(query.neuronlistfh, target.neuronlistfh,
     stop("Please install suggested nat.nblast package!")
   batch.size = numCores #floor(sqrt(numCores))
   cl = parallel::makeForkCluster(batch.size)
+  check_package_available("doParallel")
   doParallel::registerDoParallel(cl)
 
   # What are our query and target neurons

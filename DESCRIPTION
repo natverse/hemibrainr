@@ -25,7 +25,10 @@ Suggests:
     RColorBrewer,
     nat.hdf5,
     Rvcg,
-    bitsqueezr
+    bitsqueezr,
+    fastcluster,
+    reticulate,
+    doParallel
 VignetteBuilder: knitr
 Depends:
     R (>= 3.1),
@@ -61,7 +64,9 @@ Imports:
     bit64,
     bigstatsr,
     dendextend,
-    stats
+    stats,
+    checkmate,
+    pbapply
 Remotes: 
     natverse/neuprintr,
     tidyverse/googlesheets4,

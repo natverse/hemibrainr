@@ -1,7 +1,6 @@
 # convert cloudvolume python mesh to an R mesh3d object
 # method vf just uses the vertex and face arrays
 # ply writes out to Stanford ply format and reads back in again
-#' @importFrom
 cvmesh2mesh <- function(x, method=c('vf', 'ply'), ...) {
   method=match.arg(method)
   if(method=='vf') {
@@ -77,6 +76,7 @@ hemibrain_neuron_meshes <- function(bodyids, lod=2L, cloudvolume.url=NULL, conn=
 hemibrain_neuron_mesh <- function(bodyids, lod, cloudvolume.url, method='vf') {
   cv=fafbseg::flywire_cloudvolume(cloudvolume.url = cloudvolume.url)
   # convert to python longint if necessary
+  check_package_available("reticulate")
   li=reticulate::py_eval(bodyids, convert = F)
   lod=as.integer(lod)
   cm=cv$mesh$get(li, lod = lod)

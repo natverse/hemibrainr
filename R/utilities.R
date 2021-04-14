@@ -617,6 +617,7 @@ squeeze_neuronlist <- function(x, digits=6, ...) {
 # hidden
 squeeze_neuron <- function(x, digits=6, ...) {
   stopifnot(nat::is.neuron(x))
+  check_package_available('bitsqueezr')
   x$d=squeeze_dataframe(x$d, exclude=c("X", "Y", "Z"), digits=digits, ...)
   if(!is.null(x$connectors)) {
     x$connectors=squeeze_dataframe(x$connectors, digits=digits, ...)
@@ -636,4 +637,10 @@ squeeze_dataframe <- function(x, exclude=NULL, ...) {
     else x[[i]]=bitsqueezr::squeeze_bits(col, ...)
   }
   x
+}
+
+check_package_available <- function(pkg) {
+  if(!requireNamespace(pkg, quietly = TRUE)) {
+    stop("Please install suggested package: ", pkg)
+  }
 }
