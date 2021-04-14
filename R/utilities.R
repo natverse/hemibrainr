@@ -482,7 +482,7 @@ update.neuronlistfh <- function(x,
     dbClass = "ZIP"
   }
   if(dbClass=="DB1"){
-    data = gsub("\\.rds","_datafile",rds)
+    data = gsub("\\.rds","_datafile", file)
     if(file.exists(paste0(data,"___LOCK"))){
       file.remove(paste0(data,"___LOCK"))
     }
