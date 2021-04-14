@@ -84,7 +84,7 @@ hemibrainr_google_login <- function(path = NULL){
     if(all(sapply(c(hemibrainr_ghseets_api_key,
                     hemibrainr_clientid,
                     hemibrainr_secret),is.null))){
-      if (check_package_available('httr')) {
+      if(requireNamespace('httr', quietly = TRUE)) {
         message("We can access Google resources using the Google Cloud  Platform app 'hemibrainr'")
         # bring your own app via client id (aka key) and secret
         google_app <- httr::oauth_app(
