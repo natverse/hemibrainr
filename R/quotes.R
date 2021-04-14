@@ -88,6 +88,7 @@ plot_inspirobot <- function(cycle = NULL){
 #' @references https://www.randomlists.com/random-words
 #' @return returns a character vector
 #' @seealso \code{\link{plot_inspirobot}}
+#' @export
 randomwords <- function(n = 1L, words = 1L, collapse = NULL){
   wl = wordlist()
   if(words>1){
