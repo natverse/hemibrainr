@@ -78,8 +78,8 @@ nblast_big <-function(query.neuronlistfh, target.neuronlistfh,
       # target.neuronlist = target.neuronlistfh[chosen.target]
       if(!is.null(query.neuronlist)&&length(query.neuronlist)){
         ### This is a slightly more inefficient way
-        query.neuronlist = query.neuronlist[unlist(sapply(query.neuronlist,hemibrainr:::is_big_dps,no.points=no.points))]
-        target.neuronlist = target.neuronlist[unlist(sapply(target.neuronlist,hemibrainr:::is_big_dps,no.points=no.points))]
+        query.neuronlist = query.neuronlist[unlist(sapply(query.neuronlist, is_big_dps,no.points=no.points))]
+        target.neuronlist = target.neuronlist[unlist(sapply(target.neuronlist, is_big_dps,no.points=no.points))]
         if(!is.null(query.addition.neuronlistfh)){
           query.addition.neuronlist = query.addition.neuronlistfh[names(query.addition.neuronlistfh)%in%chosen.query]
         }else{
