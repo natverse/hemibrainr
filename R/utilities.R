@@ -475,6 +475,7 @@ update.neuronlistfh <- function(x,
                                 localdir = NULL,
                                 pref.meta = NULL,
                                 meta = NULL,
+                                compress = TRUE,
                                 ...){
   dbClass = match.arg(dbClass)
   if(grepl("\\.zip$",file)){
@@ -541,6 +542,9 @@ update.neuronlistfh <- function(x,
       shared.cols = intersect(pref.meta,colnames(x[,]))
       x[,] = x[,shared.cols]
     }
+    if(compress){
+      x = squeeze_neuronlist(x)
+    }
     if(dbClass == "HDF5"){
       given.neurons = nat.hdf5::write.neurons.hdf5(x, file = data, ...)
     }else if(dbClass == "ZIP"){
@@ -605,8 +609,31 @@ fafb14_to_flywire_ids_timed <- function(x, only.biggest = FALSE){
   try_with_time_limit(fafbseg::fafb14_to_flywire_ids(search=x, only.biggest=only.biggest), elapsed = 1800, error = NA)
 }
 
+# hidden
+squeeze_neuronlist <- function(x, digits=6, ...) {
+  nat::nlapply(x, squeeze_neuron, digits=digits, ...)
+}
 
+# hidden
+squeeze_neuron <- function(x, digits=6, ...) {
+  stopifnot(nat::is.neuron(x))
+  x$d=squeeze_dataframe(x$d, exclude=c("X", "Y", "Z"), digits=digits, ...)
+  if(!is.null(x$connectors)) {
+    x$connectors=squeeze_dataframe(x$connectors, digits=digits, ...)
+  }
+}
 
-
-
-
+# hidden
+squeeze_dataframe <- function(x, exclude=NULL, ...) {
+  numcols <- names(x)[sapply(x, function(c) is.numeric(c) && !inherits(c, 'integer64'))]
+  numcols=setdiff(numcols, exclude)
+  for(i in numcols) {
+    col=x[[i]]
+    # does it look like an int, if so, make it one
+    intcol=try(checkmate::asInteger(col), silent = TRUE)
+    if(is.integer(intcol))
+      x[[i]]=intcol
+    else x[[i]]=bitsqueezr::squeeze_bits(col, ...)
+  }
+  x
+}

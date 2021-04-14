@@ -758,6 +758,7 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
           stop("Sheet processing corruption. Flywire.id update failed.")
         }
         gs.t$flywire.id = as.character(gs.t$flywire.id)
+        gs.t$flywire.svid = as.character(gs.t$flywire.svid)
         write.cols = intersect(fw.columns,used.cols)
         if(length(fids) & length(write.cols)){
           gsheet_update_cols(
@@ -789,6 +790,8 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
   master = master[order(master$filled,decreasing = TRUE),]
   master = master[!duplicated(master$flywire.xyz),]
   rownames(master) = master$flywire.xyz
+  master$flywire.id = bit64::as.integer64(master$flywire.id)
+  master$flywire.svid = bit64::as.integer64(master$flywire.svid)
   if(match){
     matches = hemibrain_matches(selected_file = matching_sheet, priority = priority)
     matches = subset(matches, matches$match.dataset == "hemibrain" &  matches$dataset == "flywire")
