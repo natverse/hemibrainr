@@ -428,6 +428,9 @@ skeletor_batch <- function(obj, swc, numCores = 1, max.file.size = 1000000000, .
     obj.files = obj
   }
   ids = obj.files[sapply(obj.files, file.size) < max.file.size]
+  if(!length(ids)){
+    return(NULL)
+  }
   big = setdiff(obj.files,ids)
   if(length(big)){
     warning("Dropping ", length(big), " .obj files larger than ", max.file.size, " bytes")
@@ -452,6 +455,9 @@ skeletor_batch <- function(obj, swc, numCores = 1, max.file.size = 1000000000, .
 
 # hidden
 download_neuron_obj_batch <- function(ids, numCores = 1, ratio = 1, save.obj = "obj"){
+  if(!length(ids)){
+    return(NULL)
+  }
   batches = split(ids, round(seq(from = 1, to = numCores, length.out = length(ids))))
   batch = 0
   foreach.skeletons <- foreach::foreach (batch = seq_along(batches)) %dopar% {
