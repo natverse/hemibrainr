@@ -549,7 +549,7 @@ update.neuronlistfh <- function(x,
       x[,] = x[,shared.cols]
     }
     if(compress){
-      x = squeeze_neuronlist(x)
+      y = squeeze_neuronlist(x)
     }
     if(dbClass == "HDF5"){
       given.neurons = nat.hdf5::write.neurons.hdf5(x, file = data, ...)
@@ -627,6 +627,7 @@ squeeze_neuron <- function(x, digits=6, ...) {
   if(!is.null(x$connectors)) {
     x$connectors=squeeze_dataframe(x$connectors, digits=digits, ...)
   }
+  x
 }
 
 # hidden
