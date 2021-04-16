@@ -653,6 +653,9 @@ flywire_dns <- function(side = c("both","right","left"),
       gm$flywire.id = gm$flywire_id
       gm$flywire_id = NULL
     }
+    if(!is.null(gm$flywire.id)){
+      gm$flywire.id = as.character(gm$flywire.id)
+    }
     gs = plyr::rbind.fill(gs, gm)
   }
   gs
