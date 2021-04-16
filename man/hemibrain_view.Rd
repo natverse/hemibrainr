@@ -14,7 +14,7 @@ Get a good, head-on view of the hemibrain.
 }
 \examples{
 \dontrun{
-ab = neuprint_ROI_mesh(roi="AB(R)")
+ab = neuprintr::neuprint_ROI_mesh(roi="AB(R)")
 hemibrain_view()
 plot3d(hemibrain.surf,col="grey",alpha=0.1)
 plot3d(ab, add = TRUE, col="red",alpha=0.3)

@@ -638,7 +638,7 @@ flywire_dns <- function(side = c("both","right","left"),
   gs = data.frame()
   for(si in side){
     selected_sheet = gsheets[si]
-    gm = hemibrainr:::gsheet_manipulation(FUN = googlesheets4::read_sheet,
+    gm = gsheet_manipulation(FUN = googlesheets4::read_sheet,
                              wait = 20,
                              ss = selected_sheet,
                              guess_max = 3000,
@@ -649,10 +649,6 @@ flywire_dns <- function(side = c("both","right","left"),
     gm = gm[,colnames(gm)%in%chosen.columns]
     gm$side = si
     gm$ws = "DNs"
-    if("flywire_id"%in%colnames(gm)){
-      gm$flywire.id = gm$flywire_id
-      gm$flywire_id = NULL
-    }
     if(!is.null(gm$flywire.id)){
       gm$flywire.id = as.character(gm$flywire.id)
     }

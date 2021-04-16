@@ -1,7 +1,6 @@
 # convert cloudvolume python mesh to an R mesh3d object
 # method vf just uses the vertex and face arrays
 # ply writes out to Stanford ply format and reads back in again
-#' @importFrom
 cvmesh2mesh <- function(x, method=c('vf', 'ply'), ...) {
   method=match.arg(method)
   if(method=='vf') {
@@ -56,7 +55,6 @@ cvmesh2mesh <- function(x, method=c('vf', 'ply'), ...) {
 #' # if you just wanted one neuron (as a mesh3d object) rather than neuronlist
 #' dl4=hemibrain_neuron_meshes("name:DL4_adPN_R")[[1]]
 #' }
-#' @importFrom fafbseg flywire_cloudvolume
 hemibrain_neuron_meshes <- function(bodyids, lod=2L, cloudvolume.url=NULL, conn=NULL, dataset=NULL, ...) {
   dataset = neuprintr:::check_dataset(dataset, conn = conn)
   bodyids = neuprintr::neuprint_ids(bodyids, conn = conn, dataset = dataset)

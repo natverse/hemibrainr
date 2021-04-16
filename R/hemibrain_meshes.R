@@ -43,14 +43,13 @@
 #' @seealso \code{\link{hemibrain_skeleton_check}}, \code{\link{hemibrain.surf}},
 #' \code{neuprintr::\link[neuprintr]{neuprint_ROI_mesh}},
 #' \code{neuprintr::\link[neuprintr]{neuprint_ROI_hierarchy}}
-#' @importFrom neuprintr neuprint_ROIs neuprint_ROI_mesh
 hemibrain_roi_meshes <- function(rois=NULL, microns = FALSE, superLevel=NULL, OmitFailures=TRUE, conn=NULL, dataset=NULL, ...){
   if(isTRUE(is.null(rois)))
-    rois = unique(neuprint_ROIs(superLevel = superLevel, conn=conn, dataset = dataset))
+    rois = unique(neuprintr::neuprint_ROIs(superLevel = superLevel, conn=conn, dataset = dataset))
 
   fakelist=as.list(structure(rois, .Names=rois))
   hemibrain.rois <- nlapply(fakelist, function(roi) {
-    mesh = neuprint_ROI_mesh(roi)
+    mesh = neuprintr::neuprint_ROI_mesh(roi)
     if(microns){
       mesh <- mesh*(8/1000)
       nat.templatebrains::regtemplate(mesh) = "JRCFIB2018F"
@@ -70,7 +69,7 @@ hemibrain_roi_meshes <- function(rois=NULL, microns = FALSE, superLevel=NULL, Om
 #'
 #' @examples
 #' \dontrun{
-#' ab = neuprint_ROI_mesh(roi="AB(R)")
+#' ab = neuprintr::neuprint_ROI_mesh(roi="AB(R)")
 #' hemibrain_view()
 #' plot3d(hemibrain.surf,col="grey",alpha=0.1)
 #' plot3d(ab, add = TRUE, col="red",alpha=0.3)
