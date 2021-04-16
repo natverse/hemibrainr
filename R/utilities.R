@@ -519,12 +519,12 @@ update.neuronlistfh <- function(x,
         NULL
       })
     }
-    old.neurons = tryCatch(old.neurons[sapply(old.neurons, function(x) nat::is.neuron(x))], error = function(e) {
-      warning(e)
-      message("original neuron file cannot link to data, overwriting ", file)
-      NULL
-    })
-    if(!is.null(old.neurons)&&length(old.neurons)){
+    #old.neurons = tryCatch(old.neurons[sapply(old.neurons, function(x) nat::is.neuron(x))], error = function(e) {
+      #warning(e)
+      #message("original neuron file cannot link to data, overwriting ", file)
+      #NULL
+      #})
+    if(!is.null(old.neurons)&&length(old.neurons)&&nat::is.neuronlist(old.neurons)){
       if(!is.null(attr(old.neurons,"df"))){
         old.neurons = old.neurons[setdiff(names(old.neurons),names(x))]
         x = nat::union(x, old.neurons)
@@ -538,15 +538,20 @@ update.neuronlistfh <- function(x,
       if(!all(names(x)%in%rownames(meta))){
         warning("Each neuron name in x should be a rowname in meta")
       }
-      in.meta = names(x) %in% rownames(meta)
-      m.df = x[,]
-      shared = intersect(colnames(m.df),colnames(meta))
-      m.df[in.meta,shared] = meta[names(x)[in.meta],shared]
-      attr(x,"df") = m.df
+      if(!is.null(rownames(meta))){
+        in.meta = names(x) %in% rownames(meta)
+        in.meta[is.na(in.meta)] = FALSE
+        m.df = x[,]
+        shared = intersect(colnames(m.df),colnames(meta))
+        m.df[in.meta,shared] = meta[names(x)[in.meta],shared]
+        attr(x,"df") = m.df
+      }
     }
     if(!is.null(pref.meta)){
       shared.cols = intersect(pref.meta,colnames(x[,]))
-      x[,] = x[,shared.cols]
+      if(length(shared.cols)){
+        x[,] = x[,shared.cols]
+      }
     }
     if(compress){
       y = squeeze_neuronlist(x)
