@@ -7,6 +7,7 @@
 \alias{flywire_tracing_update}
 \alias{flywire_tracing_standardise}
 \alias{flywire_deploy_workflows}
+\alias{flywire_dns}
 \title{Retrieve or go to a specific google sheet describing flywire neurons.}
 \usage{
 flywire_tracing_sheet(
@@ -65,6 +66,14 @@ flywire_deploy_workflows(
   cloudvolume.url = NULL,
   Verbose = TRUE,
   work.flows = c("inputs", "outputs", "matches")
+)
+
+flywire_dns(
+  side = c("both", "right", "left"),
+  gsheets = c(left = "1Gq_-L1tpvuSxYs5O-_PggiI2qdF52xoTG64WzSs9KTU", right =
+    "10T0JE6nVSz_uUdoHGOpV2odO_k75-arRPKdOiBXlS80"),
+  chosen.columns = c("flywire.id", "flywire_id", "flywire.xyz", "Tags"),
+  ...
 )
 }
 \arguments{
@@ -138,6 +147,12 @@ et al 2019 (default 0, we have used 30-100 to increase specificity)}
 this data and place it in \code{~/projects/JanFunke}.}
 
 \item{work.flows}{a workflow for a flywire neuron. Either we want to trace upstream of it, downstream of it, or match it to a hemibrain neuron.}
+
+\item{side}{logical. The side of the brain these neurons are manually annotated, as being on.}
+
+\item{gsheets}{character, google sheet codes for google sheets independently containing flywire IDs for right and left DNs.}
+
+\item{chosen.columns}{character, which columns to read from the chosen google sheets..}
 }
 \value{
 a \code{data.frame} with columns from the right tab, chosen using \code{regex}, from the given google sheet(s) \code{selected_sheet},

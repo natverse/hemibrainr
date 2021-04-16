@@ -620,3 +620,42 @@ flywire_workflow <- function(flywire.id,
 
 # hidden, caches result for  5min in current session
 sheet_properties.memo <- memoise::memoise(googlesheets4::sheet_properties, ~memoise::timeout(5*60))
+
+# Find descending neurons in flywire
+#' @param side logical. The side of the brain these neurons are manually annotated, as being on.
+#' @param gsheets character, google sheet codes for google sheets independently containing flywire IDs for right and left DNs.
+#' @param chosen.columns character, which columns to read from the chosen google sheets..
+#' @name flywire_tracing_sheet
+#' @export
+flywire_dns <- function(side = c("both","right","left"),
+                        gsheets = c(left = "1Gq_-L1tpvuSxYs5O-_PggiI2qdF52xoTG64WzSs9KTU", right = "10T0JE6nVSz_uUdoHGOpV2odO_k75-arRPKdOiBXlS80"),
+                        chosen.columns = c("flywire.id","flywire_id","flywire.xyz","Tags"),
+                        ...){
+  side = match.arg(side)
+  if(side=="both"){
+    side = c("right","left")
+  }
+  gs = data.frame()
+  for(si in side){
+    selected_sheet = gsheets[si]
+    gm = hemibrainr:::gsheet_manipulation(FUN = googlesheets4::read_sheet,
+                             wait = 20,
+                             ss = selected_sheet,
+                             guess_max = 3000,
+                             sheet = "DNs",
+                             return = TRUE,
+                             Verbose = FALSE,
+                             ...)
+    gm = gm[,colnames(gm)%in%chosen.columns]
+    gm$side = si
+    gm$ws = "DNs"
+    if("flywire_id"%in%colnames(gm)){
+      gm$flywire.id = gm$flywire_id
+      gm$flywire_id = NULL
+    }
+    gs = plyr::rbind.fill(gs, gm)
+  }
+  gs
+}
+
+
