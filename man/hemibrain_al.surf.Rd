@@ -5,13 +5,16 @@
 \alias{hemibrain_al.surf}
 \alias{hemibrain_al_microns.surf}
 \alias{hemibrain_glomeruli_summary}
+\alias{odour_scenes}
 \title{Meshes for Antennal Lobe (AL) glomeruli}
 \format{
 An object of class \code{hxsurf} of length 4.
 
 An object of class \code{hxsurf} of length 4.
 
-An object of class \code{data.frame} with 59 rows and 11 columns.
+An object of class \code{data.frame} with 58 rows and 11 columns.
+
+An object of class \code{data.frame} with 83 rows and 7 columns.
 }
 \source{
 \url{https://neuprint.janelia.org/}
@@ -22,6 +25,8 @@ hemibrain_al.surf
 hemibrain_al_microns.surf
 
 hemibrain_glomeruli_summary
+
+odour_scenes
 }
 \value{
 \code{hemibrain_glomeruli_summary} is a \code{data.frame} with the

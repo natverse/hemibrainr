@@ -163,6 +163,8 @@
 "hemibrain_al_microns.surf"
 #' @rdname hemibrain_al.surf
 "hemibrain_glomeruli_summary"
+#' @rdname hemibrain_al.surf
+"odour_scenes"
 
 #' Axon-dendrite split points calculated for all hemibrain neurons
 #'

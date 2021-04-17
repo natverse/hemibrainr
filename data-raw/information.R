@@ -3,8 +3,8 @@ library(googledrive)
 
 ## Olfactory information
 ### Depends on having the repo: hemibrain_olf_data
-odour.scenes = read.csv("/Users/GD/LMBD/Papers/hemibrain_olf_data/odour_scenes.csv")
-colnames(odour.scenes) = c("glomerulus", "key_ligand", "odour_scene", "valence")
+odour_scenes = read.csv("/Users/GD/LMBD/Papers/hemibrain_olf_data/odour_scenes.csv")
+odour.scenes = odour_scenes[,c("glomerulus", "key_ligand", "odour_scene", "valence")]
 odour.scenes.agg.1 = odour.scenes.agg = aggregate(list(odour_scenes=odour.scenes$odour_scene),
                              list(glomerulus=odour.scenes$glomerulus),
                              function(x) paste(unique(x), collapse="/"))
@@ -20,7 +20,6 @@ hemibrain_glomeruli_summary = merge(hemibrain_glomeruli_summary, odour.scenes.ag
 hemibrain_glomeruli_summary = merge(hemibrain_glomeruli_summary, odour.scenes.agg.2, all.x = TRUE, all.y = TRUE)
 hemibrain_glomeruli_summary = merge(hemibrain_glomeruli_summary, odour.scenes.agg.3, all.x = TRUE, all.y = TRUE)
 hemibrain_glomeruli_summary$X = hemibrain_glomeruli_summary$RN = NULL
-hemibrain_glomeruli_summary = subset(hemibrain_glomeruli_summary, glomerulus != 'VC3')
 
 ## Olfactory projection neurons
 mpns.fib.info = read.csv("/Users/GD/LMBD/Papers/hemibrain_olf_data/FIB_mPNs.csv")
@@ -155,6 +154,7 @@ usethis::use_data(kc.info, overwrite = TRUE)
 usethis::use_data(cent.info, overwrite = TRUE)
 usethis::use_data(dn.info, overwrite = TRUE)
 usethis::use_data(hemibrain_glomeruli_summary, overwrite = TRUE)
+usethis::use_data(odour_scenes, overwrite = TRUE)
 
 ### Supplementary data for Schlegel and Bates 2021:
 supp.cols = c("bodyid", "pre", "post", "upstream", "downstream",
