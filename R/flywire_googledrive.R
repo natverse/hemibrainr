@@ -94,7 +94,7 @@ flywire_neurons <- function(x = NULL,
                             brain = c("FlyWire", "JRCFIB2018Fraw","JRCFIB2018F","FAFB","FAFB14","JFRC2", "JFRC2013","JRC2018F","FCWB"),
                             mirror = FALSE,
                             type = c("neurons", "swc","dotprops","cut_dotprops"),
-                            zip = FALSE,
+                            zip = TRUE,
                             ...){
   brain = match.arg(brain)
   type = match.arg(type)

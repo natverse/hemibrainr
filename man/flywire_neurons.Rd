@@ -14,7 +14,7 @@ flywire_neurons(
     "JFRC2013", "JRC2018F", "FCWB"),
   mirror = FALSE,
   type = c("neurons", "swc", "dotprops", "cut_dotprops"),
-  zip = FALSE,
+  zip = TRUE,
   ...
 )
 
