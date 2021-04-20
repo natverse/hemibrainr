@@ -382,6 +382,14 @@ flywire_tracing_standardise <- function(ws = NULL,
     }
     update$whimsy = gsub(" ","_",update$whimsy)
   }
+  bys = colnames(updates)[grepl("\\_by$",colnames(updates))]
+  if(length(bys)){
+    dupes = duplicated(update[[field]])
+    for(by in bys){
+      update[[by]][dupes] = gsub("DUPLICATED_","",update[[by]][dupes])
+      update[[by]][dupes] = paste0("DUPLICATED_", update[[by]])
+    }
+  }
   if(reorder||remove.duplicates){
     if(!identical(gs,update)|reorder){
       gsheet_reorder(gs=update,
