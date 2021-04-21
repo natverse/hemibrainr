@@ -509,8 +509,8 @@ sql_col_types = readr::cols(.default = "c",
                             overlap_locality = "n",
                             position = "i",
                             confidence = "n",
-                            bodyid = "?",
-                            flywire.id = "?")
+                            bodyid = "c",
+                            flywire.id = "c")
 
 #' @rdname flywire_googledrive_data
 #' @export
