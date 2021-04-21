@@ -382,7 +382,7 @@ flywire_tracing_standardise <- function(ws = NULL,
     }
     update$whimsy = gsub(" ","_",update$whimsy)
   }
-  bys = colnames(updates)[grepl("\\_by$",colnames(updates))]
+  bys = colnames(update)[grepl("\\_by$",colnames(update))]
   if(length(bys)){
     dupes = duplicated(update[[field]])
     for(by in bys){
