@@ -80,8 +80,8 @@ flywire_tracing_sheet <- function(ws,
   data = data.frame()
   for(ss in selected_sheet){
     if(open&interactive()){
-      u= sprintf("https://docs.google.com/spreadsheets/d/%s/edit", selected_sheet)
-      sel=regex_tab_names(regex=ws,selected_sheet=selected_sheet,...)
+      u= sprintf("https://docs.google.com/spreadsheets/d/%s/edit", ss)
+      sel=regex_tab_names(regex=ws,selected_sheet=ss,...)
       if(nrow(sel)>1) {
         warning("Multiple matches. Keeping first: ", paste(sel$name, collapse = ','))
         sel=sel[1,,drop=F]
@@ -90,7 +90,7 @@ flywire_tracing_sheet <- function(ws,
       utils::browseURL(uu)
     }else{
       if(regex){
-        sel=regex_tab_names(regex=ws,selected_sheet=selected_sheet,...)
+        sel=regex_tab_names(regex=ws,selected_sheet=ss,...)
         if(nrow(sel)>1) {
           warning("Multiple matches. Keeping first: ", paste(sel$name, collapse = ','))
           sel=sel[1,,drop=F]
@@ -101,7 +101,7 @@ flywire_tracing_sheet <- function(ws,
       for(w in ws){
         gm = gsheet_manipulation(FUN = googlesheets4::read_sheet,
                                  wait = 20,
-                                 ss = selected_sheet,
+                                 ss = ss,
                                  guess_max = 3000,
                                  sheet = w,
                                  return = TRUE,
