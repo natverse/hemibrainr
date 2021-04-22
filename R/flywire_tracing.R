@@ -386,27 +386,29 @@ flywire_tracing_standardise <- function(ws = NULL,
   if(length(bys)){
     dupes = duplicated(update[[field]])
     for(by in bys){
-      update[[by]][dupes] = gsub("DUPLICATED_","",update[[by]][dupes])
-      update[[by]][dupes] = paste0("DUPLICATED_", update[[by]])
+      update[[by]] = gsub("DUPLICATED_","",update[[by]])
+      update[[by]][dupes] = paste0("DUPLICATED_", update[[by]][dupes])
     }
   }
-  if(reorder||remove.duplicates){
-    if(!identical(gs,update)|reorder){
-      gsheet_reorder(gs=update,
-                     tab=tab,
-                     selected_sheet=selected_sheets,
-                     field = field,
-                     remove.duplicates = remove.duplicates,
-                     Verbose = Verbose)
-    }
-  }else{
-    if(!identical(gs,update)){
-      gsheet_update_cols(
-        write.cols = write.cols,
-        gs = update,
-        selected_sheet=selected_sheets,
-        sheet = tab,
-        Verbose = Verbose)
+  if(length(update)){
+    if(reorder||remove.duplicates){
+      if(!identical(gs,update)|reorder){
+        gsheet_reorder(gs=update,
+                       tab=tab,
+                       selected_sheet=selected_sheets,
+                       field = field,
+                       remove.duplicates = remove.duplicates,
+                       Verbose = Verbose)
+      }
+    }else{
+      if(!identical(gs,update)){
+        gsheet_update_cols(
+          write.cols = write.cols,
+          gs = update,
+          selected_sheet=selected_sheets,
+          sheet = tab,
+          Verbose = Verbose)
+      }
     }
   }
 }
