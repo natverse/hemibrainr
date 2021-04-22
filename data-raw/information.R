@@ -63,10 +63,13 @@ mb_ann = gsheet_manipulation(FUN = googlesheets4::read_sheet,
                                           ss = "1NROq0fw-WXGgu_mcWWVW9-l3YOdWHk-nESkI23fz-bo",
                                           sheet = "MBON",
                                           return = TRUE)#read.csv("data-raw/annotations/mb_annotations.csv")
-mbon.info = cbind(mbon.info,mb_ann[match(mbon.info$bodyid,mb_ann$bodyId),])
+mbon.info = cbind(mbon.info,mb_ann[match(mbon.info$bodyid,mb_ann$bodyid),])
 mbon.info[is.na(mbon.info)] = "unknown"
 # mbon.info = subset(mbon.info, compartments!=""&!is.na(compartments))
 mbon.info$class = "MBON"
+mbon.info$compartments = gsub("+\\).*","",mbon.info$name)
+mbon.info$compartments = gsub("+.*\\(","",mbon.info$compartments)
+mbon.info$compartments = gsub("_.*","",mbon.info$compartments)
 rownames(mbon.info) = mbon.info$bodyid
 mbon.meta = hemibrain_get_meta(as.character(mbon.info$bodyid))
 mbon.info = cbind(mbon.info, mbon.meta[as.character(mbon.info$bodyid),setdiff(colnames(mbon.meta),colnames(mbon.info))])
