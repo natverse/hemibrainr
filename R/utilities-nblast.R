@@ -45,23 +45,22 @@ nblast_big <-function(query.neuronlistfh, target.neuronlistfh,
       if(nrow(old)&ncol(old)){
         query = c(sort(colnames(old)), setdiff(query,colnames(old)))
         target = c(sort(rownames(old)), setdiff(target,rownames(old)))
-        nblast.mat = bigstatsr::FBM(length(target),length(query))
+        nblast.mat = bigstatsr::FBM(length(target),length(query), init = NA)
         nblast.mat[match(rownames(old), target),match(colnames(old),query)] = old
       }else{
-        nblast.mat = bigstatsr::FBM(length(target),length(query))
+        nblast.mat = bigstatsr::FBM(length(target),length(query), init = NA)
       }
     }else{
-      nblast.mat = bigstatsr::FBM(length(target),length(query))
+      nblast.mat = bigstatsr::FBM(length(target),length(query), init = NA)
     }
   }else{
-    nblast.mat = bigstatsr::FBM(length(target),length(query))
+    nblast.mat = bigstatsr::FBM(length(target),length(query), init = NA)
   }
 
   # Get batches to iterate over
   ## this would be a better way of doing it, but at the moment thwarted by DB1 lock files
   # batches.query = split(sample(query), round(seq(from = 1, to = batch.size, length.out = length(query))))
   # batches.target = split(sample(target), round(seq(from = 1, to = batch.size, length.out = length(target))))
-  chosen.query = chosen.target = NULL
 
   # Foreach loop
   ## this would be a better way of doing it, but at the moment thwarted by DB1 lock files
@@ -75,6 +74,9 @@ nblast_big <-function(query.neuronlistfh, target.neuronlistfh,
       ## this would be a better way of doing it, but at the moment thwarted by DB1 lock files
       # query.neuronlist = query.neuronlistfh[chosen.query]
       # target.neuronlist = target.neuronlistfh[chosen.target]
+      query.addition.neuronlist = chosen.query = chosen.target = NULL
+      chosen.query = names(query.neuronlist)
+      chosen.target = names(target.neuronlist)
       if(!is.null(query.neuronlist)&&length(query.neuronlist)){
         ### This is a slightly more inefficient way
         query.neuronlist = query.neuronlist[unlist(sapply(query.neuronlist,hemibrainr:::is_big_dps,no.points=no.points))]
@@ -118,6 +120,7 @@ nblast_big <-function(query.neuronlistfh, target.neuronlistfh,
           nblast.res.2 = matrix(nblast.res.2, nrow = 1, ncol = length(nblast.res.2), dimnames = list(chosen.query,chosen.target))
         }
         nblast.res.native = (nblast.res.1+t(nblast.res.2))/2
+        nblast.res.sub = nblast.res.native
         ### NBLAST mirrored
         if(!is.null(query.addition.neuronlist)&&!length(query.addition.neuronlist)){
           nblast.res.3 = nat.nblast::nblast(query = query.addition.neuronlist,
@@ -145,8 +148,6 @@ nblast_big <-function(query.neuronlistfh, target.neuronlistfh,
           nblast.res.sub = plyr::rbind.fill.matrix(t(nblast.res.native), t(nblast.res.m))
           rownames(nblast.res.sub) = c(colnames(nblast.res.native), colnames(nblast.res.sub))
           nblast.res.sub = collapse_matrix_by_names(nblast.res.sub, FUN = max)
-        }else{
-          nblast.res.sub = nblast.res.native
         }
         # Compress
         if(compress){
