@@ -288,12 +288,14 @@ flywire_tracing_update <- function(tab,
 
   #  Update columns
   if(!identical(gs,update)){
-    gsheet_update_cols(
-      write.cols = write.cols,
-      gs=gs,
-      selected_sheet=selected_sheet,
-      sheet = tab,
-      Verbose = Verbose)
+    if(isTRUE(nrow(gs)>0)){
+      gsheet_update_cols(
+        write.cols = write.cols,
+        gs=gs,
+        selected_sheet=selected_sheet,
+        sheet = tab,
+        Verbose = Verbose)
+    }
   }
 
   # Return a data.frame that represents new sheet
@@ -390,7 +392,7 @@ flywire_tracing_standardise <- function(ws = NULL,
       update[[by]][dupes] = paste0("DUPLICATED_", update[[by]][dupes])
     }
   }
-  if(length(update)){
+  if(isTRUE(nrow(update)>0)){
     if(reorder||remove.duplicates){
       if(!identical(gs,update)|reorder){
         gsheet_reorder(gs=update,
