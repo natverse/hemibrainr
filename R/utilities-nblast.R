@@ -23,6 +23,11 @@ nblast_big <-function(query.neuronlistfh, target.neuronlistfh,
   batch.size = numCores #floor(sqrt(numCores))
   cl = parallel::makeForkCluster(batch.size)
   doParallel::registerDoParallel(cl)
+  if (numCores<2){
+    `%go%` <- foreach::`%do%`
+  }else{
+    `%go%` <- foreach::`%dopar%`
+  }
 
   # What are our query and target neurons
   query = intersect(names(query.neuronlistfh),query)
@@ -69,12 +74,16 @@ nblast_big <-function(query.neuronlistfh, target.neuronlistfh,
   ### This is a slightly more inefficient way
   batches.query = split(sample(query.neuronlistfh[query]), round(seq(from = 1, to = batch.size, length.out = length(query))))
   batches.target = split(sample(target.neuronlistfh), round(seq(from = 1, to = batch.size, length.out = length(target.neuronlistfh))))
-  by.query <- foreach::foreach (query.neuronlist = batches.query, .combine = 'c', .errorhandling='pass') %:%
-    foreach::foreach (target.neuronlist = batches.target, .combine = 'c', .errorhandling='pass') %dopar% {
+  bq = seq_along(batches.query)
+  bt = seq_along(batches.target)
+  by.query <- foreach::foreach (qi = bq, .combine = 'c', .errorhandling='pass') %:%
+    foreach::foreach (ti = bt, .combine = 'c', .errorhandling='pass') %go% {
       ## this would be a better way of doing it, but at the moment thwarted by DB1 lock files
       # query.neuronlist = query.neuronlistfh[chosen.query]
       # target.neuronlist = target.neuronlistfh[chosen.target]
-      query.addition.neuronlist = chosen.query = chosen.target = NULL
+      target.neuronlist = batches.target[[ti]]
+      query.neuronlist = batches.query[[qi]]
+      query.addition.neuronlist = NULL
       chosen.query = names(query.neuronlist)
       chosen.target = names(target.neuronlist)
       if(!is.null(query.neuronlist)&&length(query.neuronlist)){
@@ -119,10 +128,12 @@ nblast_big <-function(query.neuronlistfh, target.neuronlistfh,
         if(is.null(dim(nblast.res.2))){
           nblast.res.2 = matrix(nblast.res.2, nrow = 1, ncol = length(nblast.res.2), dimnames = list(chosen.query,chosen.target))
         }
-        nblast.res.native = (nblast.res.1+t(nblast.res.2))/2
-        nblast.res.sub = nblast.res.native
+        nblast.res.sub = nblast.res.native = tryCatch((nblast.res.1+t(nblast.res.2))/2, error = function(e){
+          message(as.character(e))
+          nblast.res.1
+        })
         ### NBLAST mirrored
-        if(!is.null(query.addition.neuronlist)&&!length(query.addition.neuronlist)){
+        if(!is.null(query.addition.neuronlist)&&length(query.addition.neuronlist)){
           nblast.res.3 = nat.nblast::nblast(query = query.addition.neuronlist,
                                             target = target.neuronlist,
                                             .parallel=FALSE,
@@ -154,8 +165,9 @@ nblast_big <-function(query.neuronlistfh, target.neuronlistfh,
           nblast.res.sub[nblast.res.sub<threshold] = threshold
           nblast.res.sub = round(nblast.res.sub, digits=digits)
         }
-        try({nblast.mat[match(chosen.target, target),match(chosen.query, query)] = nblast.res.sub}, silent = FALSE)
-        NULL
+        nblast.mat[match(chosen.target, target),match(chosen.query, query)] = nblast.res.sub
+        #try({nblast.mat[match(chosen.target, target),match(chosen.query, query)] = nblast.res.sub}, silent = FALSE)
+        nblast.res.1
       }
     }
   parallel::stopCluster(cl)
