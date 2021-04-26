@@ -155,8 +155,10 @@ flywire_tracing_sheets.now <- function(ws = NULL,
     for(tab in tabs){
       pb$tick(tokens = list(what = paste0(ss,": ", tab)))
       gs.lin = flywire_tracing_sheet(ws = tab, selected_sheet=ss, Verbose = FALSE)
-      gs.lin$ws = tab
-      tracing.list[[tab]] = gs.lin
+      if(length(nrow(gs.lin))){
+        gs.lin$ws = tab
+        tracing.list[[tab]] = gs.lin
+      }
     }
     df = do.call(plyr::rbind.fill,tracing.list)
     data = plyr::rbind.fill(data,df)
