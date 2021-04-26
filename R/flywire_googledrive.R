@@ -258,7 +258,7 @@ flywire_request <- function(request,
     xyz = c()
     type = "googlesheet"
     for(req in request){
-      tabs = hemibrainr:::gsheet_manipulation(FUN = googlesheets4::sheet_names,
+      tabs = gsheet_manipulation(FUN = googlesheets4::sheet_names,
                                               ss = req,
                                               return = TRUE)
       for(tab in tabs){

@@ -75,6 +75,7 @@ hemibrain_neuron_meshes <- function(bodyids, lod=2L, cloudvolume.url=NULL, conn=
 hemibrain_neuron_mesh <- function(bodyids, lod, cloudvolume.url, method='vf') {
   cv=fafbseg::flywire_cloudvolume(cloudvolume.url = cloudvolume.url)
   # convert to python longint if necessary
+  check_package_available("reticulate")
   li=reticulate::py_eval(bodyids, convert = F)
   lod=as.integer(lod)
   cm=cv$mesh$get(li, lod = lod)

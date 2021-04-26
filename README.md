@@ -1,9 +1,8 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 <!-- badges: start -->
 
-<img src="man/figures/logo.svg" align="right" height="139" /> [![Travis
-build
-status](https://travis-ci.org/natverse/hemibrainr.svg?branch=master)](https://travis-ci.org/natverse/hemibrainr)
+<img src="man/figures/logo.svg" align="right" height="139" />
+[![R-CMD-check](https://github.com/natverse/hemibrainr/workflows/R-CMD-check/badge.svg)](https://github.com/natverse/hemibrainr/actions)
 [![Codecov test
 coverage](https://codecov.io/gh/natverse/hemibrainr/branch/master/graph/badge.svg)](https://codecov.io/gh/natverse/hemibrainr?branch=master)
 [![Lifecycle:
