@@ -64,7 +64,6 @@ Imports:
     stats
 Remotes: 
     natverse/neuprintr,
-    tidyverse/googlesheets4,
     natverse/rcatmaid,
     natverse/nat.templatebrains,
     natverse/nat.jrcbrains,
