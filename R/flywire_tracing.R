@@ -342,7 +342,7 @@ flywire_tracing_standardise <- function(ws = NULL,
   }
   if(is.null(ws)){
     if(Verbose){ message("### Working on google sheet: ", selected_sheets) }
-    tabs = hemibrainr:::gsheet_manipulation(FUN = googlesheets4::sheet_names,
+    tabs = gsheet_manipulation(FUN = googlesheets4::sheet_names,
                                             ss = selected_sheets,
                                             return = TRUE,
                                             Verbose = FALSE)
@@ -459,7 +459,7 @@ flywire_deploy_workflows <-function(ws = "flywire",
   main = to.work[indices,]
   main$workflow = unlist(tasks)
   main$tab = workflow.tabs = paste(main$whimsy,main$workflow,sep="_")
-  tabs = hemibrainr:::gsheet_manipulation(FUN = googlesheets4::sheet_names,
+  tabs = gsheet_manipulation(FUN = googlesheets4::sheet_names,
                                           ss = target_sheet,
                                           return = TRUE)
   workflow.tabs.missing = setdiff(workflow.tabs,tabs)
@@ -479,11 +479,11 @@ flywire_deploy_workflows <-function(ws = "flywire",
                           local = local,
                           cloudvolume.url = cloudvolume.url,
                           Verbose = Verbose)
-    gs.added = hemibrainr:::gsheet_manipulation(FUN = googlesheets4::sheet_add,
+    gs.added = gsheet_manipulation(FUN = googlesheets4::sheet_add,
                                                 ss = target_sheet,
                                                 sheet = missing,
                                                 Verbose = Verbose)
-    gs.added = hemibrainr:::gsheet_manipulation(FUN = googlesheets4::sheet_write,
+    gs.added = gsheet_manipulation(FUN = googlesheets4::sheet_write,
                                                 data = fw,
                                                 ss = target_sheet,
                                                 sheet = missing,

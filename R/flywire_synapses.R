@@ -66,9 +66,13 @@ flywire_synapses <- function(local = FALSE, folder = "flywire_neurons/", simplif
 #' }}
 #' @seealso \code{\link{flywire_googledrive_data}}
 #' @export
+#' @importFrom stats dist
 flywire_synapse_simplify <- function(x, method = c("cleft_scores","scores","mean"), collapse = TRUE, fast = TRUE){
   method = match.arg(method)
-  h_clust = ifelse(fast, fastcluster::hclust, stats::hclust)
+  h_clust = if(fast) {
+    check_package_available('fastcluster')
+    fastcluster::hclust
+  } else stats::hclust
 
   # for each neuron
   if("pre_id"%in%colnames(x)){

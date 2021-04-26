@@ -1,6 +1,6 @@
 Package: hemibrainr
 Type: Package
-Title: Code for working with data from Janelia FlyEM's hemibrain project
+Title: Code for Working with Data from Janelia FlyEM's Hemibrain Project``
 Version: 0.2.0
 Authors@R: c(
     person("Alexander", "Bates", email = "alexander.shakeel.bates@gmail.com", 
@@ -25,7 +25,10 @@ Suggests:
     RColorBrewer,
     nat.hdf5,
     Rvcg,
-    bitsqueezr
+    bitsqueezr,
+    fastcluster,
+    reticulate,
+    doParallel
 VignetteBuilder: knitr
 Depends:
     R (>= 3.1),
@@ -61,7 +64,9 @@ Imports:
     bit64,
     bigstatsr,
     dendextend,
-    stats
+    stats,
+    checkmate,
+    pbapply
 Remotes: 
     natverse/neuprintr,
     natverse/rcatmaid,
