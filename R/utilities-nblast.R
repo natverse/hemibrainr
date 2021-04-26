@@ -20,10 +20,11 @@ nblast_big <-function(query.neuronlistfh, target.neuronlistfh,
   # Register cores
   if(!requireNamespace('nat.nblast'))
     stop("Please install suggested nat.nblast package!")
+  gc()
   batch.size = numCores #floor(sqrt(numCores))
   cl = parallel::makeForkCluster(batch.size)
   doParallel::registerDoParallel(cl)
-  if (numCores<2){
+  if(numCores<2){
     `%go%` <- foreach::`%do%`
   }else{
     `%go%` <- foreach::`%dopar%`
@@ -72,17 +73,15 @@ nblast_big <-function(query.neuronlistfh, target.neuronlistfh,
   # by.query <- foreach::foreach (chosen.query = batches.query, .combine = 'c') %:%
   #   foreach::foreach (chosen.target = batches.target, .combine = 'c') %dopar% {
   ### This is a slightly more inefficient way
-  batches.query = split(sample(query.neuronlistfh[query]), round(seq(from = 1, to = batch.size, length.out = length(query))))
-  batches.target = split(sample(target.neuronlistfh), round(seq(from = 1, to = batch.size, length.out = length(target.neuronlistfh))))
-  bq = seq_along(batches.query)
-  bt = seq_along(batches.target)
-  by.query <- foreach::foreach (qi = bq, .combine = 'c', .errorhandling='pass') %:%
-    foreach::foreach (ti = bt, .combine = 'c', .errorhandling='pass') %go% {
+  batches.query = split(sample(query), round(seq(from = 1, to = batch.size, length.out = length(query))))
+  batches.target = split(sample(target), round(seq(from = 1, to = batch.size, length.out = length(target))))
+  by.query <- foreach::foreach (qi = batches.query, .combine = 'c', .errorhandling='pass') %:%
+    foreach::foreach (ti = batches.target, .combine = 'c', .errorhandling='pass') %go% {
       ## this would be a better way of doing it, but at the moment thwarted by DB1 lock files
       # query.neuronlist = query.neuronlistfh[chosen.query]
       # target.neuronlist = target.neuronlistfh[chosen.target]
-      target.neuronlist = batches.target[[ti]]
-      query.neuronlist = batches.query[[qi]]
+      target.neuronlist = target.neuronlistfh[ti]
+      query.neuronlist = query.neuronlistfh[qi]
       query.addition.neuronlist = NULL
       chosen.query = names(query.neuronlist)
       chosen.target = names(target.neuronlist)
@@ -133,7 +132,7 @@ nblast_big <-function(query.neuronlistfh, target.neuronlistfh,
           nblast.res.1
         })
         ### NBLAST mirrored
-        if(!is.null(query.addition.neuronlist)&&length(query.addition.neuronlist)){
+        if(!is.null(query.addition.neuronlist)&&length(query.addition.neuronlist)){ # For an additional neuronlist of mirrored neurons
           nblast.res.3 = nat.nblast::nblast(query = query.addition.neuronlist,
                                             target = target.neuronlist,
                                             .parallel=FALSE,
