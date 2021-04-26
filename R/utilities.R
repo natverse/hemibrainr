@@ -488,7 +488,7 @@ update.neuronlistfh <- function(x,
     dbClass = "ZIP"
   }
   if(dbClass=="DB1"){
-    data = gsub("\\.rds","_datafile",rds)
+    data = gsub("\\.rds","_datafile", file)
     if(file.exists(paste0(data,"___LOCK"))){
       file.remove(paste0(data,"___LOCK"))
     }
@@ -628,6 +628,7 @@ squeeze_neuronlist <- function(x, digits=6, ...) {
 # hidden
 squeeze_neuron <- function(x, digits=6, ...) {
   stopifnot(nat::is.neuron(x))
+  check_package_available('bitsqueezr')
   x$d=squeeze_dataframe(x$d, exclude=c("X", "Y", "Z"), digits=digits, ...)
   if(!is.null(x$connectors)) {
     x$connectors=squeeze_dataframe(x$connectors, digits=digits, ...)
@@ -648,4 +649,10 @@ squeeze_dataframe <- function(x, exclude=NULL, ...) {
     else x[[i]]=bitsqueezr::squeeze_bits(col, ...)
   }
   x
+}
+
+check_package_available <- function(pkg) {
+  if(!requireNamespace(pkg, quietly = TRUE)) {
+    stop("Please install suggested package: ", pkg)
+  }
 }

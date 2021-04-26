@@ -23,6 +23,7 @@ nblast_big <-function(query.neuronlistfh, target.neuronlistfh,
   gc()
   batch.size = numCores #floor(sqrt(numCores))
   cl = parallel::makeForkCluster(batch.size)
+  check_package_available("doParallel")
   doParallel::registerDoParallel(cl)
   if(numCores<2){
     `%go%` <- foreach::`%do%`
@@ -87,8 +88,8 @@ nblast_big <-function(query.neuronlistfh, target.neuronlistfh,
       chosen.target = names(target.neuronlist)
       if(!is.null(query.neuronlist)&&length(query.neuronlist)){
         ### This is a slightly more inefficient way
-        query.neuronlist = query.neuronlist[unlist(sapply(query.neuronlist,hemibrainr:::is_big_dps,no.points=no.points))]
-        target.neuronlist = target.neuronlist[unlist(sapply(target.neuronlist,hemibrainr:::is_big_dps,no.points=no.points))]
+        query.neuronlist = query.neuronlist[unlist(sapply(query.neuronlist, is_big_dps,no.points=no.points))]
+        target.neuronlist = target.neuronlist[unlist(sapply(target.neuronlist, is_big_dps,no.points=no.points))]
         if(!is.null(query.addition.neuronlistfh)){
           query.addition.neuronlist = query.addition.neuronlistfh[names(query.addition.neuronlistfh)%in%chosen.query]
         }else{
