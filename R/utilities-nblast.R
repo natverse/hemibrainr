@@ -76,16 +76,12 @@ nblast_big <-function(query.neuronlistfh, target.neuronlistfh,
   ### This is a slightly more inefficient way
   batches.query = split(sample(query), round(seq(from = 1, to = batch.size, length.out = length(query))))
   batches.target = split(sample(target), round(seq(from = 1, to = batch.size, length.out = length(target))))
-  by.query <- foreach::foreach (qi = batches.query, .combine = 'c', .errorhandling='pass') %:%
-    foreach::foreach (ti = batches.target, .combine = 'c', .errorhandling='pass') %go% {
+  by.query <- foreach::foreach (chosen.query = batches.query, .combine = 'c', .errorhandling='pass') %:%
+    foreach::foreach (chosen.target = batches.target, .combine = 'c', .errorhandling='pass') %go% {
       ## this would be a better way of doing it, but at the moment thwarted by DB1 lock files
-      # query.neuronlist = query.neuronlistfh[chosen.query]
-      # target.neuronlist = target.neuronlistfh[chosen.target]
-      target.neuronlist = target.neuronlistfh[ti]
-      query.neuronlist = query.neuronlistfh[qi]
+      query.neuronlist = query.neuronlistfh[chosen.query]
+      target.neuronlist = target.neuronlistfh[chosen.target]
       query.addition.neuronlist = NULL
-      chosen.query = names(query.neuronlist)
-      chosen.target = names(target.neuronlist)
       if(!is.null(query.neuronlist)&&length(query.neuronlist)){
         ### This is a slightly more inefficient way
         query.neuronlist = query.neuronlist[unlist(sapply(query.neuronlist, is_big_dps,no.points=no.points))]
