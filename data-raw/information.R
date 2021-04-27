@@ -31,6 +31,7 @@ pn.info = plyr::rbind.fill(upns.fib.info,mpns.fib.info,vpns.fib.info, other.fib.
 pn.info = plyr::rbind.fill(pn.info, upns.left.fib.info)
 pn.info = pn.info[!is.na(pn.info$bodyid),]
 pn.info = pn.info[!duplicated(pn.info$bodyid),]
+pn.info = subset(pn.info, !grepl("_L",pn.info$instance)) # Just take right-side
 pn.info$glomerulus = gsub("\\+.*","",pn.info$glomerulus)
 pn.info = merge(pn.info, odour.scenes.agg, all.x = TRUE, all.y = FALSE)
 pn.meta = neuprint_get_meta(pn.info$bodyid)
@@ -45,7 +46,6 @@ pn.info$neurotransmitter = ifelse(pn.info$tract=="mlALT","GABA","acetylcholine")
 pn.info$glomerulus = gsub(" ","",pn.info$glomerulus)
 pn.info$glomerulus[pn.info$class=='mPN'] = "mPN"
 pn.info=pn.info[,!colnames(pn.info)%in%c( "X", "PN_type", "fafb_type", "PN_type_revised", "best_fafb_match")]
-pn.info = subset(pn.info, !grepl("_L",name)) # Just take right-side
 pn.info$putative.classic.transmitter[is.na(pn.info$putative.classic.transmitter)] = "unknown"
 
 # ALRN info
