@@ -45,6 +45,8 @@ pn.info$neurotransmitter = ifelse(pn.info$tract=="mlALT","GABA","acetylcholine")
 pn.info$glomerulus = gsub(" ","",pn.info$glomerulus)
 pn.info$glomerulus[pn.info$class=='mPN'] = "mPN"
 pn.info=pn.info[,!colnames(pn.info)%in%c( "X", "PN_type", "fafb_type", "PN_type_revised", "best_fafb_match")]
+pn.info = subset(pn.info, !grepl("_L",name)) # Just take right-side
+pn.info$putative.classic.transmitter[is.na(pn.info$putative.classic.transmitter)] = "unknown"
 
 # ALRN info
 rn.info = read.csv("/Users/GD/LMBD/Papers/hemibrain_olf_data/FIB_RNs.csv")
@@ -80,6 +82,10 @@ ton.info$class[ton.info$class=="TON"] = "TOON"
 ton.info$class[ton.info$bodyid%in%cent.ids] = "LHCENT"
 ton.meta = hemibrain_get_meta(as.character(ton.info$bodyid))
 ton.meta$side = "right"
+ton.meta$putative.classic.transmitter[ton.meta$putative.classic.transmitter=="acetlcholine"] = "acetylcholine"
+ton.meta$putative.classic.transmitter[ton.meta$putative.classic.transmitter=="acetylcoline"] = "acetylcholine"
+ton.meta$putative.classic.transmitter[ton.meta$putative.classic.transmitter=="NA"] = "unknown"
+ton.meta$putative.classic.transmitter[is.na(ton.meta$putative.classic.transmitter)]= "unknown"
 ton.info = cbind(ton.info, ton.meta[as.character(ton.info$bodyid),setdiff(colnames(ton.meta),colnames(ton.info))])
 
 ## Visual projection neuron information
