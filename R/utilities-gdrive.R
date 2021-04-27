@@ -523,7 +523,7 @@ gsheet_manipulation <- function(FUN,
   try(Sys.sleep(1))
   if(return){
     if(is.data.frame(g)){
-      g = unlist_df(g)
+      g = try(unlist_df(g), silent = FALSE)
     }
     return(g)
   }
