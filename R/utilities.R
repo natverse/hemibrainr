@@ -519,6 +519,7 @@ update.neuronlistfh <- function(x,
         NULL
       })
     }
+    old.neurons = as.neuronlist(old.neurons)
     #old.neurons = tryCatch(old.neurons[sapply(old.neurons, function(x) nat::is.neuron(x))], error = function(e) {
       #warning(e)
       #message("original neuron file cannot link to data, overwriting ", file)
@@ -526,9 +527,15 @@ update.neuronlistfh <- function(x,
       #})
     if(!is.null(old.neurons)&&length(old.neurons)&&nat::is.neuronlist(old.neurons)){
       if(!is.null(attr(old.neurons,"df"))){
-        old.neurons = old.neurons[setdiff(names(old.neurons),names(x))]
-        x = nat::union(x, old.neurons)
-        message("x combined with ", length(old.neurons), " old neurons from extant: ", file)
+        just.old = setdiff(names(old.neurons),names(x))
+        if(length(just.old)){
+          old.neurons = tryCatch(old.neurons[just.old], function(e){
+            message(as.character(e))
+            NULL
+          })
+          x = nat::union(x, old.neurons)
+          message("x combined with ", length(old.neurons), " old neurons from extant: ", file)
+        }
       }
     }
   }

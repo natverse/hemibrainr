@@ -47,6 +47,7 @@ pn.info$glomerulus = gsub(" ","",pn.info$glomerulus)
 pn.info$glomerulus[pn.info$class=='mPN'] = "mPN"
 pn.info=pn.info[,!colnames(pn.info)%in%c( "X", "PN_type", "fafb_type", "PN_type_revised", "best_fafb_match")]
 pn.info$putative.classic.transmitter[is.na(pn.info$putative.classic.transmitter)] = "unknown"
+pn.info$putative.classic.transmitter = hemibrainr::standardise(pn.info$putative.classic.transmitter)
 
 # ALRN info
 rn.info = read.csv("/Users/GD/LMBD/Papers/hemibrain_olf_data/FIB_RNs.csv")
@@ -58,6 +59,7 @@ rn.info$class = ifelse(rn.info$modality=="olfactory","ORN","THRN")
 rn.info$side = rn.info$soma_side
 rn.info=rn.info[,!colnames(rn.info)%in%c( "X", "PN_type", "fafb_type", "PN_type_revised", "best_fafb_match", "soma_side")]
 rn.info = rn.info[,!grepl("dend\\.|pd\\.|segregation",colnames(rn.info))]
+rn.info$putative.classic.transmitter = "acetylcholine"
 
 ## MBON information
 mbon.info = neuprint_search(".*MBON.*")
@@ -75,6 +77,10 @@ mbon.info$compartments = gsub("_.*","",mbon.info$compartments)
 rownames(mbon.info) = mbon.info$bodyid
 mbon.meta = hemibrain_get_meta(as.character(mbon.info$bodyid))
 mbon.info = cbind(mbon.info, mbon.meta[as.character(mbon.info$bodyid),setdiff(colnames(mbon.meta),colnames(mbon.info))])
+mbon.info$naive.valence = "unknown"
+mbon.info$naive.valence[mbon.info$valence=="app"] = "aversive"
+mbon.info$naive.valence[mbon.info$valence=="aver"] = "appetitive"
+mbon.info$neurotransmitter = hemibrainr::standardise(mbon.info$neurotransmitter)
 
 ### olfactory TON information
 ton.info = lhns::hemibrain_tons
@@ -87,6 +93,7 @@ ton.meta$putative.classic.transmitter[ton.meta$putative.classic.transmitter=="ac
 ton.meta$putative.classic.transmitter[ton.meta$putative.classic.transmitter=="NA"] = "unknown"
 ton.meta$putative.classic.transmitter[is.na(ton.meta$putative.classic.transmitter)]= "unknown"
 ton.info = cbind(ton.info, ton.meta[as.character(ton.info$bodyid),setdiff(colnames(ton.meta),colnames(ton.info))])
+ton.info$putative.classic.transmitter = hemibrainr::standardise(ton.info$putative.classic.transmitter)
 
 ## Visual projection neuron information
 lc.info = neuprint_search("LC.*",field="type")
@@ -123,6 +130,7 @@ alln.info$notes = paste0("Type: ",alln.summary$type.description[match(alln.info$
 kc.info = neuprint_search("^KC.*",field="type")
 kc.info = hemibrain_get_meta(kc.info$bodyid)
 kc.info$class = "KC"
+kc.info$putative.classic.transmitter = "acetylcholine"
 
 # CENT information
 cent.info = hemibrain_get_meta(unique(hemibrainr::cent.ids))
