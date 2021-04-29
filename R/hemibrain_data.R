@@ -103,6 +103,8 @@
 "hemibrain.surf"
 #' @rdname hemibrain.surf
 "hemibrain_microns.surf"
+#' @rdname hemibrain.surf
+"flywire_al.surf"
 
 #'Meshes for Antennal Lobe (AL) glomeruli
 #'

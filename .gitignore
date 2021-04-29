@@ -12,6 +12,7 @@ data-raw/annotations/
 .DS_Store
 vignettes/future/*
 data-raw/metrics/
+data-raw/FAFB/
 doc/
 hemibrainr.pptx
 ~$hemibrainr.pptx

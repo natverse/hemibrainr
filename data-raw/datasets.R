@@ -151,6 +151,34 @@ nat.templatebrains::regtemplate(hemibrain_al.surf) = "JRCFIB2018Fraw"
 usethis::use_data(hemibrain_al_microns.surf, overwrite = TRUE)
 usethis::use_data(hemibrain_al.surf, overwrite = TRUE)
 
+### Same from FAFB
+fw.al.objs = list.files("data-raw/FAFB/",pattern = ".obj",full.names = TRUE)
+fw.al.meshes = sapply(fw.al.objs, readobj::read.obj, convert.rgl = TRUE)
+fw.gloms = gsub(".*raw\\.|\\_mesh.*","",names(fw.al.meshes))
+names(fw.al.meshes) = fw.gloms
+Vertices = data.frame(stringsAsFactors = FALSE)
+Regions = list()
+count = 0
+for(i in 1:length(fw.al.meshes)){
+  glom = names(fw.al.meshes)[i]
+  mesh = fw.al.meshes[[glom]]
+  h = nat::as.hxsurf(mesh)
+  h = nat.templatebrains::xform_brain(h, sample = "FAFB14", reference = "FlyWire", OmitFailures = FALSE, Verbose = FALSE)
+  vertices = h$Vertices
+  vertices$PointNo = vertices$PointNo+count
+  regions = h$Regions$Interior + count
+  count = max(vertices$PointNo)
+  Vertices = rbind(Vertices, vertices)
+  Regions[[glom]] = regions
+}
+flywire_al.surf = list(Vertices = Vertices,
+                         Regions = Regions,
+                         RegionList = fw.gloms,
+                         RegionColourList = hemibrain_bright_colour_ramp(length(fw.gloms)))
+class(flywire_al.surf) = "hxsurf"
+nat.templatebrains::regtemplate(flywire_al.surf) = "FlyWire"
+usethis::use_data(flywire_al.surf, overwrite = TRUE)
+
 # Just save the ORN and HRN bodyids
 # ton.ids = read.csv("data-raw/annotations/bodyids_thirdorder.csv")
 # lhn.ids = read.csv("data-raw/annotations/bodyids_lhns.csv")

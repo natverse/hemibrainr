@@ -25,7 +25,7 @@
 \format{
 An object of class \code{character} of length 2653.
 
-An object of class \code{character} of length 2577.
+An object of class \code{character} of length 2576.
 
 An object of class \code{character} of length 57.
 

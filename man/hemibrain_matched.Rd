@@ -6,7 +6,7 @@
 \alias{lm_matched}
 \title{Manually verified neuron matches between the hemibrain and FAFB dataset}
 \format{
-An object of class \code{data.frame} with 99161 rows and 16 columns.
+An object of class \code{data.frame} with 99155 rows and 16 columns.
 
 An object of class \code{data.frame} with 27878 rows and 11 columns.
 }
