@@ -103,16 +103,15 @@
 "hemibrain.surf"
 #' @rdname hemibrain.surf
 "hemibrain_microns.surf"
-#' @rdname hemibrain.surf
-"flywire_al.surf"
 
 #'Meshes for Antennal Lobe (AL) glomeruli
 #'
 #'3D meshes of 51 olfactory + 7 thermosensory antennal lobe glomeruli for the
 #'the hemibrain volume. They are represented as a \code{\link[nat]{hxsurf}}
-#'object, in which 58 'regions' are defined, one for each glomerulus. Meshes are
+#'object, in which 'regions' are defined, one for each glomerulus. Meshes are
 #'available both in raw voxels and in microns. You can see which glomeruli are
-#'truncated, and by roughly how much by examining
+#'truncated, and by roughly how much by examining. The glomeruli are made from PN
+#'dendrites.
 #'\code{hemibrain_glomeruli_summary}.
 #'
 #'@details note that hemibrain coordinate system  has the anterior-posterior
@@ -167,6 +166,8 @@
 "hemibrain_glomeruli_summary"
 #' @rdname hemibrain_al.surf
 "odour_scenes"
+#' @rdname hemibrain_al.surf
+"flywire_al.surf"
 
 #' Axon-dendrite split points calculated for all hemibrain neurons
 #'

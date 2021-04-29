@@ -122,9 +122,10 @@ usethis::use_data(hemibrain.surf, overwrite = TRUE)
 # usethis::use_data(hemibrain_rois, overwrite = TRUE)
 
 ### AL glomeruli meshes
-al.objs = list.files("data-raw/AL/",pattern = ".obj",full.names = TRUE)
-al.meshes = sapply(al.objs, readobj::read.obj, convert.rgl = TRUE)
-gloms = gsub(".*raw\\.|\\_mesh.*","",names(al.meshes))
+al.stls = list.files("data-raw/AL/PN/",pattern = ".stl",full.names = TRUE)
+al.meshes.stl = sapply(al.stls, readSTL, plot = FALSE)
+al.meshes = pbapply::pblapply(al.meshes.stl, as.mesh3d)
+gloms = gsub(".*raw\\.|\\_mesh.*|\\.stl","",names(al.meshes))
 names(al.meshes) = gloms
 Vertices = data.frame(stringsAsFactors = FALSE)
 Regions = list()
@@ -152,9 +153,9 @@ usethis::use_data(hemibrain_al_microns.surf, overwrite = TRUE)
 usethis::use_data(hemibrain_al.surf, overwrite = TRUE)
 
 ### Same from FAFB
-fw.al.objs = list.files("data-raw/FAFB/",pattern = ".obj",full.names = TRUE)
+fw.al.objs = list.files("data-raw/AL/FAFB/",pattern = ".obj",full.names = TRUE)
 fw.al.meshes = sapply(fw.al.objs, readobj::read.obj, convert.rgl = TRUE)
-fw.gloms = gsub(".*raw\\.|\\_mesh.*","",names(fw.al.meshes))
+fw.gloms = basename(gsub(".*raw\\.|\\_mesh.*|\\.obj","",fw.al.objs))
 names(fw.al.meshes) = fw.gloms
 Vertices = data.frame(stringsAsFactors = FALSE)
 Regions = list()
@@ -164,6 +165,10 @@ for(i in 1:length(fw.al.meshes)){
   mesh = fw.al.meshes[[glom]]
   h = nat::as.hxsurf(mesh)
   h = nat.templatebrains::xform_brain(h, sample = "FAFB14", reference = "FlyWire", OmitFailures = FALSE, Verbose = FALSE)
+  # Save converted .obj files
+  plot3d(h)
+  writeOBJ(paste0("flywire_right_",glom,".obj"))
+  clear3d()
   vertices = h$Vertices
   vertices$PointNo = vertices$PointNo+count
   regions = h$Regions$Interior + count

@@ -4,14 +4,11 @@
 \name{hemibrain.surf}
 \alias{hemibrain.surf}
 \alias{hemibrain_microns.surf}
-\alias{flywire_al.surf}
 \title{The hemibrain mesh}
 \format{
 An object of class \code{hxsurf} (inherits from \code{list}) of length 4.
 
 An object of class \code{hxsurf} (inherits from \code{list}) of length 4.
-
-An object of class \code{hxsurf} of length 4.
 }
 \source{
 \url{https://neuprint.janelia.org/}
@@ -20,8 +17,6 @@ An object of class \code{hxsurf} of length 4.
 hemibrain.surf
 
 hemibrain_microns.surf
-
-flywire_al.surf
 }
 \description{
 A 3D mesh of the overall neuropil structures in the hemibrain volume as a

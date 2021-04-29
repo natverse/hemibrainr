@@ -6,6 +6,7 @@
 \alias{hemibrain_al_microns.surf}
 \alias{hemibrain_glomeruli_summary}
 \alias{odour_scenes}
+\alias{flywire_al.surf}
 \title{Meshes for Antennal Lobe (AL) glomeruli}
 \format{
 An object of class \code{hxsurf} of length 4.
@@ -15,6 +16,8 @@ An object of class \code{hxsurf} of length 4.
 An object of class \code{data.frame} with 58 rows and 11 columns.
 
 An object of class \code{data.frame} with 83 rows and 7 columns.
+
+An object of class \code{hxsurf} of length 4.
 }
 \source{
 \url{https://neuprint.janelia.org/}
@@ -27,6 +30,8 @@ hemibrain_al_microns.surf
 hemibrain_glomeruli_summary
 
 odour_scenes
+
+flywire_al.surf
 }
 \value{
 \code{hemibrain_glomeruli_summary} is a \code{data.frame} with the
@@ -53,9 +58,10 @@ odour_scenes
 \description{
 3D meshes of 51 olfactory + 7 thermosensory antennal lobe glomeruli for the
 the hemibrain volume. They are represented as a \code{\link[nat]{hxsurf}}
-object, in which 58 'regions' are defined, one for each glomerulus. Meshes are
+object, in which 'regions' are defined, one for each glomerulus. Meshes are
 available both in raw voxels and in microns. You can see which glomeruli are
-truncated, and by roughly how much by examining
+truncated, and by roughly how much by examining. The glomeruli are made from PN
+dendrites.
 \code{hemibrain_glomeruli_summary}.
 }
 \details{
