@@ -346,11 +346,12 @@ flywire_tracing_standardise <- function(ws = NULL,
                                             ss = selected_sheets,
                                             return = TRUE,
                                             Verbose = FALSE)
+    tabs = tabs[tabs!="readme"]
     pb = progress::progress_bar$new(
       format = "  standardising :what [:bar] :percent eta: :eta",
       clear = !Verbose, total = length(tabs))
     for(tab in tabs){
-      pb$tick(tokens = list(what = tab))
+      try(pb$tick(tokens = list(what = tab)), silent = TRUE)
       flywire_tracing_standardise(ws=tab,
                                   field = field,
                                   regex=FALSE,
@@ -464,11 +465,11 @@ flywire_deploy_workflows <-function(ws = "flywire",
                                           return = TRUE)
   workflow.tabs.missing = setdiff(workflow.tabs,tabs)
   workflow.tabs.there= intersect(workflow.tabs,tabs)
-  pb = progress::progress_bar$new(
+  pbm = progress::progress_bar$new(
     format = "  adding new tab :what [:bar] :percent eta: :eta",
     clear = FALSE, total = length(tabs))
   for(missing in workflow.tabs.missing){
-    pb$tick(tokens = list(what = missing))
+    try(pbm$tick(tokens = list(what = missing)), silent = TRUE)
     please.add = subset(main, main$tab == missing)
     fw = flywire_workflow(flywire.id = please.add$flywire.id,
                           status = please.add$status,
@@ -577,7 +578,8 @@ flywire_workflow <- function(flywire.id,
                               local = NULL,
                               cloudvolume.url = NULL,
                              Verbose = TRUE,
-                             max.hits = 50){
+                             max.hits = 50,
+                             db = flywire_neurons(WithConnectors = TRUE)){
   if(length(flywire.id)>1){
     stop("Only one flywire.id at a time please")
   }
@@ -596,8 +598,18 @@ flywire_workflow <- function(flywire.id,
                                 note = NA,
                                 stringsAsFactors = FALSE)
     main = data.frame(flywire.id, nblast = "main", quality = "none", note = gsub("_.*","",ws), stringsAsFactors = FALSE)
+    colnames(main) = colnames(tab.entries)
+    tab.entries = as.data.frame(tab.entries, stringsAsFactors = FALSE)
+    plyr::rbind.fill(main, tab.entries)
   }else if (syns){
-
+    tab.entries = flywire_synapse_annotations(flywire.id,
+                                            partners = NULL,
+                                            db = db,
+                                            keep.dist.nm = NULL,
+                                            cleft_scores.thresh = 50,
+                                            sample = NULL,
+                                            write.csv = FALSE)
+    tab.entries
   }else{
     partners = ifelse(grepl("outputs",ws),"outputs","inputs")
     tab.entries = fafbseg::flywire_partner_summary(flywire.id,
@@ -631,10 +643,10 @@ flywire_workflow <- function(flywire.id,
     tab.entries$status = "unassessed"
     tab.entries$note = NA
     main = data.frame(flywire.id,weight = "main", status = status, note = gsub("_.*","",ws), stringsAsFactors = FALSE)
+    colnames(main) = colnames(tab.entries)
+    tab.entries = as.data.frame(tab.entries, stringsAsFactors = FALSE)
+    plyr::rbind.fill(main, tab.entries)
   }
-  colnames(main) = colnames(tab.entries)
-  tab.entries = as.data.frame(tab.entries, stringsAsFactors = FALSE)
-  plyr::rbind.fill(main, tab.entries)
 }
 
 # hidden, caches result for  5min in current session
