@@ -65,7 +65,7 @@ flywire_deploy_workflows(
   local = NULL,
   cloudvolume.url = NULL,
   Verbose = TRUE,
-  work.flows = c("inputs", "outputs", "matches")
+  work.flows = c("inputs", "outputs", "matches", "synapses")
 )
 
 flywire_dns(

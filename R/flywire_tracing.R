@@ -437,7 +437,7 @@ flywire_deploy_workflows <-function(ws = "flywire",
                                       local = NULL,
                                       cloudvolume.url = NULL,
                                       Verbose = TRUE,
-                                      work.flows = c("inputs","outputs","matches")){
+                                      work.flows = c("inputs","outputs","matches","synapses")){
   if(length(setdiff(work.flows,c("inputs","outputs","matches")))){
     stop("The only supported workflows are: inputs, outputs and matches")
   }
@@ -532,29 +532,31 @@ flywire_update_workflow <-function(main,
     }
   }else{
     gs = update = flywire_tracing_sheet(ws=ws,regex=FALSE,open=FALSE,selected_sheet=target_sheet,Verbose=Verbose)
-    gs$status = standard_statuses(gs$status)
-    id = ifelse("pre_id"%in%colnames(gs),"pre_id","post_id")
-    gs[[id]][is.na(gs[[id]])] = "0"
-    gs[[id]] = tryCatch(fafbseg::flywire_latestid(gs[[id]]), error = function(e){
-      warning(e)
-     unlist(sapply(gs[[id]], function(x) tryCatch(fafbseg::flywire_latestid(x), error = function(e) NA)))
-    })
-    if(!nrow(gs)){
-      warning("Workflow sheet has no rows: ", ws)
-      return(invisible())
-    }
-    fw = flywire_workflow(flywire.id = main$flywire.id,
-                          status = main$status,
-                          ws=ws,
-                          threshold = threshold,
-                          cleft.threshold = cleft.threshold,
-                          transmitters=transmitters,
-                          local = local,
-                          cloudvolume.url = cloudvolume.url,
-                          Verbose = Verbose)
-    shared.cols = setdiff(intersect(colnames(fw),colnames(gs)),id)
-    for(sc in shared.cols){
-      fw[[sc]] = gs[[sc]][match(fw[[id]],gs[[id]])]
+    if(!is.null(gs$status)){
+      gs$status = standard_statuses(gs$status)
+      id = ifelse("pre_id"%in%colnames(gs),"pre_id","post_id")
+      gs[[id]][is.na(gs[[id]])] = "0"
+      gs[[id]] = tryCatch(fafbseg::flywire_latestid(gs[[id]]), error = function(e){
+        warning(e)
+        unlist(sapply(gs[[id]], function(x) tryCatch(fafbseg::flywire_latestid(x), error = function(e) NA)))
+      })
+      if(!nrow(gs)){
+        warning("Workflow sheet has no rows: ", ws)
+        return(invisible())
+      }
+      fw = flywire_workflow(flywire.id = main$flywire.id,
+                            status = main$status,
+                            ws=ws,
+                            threshold = threshold,
+                            cleft.threshold = cleft.threshold,
+                            transmitters=transmitters,
+                            local = local,
+                            cloudvolume.url = cloudvolume.url,
+                            Verbose = Verbose)
+      shared.cols = setdiff(intersect(colnames(fw),colnames(gs)),id)
+      for(sc in shared.cols){
+        fw[[sc]] = gs[[sc]][match(fw[[id]],gs[[id]])]
+      }
     }
     gsheet_manipulation(FUN = googlesheets4::sheet_write,
                                      data = fw,
@@ -580,6 +582,7 @@ flywire_workflow <- function(flywire.id,
     stop("Only one flywire.id at a time please")
   }
   match = grepl("match",ws)
+  syns = grepl("synapses",ws)
   if(match){
     if(is.null(nblast)){
       nblast = hemibrain_nblast("hemibrain-flywire")
@@ -593,6 +596,8 @@ flywire_workflow <- function(flywire.id,
                                 note = NA,
                                 stringsAsFactors = FALSE)
     main = data.frame(flywire.id, nblast = "main", quality = "none", note = gsub("_.*","",ws), stringsAsFactors = FALSE)
+  }else if (syns){
+
   }else{
     partners = ifelse(grepl("outputs",ws),"outputs","inputs")
     tab.entries = fafbseg::flywire_partner_summary(flywire.id,
@@ -671,4 +676,91 @@ flywire_dns <- function(side = c("both","right","left"),
   gs
 }
 
-
+# Generate a .csv of neuron synapses as flywire annotations
+#' @param fw.ids character vector, a vector of valid flywire IDs
+#' @param partners character vector else not used i \code{NULL}. A vector of valid flywire IDs for postsynaptic neurons to keep.
+#' Synapses to other postsynaptic targets are filtered out.
+#' @param db a \code{neuronlist} of flywire neurons with synapses attached
+#' @param keep.dist.nm numeric, minimum distance in nm that one synapse can be from another. One random synapse is chosen from groups of proximal synapses. To deactive, enter \code{NULL}.
+#' @param cleft_scores.thresh numeric, cleft_score threshold for synapse inclusion
+#' @param sample numeric, the number of synapses to choose from both the dendrite and axon of each neuron in \code{fw.ids}
+#' @param write.csv logical, whether or not to write a \code{.csv} output file, ready for import into flywire. One for each neuron, named by \code{csv.path}.
+#' @param csv.path character, the path to which to save \code{.csv} files.
+#' @name flywire_synapse_annotations
+#' @export
+flywire_synapse_annotations <- function(fw.ids,
+                                        partners = NULL,
+                                        db = flywire_neurons(WithConnectors = TRUE),
+                                        keep.dist.nm = 500,
+                                        cleft_scores.thresh = 75,
+                                        sample = 250,
+                                        write.csv = TRUE,
+                                        csv.path = getwd()){
+  flywire.scan = data.frame(stringsAsFactors = FALSE)
+  for(fw.id in fw.ids){
+    if(!fw.id%in%names(db)){
+      warning(fw.id," missing from db")
+      next
+    }
+    fw.neurons.syn.ac.syns = hemibrain_extract_synapses(db[fw.id], .parallel = TRUE, OmitFailures = TRUE)
+    if(is.null(partners)){
+      fw.neurons.syn.ac.syns <- fw.neurons.syn.ac.syns %>%
+        dplyr::filter(partner %in% partners)
+    }
+    if(!nrow(fw.neurons.syn.ac.syns)){
+      warning(fw.id," no valid synapses after partner filtering")
+      next
+    }
+    if(is.null(fw.neurons.syn.ac.syns$Label)){
+      fw.neurons.syn.ac.syns$Label = "unknown"
+    }
+    synister.synapse.sample <- fw.neurons.syn.ac.syns %>%
+      dplyr::filter(prepost==0, cleft_scores > cleft_scores.thresh, Label %in% c("axon","dendrite", "2","3","unknown")) %>%
+      dplyr::mutate(bin.cleft_scores= plyr::round_any(cleft_scores, 10)) %>%
+      dplyr::group_by(Label) %>%
+      dplyr::sample_n(size=sample, replace = TRUE) %>%
+      dplyr::collect()
+    if(!nrow(synister.synapse.sample)){
+      warning(fw.id," no valid synapses after filtering")
+      next
+    }
+    if(!is.null(keep.dist.nm)){
+      d = t(apply(nat::xyzmatrix(synister.synapse.sample),1,function(r) r*c(4,4,40)))
+      close = nabor::knn(d,d,k=10,radius=keep.dist.nm) # remove synapses within 500 nm of each other
+      near = close$nn.idx
+      keep = c()
+      remove = c()
+      for(r in 1:nrow(near)){
+        remove = unique(c(remove,near[r,-1]))
+        if(!r%in%remove){
+          keep = c(keep, r)
+        }
+      }
+      synister.synapse.sample = synister.synapse.sample[keep,]
+    }
+    synister.synapse.sample = as.data.frame(synister.synapse.sample, stringsAsFactors = FALSE)
+    synister.synapse.sample = synister.synapse.sample[!duplicated(synister.synapse.sample$offset),]
+    synister.synapse.sample$`Coordinate 1` = apply(nat::xyzmatrix(synister.synapse.sample),1,function(x) hemibrainr:::paste_coords(x/c(4,4,40)))
+    flywire.scan = data.frame(`Coordinate 1` = synister.synapse.sample$`Coordinate 1`,
+                              `Coordinate 2` = "",
+                              `Ellipsoid Dimensions` = "",
+                              tags = "",
+                              Description = synister.synapse.sample$top.nt,
+                              `Segment IDs` = "",
+                              `Parent ID` = "",
+                              Type = "Point",
+                              ID = "",
+                              offset = synister.synapse.sample$offset,
+                              scores = synister.synapse.sample$scores,
+                              cleft_scores = synister.synapse.sample$cleft_scores,
+                              Label = synister.synapse.sample$Label,
+                              flywire.id = fw.id)
+    colnames(flywire.scan) = gsub("\\."," ",colnames(flywire.scan))
+    flywire.scan$`Coordinate 1` = as.character(flywire.scan$`Coordinate 1`)
+    if(write.csv){
+      readr::write_excel_csv(flywire.scan, file = file.path(csv.path, paste0("flywire_",fw.id,"_synapse_annotations.csv")))
+    }
+    flywire.scan = plyr::rbind.fill(flywire.scans,flywire.scan)
+  }
+  flywire.scans
+}
