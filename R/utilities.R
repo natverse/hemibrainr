@@ -529,7 +529,7 @@ update.neuronlistfh <- function(x,
       if(!is.null(attr(old.neurons,"df"))){
         just.old = setdiff(names(old.neurons),names(x))
         if(length(just.old)){
-          old.neurons = tryCatch(old.neurons[just.old], function(e){
+          old.neurons = tryCatch(old.neurons[just.old], error = function(e){
             message(as.character(e))
             NULL
           })
