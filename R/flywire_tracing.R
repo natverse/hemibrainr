@@ -439,7 +439,7 @@ flywire_deploy_workflows <-function(ws = "flywire",
                                       cloudvolume.url = NULL,
                                       Verbose = TRUE,
                                       work.flows = c("inputs","outputs","matches","synapses")){
-  if(length(setdiff(work.flows,c("inputs","outputs","matches")))){
+  if(length(setdiff(work.flows,c("inputs","outputs","matches","synapses")))){
     stop("The only supported workflows are: inputs, outputs and matches")
   }
   gs = flywire_tracing_sheet(ws=ws,regex=regex,open=FALSE,selected_sheet=main_sheet,Verbose=Verbose)
