@@ -92,6 +92,12 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
+  <a href="../index.html">
+    <span class="fas fa-home fa-lg"></span>
+     
+  </a>
+</li>
+<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -149,7 +155,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Read precomputed flywire data from the hemibrainr Google Drive</h1>
-    <small class="dont-index">Source: <a href='https://github.com/flyconnectome/hemibrainr/blob/master/R/flywire_googledrive.R'><code>R/flywire_googledrive.R</code></a></small>
+    <small class="dont-index">Source: <a href='https://github.com/flyconnectome/hemibrainr/blob/master/R/flywire_googledrive.R'><code>R/flywire_googledrive.R</code></a>, <a href='https://github.com/flyconnectome/hemibrainr/blob/master/R/flywire_synapses.R'><code>R/flywire_synapses.R</code></a></small>
     <div class="hidden name"><code>flywire_googledrive_data.Rd</code></div>
     </div>
 
@@ -173,7 +179,24 @@
   <span class='va'>...</span>
 <span class='op'>)</span>
 
-<span class='fu'>flywire_ids</span><span class='op'>(</span>local <span class='op'>=</span> <span class='cn'>FALSE</span>, folder <span class='op'>=</span> <span class='st'>"flywire_neurons/"</span>, sql <span class='op'>=</span> <span class='cn'>FALSE</span>, <span class='va'>...</span><span class='op'>)</span></pre>
+<span class='fu'>flywire_ids</span><span class='op'>(</span>local <span class='op'>=</span> <span class='cn'>FALSE</span>, folder <span class='op'>=</span> <span class='st'>"flywire_neurons/"</span>, sql <span class='op'>=</span> <span class='cn'>FALSE</span>, <span class='va'>...</span><span class='op'>)</span>
+
+<span class='fu'>flywire_elist</span><span class='op'>(</span>local <span class='op'>=</span> <span class='cn'>FALSE</span>, folder <span class='op'>=</span> <span class='st'>"flywire_neurons/"</span>, sql <span class='op'>=</span> <span class='cn'>TRUE</span>, <span class='va'>...</span><span class='op'>)</span>
+
+<span class='fu'>flywire_connections</span><span class='op'>(</span>
+  local <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  folder <span class='op'>=</span> <span class='st'>"flywire_neurons/"</span>,
+  sql <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span>
+
+<span class='fu'>flywire_synapses</span><span class='op'>(</span>
+  local <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  folder <span class='op'>=</span> <span class='st'>"flywire_neurons/"</span>,
+  simplified <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  sql <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -198,6 +221,11 @@ which can take some time.</p></td>
     <tr>
       <th>...</th>
       <td><p>if <code>sql=TRUE</code>, methods passed to <code><a href='https://dplyr.tidyverse.org/reference/tbl.html'>dplyr::tbl</a></code>.</p></td>
+    </tr>
+    <tr>
+      <th>simplified</th>
+      <td><p>flywire synapses, where nearby Buhmann predicted synapses (often multiple per real synapses) are algorithmically combined into approximate single synapses
+using <code>hemibrainr:::flywire_synapse_simplify</code>.</p></td>
     </tr>
     </table>
 
@@ -254,7 +282,7 @@ which can take some time.</p></td>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

@@ -45,6 +45,12 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
 <li>
+  <a href="../index.html">
+    <span class="fas fa-home fa-lg"></span>
+     
+  </a>
+</li>
+<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -98,7 +104,7 @@
 
       
 
-      </header><div class="row">
+      </header><script src="hemibrain_axons_dendrites_files/header-attrs-2.7/header-attrs.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>axons and dendrites</h1>
@@ -124,12 +130,12 @@
 <a href="#splitting-a-neuron" class="anchor"></a>Splitting a neuron</h2>
 <p>Neurons can be split into a principle input zone, a dendrite, and a principle output zone, an axon. Dendrites tend to be more spindly and axons bulkier, with boutons packed with presynapses, ready to release neurotransmitter.</p>
 <center>
-<img src="https://raw.githubusercontent.com/natverse/hemibrainr/master/inst/images/neuron_split.png" alt="neuron_split">
+<img src="https://raw.githubusercontent.com/natverse/hemibrainr/master/inst/images/neuron_split.png" title="fig:" alt="neuron_split">
 </center>
 <p>But axons and dendrites are not a totally clear division for most neurons. A neuron may have more than one of each. It may also be more ‘amacrine-like’ and lack this division, though this is less common. Dendrites can have outputs, and axons can have inputs. Axons may connect with axons, even dendrites may input and axon.</p>
 <p>However, all fly neurons examined can be split into an axon-like and a dendrite-like compartment <a href="https://elifesciences.org/articles/12059">(Schneider-Mizell et al., 2016)</a>). The density of outputs in the axon is higher than in the dendrite. The density of inputs to the dendrite, are higher than in the axon <a href="https://www.sciencedirect.com/science/article/pii/S0960982220308587">(Bates &amp; Schlegel et al., 2020)</a>). Interestingly, the ‘start’ of a dendrite is almost always closer to the neuron’s cell body than the start of its axon. See our recent data <a href="https://www.sciencedirect.com/science/article/pii/S0960982220308587">(Bates &amp; Schlegel et al., 2020)</a>) for three broad classes of olfactory neuron:</p>
 <center>
-<img src="https://raw.githubusercontent.com/natverse/hemibrainr/master/inst/images/split_validation.png" alt="split_validation">
+<img src="https://raw.githubusercontent.com/natverse/hemibrainr/master/inst/images/split_validation.png" title="fig:" alt="split_validation">
 </center>
 <p>The biophysical impact of axo-axonic connections is unclear – they can have non-intuitive effects depending on the timing of action potentials in connected partners <a href="https://en.wikipedia.org/wiki/Axo-axonic_synapse">(Burrows and Laurent, 1993; Burrows and Matheson, 1994; Cuntz et al., 2007; Haag and Borst, 2004)</a>.</p>
 </div>
@@ -237,7 +243,7 @@
 <span class="va">axon.synapses</span> <span class="op">=</span> <span class="fu"><a href="../reference/hemibrain_extract_synapses.html">hemibrain_extract_synapses</a></span><span class="op">(</span><span class="va">axons</span>, prepost <span class="op">=</span> <span class="st">"PRE"</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/pkg/nat/man/neuronlist-dataframe-methods.html">head</a></span><span class="op">(</span><span class="va">axon.synapses</span><span class="op">)</span></code></pre></div>
 <center>
-<img src="https://raw.githubusercontent.com/natverse/hemibrainr/master/inst/images/tracts.png" alt="tracts">
+<img src="https://raw.githubusercontent.com/natverse/hemibrainr/master/inst/images/tracts.png" title="fig:" alt="tracts">
 </center>
 </div>
 <div id="visualise-the-split" class="section level3">
@@ -251,7 +257,7 @@
 <span class="fu"><a href="../reference/plot3d_split.html">plot3d_split</a></span><span class="op">(</span><span class="va">neurons.flow</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/pkg/nat/man/plot3d.html">plot3d</a></span><span class="op">(</span><span class="va">hemibrain.surf</span>, col <span class="op">=</span> <span class="st">"lightgrey"</span>, alpha <span class="op">=</span> <span class="fl">0.1</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 <center>
-<img src="https://raw.githubusercontent.com/natverse/hemibrainr/master/inst/images/plot3d_split.png" alt="plot3d_split">
+<img src="https://raw.githubusercontent.com/natverse/hemibrainr/master/inst/images/plot3d_split.png" title="fig:" alt="plot3d_split">
 </center>
 <p>Here, lines: blue = dendrite, orange = axon, green = linker, purple = cell body fibre.</p>
 <p>Balls: red = presynapse (output), navy blue = postsynapse (input), purple = soma.</p>
@@ -261,7 +267,7 @@
 <span class="fu">clear3d</span><span class="op">(</span><span class="op">)</span>
 <span class="fu"><a href="../reference/plot3d_split.html">nlscan_split</a></span><span class="op">(</span><span class="va">neurons.flow</span><span class="op">)</span></code></pre></div>
 <center>
-<img src="https://raw.githubusercontent.com/natverse/hemibrainr/master/inst/images/nlscan_split.png" alt="nlscan_split">
+<img src="https://raw.githubusercontent.com/natverse/hemibrainr/master/inst/images/nlscan_split.png" title="fig:" alt="nlscan_split">
 </center>
 <p>So I think most of those splits are pretty convincing.</p>
 </div>
@@ -334,7 +340,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

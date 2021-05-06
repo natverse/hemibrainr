@@ -45,6 +45,12 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
 <li>
+  <a href="../index.html">
+    <span class="fas fa-home fa-lg"></span>
+     
+  </a>
+</li>
+<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -98,7 +104,7 @@
 
       
 
-      </header><div class="row">
+      </header><script src="google_filestream_files/header-attrs-2.7/header-attrs.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>read data from Google drive</h1>
@@ -128,7 +134,7 @@
 <p>The best option is to use google filestream. By default, this is what <code>hemibrainr</code> expects. However, you need a <a href="https://workspace.google.com/pricing.html">Google Workspace</a> account (formerly G-Suite), which is a paid-for service. Without this, the best option is to use <a href="https://rclone.org/drive/">rclone</a>. You can also download to an external hard drive and use that.</p>
 <p>We have two <a href="https://support.google.com/a/users/answer/9310156?hl=en">Google team drives</a> available for you to use, which contain similar data. One (<code>"hemibrain"</code>) is for internal use by the <a href="https://www.zoo.cam.ac.uk/research/groups/connectomics">Drosophila Connectomics Group</a>. The other one (<code>"hemibrainr"</code>) is shared with those who would like access. Contact us by email to request access.</p>
 <center>
-<img src="https://raw.githubusercontent.com/natverse/hemibrainr/master/inst/images/hemibrainr_googledrive.png" alt="hemibrainr_googledrive">
+<img src="https://raw.githubusercontent.com/natverse/hemibrainr/master/inst/images/hemibrainr_googledrive.png" title="fig:" alt="hemibrainr_googledrive">
 </center>
 <div id="option-1-google-workspace-hemibrainr-and-r" class="section level2">
 <h2 class="hasAnchor">
@@ -168,7 +174,7 @@
 <a href="#set-your-drive-location" class="anchor"></a>Set your drive location</h3>
 <p>If you have mounted your Google drives with Google file stream, you should be able to see something like this:</p>
 <center>
-<img src="https://raw.githubusercontent.com/natverse/hemibrainr/master/inst/images/google_filestream.png" alt="google_filestream">
+<img src="https://raw.githubusercontent.com/natverse/hemibrainr/master/inst/images/google_filestream.png" title="fig:" alt="google_filestream">
 </center>
 <p>If you need to set <code>hemibrainr</code> to look at a new drive, use:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
@@ -189,8 +195,8 @@
 <h3 class="hasAnchor">
 <a href="#download-rclone" class="anchor"></a>Download rclone</h3>
 <p>First, <a href="https://rclone.org/downloads/">download</a> rclone for your operating system. You can also download from your system’s command line (e.g. from terminal):</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="co"># unix/macosx</span></a>
-<a class="sourceLine" id="cb3-2" data-line-number="2"><span class="ex">curl</span> https://rclone.org/install.sh <span class="kw">|</span> <span class="fu">sudo</span> bash</a></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># unix/macosx</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> https://rclone.org/install.sh <span class="kw">|</span> <span class="fu">sudo</span> bash</span></code></pre></div>
 </div>
 <div id="configure-rclone-with-hemibrainr-google-drive" class="section level3">
 <h3 class="hasAnchor">
@@ -198,76 +204,76 @@
 <p>Once you have rclone installed, you will need to follow <a href="https://rclone.org/drive/">these instructions</a> to configure rclone with a Google drive: this should either be the team drive ‘hemibrain’ or the team drive ‘hemibrainr’. For the defaults in this package to work, please name your remote drive ‘hemibrainr’.</p>
 <p>Whilst configuring, you will be asked to supply some google credentials - you can proceed without doing this. However, I highly recommend obtaining your own google client id and client secret from the <a href="https://console.developers.google.com/apis/">developer console</a> associated with your preferred Google account. To do this, <a href="https://rclone.org/drive/#making-your-own-client-id">follow these detailed instructions</a>. This allows you to operate with a higher API rate limit - if you proceed without you will be using the rclone credentials, which many users as operating with, and this might be slower.</p>
 <p>In short, the configuration process in terminal is:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="ex">rclone</span> config</a>
-<a class="sourceLine" id="cb4-2" data-line-number="2"><span class="co"># you will now be guided through the config on the command line:</span></a>
-<a class="sourceLine" id="cb4-3" data-line-number="3"><span class="ex">No</span> remotes found - make a new one</a>
-<a class="sourceLine" id="cb4-4" data-line-number="4"><span class="ex">n</span>) <span class="ex">New</span> remote</a>
-<a class="sourceLine" id="cb4-5" data-line-number="5"><span class="ex">r</span>) <span class="ex">Rename</span> remote</a>
-<a class="sourceLine" id="cb4-6" data-line-number="6"><span class="ex">c</span>) <span class="ex">Copy</span> remote</a>
-<a class="sourceLine" id="cb4-7" data-line-number="7"><span class="ex">s</span>) <span class="ex">Set</span> configuration password</a>
-<a class="sourceLine" id="cb4-8" data-line-number="8"><span class="ex">q</span>) <span class="ex">Quit</span> config</a>
-<a class="sourceLine" id="cb4-9" data-line-number="9"><span class="ex">n/r/c/s</span>/<span class="ex">q</span><span class="op">&gt;</span> n</a>
-<a class="sourceLine" id="cb4-10" data-line-number="10"><span class="ex">name</span><span class="op">&gt;</span> hemibrainr</a>
-<a class="sourceLine" id="cb4-11" data-line-number="11"><span class="ex">Type</span> of storage to configure.</a>
-<a class="sourceLine" id="cb4-12" data-line-number="12"><span class="ex">Choose</span> a number from below, or type in your own value</a>
-<a class="sourceLine" id="cb4-13" data-line-number="13">[<span class="ex">snip</span>]</a>
-<a class="sourceLine" id="cb4-14" data-line-number="14"><span class="ex">XX</span> / Google Drive</a>
-<a class="sourceLine" id="cb4-15" data-line-number="15">   <span class="ex">\ </span><span class="st">"drive"</span></a>
-<a class="sourceLine" id="cb4-16" data-line-number="16">[<span class="ex">snip</span>]</a>
-<a class="sourceLine" id="cb4-17" data-line-number="17"><span class="ex">Storage</span><span class="op">&gt;</span> drive</a>
-<a class="sourceLine" id="cb4-18" data-line-number="18"><span class="ex">Google</span> Application Client Id - leave blank normally.</a>
-<a class="sourceLine" id="cb4-19" data-line-number="19"><span class="ex">client_id</span><span class="op">&gt;</span> 4246767787-52r215n6e0h9k0qpta8f4o6jkr7dgfha3.apps.googleusercontent.com <span class="co">#dummy example</span></a>
-<a class="sourceLine" id="cb4-20" data-line-number="20"><span class="ex">Google</span> Application Client Secret - leave blank normally.</a>
-<a class="sourceLine" id="cb4-21" data-line-number="21"><span class="ex">client_secret</span><span class="op">&gt;</span> yiedGkPA-KLO_dqehctghgh <span class="co">#dummy example</span></a>
-<a class="sourceLine" id="cb4-22" data-line-number="22"><span class="ex">Scope</span> that rclone should use when requesting access from drive.</a>
-<a class="sourceLine" id="cb4-23" data-line-number="23"><span class="ex">Choose</span> a number from below, or type in your own value</a>
-<a class="sourceLine" id="cb4-24" data-line-number="24"> <span class="ex">1</span> / Full access all files, excluding Application Data Folder.</a>
-<a class="sourceLine" id="cb4-25" data-line-number="25">   <span class="ex">\ </span><span class="st">"drive"</span></a>
-<a class="sourceLine" id="cb4-26" data-line-number="26"> <span class="ex">2</span> / Read-only access to file metadata and file contents.</a>
-<a class="sourceLine" id="cb4-27" data-line-number="27">   <span class="ex">\ </span><span class="st">"drive.readonly"</span></a>
-<a class="sourceLine" id="cb4-28" data-line-number="28">   <span class="ex">/</span> Access to files created by rclone only.</a>
-<a class="sourceLine" id="cb4-29" data-line-number="29"> <span class="ex">3</span> <span class="kw">|</span> <span class="ex">These</span> are visible in the drive website.</a>
-<a class="sourceLine" id="cb4-30" data-line-number="30">   <span class="kw">|</span> <span class="ex">File</span> authorization is revoked when the user deauthorizes the app.</a>
-<a class="sourceLine" id="cb4-31" data-line-number="31">   <span class="ex">\ </span><span class="st">"drive.file"</span></a>
-<a class="sourceLine" id="cb4-32" data-line-number="32">   <span class="ex">/</span> Allows read and write access to the Application Data folder.</a>
-<a class="sourceLine" id="cb4-33" data-line-number="33"> <span class="ex">4</span> <span class="kw">|</span> <span class="ex">This</span> is not visible in the drive website.</a>
-<a class="sourceLine" id="cb4-34" data-line-number="34">   <span class="ex">\ </span><span class="st">"drive.appfolder"</span></a>
-<a class="sourceLine" id="cb4-35" data-line-number="35">   <span class="ex">/</span> Allows read-only access to file metadata but</a>
-<a class="sourceLine" id="cb4-36" data-line-number="36"> <span class="ex">5</span> <span class="kw">|</span> <span class="ex">does</span> not allow any access to read or download file content.</a>
-<a class="sourceLine" id="cb4-37" data-line-number="37">   <span class="ex">\ </span><span class="st">"drive.metadata.readonly"</span></a>
-<a class="sourceLine" id="cb4-38" data-line-number="38"><span class="ex">scope</span><span class="op">&gt;</span> 1</a>
-<a class="sourceLine" id="cb4-39" data-line-number="39"><span class="ex">ID</span> of the root folder - leave blank normally.  Fill in to access <span class="st">"Computers"</span> folders. (see docs)<span class="ex">.</span></a>
-<a class="sourceLine" id="cb4-40" data-line-number="40"><span class="ex">root_folder_id</span><span class="op">&gt;</span> </a>
-<a class="sourceLine" id="cb4-41" data-line-number="41"><span class="ex">Service</span> Account Credentials JSON file path - needed only if you want use SA instead of interactive login.</a>
-<a class="sourceLine" id="cb4-42" data-line-number="42"><span class="ex">service_account_file</span><span class="op">&gt;</span></a>
-<a class="sourceLine" id="cb4-43" data-line-number="43"><span class="ex">Remote</span> config</a>
-<a class="sourceLine" id="cb4-44" data-line-number="44"><span class="ex">Use</span> auto config?</a>
-<a class="sourceLine" id="cb4-45" data-line-number="45"> <span class="ex">*</span> Say Y if not sure</a>
-<a class="sourceLine" id="cb4-46" data-line-number="46"> <span class="ex">*</span> Say N if you are working on a remote or headless machine or Y didn<span class="st">'t work</span></a>
-<a class="sourceLine" id="cb4-47" data-line-number="47"><span class="st">y) Yes</span></a>
-<a class="sourceLine" id="cb4-48" data-line-number="48"><span class="st">n) No</span></a>
-<a class="sourceLine" id="cb4-49" data-line-number="49"><span class="st">y/n&gt; y</span></a>
-<a class="sourceLine" id="cb4-50" data-line-number="50"><span class="st">If your browser doesn'</span>t open automatically go to the following link: http://127.0.0.1:53682/auth</a>
-<a class="sourceLine" id="cb4-51" data-line-number="51"><span class="ex">Log</span> in and authorize rclone for access</a>
-<a class="sourceLine" id="cb4-52" data-line-number="52"><span class="ex">Waiting</span> for code...</a>
-<a class="sourceLine" id="cb4-53" data-line-number="53"><span class="ex">Got</span> code</a>
-<a class="sourceLine" id="cb4-54" data-line-number="54"><span class="ex">Configure</span> this as a team drive?</a>
-<a class="sourceLine" id="cb4-55" data-line-number="55"><span class="ex">y</span>) <span class="ex">Yes</span></a>
-<a class="sourceLine" id="cb4-56" data-line-number="56"><span class="ex">n</span>) <span class="ex">No</span></a>
-<a class="sourceLine" id="cb4-57" data-line-number="57"><span class="ex">y</span>/<span class="ex">n</span><span class="op">&gt;</span> y</a>
-<a class="sourceLine" id="cb4-58" data-line-number="58"><span class="ex">--------------------</span></a>
-<a class="sourceLine" id="cb4-59" data-line-number="59">[<span class="ex">remote</span>] <span class="co"># these are the specific details of your chosen drive</span></a>
-<a class="sourceLine" id="cb4-60" data-line-number="60"><span class="ex">client_id</span> = </a>
-<a class="sourceLine" id="cb4-61" data-line-number="61"><span class="ex">client_secret</span> = </a>
-<a class="sourceLine" id="cb4-62" data-line-number="62"><span class="ex">scope</span> = drive</a>
-<a class="sourceLine" id="cb4-63" data-line-number="63"><span class="ex">root_folder_id</span> = </a>
-<a class="sourceLine" id="cb4-64" data-line-number="64"><span class="ex">service_account_file</span> =</a>
-<a class="sourceLine" id="cb4-65" data-line-number="65"><span class="ex">token</span> = <span class="dt">{"access_token":"XXX","token_type":"Bearer","refresh_token":"XXX","expiry":"2014-03-16T13:57:58.955387075Z"}</span></a>
-<a class="sourceLine" id="cb4-66" data-line-number="66"><span class="ex">--------------------</span></a>
-<a class="sourceLine" id="cb4-67" data-line-number="67"><span class="ex">y</span>) <span class="ex">Yes</span> this is OK</a>
-<a class="sourceLine" id="cb4-68" data-line-number="68"><span class="ex">e</span>) <span class="ex">Edit</span> this remote</a>
-<a class="sourceLine" id="cb4-69" data-line-number="69"><span class="ex">d</span>) <span class="ex">Delete</span> this remote</a>
-<a class="sourceLine" id="cb4-70" data-line-number="70"><span class="ex">y/e</span>/<span class="ex">d</span><span class="op">&gt;</span> y</a></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">rclone</span> config</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co"># you will now be guided through the config on the command line:</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="ex">No</span> remotes found <span class="at">-</span> make a new one</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="ex">n</span><span class="er">)</span> <span class="ex">New</span> remote</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="ex">r</span><span class="er">)</span> <span class="ex">Rename</span> remote</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="ex">c</span><span class="er">)</span> <span class="ex">Copy</span> remote</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="ex">s</span><span class="er">)</span> <span class="ex">Set</span> configuration password</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="ex">q</span><span class="er">)</span> <span class="ex">Quit</span> config</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="ex">n/r/c/s/q</span><span class="op">&gt;</span> n</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="ex">name</span><span class="op">&gt;</span> hemibrainr</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="ex">Type</span> of storage to configure.</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="ex">Choose</span> a number from below, or type in your own value</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="ex">[snip]</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="ex">XX</span> / Google Drive</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>   <span class="ex">\ </span><span class="st">"drive"</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="ex">[snip]</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="ex">Storage</span><span class="op">&gt;</span> drive</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="ex">Google</span> Application Client Id <span class="at">-</span> leave blank normally.</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="ex">client_id</span><span class="op">&gt;</span> 4246767787-52r215n6e0h9k0qpta8f4o6jkr7dgfha3.apps.googleusercontent.com <span class="co">#dummy example</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="ex">Google</span> Application Client Secret <span class="at">-</span> leave blank normally.</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a><span class="ex">client_secret</span><span class="op">&gt;</span> yiedGkPA-KLO_dqehctghgh <span class="co">#dummy example</span></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a><span class="ex">Scope</span> that rclone should use when requesting access from drive.</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a><span class="ex">Choose</span> a number from below, or type in your own value</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a> <span class="ex">1</span> / Full access all files, excluding Application Data Folder.</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>   <span class="ex">\ </span><span class="st">"drive"</span></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a> <span class="ex">2</span> / Read-only access to file metadata and file contents.</span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>   <span class="ex">\ </span><span class="st">"drive.readonly"</span></span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>   <span class="ex">/</span> Access to files created by rclone only.</span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a> <span class="ex">3</span> <span class="kw">|</span> <span class="ex">These</span> are visible in the drive website.</span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>   <span class="kw">|</span> <span class="ex">File</span> authorization is revoked when the user deauthorizes the app.</span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>   <span class="ex">\ </span><span class="st">"drive.file"</span></span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>   <span class="ex">/</span> Allows read and write access to the Application Data folder.</span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a> <span class="ex">4</span> <span class="kw">|</span> <span class="ex">This</span> is not visible in the drive website.</span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a>   <span class="ex">\ </span><span class="st">"drive.appfolder"</span></span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a>   <span class="ex">/</span> Allows read-only access to file metadata but</span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a> <span class="ex">5</span> <span class="kw">|</span> <span class="ex">does</span> not allow any access to read or download file content.</span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a>   <span class="ex">\ </span><span class="st">"drive.metadata.readonly"</span></span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a><span class="ex">scope</span><span class="op">&gt;</span> 1</span>
+<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a><span class="ex">ID</span> of the root folder <span class="at">-</span> leave blank normally.  Fill in to access <span class="st">"Computers"</span> folders. <span class="er">(</span><span class="ex">see</span> docs<span class="kw">)</span><span class="bu">.</span></span>
+<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a><span class="ex">root_folder_id</span><span class="op">&gt;</span> </span>
+<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a><span class="ex">Service</span> Account Credentials JSON file path <span class="at">-</span> needed only if you want use SA instead of interactive login.</span>
+<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a><span class="ex">service_account_file</span><span class="op">&gt;</span></span>
+<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a><span class="ex">Remote</span> config</span>
+<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a><span class="ex">Use</span> auto config<span class="pp">?</span></span>
+<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a> <span class="ex">*</span> Say Y if not sure</span>
+<span id="cb4-46"><a href="#cb4-46" aria-hidden="true" tabindex="-1"></a> <span class="ex">*</span> Say N if you are working on a remote or headless machine or Y didn<span class="st">'t work</span></span>
+<span id="cb4-47"><a href="#cb4-47" aria-hidden="true" tabindex="-1"></a><span class="st">y) Yes</span></span>
+<span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a><span class="st">n) No</span></span>
+<span id="cb4-49"><a href="#cb4-49" aria-hidden="true" tabindex="-1"></a><span class="st">y/n&gt; y</span></span>
+<span id="cb4-50"><a href="#cb4-50" aria-hidden="true" tabindex="-1"></a><span class="st">If your browser doesn'</span>t open automatically go to the following link: http://127.0.0.1:53682/auth</span>
+<span id="cb4-51"><a href="#cb4-51" aria-hidden="true" tabindex="-1"></a><span class="ex">Log</span> in and authorize rclone for access</span>
+<span id="cb4-52"><a href="#cb4-52" aria-hidden="true" tabindex="-1"></a><span class="ex">Waiting</span> for code...</span>
+<span id="cb4-53"><a href="#cb4-53" aria-hidden="true" tabindex="-1"></a><span class="ex">Got</span> code</span>
+<span id="cb4-54"><a href="#cb4-54" aria-hidden="true" tabindex="-1"></a><span class="ex">Configure</span> this as a team drive<span class="pp">?</span></span>
+<span id="cb4-55"><a href="#cb4-55" aria-hidden="true" tabindex="-1"></a><span class="ex">y</span><span class="er">)</span> <span class="ex">Yes</span></span>
+<span id="cb4-56"><a href="#cb4-56" aria-hidden="true" tabindex="-1"></a><span class="ex">n</span><span class="er">)</span> <span class="ex">No</span></span>
+<span id="cb4-57"><a href="#cb4-57" aria-hidden="true" tabindex="-1"></a><span class="ex">y/n</span><span class="op">&gt;</span> y</span>
+<span id="cb4-58"><a href="#cb4-58" aria-hidden="true" tabindex="-1"></a><span class="ex">--------------------</span></span>
+<span id="cb4-59"><a href="#cb4-59" aria-hidden="true" tabindex="-1"></a><span class="ex">[remote]</span> <span class="co"># these are the specific details of your chosen drive</span></span>
+<span id="cb4-60"><a href="#cb4-60" aria-hidden="true" tabindex="-1"></a><span class="ex">client_id</span> = </span>
+<span id="cb4-61"><a href="#cb4-61" aria-hidden="true" tabindex="-1"></a><span class="ex">client_secret</span> = </span>
+<span id="cb4-62"><a href="#cb4-62" aria-hidden="true" tabindex="-1"></a><span class="ex">scope</span> = drive</span>
+<span id="cb4-63"><a href="#cb4-63" aria-hidden="true" tabindex="-1"></a><span class="ex">root_folder_id</span> = </span>
+<span id="cb4-64"><a href="#cb4-64" aria-hidden="true" tabindex="-1"></a><span class="ex">service_account_file</span> =</span>
+<span id="cb4-65"><a href="#cb4-65" aria-hidden="true" tabindex="-1"></a><span class="ex">token</span> = <span class="dt">{</span><span class="st">"access_token"</span><span class="dt">:</span><span class="st">"XXX"</span><span class="op">,</span><span class="st">"token_type"</span><span class="dt">:</span><span class="st">"Bearer"</span><span class="op">,</span><span class="st">"refresh_token"</span><span class="dt">:</span><span class="st">"XXX"</span><span class="op">,</span><span class="st">"expiry"</span><span class="dt">:</span><span class="st">"2014-03-16T13:57:58.955387075Z"</span><span class="dt">}</span></span>
+<span id="cb4-66"><a href="#cb4-66" aria-hidden="true" tabindex="-1"></a><span class="ex">--------------------</span></span>
+<span id="cb4-67"><a href="#cb4-67" aria-hidden="true" tabindex="-1"></a><span class="ex">y</span><span class="er">)</span> <span class="ex">Yes</span> this is OK</span>
+<span id="cb4-68"><a href="#cb4-68" aria-hidden="true" tabindex="-1"></a><span class="ex">e</span><span class="er">)</span> <span class="ex">Edit</span> this remote</span>
+<span id="cb4-69"><a href="#cb4-69" aria-hidden="true" tabindex="-1"></a><span class="ex">d</span><span class="er">)</span> <span class="ex">Delete</span> this remote</span>
+<span id="cb4-70"><a href="#cb4-70" aria-hidden="true" tabindex="-1"></a><span class="ex">y/e/d</span><span class="op">&gt;</span> y</span></code></pre></div>
 <p>Once you have done this, you can check it works using:</p>
 </div>
 <div id="use-rclone-mounted-google-drive-with-hemibrainr" class="section level3">
@@ -275,8 +281,8 @@
 <a href="#use-rclone-mounted-google-drive-with-hemibrainr" class="anchor"></a>Use rclone-mounted Google drive with hemibrainr</h3>
 <p>Once you have installed and configured rclone, you can use it to <a href="https://rclone.org/commands/rclone_mount/">mount</a> the google team drive. To do this, you create an empty directory wherever you want, named whatever you like, and then rclone ‘turns’ this directory into your mounted Google drive.</p>
 <p>You can mount with rclone from your system’s command line:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="co"># unix/macosx</span></a>
-<a class="sourceLine" id="cb5-2" data-line-number="2"><span class="ex">rclone</span> mount hemibrainr: /path/to/local/mount</a></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># unix/macosx</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="ex">rclone</span> mount hemibrainr: /path/to/local/mount</span></code></pre></div>
 <p>Try it somewhere like <code>/Documents</code> to see how it works. For <code>hemibrainr</code> there is an R function that will do the mounting for you in your working directory. So within R:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># mounts in working directory</span>
@@ -322,7 +328,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>
