@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Code for working with data from Janelia FlyEM's hemibrain project • hemibrainr</title>
+<title>Code for Working with Data from Janelia FlyEM's Hemibrain Project`` • hemibrainr</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
 <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="apple-touch-icon.png">
@@ -17,7 +17,7 @@
 <script src="bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
-<script src="pkgdown.js"></script><meta property="og:title" content="Code for working with data from Janelia FlyEM's hemibrain project">
+<script src="pkgdown.js"></script><meta property="og:title" content="Code for Working with Data from Janelia FlyEM's Hemibrain Project``">
 <meta property="og:description" content="Useful functions for pre-processing and analysing data from Janelia FlyEM's hemibrain project &lt;https://www.janelia.org/project-team/flyem/hemibrain&gt;. 
              Data can be accessed from a neuPrint instance &lt;https://neuprint.janelia.org/&gt; using the R package neuprintr.">
 <meta property="og:image" content="/logo.svg">
@@ -45,6 +45,12 @@
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
+<li>
+  <a href="index.html">
+    <span class="fas fa-home fa-lg"></span>
+     
+  </a>
+</li>
 <li>
   <a href="reference/index.html">Reference</a>
 </li>
@@ -198,9 +204,9 @@
 <span class="co">## This will be used to locate your team drive using the R package googledrive</span>
 <span class="fu"><a href="reference/hemibrainr_set_drive.html">hemibrainr_team_drive</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <p>Option 2, this is free. You still need authenticated access to the hemibrainr Gogle team drive. It can then be mounted using <a href="https://rclone.org/">rclone</a>. First, <a href="https://rclone.org/downloads/">download</a> rclone for your operating system. You can also download from your system’s command line (e.g. from terminal) and then configure it for the drive:</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="co"># unix/macosx</span></a>
-<a class="sourceLine" id="cb8-2" data-line-number="2"><span class="ex">curl</span> https://rclone.org/install.sh <span class="kw">|</span> <span class="fu">sudo</span> bash</a>
-<a class="sourceLine" id="cb8-3" data-line-number="3"><span class="ex">rclone</span> config</a></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># unix/macosx</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> https://rclone.org/install.sh <span class="kw">|</span> <span class="fu">sudo</span> bash</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="ex">rclone</span> config</span></code></pre></div>
 <p>And now check this has worked:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># mounts in working directory</span>
@@ -306,7 +312,7 @@ split <span class="op">=</span> <span class="st">"distance"</span><span class="o
   <div class="dev-status">
 <h2>Dev status</h2>
 <ul class="list-unstyled">
-<li><a href="https://travis-ci.org/natverse/hemibrainr"><img src="https://travis-ci.org/natverse/hemibrainr.svg?branch=master" alt="Travis build status"></a></li>
+<li><a href="https://github.com/natverse/hemibrainr/actions"><img src="https://github.com/natverse/hemibrainr/workflows/R-CMD-check/badge.svg" alt="R-CMD-check"></a></li>
 <li><a href="https://codecov.io/gh/natverse/hemibrainr?branch=master"><img src="https://codecov.io/gh/natverse/hemibrainr/branch/master/graph/badge.svg" alt="Codecov test coverage"></a></li>
 <li><a href="https://www.tidyverse.org/lifecycle/#experimental"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: experimental"></a></li>
 </ul>
@@ -320,7 +326,7 @@ split <span class="op">=</span> <span class="st">"distance"</span><span class="o
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

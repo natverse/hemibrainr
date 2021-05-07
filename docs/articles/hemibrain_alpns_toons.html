@@ -45,6 +45,12 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
 <li>
+  <a href="../index.html">
+    <span class="fas fa-home fa-lg"></span>
+     
+  </a>
+</li>
+<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -98,7 +104,7 @@
 
       
 
-      </header><div class="row">
+      </header><script src="hemibrain_alpns_toons_files/header-attrs-2.7/header-attrs.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>olfactory connectivity</h1>
@@ -123,7 +129,7 @@
 <code class="sourceCode R"><span class="co"># Load package</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/flyconnectome/hemibrainr">hemibrainr</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">gplots</span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/talgalili/gplots">gplots</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://had.co.nz/plyr">plyr</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/hadley/reshape">reshape2</a></span><span class="op">)</span>
@@ -144,8 +150,8 @@
 <p>First, let us find these neurons, so we can plot them if we like:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">db</span> <span class="op">=</span> <span class="fu"><a href="../reference/hemibrain_read_neurons.html">hemibrain_neurons</a></span><span class="op">(</span><span class="op">)</span>
-<span class="va">alpns.nl</span><span class="op">=</span> <span class="va">db</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">db</span><span class="op">)</span><span class="op">%in%</span><span class="fu">hemibrainr</span><span class="fu">::</span><span class="va"><a href="../reference/info.html">pn.info</a></span><span class="op">$</span><span class="va">bodyid</span><span class="op">]</span>
-<span class="va">ton.nl</span> <span class="op">=</span> <span class="va">db</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">db</span><span class="op">)</span><span class="op">%in%</span><span class="fu">hemibrainr</span><span class="fu">::</span><span class="va"><a href="../reference/info.html">ton.info</a></span><span class="op">$</span><span class="va">bodyid</span><span class="op">]</span></code></pre></div>
+<span class="va">alpns.nl</span><span class="op">=</span> <span class="va">db</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">db</span><span class="op">)</span><span class="op">%in%</span><span class="va">pn.info</span><span class="op">$</span><span class="va">bodyid</span><span class="op">]</span>
+<span class="va">ton.nl</span> <span class="op">=</span> <span class="va">db</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">db</span><span class="op">)</span><span class="op">%in%</span><span class="va">ton.info</span><span class="op">$</span><span class="va">bodyid</span><span class="op">]</span></code></pre></div>
 <p>We can now plot them if we like:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Get ROIs</span>
@@ -159,7 +165,8 @@
 <span class="fu"><a href="https://rdrr.io/pkg/nat/man/plot3d.html">plot3d</a></span><span class="op">(</span><span class="va">alr</span>, alpha <span class="op">=</span> <span class="fl">0.3</span>, col <span class="op">=</span> <span class="va">hemibrain_bright_colors</span><span class="op">[</span><span class="st">"red"</span><span class="op">]</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/pkg/nat/man/plot3d.html">plot3d</a></span><span class="op">(</span><span class="va">hemibrain.surf</span>, alpha <span class="op">=</span> <span class="fl">0.1</span>, col <span class="op">=</span> <span class="st">"lightgrey"</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="fu"><a href="../reference/plot3d_split.html">plot3d_split</a></span><span class="op">(</span><span class="va">alpns.nl</span>, lwd <span class="op">=</span><span class="fl">2</span>, soma <span class="op">=</span> <span class="fl">600</span>, col <span class="op">=</span> <span class="va">hemibrain_bright_colours</span><span class="op">[</span><span class="st">"cerise"</span><span class="op">]</span><span class="op">)</span>
-<span class="fu"><a href="../reference/plot3d_split.html">plot3d_split</a></span><span class="op">(</span><span class="va">ton.nl</span>, lwd <span class="op">=</span><span class="fl">2</span>, soma <span class="op">=</span> <span class="fl">600</span>, col <span class="op">=</span> <span class="fu"><a href="../reference/hemibrain_colours.html">hemibrain_bright_colour_ramp</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">ton.nl</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<span class="va">ton.sample</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">ton.nl</span><span class="op">)</span>,<span class="fl">10</span><span class="op">)</span>
+<span class="fu"><a href="../reference/plot3d_split.html">plot3d_split</a></span><span class="op">(</span><span class="va">ton.nl</span><span class="op">[</span><span class="va">ton.sample</span><span class="op">]</span>, lwd <span class="op">=</span><span class="fl">2</span>, soma <span class="op">=</span> <span class="fl">600</span>, col <span class="op">=</span> <span class="fu"><a href="../reference/hemibrain_colours.html">hemibrain_bright_colour_ramp</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">ton.sample</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="get-neuron-connectivity-data" class="section level2">
 <h2 class="hasAnchor">
@@ -183,6 +190,8 @@
 <span class="va">alpn.lhn.elist</span> <span class="op">&lt;-</span> <span class="va">alpn.lhn.elist</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>pre.cell.type <span class="op">=</span> <span class="va">meta</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/match.html">match</a></span><span class="op">(</span><span class="va">pre</span>,<span class="va">meta</span><span class="op">$</span><span class="va">bodyid</span><span class="op">)</span>,<span class="st">"cell.type"</span><span class="op">]</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>post.cell.type <span class="op">=</span> <span class="va">meta</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/match.html">match</a></span><span class="op">(</span><span class="va">post</span>,<span class="va">meta</span><span class="op">$</span><span class="va">bodyid</span><span class="op">)</span>,<span class="st">"cell.type"</span><span class="op">]</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">pre.cell.type</span> <span class="op">!=</span> <span class="st">"NA"</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">post.cell.type</span> <span class="op">!=</span> <span class="st">"NA"</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span>stringsAsFactors<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span>
 
 <span class="co"># Convert edgelist to a connectivity matrix</span>
@@ -205,10 +214,10 @@
 <p>First let us get some clusterings for ALPNs and TONs based on their cross-correlation.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># TON correlation matrix</span>
-<span class="va">cor.mat</span> <span class="op">=</span> <span class="fu">lsa</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/lsa/man/cosine.html">cosine</a></span><span class="op">(</span><span class="va">conn.mat.scaled</span><span class="op">)</span>
+<span class="va">cor.mat</span> <span class="op">=</span> <span class="fu">lsa</span><span class="fu">::</span><span class="fu">cosine</span><span class="op">(</span><span class="va">conn.mat.scaled</span><span class="op">)</span>
 
 <span class="co"># ALPN correlation matrix</span>
-<span class="va">cor.mat.2</span> <span class="op">=</span> <span class="fu">lsa</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/lsa/man/cosine.html">cosine</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/t.html">t</a></span><span class="op">(</span><span class="va">conn.mat.scaled</span><span class="op">)</span><span class="op">)</span>
+<span class="va">cor.mat.2</span> <span class="op">=</span> <span class="fu">lsa</span><span class="fu">::</span><span class="fu">cosine</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/t.html">t</a></span><span class="op">(</span><span class="va">conn.mat.scaled</span><span class="op">)</span><span class="op">)</span>
 
 <span class="co"># Grey tone for heatmap</span>
 <span class="va">heatmap.cols</span> <span class="op">=</span> <span class="fu">circlize</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/circlize/man/colorRamp2.html">colorRamp2</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1</span>, <span class="op">-</span><span class="fl">0.5</span>, <span class="op">-</span><span class="fl">0.25</span>, <span class="fl">0</span>, <span class="fl">0.25</span>, <span class="fl">0.5</span>, <span class="fl">1</span><span class="op">)</span>,
@@ -224,7 +233,7 @@
 
 
 <span class="co"># dendrogram colours</span>
-<span class="va">apricot</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grDevices/colorRamp.html">colorRampPalette</a></span><span class="op">(</span><span class="fu">LaCroixColoR</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/LaCroixColoR/man/lacroix_palette.html">lacroix_palette</a></span><span class="op">(</span><span class="st">"Apricot"</span><span class="op">)</span><span class="op">)</span>
+<span class="va">apricot</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grDevices/colorRamp.html">colorRampPalette</a></span><span class="op">(</span><span class="fu">LaCroixColoR</span><span class="fu">::</span><span class="fu">lacroix_palette</span><span class="op">(</span><span class="st">"Apricot"</span><span class="op">)</span><span class="op">)</span>
 
 <span class="co"># clustering</span>
 <span class="va">cclus</span> <span class="op">=</span>  <span class="fu">dendroextras</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/dendroextras/man/colour_clusters.html">color_clusters</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/hclust.html">hclust</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/dist.html">as.dist</a></span><span class="op">(</span><span class="fl">1</span><span class="op">-</span><span class="va">cor.mat</span><span class="op">)</span>, method <span class="op">=</span> <span class="st">"ward.D2"</span><span class="op">)</span>, h <span class="op">=</span> <span class="fl">0.1</span>, col <span class="op">=</span> <span class="va">apricot</span><span class="op">)</span>
@@ -232,10 +241,10 @@
 <p>Plot dendrograms:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Plot ALPN clustering</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span><span class="op">(</span><span class="va">rclus</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">rclus</span><span class="op">)</span>
 
 <span class="co"># Plot TON clustering</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span><span class="op">(</span><span class="va">cclus</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">cclus</span><span class="op">)</span></code></pre></div>
 <p>We can see what our data like quickly, by plotting some simple heatmaps:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Normalised matrix</span>
@@ -280,9 +289,10 @@
 <span class="co"># Row annotations</span>
 <span class="va">pn.class</span> <span class="op">=</span> <span class="va">pn.info</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/match.html">match</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="va">conn.mat.scaled</span><span class="op">)</span>,<span class="va">pn.info</span><span class="op">$</span><span class="va">cell.type</span><span class="op">)</span>,<span class="st">"class"</span><span class="op">]</span>
 <span class="va">pn.class</span><span class="op">[</span><span class="va">pn.class</span><span class="op">==</span><span class="st">"biPN"</span><span class="op">]</span> <span class="op">=</span> <span class="st">"mPN"</span>
+<span class="va">pn.class</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">pn.class</span><span class="op">)</span><span class="op">]</span> <span class="op">=</span> <span class="st">"mPN"</span>
 <span class="va">pn.neurotransmitter</span> <span class="op">=</span> <span class="va">pn.info</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/match.html">match</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="va">conn.mat.scaled</span><span class="op">)</span>,<span class="va">pn.info</span><span class="op">$</span><span class="va">cell.type</span><span class="op">)</span>,<span class="st">"neurotransmitter"</span><span class="op">]</span>
 <span class="va">pn.ct.layer</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html">as.character</a></span><span class="op">(</span><span class="va">pn.info</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/match.html">match</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="va">conn.mat.scaled</span><span class="op">)</span>,<span class="va">pn.info</span><span class="op">$</span><span class="va">cell.type</span><span class="op">)</span>,<span class="st">"ct.layer"</span><span class="op">]</span><span class="op">)</span>
-<span class="va">pn.os</span> <span class="op">=</span> <span class="va">pn.info</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/match.html">match</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="va">conn.mat.scaled</span><span class="op">)</span>,<span class="va">pn.info</span><span class="op">$</span><span class="va">cell.type</span><span class="op">)</span>,<span class="st">"odour.scenes"</span><span class="op">]</span>
+<span class="va">pn.os</span> <span class="op">=</span> <span class="va">pn.info</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/match.html">match</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="va">conn.mat.scaled</span><span class="op">)</span>,<span class="va">pn.info</span><span class="op">$</span><span class="va">cell.type</span><span class="op">)</span>,<span class="st">"odour_scenes"</span><span class="op">]</span>
 <span class="va">pn.os</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/strsplit.html">strsplit</a></span><span class="op">(</span><span class="va">pn.os</span>,<span class="st">"/"</span><span class="op">)</span>
 <span class="va">pn.os</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span><span class="op">(</span><span class="va">pn.os</span>, <span class="va">sort</span><span class="op">)</span>
 <span class="va">pn.os.1</span>  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span><span class="op">(</span><span class="va">pn.os</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu">hemibrainr</span><span class="fu">:::</span><span class="fu">nullToNA</span><span class="op">(</span><span class="va">x</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>
@@ -306,7 +316,7 @@
 <span class="op">)</span>
 
 <span class="co"># Plot complex heatmap!</span>
-<span class="fu"><a href="https://rdrr.io/r/grDevices/pdf.html">pdf</a></span><span class="op">(</span><span class="st">"ALPN_TOON_normalised_connectivity.pdf"</span>, height <span class="op">=</span> <span class="fl">14</span>, width <span class="op">=</span> <span class="fl">10</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/grDevices/pdf.html">pdf</a></span><span class="op">(</span><span class="st">"ALPN_TOON_normalised_connectivity.pdf"</span>, height <span class="op">=</span> <span class="fl">14</span>, width <span class="op">=</span> <span class="fl">9</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/pkg/ComplexHeatmap/man/Heatmap.html">Heatmap</a></span><span class="op">(</span><span class="va">conn.mat.scaled</span>, 
         split <span class="op">=</span> <span class="fl">10</span>, 
         name <span class="op">=</span> <span class="st">" "</span>,
@@ -343,7 +353,7 @@
         column_names_gp <span class="op">=</span> <span class="fu">gpar</span><span class="op">(</span>fontsize <span class="op">=</span> <span class="fl">12</span>, fontfamily  <span class="op">=</span><span class="st">"Helvetica"</span><span class="op">)</span><span class="op">)</span> 
 <span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <center>
-<img src="https://raw.githubusercontent.com/natverse/hemibrainr/master/inst/images/alpn_toon_heatmap.png" alt="alpn_toon_heatmap.png">
+<img src="https://raw.githubusercontent.com/natverse/hemibrainr/master/inst/images/alpn_toon_heatmap.png" title="fig:" alt="alpn_toon_heatmap.png">
 </center>
 <p>We can also plot the correlation heatmaps.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
@@ -382,10 +392,10 @@
 <span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <center>
-<img src="https://raw.githubusercontent.com/natverse/hemibrainr/master/inst/images/alpn_cosine.png" alt="alpn_cosine.png">
+<img src="https://raw.githubusercontent.com/natverse/hemibrainr/master/inst/images/alpn_cosine.png" title="fig:" alt="alpn_cosine.png">
 </center>
 <center>
-<img src="https://raw.githubusercontent.com/natverse/hemibrainr/master/inst/images/toon_cosine.png" alt="toon_cosine.png">
+<img src="https://raw.githubusercontent.com/natverse/hemibrainr/master/inst/images/toon_cosine.png" title="fig:" alt="toon_cosine.png">
 </center>
 </div>
 </div>
@@ -406,7 +416,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

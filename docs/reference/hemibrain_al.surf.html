@@ -49,9 +49,10 @@
 <meta property="og:title" content="Meshes for Antennal Lobe (AL) glomeruli — hemibrain_al.surf" />
 <meta property="og:description" content="3D meshes of 51 olfactory + 7 thermosensory antennal lobe glomeruli for the
 the hemibrain volume. They are represented as a hxsurf
-object, in which 58 'regions' are defined, one for each glomerulus. Meshes are
+object, in which 'regions' are defined, one for each glomerulus. Meshes are
 available both in raw voxels and in microns. You can see which glomeruli are
-truncated, and by roughly how much by examining
+truncated, and by roughly how much by examining. The glomeruli are made from PN
+dendrites.
 hemibrain_glomeruli_summary." />
 <meta property="og:image" content="/logo.svg" />
 
@@ -92,6 +93,12 @@ hemibrain_glomeruli_summary." />
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
+  <a href="../index.html">
+    <span class="fas fa-home fa-lg"></span>
+     
+  </a>
+</li>
+<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -156,9 +163,10 @@ hemibrain_glomeruli_summary." />
     <div class="ref-description">
     <p>3D meshes of 51 olfactory + 7 thermosensory antennal lobe glomeruli for the
 the hemibrain volume. They are represented as a <code><a href='https://rdrr.io/pkg/nat/man/read.hxsurf.html'>hxsurf</a></code>
-object, in which 58 'regions' are defined, one for each glomerulus. Meshes are
+object, in which 'regions' are defined, one for each glomerulus. Meshes are
 available both in raw voxels and in microns. You can see which glomeruli are
-truncated, and by roughly how much by examining
+truncated, and by roughly how much by examining. The glomeruli are made from PN
+dendrites.
 <code>hemibrain_glomeruli_summary</code>.</p>
     </div>
 
@@ -166,7 +174,11 @@ truncated, and by roughly how much by examining
 
 <span class='va'>hemibrain_al_microns.surf</span>
 
-<span class='va'>hemibrain_glomeruli_summary</span></pre>
+<span class='va'>hemibrain_glomeruli_summary</span>
+
+<span class='va'>odour_scenes</span>
+
+<span class='va'>flywire_al.surf</span></pre>
 
 
     <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
@@ -174,6 +186,8 @@ truncated, and by roughly how much by examining
     <p>An object of class <code>hxsurf</code> of length 4.</p>
 <p>An object of class <code>hxsurf</code> of length 4.</p>
 <p>An object of class <code>data.frame</code> with 58 rows and 11 columns.</p>
+<p>An object of class <code>data.frame</code> with 83 rows and 7 columns.</p>
+<p>An object of class <code>hxsurf</code> of length 4.</p>
     <h2 class="hasAnchor" id="source"><a class="anchor" href="#source"></a>Source</h2>
 
     <p><a href='https://neuprint.janelia.org/'>https://neuprint.janelia.org/</a></p>
@@ -207,7 +221,7 @@ truncated, and by roughly how much by examining
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
 <span class='fu'><a href='https://rdrr.io/pkg/nat/man/nvertices.html'>nvertices</a></span><span class='op'>(</span><span class='va'>hemibrain_al.surf</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] 6053</div><div class='input'><span class='fu'><a href='https://rdrr.io/pkg/nat/man/materials.html'>materials</a></span><span class='op'>(</span><span class='va'>hemibrain_al.surf</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] 162970</div><div class='input'><span class='fu'><a href='https://rdrr.io/pkg/nat/man/materials.html'>materials</a></span><span class='op'>(</span><span class='va'>hemibrain_al.surf</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;      name id     col
 #&gt; D       D  1 #C70E7B
 #&gt; DA1   DA1  2 #DA2F7D
@@ -245,19 +259,19 @@ truncated, and by roughly how much by examining
 #&gt; VA7m VA7m 34 #EF851D
 #&gt; VC1   VC1 35 #F19C37
 #&gt; VC2   VC2 36 #F3B252
-#&gt; VC3l VC3l 37 #E69756
-#&gt; VC3m VC3m 38 #D46850
-#&gt; VC4   VC4 39 #C23A4B
-#&gt; VC5   VC5 40 #D66949
-#&gt; VL1   VL1 41 #EC9948
-#&gt; VL2a VL2a 42 #F9C047
-#&gt; VL2p VL2p 43 #F5D347
-#&gt; VM1   VM1 44 #F0E646
-#&gt; VM2   VM2 45 #C7E947
-#&gt; VM3   VM3 46 #80E04A
-#&gt; VM4   VM4 47 #3BD74C
-#&gt; VM5d VM5d 48 #279C50
-#&gt; VM5v VM5v 49 #1C5A53
+#&gt; VC3   VC3 37 #E69756
+#&gt; VC4   VC4 38 #D46850
+#&gt; VC5   VC5 39 #C23A4B
+#&gt; VL1   VL1 40 #D66949
+#&gt; VL2a VL2a 41 #EC9948
+#&gt; VL2p VL2p 42 #F9C047
+#&gt; VM1   VM1 43 #F5D347
+#&gt; VM2   VM2 44 #F0E646
+#&gt; VM3   VM3 45 #C7E947
+#&gt; VM4   VM4 46 #80E04A
+#&gt; VM5d VM5d 47 #3BD74C
+#&gt; VM5v VM5v 48 #279C50
+#&gt; VM6   VM6 49 #1C5A53
 #&gt; VM7d VM7d 50 #1E2255
 #&gt; VM7v VM7v 51 #6F2E4E
 #&gt; VP1d VP1d 52 #BF3B48
@@ -291,7 +305,7 @@ truncated, and by roughly how much by examining
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

@@ -92,6 +92,12 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
+  <a href="../index.html">
+    <span class="fas fa-home fa-lg"></span>
+     
+  </a>
+</li>
+<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -163,14 +169,15 @@
     </div>
 
     <pre class="usage"><span class='fu'>hemibrainr_set_drive</span><span class='op'>(</span>
-  Gdrive <span class='op'>=</span> <span class='st'>"hemibrainr"</span>,
-  path <span class='op'>=</span> <span class='st'>"/Volumes/GoogleDrive/Shared drives"</span>
+  drive <span class='op'>=</span> <span class='st'>"hemibrainr"</span>,
+  path <span class='op'>=</span> <span class='cn'>NULL</span>,
+  drive.type <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"googledrive"</span>, <span class='st'>"dropbox"</span>, <span class='st'>"rclone"</span><span class='op'>)</span>
 <span class='op'>)</span>
 
 <span class='fu'>hemibrainr_team_drive</span><span class='op'>(</span><span class='op'>)</span>
 
 <span class='fu'>hemibrainr_rclone</span><span class='op'>(</span>
-  Gdrive <span class='op'>=</span> <span class='st'>"hemibrainr"</span>,
+  drive <span class='op'>=</span> <span class='st'>"hemibrainr"</span>,
   path <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/file.path.html'>file.path</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/getwd.html'>getwd</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='st'>"hemibrainr_data/"</span><span class='op'>)</span>
 <span class='op'>)</span>
 
@@ -180,14 +187,19 @@
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>Gdrive</th>
-      <td><p>name of the mounted Google drive. Can just be the name of a team
+      <th>drive</th>
+      <td><p>name of the mounted Google or DropBox drive. Can just be the name of a team
 drive to be found in the standard location: <code>"/Volumes/GoogleDrive/Shared\ drives/"</code>.</p></td>
     </tr>
     <tr>
       <th>path</th>
       <td><p>path to your 'hemibrainr Google drive', either a mounted remote or a local copy.
-For example on a Mac, <a href='https://support.google.com/drive/answer/7329379?authuser=2'>Google filestream</a> mounts it at: <code>/Volumes/GoogleDrive/Shared\ drives/</code>.
+For example on a Mac, <a href='https://support.google.com/drive/answer/7329379?authuser=2'>Google filestream</a> mounts it at: <code>/Volumes/GoogleDrive/Shared\ drives/</code>.</p></td>
+    </tr>
+    <tr>
+      <th>drive.type</th>
+      <td><p>the type of network drive to use. This must be a mounted drive, either a googledrive or dropbox, or soemthing configured with rclone. This is used when path is not given
+to try to find the path to hemibrainr data. If in doubt, try the googledrive option. Access to dropbox version of data available at special request.
 With <a href='https://rclone.org/drive/'>rclone sheet</a> you can mount it wherever you like, by default hemibrainr expects it at:
 <code><a href='https://rdrr.io/r/base/file.path.html'>file.path(getwd(),"hemibrainr_data/")</a></code></p></td>
     </tr>
@@ -260,7 +272,7 @@ You can also download to an external hard drive and use that.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

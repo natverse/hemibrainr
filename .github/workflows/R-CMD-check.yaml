@@ -34,12 +34,13 @@ jobs:
       CHUNKEDGRAPH_SECRET: ${{ secrets.CHUNKEDGRAPH_SECRET }}
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       RETICULATE_MINICONDA_PYTHON_VERSION: 3.8
-      RGL_USE_NULL: TRUE
+      RGL_USE_NULL: true
       _R_CHECK_DONTTEST_EXAMPLES_: FALSE
       _R_CHECK_TESTS_NLINES_: 0
       neuprint_dataset: "hemibrain:v1.1"
       neuprint_server: "https://neuprint.janelia.org"
       neuprint_token: ${{ secrets.NEUPRINT_TOKEN }}
+      R_KEEP_PKG_SOURCE: true
 
     steps:
       - uses: actions/checkout@v2

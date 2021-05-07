@@ -94,6 +94,12 @@ a neuron's axon and dendrite." />
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
+  <a href="../index.html">
+    <span class="fas fa-home fa-lg"></span>
+     
+  </a>
+</li>
+<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -192,76 +198,76 @@ a neuron's axon and dendrite.</p>
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
 <span class='fu'><a href='https://rdrr.io/pkg/nat/man/neuronlist-dataframe-methods.html'>head</a></span><span class='op'>(</span><span class='va'>hemibrain_metrics</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;            cellBodyFiber     bodyid pre post upstream downstream status
-#&gt; 5812980768         PDL03 5812980768 233  411      411        742 Traced
-#&gt; 480918798          PDL13  480918798 103  114      114        959 Traced
-#&gt; 599674785          PDL02  599674785 219  646      646        710 Traced
-#&gt; 358424052          AVM10  358424052 339 1017     1017       1804 Traced
-#&gt; 326530038          PDM22  326530038 392 4143     4143       2972 Traced
-#&gt; 203594175          PDM03  203594175  57  343      343        380 Traced
-#&gt;               statusLabel cropped                name         type     voxels
-#&gt; 5812980768 Roughly traced   FALSE            KCab-s_R      KCab-sc  168076566
-#&gt; 480918798  Roughly traced   FALSE         LHPD3a4_c_R PDL13f_c_pct  200996180
-#&gt; 599674785  Roughly traced   FALSE            KCab-m_R      KCab-sc  297379383
-#&gt; 358424052  Roughly traced   FALSE              FB8G_L         FB7H  471990409
-#&gt; 326530038  Roughly traced   FALSE            SMP505_R   PDM22c_pct 1760593458
-#&gt; 203594175  Roughly traced   FALSE FS4A(AB)(FQ12)_C4_R       FQ12_a  155191393
-#&gt;                  notes  soma ItoLee_Lineage ItoLee_Hemilineage
-#&gt; 5812980768        &lt;NA&gt; FALSE           MBp3               MBp3
-#&gt; 480918798         &lt;NA&gt;  TRUE           LHd2               LHd2
-#&gt; 599674785         &lt;NA&gt;  TRUE           MBp2               MBp2
-#&gt; 358424052  SMPSIPFB8_2 FALSE         AOTUv4     AOTUv4_ventral
-#&gt; 326530038         &lt;NA&gt;  TRUE            DM3                DM3
-#&gt; 203594175   FB3,8ABSMP  TRUE            DM3                DM3
-#&gt;            Hartenstein_Lineage Hartenstein_Hemilineage
-#&gt; 5812980768                MBp3                    MBp3
-#&gt; 480918798                DPLm2                   DPLm2
-#&gt; 599674785                 MBp2                    MBp2
-#&gt; 358424052               DALcl2          DALcl2_ventral
-#&gt; 326530038               DPMpm2                  DPMpm2
-#&gt; 203594175               DPMpm2                  DPMpm2
-#&gt;            putative.classic.transmitter putative.other.transmitter FAFB.match
-#&gt; 5812980768                acetylcholine                    unknown       none
-#&gt; 480918798                     glutamate                    unknown    3136002
-#&gt; 599674785                 acetylcholine                    unknown       none
-#&gt; 358424052                       unknown                    unknown       none
-#&gt; 326530038                       unknown                    unknown       none
-#&gt; 203594175                       unknown                    unknown       none
-#&gt;            FAFB.match.quality    layer ct.layer overlap_locality position point
-#&gt; 5812980768               none 4.963892        3               NA      684  root
-#&gt; 480918798                good 3.032000        3               NA        7  root
-#&gt; 599674785                none 3.409919        3               NA     1921  root
-#&gt; 358424052                none 6.718847        7         2.47e-32      328  root
-#&gt; 326530038                none 5.909853        6               NA    12181  root
-#&gt; 203594175                none 6.468041        6               NA     1405  root
-#&gt;                X     Y     Z soma.edit   cut truncated manual_edit splittable
-#&gt; 5812980768 10372 12128 12116     FALSE FALSE     FALSE       FALSE       TRUE
-#&gt; 480918798   8416 22008  4650     FALSE FALSE     FALSE        TRUE       TRUE
-#&gt; 599674785  11448 13554  9230     FALSE FALSE     FALSE       FALSE       TRUE
-#&gt; 358424052  29797 31023 23871     FALSE FALSE     FALSE       FALSE       TRUE
-#&gt; 326530038  19205 12326 13177     FALSE FALSE     FALSE       FALSE       TRUE
-#&gt; 203594175  18571 12005 12002     FALSE FALSE     FALSE       FALSE       TRUE
-#&gt;            skeletonization checked          user             time note priority
-#&gt; 5812980768            good       0 flyconnectome 1587120331.87611 none        0
-#&gt; 480918798     major errors       1            IT       1596121300 none        3
-#&gt; 599674785             good       1            JH       1591330875 none        2
-#&gt; 358424052             good       0 flyconnectome 1587120331.87611 none        0
-#&gt; 326530038             good       0 flyconnectome 1587120331.87611 none        0
-#&gt; 203594175             good       0 flyconnectome 1587120331.87611 none        0
-#&gt;            edited.cable orig.soma orig.cut soma.checked     cbf total.outputs
-#&gt; 5812980768            0     FALSE    FALSE         TRUE   PDL03           737
-#&gt; 480918798             0      TRUE    FALSE         TRUE   PDL13           959
-#&gt; 599674785             0      TRUE    FALSE         TRUE   PDL02           710
-#&gt; 358424052             0     FALSE    FALSE         TRUE unknown          1800
-#&gt; 326530038             0      TRUE    FALSE         TRUE   PDM22          2972
-#&gt; 203594175             0      TRUE    FALSE         TRUE   PDM03           380
-#&gt;            total.inputs axon.outputs dend.outputs axon.inputs dend.inputs
-#&gt; 5812980768          411          231          286         117         175
-#&gt; 480918798           112          912           27          83          29
-#&gt; 599674785           645          519           58         402         153
-#&gt; 358424052          1008         1673          120         846         157
-#&gt; 326530038          4122         2264          704        1660        2415
-#&gt; 203594175           342          307           45          31         289
+</div><div class='output co'>#&gt;            cellBodyFiber     bodyid  pre post upstream downstream status
+#&gt; 5812980768            94 5812980768  621 2235     2235       4774      2
+#&gt; 480918798            104  480918798   28  176      176       5337      2
+#&gt; 599674785             93  599674785  578 2783     2783       4664      2
+#&gt; 358424052             79  358424052  833   28       28       1210      2
+#&gt; 326530038            141  326530038  909 2245     2245       2481      2
+#&gt; 203594175            122  203594175 1128 1971     1971       3136      2
+#&gt;            statusLabel cropped name         type voxels notes soma
+#&gt; 5812980768           5       1 2753      KCab-sc   4099    NA    1
+#&gt; 480918798            5       1 3538 PDL13f_c_pct   5584    NA    2
+#&gt; 599674785            5       1 2751      KCab-sc  10340    NA    2
+#&gt; 358424052            5       1 2002         FB7H  17600   395    1
+#&gt; 326530038            5       1 6892   PDM22c_pct   4460    NA    2
+#&gt; 203594175            5       1 2311       FQ12_a   3441   177    2
+#&gt;            ItoLee_Lineage ItoLee_Hemilineage Hartenstein_Lineage
+#&gt; 5812980768             43                 67                  90
+#&gt; 480918798              34                 55                  76
+#&gt; 599674785              42                 66                  89
+#&gt; 358424052               9                 20                  52
+#&gt; 326530038              18                 42                  87
+#&gt; 203594175              18                 42                  87
+#&gt;            Hartenstein_Hemilineage putative.classic.transmitter
+#&gt; 5812980768                     134                            1
+#&gt; 480918798                      116                            4
+#&gt; 599674785                      133                            1
+#&gt; 358424052                       85                            5
+#&gt; 326530038                      131                            5
+#&gt; 203594175                      131                            5
+#&gt;            putative.other.transmitter FAFB.match FAFB.match.quality layer
+#&gt; 5812980768                          2       2240                  3  5078
+#&gt; 480918798                           2        968                  1   590
+#&gt; 599674785                           2       2240                  3  1870
+#&gt; 358424052                           2       2240                  3 11486
+#&gt; 326530038                           2       2240                  3  7444
+#&gt; 203594175                           2       2240                  3 10000
+#&gt;            ct.layer overlap_locality position point     X     Y     Z soma.edit
+#&gt; 5812980768        3               NA      684  root 10372 12128 12116      TRUE
+#&gt; 480918798         3               NA        7  root  8416 22008  4650     FALSE
+#&gt; 599674785         3               NA     1921  root 11448 13554  9230     FALSE
+#&gt; 358424052         7             1589      328  root 29797 31023 23871      TRUE
+#&gt; 326530038         6               NA    12181  root 19205 12326 13177     FALSE
+#&gt; 203594175         6               NA     1405  root 18571 12005 12002     FALSE
+#&gt;              cut truncated manual_edit splittable skeletonization checked
+#&gt; 5812980768 FALSE     FALSE       FALSE       TRUE            good       0
+#&gt; 480918798  FALSE     FALSE        TRUE       TRUE    major errors       1
+#&gt; 599674785  FALSE     FALSE       FALSE       TRUE            good       1
+#&gt; 358424052  FALSE     FALSE       FALSE       TRUE            good       0
+#&gt; 326530038  FALSE     FALSE       FALSE       TRUE            good       0
+#&gt; 203594175  FALSE     FALSE       FALSE       TRUE            good       0
+#&gt;                     user             time note priority edited.cable orig.soma
+#&gt; 5812980768 flyconnectome 1587120331.87611 none        0            0     FALSE
+#&gt; 480918798             IT       1596121300 none        3            0      TRUE
+#&gt; 599674785             JH       1591330875 none        2            0      TRUE
+#&gt; 358424052  flyconnectome 1587120331.87611 none        0            0     FALSE
+#&gt; 326530038  flyconnectome 1587120331.87611 none        0            0      TRUE
+#&gt; 203594175  flyconnectome 1587120331.87611 none        0            0      TRUE
+#&gt;            orig.cut soma.checked     cbf total.outputs total.inputs
+#&gt; 5812980768    FALSE         TRUE   PDL03           737          411
+#&gt; 480918798     FALSE         TRUE   PDL13           959          112
+#&gt; 599674785     FALSE         TRUE   PDL02           710          645
+#&gt; 358424052     FALSE         TRUE unknown          1800         1008
+#&gt; 326530038     FALSE         TRUE   PDM22          2972         4122
+#&gt; 203594175     FALSE         TRUE   PDM03           380          342
+#&gt;            axon.outputs dend.outputs axon.inputs dend.inputs
+#&gt; 5812980768          231          286         117         175
+#&gt; 480918798           912           27          83          29
+#&gt; 599674785           519           58         402         153
+#&gt; 358424052          1673          120         846         157
+#&gt; 326530038          2264          704        1660        2415
+#&gt; 203594175           307           45          31         289
 #&gt;            total.outputs.density total.inputs.density axon.outputs.density
 #&gt; 5812980768             1.1657676            0.6501092            1.9553200
 #&gt; 480918798              1.0857725            0.1268055            2.5803720
@@ -300,7 +306,7 @@ a neuron's axon and dendrite.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>
