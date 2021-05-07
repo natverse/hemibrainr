@@ -203,7 +203,7 @@ extract_synapses <-function(x, unitary = FALSE, meta = NULL){
     }
   }else if(length(poss.nts)){
     syn$top.nt = apply(syn[,colnames(syn)%in%poss.nts], 1, function(x) names(x)[which.max(x)])
-    warning("top.nt may be taken on a per stynapse, rather than per neuron, basis")
+    warning("top.nt may be taken on a per synapse, rather than per neuron, basis")
   }else{
     syn$top.nt = "unknown"
   }
@@ -247,7 +247,7 @@ hemibrain_extract_compartment_edgelist <- function(x, meta = NULL, ...){
   y = x[[1]]
   if(!is.null(y$flywire.id)){
     id = "flywire.id"
-    partner = "pre_id"
+    partner = "post_id"
   } else if(!is.null(y$skid)){
     id = "skid"
     partner = "partner"
@@ -326,9 +326,9 @@ extract_elist <- function(syns, lookup, meta = NULL, id = "bodyid", partner = "p
   }
   syns %>%
     # Re-name for clarity
-    dplyr::filter(.data$prepost==1) %>%
-    dplyr::rename(post = .data[[id]]) %>%
-    dplyr::rename(pre = .data[[partner]]) %>%
+    dplyr::filter(.data$prepost==0) %>%
+    dplyr::rename(pre = .data[[id]]) %>%
+    dplyr::rename(post = .data[[partner]]) %>%
     dplyr::rename(post_Label = .data$Label) %>%
     # Compartment labels
     dplyr::mutate(pre_Label = lookup[as.character(.data$connector_id)]) %>%

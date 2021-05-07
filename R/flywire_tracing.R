@@ -568,6 +568,7 @@ flywire_update_workflow <-function(main,
 }
 
 # hidden
+#' @import fafbseg
 flywire_workflow <- function(flywire.id,
                              status = "unassessed",
                               ws,
@@ -708,7 +709,7 @@ flywire_synapse_annotations <- function(fw.ids,
                                         sample = 250,
                                         write.csv = TRUE,
                                         csv.path = getwd()){
-  flywire.scan = data.frame(stringsAsFactors = FALSE)
+  flywire.scans = data.frame(stringsAsFactors = FALSE)
   for(fw.id in fw.ids){
     if(!fw.id%in%names(db)){
       warning(fw.id," missing from db")

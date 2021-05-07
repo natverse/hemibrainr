@@ -15,15 +15,15 @@ nblast_big <-function(query.neuronlistfh, target.neuronlistfh,
                       compress = TRUE,
                       threshold = 0, # or -0.5?
                       digits = 3,
-                      update.old = NULL){
+                      update.old = NULL,
+                      outfile = ""){
 
   # Register cores
-  if(!requireNamespace('nat.nblast'))
-    stop("Please install suggested nat.nblast package!")
-  gc()
-  batch.size = numCores #floor(sqrt(numCores))
-  cl = parallel::makeForkCluster(batch.size)
+  check_package_available("nat.nblast")
   check_package_available("doParallel")
+  batch.size = numCores #floor(sqrt(numCores))
+  # cl = parallel::makeForkCluster(batch.size)
+  cl = parallel::makeCluster(batch.size, outfile = outfile)
   doParallel::registerDoParallel(cl)
   if(numCores<2){
     `%go%` <- foreach::`%do%`
@@ -163,7 +163,7 @@ nblast_big <-function(query.neuronlistfh, target.neuronlistfh,
         }
         nblast.mat[match(chosen.target, target),match(chosen.query, query)] = nblast.res.sub
         #try({nblast.mat[match(chosen.target, target),match(chosen.query, query)] = nblast.res.sub}, silent = FALSE)
-        nblast.res.1
+        nblast.res.sub
       }
     }
   parallel::stopCluster(cl)
@@ -172,7 +172,6 @@ nblast_big <-function(query.neuronlistfh, target.neuronlistfh,
   dimnames(nmat) = list(target, query)
   nmat
 }
-
 
 # hidden
 is_big_dps <- function(dps, no.points = 5){

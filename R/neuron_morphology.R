@@ -19,14 +19,14 @@ geodesic_distance.neuron <- function(x, graph.distance=TRUE, Label = 1, ...){
   }else{
     pn = subset(x$d, Label == Label)
     bp = nat::endpoints(pn)[!nat::endpoints(pn) %in% nat::rootpoints(pn)]
-    bp = as.numeric(rownames(subset(x$d, PointNo == bp)))
+    bp = as.numeric(rownames(subset(x$d, x$d$PointNo == bp)))
   }
     n = nat::as.ngraph(x)
     path = suppressWarnings(igraph::shortest_paths(n, from = bp,
                                                    mode = "out")$vpath)
     x$d$geodesic.distance = sapply(path, length)
     if (!graph.distance) {
-      conns = as.numeric(rownames((subset(x$d, PointNo %in%
+      conns = as.numeric(rownames((subset(x$d, x$d$PointNo %in%
                                             x$connectors$treenode_id))))
       paths = suppressWarnings(igraph::shortest_paths(n, from = bp,
                                                       to = conns, mode = "out")$vpath)
@@ -45,7 +45,7 @@ geodesic_distance.neuron <- function(x, graph.distance=TRUE, Label = 1, ...){
       x$d$geodesic.distance[conns] = real.lengths
     }
     x$d$geodesic.distance.norm = x$d$geodesic.distance/max(x$d$geodesic.distance, na.rm = TRUE)
-    relevant.points = subset(x$d, PointNo %in% x$connectors$treenode_id)
+    relevant.points = subset(x$d, x$d$PointNo %in% x$connectors$treenode_id)
     x$connectors$geodesic.distance = relevant.points[match(x$connectors$treenode_id,
                                                            relevant.points$PointNo), ]$geodesic.distance
     x$connectors$geodesic.distance.norm = relevant.points[match(x$connectors$treenode_id,
