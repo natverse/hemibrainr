@@ -40,7 +40,7 @@ jobs:
       neuprint_dataset: "hemibrain:v1.1"
       neuprint_server: "https://neuprint.janelia.org"
       neuprint_token: ${{ secrets.NEUPRINT_TOKEN }}
-      R_KEEP_PKG_SOURCE: true
+      R_KEEP_PKG_SOURCE: yes
 
     steps:
       - uses: actions/checkout@v2
