@@ -627,19 +627,19 @@ flywire_workflow <- function(flywire.id,
       ntpredictions=try(fafbseg:::ntpredictions_tbl(local=local),silent=TRUE)
       if(is.null(ntpredictions)){
         warning("Cannot find transmitter predictions")
-        break
+      } else {
+        nts.all = list()
+        for(i in tab.entries[,1]){
+          nt = fafbseg::flywire_ntpred(i,
+                                       local = local,
+                                       cleft.threshold=cleft.threshold,
+                                       cloudvolume.url=cloudvolume.url)
+          top.nt = names(sort(table(nt$top.nt),decreasing = TRUE))[1]
+          nts.all[[i]] = data.frame(id = i, top.nt = top.nt)
+        }
+        nts = do.call(plyr::rbind.fill, nts.all)
+        tab.entries$top.nt = nts$top.nt[match(tab.entries[,1],nts$id)]
       }
-      nts.all = list()
-      for(i in tab.entries[,1]){
-        nt = fafbseg::flywire_ntpred(i,
-                                     local = local,
-                                     cleft.threshold=cleft.threshold,
-                                     cloudvolume.url=cloudvolume.url)
-        top.nt = names(sort(table(nt$top.nt),decreasing = TRUE))[1]
-        nts.all[[i]] = data.frame(id = i, top.nt = top.nt)
-      }
-      nts = do.call(plyr::rbind.fill, nts.all)
-      tab.entries$top.nt = nts$top.nt[match(tab.entries[,1],nts$id)]
     }
     tab.entries$status = "unassessed"
     tab.entries$note = NA
