@@ -760,7 +760,7 @@ flywire_synapse_annotations <- function(fw.ids,
     }
     synister.synapse.sample = as.data.frame(synister.synapse.sample, stringsAsFactors = FALSE)
     synister.synapse.sample = synister.synapse.sample[!duplicated(synister.synapse.sample$offset),]
-    synister.synapse.sample$`Coordinate 1` = apply(nat::xyzmatrix(synister.synapse.sample),1,function(x) hemibrainr:::paste_coords(x/c(4,4,40)))
+    synister.synapse.sample$`Coordinate 1` = apply(nat::xyzmatrix(synister.synapse.sample),1,function(x) paste_coords(x/c(4,4,40)))
     flywire.scan = data.frame(`Coordinate 1` = synister.synapse.sample$`Coordinate 1`,
                               `Coordinate 2` = "",
                               `Ellipsoid Dimensions` = "",
