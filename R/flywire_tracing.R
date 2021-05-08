@@ -689,17 +689,24 @@ flywire_dns <- function(side = c("both","right","left"),
   gs
 }
 
-# Generate a .csv of neuron synapses as flywire annotations
+#' Generate a CSV of neuron synapses to import to a flywire annotation layer
+#'
 #' @param fw.ids character vector, a vector of valid flywire IDs
-#' @param partners character vector else not used i \code{NULL}. A vector of valid flywire IDs for postsynaptic neurons to keep.
-#' Synapses to other postsynaptic targets are filtered out.
+#' @param partners character vector else not used i \code{NULL}. A vector of
+#'   valid flywire IDs for postsynaptic neurons to keep. Synapses to other
+#'   postsynaptic targets are filtered out.
 #' @param db a \code{neuronlist} of flywire neurons with synapses attached
-#' @param keep.dist.nm numeric, minimum distance in nm that one synapse can be from another. One random synapse is chosen from groups of proximal synapses. To deactive, enter \code{NULL}.
-#' @param cleft_scores.thresh numeric, cleft_score threshold for synapse inclusion
-#' @param sample numeric, the number of synapses to choose from both the dendrite and axon of each neuron in \code{fw.ids}
-#' @param write.csv logical, whether or not to write a \code{.csv} output file, ready for import into flywire. One for each neuron, named by \code{csv.path}.
+#' @param keep.dist.nm numeric, minimum distance in nm that one synapse can be
+#'   from another. One random synapse is chosen from groups of proximal
+#'   synapses. To deactivate, enter \code{NULL}.
+#' @param cleft_scores.thresh numeric, cleft_score threshold for synapse
+#'   inclusion
+#' @param sample numeric, the number of synapses to choose from both the
+#'   dendrite and axon of each neuron in \code{fw.ids}
+#' @param write.csv logical, whether or not to write a \code{.csv} output file,
+#'   ready for import into flywire. One for each neuron, named by
+#'   \code{csv.path}.
 #' @param csv.path character, the path to which to save \code{.csv} files.
-#' @name flywire_synapse_annotations
 #' @export
 flywire_synapse_annotations <- function(fw.ids,
                                         partners = NULL,
