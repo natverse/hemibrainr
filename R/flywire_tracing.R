@@ -627,19 +627,19 @@ flywire_workflow <- function(flywire.id,
       ntpredictions=try(fafbseg:::ntpredictions_tbl(local=local),silent=TRUE)
       if(is.null(ntpredictions)){
         warning("Cannot find transmitter predictions")
-        break
+      } else {
+        nts.all = list()
+        for(i in tab.entries[,1]){
+          nt = fafbseg::flywire_ntpred(i,
+                                       local = local,
+                                       cleft.threshold=cleft.threshold,
+                                       cloudvolume.url=cloudvolume.url)
+          top.nt = names(sort(table(nt$top.nt),decreasing = TRUE))[1]
+          nts.all[[i]] = data.frame(id = i, top.nt = top.nt)
+        }
+        nts = do.call(plyr::rbind.fill, nts.all)
+        tab.entries$top.nt = nts$top.nt[match(tab.entries[,1],nts$id)]
       }
-      nts.all = list()
-      for(i in tab.entries[,1]){
-        nt = fafbseg::flywire_ntpred(i,
-                                     local = local,
-                                     cleft.threshold=cleft.threshold,
-                                     cloudvolume.url=cloudvolume.url)
-        top.nt = names(sort(table(nt$top.nt),decreasing = TRUE))[1]
-        nts.all[[i]] = data.frame(id = i, top.nt = top.nt)
-      }
-      nts = do.call(plyr::rbind.fill, nts.all)
-      tab.entries$top.nt = nts$top.nt[match(tab.entries[,1],nts$id)]
     }
     tab.entries$status = "unassessed"
     tab.entries$note = NA
@@ -689,17 +689,24 @@ flywire_dns <- function(side = c("both","right","left"),
   gs
 }
 
-# Generate a .csv of neuron synapses as flywire annotations
+#' Generate a CSV of neuron synapses to import to a flywire annotation layer
+#'
 #' @param fw.ids character vector, a vector of valid flywire IDs
-#' @param partners character vector else not used i \code{NULL}. A vector of valid flywire IDs for postsynaptic neurons to keep.
-#' Synapses to other postsynaptic targets are filtered out.
+#' @param partners character vector else not used i \code{NULL}. A vector of
+#'   valid flywire IDs for postsynaptic neurons to keep. Synapses to other
+#'   postsynaptic targets are filtered out.
 #' @param db a \code{neuronlist} of flywire neurons with synapses attached
-#' @param keep.dist.nm numeric, minimum distance in nm that one synapse can be from another. One random synapse is chosen from groups of proximal synapses. To deactive, enter \code{NULL}.
-#' @param cleft_scores.thresh numeric, cleft_score threshold for synapse inclusion
-#' @param sample numeric, the number of synapses to choose from both the dendrite and axon of each neuron in \code{fw.ids}
-#' @param write.csv logical, whether or not to write a \code{.csv} output file, ready for import into flywire. One for each neuron, named by \code{csv.path}.
+#' @param keep.dist.nm numeric, minimum distance in nm that one synapse can be
+#'   from another. One random synapse is chosen from groups of proximal
+#'   synapses. To deactivate, enter \code{NULL}.
+#' @param cleft_scores.thresh numeric, cleft_score threshold for synapse
+#'   inclusion
+#' @param sample numeric, the number of synapses to choose from both the
+#'   dendrite and axon of each neuron in \code{fw.ids}
+#' @param write.csv logical, whether or not to write a \code{.csv} output file,
+#'   ready for import into flywire. One for each neuron, named by
+#'   \code{csv.path}.
 #' @param csv.path character, the path to which to save \code{.csv} files.
-#' @name flywire_synapse_annotations
 #' @export
 flywire_annotations_for_synapses <- function(fw.ids,
                                         partners = NULL,
@@ -753,7 +760,7 @@ flywire_annotations_for_synapses <- function(fw.ids,
     }
     synister.synapse.sample = as.data.frame(synister.synapse.sample, stringsAsFactors = FALSE)
     synister.synapse.sample = synister.synapse.sample[!duplicated(synister.synapse.sample$offset),]
-    synister.synapse.sample$`Coordinate 1` = apply(nat::xyzmatrix(synister.synapse.sample),1,function(x) hemibrainr:::paste_coords(x/c(4,4,40)))
+    synister.synapse.sample$`Coordinate 1` = apply(nat::xyzmatrix(synister.synapse.sample),1,function(x) paste_coords(x/c(4,4,40)))
     flywire.scan = data.frame(`Coordinate 1` = synister.synapse.sample$`Coordinate 1`,
                               `Coordinate 2` = "",
                               `Ellipsoid Dimensions` = "",
