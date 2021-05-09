@@ -701,7 +701,7 @@ flywire_dns <- function(side = c("both","right","left"),
 #' @param csv.path character, the path to which to save \code{.csv} files.
 #' @name flywire_synapse_annotations
 #' @export
-flywire_synapse_annotations <- function(fw.ids,
+flywire_annotations_for_synapses <- function(fw.ids,
                                         partners = NULL,
                                         db = flywire_neurons(WithConnectors = TRUE),
                                         keep.dist.nm = 500,
