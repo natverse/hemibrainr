@@ -90,21 +90,22 @@
 hemibrain_extract_synapses <- function(x,
                                        prepost = c("BOTH","PRE","POST"),
                                        ...){
-  x = nat::as.neuronlist(x)
   prepost = match.arg(prepost)
-  if(!is.null(names(x))){
-    x = add_field_seq(x,names(x),field="id")
-  }else if("bodyid"%in%colnames(x[,])){
-    x = add_field_seq(x,x[,"bodyid"],field="bodyid")
-  }else if("skid"%in%colnames(x[,])){
-    x = add_field_seq(x,x[,"skid"],field="skid")
-  }else if("flywire.id"%in%colnames(x[,])){
-    x = add_field_seq(x,x[,"flywire.id"],field="flywire.id")
-  }
-  if(is.neuronlist(x)){
+  if(nat::is.neuronlist(x)){
+    if(!is.null(names(x))){
+      x = add_field_seq(x,names(x),field="id")
+    }else if("bodyid"%in%colnames(x[,])){
+      x = add_field_seq(x,x[,"bodyid"],field="bodyid")
+    }else if("skid"%in%colnames(x[,])){
+      x = add_field_seq(x,x[,"skid"],field="skid")
+    }else if("flywire.id"%in%colnames(x[,])){
+      x = add_field_seq(x,x[,"flywire.id"],field="flywire.id")
+    }
     syns = nat::nlapply(x,extract_synapses, unitary = FALSE, ...)
     syns = do.call(rbind,syns)
-  }else if (is.neuron(x)){
+  }else if (nat::is.neuron(x)){
+    syns = extract_synapses(x, unitary = FALSE)
+  }else if(is.data.frame(x) && "prepost"%in%colnames(x)){
     syns = extract_synapses(x, unitary = FALSE)
   }else{
     stop("x must be a neuron or neuronlist object")
@@ -126,12 +127,23 @@ hemibrain_extract_connections <- function(x,
                                        prepost = c("BOTH","PRE","POST"),
                                        meta = NULL,
                                        ...){
-  x = add_field_seq(x,names(x),field="bodyid")
   prepost = match.arg(prepost)
   if(nat::is.neuronlist(x)){
+    if(!is.null(names(x))){
+      x = add_field_seq(x,names(x),field="id")
+    }else if("bodyid"%in%colnames(x[,])){
+      x = add_field_seq(x,x[,"bodyid"],field="bodyid")
+    }else if("skid"%in%colnames(x[,])){
+      x = add_field_seq(x,x[,"skid"],field="skid")
+    }else if("flywire.id"%in%colnames(x[,])){
+      x = add_field_seq(x,x[,"flywire.id"],field="flywire.id")
+    }
+    x = add_field_seq(x,names(x),field=id)
     syns = nat::nlapply(x, extract_synapses, unitary = TRUE, meta = meta, ...)
     syns = do.call(rbind,syns)
   }else if (nat::is.neuron(x)){
+    syns = extract_synapses(x, unitary = TRUE)
+  }else if(is.data.frame(x) && "prepost"%in%colnames(x)){
     syns = extract_synapses(x, unitary = TRUE)
   }else{
     stop("x must be a neuron or neuronlist object")
@@ -156,9 +168,10 @@ magrittr::`%>%`
 #' @importFrom dplyr filter mutate group_by distinct select n case_when
 #' @importFrom rlang .data
 extract_synapses <-function(x, unitary = FALSE, meta = NULL){
-  syn = x$connectors
-  if(!nrow(syn)){
-    warning("Neuron ", x$bodyid," has no synapses")
+  if(nat::is.neuron(x)){
+    syn = x$connectors
+  }else{
+    syn = x
   }
   if(!is.null(x$flywire.id)){
     id = "flywire.id"
@@ -168,6 +181,9 @@ extract_synapses <-function(x, unitary = FALSE, meta = NULL){
       id = "bodyid"
   }else{
     id = "id"
+  }
+  if(!nrow(syn)){
+    warning("Neuron ", x$id," has no synapses")
   }
   syn[[id]] = nullToNA(as.character(x[[id]]))
   syn[[id]] = gsub(" ","",syn[[id]])
