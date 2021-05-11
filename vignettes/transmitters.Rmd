@@ -1,0 +1,156 @@
+---
+title: "transmitters"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{transmitters}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# FlyWire and R
+
+```{r LNO1.transmitters, eval = FALSE}
+# These are the flywire IDs of LNO1
+LNO1.xyz = matrix(c(135467, 51625, 2367, 136541, 50845, 2280), ncol = 3, byrow = TRUE)
+LNO1 = unique(flywire_xyz2id(LNO1.xyz,rawcoords = TRUE))
+
+# Let us get all of the flywire neurons with synapses
+fw.neurons = flywire_neurons(WithConnectors = TRUE, zip = TRUE)
+
+# Subset these to just the LNO neurons
+LNO1.flow = fw.neurons[names(fw.neurons)%in%LNO1]
+LNO1.flow = as.neuronlist(LNO1.flow)
+
+# Get meshes
+LNO1.meshes = fafbseg::read_cloudvolume_meshes(LNO1)
+
+# Plot together
+plot3d_split(LNO1.flow, transmitters = TRUE, soma = FALSE, transmitter.alpha = 1)
+plot3d(LNO1.meshes, col = "grey", alpha = 0.1)
+
+# Get synapse data
+LNO1.synapses = hemibrain_extract_synapses(LNO1.flow, .parallel = FALSE, OmitFailures = FALSE)
+LNO1.synapses.outputs = subset(LNO1.synapses, prepost == 0 & Label!="dendrite")
+
+# Cluster by transmitter
+LNO1.select = aggregate(list(count = LNO1.synapses.outputs$prepost),list(pre_id = LNO1.synapses.outputs$pre_id,
+                                                    top.nt = LNO1.synapses.outputs$top.nt,
+                                                    post_id = LNO1.synapses.outputs$post_id),
+                 length)
+LNO1.select.strong = subset(LNO1.select, count >= 5)
+conn.mat = reshape2::acast(data = LNO1.select.strong,
+                     formula = top.nt ~ post_id , # pre ~ post, to use bodyids instead of cells
+                     fun.aggregate = sum,
+                     value.var = "count", # for raw synapses, change to count
+                     fill = 0)
+ComplexHeatmap::Heatmap(conn.mat)
+```
+
+## Run from scratch
+
+We can do the same thing without using the precomputed data. It takes a little longer, but we can do this like so:
+
+```{r LNO1.scratch, eval = FALSE}
+# Load the libraries we need
+library(hemibrainr)
+library(fafbseg)
+choose_segmentation('flywire')
+
+# We need to use some python modules to skeletonise meshes
+## Install them with this R code
+fafbseg::simple_python("full")
+
+# Get all the flywire meta data
+fw.meta = flywire_meta(sql=FALSE)
+
+# These are the flywire IDs of LNO1
+LNO1 = c("720575940631591157", "720575940620581780")
+
+# Get meshes
+LNO1.meshes = fafbseg::read_cloudvolume_meshes(LNO1)
+
+# Let us get the skeletons 
+LNO1.skels = fafbseg::skeletor(LNO1)
+### If this crashes, follow these instructions instead: http://natverse.org/fafbseg/articles/articles/installing-cloudvolume-meshparty.html
+### Or cheat and just get the skeletons from the drive:  LNO1.skels = subset(flywire_neurons(), flywire.id %in% LNO1)
+
+# This points to a location on your computer where you have the synapse SQL database 
+fafbsynapses = "/Volumes/nnautilus/projects/JanFunke"
+## Google drive location is: hemibrain/fafbsynapses/
+## Here I am using an external SSD as that is faster
+
+# Now let us attach the synapses with prediction
+LNO1.syn = flywire_neurons_add_synapses(LNO1.skels,
+                                        cleft.threshold = 50,
+                                        transmitters = TRUE,
+                                        local = fafbsynapses,
+                                        Verbose = TRUE,
+                                        OmitFailures = TRUE,
+                                        .parallel = FALSE)
+
+# Now split into axon and dendrite
+LNO1.flow = hemibrainr::flow_centrality(LNO1.syn, mode = "centrifugal", polypre = TRUE, split = "synapses", .parallel = FALSE, OmitFailures = TRUE)
+
+# Plot together
+plot3d_split(LNO1.flow, transmitters = TRUE)
+plot3d(LNO1.meshes, col = "grey", alpha = 0.1)
+
+# Get synapse data
+LNO1.synapses = hemibrain_extract_synapses(LNO1.flow, .parallel = FALSE, OmitFailures = FALSE)
+LNO1.conns = hemibrain_extract_connections(LNO1.flow, .parallel = FALSE, OmitFailures = FALSE, meta = fw.meta)
+```
+
+
+And now for Istvan's weird LNs
+
+
+```{r il3LN1}
+# These are the flywire IDs of il3LN1
+il3LN1.xyz = matrix(c(123158, 81767, 2697, 135901, 84928, 2642), ncol = 3, byrow = TRUE)
+il3LN1 = unique(flywire_xyz2id(il3LN1.xyz,rawcoords = TRUE))
+
+# Let us get all of the flywire neurons with synapses
+fw.neurons = flywire_neurons(WithConnectors = TRUE, zip = TRUE)
+
+# Subset these to just the il3LN neurons
+il3LN1.flow = fw.neurons[names(fw.neurons)%in%il3LN1]
+il3LN1.flow = as.neuronlist(il3LN1.flow)
+
+# Get meshes
+il3LN1.meshes = fafbseg::read_cloudvolume_meshes(il3LN1)
+
+# Plot together
+plot3d_split(il3LN1.flow, transmitters = TRUE, soma = FALSE, transmitter.alpha = 1)
+plot3d(il3LN1.meshes, col = "grey", alpha = 0.1)
+
+# Get synapse data
+il3LN1.synapses = hemibrain_extract_synapses(il3LN1.flow, .parallel = FALSE, OmitFailures = FALSE)
+il3LN1.synapses.outputs = subset(il3LN1.synapses, prepost == 0)
+```
+
+
+# Get annotations for flywire
+
+```{r get.syns}
+interesting = c("720575940631591157", "720575940620581780", "720575940638426064", "720575940609123794")
+partners = flywire_partners(interesting, local = fafbsynapses, details = TRUE)
+partners = subset(partners, prepost == 0 & pre_id %in% interesting)
+ntp = npred = flywire_ntpred(partners)
+
+nts = fafbseg:::ntpredictions_tbl(local = fafbsynapses)
+interesting.syns <- partners %>%
+      dplyr::inner_join(nts, by = "offset", copy = TRUE) %>%
+      dplyr::filter(prepost==0, pre_id %in% interesting) %>%
+      dplyr::collect()
+interesting.syns$cell.type = "LNO1"
+interesting.syns$cell.type[interesting.syns$pre_id%in%il3LN1] = "il3LN1"
+```
+
+
