@@ -87,12 +87,6 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -103,10 +97,10 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/data.html">hemibrain and flywire meta data</a>
+      <a href="../articles/flywire.html">flywire</a>
     </li>
     <li>
-      <a href="../articles/flywire.html">flywire</a>
+      <a href="../articles/glomerulus_search.html">glomerulus search</a>
     </li>
     <li>
       <a href="../articles/google_filestream.html">read data from Google drive</a>
@@ -124,7 +118,13 @@
       <a href="../articles/match_making.html">neuron match making</a>
     </li>
     <li>
+      <a href="../articles/meta_data.html">hemibrain and flywire meta data</a>
+    </li>
+    <li>
       <a href="../articles/packages_guide.html">related packages</a>
+    </li>
+    <li>
+      <a href="../articles/transmitters.html">transmitters</a>
     </li>
   </ul>
 </li>
@@ -214,7 +214,7 @@ If x is a <code>neuronlist</code> then tags may be supplied of <code><a href='ht
 
 <span class='co'># Get neurons</span>
 <span class='va'>neurons</span> <span class='op'>=</span> <span class='fu'><a href='hemibrain_read_neurons.html'>hemibrain_read_neurons</a></span><span class='op'>(</span><span class='va'>al.local.neurons</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'>Reading from Google Team Drive: hemibrainr</span></div><div class='output co'>#&gt; <span class='warning'>Warning: 1 neurons cropped, split likely to be inaccurate for: 2068966051</span></div><div class='output co'>#&gt; <span class='warning'>Warning: 1 neurons have no soma tagged, split could be inaccurate for: 2068966051</span></div><div class='output co'>#&gt; <span class='warning'>Warning: No meta data could be retieved, returning NULL</span></div><div class='output co'>#&gt; <span class='error'>Error in neurons.flow[, ] = hemibrain_get_meta(names(neurons.flow)): incorrect number of subscripts on matrix</span></div><div class='input'>
+</div><div class='output co'>#&gt; <span class='message'>Reading from Google Team Drive: hemibrainr</span></div><div class='output co'>#&gt; <span class='warning'>Warning: 1 neurons cropped, split likely to be inaccurate for: 2068966051</span></div><div class='output co'>#&gt; <span class='warning'>Warning: 1 neurons have no soma tagged, split could be inaccurate for: 2068966051</span></div><div class='output co'>#&gt; <span class='warning'>Warning: No meta data could be retieved, returning NULL</span></div><div class='output co'>#&gt; <span class='error'>Error in neurons.flow[, ] &lt;- hemibrain_get_meta(names(neurons.flow)): incorrect number of subscripts on matrix</span></div><div class='input'>
 <span class='co'># Tag</span>
 <span class='va'>neurons</span> <span class='op'>=</span> <span class='fu'>hemibrain_settags</span><span class='op'>(</span><span class='va'>neurons</span>, antennal.lobe <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; <span class='error'>Error in hemibrain_settags(neurons, antennal.lobe = TRUE): object 'neurons' not found</span></div><div class='input'>
@@ -237,7 +237,7 @@ If x is a <code>neuronlist</code> then tags may be supplied of <code><a href='ht
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

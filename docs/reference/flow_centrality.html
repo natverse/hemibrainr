@@ -91,12 +91,6 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -107,10 +101,10 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/data.html">hemibrain and flywire meta data</a>
+      <a href="../articles/flywire.html">flywire</a>
     </li>
     <li>
-      <a href="../articles/flywire.html">flywire</a>
+      <a href="../articles/glomerulus_search.html">glomerulus search</a>
     </li>
     <li>
       <a href="../articles/google_filestream.html">read data from Google drive</a>
@@ -128,7 +122,13 @@
       <a href="../articles/match_making.html">neuron match making</a>
     </li>
     <li>
+      <a href="../articles/meta_data.html">hemibrain and flywire meta data</a>
+    </li>
+    <li>
       <a href="../articles/packages_guide.html">related packages</a>
+    </li>
+    <li>
+      <a href="../articles/transmitters.html">transmitters</a>
     </li>
   </ul>
 </li>
@@ -241,7 +241,7 @@ most usually the dendrite (Bates &amp; Schlegel 2020).</p></td>
     <p>the neuron or neuron list object inputted, with centripetal flow
   centrality information added to neuron$d and a segregation index score. The
   neuron$d$Label now gives the compartment, where axon is Label = 2, dendrite
-  Label = 3, primary dendrite Label = 9 and primary neurite Label = 7. Soma
+  Label = 3, primary dendrite Label = 4 and primary neurite Label = 7. Soma
   is Label = 1.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
@@ -294,7 +294,7 @@ most usually the dendrite (Bates &amp; Schlegel 2020).</p></td>
 <span class='co'># Now make sure the neurons have a soma marked</span>
 <span class='co'>## Some hemibrain neurons do not, as the soma was chopped off</span>
 <span class='va'>neurons.checked</span> <span class='op'>=</span> <span class='fu'><a href='hemibrain_skeleton_check.html'>hemibrain_skeleton_check</a></span><span class='op'>(</span><span class='va'>neurons</span>, meshes <span class='op'>=</span> <span class='va'>hemibrain.surf</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'>Re-rooting 2 neurons without a soma</span></div><div class='output co'>#&gt; <span class='message'>Removing synapses outside the hemibrain neuropil volume for 5 neurons</span></div><div class='input'>
+</div><div class='output co'>#&gt; <span class='message'>Re-rooting 2 neurons without a soma</span></div><div class='output co'>#&gt; <span class='message'>Removing synapses outside the hemibrain neuropil volume for 5 neurons</span></div><div class='output co'>#&gt; <span class='warning'>Warning: invalid factor level, NA generated</span></div><div class='output co'>#&gt; <span class='warning'>Warning: invalid factor level, NA generated</span></div><div class='output co'>#&gt; <span class='warning'>Warning: invalid factor level, NA generated</span></div><div class='output co'>#&gt; <span class='warning'>Warning: invalid factor level, NA generated</span></div><div class='output co'>#&gt; <span class='warning'>Warning: invalid factor level, NA generated</span></div><div class='output co'>#&gt; <span class='warning'>Warning: invalid factor level, NA generated</span></div><div class='input'>
 <span class='co'># Split neuron</span>
 <span class='co'>## These are the recommended parameters for hemibrain neurons</span>
 <span class='va'>neurons.flow</span> <span class='op'>=</span> <span class='fu'>flow_centrality</span><span class='op'>(</span><span class='va'>neurons.checked</span>,
@@ -324,7 +324,7 @@ split <span class='op'>=</span> <span class='st'>"distance"</span><span class='o
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

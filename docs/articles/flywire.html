@@ -45,12 +45,6 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
 <li>
-  <a href="../index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -61,10 +55,10 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/data.html">hemibrain and flywire meta data</a>
+      <a href="../articles/flywire.html">flywire</a>
     </li>
     <li>
-      <a href="../articles/flywire.html">flywire</a>
+      <a href="../articles/glomerulus_search.html">glomerulus search</a>
     </li>
     <li>
       <a href="../articles/google_filestream.html">read data from Google drive</a>
@@ -82,7 +76,13 @@
       <a href="../articles/match_making.html">neuron match making</a>
     </li>
     <li>
+      <a href="../articles/meta_data.html">hemibrain and flywire meta data</a>
+    </li>
+    <li>
       <a href="../articles/packages_guide.html">related packages</a>
+    </li>
+    <li>
+      <a href="../articles/transmitters.html">transmitters</a>
     </li>
   </ul>
 </li>
@@ -318,7 +318,7 @@
 <p>Let us get some neurons from the ‘flywire interest’ googlesheet:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Get all the flywire IDs (updated regularly based on position information) users have flagged</span>
-<span class="va">gs</span> <span class="op">=</span> <span class="fu">googlesheets4</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/googlesheets4/man/range_read.html">read_sheet</a></span><span class="op">(</span>ss <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">flywire_flagged_gsheet</span>, sheet <span class="op">=</span> <span class="st">"flywire"</span><span class="op">)</span>
+<span class="va">gs</span> <span class="op">=</span> <span class="fu">googlesheets4</span><span class="fu">::</span><span class="fu"><a href="https://googlesheets4.tidyverse.org/reference/range_read.html">read_sheet</a></span><span class="op">(</span>ss <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">flywire_flagged_gsheet</span>, sheet <span class="op">=</span> <span class="st">"flywire"</span><span class="op">)</span>
 
 <span class="co"># Get IDs for User 'Tots'</span>
 <span class="va">gs.chosen</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/nat/man/subset.html">subset</a></span><span class="op">(</span><span class="va">gs</span>, <span class="va">User</span> <span class="op">==</span> <span class="st">"Tots"</span><span class="op">)</span>
@@ -350,7 +350,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

@@ -39,7 +39,7 @@ flywire_al.surf
 
  \itemize{
 
- \item{"expected_cit"}{a citation that describes this glomerulus},
+ \item{"expected_cit"}{the citation for the number of expected RNs},
 
  \item{"expected_RN_female_1h"}{.}
 
