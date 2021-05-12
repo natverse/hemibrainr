@@ -143,7 +143,7 @@ il3LN1.synapses.outputs = subset(il3LN1.synapses, prepost == 0)
 
 # Get all of these interesting synapses
 
-```{r get.syns}
+```{r get.syns, eval = FALSE}
 interesting = c("720575940631591157", "720575940620581780", "720575940638426064", "720575940609123794")
 partners = flywire_partners(interesting, local = fafbsynapses, details = TRUE)
 partners = subset(partners, prepost == 0 & pre_id %in% interesting)
