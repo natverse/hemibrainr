@@ -51,7 +51,7 @@ dm6.upn.meshes = fafbseg::read_cloudvolume_meshes(dm6.upn.ids)
 
 # Look good?
 nopen3d()
-plot3d(dm6.upn.meshes[1], alpha = 0.5)
+plot3d(dm6.upn.meshes[1], alpha = 0.5, col = "red")
 plot3d(FAFB14, col = "grey", alpha = 0.1)
 ```
 
