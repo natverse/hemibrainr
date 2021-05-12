@@ -51,7 +51,7 @@ dm6.upn.meshes = fafbseg::read_cloudvolume_meshes(dm6.upn.ids)
 
 # Look good?
 nopen3d()
-plot3d(dm6.upn.meshes, alpha = 0.5)
+plot3d(dm6.upn.meshes[1], alpha = 0.5)
 plot3d(FAFB14, col = "grey", alpha = 0.1)
 ```
 
@@ -121,8 +121,8 @@ dm6.upn.partner.ids = unique(as.character(dm6.upn.conns.strong$partner))
 dm6.upn.partner.skels = fafbseg::skeletor(dm6.upn.partner.ids, method = 'wavefront')
 ## These IDs constitute the neurons you should examine and 'clean up' in flywire
 
-# Treat GABA/Glut synapses as inhibitory
-dm6.upn.conns.strong$count[dm6.upn.conns.strong$top.nt%in%c("gaba","glutamate")] = -1*
+# Treat GABA/Glut synapses as inhibitory (if you have the predicted transmitters)
+dm6.upn.conns.strong$count[dm6.upn.conns.strong$top.nt%in%c("gaba","glutamate")] = -1*dm6.upn.conns.strong$count[dm6.upn.conns.strong$top.nt%in%c("gaba","glutamate")]
 
 # Plot!
 nopen3d()

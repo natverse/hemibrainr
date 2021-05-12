@@ -14,9 +14,15 @@ knitr::opts_chunk$set(
 )
 ```
 
-# FlyWire and R
+This markdown examines some neurons that have 'mixed' predicted transmitters. Prediction error or biological quirk?
+
+# LNO1
 
 ```{r LNO1.transmitters, eval = FALSE}
+# Load libraries
+library(hemibrainr)
+library(fafbseg)
+
 # These are the flywire IDs of LNO1
 LNO1.xyz = matrix(c(135467, 51625, 2367, 136541, 50845, 2280), ncol = 3, byrow = TRUE)
 LNO1 = unique(flywire_xyz2id(LNO1.xyz,rawcoords = TRUE))
@@ -107,9 +113,9 @@ LNO1.synapses = hemibrain_extract_synapses(LNO1.flow, .parallel = FALSE, OmitFai
 LNO1.conns = hemibrain_extract_connections(LNO1.flow, .parallel = FALSE, OmitFailures = FALSE, meta = fw.meta)
 ```
 
+# il3LN1
 
-And now for Istvan's weird LNs
-
+And now for Istvan's weird antennal lobe LNs
 
 ```{r il3LN1}
 # These are the flywire IDs of il3LN1
@@ -135,15 +141,13 @@ il3LN1.synapses = hemibrain_extract_synapses(il3LN1.flow, .parallel = FALSE, Omi
 il3LN1.synapses.outputs = subset(il3LN1.synapses, prepost == 0)
 ```
 
-
-# Get annotations for flywire
+# Get all of these interesting synapses
 
 ```{r get.syns}
 interesting = c("720575940631591157", "720575940620581780", "720575940638426064", "720575940609123794")
 partners = flywire_partners(interesting, local = fafbsynapses, details = TRUE)
 partners = subset(partners, prepost == 0 & pre_id %in% interesting)
 ntp = npred = flywire_ntpred(partners)
-
 nts = fafbseg:::ntpredictions_tbl(local = fafbsynapses)
 interesting.syns <- partners %>%
       dplyr::inner_join(nts, by = "offset", copy = TRUE) %>%
