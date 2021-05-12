@@ -151,7 +151,7 @@
 
 <span class="co"># Look good?</span>
 <span class="fu"><a href="https://rdrr.io/pkg/nat/man/nopen3d.html">nopen3d</a></span><span class="op">(</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/pkg/nat/man/plot3d.html">plot3d</a></span><span class="op">(</span><span class="va">dm6.upn.meshes</span>, alpha <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/nat/man/plot3d.html">plot3d</a></span><span class="op">(</span><span class="va">dm6.upn.meshes</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, alpha <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/pkg/nat/man/plot3d.html">plot3d</a></span><span class="op">(</span><span class="va">FAFB14</span>, col <span class="op">=</span> <span class="st">"grey"</span>, alpha <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></code></pre></div>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Let us get the skeletons </span>
@@ -210,8 +210,8 @@
 <span class="va">dm6.upn.partner.skels</span> <span class="op">=</span> <span class="fu">fafbseg</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/fafbseg/man/skeletor.html">skeletor</a></span><span class="op">(</span><span class="va">dm6.upn.partner.ids</span>, method <span class="op">=</span> <span class="st">'wavefront'</span><span class="op">)</span>
 <span class="co">## These IDs constitute the neurons you should examine and 'clean up' in flywire</span>
 
-<span class="co"># Treat GABA/Glut synapses as inhibitory</span>
-<span class="va">dm6.upn.conns.strong</span><span class="op">$</span><span class="va">count</span><span class="op">[</span><span class="va">dm6.upn.conns.strong</span><span class="op">$</span><span class="va">top.nt</span><span class="op">%in%</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"gaba"</span>,<span class="st">"glutamate"</span><span class="op">)</span><span class="op">]</span> <span class="op">=</span> <span class="op">-</span><span class="fl">1</span><span class="op">*</span>
+<span class="co"># Treat GABA/Glut synapses as inhibitory (if you have the predicted transmitters)</span>
+<span class="va">dm6.upn.conns.strong</span><span class="op">$</span><span class="va">count</span><span class="op">[</span><span class="va">dm6.upn.conns.strong</span><span class="op">$</span><span class="va">top.nt</span><span class="op">%in%</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"gaba"</span>,<span class="st">"glutamate"</span><span class="op">)</span><span class="op">]</span> <span class="op">=</span> <span class="op">-</span><span class="fl">1</span><span class="op">*</span><span class="va">dm6.upn.conns.strong</span><span class="op">$</span><span class="va">count</span><span class="op">[</span><span class="va">dm6.upn.conns.strong</span><span class="op">$</span><span class="va">top.nt</span><span class="op">%in%</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"gaba"</span>,<span class="st">"glutamate"</span><span class="op">)</span><span class="op">]</span>
 
 <span class="co"># Plot!</span>
 <span class="fu"><a href="https://rdrr.io/pkg/nat/man/nopen3d.html">nopen3d</a></span><span class="op">(</span><span class="op">)</span>
