@@ -516,7 +516,7 @@ neuron_match_scanner <- function(brain,
                   native = scale_neurons.neuronlist(native2, scaling = (8/1000))
                   native2 = suppressWarnings(nat.templatebrains::xform_brain(native2, reference = "FAFB14", sample = "JRCFIB2018F"))
                 }else if (targets.repository == "CATMAID"){
-                  native2  = catmaid::read.neurons.catmaid((names(r)[1:batch.size]), .progress = TRUE, OmitFailures = TRUE)
+                  native2  = catmaid::read.neurons.catmaid((names(r)[1:batch.size]), .progress = 'text', OmitFailures = TRUE)
                 }
               }
               native = nat::union(native, native2)
