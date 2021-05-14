@@ -215,7 +215,7 @@ extract_synapses <-function(x, unitary = FALSE, meta = NULL){
                               copy = TRUE,
                               auto_index = TRUE)
     }else{
-      stop(id, " and top.nt must be in colnames(meta)")
+      warning("top.nt must not in colnames(meta)")
     }
   }else if(length(poss.nts)){
     syn$top.nt = apply(syn[,colnames(syn)%in%poss.nts], 1, function(x) names(x)[which.max(x)])
