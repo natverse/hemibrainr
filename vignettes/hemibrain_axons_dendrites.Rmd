@@ -246,7 +246,7 @@ pns.flow = hemibrain_read_neurons(hemibrainr::upn.ids, remote= TRUE)
 ### Set remote to FALSE, if you do not have the google drive mounted.
 
 # Extract connections
-pns.elist = hemibrain_extract_compartment_edgelist(pns.flow, .progress = FALSE)
+pns.elist = hemibrain_extract_compartment_edgelist(pns.flow, .progress = 'text')
 pns.elist.strong = subset(pns.elist, count >= 10 | norm > 0.01)
 sort(table(pns.elist.strong$connection))
 ## A lot of axo-axonic and dendro-dendritic action amongst the PNs
