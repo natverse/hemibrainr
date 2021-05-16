@@ -259,25 +259,26 @@ extract_synapses <-function(x, unitary = FALSE, meta = NULL){
 #' @export
 #' @rdname hemibrain_extract_connections
 hemibrain_extract_compartment_edgelist <- function(x, meta = NULL, ...){
-  x = add_field_seq(x,names(x),field="bodyid")
-  y = x[[1]]
-  if(!is.null(y$flywire.id)){
-    id = "flywire.id"
-    partner = "post_id"
-  } else if(!is.null(y$skid)){
-    id = "skid"
-    partner = "partner"
-  } else if(!is.null(y$bodyid)){
-    id = "bodyid"
-    partner = "partner"
-  }else{
-    id = "id"
-    partner = "partner"
-  }
   if(nat::is.neuronlist(x)){
+    x = add_field_seq(x,names(x),field="bodyid")
+    y = x[[1]]
+    if(!is.null(y$flywire.id)){
+      id = "flywire.id"
+      partner = "post_id"
+    } else if(!is.null(y$skid)){
+      id = "skid"
+      partner = "partner"
+    } else if(!is.null(y$bodyid)){
+      id = "bodyid"
+      partner = "partner"
+    }else{
+      id = "id"
+      partner = "partner"
+    }
     syns.list = nat::nlapply(x, extract_synapses, unitary = FALSE, meta = meta, ...)
   }else{
-    stop("x must be a neuronlist object")
+    syns.list = x
+    warning("x should be a neuronlist object")
   }
   names(syns.list) = NULL
   lookup = nat::nlapply(syns.list, extract_lookup,  ...)
