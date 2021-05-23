@@ -551,7 +551,7 @@ update.neuronlistfh <- function(x = NULL,
       if(!is.null(rownames(meta))){
         in.meta = names(x) %in% rownames(meta)
         in.meta[is.na(in.meta)] = FALSE
-        m.df = x[,]
+        m.df = x[in.meta,]
         m.df[in.meta,] = meta[names(x)[in.meta],]
         attr(x,"df") = m.df
       }
