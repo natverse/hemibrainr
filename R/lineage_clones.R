@@ -132,5 +132,3 @@ lineage_converter <- function(x, from = c("ItoLee_Hemilineage", "cellBodyFiber",
   hemibrainr::hemibrain_hemilineages[match(x, hemibrainr::hemibrain_hemilineages[[from]]),colnames(hemibrainr::hemibrain_hemilineages)%in%to]
 }
 
-
-

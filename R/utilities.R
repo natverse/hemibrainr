@@ -507,7 +507,7 @@ update.neuronlistfh <- function(x,
         NULL
       })
     }else if(dbClass == "ZIP"){
-      old.neurons = tryCatch(nat::neuronlistz(file), error = function(e) {
+      old.neurons = tryCatch(nat::read.neurons(file), error = function(e) {
         warning(e)
         message("original neuron file cannot link to data, overwriting ", file)
         NULL
@@ -519,7 +519,6 @@ update.neuronlistfh <- function(x,
         NULL
       })
     }
-    old.neurons = as.neuronlist(old.neurons)
     #old.neurons = tryCatch(old.neurons[sapply(old.neurons, function(x) nat::is.neuron(x))], error = function(e) {
       #warning(e)
       #message("original neuron file cannot link to data, overwriting ", file)
@@ -644,7 +643,7 @@ squeeze_neuron <- function(x, digits=6, ...) {
 }
 
 # hidden
-squeeze_dataframe <- function(x, exclude=NULL, ...) {
+squeeze_dataframe <- function(x, exclude=NULL, digits = 6, ...) {
   numcols <- names(x)[sapply(x, function(c) is.numeric(c) && !inherits(c, 'integer64'))]
   numcols=setdiff(numcols, exclude)
   for(i in numcols) {
