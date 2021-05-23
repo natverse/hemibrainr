@@ -474,7 +474,7 @@ download_neuron_obj_batch <- function(ids, numCores = 1, ratio = 1, save.obj = "
 }
 
 # hidden
-update.neuronlistfh <- function(x,
+update.neuronlistfh <- function(x = NULL,
                                 file,
                                 dbClass = c("RDS", "RDS2", "DB1","HDF5", "ZIP"),
                                 remote = NULL,
@@ -532,8 +532,12 @@ update.neuronlistfh <- function(x,
             message(as.character(e))
             NULL
           })
-          x = nat::union(x, old.neurons)
-          message("x combined with ", length(old.neurons), " old neurons from extant: ", file)
+          if(is.null(x)){
+            x = old.neurons
+          }else{
+            x = nat::union(x, old.neurons)
+            message("x combined with ", length(old.neurons), " old neurons from extant: ", file)
+          }
         }
       }
     }
@@ -548,8 +552,7 @@ update.neuronlistfh <- function(x,
         in.meta = names(x) %in% rownames(meta)
         in.meta[is.na(in.meta)] = FALSE
         m.df = x[,]
-        shared = intersect(colnames(m.df),colnames(meta))
-        m.df[in.meta,shared] = meta[names(x)[in.meta],shared]
+        m.df[in.meta,] = meta[names(x)[in.meta],]
         attr(x,"df") = m.df
       }
     }
@@ -650,9 +653,12 @@ squeeze_dataframe <- function(x, exclude=NULL, digits = 6, ...) {
     col=x[[i]]
     # does it look like an int, if so, make it one
     intcol=try(checkmate::asInteger(col), silent = TRUE)
-    if(is.integer(intcol))
+    if((sum(is.na(col))==length(col))){
+      x[[i]]=col
+    }else if(is.integer(intcol)){
       x[[i]]=intcol
-    else x[[i]]=bitsqueezr::squeeze_bits(col, ...)
+    }
+    else x[[i]]=bitsqueezr::squeeze_bits(col, digits = digits, ...)
   }
   x
 }
