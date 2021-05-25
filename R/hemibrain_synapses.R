@@ -217,8 +217,14 @@ extract_synapses <-function(x, unitary = FALSE, meta = NULL){
     }else{
       warning("top.nt must not in colnames(meta)")
     }
-  }else if(length(poss.nts)){
-    syn$top.nt = apply(syn[,colnames(syn)%in%poss.nts], 1, function(x) names(x)[which.max(x)])
+  }else if(length(poss.nts) && syn$top.nt != "unknown"){
+    if(sum(syn[,colnames(syn)%in%poss.nts],na.rm)==0){
+      syn$top.nt = "unknown"
+    }else{
+      zeros=apply(syn[,colnames(syn)%in%poss.nts], 1, function(x) sum(x,na.rm=TRUE)==0)
+      syn$top.nt = apply(syn[,colnames(syn)%in%poss.nts], 1, function(x) names(x)[which.max(x)])
+      syn$top.nt[zeros] = "unknown"
+    }
     warning("top.nt may be taken on a per synapse, rather than per neuron, basis")
   }else{
     syn$top.nt = "unknown"
