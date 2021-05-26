@@ -831,7 +831,7 @@ flywire_annotation_csv <- function(xyz,
                             scores = nullToNA(xyz$scores),
                             cleft_scores = nullToNA(xyz$cleft_scores),
                             Label = nullToNA(xyz$Label),
-                            flywire.id = as.character(xyz$flywire.id))
+                            flywire.id = as.character(nullToNA(xyz$flywire.id)))
   colnames(flywire.scan) = gsub("\\."," ",colnames(flywire.scan))
   flywire.scan$`Coordinate 1` = as.character(flywire.scan$`Coordinate 1`)
   if(write.csv){
@@ -839,5 +839,5 @@ flywire_annotation_csv <- function(xyz,
     message("Writing ", csv.file)
     readr::write_excel_csv(flywire.scan, file = csv.file)
   }
-  flywire.scans
+  flywire.scan
 }
