@@ -818,6 +818,7 @@ flywire_annotation_csv <- function(xyz,
                                    write.csv = TRUE,
                                    csv.path = getwd(),
                                    description = 'top.nt'){
+  xyz$`Coordinate 1` = apply(nat::xyzmatrix(xyz),1,function(x) paste_coords(x))
   flywire.scan = data.frame(`Coordinate 1` = xyz$`Coordinate 1`,
                             `Coordinate 2` = "",
                             `Ellipsoid Dimensions` = "",
