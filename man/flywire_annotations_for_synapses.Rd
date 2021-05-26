@@ -6,17 +6,21 @@
 \usage{
 flywire_annotations_for_synapses(
   fw.ids,
+  direction = c("inputs", "oputputs", "both"),
   partners = NULL,
   db = flywire_neurons(WithConnectors = TRUE),
   keep.dist.nm = 500,
   cleft_scores.thresh = 75,
   sample = 250,
   write.csv = TRUE,
-  csv.path = getwd()
+  csv.path = getwd(),
+  ...
 )
 }
 \arguments{
 \item{fw.ids}{character vector, a vector of valid flywire IDs}
+
+\item{direction}{whether to get presynapses, postsynapses or both.}
 
 \item{partners}{character vector else not used i \code{NULL}. A vector of
 valid flywire IDs for postsynaptic neurons to keep. Synapses to other
@@ -38,7 +42,7 @@ dendrite and axon of each neuron in \code{fw.ids}}
 ready for import into flywire. One for each neuron, named by
 \code{csv.path}.}
 
-\item{csv.path}{character, the path to which to save \code{.csv} files.}
+\item{...}{further arguments passed to \code{fafbseg::flywire_partners}, when \code{db} is \code{NULL}.}
 }
 \description{
 Generate a CSV of neuron synapses to import to a flywire annotation layer

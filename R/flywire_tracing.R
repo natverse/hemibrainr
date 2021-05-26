@@ -692,6 +692,7 @@ flywire_dns <- function(side = c("both","right","left"),
 #' Generate a CSV of neuron synapses to import to a flywire annotation layer
 #'
 #' @param fw.ids character vector, a vector of valid flywire IDs
+#' @param direction whether to get presynapses, postsynapses or both.
 #' @param partners character vector else not used i \code{NULL}. A vector of
 #'   valid flywire IDs for postsynaptic neurons to keep. Synapses to other
 #'   postsynaptic targets are filtered out.
@@ -706,39 +707,61 @@ flywire_dns <- function(side = c("both","right","left"),
 #' @param write.csv logical, whether or not to write a \code{.csv} output file,
 #'   ready for import into flywire. One for each neuron, named by
 #'   \code{csv.path}.
-#' @param csv.path character, the path to which to save \code{.csv} files.
+#' @param ... further arguments passed to \code{fafbseg::flywire_partners}, when \code{db} is \code{NULL}.
 #' @export
 flywire_annotations_for_synapses <- function(fw.ids,
+                                        direction = c("inputs","oputputs","both"),
                                         partners = NULL,
                                         db = flywire_neurons(WithConnectors = TRUE),
-                                        keep.dist.nm = 500,
-                                        cleft_scores.thresh = 75,
-                                        sample = 250,
+                                        keep.dist.nm = 500, # can be NULL
+                                        cleft_scores.thresh = 75, # can be 0
+                                        sample = 250,  # can be NULL
                                         write.csv = TRUE,
-                                        csv.path = getwd()){
+                                        csv.path = getwd(),
+                                        ...){
   flywire.scans = data.frame(stringsAsFactors = FALSE)
   for(fw.id in fw.ids){
-    if(!fw.id%in%names(db)){
-      warning(fw.id," missing from db")
-      next
+    if(is.null(db)){
+      fw.neurons.syn.ac.syns = fafbseg::flywire_partners(fw.id, details = TRUE,  partners = direction, ...)
+      fw.neurons.syn.ac.syns[,c("x","y","z")] = fw.neurons.syn.ac.syns[,c("pre_x","pre_y","pre_z")]
+      partners = as.character(fafbseg::flywire_latestid(partners))
+      fw.neurons.syn.ac.syns$partner =  ifelse(as.character(fw.neurons.syn.ac.syns$pre_id)%in%fw.id,as.character(fw.neurons.syn.ac.syns$post_id),as.character(fw.neurons.syn.ac.syns$pre_id))
+    }else{
+      if(!fw.id%in%names(db)){
+        warning(fw.id," missing from db")
+        next
+      }
+      fw.neurons.syn.ac.syns = hemibrain_extract_synapses(db[fw.id], .parallel = TRUE, OmitFailures = TRUE)
     }
-    fw.neurons.syn.ac.syns = hemibrain_extract_synapses(db[fw.id], .parallel = TRUE, OmitFailures = TRUE)
-    if(is.null(partners)){
+    if(!is.null(partners)){
       fw.neurons.syn.ac.syns <- fw.neurons.syn.ac.syns %>%
-        dplyr::filter(partner %in% partners)
-    }
-    if(!nrow(fw.neurons.syn.ac.syns)){
-      warning(fw.id," no valid synapses after partner filtering")
-      next
+        dplyr::filter(.data$partner %in% partners)
+      if(!nrow(fw.neurons.syn.ac.syns)){
+        warning(fw.id," no valid synapses after partner filtering")
+        next
+      }
     }
     if(is.null(fw.neurons.syn.ac.syns$Label)){
       fw.neurons.syn.ac.syns$Label = "unknown"
     }
+    if(is.null(fw.neurons.syn.ac.syns$prepost)){
+      fw.neurons.syn.ac.syns$prepost = ifelse(as.character(fw.neurons.syn.ac.syns$pre_id) %in% fw.id, 0, 1)
+    }
+    accepted = if(direction=="outputs"){
+      0
+    }else if(direction=="inputs"){
+      1
+    }else{
+      c(0,1)
+    }
+    if(is.null(sample)){
+      sample = nrow(subset(fw.neurons.syn.ac.syns, fw.neurons.syn.ac.syns$prepost%in%accepted))
+    }
     synister.synapse.sample <- fw.neurons.syn.ac.syns %>%
-      dplyr::filter(prepost==0, cleft_scores > cleft_scores.thresh, Label %in% c("axon","dendrite", "2","3","unknown")) %>%
+      dplyr::filter(prepost%in%accepted, cleft_scores > cleft_scores.thresh, Label %in% c("axon","dendrite", "2","3","unknown")) %>%
       dplyr::mutate(bin.cleft_scores= plyr::round_any(cleft_scores, 10)) %>%
-      dplyr::group_by(Label) %>%
-      dplyr::sample_n(size=sample, replace = TRUE) %>%
+      # dplyr::group_by(Label) %>%
+      dplyr::slice_sample(n=sample, replace = FALSE) %>%
       dplyr::collect()
     if(!nrow(synister.synapse.sample)){
       warning(fw.id," no valid synapses after filtering")
@@ -765,20 +788,22 @@ flywire_annotations_for_synapses <- function(fw.ids,
                               `Coordinate 2` = "",
                               `Ellipsoid Dimensions` = "",
                               tags = "",
-                              Description = synister.synapse.sample$top.nt,
+                              Description = nullToNA(synister.synapse.sample$top.nt),
                               `Segment IDs` = "",
                               `Parent ID` = "",
                               Type = "Point",
                               ID = "",
-                              offset = synister.synapse.sample$offset,
-                              scores = synister.synapse.sample$scores,
-                              cleft_scores = synister.synapse.sample$cleft_scores,
-                              Label = synister.synapse.sample$Label,
-                              flywire.id = fw.id)
+                              offset = nullToNA(synister.synapse.sample$offset),
+                              scores = nullToNA(synister.synapse.sample$scores),
+                              cleft_scores = nullToNA(synister.synapse.sample$cleft_scores),
+                              Label = nullToNA(synister.synapse.sample$Label),
+                              flywire.id = as.character(fw.id))
     colnames(flywire.scan) = gsub("\\."," ",colnames(flywire.scan))
     flywire.scan$`Coordinate 1` = as.character(flywire.scan$`Coordinate 1`)
     if(write.csv){
-      readr::write_excel_csv(flywire.scan, file = file.path(csv.path, paste0("flywire_",fw.id,"_synapse_annotations.csv")))
+      csv.file = file.path(csv.path, paste0("flywire_",fw.id,"_synapse_annotations.csv"))
+      message("Writing ", csv.file)
+      readr::write_excel_csv(flywire.scan, file = csv.file)
     }
     flywire.scan = plyr::rbind.fill(flywire.scans,flywire.scan)
   }
