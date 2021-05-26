@@ -43,6 +43,11 @@ ready for import into flywire. One for each neuron, named by
 \code{csv.path}.}
 
 \item{...}{further arguments passed to \code{fafbseg::flywire_partners}, when \code{db} is \code{NULL}.}
+
+\item{xyz}{a \code{data.frame} of xyz coordinates in flywire voxel space
+to write as a flyiwre annotation .csv file. Can contains other columns.}
+
+\item{description}{the column in \code{xyz} to use for the Descritpion field of the final \code{.csv}.}
 }
 \description{
 Generate a CSV of neuron synapses to import to a flywire annotation layer

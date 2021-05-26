@@ -692,6 +692,8 @@ flywire_dns <- function(side = c("both","right","left"),
 #' Generate a CSV of neuron synapses to import to a flywire annotation layer
 #'
 #' @param fw.ids character vector, a vector of valid flywire IDs
+#' @param xyz a \code{data.frame} of xyz coordinates in flywire voxel space
+#' to write as a flyiwre annotation .csv file. Can contains other columns.
 #' @param direction whether to get presynapses, postsynapses or both.
 #' @param partners character vector else not used i \code{NULL}. A vector of
 #'   valid flywire IDs for postsynaptic neurons to keep. Synapses to other
@@ -707,6 +709,7 @@ flywire_dns <- function(side = c("both","right","left"),
 #' @param write.csv logical, whether or not to write a \code{.csv} output file,
 #'   ready for import into flywire. One for each neuron, named by
 #'   \code{csv.path}.
+#' @param description the column in \code{xyz} to use for the Descritpion field of the final \code{.csv}.
 #' @param ... further arguments passed to \code{fafbseg::flywire_partners}, when \code{db} is \code{NULL}.
 #' @export
 flywire_annotations_for_synapses <- function(fw.ids,
@@ -806,6 +809,35 @@ flywire_annotations_for_synapses <- function(fw.ids,
       readr::write_excel_csv(flywire.scan, file = csv.file)
     }
     flywire.scan = plyr::rbind.fill(flywire.scans,flywire.scan)
+  }
+  flywire.scans
+}
+
+#' @export
+flywire_annotation_csv <- function(xyz,
+                                   write.csv = TRUE,
+                                   csv.path = getwd(),
+                                   description = 'top.nt'){
+  flywire.scan = data.frame(`Coordinate 1` = xyz$`Coordinate 1`,
+                            `Coordinate 2` = "",
+                            `Ellipsoid Dimensions` = "",
+                            tags = "",
+                            Description = nullToNA(xyz[[description]]),
+                            `Segment IDs` = "",
+                            `Parent ID` = "",
+                            Type = "Point",
+                            ID = "",
+                            offset = nullToNA(xyz$offset),
+                            scores = nullToNA(xyz$scores),
+                            cleft_scores = nullToNA(xyz$cleft_scores),
+                            Label = nullToNA(xyz$Label),
+                            flywire.id = as.character(xyz$flywire.id))
+  colnames(flywire.scan) = gsub("\\."," ",colnames(flywire.scan))
+  flywire.scan$`Coordinate 1` = as.character(flywire.scan$`Coordinate 1`)
+  if(write.csv){
+    csv.file = file.path(csv.path, paste0("flywire_",fw.id,"_annotations.csv"))
+    message("Writing ", csv.file)
+    readr::write_excel_csv(flywire.scan, file = csv.file)
   }
   flywire.scans
 }
