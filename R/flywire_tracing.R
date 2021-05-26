@@ -709,6 +709,7 @@ flywire_dns <- function(side = c("both","right","left"),
 #' @param write.csv logical, whether or not to write a \code{.csv} output file,
 #'   ready for import into flywire. One for each neuron, named by
 #'   \code{csv.path}.
+#' @param csv.name the name of the .csv file to be saved.
 #' @param description the column in \code{xyz} to use for the Descritpion field of the final \code{.csv}.
 #' @param ... further arguments passed to \code{fafbseg::flywire_partners}, when \code{db} is \code{NULL}.
 #' @export
@@ -817,7 +818,8 @@ flywire_annotations_for_synapses <- function(fw.ids,
 flywire_annotation_csv <- function(xyz,
                                    write.csv = TRUE,
                                    csv.path = getwd(),
-                                   description = 'top.nt'){
+                                   description = 'top.nt',
+                                   csv.name = "flywire_points_annotations.csv"){
   xyz$`Coordinate 1` = apply(nat::xyzmatrix(xyz),1,function(x) paste_coords(x))
   flywire.scan = data.frame(`Coordinate 1` = xyz$`Coordinate 1`,
                             `Coordinate 2` = "",
@@ -836,7 +838,7 @@ flywire_annotation_csv <- function(xyz,
   colnames(flywire.scan) = gsub("\\."," ",colnames(flywire.scan))
   flywire.scan$`Coordinate 1` = as.character(flywire.scan$`Coordinate 1`)
   if(write.csv){
-    csv.file = file.path(csv.path, paste0("flywire_",fw.id,"_annotations.csv"))
+    csv.file = file.path(csv.path, csv.name)
     message("Writing ", csv.file)
     readr::write_excel_csv(flywire.scan, file = csv.file)
   }
