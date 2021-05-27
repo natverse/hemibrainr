@@ -47,7 +47,7 @@ ready for import into flywire. One for each neuron, named by
 \item{xyz}{a \code{data.frame} of xyz coordinates in flywire voxel space
 to write as a flyiwre annotation .csv file. Can contains other columns.}
 
-\item{csv.name}{the name of the .csv file to be saved.}
+\item{csv.name}{the name of the .csv file to be saved}
 
 \item{description}{the column in \code{xyz} to use for the Descritpion field of the final \code{.csv}.}
 }

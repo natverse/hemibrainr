@@ -709,9 +709,25 @@ flywire_dns <- function(side = c("both","right","left"),
 #' @param write.csv logical, whether or not to write a \code{.csv} output file,
 #'   ready for import into flywire. One for each neuron, named by
 #'   \code{csv.path}.
-#' @param csv.name the name of the .csv file to be saved.
+#' @param csv.name the name of the .csv file to be saved
 #' @param description the column in \code{xyz} to use for the Descritpion field of the final \code{.csv}.
 #' @param ... further arguments passed to \code{fafbseg::flywire_partners}, when \code{db} is \code{NULL}.
+#' @example
+#' csv = flywire_annotations_for_synapses(fw.id = "720575940616046363",
+#' direction = "inputs",
+#' partners = c("720575940628113292",
+#' "720575940610903062",
+#' "720575940611661805",
+#' "720575940628115084",
+#' "720575940612337575",
+#' "720575940618976297",
+#' "720575940619059497",
+#' "720575940616852894",
+#' "720575940629359076",
+#' "720575940632437856",
+#' "720575940624804248",
+#' "720575940613725708"),
+#' db = NULL, keep.dist.nm = NULL, cleft_scores.thresh = 0, sample = NULL)
 #' @export
 flywire_annotations_for_synapses <- function(fw.ids,
                                         direction = c("inputs","oputputs","both"),
@@ -728,6 +744,7 @@ flywire_annotations_for_synapses <- function(fw.ids,
     if(is.null(db)){
       fw.neurons.syn.ac.syns = fafbseg::flywire_partners(fw.id, details = TRUE,  partners = direction, ...)
       fw.neurons.syn.ac.syns[,c("x","y","z")] = fw.neurons.syn.ac.syns[,c("pre_x","pre_y","pre_z")]
+      fw.id = as.character(fafbseg::flywire_latestid(fw.id))
       partners = as.character(fafbseg::flywire_latestid(partners))
       fw.neurons.syn.ac.syns$partner =  ifelse(as.character(fw.neurons.syn.ac.syns$pre_id)%in%fw.id,as.character(fw.neurons.syn.ac.syns$post_id),as.character(fw.neurons.syn.ac.syns$pre_id))
     }else{
@@ -801,10 +818,15 @@ flywire_annotations_for_synapses <- function(fw.ids,
                               scores = nullToNA(synister.synapse.sample$scores),
                               cleft_scores = nullToNA(synister.synapse.sample$cleft_scores),
                               Label = nullToNA(synister.synapse.sample$Label),
-                              flywire.id = as.character(fw.id))
+                              flywire.id = as.character(fw.id),
+                              prepost = nullToNA(as.character(prepost)),
+                              partner = nullToNA(as.character(partner)))
     colnames(flywire.scan) = gsub("\\."," ",colnames(flywire.scan))
     flywire.scan$`Coordinate 1` = as.character(flywire.scan$`Coordinate 1`)
     if(write.csv){
+      for(id in c("flywire.id","partner")){
+        flywire.scan[[id]] = paste0('"=""', as.character(flywire.scan[[id]]), '"""')
+      }
       csv.file = file.path(csv.path, paste0("flywire_",fw.id,"_synapse_annotations.csv"))
       message("Writing ", csv.file)
       readr::write_excel_csv(flywire.scan, file = csv.file)
@@ -829,18 +851,63 @@ flywire_annotation_csv <- function(xyz,
                             `Segment IDs` = "",
                             `Parent ID` = "",
                             Type = "Point",
-                            ID = "",
-                            offset = nullToNA(xyz$offset),
-                            scores = nullToNA(xyz$scores),
-                            cleft_scores = nullToNA(xyz$cleft_scores),
-                            Label = nullToNA(xyz$Label),
-                            flywire.id = as.character(nullToNA(xyz$flywire.id)))
+                            ID = "")
+  flywire.scan = cbind(flywire.scan,xyz[,setdiff(colnames(xyz,flywire.scan))])
   colnames(flywire.scan) = gsub("\\."," ",colnames(flywire.scan))
   flywire.scan$`Coordinate 1` = as.character(flywire.scan$`Coordinate 1`)
   if(write.csv){
+    for(id in intersect(c("pre_id","post_id","flywire.id","partner"),colnames(flywire.scan))){
+      flywire.scan[[id]] = paste0('"=""', as.character(flywire.scan[[id]]), '"""')
+    }
     csv.file = file.path(csv.path, csv.name)
     message("Writing ", csv.file)
     readr::write_excel_csv(flywire.scan, file = csv.file)
   }
   flywire.scan
 }
+
+#' @export
+flywire_verified_synapses <- function(fw.ids,
+                                      direction = c("inputs","oputputs","both"),
+                                      partners = NULL,
+                                      csv.path = getwd(),
+                                      csv.name = "annotations.csv",
+                                      write.csv = TRUE){
+  csv.file = file.path(csv.path,csv.name)
+  csv = readr::read_csv(csv.file)
+  # Get synaptic data
+  fw.neurons.syn.ac.syns.all = data.frame(stringsAsFactors = FALSE)
+  for(fw.id in fw.ids){
+    fw.neurons.syn.ac.syns = fafbseg::flywire_partners(fw.id, details = TRUE,  partners = direction)
+    fw.neurons.syn.ac.syns[,c("x","y","z")] = fw.neurons.syn.ac.syns[,c("pre_x","pre_y","pre_z")]
+    fw.id = as.character(fafbseg::flywire_latestid(fw.id))
+    partners = as.character(fafbseg::flywire_latestid(partners))
+    fw.neurons.syn.ac.syns$partner = ifelse(as.character(fw.neurons.syn.ac.syns$pre_id)%in%fw.id,as.character(fw.neurons.syn.ac.syns$post_id),as.character(fw.neurons.syn.ac.syns$pre_id))
+    if(!is.null(partners)){
+      fw.neurons.syn.ac.syns <- fw.neurons.syn.ac.syns %>%
+        dplyr::filter(.data$partner %in% partners)
+      if(!nrow(fw.neurons.syn.ac.syns)){
+        warning(fw.id," no valid synapses after partner filtering")
+        next
+      }
+    }
+    # Work out good and bad
+    if("offset"%in%colnames(csv)){
+      fw.neurons.syn.ac.syns$Tags = c(csv[match(fw.neurons.syn.ac.syns$offset,csv$offset),"Tags"])[[1]]
+    }else{
+      fw.neurons.syn.ac.syns$`Coordinate 1` = apply(nat::xyzmatrix(fw.neurons.syn.ac.syns),1,function(x) paste_coords(x/c(4,4,40)))
+      fw.neurons.syn.ac.syns$Tags = c(csv[match(fw.neurons.syn.ac.syns$`Coordinate 1`,csv$`Coordinate 1`),"Tags"])[[1]]
+    }
+    fw.neurons.syn.ac.syns.all = plyr::rbind.fill(fw.neurons.syn.ac.syns.all,fw.neurons.syn.ac.syns)
+  }
+  if(write.csv){
+    for(id in c("pre_svid","post_svid","pre_id","post_id","flywire.id","partner")){
+      fw.neurons.syn.ac.syns.all[[id]] = paste0('"=""', as.character(fw.neurons.syn.ac.syns.all[[id]]), '"""')
+    }
+    csv.file = file.path(csv.path, gsub("\\.csv$","_verified.csv",csv.name))
+    message("Writing ", csv.file)
+    write.csv(fw.neurons.syn.ac.syns.all, file = csv.file, row.names = FALSE, quote = F)
+  }
+  fw.neurons.syn.ac.syns.all
+}
+
