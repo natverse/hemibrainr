@@ -852,7 +852,10 @@ flywire_annotation_csv <- function(xyz,
                             `Parent ID` = "",
                             Type = "Point",
                             ID = "")
-  flywire.scan = cbind(flywire.scan,xyz[,setdiff(colnames(xyz,flywire.scan))])
+  col.dif = setdiff(colnames(xyz),colnames(flywire.scan))
+  if(length(col.dif)){
+    flywire.scan = cbind(flywire.scan,xyz[,colnames(flywire.scan)%in%col.dif])
+  }
   colnames(flywire.scan) = gsub("\\."," ",colnames(flywire.scan))
   flywire.scan$`Coordinate 1` = as.character(flywire.scan$`Coordinate 1`)
   if(write.csv){
