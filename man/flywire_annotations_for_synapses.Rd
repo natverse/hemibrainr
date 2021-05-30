@@ -6,7 +6,7 @@
 \usage{
 flywire_annotations_for_synapses(
   fw.ids,
-  direction = c("inputs", "oputputs", "both"),
+  direction = c("inputs", "outputs", "both"),
   partners = NULL,
   db = flywire_neurons(WithConnectors = TRUE),
   keep.dist.nm = 500,

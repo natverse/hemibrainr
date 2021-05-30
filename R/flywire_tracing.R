@@ -730,7 +730,7 @@ flywire_dns <- function(side = c("both","right","left"),
 #' db = NULL, keep.dist.nm = NULL, cleft_scores.thresh = 0, sample = NULL)
 #' @export
 flywire_annotations_for_synapses <- function(fw.ids,
-                                        direction = c("inputs","oputputs","both"),
+                                        direction = c("inputs","outputs","both"),
                                         partners = NULL,
                                         db = flywire_neurons(WithConnectors = TRUE),
                                         keep.dist.nm = 500, # can be NULL
@@ -871,7 +871,7 @@ flywire_annotation_csv <- function(xyz,
 
 #' @export
 flywire_verified_synapses <- function(fw.ids,
-                                      direction = c("inputs","oputputs","both"),
+                                      direction = c("inputs","outputs","both"),
                                       partners = NULL,
                                       csv.path = getwd(),
                                       csv.name = "annotations.csv",
