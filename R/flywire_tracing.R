@@ -827,8 +827,8 @@ flywire_annotations_for_synapses <- function(fw.ids,
                               cleft_scores = nullToNA(synister.synapse.sample$cleft_scores),
                               Label = nullToNA(synister.synapse.sample$Label),
                               flywire.id = as.character(fw.id),
-                              prepost = nullToNA(as.character(prepost)),
-                              partner = nullToNA(as.character(partner)))
+                              prepost = nullToNA(as.character(synister.synapse.sample$prepost)),
+                              partner = nullToNA(as.character(synister.synapse.sample$partner)))
     colnames(flywire.scan) = gsub("\\."," ",colnames(flywire.scan))
     flywire.scan$`Coordinate 1` = as.character(flywire.scan$`Coordinate 1`)
     if(write.csv){
