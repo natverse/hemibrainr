@@ -711,6 +711,7 @@ flywire_dns <- function(side = c("both","right","left"),
 #'   \code{csv.path}.
 #' @param csv.name the name of the .csv file to be saved
 #' @param description the column in \code{xyz} to use for the Descritpion field of the final \code{.csv}.
+#' @param volume it \code{NLLL} there is no subseting. If a \code{mesh3d} object, only points inside this volume are chosen.
 #' @param ... further arguments passed to \code{fafbseg::flywire_partners}, when \code{db} is \code{NULL}.
 #' @example
 #' csv = flywire_annotations_for_synapses(fw.id = "720575940616046363",
@@ -738,6 +739,7 @@ flywire_annotations_for_synapses <- function(fw.ids,
                                         sample = 250,  # can be NULL
                                         write.csv = TRUE,
                                         csv.path = getwd(),
+                                        volume = NULL,
                                         ...){
   flywire.scans = data.frame(stringsAsFactors = FALSE)
   for(fw.id in fw.ids){
@@ -745,7 +747,9 @@ flywire_annotations_for_synapses <- function(fw.ids,
       fw.neurons.syn.ac.syns = fafbseg::flywire_partners(fw.id, details = TRUE,  partners = direction, ...)
       fw.neurons.syn.ac.syns[,c("x","y","z")] = fw.neurons.syn.ac.syns[,c("pre_x","pre_y","pre_z")]
       fw.id = as.character(fafbseg::flywire_latestid(fw.id))
-      partners = as.character(fafbseg::flywire_latestid(partners))
+      if(!is.null(partners)){
+        partners = as.character(fafbseg::flywire_latestid(as.character(partners)))
+      }
       fw.neurons.syn.ac.syns$partner =  ifelse(as.character(fw.neurons.syn.ac.syns$pre_id)%in%fw.id,as.character(fw.neurons.syn.ac.syns$post_id),as.character(fw.neurons.syn.ac.syns$pre_id))
     }else{
       if(!fw.id%in%names(db)){
@@ -777,6 +781,10 @@ flywire_annotations_for_synapses <- function(fw.ids,
     }
     if(is.null(sample)){
       sample = nrow(subset(fw.neurons.syn.ac.syns, fw.neurons.syn.ac.syns$prepost%in%accepted))
+    }
+    if(!is.null(volume)){
+      v = nat::pointsinside(nat::xyzmatrix(fw.neurons.syn.ac.syns),surf=volume)
+      fw.neurons.syn.ac.syns = fw.neurons.syn.ac.syns[v,]
     }
     synister.synapse.sample <- fw.neurons.syn.ac.syns %>%
       dplyr::filter(prepost%in%accepted, cleft_scores > cleft_scores.thresh, Label %in% c("axon","dendrite", "2","3","unknown")) %>%
