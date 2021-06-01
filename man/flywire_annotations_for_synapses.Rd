@@ -14,6 +14,7 @@ flywire_annotations_for_synapses(
   sample = 250,
   write.csv = TRUE,
   csv.path = getwd(),
+  volume = NULL,
   ...
 )
 }
@@ -41,6 +42,8 @@ dendrite and axon of each neuron in \code{fw.ids}}
 \item{write.csv}{logical, whether or not to write a \code{.csv} output file,
 ready for import into flywire. One for each neuron, named by
 \code{csv.path}.}
+
+\item{volume}{it \code{NLLL} there is no subseting. If a \code{mesh3d} object, only points inside this volume are chosen.}
 
 \item{...}{further arguments passed to \code{fafbseg::flywire_partners}, when \code{db} is \code{NULL}.}
 
