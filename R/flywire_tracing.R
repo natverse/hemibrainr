@@ -471,7 +471,7 @@ flywire_deploy_workflows <-function(ws = "flywire",
   for(missing in workflow.tabs.missing){
     try(pbm$tick(tokens = list(what = missing)), silent = TRUE)
     please.add = subset(main, main$tab == missing)
-    fw = flywire_workflow(flywire.id = please.add$flywire.id,
+    fw = try(flywire_workflow(flywire.id = please.add$flywire.id,
                           status = please.add$status,
                           ws=missing,
                           threshold = threshold,
@@ -479,28 +479,32 @@ flywire_deploy_workflows <-function(ws = "flywire",
                           transmitters=transmitters,
                           local = local,
                           cloudvolume.url = cloudvolume.url,
-                          Verbose = Verbose)
-    gs.added = gsheet_manipulation(FUN = googlesheets4::sheet_add,
-                                                ss = target_sheet,
-                                                sheet = missing,
-                                                Verbose = Verbose)
-    gs.added = gsheet_manipulation(FUN = googlesheets4::sheet_write,
-                                                data = fw,
-                                                ss = target_sheet,
-                                                sheet = missing,
-                                                Verbose = Verbose)
+                          Verbose = Verbose), silent = FALSE)
+    if(grepl("try",class(fw))){
+      warning("Error in adding information for: ", please.add$flywire.id)
+    }else{
+      gs.added = gsheet_manipulation(FUN = googlesheets4::sheet_add,
+                                     ss = target_sheet,
+                                     sheet = missing,
+                                     Verbose = Verbose)
+      gs.added = gsheet_manipulation(FUN = googlesheets4::sheet_write,
+                                     data = fw,
+                                     ss = target_sheet,
+                                     sheet = missing,
+                                     Verbose = Verbose)
+    }
   }
   if(length(workflow.tabs.there)){
     flywire_update_workflow(
       main = main,
       ws=workflow.tabs.there,
-                            target_sheet=target_sheet,
-                            Verbose = Verbose,
-                            threshold = threshold,
-                            cleft.threshold = cleft.threshold,
-                            transmitters=transmitters,
-                            local = local,
-                            cloudvolume.url = cloudvolume.url)
+      target_sheet=target_sheet,
+      Verbose = Verbose,
+      threshold = threshold,
+      cleft.threshold = cleft.threshold,
+      transmitters=transmitters,
+      local = local,
+      cloudvolume.url = cloudvolume.url)
   }
 }
 
@@ -533,7 +537,8 @@ flywire_update_workflow <-function(main,
     }
   }else{
     gs = update = flywire_tracing_sheet(ws=ws,regex=FALSE,open=FALSE,selected_sheet=target_sheet,Verbose=Verbose)
-    if(!is.null(gs$status)){
+    gs.bad = (is.null(gs$flywire.id)||is.na(gs$flywire.id)||gs$flywire.id%in%c("0","NA","none","None"," ",""))
+    if(!is.null(gs$status) & !gs.bad){
       gs$status = standard_statuses(gs$status)
       id = ifelse("pre_id"%in%colnames(gs),"pre_id","post_id")
       gs[[id]][is.na(gs[[id]])] = "0"
@@ -558,12 +563,12 @@ flywire_update_workflow <-function(main,
       for(sc in shared.cols){
         fw[[sc]] = gs[[sc]][match(fw[[id]],gs[[id]])]
       }
+      gsheet_manipulation(FUN = googlesheets4::sheet_write,
+                          data = fw,
+                          ss = target_sheet,
+                          sheet = ws,
+                          Verbose = Verbose)
     }
-    gsheet_manipulation(FUN = googlesheets4::sheet_write,
-                                     data = fw,
-                                     ss = target_sheet,
-                                     sheet = ws,
-                                     Verbose = Verbose)
   }
 }
 
@@ -583,6 +588,10 @@ flywire_workflow <- function(flywire.id,
                              db = flywire_neurons(WithConnectors = TRUE)){
   if(length(flywire.id)>1){
     stop("Only one flywire.id at a time please")
+  }
+  if(is.null(flywire.id)||is.na(flywire.id)||flywire.id%in%c("0","NA","none","None"," ","")){
+    warning("flywire.id invalid ", flywire.id)
+    return(NULL)
   }
   match = grepl("match",ws)
   syns = grepl("synapses",ws)
