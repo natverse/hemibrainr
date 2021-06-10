@@ -154,6 +154,7 @@ save_compressed_nblast_mat <- function(x,
   newobjname <- paste0(objname, ".compressed")
   fname <- paste0(file.path(file, newobjname), ".", format)
   combine = FALSE
+  old <- NULL
   if(file.exists(fname)){
     if(overwrite=="no"){
       stop(fname, " already exists")
