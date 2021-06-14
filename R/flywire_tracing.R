@@ -717,10 +717,15 @@ flywire_dns <- function(side = c("both","right","left"),
 #'   ready for import into flywire for each neuron. They will be named using the
 #'   pattern \code{"flywire_<fw.id>_synapse_annotations.csv"} and written to
 #'   \code{csv.path}.
-#' @param volume if \code{NLLL} there is no subseting. If a \code{mesh3d}
+#' @param volume if \code{NLLL} there is no subsetting. If a \code{mesh3d}
 #'   object, only points inside this volume are chosen.
 #' @param csv.path Output path for CSV files (defaults to current working
 #'   directory)
+#' @param xyz a \code{data.frame} of xyz coordinates in flywire voxel space -to
+#'   write as a flywire annotation .csv file. Can contains other columns.
+#' @param csv.name the name of the .csv file to be saved
+#' @param description the column in \code{xyz} to use for the Description field
+#'   of the final \code{.csv}.
 #' @param ... further arguments passed to \code{fafbseg::flywire_partners}, when
 #'   \code{db} is \code{NULL}.
 #'
@@ -856,6 +861,7 @@ flywire_annotations_for_synapses <- function(fw.ids,
 }
 
 #' @export
+#' @rdname flywire_annotations_for_synapses
 flywire_annotation_csv <- function(xyz,
                                    write.csv = TRUE,
                                    csv.path = getwd(),
@@ -889,6 +895,7 @@ flywire_annotation_csv <- function(xyz,
 }
 
 #' @export
+#' @rdname flywire_annotations_for_synapses
 flywire_verified_synapses <- function(fw.ids,
                                       direction = c("inputs","outputs","both"),
                                       partners = NULL,

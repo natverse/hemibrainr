@@ -2,6 +2,8 @@
 % Please edit documentation in R/flywire_tracing.R
 \name{flywire_annotations_for_synapses}
 \alias{flywire_annotations_for_synapses}
+\alias{flywire_annotation_csv}
+\alias{flywire_verified_synapses}
 \title{Generate a CSV of neuron synapses to import to a flywire annotation layer}
 \usage{
 flywire_annotations_for_synapses(
@@ -16,6 +18,23 @@ flywire_annotations_for_synapses(
   csv.path = getwd(),
   volume = NULL,
   ...
+)
+
+flywire_annotation_csv(
+  xyz,
+  write.csv = TRUE,
+  csv.path = getwd(),
+  description = "top.nt",
+  csv.name = "flywire_points_annotations.csv"
+)
+
+flywire_verified_synapses(
+  fw.ids,
+  direction = c("inputs", "outputs", "both"),
+  partners = NULL,
+  csv.path = getwd(),
+  csv.name = "annotations.csv",
+  write.csv = TRUE
 )
 }
 \arguments{
@@ -47,11 +66,19 @@ pattern \code{"flywire_<fw.id>_synapse_annotations.csv"} and written to
 \item{csv.path}{Output path for CSV files (defaults to current working
 directory)}
 
-\item{volume}{if \code{NLLL} there is no subseting. If a \code{mesh3d}
+\item{volume}{if \code{NLLL} there is no subsetting. If a \code{mesh3d}
 object, only points inside this volume are chosen.}
 
 \item{...}{further arguments passed to \code{fafbseg::flywire_partners}, when
 \code{db} is \code{NULL}.}
+
+\item{xyz}{a \code{data.frame} of xyz coordinates in flywire voxel space -to
+write as a flywire annotation .csv file. Can contains other columns.}
+
+\item{description}{the column in \code{xyz} to use for the Description field
+of the final \code{.csv}.}
+
+\item{csv.name}{the name of the .csv file to be saved}
 }
 \description{
 Generate a CSV of neuron synapses to import to a flywire annotation layer
