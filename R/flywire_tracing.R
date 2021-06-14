@@ -701,8 +701,6 @@ flywire_dns <- function(side = c("both","right","left"),
 #' Generate a CSV of neuron synapses to import to a flywire annotation layer
 #'
 #' @param fw.ids character vector, a vector of valid flywire IDs
-#' @param xyz a \code{data.frame} of xyz coordinates in flywire voxel space
-#' to write as a flyiwre annotation .csv file. Can contains other columns.
 #' @param direction whether to get presynapses, postsynapses or both.
 #' @param partners character vector else not used i \code{NULL}. A vector of
 #'   valid flywire IDs for postsynaptic neurons to keep. Synapses to other
@@ -716,13 +714,17 @@ flywire_dns <- function(side = c("both","right","left"),
 #' @param sample numeric, the number of synapses to choose from both the
 #'   dendrite and axon of each neuron in \code{fw.ids}
 #' @param write.csv logical, whether or not to write a \code{.csv} output file,
-#'   ready for import into flywire. One for each neuron, named by
+#'   ready for import into flywire for each neuron. They will be named using the
+#'   pattern \code{"flywire_<fw.id>_synapse_annotations.csv"} and written to
 #'   \code{csv.path}.
-#' @param csv.name the name of the .csv file to be saved
-#' @param description the column in \code{xyz} to use for the Descritpion field of the final \code{.csv}.
-#' @param volume it \code{NLLL} there is no subseting. If a \code{mesh3d} object, only points inside this volume are chosen.
-#' @param ... further arguments passed to \code{fafbseg::flywire_partners}, when \code{db} is \code{NULL}.
-#' @example
+#' @param volume if \code{NLLL} there is no subseting. If a \code{mesh3d}
+#'   object, only points inside this volume are chosen.
+#' @param csv.path Output path for CSV files (defaults to current working
+#'   directory)
+#' @param ... further arguments passed to \code{fafbseg::flywire_partners}, when
+#'   \code{db} is \code{NULL}.
+#'
+#' @examples
 #' csv = flywire_annotations_for_synapses(fw.id = "720575940616046363",
 #' direction = "inputs",
 #' partners = c("720575940628113292",
