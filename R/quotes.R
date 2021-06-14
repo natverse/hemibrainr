@@ -81,7 +81,7 @@ plot_inspirobot <- function(cycle = NULL){
 #'
 #' @param n number of random word/word combinations to generate.
 #' @param words integer, number of words in each combination.
-#' @param collapse Whether to combine into one charcter vector. Words
+#' @param collapse Whether to combine into one character vector. Words
 #' will be separated by the character entered here. Default \code{NULL}, is not to combine.
 #' @examples
 #' randomwords(10, 2, collapse = "_")

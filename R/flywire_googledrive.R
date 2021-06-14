@@ -14,11 +14,11 @@
 #' have a predicted axon/dendrite split at \code{neuron$d$Label} for each point in its skeleton, created using \code{\link{flow_centrality}}.
 #' @param local \code{FALSE} or path. By default (\code{FALSE}) data is read from \code{options()$Drive_hemibrain_data}), but the user can specify an alternative path.
 #' @param mirror logical, whether or not to read neurons that have been mirrored (i.e. flipped to the 'other' brain hemisphere).
-#' @param zip logical. If \code{TRUE} then \code{nat::neuronlistz} is used to resad neurons from a \code{.zip} archive. Otherwise, \code{nat::neuronlistfh} is used to read neurons from a \code{.rds} file with a linked 'data' folder.
-#' The \code{.zip} method is preffered. Both methods load a dynamic neuronlist, which only loads skeleton data into memroy at the point where it is processed.
+#' @param zip logical. If \code{TRUE} then \code{nat::neuronlistz} is used to read neurons from a \code{.zip} archive. Otherwise, \code{nat::neuronlistfh} is used to read neurons from a \code{.rds} file with a linked 'data' folder.
+#' The \code{.zip} method is preferred. Both methods load a dynamic neuronlist, which only loads skeleton data into memory at the point where it is processed.
 #' @param flywire.neurons a \code{neuronlist} of flywire neurons in FlyWire space. The \code{flywire_basics} function will calculate some useful meta-data, namely
 #' a point in the primary neurite tract that can be used as a stable reference for this neuron.
-#' @param request a neuronlist, matrix of x,y,z position or flywire ID to add to a
+#' @param request a \code{neuronlist}, matrix of x,y,z position or flywire ID to add to a
 #' \href{https://docs.google.com/spreadsheets/d/1rzG1MuZYacM-vbW7100aK8HeA-BY6dWAVXQ7TB6E2cQ/edit#gid=0}{Google sheet} that records flywire positions
 #' flagged to be processed into neuron skeletons that can be called by \code{flywire_neurons}.
 #' @param selected_sheet the Google sheet onto which to add new flywire coordinate. I.e. \href{https://docs.google.com/spreadsheets/d/1rzG1MuZYacM-vbW7100aK8HeA-BY6dWAVXQ7TB6E2cQ/edit#gid=0}{Google sheet}.
@@ -553,10 +553,10 @@ flywire_ids <-function(local = FALSE, folder = "flywire_neurons/", sql = FALSE, 
 #' If set to \code{NULL} for \code{flywire_tracing_sheets}, the whole google sheet is read and all tabs are combined using \code{plyr::rbind.fill}.
 #' @param regex logical, use \code{ws} with regex.
 #' @param match logical. If \code{TRUE}, hemibrain matches given.
-#' @param meta meta data for flywire neurons, e.g. as retreived using \code{\link{flywire_meta}}. Used to efficiently input \code{flywire.xyz} column if only a \code{flywire.id} entry has been given.
+#' @param meta meta data for flywire neurons, e.g. as retrieved using \code{\link{flywire_meta}}. Used to efficiently input \code{flywire.xyz} column if only a \code{flywire.id} entry has been given.
 #' Only works if that id is also in this provided \code{data.frame}, \code{meta}.
 #' @param Verbose logical, whether or not to supply you with messages.
-#' @param retry integer, sometimes \code{fafbseg::flywire_xyz2id} fails due to a server timeout. This is the number of times to re-arrempt failed calls before accepting defeat.
+#' @param retry integer, sometimes \code{fafbseg::flywire_xyz2id} fails due to a server timeout. This is the number of times to re-attempt failed calls before accepting defeat.
 #' @inheritParams matches_update
 #'
 #' @details For this function to work, the specified google sheet(s) must have either the column \code{flywire.xyz},

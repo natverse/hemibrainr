@@ -44,15 +44,15 @@ have a predicted axon/dendrite split at \code{neuron$d$Label} for each point in 
 \item{type}{When using neurons with \code{flywire_neurons} from the Google drive a neuronlistfh object of neuron skeletons (default),
 the saved \code{.swc} files, a \code{nat::dotprops} objects or a \code{nat::dotprops object} cut to the hemibrain volume. Not all brainspaces supported.}
 
-\item{zip}{logical. If \code{TRUE} then \code{nat::neuronlistz} is used to resad neurons from a \code{.zip} archive. Otherwise, \code{nat::neuronlistfh} is used to read neurons from a \code{.rds} file with a linked 'data' folder.
-The \code{.zip} method is preffered. Both methods load a dynamic neuronlist, which only loads skeleton data into memroy at the point where it is processed.}
+\item{zip}{logical. If \code{TRUE} then \code{nat::neuronlistz} is used to read neurons from a \code{.zip} archive. Otherwise, \code{nat::neuronlistfh} is used to read neurons from a \code{.rds} file with a linked 'data' folder.
+The \code{.zip} method is preferred. Both methods load a dynamic neuronlist, which only loads skeleton data into memory at the point where it is processed.}
 
 \item{...}{Additional arguments passed to \code{nat::nlapply}.and/or \code{fafbseg::skeletor}.}
 
 \item{flywire.neurons}{a \code{neuronlist} of flywire neurons in FlyWire space. The \code{flywire_basics} function will calculate some useful meta-data, namely
 a point in the primary neurite tract that can be used as a stable reference for this neuron.}
 
-\item{request}{a neuronlist, matrix of x,y,z position or flywire ID to add to a
+\item{request}{a \code{neuronlist}, matrix of x,y,z position or flywire ID to add to a
 \href{https://docs.google.com/spreadsheets/d/1rzG1MuZYacM-vbW7100aK8HeA-BY6dWAVXQ7TB6E2cQ/edit#gid=0}{Google sheet} that records flywire positions
 flagged to be processed into neuron skeletons that can be called by \code{flywire_neurons}.}
 

@@ -28,8 +28,8 @@
 #' folder in the location: \code{hemibrainr:::good_savedir(local=local)},
 #' by default the mounted Google drive (\code{options()$Gdrive_hemibrain_data}) or locally ((\code{options()$hemibrain_data}))
 #' @param swc logical. When using neurons with \code{hemibrain_neurons} from the Google drive, whether to read \code{.swc} files (if \code{TRUE}), or a neuronlistfh object (default).
-#' @param zip logical. If \code{TRUE} then \code{nat::neuronlistz} is used to resad neurons from a \code{.zip} archive. Otherwise, \code{nat::neuronlistfh} is used to read neurons from a \code{.rds} file with a linked 'data' folder.
-#' The \code{.zip} method is preffered. Both methods load a dynamic neuronlist, which only loads skeleton data into memroy at the point where it is processed.
+#' @param zip logical. If \code{TRUE} then \code{nat::neuronlistz} is used to read neurons from a \code{.zip} archive. Otherwise, \code{nat::neuronlistfh} is used to read neurons from a \code{.rds} file with a linked 'data' folder.
+#' The \code{.zip} method is preferred. Both methods load a dynamic neuronlist, which only loads skeleton data into memory at the point where it is processed.
 #' @param ... arguments passed to \code{neuprintr::neuprint_read_neurons}, \code{\link{hemibrain_remove_bad_synapses}}
 #'  and \code{\link{hemibrain_flow_centrality}}
 #'

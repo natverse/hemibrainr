@@ -11,14 +11,14 @@
 #' @param ws character vector, tabs (i.e. work sheets) on the google sheet to query/read. This works with regex, if \code{regex==TRUE}, so you only need to give the name partially.
 #' If set to \code{NULL} for \code{flywire_tracing_sheets}, the whole google sheet is read and all tabs are combined using \code{plyr::rbind.fill}.
 #' @param regex logical, use \code{ws} with regex.
-#' @param open logial, if \code{TRUE} the relevant google sheet tab is opened in your browser. Else, a \code{data.frame} of the tab is returned.
+#' @param open logical, if \code{TRUE} the relevant google sheet tab is opened in your browser. Else, a \code{data.frame} of the tab is returned.
 #' @param selected_sheet character indicating the a flywire tracing google sheet. This defaults to the master 'lineage' tracing sheet used by the Drosphila Connectomics Group to
 #' store annotations on flywire neurons in different developmental lineages. Note: You may not have access.
 #' @param selected_sheets a character vector of multiple google sheet IDs, as for \code{selected_sheet}.
 #' @param query a vector of data indicating flywire neurons. These can be a vector of flywire XYZ positions (readable by \code{nat::xyzmatrix}),
 #' flywire root IDs or flywire supervoxel IDs. These are used to get the most up to date root IDs from FlyWire, which are then matched to the
 #' results from \code{flywire_tracing_sheets}.
-#' @param query.type  wtherh the qurey is a vector of xyz positions, flywire supervoxel IDs or flywire IDs ("flywire.xyz"/"flywire.svid"/"flywire.id").
+#' @param query.type  whether the query is a vector of xyz positions, flywire supervoxel IDs or flywire IDs ("flywire.xyz"/"flywire.svid"/"flywire.id").
 #' @param fw.meta a \code{data.frame} of meta data on flywire neurons, e.g. as produced by \code{flywire_tracing_sheets}.or read by \code{flywire_meta}.
 #' @param cloudvolume.url URL for CloudVolume to fetch segmentation image data. The default value of NULL choose
 #' @param Verbose logical, if \code{TRUE} then \code{hemibrainr} communicates what it has found.
@@ -311,9 +311,9 @@ flywire_tracing_update <- function(tab,
 # Standardise flywire sheet
 #' @param whimsy logical. If TRUE then a column with randomly generated 'whimsical' names
 #' is generated (unless there is already a name in this column).
-#' @param field character, the the colum in the google sheet that you wish to have unique,
+#' @param field character, the the column in the google sheet that you wish to have unique,
 #' when \code{remove.duplicates} is \code{TRUE}.
-#' @param remove.duplicates logical, whether or not to remvoe duplicate rows from google sheet. Currently,
+#' @param remove.duplicates logical, whether or not to remove duplicate rows from google sheet. Currently,
 #' this will also trigger \code{reorder} even if it is set to \code{FALSE}.
 #' @param reorder logical, if \code{TRUE} then the googlesheet is reordered by cell type, connection weight and users.
 #' @name flywire_tracing_sheet

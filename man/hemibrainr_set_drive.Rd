@@ -29,7 +29,7 @@ drive to be found in the standard location: \code{"/Volumes/GoogleDrive/Shared\ 
 \item{path}{path to your 'hemibrainr Google drive', either a mounted remote or a local copy.
 For example on a Mac, \href{https://support.google.com/drive/answer/7329379?authuser=2}{Google filestream} mounts it at: \code{/Volumes/GoogleDrive/Shared\ drives/}.}
 
-\item{drive.type}{the type of network drive to use. This must be a mounted drive, either a googledrive or dropbox, or soemthing configured with rclone. This is used when path is not given
+\item{drive.type}{the type of network drive to use. This must be a mounted drive, either a googledrive or dropbox, or something configured with rclone. This is used when path is not given
 to try to find the path to hemibrainr data. If in doubt, try the googledrive option. Access to dropbox version of data available at special request.
 With \href{https://rclone.org/drive/}{rclone sheet} you can mount it wherever you like, by default hemibrainr expects it at:
 \code{file.path(getwd(),"hemibrainr_data/")}}

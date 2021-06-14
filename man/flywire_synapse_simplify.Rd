@@ -26,7 +26,7 @@ a \code{data.frame} of collapsed synapses.
 }
 \description{
 Many predicted Buhmann synapses may be located at one real synapse. Collapse Buhmann predicted flywire synapses into smaller units using a hierarchical clustering
-based on the Eucliean distances between predicted 'presynapses'.
+based on the Euclidean distances between predicted 'presynapses'.
 }
 \examples{
 \donttest{

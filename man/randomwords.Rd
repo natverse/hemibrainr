@@ -11,7 +11,7 @@ randomwords(n = 1L, words = 1L, collapse = NULL)
 
 \item{words}{integer, number of words in each combination.}
 
-\item{collapse}{Whether to combine into one charcter vector. Words
+\item{collapse}{Whether to combine into one character vector. Words
 will be separated by the character entered here. Default \code{NULL}, is not to combine.}
 }
 \value{

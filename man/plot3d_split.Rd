@@ -78,7 +78,7 @@ plot3d_somas(
 \item{soma.alpha}{numeric, alpha transparency value for plotting the soma. Passed to \code{rgl::spheres3d}}
 
 \item{transmitters}{logical. If \code{TRUE}, and transmitter identities are given in each neuron's meta data at neuron$connectors, then synapses.
-are plotted in their transmitter colours. Transmitter identity is given by the colour of a hlow around each synapse. The colours correspond to entries in \code{\link{paper_colours}}.}
+are plotted in their transmitter colours. Transmitter identity is given by the colour of a halo around each synapse. The colours correspond to entries in \code{\link{paper_colours}}.}
 
 \item{transmitter.alpha}{numeric, alpha transparency value for a coloured halo indicative of transmitter identity around synapses. Passed to \code{rgl::spheres3d}.}
 

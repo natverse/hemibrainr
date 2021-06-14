@@ -16,7 +16,7 @@
 #'   login details for this project recorded in your .Renviron for these
 #'   functions to work. You are given neurons assigned to your initials on the matching google sheet (the \code{User} column)
 #'   though you can look at other's assigned matches using \code{superUser=TRUE}. Your selection is further narrowed
-#'   by ommitting neurons whose matches have already been made, when using the default \code{overwrite="TRUE"}. However, you
+#'   by omitting neurons whose matches have already been made, when using the default \code{overwrite="TRUE"}. However, you
 #'   can change this to overwrite matches, and to review made matches.
 #'
 #' @param ids body IDs for hemibrain neurons present in the
@@ -62,7 +62,7 @@
 #' @param superUser if \code{FALSE} then you will only be given neurons flagged for your user. If \code{TRUE} then
 #' you will be given neurons flagged for any user. To select whether or not you want to look at neurons with no match, neurons with a match
 #' or either, use the \code{overwrite} argument.
-#' @param flywire.good logical, whether or not to only take 'well traced' flywire neurons, as annotated by the Drosophila Connectomics Group. This relies on the status column retreived
+#' @param flywire.good logical, whether or not to only take 'well traced' flywire neurons, as annotated by the Drosophila Connectomics Group. This relies on the status column retrieved
 #' by \code{flywire_meta}.
 #'
 #' @details Currently, the

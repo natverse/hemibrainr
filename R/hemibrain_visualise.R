@@ -18,7 +18,7 @@
 #' @param brain a template brain to plot. \code{FALSE} results in no brain plotted.
 #' @param highflow whether to plot the nodes of highest (with in one standard deviation less than maximum) flow centrality (pink points).
 #' @param transmitters logical. If \code{TRUE}, and transmitter identities are given in each neuron's meta data at neuron$connectors, then synapses.
-#' are plotted in their transmitter colours. Transmitter identity is given by the colour of a hlow around each synapse. The colours correspond to entries in \code{\link{paper_colours}}.
+#' are plotted in their transmitter colours. Transmitter identity is given by the colour of a halo around each synapse. The colours correspond to entries in \code{\link{paper_colours}}.
 #' @param transmitter.alpha numeric, alpha transparency value for a coloured halo indicative of transmitter identity around synapses. Passed to \code{rgl::spheres3d}.
 #' @param volume a \code{mesh3d} or \code{hxsurf} object. Only somas outside this volume will be plotted.
 #' @param check.template check which template space \code{someneuronlist} is in, in order to set default plotting settings.

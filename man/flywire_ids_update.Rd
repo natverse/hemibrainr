@@ -30,7 +30,7 @@ If set to \code{NULL} for \code{flywire_tracing_sheets}, the whole google sheet 
 
 \item{regex}{logical, use \code{ws} with regex.}
 
-\item{meta}{meta data for flywire neurons, e.g. as retreived using \code{\link{flywire_meta}}. Used to efficiently input \code{flywire.xyz} column if only a \code{flywire.id} entry has been given.
+\item{meta}{meta data for flywire neurons, e.g. as retrieved using \code{\link{flywire_meta}}. Used to efficiently input \code{flywire.xyz} column if only a \code{flywire.id} entry has been given.
 Only works if that id is also in this provided \code{data.frame}, \code{meta}.}
 
 \item{match}{logical. If \code{TRUE}, hemibrain matches given.}
@@ -43,7 +43,7 @@ cell type names to FAFB neurons. In both cases, cell type names are attached to 
 
 \item{Verbose}{logical, whether or not to supply you with messages.}
 
-\item{retry}{integer, sometimes \code{fafbseg::flywire_xyz2id} fails due to a server timeout. This is the number of times to re-arrempt failed calls before accepting defeat.}
+\item{retry}{integer, sometimes \code{fafbseg::flywire_xyz2id} fails due to a server timeout. This is the number of times to re-attempt failed calls before accepting defeat.}
 }
 \value{
 a \code{data.frame} with columns from the given google sheet(s), specified using the argument \code{chosen.columns}.

@@ -60,11 +60,11 @@
 #' you will get:
 #'
 ##' \itemize{
-##'  \item{"Harenstein_Lineage"}{ The Hartenstein lineage name based on expert review of light level data from the V. Hartenstein group (Wong 2013, Lovick 2013).
+##'  \item{"Hartenstein_Lineage"}{ The Hartenstein lineage name based on expert review of light level data from the V. Hartenstein group (Wong 2013, Lovick 2013).
 #'    See \code{\link{hemibrain_hemilineages}}.}
 ##'  \item{"ItoLee_Lineage"}{ Lineage name, data from the K. Ito and T. Lee groups (Yu 2013, Ito 2013).
 #'    See \code{\link{hemibrain_hemilineages}}}
-##'  \item{"side"}{ The hemisphere of the brain onto which thisa clone is registered}
+##'  \item{"side"}{ The hemisphere of the brain onto which this clone is registered}
 ##' }
 #'@name lineage_clones
 #'@export

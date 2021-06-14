@@ -82,7 +82,7 @@ If set to \code{NULL} for \code{flywire_tracing_sheets}, the whole google sheet 
 
 \item{regex}{logical, use \code{ws} with regex.}
 
-\item{open}{logial, if \code{TRUE} the relevant google sheet tab is opened in your browser. Else, a \code{data.frame} of the tab is returned.}
+\item{open}{logical, if \code{TRUE} the relevant google sheet tab is opened in your browser. Else, a \code{data.frame} of the tab is returned.}
 
 \item{selected_sheet}{character indicating the a flywire tracing google sheet. This defaults to the master 'lineage' tracing sheet used by the Drosphila Connectomics Group to
 store annotations on flywire neurons in different developmental lineages. Note: You may not have access.}
@@ -96,7 +96,7 @@ store annotations on flywire neurons in different developmental lineages. Note: 
 flywire root IDs or flywire supervoxel IDs. These are used to get the most up to date root IDs from FlyWire, which are then matched to the
 results from \code{flywire_tracing_sheets}.}
 
-\item{query.type}{wtherh the qurey is a vector of xyz positions, flywire supervoxel IDs or flywire IDs ("flywire.xyz"/"flywire.svid"/"flywire.id").}
+\item{query.type}{whether the query is a vector of xyz positions, flywire supervoxel IDs or flywire IDs ("flywire.xyz"/"flywire.svid"/"flywire.id").}
 
 \item{fw.meta}{a \code{data.frame} of meta data on flywire neurons, e.g. as produced by \code{flywire_tracing_sheets}.or read by \code{flywire_meta}.}
 
@@ -114,7 +114,7 @@ must be in both the google sheet tab and \code{update}.}
 
 \item{return}{logical, whether or not to return the updated googlesheet tab as a \code{data.frame}.}
 
-\item{field}{character, the the colum in the google sheet that you wish to have unique,
+\item{field}{character, the the column in the google sheet that you wish to have unique,
 when \code{remove.duplicates} is \code{TRUE}.}
 
 \item{selected_sheets}{a character vector of multiple google sheet IDs, as for \code{selected_sheet}.}
@@ -124,7 +124,7 @@ is generated (unless there is already a name in this column).}
 
 \item{reorder}{logical, if \code{TRUE} then the googlesheet is reordered by cell type, connection weight and users.}
 
-\item{remove.duplicates}{logical, whether or not to remvoe duplicate rows from google sheet. Currently,
+\item{remove.duplicates}{logical, whether or not to remove duplicate rows from google sheet. Currently,
 this will also trigger \code{reorder} even if it is set to \code{FALSE}.}
 
 \item{main_sheet}{a google sheet of flywire neurons with columns: \code{workflow}, \code{whimsy}, \code{flywire.id}. See \code{\link{standard_workflow}}.

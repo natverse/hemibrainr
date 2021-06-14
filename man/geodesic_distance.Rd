@@ -17,7 +17,7 @@ geodesic_distance(x, graph.distance = TRUE, Label = 1, ...)
 
 \item{graph.distance}{logical, whether to use geodesic distance in terms of node number (\code{TRUE}) or real unit distance.}
 
-\item{Label}{defaults to 1, so distances to soma are chiosen. If 7, then distance from primary neurite's branchpoint.}
+\item{Label}{defaults to 1, so distances to soma are chosen. If 7, then distance from primary neurite's branchpoint.}
 
 \item{...}{methods passed to \code{nat::nlapply}}
 }
