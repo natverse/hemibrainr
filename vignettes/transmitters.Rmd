@@ -117,7 +117,7 @@ LNO1.conns = hemibrain_extract_connections(LNO1.flow, .parallel = FALSE, OmitFai
 
 And now for Istvan's weird antennal lobe LNs
 
-```{r il3LN1}
+```{r il3LN1, eval=FALSE}
 # These are the flywire IDs of il3LN1
 il3LN1.xyz = matrix(c(123158, 81767, 2697, 135901, 84928, 2642), ncol = 3, byrow = TRUE)
 il3LN1 = unique(flywire_xyz2id(il3LN1.xyz,rawcoords = TRUE))
