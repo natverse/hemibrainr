@@ -42,7 +42,7 @@ A \code{\link{neuronlist}} object
 \code{hemibrain_mito_meshes} reads mitochondrial meshes
 }
 \examples{
-\donttest{
+\dontrun{
 da2.lod3=hemibrain_neuron_meshes("DA2_lPN", lod=3)
 da2.lod3
 }

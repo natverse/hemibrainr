@@ -40,7 +40,7 @@ cvmesh2mesh <- function(x, method=c('vf', 'ply'), ...) {
 #' @export
 #'
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' da2.lod3=hemibrain_neuron_meshes("DA2_lPN", lod=3)
 #' da2.lod3
 #' }
