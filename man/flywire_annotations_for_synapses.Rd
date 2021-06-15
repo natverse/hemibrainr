@@ -2,6 +2,8 @@
 % Please edit documentation in R/flywire_tracing.R
 \name{flywire_annotations_for_synapses}
 \alias{flywire_annotations_for_synapses}
+\alias{flywire_annotation_csv}
+\alias{flywire_verified_synapses}
 \title{Generate a CSV of neuron synapses to import to a flywire annotation layer}
 \usage{
 flywire_annotations_for_synapses(
@@ -16,6 +18,23 @@ flywire_annotations_for_synapses(
   csv.path = getwd(),
   volume = NULL,
   ...
+)
+
+flywire_annotation_csv(
+  xyz,
+  write.csv = TRUE,
+  csv.path = getwd(),
+  description = "top.nt",
+  csv.name = "flywire_points_annotations.csv"
+)
+
+flywire_verified_synapses(
+  fw.ids,
+  direction = c("inputs", "outputs", "both"),
+  partners = NULL,
+  csv.path = getwd(),
+  csv.name = "annotations.csv",
+  write.csv = TRUE
 )
 }
 \arguments{
@@ -40,20 +59,44 @@ inclusion}
 dendrite and axon of each neuron in \code{fw.ids}}
 
 \item{write.csv}{logical, whether or not to write a \code{.csv} output file,
-ready for import into flywire. One for each neuron, named by
+ready for import into flywire for each neuron. They will be named using the
+pattern \code{"flywire_<fw.id>_synapse_annotations.csv"} and written to
 \code{csv.path}.}
 
-\item{volume}{it \code{NLLL} there is no subseting. If a \code{mesh3d} object, only points inside this volume are chosen.}
+\item{csv.path}{Output path for CSV files (defaults to current working
+directory)}
 
-\item{...}{further arguments passed to \code{fafbseg::flywire_partners}, when \code{db} is \code{NULL}.}
+\item{volume}{if \code{NLLL} there is no subsetting. If a \code{mesh3d}
+object, only points inside this volume are chosen.}
 
-\item{xyz}{a \code{data.frame} of xyz coordinates in flywire voxel space
-to write as a flyiwre annotation .csv file. Can contains other columns.}
+\item{...}{further arguments passed to \code{fafbseg::flywire_partners}, when
+\code{db} is \code{NULL}.}
+
+\item{xyz}{a \code{data.frame} of xyz coordinates in flywire voxel space -to
+write as a flywire annotation .csv file. Can contains other columns.}
+
+\item{description}{the column in \code{xyz} to use for the Description field
+of the final \code{.csv}.}
 
 \item{csv.name}{the name of the .csv file to be saved}
-
-\item{description}{the column in \code{xyz} to use for the Descritpion field of the final \code{.csv}.}
 }
 \description{
 Generate a CSV of neuron synapses to import to a flywire annotation layer
+}
+\examples{
+csv = flywire_annotations_for_synapses(fw.id = "720575940616046363",
+direction = "inputs",
+partners = c("720575940628113292",
+"720575940610903062",
+"720575940611661805",
+"720575940628115084",
+"720575940612337575",
+"720575940618976297",
+"720575940619059497",
+"720575940616852894",
+"720575940629359076",
+"720575940632437856",
+"720575940624804248",
+"720575940613725708"),
+db = NULL, keep.dist.nm = NULL, cleft_scores.thresh = 0, sample = NULL)
 }

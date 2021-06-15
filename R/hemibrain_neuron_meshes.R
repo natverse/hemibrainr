@@ -40,7 +40,7 @@ cvmesh2mesh <- function(x, method=c('vf', 'ply'), ...) {
 #' @export
 #'
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' da2.lod3=hemibrain_neuron_meshes("DA2_lPN", lod=3)
 #' da2.lod3
 #' }
@@ -59,9 +59,11 @@ hemibrain_neuron_meshes <- function(bodyids, lod=2L, cloudvolume.url=NULL, conn=
   dataset = neuprintr:::check_dataset(dataset, conn = conn)
   bodyids = neuprintr::neuprint_ids(bodyids, conn = conn, dataset = dataset)
   if(is.null(cloudvolume.url)) {
+    # remove patch level keeping major minor
+    trimmed_dataset=stringr::str_match(dataset, ".+:v[^.]+\\.[^.]+")
     cloudvolume.url = sprintf(
       "precomputed://gs://neuroglancer-janelia-flyem-%s/segmentation",
-      sub(":", "/", dataset, fixed = T)
+      sub(":", "/", trimmed_dataset, fixed = T)
     )
   }
   # in case they are integer64
