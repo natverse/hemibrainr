@@ -7,6 +7,7 @@ paper_colours = paper.settings$hex
 names(paper_colours) = paper.settings$label
 paper_colours = paper_colours[order(names(paper_colours))]
 paper_colours["neuron"] = "grey80"
+paper_colours = paper_colours[!duplicated(names(paper_colours))]
 usethis::use_data(paper_colours, overwrite = TRUE)
 
 ### Match information ###

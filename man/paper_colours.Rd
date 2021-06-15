@@ -5,7 +5,7 @@
 \alias{paper_colours}
 \title{Colours for labels used in Schlegel and Bates et al.2021}
 \format{
-An object of class \code{character} of length 178.
+An object of class \code{character} of length 188.
 }
 \usage{
 paper_colours
