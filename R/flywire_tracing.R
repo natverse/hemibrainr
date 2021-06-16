@@ -612,7 +612,7 @@ flywire_workflow <- function(flywire.id,
     tab.entries = as.data.frame(tab.entries, stringsAsFactors = FALSE)
     plyr::rbind.fill(main, tab.entries)
   }else if (syns){
-    tab.entries = flywire_synapse_annotations(flywire.id,
+    tab.entries = flywire_annotations_for_synapses(flywire.id,
                                             partners = NULL,
                                             db = db,
                                             keep.dist.nm = NULL,
