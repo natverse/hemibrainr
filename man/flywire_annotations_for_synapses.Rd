@@ -84,6 +84,7 @@ of the final \code{.csv}.}
 Generate a CSV of neuron synapses to import to a flywire annotation layer
 }
 \examples{
+\dontrun{
 csv = flywire_annotations_for_synapses(fw.id = "720575940616046363",
 direction = "inputs",
 partners = c("720575940628113292",
@@ -99,4 +100,5 @@ partners = c("720575940628113292",
 "720575940624804248",
 "720575940613725708"),
 db = NULL, keep.dist.nm = NULL, cleft_scores.thresh = 0, sample = NULL)
+}
 }
