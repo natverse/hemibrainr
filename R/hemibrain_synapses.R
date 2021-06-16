@@ -218,7 +218,7 @@ extract_synapses <-function(x, unitary = FALSE, meta = NULL){
       warning("top.nt must not in colnames(meta)")
     }
   }else if(length(poss.nts) && syn$top.nt != "unknown"){
-    if(sum(syn[,colnames(syn)%in%poss.nts],na.rm)==0){
+    if(sum(syn[,colnames(syn)%in%poss.nts],na.rm = TRUE)==0){
       syn$top.nt = "unknown"
     }else{
       zeros=apply(syn[,colnames(syn)%in%poss.nts], 1, function(x) sum(x,na.rm=TRUE)==0)
