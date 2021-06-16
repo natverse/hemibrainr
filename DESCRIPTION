@@ -13,6 +13,7 @@ Description: Useful functions for pre-processing and analysing data from Janelia
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
+LazyDataCompression: xz
 Suggests: 
     spelling,
     testthat (>= 2.1.0),
