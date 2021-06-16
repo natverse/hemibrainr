@@ -730,6 +730,7 @@ flywire_dns <- function(side = c("both","right","left"),
 #'   \code{db} is \code{NULL}.
 #'
 #' @examples
+#' \dontrun{
 #' csv = flywire_annotations_for_synapses(fw.id = "720575940616046363",
 #' direction = "inputs",
 #' partners = c("720575940628113292",
@@ -745,6 +746,7 @@ flywire_dns <- function(side = c("both","right","left"),
 #' "720575940624804248",
 #' "720575940613725708"),
 #' db = NULL, keep.dist.nm = NULL, cleft_scores.thresh = 0, sample = NULL)
+#' }
 #' @export
 flywire_annotations_for_synapses <- function(fw.ids,
                                         direction = c("inputs","outputs","both"),
