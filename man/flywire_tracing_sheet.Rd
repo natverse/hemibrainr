@@ -84,7 +84,7 @@ If set to \code{NULL} for \code{flywire_tracing_sheets}, the whole google sheet 
 
 \item{open}{logical, if \code{TRUE} the relevant google sheet tab is opened in your browser. Else, a \code{data.frame} of the tab is returned.}
 
-\item{selected_sheet}{character indicating the a flywire tracing google sheet. This defaults to the master 'lineage' tracing sheet used by the Drosphila Connectomics Group to
+\item{selected_sheet}{character indicating the a flywire tracing google sheet. This defaults to the master 'lineage' tracing sheet used by the Drosophila Connectomics Group to
 store annotations on flywire neurons in different developmental lineages. Note: You may not have access.}
 
 \item{Verbose}{logical, if \code{TRUE} then \code{hemibrainr} communicates what it has found.}
@@ -128,7 +128,7 @@ is generated (unless there is already a name in this column).}
 this will also trigger \code{reorder} even if it is set to \code{FALSE}.}
 
 \item{main_sheet}{a google sheet of flywire neurons with columns: \code{workflow}, \code{whimsy}, \code{flywire.id}. See \code{\link{standard_workflow}}.
-This sheet is ead, and a separate tab in \code{target_sheet} is made for each workflow.}
+This sheet is read, and a separate tab in \code{target_sheet} is made for each workflow.}
 
 \item{target_sheet}{a sheet to which to add 'workflow' tabs. Workflow tabs are lists of flywire neurons up/downstream of neurons
 entered into the \code{main_sheet}. Accepted workflows: inputs, outputs, matches.}

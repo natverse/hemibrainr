@@ -12,7 +12,7 @@
 #' If set to \code{NULL} for \code{flywire_tracing_sheets}, the whole google sheet is read and all tabs are combined using \code{plyr::rbind.fill}.
 #' @param regex logical, use \code{ws} with regex.
 #' @param open logical, if \code{TRUE} the relevant google sheet tab is opened in your browser. Else, a \code{data.frame} of the tab is returned.
-#' @param selected_sheet character indicating the a flywire tracing google sheet. This defaults to the master 'lineage' tracing sheet used by the Drosphila Connectomics Group to
+#' @param selected_sheet character indicating the a flywire tracing google sheet. This defaults to the master 'lineage' tracing sheet used by the Drosophila Connectomics Group to
 #' store annotations on flywire neurons in different developmental lineages. Note: You may not have access.
 #' @param selected_sheets a character vector of multiple google sheet IDs, as for \code{selected_sheet}.
 #' @param query a vector of data indicating flywire neurons. These can be a vector of flywire XYZ positions (readable by \code{nat::xyzmatrix}),
@@ -419,7 +419,7 @@ flywire_tracing_standardise <- function(ws = NULL,
 }
 
 #' @param main_sheet a google sheet of flywire neurons with columns: \code{workflow}, \code{whimsy}, \code{flywire.id}. See \code{\link{standard_workflow}}.
-#' This sheet is ead, and a separate tab in \code{target_sheet} is made for each workflow.
+#' This sheet is read, and a separate tab in \code{target_sheet} is made for each workflow.
 #' @param target_sheet a sheet to which to add 'workflow' tabs. Workflow tabs are lists of flywire neurons up/downstream of neurons
 #' entered into the \code{main_sheet}. Accepted workflows: inputs, outputs, matches.
 #' @param transmitters logical, if \code{TRUE} then inputs/outputs workflows include transmitter predictions for partners.
