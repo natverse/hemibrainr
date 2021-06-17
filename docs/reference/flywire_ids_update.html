@@ -83,13 +83,19 @@ then use this function to update and get the correct flywire ID whenever they wi
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">hemibrainr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
+  <a href="../index.html">
+    <span class="fas fa-home fa-lg"></span>
+     
+  </a>
+</li>
+<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -202,7 +208,7 @@ If set to <code>NULL</code> for <code>flywire_tracing_sheets</code>, the whole g
     </tr>
     <tr>
       <th>meta</th>
-      <td><p>meta data for flywire neurons, e.g. as retreived using <code><a href='flywire_googledrive_data.html'>flywire_meta</a></code>. Used to efficiently input <code>flywire.xyz</code> column if only a <code>flywire.id</code> entry has been given.
+      <td><p>meta data for flywire neurons, e.g. as retrieved using <code><a href='flywire_googledrive_data.html'>flywire_meta</a></code>. Used to efficiently input <code>flywire.xyz</code> column if only a <code>flywire.id</code> entry has been given.
 Only works if that id is also in this provided <code>data.frame</code>, <code>meta</code>.</p></td>
     </tr>
     <tr>
@@ -225,7 +231,7 @@ cell type names to FAFB neurons. In both cases, cell type names are attached to 
     </tr>
     <tr>
       <th>retry</th>
-      <td><p>integer, sometimes <code><a href='https://rdrr.io/pkg/fafbseg/man/flywire_xyz2id.html'>fafbseg::flywire_xyz2id</a></code> fails due to a server timeout. This is the number of times to re-arrempt failed calls before accepting defeat.</p></td>
+      <td><p>integer, sometimes <code><a href='https://rdrr.io/pkg/fafbseg/man/flywire_xyz2id.html'>fafbseg::flywire_xyz2id</a></code> fails due to a server timeout. This is the number of times to re-attempt failed calls before accepting defeat.</p></td>
     </tr>
     </table>
 
@@ -280,7 +286,7 @@ specified by the argument <code>chosen.columns</code>.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

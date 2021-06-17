@@ -84,13 +84,19 @@ and see if a flywire neuron of interest is among the data stored on the hemibrai
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">hemibrainr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
+  <a href="../index.html">
+    <span class="fas fa-home fa-lg"></span>
+     
+  </a>
+</li>
+<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -246,11 +252,11 @@ If set to <code>NULL</code> for <code>flywire_tracing_sheets</code>, the whole g
     </tr>
     <tr>
       <th>open</th>
-      <td><p>logial, if <code>TRUE</code> the relevant google sheet tab is opened in your browser. Else, a <code>data.frame</code> of the tab is returned.</p></td>
+      <td><p>logical, if <code>TRUE</code> the relevant google sheet tab is opened in your browser. Else, a <code>data.frame</code> of the tab is returned.</p></td>
     </tr>
     <tr>
       <th>selected_sheet</th>
-      <td><p>character indicating the a flywire tracing google sheet. This defaults to the master 'lineage' tracing sheet used by the Drosphila Connectomics Group to
+      <td><p>character indicating the a flywire tracing google sheet. This defaults to the master 'lineage' tracing sheet used by the Drosophila Connectomics Group to
 store annotations on flywire neurons in different developmental lineages. Note: You may not have access.</p></td>
     </tr>
     <tr>
@@ -270,7 +276,7 @@ results from <code>flywire_tracing_sheets</code>.</p></td>
     </tr>
     <tr>
       <th>query.type</th>
-      <td><p>wtherh the qurey is a vector of xyz positions, flywire supervoxel IDs or flywire IDs ("flywire.xyz"/"flywire.svid"/"flywire.id").</p></td>
+      <td><p>whether the query is a vector of xyz positions, flywire supervoxel IDs or flywire IDs ("flywire.xyz"/"flywire.svid"/"flywire.id").</p></td>
     </tr>
     <tr>
       <th>fw.meta</th>
@@ -304,7 +310,7 @@ must be in both the google sheet tab and <code>update</code>.</p></td>
     </tr>
     <tr>
       <th>field</th>
-      <td><p>character, the the colum in the google sheet that you wish to have unique,
+      <td><p>character, the the column in the google sheet that you wish to have unique,
 when <code>remove.duplicates</code> is <code>TRUE</code>.</p></td>
     </tr>
     <tr>
@@ -322,13 +328,13 @@ is generated (unless there is already a name in this column).</p></td>
     </tr>
     <tr>
       <th>remove.duplicates</th>
-      <td><p>logical, whether or not to remvoe duplicate rows from google sheet. Currently,
+      <td><p>logical, whether or not to remove duplicate rows from google sheet. Currently,
 this will also trigger <code>reorder</code> even if it is set to <code>FALSE</code>.</p></td>
     </tr>
     <tr>
       <th>main_sheet</th>
       <td><p>a google sheet of flywire neurons with columns: <code>workflow</code>, <code>whimsy</code>, <code>flywire.id</code>. See <code><a href='standard_transmitters.html'>standard_workflow</a></code>.
-This sheet is ead, and a separate tab in <code>target_sheet</code> is made for each workflow.</p></td>
+This sheet is read, and a separate tab in <code>target_sheet</code> is made for each workflow.</p></td>
     </tr>
     <tr>
       <th>target_sheet</th>
@@ -396,7 +402,7 @@ stable flywire.svid column if it is empty.</p>
 <span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
 
 <span class='co'># Quick look at what we have on the google sheet</span>
-<span class='va'>sheetlist</span><span class='op'>=</span><span class='fu'>googlesheets4</span><span class='fu'>::</span><span class='fu'><a href='https://googlesheets4.tidyverse.org/reference/sheet_properties.html'>sheet_properties</a></span><span class='op'>(</span>
+<span class='va'>sheetlist</span><span class='op'>=</span><span class='fu'>googlesheets4</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/googlesheets4/man/sheet_properties.html'>sheet_properties</a></span><span class='op'>(</span>
 <span class='st'>"1QyuHFdqz705OSxXNynD9moIsLvZGjjBjylx5sGZP2Yg"</span><span class='op'>)</span>
 <span class='fu'><a href='https://rdrr.io/r/utils/View.html'>View</a></span><span class='op'>(</span><span class='va'>sheetlist</span><span class='op'>)</span>
 
@@ -440,7 +446,7 @@ query.type <span class='op'>=</span> <span class='st'>"flywire.xyz"</span>, Verb
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

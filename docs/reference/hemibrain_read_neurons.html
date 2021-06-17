@@ -84,13 +84,19 @@ space (as they are stored in neuPrint) to microns." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">hemibrainr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
+  <a href="../index.html">
+    <span class="fas fa-home fa-lg"></span>
+     
+  </a>
+</li>
+<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -255,8 +261,8 @@ The dotprops object will be in JRC2018FIBF micron space.</p></td>
     </tr>
     <tr>
       <th>zip</th>
-      <td><p>logical. If <code>TRUE</code> then <code><a href='https://rdrr.io/pkg/nat/man/neuronlistz.html'>nat::neuronlistz</a></code> is used to resad neurons from a <code>.zip</code> archive. Otherwise, <code><a href='https://rdrr.io/pkg/nat/man/neuronlistfh.html'>nat::neuronlistfh</a></code> is used to read neurons from a <code>.rds</code> file with a linked 'data' folder.
-The <code>.zip</code> method is preffered. Both methods load a dynamic neuronlist, which only loads skeleton data into memroy at the point where it is processed.</p></td>
+      <td><p>logical. If <code>TRUE</code> then <code><a href='https://rdrr.io/pkg/nat/man/neuronlistz.html'>nat::neuronlistz</a></code> is used to read neurons from a <code>.zip</code> archive. Otherwise, <code><a href='https://rdrr.io/pkg/nat/man/neuronlistfh.html'>nat::neuronlistfh</a></code> is used to read neurons from a <code>.rds</code> file with a linked 'data' folder.
+The <code>.zip</code> method is preferred. Both methods load a dynamic neuronlist, which only loads skeleton data into memory at the point where it is processed.</p></td>
     </tr>
     <tr>
       <th>folder</th>
@@ -315,7 +321,7 @@ by default the mounted Google drive (<code>options()$Gdrive_hemibrain_data</code
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>
