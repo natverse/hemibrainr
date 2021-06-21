@@ -331,7 +331,7 @@ extract_elist <- function(syns, lookup, lookup.nt = NULL, id = "bodyid", partner
     # Normalised synapses, by compartment
     dplyr::ungroup() %>%
     dplyr::group_by(.data$post,.data$post_Label) %>%
-    dplyr::mutate(norm = .data$count/compartment.inputs[post_Label]) %>%
+    dplyr::mutate(norm = .data$count/compartment.inputs[as.character(post_Label)]) %>%
     # Clean up
     dplyr::distinct(.data$post, .data$pre,.data$post_Label, .data$pre_Label, .data$count, .data$norm, .data$top.nt, .keep_all = FALSE) %>%
     dplyr::filter(!is.na(.data$pre_Label) & .data$count > 0) %>%
