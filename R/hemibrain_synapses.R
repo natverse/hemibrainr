@@ -342,8 +342,8 @@ extract_elist <- function(syns, lookup, lookup.nt = NULL, id = "bodyid", partner
     rownames(elist) = 1:nrow(elist)
     elist$post_Label = standard_compartments(elist$post_Label)
     elist$pre_Label = standard_compartments(elist$pre_Label)
-    elist$connection = paste(elist$pre_Label,elist$post_Labell,sep="-")
     elist[,c("pre", "post", "pre_Label", "post_Label", "count", "norm", "top.nt")]
+    elist$connection = paste(elist$pre_Label,elist$post_Labell,sep="-")
   }else{
     NULL
   }
