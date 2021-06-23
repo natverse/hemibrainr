@@ -510,7 +510,9 @@ sql_col_types = readr::cols(.default = "c",
                             position = "i",
                             confidence = "n",
                             bodyid = "c",
-                            flywire.id = "c")
+                            flywire.id = "c",
+                            pre = "c",
+                            post = "c")
 
 #' @rdname flywire_googledrive_data
 #' @export
