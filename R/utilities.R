@@ -636,7 +636,7 @@ squeeze_neuronlist <- function(x, digits=6, ...) {
 
 # hidden
 squeeze_neuron <- function(x, digits=6, ...) {
-  stopifnot(nat::is.neuron(x))
+  stopifnot(nat::is.neuron(x)|nat::is.dotprops(x))
   check_package_available('bitsqueezr')
   x$d=squeeze_dataframe(x$d, exclude=c("X", "Y", "Z"), digits=digits, ...)
   if(!is.null(x$connectors)) {
