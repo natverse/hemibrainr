@@ -366,53 +366,55 @@ flywire_tracing_standardise <- function(ws = NULL,
     tab = ws
   }
   gs = update = flywire_tracing_sheet(ws=tab,regex=regex,open=FALSE,selected_sheet=selected_sheets,Verbose=Verbose)
-  write.cols = colnames(gs)
-  if(!is.null(gs$status)){
-    update$status = standard_statuses(update$status)
-    write.cols = union("status",write.cols)
-  }
-  if(!is.null(gs$workflow)){
-    update$workflow = standard_workflow(update$workflow)
-    write.cols = union("workflow",write.cols)
-  }
-  if(whimsy){
-    write.cols = union(write.cols,"whimsy")
-    if(is.null(update$whimsy)){
-      update$whimsy  = randomwords(n=nrow(update),words= 2,collapse = "_")
-    }else{
-      whismy.na = is.na(update$whimsy)
-      if(sum(whismy.na)){
-        update$whimsy[whismy.na] = randomwords(n=sum(whismy.na),words= 2,collapse = "_")
+  if(nrow(gs)){
+    write.cols = colnames(gs)
+    if(!is.null(gs$status)){
+      update$status = standard_statuses(update$status)
+      write.cols = union("status",write.cols)
+    }
+    if(!is.null(gs$workflow)){
+      update$workflow = standard_workflow(update$workflow)
+      write.cols = union("workflow",write.cols)
+    }
+    if(whimsy){
+      write.cols = union(write.cols,"whimsy")
+      if(is.null(update$whimsy)){
+        update$whimsy  = randomwords(n=nrow(update),words= 2,collapse = "_")
+      }else{
+        whismy.na = is.na(update$whimsy)
+        if(sum(whismy.na)){
+          update$whimsy[whismy.na] = randomwords(n=sum(whismy.na),words= 2,collapse = "_")
+        }
+      }
+      update$whimsy = gsub(" ","_",update$whimsy)
+    }
+    bys = colnames(update)[grepl("\\_by$",colnames(update))]
+    if(length(bys)){
+      dupes = duplicated(update[[field]])
+      for(by in bys){
+        update[[by]] = gsub("DUPLICATED_","",update[[by]])
+        update[[by]][dupes] = paste0("DUPLICATED_", update[[by]][dupes])
       }
     }
-    update$whimsy = gsub(" ","_",update$whimsy)
-  }
-  bys = colnames(update)[grepl("\\_by$",colnames(update))]
-  if(length(bys)){
-    dupes = duplicated(update[[field]])
-    for(by in bys){
-      update[[by]] = gsub("DUPLICATED_","",update[[by]])
-      update[[by]][dupes] = paste0("DUPLICATED_", update[[by]][dupes])
-    }
-  }
-  if(isTRUE(nrow(update)>0)){
-    if(reorder||remove.duplicates){
-      if(!identical(gs,update)|reorder){
-        gsheet_reorder(gs=update,
-                       tab=tab,
-                       selected_sheet=selected_sheets,
-                       field = field,
-                       remove.duplicates = remove.duplicates,
-                       Verbose = Verbose)
-      }
-    }else{
-      if(!identical(gs,update)){
-        gsheet_update_cols(
-          write.cols = write.cols,
-          gs = update,
-          selected_sheet=selected_sheets,
-          sheet = tab,
-          Verbose = Verbose)
+    if(isTRUE(nrow(update)>0)){
+      if(reorder||remove.duplicates){
+        if(!identical(gs,update)|reorder){
+          gsheet_reorder(gs=update,
+                         tab=tab,
+                         selected_sheet=selected_sheets,
+                         field = field,
+                         remove.duplicates = remove.duplicates,
+                         Verbose = Verbose)
+        }
+      }else{
+        if(!identical(gs,update)){
+          gsheet_update_cols(
+            write.cols = write.cols,
+            gs = update,
+            selected_sheet=selected_sheets,
+            sheet = tab,
+            Verbose = Verbose)
+        }
       }
     }
   }
