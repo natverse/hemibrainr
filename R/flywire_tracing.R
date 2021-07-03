@@ -944,3 +944,12 @@ flywire_verified_synapses <- function(fw.ids,
   fw.neurons.syn.ac.syns.all
 }
 
+
+ws = "flywire"
+target_sheet = "1WI7ri9yHkCGXDZ68PM5PnwAL6mw2keW7QYcxtz9Fwtw"
+regex = FALSE
+                                      main_sheet = "1nVEkC-WBcRMODhkKAp5KW5OWIRHzdxpY2ipFOV7r7k4"
+                                      Verbose = FALSE
+                                      transmitters = FALSE
+                                      threshold = 3
+                                      cleft.threshold = 75
