@@ -562,9 +562,12 @@ flywire_update_workflow <-function(main,
                             local = local,
                             cloudvolume.url = cloudvolume.url,
                             Verbose = Verbose)
-      shared.cols = setdiff(intersect(colnames(fw),colnames(gs)),id)
+      shared.cols = setdiff(intersect(colnames(fw),colnames(gs)),c(id,"weight","count","flywire.id","flywire.xyz","flywire.svid"))
       for(sc in shared.cols){
         fw[[sc]] = gs[[sc]][match(fw[[id]],gs[[id]])]
+      }
+      if("status"%in%colnames(fw)){
+        fw$status[is.na(fw$status)] = "unassessed"
       }
       gsheet_manipulation(FUN = googlesheets4::sheet_write,
                           data = fw,
@@ -944,24 +947,6 @@ flywire_verified_synapses <- function(fw.ids,
   }
   fw.neurons.syn.ac.syns.all
 }
-
-flywire_deploy_workflows(ws = "flywire",
-                                                               target_sheet = "1WI7ri9yHkCGXDZ68PM5PnwAL6mw2keW7QYcxtz9Fwtw",
-                                                               regex = FALSE,
-                                                               main_sheet = "1nVEkC-WBcRMODhkKAp5KW5OWIRHzdxpY2ipFOV7r7k4",
-                                                               Verbose = FALSE,
-                                                               transmitters = FALSE,
-                                                               threshold = 3,
-                                                               cleft.threshold = 75,
-                                                               local = fafbsynapses)
-ws = "flywire"
-target_sheet = "1WI7ri9yHkCGXDZ68PM5PnwAL6mw2keW7QYcxtz9Fwtw"
-regex = FALSE
-                                      main_sheet = "1nVEkC-WBcRMODhkKAp5KW5OWIRHzdxpY2ipFOV7r7k4"
-                                      Verbose = FALSE
-                                      transmitters = FALSE
-                                      threshold = 3
-                                      cleft.threshold = 75
 
 
 
