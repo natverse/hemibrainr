@@ -10,7 +10,8 @@ hemibrain_nblast(
     "hemibrain-primary.neurites", "hemibrain-primary.dendrites", "hemibrain-axons",
     "hemibrain-dendrites", "hemibrain-spines", "hemibrain-tracts", "hemibrain-arbour",
     "hemibrain-simplified"),
-  local = FALSE
+  local = FALSE,
+  fafbsegpy = TRUE
 )
 }
 \arguments{
@@ -21,6 +22,8 @@ branching arbour.
 
 \item{local}{\code{FALSE} or path. By default (\code{FALSE}) data is read from \code{options()$Drive_hemibrain_data}),
 but the user can specify an alternative path.}
+
+\item{fafbsegpy}{logical. If \code{TRUE} the NBLASTs are fetched from Philipp Schlegel's nightly  \href{https://github.com/flyconnectome/flywire_nblast_pipeline/tree/main/data}{flywire NBLAST pipeline}.}
 }
 \value{
 a \code{matrix} with named rows and columns describing an NBLAST result.
