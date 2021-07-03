@@ -86,6 +86,7 @@ flywire_synapse_simplify <- function(x, method = c("cleft_scores","scores","mean
         pb$tick()
         z = x[x$pre_id==preid,]
         y = flywire_synapse_simplify(x=z, method=method)
+        preid = as.character(preid)
         res[[preid]]=y
       }
       return(do.call(plyr::rbind.fill,res))
