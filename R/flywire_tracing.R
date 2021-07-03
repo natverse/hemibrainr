@@ -539,7 +539,8 @@ flywire_update_workflow <-function(main,
     }
   }else{
     gs = update = flywire_tracing_sheet(ws=ws,regex=FALSE,open=FALSE,selected_sheet=target_sheet,Verbose=Verbose)
-    gs.bad = (is.null(gs$flywire.id)||is.na(gs$flywire.id)||gs$flywire.id%in%c("0","NA","none","None"," ",""))
+    id = colnames(gs)[1]
+    gs.bad = (is.null(gs[[id]])||is.na(gs[[id]])||gs[[id]]%in%c("0","NA","none","None"," ",""))
     if(!is.null(gs$status) & !gs.bad){
       gs$status = standard_statuses(gs$status)
       id = ifelse("pre_id"%in%colnames(gs),"pre_id","post_id")
@@ -944,6 +945,23 @@ flywire_verified_synapses <- function(fw.ids,
   fw.neurons.syn.ac.syns.all
 }
 
+flywire_deploy_workflows(ws = "flywire",
+                                                               target_sheet = "1WI7ri9yHkCGXDZ68PM5PnwAL6mw2keW7QYcxtz9Fwtw",
+                                                               regex = FALSE,
+                                                               main_sheet = "1nVEkC-WBcRMODhkKAp5KW5OWIRHzdxpY2ipFOV7r7k4",
+                                                               Verbose = FALSE,
+                                                               transmitters = FALSE,
+                                                               threshold = 3,
+                                                               cleft.threshold = 75,
+                                                               local = fafbsynapses)
+ws = "flywire"
+target_sheet = "1WI7ri9yHkCGXDZ68PM5PnwAL6mw2keW7QYcxtz9Fwtw"
+regex = FALSE
+                                      main_sheet = "1nVEkC-WBcRMODhkKAp5KW5OWIRHzdxpY2ipFOV7r7k4"
+                                      Verbose = FALSE
+                                      transmitters = FALSE
+                                      threshold = 3
+                                      cleft.threshold = 75
 
 
 
