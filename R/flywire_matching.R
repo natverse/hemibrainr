@@ -178,7 +178,7 @@ flywire_matching_rewrite <- function(flywire.ids = names(flywire_neurons()),
 #' @rdname hemibrain_matching
 #' @export
 LR_matching <- function(ids = NULL,
-                        threshold = -0.5,
+                        threshold = 0,
                         mirror.nblast = NULL,
                         selected_file = options()$hemibrainr_matching_gsheet,
                         batch_size = 50,
