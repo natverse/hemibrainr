@@ -178,7 +178,7 @@ flywire_matching_rewrite <- function(flywire.ids = names(flywire_neurons()),
 #' @rdname hemibrain_matching
 #' @export
 LR_matching <- function(ids = NULL,
-                        threshold = 0,
+                        threshold = -0.5,
                         mirror.nblast = NULL,
                         selected_file = options()$hemibrainr_matching_gsheet,
                         batch_size = 50,
@@ -248,6 +248,14 @@ LR_matching <- function(ids = NULL,
   selected = id_selector(gs=gs, ids=ids, id=id, overwrite = overwrite,
                          quality.field = quality.field, match.field = match.field,
                          initials = initials, column = column, entry = entry, superUser = superUser, flywire.good)
+  rem = gs[[id]][!gs[[id]]%in%selected[[id]]]
+  if(length(rem)){
+    message("Removing ", length(rem), " neurons not in NBLAST matrix")
+    selected = subset(selected, !selected[[id]]%in%rem)
+  }
+  if(!nrow(selected)){
+    stop("No neurons to match")
+  }
   # choose brain
   brain = elmr::FAFB.surf
   # Make matches!
@@ -272,6 +280,9 @@ LR_matching <- function(ids = NULL,
                                        quality.field = quality.field,
                                        soma.size = 4000,
                                        show.columns = c("cell.type","ItoLee_Hemilineage","status", match.field, quality.field,"note"))
+    if(is.null(match_cycle)){
+      next
+    }
     selected = match_cycle[["selected"]]
     unsaved = match_cycle[["unsaved"]]
     selected$User = initials
@@ -351,7 +362,7 @@ neuron_match_scanner <- function(brain,
                                                     -0.988434314727783, 0, 0, 0, 0, 1), .Dim = c(4L, 4L)), zoom = 0.644609212875366) # FAFB14 view
         rgl::bg3d("white")
         plot3d(brain, alpha = 0.1, col ="grey")
-        query.n = get_match_neuron(query = query, n = n, query.repository = query.repository)
+        query.n = get_match_neuron(query = query, n = n, query.repository = query.repository, skip.if.absent = TRUE)
         if(!is.null(query.n)){plot3d(query.n, lwd = 3, soma = soma.size, col = "#1BB6AF")}
         progress = readline(prompt = "This neuron will be skipped. Press any key to continue ")
         next
@@ -368,6 +379,10 @@ neuron_match_scanner <- function(brain,
     plot3d(brain, alpha = 0.1, col ="grey")
     # Get data
     query.n = get_match_neuron(query = query, n = n, query.repository = query.repository)
+    if(is.null(query.n)||!length(query.n)){
+      message("Could not find query neuron: ", n)
+      return(NULL)
+    }
     # Other neurons to always plot
     if(extra.repository!="none"){
       if(extra.repository=="CATMAID"){
@@ -600,7 +615,7 @@ neuron_match_scanner <- function(brain,
 }
 
 # hidden
-get_match_neuron <- function(query = NULL, n, query.repository){
+get_match_neuron <- function(query = NULL, n, query.repository, skip.if.absent = FALSE){
   if(!is.null(query)){
     query.n = tryCatch(query[n], error = function(e){
       message("Could not immediately load query neuron: ", n)
@@ -611,7 +626,7 @@ get_match_neuron <- function(query = NULL, n, query.repository){
   }else{
     query.n = NULL
   }
-  if(is.null(query.n)){ # in FAFB14 space.
+  if(is.null(query.n)||!length(query.n)&&!skip.if.absent){ # in FAFB14 space.
     query.n = tryCatch({
       message("Neuron not found on Google drive, attempting to read ...")
       if(!requireNamespace("fafbseg", quietly = TRUE)) {
