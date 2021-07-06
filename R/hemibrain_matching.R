@@ -64,6 +64,7 @@
 #' or either, use the \code{overwrite} argument.
 #' @param flywire.good logical, whether or not to only take 'well traced' flywire neurons, as annotated by the Drosophila Connectomics Group. This relies on the status column retrieved
 #' by \code{flywire_meta}.
+#' @param verbose logical. If \code{TRUE} the pipeline pauses for each neuron that is missing from the NBLAST/data set.
 #'
 #' @details Currently, the
 #'   \href{https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit#gid=0}{Google
@@ -122,7 +123,8 @@ hemibrain_matching <- function(ids = NULL,
                          column = NULL,
                          entry = NULL,
                          User = NULL,
-                         superUser = FALSE){
+                         superUser = FALSE,
+                         verbose = FALSE){
   repository = match.arg(repository)
   message("Matching hemibrain neurons (blue) to ", repository," neurons (red)")
   # Other packages
@@ -219,6 +221,16 @@ hemibrain_matching <- function(ids = NULL,
   selected = id_selector(gs=gs, ids=ids, id = id, overwrite = overwrite,
                          quality.field = quality.field, match.field = match.field,
                          initials = initials, column = column, entry = entry, superUser = superUser)
+  if(!verbose){
+    rem = gs[[id]][!gs[[id]]%in%selected[[id]]]
+    if(length(rem)){
+      message("Removing ", length(rem), " neurons not in NBLAST matrix")
+      selected = subset(selected, !selected[[id]]%in%rem)
+    }
+  }
+  if(!nrow(selected)){
+    stop("No neurons to match")
+  }
   # Make matches!
   match.more = TRUE
   while(match.more){
@@ -240,7 +252,8 @@ hemibrain_matching <- function(ids = NULL,
                                        match.field = match.field,
                                        quality.field = quality.field,
                                        soma.size = 4000,
-                                       show.columns = c("cell.type","ItoLee_Hemilineage","status", match.field, quality.field,"note"))
+                                       show.columns = c("cell.type","ItoLee_Hemilineage","status", match.field, quality.field,"note"),
+                                       skip.if.absent = !verbose)
     selected = match_cycle[["selected"]]
     unsaved = match_cycle[["unsaved"]]
     if(length(unsaved)){
