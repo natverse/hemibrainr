@@ -351,7 +351,7 @@ neuron_match_scanner <- function(brain,
     end = n==selected[[id]][length(selected[[id]])]
     # Read top 10  matches
     r = tryCatch(sort(nblast[n,],decreasing = TRUE), error = function(e) NULL)
-    if(is.null(r)){
+    if(is.null(r)||!ncol(r)){
       message(n, " not in NBLAST matrix, skipping ...")
       if(!skip.if.absent){
         progress = readline(prompt = "Press any key to continue ")
