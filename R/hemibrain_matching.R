@@ -1784,7 +1784,7 @@ id_selector <- function(gs,
   }
   if("duplicated" %in% colnames(gs)){
     gs$duplicated = as.logical(gs$duplicated)
-    gs = subset(gs, isFALSE(gs$duplicated))
+    gs = subset(gs, !gs$duplicated)
   }
   # choose possible ids
   id.len = ifelse(length(ids),length(ids),"all")
