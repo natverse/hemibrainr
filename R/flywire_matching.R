@@ -359,8 +359,8 @@ neuron_match_scanner <- function(brain,
       next
     }
     if(!is.null(threshold)){
-      r = r[r>threshold]
-      if(!length(r)&!skip.if.absent){
+      res = names(r)[r>threshold]
+      if(!length(res)&!skip.if.absent){
         message(" no normalised NBLAST score greater or equal to ", threshold," for neuron ", n," ...")
         rgl::clear3d()
         rgl::rgl.viewpoint(userMatrix = structure(c(0.990777730941772, 0.049733679741621,
@@ -373,12 +373,12 @@ neuron_match_scanner <- function(brain,
         if(!is.null(query.n)&&length(query.n)){plot3d(query.n, lwd = 3, soma = soma.size, col = "#1BB6AF")}
         progress = readline(prompt = "This neuron will be skipped. Press any key to continue ")
         next
-      }else if(!length(r)){
+      }else if(!length(res)){
         message(" no normalised NBLAST score greater or equal to ", threshold," for neuron ", n," ...")
         next
       }
     }
-    batch.size = ifelse(length(r)>=batch_size,batch_size, length(r))
+    batch.size = ifelse(length(res)>=batch_size,batch_size, length(res))
     # Plot brain
     rgl::clear3d()
     rgl::rgl.viewpoint(userMatrix = structure(c(0.990777730941772, 0.049733679741621,
@@ -456,7 +456,7 @@ neuron_match_scanner <- function(brain,
     message(paste(display,collapse="  |  "))
     # Read database neurons
     message(sprintf("Reading the top %s %s hits",batch.size, targets.repository))
-    batch = names(r)[1:batch.size]
+    batch = res[1:batch.size]
     if(is.null(targets)){
       if(targets.repository=="flywire"){
         fafbseg::choose_segmentation("flywire")
@@ -485,7 +485,7 @@ neuron_match_scanner <- function(brain,
     j = batch.size
     # Cycle through potential matches
     while(length(sel)>1){
-      plot.order = match(names(r)[1:j],names(native))
+      plot.order = match(res[1:j],names(native))
       plot.order = plot.order[!is.na(plot.order)]
       sel = sel.orig = tryCatch(nat::nlscan(native[plot.order], col = "#EE4244", lwd = 3, soma = soma.size),
                                 error = function(e){
@@ -526,7 +526,7 @@ neuron_match_scanner <- function(brain,
               k = j
               j = j + batch_size
               if(!is.null(targets)){
-                native2 = tryCatch(targets[(names(r)[(k+1):j])], error = function(e) {
+                native2 = tryCatch(targets[(res[(k+1):j])], error = function(e) {
                   message("Cannot read neuron: ", n, " from local targets, fetching from remote!")
                   message(e)
                   NULL
@@ -535,13 +535,13 @@ neuron_match_scanner <- function(brain,
               if(is.null(targets)|is.null(native2)){
                 if(targets.repository=="flywire"){
                   fafbseg::choose_segmentation("flywire")
-                  native2  = fafbseg::skeletor((names(r)[1:batch.size]), mesh3d = FALSE, clean = FALSE)
+                  native2  = fafbseg::skeletor((res[1:batch.size]), mesh3d = FALSE, clean = FALSE)
                 }else if (targets.repository == "hemibrain"){
-                  native2  = neuprintr::neuprint_read_neurons((names(r)[1:batch.size]), all_segments = TRUE, heal = FALSE)
+                  native2  = neuprintr::neuprint_read_neurons((res[1:batch.size]), all_segments = TRUE, heal = FALSE)
                   native = scale_neurons.neuronlist(native2, scaling = (8/1000))
                   native2 = suppressWarnings(nat.templatebrains::xform_brain(native2, reference = "FAFB14", sample = "JRCFIB2018F"))
                 }else if (targets.repository == "CATMAID"){
-                  native2  = catmaid::read.neurons.catmaid((names(r)[1:batch.size]), .progress = 'text', OmitFailures = TRUE)
+                  native2  = catmaid::read.neurons.catmaid((res[1:batch.size]), .progress = 'text', OmitFailures = TRUE)
                 }
               }
               native = nat::union(native, native2)
