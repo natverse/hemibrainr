@@ -189,7 +189,8 @@ LR_matching <- function(ids = NULL,
                         entry = NULL,
                         User = NULL,
                         superUser = FALSE,
-                        flywire.good = FALSE){
+                        flywire.good = FALSE,
+                        verbose = FALSE){
   message("Matching mirrored flywire neurons (blue) to non-mirrored flywire neurons (red)")
   # Packages
   if(!requireNamespace("elmr", quietly = TRUE)) {
@@ -248,10 +249,12 @@ LR_matching <- function(ids = NULL,
   selected = id_selector(gs=gs, ids=ids, id=id, overwrite = overwrite,
                          quality.field = quality.field, match.field = match.field,
                          initials = initials, column = column, entry = entry, superUser = superUser, flywire.good)
-  rem = gs[[id]][!gs[[id]]%in%selected[[id]]]
-  if(length(rem)){
-    message("Removing ", length(rem), " neurons not in NBLAST matrix")
-    selected = subset(selected, !selected[[id]]%in%rem)
+  if(!verbose){
+    rem = gs[[id]][!gs[[id]]%in%selected[[id]]]
+    if(length(rem)){
+      message("Removing ", length(rem), " neurons not in NBLAST matrix")
+      selected = subset(selected, !selected[[id]]%in%rem)
+    }
   }
   if(!nrow(selected)){
     stop("No neurons to match")
@@ -279,7 +282,8 @@ LR_matching <- function(ids = NULL,
                                        match.field = match.field,
                                        quality.field = quality.field,
                                        soma.size = 4000,
-                                       show.columns = c("cell.type","ItoLee_Hemilineage","status", match.field, quality.field,"note"))
+                                       show.columns = c("cell.type","ItoLee_Hemilineage","status", match.field, quality.field,"note"),
+                                       skip.if.absent = !verbose)
     if(is.null(match_cycle)){
       next
     }
@@ -331,8 +335,8 @@ neuron_match_scanner <- function(brain,
                                  unsaved = c(),
                                  saved = c(),
                                  soma.size = 4000,
-                                 show.columns = c("cell.type","ItoLee_Hemilineage","status", match.field, quality.field,"note")
-                                 ){
+                                 show.columns = c("cell.type","ItoLee_Hemilineage","status", match.field, quality.field,"note"),
+                                 skip.if.absent = TRUE){
   targets.repository = match.arg(targets.repository)
   extra.repository = match.arg(extra.repository)
   query.repository = match.arg(query.repository)
@@ -348,12 +352,14 @@ neuron_match_scanner <- function(brain,
     r = tryCatch(sort(nblast[n,],decreasing = TRUE), error = function(e) NULL)
     if(is.null(r)){
       message(n, " not in NBLAST matrix, skipping ...")
-      progress = readline(prompt = "Press any key to continue ")
+      if(!skip.if.absent){
+        progress = readline(prompt = "Press any key to continue ")
+      }
       next
     }
     if(!is.null(threshold)){
       r = r[r>threshold]
-      if(!length(r)){
+      if(!length(r)&!skip.if.absent){
         message(" no normalised NBLAST score greater or equal to ", threshold," for neuron ", n," ...")
         rgl::clear3d()
         rgl::rgl.viewpoint(userMatrix = structure(c(0.990777730941772, 0.049733679741621,
@@ -362,9 +368,12 @@ neuron_match_scanner <- function(brain,
                                                     -0.988434314727783, 0, 0, 0, 0, 1), .Dim = c(4L, 4L)), zoom = 0.644609212875366) # FAFB14 view
         rgl::bg3d("white")
         plot3d(brain, alpha = 0.1, col ="grey")
-        query.n = get_match_neuron(query = query, n = n, query.repository = query.repository, skip.if.absent = TRUE)
-        if(!is.null(query.n)&&!length(query.n)){plot3d(query.n, lwd = 3, soma = soma.size, col = "#1BB6AF")}
+        query.n = get_match_neuron(query = query, n = n, query.repository = query.repository, skip.if.absent = skip.if.absent)
+        if(!is.null(query.n)&&length(query.n)){plot3d(query.n, lwd = 3, soma = soma.size, col = "#1BB6AF")}
         progress = readline(prompt = "This neuron will be skipped. Press any key to continue ")
+        next
+      }else if(!length(r)){
+        message(" no normalised NBLAST score greater or equal to ", threshold," for neuron ", n," ...")
         next
       }
     }
