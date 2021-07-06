@@ -20,7 +20,8 @@ LR_matching(
   entry = NULL,
   User = NULL,
   superUser = FALSE,
-  flywire.good = FALSE
+  flywire.good = FALSE,
+  verbose = FALSE
 )
 
 hemibrain_matching(
@@ -36,7 +37,8 @@ hemibrain_matching(
   column = NULL,
   entry = NULL,
   User = NULL,
-  superUser = FALSE
+  superUser = FALSE,
+  verbose = FALSE
 )
 
 lm_matching(
@@ -122,6 +124,8 @@ or either, use the \code{overwrite} argument.}
 
 \item{flywire.good}{logical, whether or not to only take 'well traced' flywire neurons, as annotated by the Drosophila Connectomics Group. This relies on the status column retrieved
 by \code{flywire_meta}.}
+
+\item{verbose}{logical. If \code{TRUE} the pipeline pauses for each neuron that is missing from the NBLAST/data set.}
 
 \item{hemibrain.nblast}{a FAFB (rows) - hemibrain (columns) normalised
 NBLAST matrix. By default this is read from the flyconnectome Team Drive.}
