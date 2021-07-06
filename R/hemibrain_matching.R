@@ -1769,6 +1769,10 @@ id_selector <- function(gs,
   if(is.null(column)+is.null(entry)==1){
     stop("column and entry must both be NULL, or both be given")
   }
+  if("duplicated" %in% colnames(gs)){
+    gs$duplicated = as.logical(gs$duplicated)
+    gs = subset(gs, isFALSE(gs$duplicated))
+  }
   # choose possible ids
   id.len = ifelse(length(ids),length(ids),"all")
   if((overwrite %in% c("TRUE") & is.null(ids))){
