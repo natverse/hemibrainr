@@ -192,6 +192,7 @@ LR_matching <- function(ids = NULL,
                         flywire.good = FALSE,
                         verbose = FALSE){
   message("Matching mirrored flywire neurons (blue) to non-mirrored flywire neurons (red)")
+  mirror = TRUE
   # Packages
   if(!requireNamespace("elmr", quietly = TRUE)) {
     stop("Please install elmr using:\n", call. = FALSE,
@@ -284,7 +285,8 @@ LR_matching <- function(ids = NULL,
                                        quality.field = quality.field,
                                        soma.size = 4000,
                                        show.columns = c("cell.type","ItoLee_Hemilineage","status", match.field, quality.field,"note"),
-                                       skip.if.absent = !verbose)
+                                       skip.if.absent = !verbose,
+                                       mirror.query = mirror)
     if(is.null(match_cycle)){
       next
     }
@@ -337,7 +339,8 @@ neuron_match_scanner <- function(brain,
                                  saved = c(),
                                  soma.size = 4000,
                                  show.columns = c("cell.type","ItoLee_Hemilineage","status", match.field, quality.field,"note"),
-                                 skip.if.absent = TRUE){
+                                 skip.if.absent = TRUE,
+                                 mirror.query = FALSE){
   targets.repository = match.arg(targets.repository)
   extra.repository = match.arg(extra.repository)
   query.repository = match.arg(query.repository)
@@ -388,7 +391,7 @@ neuron_match_scanner <- function(brain,
     rgl::bg3d("white")
     plot3d(brain, alpha = 0.1, col ="grey")
     # Get data
-    query.n = get_match_neuron(query = query, n = n, query.repository = query.repository)
+    query.n = get_match_neuron(query = query, n = n, query.repository = query.repository, mirror = mirror.query)
     if(is.null(query.n)||!length(query.n)){
       message("Could not find query neuron: ", n)
       return(NULL)
@@ -625,7 +628,7 @@ neuron_match_scanner <- function(brain,
 }
 
 # hidden
-get_match_neuron <- function(query = NULL, n, query.repository, skip.if.absent = FALSE){
+get_match_neuron <- function(query = NULL, n, query.repository, skip.if.absent = FALSE, mirror = FALSE){
   if(!is.null(query)){
     query.n = tryCatch(query[n], error = function(e){
       message("Could not immediately load query neuron: ", n)
@@ -655,6 +658,13 @@ get_match_neuron <- function(query = NULL, n, query.repository, skip.if.absent =
         query.n = catmaid::read.neurons.catmaid(n)
       }else{
         NULL
+      }
+      if(mirror){
+        if(!requireNamespace("elmr", quietly = TRUE)) {
+          stop("Please install fafbseg using:\n", call. = FALSE,
+               "remotes::install_github('natverse/elmr')")
+        }
+        query.n = mirror_brain(x = query.n, brain = get("FAFB14", as.environment("package:elmr")), .parallel = FALSE, OmitFailures = FALSE)
       }
     }, error = function(e) {NULL})
   }
