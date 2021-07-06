@@ -366,12 +366,12 @@ hemibrain_nblast <- function(nblast = c("hemibrain",
                   `hemibrain-arbour` = "hemibrain.arbour.aba.mean.compressed.rda",
                   `hemibrain-tracts` = "hemibrain.tract.aba.mean.compressed.rda",
                   `hemibrain-simplified` = "hemibrain.simp.aba.mean.compressed.rda",
-                  `hemibrain-flywire` = "hemibrain.flywire.mean.compressed.rda",
+                  `hemibrain-flywire` = "hemibrain_flywire_fafbpy.rda",
                   `hemibrain-flycircuit` = "hemibrain.flycircuit.mean.compressed.rda",
                   `hemibrain-fafb14` = "hemibrain.fafb14.mean.compressed.rda",
-                  `flywire-mirror` = "flywire.mirror.mean.compressed.rda",
+                  `flywire-mirror` = "flywire_mirror_fafbpy.rda",
                   `flywire-spine` = "flywire.spine.mean.compressed.rda",
-                  flywire = "flywire.mean.compressed.rda",
+                  flywire = "flywire.fafbsegpy.rda",
                   stop("Unrecognised value for nblast argument!")
     )
   }else{
@@ -385,16 +385,15 @@ hemibrain_nblast <- function(nblast = c("hemibrain",
                   `hemibrain-arbour` = "hemibrain.arbour.aba.mean.compressed.rda",
                   `hemibrain-tracts` = "hemibrain.tract.aba.mean.compressed.rda",
                   `hemibrain-simplified` = "hemibrain.simp.aba.mean.compressed.rda",
-                  `hemibrain-flywire` = "hemibrain.flywire.fafbsegpy.rda",
+                  `hemibrain-flywire` = "hemibrain.flywire.mean.compressed.rda",
                   `hemibrain-flycircuit` = "hemibrain.flycircuit.mean.compressed.rda",
                   `hemibrain-fafb14` = "hemibrain.fafb14.mean.compressed.rda",
-                  `flywire-mirror` = "flywire.mirror.fafbsegpy.rda",
+                  `flywire-mirror` = "flywire.mirror.mean.compressed.rda",
                   `flywire-spine` = "flywire.spine.mean.compressed.rda",
-                  flywire = "flywire.fafbsegpy.rda",
+                  flywire = "flywire.mean.compressed.rda",
                   stop("Unrecognised value for nblast argument!")
     )
   }
-
   if(nblast=="hemibrain-fafb14" && file.exists("/Volumes/GoogleDrive/Shared drives/flyconnectome/fafbpipeline/fib.fafb.crossnblast.twigs5.mean.compress.rda")){
     gfile = "/Volumes/GoogleDrive/Shared drives/flyconnectome/fafbpipeline/fib.fafb.crossnblast.twigs5.mean.compress.rda"
   }else{
