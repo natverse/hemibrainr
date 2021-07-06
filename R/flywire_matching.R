@@ -440,9 +440,9 @@ neuron_match_scanner <- function(brain,
       extra.n=NULL
     }
     if(!is.null(query.n)){plot3d(query.n, lwd = 3, soma = soma.size, col = "#1BB6AF")}
-    if(!is.null(extra.n)){plot3d(extra.n, lwd = 2, soma = soma.size, col = "black")}
-    if(!is.null(another.n)){plot3d(another.n, lwd = 3, soma = soma.size, col = "grey50")}
-    if(!is.null(match.n)){plot3d(match.n, lwd = 2, soma = soma.size, col = "#348E53")}
+    if(!is.null(extra.n)&&length(extra.n)){plot3d(extra.n, lwd = 2, soma = soma.size, col = "black")}
+    if(!is.null(another.n)&&length(another.n)){plot3d(another.n, lwd = 3, soma = soma.size, col = "grey50")}
+    if(!is.null(match.n)&&length(match.n)){plot3d(match.n, lwd = 2, soma = soma.size, col = "#348E53")}
     message("ID: ", n)
     show.columns = intersect(show.columns,colnames(query.n[,]))
     display = c()
