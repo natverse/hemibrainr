@@ -248,7 +248,8 @@ LR_matching <- function(ids = NULL,
   # choose ids
   selected = id_selector(gs=gs, ids=ids, id=id, overwrite = overwrite,
                          quality.field = quality.field, match.field = match.field,
-                         initials = initials, column = column, entry = entry, superUser = superUser, flywire.good)
+                         initials = initials, column = column, entry = entry, superUser = superUser,
+                         flywire.good = flywire.good)
   if(!verbose){
     rem = gs[[id]][!gs[[id]]%in%selected[[id]]]
     if(length(rem)){
