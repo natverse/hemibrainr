@@ -664,7 +664,17 @@ get_match_neuron <- function(query = NULL, n, query.repository, skip.if.absent =
           stop("Please install fafbseg using:\n", call. = FALSE,
                "remotes::install_github('natverse/elmr')")
         }
-        query.n = mirror_brain(x = query.n, brain = get("FAFB14", as.environment("package:elmr")), .parallel = FALSE, OmitFailures = FALSE)
+        if(!requireNamespace("nat.templatebrains", quietly = TRUE)) {
+          stop("Please install fafbseg using:\n", call. = FALSE,
+               "remotes::install_github('natverse/nat.templatebrains')")
+        }
+        if(!requireNamespace("nat.flybrains", quietly = TRUE)) {
+          stop("Please install fafbseg using:\n", call. = FALSE,
+               "remotes::install_github('natverse/nat.flybrains')")
+        }
+        t = java_xform_brain(query.n, reference = "JRC2018F", sample = "FAFB14", .parallel = FALSE, verbose = TRUE, OmitFailures = TRUE, progress.rjava=TRUE)
+        m = mirror_brain(x = t, brain = nat.flybrains::JRC2018F, .parallel = TRUE, OmitFailures = FALSE, transform = "flip")
+        query.n = java_xform_brain(m, reference = "FAFB14", sample = "JRC2018F",.parallel = TRUE, verbose = TRUE, OmitFailures = TRUE, progress.rjava=TRUE)
       }
     }, error = function(e) {NULL})
   }
