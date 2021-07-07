@@ -372,7 +372,7 @@ neuron_match_scanner <- function(brain,
                                                     -0.988434314727783, 0, 0, 0, 0, 1), .Dim = c(4L, 4L)), zoom = 0.644609212875366) # FAFB14 view
         rgl::bg3d("white")
         plot3d(brain, alpha = 0.1, col ="grey")
-        query.n = get_match_neuron(query = query, n = n, query.repository = query.repository, skip.if.absent = skip.if.absent)
+        query.n = get_match_neuron(query = query, n = n, query.repository = query.repository, skip.if.absent = skip.if.absent, mirror = mirror.query)
         if(!is.null(query.n)&&length(query.n)){plot3d(query.n, lwd = 3, soma = soma.size, col = "#1BB6AF")}
         progress = readline(prompt = "This neuron will be skipped. Press any key to continue ")
         next
