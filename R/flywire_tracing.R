@@ -593,7 +593,6 @@ flywire_update_workflow <-function(main,
           }
         }
       }
-      }
     }
   }
 }
