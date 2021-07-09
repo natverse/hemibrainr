@@ -549,47 +549,50 @@ flywire_update_workflow <-function(main,
     gs = update = flywire_tracing_sheet(ws=ws,regex=FALSE,open=FALSE,selected_sheet=target_sheet,Verbose=Verbose)
     id = colnames(gs)[1]
     gs.bad = (is.null(gs[[id]])||is.na(gs[[id]])||gs[[id]]%in%c("0","NA","none","None"," ",""))
-    if(!is.null(gs$status) & !gs.bad){
-      gs$status = standard_statuses(gs$status)
-      id = ifelse("pre_id"%in%colnames(gs),"pre_id","post_id")
-      gs[[id]][is.na(gs[[id]])] = "0"
-      gs[[id]] = tryCatch(fafbseg::flywire_latestid(gs[[id]]), error = function(e){
-        warning(e)
-        unlist(sapply(gs[[id]], function(x) tryCatch(fafbseg::flywire_latestid(x), error = function(e) NA)))
-      })
-      if(!nrow(gs)){
-        warning("Workflow sheet has no rows: ", ws)
-        return(invisible())
-      }
-      fw = tryCatch(flywire_workflow(flywire.id = main$flywire.id,
-                            status = main$status,
-                            ws=ws,
-                            threshold = threshold,
-                            cleft.threshold = cleft.threshold,
-                            transmitters=transmitters,
-                            local = local,
-                            cloudvolume.url = cloudvolume.url,
-                            Verbose = Verbose),
-                    error = function(e){
-                      message("Failed for tab: ", ws)
-                      message(as.character(e))
-                      NULL
-                    })
-      if(is.data.frame(fw)){
-        if(nrow(fw)){
-          shared.cols = setdiff(intersect(colnames(fw),colnames(gs)),c(id,"weight","count","flywire.id","flywire.xyz","flywire.svid"))
-          for(sc in shared.cols){
-            fw[[sc]] = gs[[sc]][match(fw[[id]],gs[[id]])]
-          }
-          if("status"%in%colnames(fw)){
-            fw$status[is.na(fw$status)] = "unassessed"
-          }
-          gsheet_manipulation(FUN = googlesheets4::sheet_write,
-                              data = fw,
-                              ss = target_sheet,
-                              sheet = ws,
-                              Verbose = Verbose)
+    if(!is.null(gs$status) & !is.null(gs$gs.bad)){
+      if(!gs.bad){
+        gs$status = standard_statuses(gs$status)
+        id = ifelse("pre_id"%in%colnames(gs),"pre_id","post_id")
+        gs[[id]][is.na(gs[[id]])] = "0"
+        gs[[id]] = tryCatch(fafbseg::flywire_latestid(gs[[id]]), error = function(e){
+          warning(e)
+          unlist(sapply(gs[[id]], function(x) tryCatch(fafbseg::flywire_latestid(x), error = function(e) NA)))
+        })
+        if(!nrow(gs)){
+          warning("Workflow sheet has no rows: ", ws)
+          return(invisible())
         }
+        fw = tryCatch(flywire_workflow(flywire.id = main$flywire.id,
+                                       status = main$status,
+                                       ws=ws,
+                                       threshold = threshold,
+                                       cleft.threshold = cleft.threshold,
+                                       transmitters=transmitters,
+                                       local = local,
+                                       cloudvolume.url = cloudvolume.url,
+                                       Verbose = Verbose),
+                      error = function(e){
+                        message("Failed for tab: ", ws)
+                        message(as.character(e))
+                        NULL
+                      })
+        if(is.data.frame(fw)){
+          if(nrow(fw)){
+            shared.cols = setdiff(intersect(colnames(fw),colnames(gs)),c(id,"weight","count","flywire.id","flywire.xyz","flywire.svid"))
+            for(sc in shared.cols){
+              fw[[sc]] = gs[[sc]][match(fw[[id]],gs[[id]])]
+            }
+            if("status"%in%colnames(fw)){
+              fw$status[is.na(fw$status)] = "unassessed"
+            }
+            gsheet_manipulation(FUN = googlesheets4::sheet_write,
+                                data = fw,
+                                ss = target_sheet,
+                                sheet = ws,
+                                Verbose = Verbose)
+          }
+        }
+      }
       }
     }
   }
