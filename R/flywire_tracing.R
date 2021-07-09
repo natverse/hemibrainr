@@ -449,7 +449,7 @@ flywire_deploy_workflows <-function(ws = "flywire",
     stop("Please give a column named 'whimsy' with human-memorable names for neurons\n Make sure there is a flywire.id column with valid entires.")
   }
   gs = gs[!is.na(gs$whimsy),]
-  gs = gs[!duplicated(gs$whimsy),]
+  #gs = gs[!duplicated(gs$whimsy),]
   gs$workflow = standard_workflow(gs$workflow)
   gs$status = standard_statuses(gs$status)
   to.work = subset(gs, grepl(paste(work.flows,collapse="|"),gs$workflow))
@@ -499,7 +499,7 @@ flywire_deploy_workflows <-function(ws = "flywire",
   if(length(workflow.tabs.there)){
     flywire_update_workflow(
       main = main,
-      ws=workflow.tabs.there,
+      ws=unique(workflow.tabs.there),
       target_sheet=target_sheet,
       Verbose = Verbose,
       threshold = threshold,
