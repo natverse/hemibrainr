@@ -482,7 +482,7 @@ flywire_deploy_workflows <-function(ws = "flywire",
                           local = local,
                           cloudvolume.url = cloudvolume.url,
                           Verbose = Verbose), silent = FALSE)
-    if(grepl("try",class(fw))){
+    if(grepl("try",class(fw))||is.null(fw)){
       warning("Error in adding information for: ", please.add$flywire.id)
     }else{
       gs.added = gsheet_manipulation(FUN = googlesheets4::sheet_add,
@@ -509,7 +509,15 @@ flywire_deploy_workflows <-function(ws = "flywire",
       cloudvolume.url = cloudvolume.url)
   }
 }
-
+# flywire_deploy_workflows(ws = "flywire",
+#                          target_sheet = "1WI7ri9yHkCGXDZ68PM5PnwAL6mw2keW7QYcxtz9Fwtw",
+#                          regex = FALSE,
+#                          main_sheet = "1nVEkC-WBcRMODhkKAp5KW5OWIRHzdxpY2ipFOV7r7k4",
+#                          Verbose = FALSE,
+#                          transmitters = FALSE,
+#                          threshold = 3,
+#                          cleft.threshold = 75,
+#                          local = fafbsynapses)
 # hidden
 flywire_update_workflow <-function(main,
                                    ws,
@@ -553,7 +561,7 @@ flywire_update_workflow <-function(main,
         warning("Workflow sheet has no rows: ", ws)
         return(invisible())
       }
-      fw = flywire_workflow(flywire.id = main$flywire.id,
+      fw = try(flywire_workflow(flywire.id = main$flywire.id,
                             status = main$status,
                             ws=ws,
                             threshold = threshold,
@@ -561,19 +569,23 @@ flywire_update_workflow <-function(main,
                             transmitters=transmitters,
                             local = local,
                             cloudvolume.url = cloudvolume.url,
-                            Verbose = Verbose)
-      shared.cols = setdiff(intersect(colnames(fw),colnames(gs)),c(id,"weight","count","flywire.id","flywire.xyz","flywire.svid"))
-      for(sc in shared.cols){
-        fw[[sc]] = gs[[sc]][match(fw[[id]],gs[[id]])]
+                            Verbose = Verbose), silent = FALSE)
+      if(is.data.frame(fw)){
+        if(nrow(fw)){
+          shared.cols = setdiff(intersect(colnames(fw),colnames(gs)),c(id,"weight","count","flywire.id","flywire.xyz","flywire.svid"))
+          for(sc in shared.cols){
+            fw[[sc]] = gs[[sc]][match(fw[[id]],gs[[id]])]
+          }
+          if("status"%in%colnames(fw)){
+            fw$status[is.na(fw$status)] = "unassessed"
+          }
+          gsheet_manipulation(FUN = googlesheets4::sheet_write,
+                              data = fw,
+                              ss = target_sheet,
+                              sheet = ws,
+                              Verbose = Verbose)
+        }
       }
-      if("status"%in%colnames(fw)){
-        fw$status[is.na(fw$status)] = "unassessed"
-      }
-      gsheet_manipulation(FUN = googlesheets4::sheet_write,
-                          data = fw,
-                          ss = target_sheet,
-                          sheet = ws,
-                          Verbose = Verbose)
     }
   }
 }
