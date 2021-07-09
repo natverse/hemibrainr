@@ -561,7 +561,7 @@ flywire_update_workflow <-function(main,
         warning("Workflow sheet has no rows: ", ws)
         return(invisible())
       }
-      fw = try(flywire_workflow(flywire.id = main$flywire.id,
+      fw = tryCatch(flywire_workflow(flywire.id = main$flywire.id,
                             status = main$status,
                             ws=ws,
                             threshold = threshold,
@@ -569,7 +569,12 @@ flywire_update_workflow <-function(main,
                             transmitters=transmitters,
                             local = local,
                             cloudvolume.url = cloudvolume.url,
-                            Verbose = Verbose), silent = FALSE)
+                            Verbose = Verbose),
+                    error = function(e){
+                      message("Failed for tab: ", ws)
+                      message(as.character(e))
+                      NULL
+                    })
       if(is.data.frame(fw)){
         if(nrow(fw)){
           shared.cols = setdiff(intersect(colnames(fw),colnames(gs)),c(id,"weight","count","flywire.id","flywire.xyz","flywire.svid"))
