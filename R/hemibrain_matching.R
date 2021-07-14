@@ -1378,6 +1378,9 @@ hemibrain_match_sheet <- function(selected_file = options()$hemibrainr_matching_
                                         sheet = ws,
                                         return = TRUE,
                            Verbose = FALSE)
+  if(!id.field%in%colnames(gs)){
+    stop(id.field," missing from column names of googlesheet: ", selected_file)
+  }
   if(nrow(gs)){
     gs[[id.field]] = correct_id(gs[[id.field]])
     ids = gs[[id.field]]
