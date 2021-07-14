@@ -338,7 +338,7 @@ neuron_match_scanner <- function(brain,
                                  unsaved = c(),
                                  saved = c(),
                                  soma.size = 4000,
-                                 show.columns = c("cell.type","ItoLee_Hemilineage","status", match.field, quality.field,"note"),
+                                 show.columns = c("cell.type","ItoLee_Hemilineage","status",  match.field, quality.field,"note"),
                                  skip.if.absent = TRUE,
                                  mirror.query = FALSE){
   targets.repository = match.arg(targets.repository)
@@ -592,6 +592,10 @@ neuron_match_scanner <- function(brain,
     }
     message("You chose: ", hit)
     selected[selected[[id]]%in%n,match.field] = hit
+    if(match.field%in%c("FAFB.hemisphere.match","flywire.match","FAFB.match","flywire.xyz")){
+      try({selected[selected[[id]]%in%n,"flywire.match.id"] = fafbseg:::flywire_xyz2id(selected[selected[[id]]%in%n,match.field])}, silent = FALSE)
+      show.columns = unique(c(show.columns,"flywire.match.id"))
+    }
     if(length(sel)){
       rgl::plot3d(native[sel],col= hemibrain_bright_colours["navy"],lwd=2,soma=TRUE)
       quality = must_be("What is the quality of this match? good(e)/okay(o)/poor(p)/tract-only(t) ", answers = c("e","o","p","t"))
