@@ -151,27 +151,27 @@ flywire_matching_rewrite <- function(flywire.ids = names(flywire_neurons()),
     hemibrain_matching_add(ids = missing, meta = meta, dataset="flywire", selected_file = selected_file, ...)
   }
 
-  ## Read the LM Google Sheet
-  lmg = hemibrain_match_sheet(sheet = "lm", selected_file = selected_file)
-  if(nrow(lmg)){
-    lmg$flywire.xyz = fg$flywire.xyz[match(lmg$id,fg$LM.match)]
-    gsheet_update_cols(
-      write.cols = "flywire.xyz",
-      gs=lmg,
-      selected_sheet = selected_file,
-      sheet = "lm")
-  }
-
-  ## Read the hemibrain Google Sheet
-  hg = hemibrain_match_sheet(sheet = "hemibrain", selected_file = selected_file)
-  if(nrow(hg)){
-    hg$flywire.xyz = fg$flywire.xyz[match(hg$bodyid,fg$hemibrain.match)]
-    gsheet_update_cols(
-      write.cols = "flywire.xyz",
-      gs=hg,
-      selected_sheet = selected_file,
-      sheet = "hemibrain")
-  }
+  # ## Read the LM Google Sheet
+  # lmg = hemibrain_match_sheet(sheet = "lm", selected_file = selected_file)
+  # if(nrow(lmg)){
+  #   lmg$flywire.xyz = fg$flywire.xyz[match(lmg$id,fg$LM.match)]
+  #   gsheet_update_cols(
+  #     write.cols = "flywire.xyz",
+  #     gs=lmg,
+  #     selected_sheet = selected_file,
+  #     sheet = "lm")
+  # }
+  #
+  # ## Read the hemibrain Google Sheet
+  # hg = hemibrain_match_sheet(sheet = "hemibrain", selected_file = selected_file)
+  # if(nrow(hg)){
+  #   hg$flywire.xyz = fg$flywire.xyz[match(hg$bodyid,fg$hemibrain.match)]
+  #   gsheet_update_cols(
+  #     write.cols = "flywire.xyz",
+  #     gs=hg,
+  #     selected_sheet = selected_file,
+  #     sheet = "hemibrain")
+  # }
 
 }
 
