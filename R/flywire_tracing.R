@@ -447,6 +447,8 @@ flywire_deploy_workflows <-function(ws = "flywire",
   gs = flywire_tracing_sheet(ws=ws,regex=regex,open=FALSE,selected_sheet=main_sheet,Verbose=Verbose)
   if(!all(c("whimsy","workflow")%in%colnames(gs))){
     stop("Please give a column named 'whimsy' with human-memorable names for neurons\n Make sure there is a flywire.id column with valid entires.")
+  }else if (!nrow(gs)){
+    return(NULL)
   }
   gs = gs[!is.na(gs$whimsy),]
   #gs = gs[!duplicated(gs$whimsy),]
@@ -547,6 +549,9 @@ flywire_update_workflow <-function(main,
     }
   }else{
     gs = update = flywire_tracing_sheet(ws=ws,regex=FALSE,open=FALSE,selected_sheet=target_sheet,Verbose=Verbose)
+    if(!nrow(gs)){
+      return(NULL)
+    }
     id = colnames(gs)[1]
     gs.bad = (is.null(gs[[id]])||is.na(gs[[id]])||gs[[id]]%in%c("0","NA","none","None"," ",""))
     if(!is.null(gs$status) & !is.null(gs$gs.bad)){
