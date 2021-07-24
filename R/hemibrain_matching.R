@@ -1483,8 +1483,8 @@ hemibrain_matching_transfers <- function(selected_file = options()$hemibrainr_ma
   #############
   # Transfers #
   #############
-  for(repo1 in c("CATMAID","flywire","hemibrain","lm")){
-    for(repo2 in c("CATMAID","flywire","hemibrain","lm")){
+  for(repo1 in c("CATMAID","flywire","hemibrain","FAFB.hemisphere")){
+    for(repo2 in c("CATMAID","flywire","hemibrain","FAFB.hemisphere")){
       ws.1 = get_idfield(repo1, return = "sheet")
       ws.2 = get_idfield(repo2, return = "sheet")
       if(repo1==repo2|ws.1==ws.2){
