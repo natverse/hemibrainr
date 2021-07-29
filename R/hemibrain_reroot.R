@@ -143,7 +143,6 @@ hemibrain_reroot.neuron <- function(x,
   y
 }
 
-
 #' @export
 hemibrain_reroot.neuronlist <- function(x,
                                         method = c("manual","estimated"),

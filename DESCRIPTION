@@ -29,7 +29,8 @@ Suggests:
     bitsqueezr,
     fastcluster,
     reticulate,
-    doParallel
+    doParallel,
+    qs
 VignetteBuilder: knitr
 Depends:
     R (>= 3.1),
