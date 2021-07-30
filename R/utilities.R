@@ -668,12 +668,12 @@ check_package_available <- function(pkg) {
 update_metdata <- function(neurons, meta, id){
   check_package_available('dplyr')
   df = neurons[,]
-  dfn = dplyr::left_join(df, meta)
+  dfn = suppress(dplyr::left_join(df, meta))
   matched = match(dfn[[id]], meta[[id]])
   matched.good = !is.na(matched)
   shared.cols = intersect(colnames(dfn[,]),colnames(meta))
   dfn[matched.good,shared.cols] = meta[matched[matched.good],shared.cols]
-  neurons[,] = dfn
+  attr(neurons,'df') = dfn
   neurons
 }
 
