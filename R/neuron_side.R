@@ -98,10 +98,14 @@ synapse_side_index.neuron <- function(x,
     x = java_xform_brain(x, reference = "JRC2018F", sample = brain, .parallel = FALSE, verbose = FALSE, OmitFailures = FALSE, progress.rjava=TRUE)
   }
   x$connectors$side = ifelse(nat::xyzmatrix(x$connectors)[,"X"]>bound,"left","right")
-  agg = aggregate(list(count = x$connectors$connector_id),
-                  list(side = x$connectors$side,
-                       prepost = x$connectors$prepost),
-                  function(x) length(unique(x)))
+  if(length(x$connectors)){
+    agg = aggregate(list(count = x$connectors$connector_id),
+                    list(side = x$connectors$side,
+                         prepost = x$connectors$prepost),
+                    function(x) length(unique(x)))
+  }else{
+    agg = data.frame(count = 0, side = c("right","left"), prepost = c(0,1,1,0))
+  }
   pre.right = emptytozero(subset(agg, agg$side=="right" & agg$prepost==0)$count)
   pre.left = emptytozero(subset(agg, agg$side=="left" & agg$prepost==0)$count)
   presynapse_side_index = (pre.right-pre.left)/(pre.right+pre.left)
@@ -111,11 +115,17 @@ synapse_side_index.neuron <- function(x,
   df = data.frame(postsynapse_side_index=postsynapse_side_index, presynapse_side_index=presynapse_side_index)
   if(!is.null(x$connectors$Label)){
     x$connectors$Label = standard_compartments(x$connectors$Label)
-    agg = aggregate(list(count = x$connectors$connector_id),
-                    list(side = x$connectors$side,
-                         prepost = x$connectors$prepost,
-                         Label = x$connectors$Label),
-                    function(x) length(unique(x)))
+    if(length(x$connectors$Label)){
+      agg = aggregate(list(count = x$connectors$connector_id),
+                      list(side = x$connectors$side,
+                           prepost = x$connectors$prepost,
+                           Label = x$connectors$Label),
+                      function(x) length(unique(x)))
+    }else{
+      agg1 = data.frame(count = 0, side = c("right","left"), prepost = c(0,1,1,0), Label = c("axon"))
+      agg2 = data.frame(count = 0, side = c("right","left"), prepost = c(0,1,1,0), Label = c("dendrite"))
+      agg = rbind(agg1,agg2)
+    }
     # axons
     pre.right = emptytozero(subset(agg, agg$side=="right" & agg$prepost==0 & agg$Label == "axon")$count)
     pre.left = emptytozero(subset(agg, agg$side=="left" & agg$prepost==0 & agg$Label == "axon")$count)
