@@ -482,6 +482,7 @@ update.neuronlistfh <- function(x = NULL,
                                 pref.meta = NULL,
                                 meta = NULL,
                                 compress = TRUE,
+                                id = 'flywire.xyz',
                                 ...){
   dbClass = match.arg(dbClass)
   if(grepl("\\.zip$",file)){
@@ -519,11 +520,6 @@ update.neuronlistfh <- function(x = NULL,
         NULL
       })
     }
-    #old.neurons = tryCatch(old.neurons[sapply(old.neurons, function(x) nat::is.neuron(x))], error = function(e) {
-      #warning(e)
-      #message("original neuron file cannot link to data, overwriting ", file)
-      #NULL
-      #})
     if(!is.null(old.neurons)&&length(old.neurons)&&nat::is.neuronlist(old.neurons)){
       if(!is.null(attr(old.neurons,"df"))){
         just.old = setdiff(names(old.neurons),names(x))
@@ -546,14 +542,12 @@ update.neuronlistfh <- function(x = NULL,
     if(dbClass=="DB1"){try(file.remove(data))}
     if(!is.null(meta)){
       if(!all(names(x)%in%rownames(meta))){
-        warning("Each neuron name in x should be a rowname in meta")
+        warning("each neuron name in x should be a rowname in meta")
       }
       if(!is.null(rownames(meta))){
         in.meta = names(x) %in% rownames(meta)
         in.meta[is.na(in.meta)] = FALSE
-        x = x[in.meta]
-        m.df = meta[names(x),]
-        attr(x,"df") = m.df
+        x = update_metdata(x, meta = meta, id = id)
       }
     }
     if(!is.null(pref.meta)){
@@ -663,8 +657,23 @@ squeeze_dataframe <- function(x, exclude=NULL, digits = 6, ...) {
   x
 }
 
+# hidden
 check_package_available <- function(pkg) {
   if(!requireNamespace(pkg, quietly = TRUE)) {
     stop("Please install suggested package: ", pkg)
   }
 }
+
+# hidden
+update_metdata <- function(neurons, meta, id){
+  check_package_available('dplyr')
+  df = neurons[,]
+  dfn = dplyr::left_join(df, meta)
+  matched = match(dfn[[id]], meta[[id]])
+  matched.good = !is.na(matched)
+  shared.cols = intersect(colnames(dfn[,]),colnames(meta))
+  dfn[matched.good,shared.cols] = meta[matched[matched.good],shared.cols]
+  neurons[,] = dfn
+  neurons
+}
+
