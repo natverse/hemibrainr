@@ -98,7 +98,7 @@ synapse_side_index.neuron <- function(x,
     x = java_xform_brain(x, reference = "JRC2018F", sample = brain, .parallel = FALSE, verbose = FALSE, OmitFailures = FALSE, progress.rjava=TRUE)
   }
   x$connectors$side = ifelse(nat::xyzmatrix(x$connectors)[,"X"]>bound,"left","right")
-  if(length(x$connectors)){
+  if(is.nrowlength(x$connectors)){
     agg = aggregate(list(count = x$connectors$connector_id),
                     list(side = x$connectors$side,
                          prepost = x$connectors$prepost),
