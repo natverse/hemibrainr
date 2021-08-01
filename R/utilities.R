@@ -165,6 +165,20 @@ is.issue <- function(x){
 }
 
 # hidden
+is.nrowlength <- function(x){
+  if(length(x)){
+    if(nrow(x)){
+      ans <- TRUE
+    }else{
+      ans <- FALSE
+    }
+  }else{
+    ans <- FALSE
+  }
+  ans
+}
+
+# hidden
 carryover_tags <- function(x, y){
   y$tags = x$tags
   y
