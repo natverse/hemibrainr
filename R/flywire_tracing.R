@@ -835,8 +835,8 @@ flywire_annotations_for_synapses <- function(fw.ids,
       fw.neurons.syn.ac.syns = fw.neurons.syn.ac.syns[v,]
     }
     synister.synapse.sample <- fw.neurons.syn.ac.syns %>%
-      dplyr::filter(prepost%in%accepted, cleft_scores > cleft_scores.thresh, Label %in% c("axon","dendrite", "2","3","unknown")) %>%
-      dplyr::mutate(bin.cleft_scores= plyr::round_any(cleft_scores, 10)) %>%
+      dplyr::filter(.data$prepost%in%accepted, .data$cleft_scores > cleft_scores.thresh, .data$Label %in% c("axon","dendrite", "2","3","unknown")) %>%
+      dplyr::mutate(bin.cleft_scores = plyr::round_any(.data$cleft_scores, 10)) %>%
       # dplyr::group_by(Label) %>%
       dplyr::slice_sample(n=sample, replace = FALSE) %>%
       dplyr::collect()

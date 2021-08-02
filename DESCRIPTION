@@ -21,6 +21,7 @@ Suggests:
     rmarkdown,
     covr,
     nat.jrcbrains,
+    nat.flybrains,
     elmr,
     dbscan,
     RColorBrewer,
@@ -78,6 +79,7 @@ Remotes:
     natverse/fafbseg,
     natverse/nat.nblast,
     natverse/nat,
+    natverse/nat.flybrains,
     schlegelp/nat.hdf5
 Language: en-GB
 RoxygenNote: 7.1.1

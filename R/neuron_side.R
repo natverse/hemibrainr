@@ -7,6 +7,7 @@
 #' @param x a \code{nat::neuronlist} or \code{nat::neuron} object
 #' @param brain wthe brainspace what \code{x} is in.
 #' @param bound the dividing line that separates left and right in e \code{JRC2018F}.
+#' @param transform whether to transform \code{x} (when \code{TRUE}) when the given brain is not \code{JRC2018F}
 #'
 #' @return a \code{nat::neuronlist} object with either 'side' or synapse_side_index updated in its metadata.
 #'
@@ -31,22 +32,24 @@
 #' neurons.flow[,]
 #'
 #'}
-#' @export
 #' @seealso \code{\link{hemibrain_reroot}}
 #' @export
+#' @rdname soma_side
 soma_side <-function(x,
-                     brain = "JRC2018F",
-                     bound = (nat::boundingbox(nat.flybrains::JRC2018F.surf)[2,1]+nat::boundingbox(nat.flybrains::JRC2018F.surf)[1,1])/2) UseMethod("soma_side")
+                     brain = nat.flybrains::JRC2018F,
+                     bound = NULL,
+                     transform = FALSE) UseMethod("soma_side")
 
 #' @export
+#' @rdname soma_side
 soma_side.neuronlist <- function(x,
-                                 brain = "JRC2018F",
-                                 bound = (nat::boundingbox(nat.flybrains::JRC2018F.surf)[2,1]+nat::boundingbox(nat.flybrains::JRC2018F.surf)[1,1])/2){
-  if(brain!="JRC2018F"){
-    y = java_xform_brain(x, reference = "JRC2018F", sample = brain, .parallel = FALSE, verbose = FALSE, OmitFailures = FALSE, progress.rjava=TRUE)
-  }else{
-    y = x
-  }
+                                 brain = nat.flybrains::JRC2018F,
+                                 bound = NULL,
+                                 transform = FALSE){
+
+  ss = sort_side(x=x, brain=brain, bound=bound, transform=transform)
+  y = ss$y
+  bound = ss$bound
   leftsomas = unlist(nat::nlapply(y, soma_side.neuron, brain = "JRC2018F", bound = bound))
   leftsomas = leftsomas[!is.na(leftsomas)]
   x[names(leftsomas),"side"] = leftsomas
@@ -54,11 +57,17 @@ soma_side.neuronlist <- function(x,
 }
 
 #' @export
+#' @rdname soma_side
 soma_side.neuron <- function(x,
-                      brain = "JRC2018F",
-                      bound = (nat::boundingbox(nat.flybrains::JRC2018F.surf)[2,1]+nat::boundingbox(nat.flybrains::JRC2018F.surf)[1,1])/2){
-  if(brain!="JRC2018F"){
-    x = java_xform_brain(x, reference = "JRC2018F", sample = brain, .parallel = FALSE, verbose = FALSE, OmitFailures = FALSE, progress.rjava=TRUE)
+                             brain = nat.flybrains::JRC2018F,
+                             bound = NULL,
+                             transform = FALSE){
+  if(is.null(bound)){
+    ss = sort_side(x=x, brain=brain, bound=bound, transform=transform)
+    y = ss$y
+    bound = ss$bound
+  }else{
+    y=x
   }
   r = nat::rootpoints(x)
   if(is.numeric(r)){
@@ -70,36 +79,50 @@ soma_side.neuron <- function(x,
 }
 
 #' @export
+#' @rdname soma_side
 synapse_side_index <-function(x,
-                              brain = "JRC2018F",
-                     bound = (nat::boundingbox(nat.flybrains::JRC2018F.surf)[2,1]+nat::boundingbox(nat.flybrains::JRC2018F.surf)[1,1])/2) UseMethod("synapse_side_index")
+                              brain = nat.flybrains::JRC2018F,
+                              bound = NULL,
+                              transform = FALSE) UseMethod("synapse_side_index")
 
 #' @export
+#' @rdname soma_side
 synapse_side_index.neuronlist <- function(x,
-                                 brain = "JRC2018F",
-                                 bound = (nat::boundingbox(nat.flybrains::JRC2018F.surf)[2,1]-nat::boundingbox(nat.flybrains::JRC2018F.surf)[1,1])/2){
-  if(brain!="JRC2018F"){
-    y = java_xform_brain(x, reference = "JRC2018F", sample = brain, .parallel = FALSE, verbose = FALSE, OmitFailures = FALSE, progress.rjava=TRUE)
-  }else{
-    y = x
-  }
-  ssi = nat::nlapply(y, synapse_side_index.neuron, brain = "JRC2018F", bound = bound)
+                                          brain = nat.flybrains::JRC2018F,
+                                          bound = NULL,
+                                          transform = FALSE){
+  ss = sort_side(x=x, brain=brain, bound=bound, transform=transform)
+  y = ss$y
+  bound = ss$bound
+  # soma side
+  leftsomas = unlist(nat::nlapply(y, soma_side.neuron, bound = bound))
+  leftsomas = leftsomas[!is.na(leftsomas)]
+  x[names(leftsomas),"side"] = leftsomas
+  # synapse side
+  ssi = nat::nlapply(y, synapse_side_index.neuron, bound = bound)
   ssi = do.call(rbind,ssi)
   rownames(ssi) = names(y)
   x[rownames(ssi),colnames(ssi)] = ssi
+  # return
   x
 }
 
 #' @export
+#' @rdname soma_side
 synapse_side_index.neuron <- function(x,
-                                      brain = "JRC2018F",
-                               bound = (nat::boundingbox(nat.flybrains::JRC2018F.surf)[2,1]+nat::boundingbox(nat.flybrains::JRC2018F.surf)[1,1])/2){
-  if(brain!="JRC2018F"){
-    x = java_xform_brain(x, reference = "JRC2018F", sample = brain, .parallel = FALSE, verbose = FALSE, OmitFailures = FALSE, progress.rjava=TRUE)
+                                      brain = nat.flybrains::JRC2018F,
+                                      bound = NULL,
+                                      transform = FALSE){
+  if(is.null(bound)){
+    ss = sort_side(x=x, brain=brain, bound=bound, transform=transform)
+    y = ss$y
+    bound = ss$bound
+  }else{
+    y=x
   }
   x$connectors$side = ifelse(nat::xyzmatrix(x$connectors)[,"X"]>bound,"left","right")
   if(is.nrowlength(x$connectors)){
-    agg = aggregate(list(count = x$connectors$connector_id),
+    agg = stats::aggregate(list(count = x$connectors$connector_id),
                     list(side = x$connectors$side,
                          prepost = x$connectors$prepost),
                     function(x) length(unique(x)))
@@ -116,7 +139,7 @@ synapse_side_index.neuron <- function(x,
   if(!is.null(x$connectors$Label)){
     x$connectors$Label = standard_compartments(x$connectors$Label)
     if(length(x$connectors$Label)){
-      agg = aggregate(list(count = x$connectors$connector_id),
+      agg = stats::aggregate(list(count = x$connectors$connector_id),
                       list(side = x$connectors$side,
                            prepost = x$connectors$prepost,
                            Label = x$connectors$Label),
@@ -153,4 +176,27 @@ emptytozero <- function(v){
   }else{
     v
   }
+}
+
+# hidden
+sort_side <- function(x, brain, bound = NULL, transform = FALSE){
+  boundnull = is.null(bound)
+  if(is.character(brain)){
+    sample = brain
+  }else{
+    sample = brain$name
+  }
+  if(sample!="JRC2018F"){
+    if(transform){
+      y = nat.templatebrains::xform_brain(x, reference = "JRC2018F", sample = sample, .parallel = TRUE, verbose = FALSE, OmitFailures = FALSE)
+      if(boundnull) bound = (nat::boundingbox(nat.flybrains::JRC2018F.surf)[2,1]+nat::boundingbox(nat.flybrains::JRC2018F.surf)[1,1])/2
+    }else{
+      y = x
+      if(boundnull) bound = (nat::boundingbox(brain)[2,1]+nat::boundingbox(brain)[1,1])/2
+    }
+  }else{
+    y = x
+    if(boundnull) bound = (brain$BoundingBox[2,1]+brain$BoundingBox[1,1])/2
+  }
+  list(y = y, brain = brain, sample = sample, bound = bound, transform = transform)
 }

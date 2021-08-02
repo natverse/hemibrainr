@@ -2,13 +2,38 @@
 % Please edit documentation in R/neuron_side.R
 \name{soma_side}
 \alias{soma_side}
+\alias{soma_side.neuronlist}
+\alias{soma_side.neuron}
+\alias{synapse_side_index}
+\alias{synapse_side_index.neuronlist}
+\alias{synapse_side_index.neuron}
 \title{Calculate which side of the brain a neuron is on}
 \usage{
-soma_side(
+soma_side(x, brain = nat.flybrains::JRC2018F, bound = NULL, transform = FALSE)
+
+\method{soma_side}{neuronlist}(x, brain = nat.flybrains::JRC2018F, bound = NULL, transform = FALSE)
+
+\method{soma_side}{neuron}(x, brain = nat.flybrains::JRC2018F, bound = NULL, transform = FALSE)
+
+synapse_side_index(
   x,
-  brain = "JRC2018F",
-  bound = (nat::boundingbox(nat.flybrains::JRC2018F.surf)[2, 1] +
-    nat::boundingbox(nat.flybrains::JRC2018F.surf)[1, 1])/2
+  brain = nat.flybrains::JRC2018F,
+  bound = NULL,
+  transform = FALSE
+)
+
+\method{synapse_side_index}{neuronlist}(
+  x,
+  brain = nat.flybrains::JRC2018F,
+  bound = NULL,
+  transform = FALSE
+)
+
+\method{synapse_side_index}{neuron}(
+  x,
+  brain = nat.flybrains::JRC2018F,
+  bound = NULL,
+  transform = FALSE
 )
 }
 \arguments{
@@ -17,6 +42,8 @@ soma_side(
 \item{brain}{wthe brainspace what \code{x} is in.}
 
 \item{bound}{the dividing line that separates left and right in e \code{JRC2018F}.}
+
+\item{transform}{whether to transform \code{x} (when \code{TRUE}) when the given brain is not \code{JRC2018F}}
 }
 \value{
 a \code{nat::neuronlist} object with either 'side' or synapse_side_index updated in its metadata.

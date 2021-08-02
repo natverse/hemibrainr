@@ -1272,7 +1272,7 @@ lm_matches <- function(priority = c("hemibrain","lm"), selected_file = options()
 #' @seealso \code{\link{hemibrain_matching}}, \code{\link{fafb_matching}}
 #' @rdname hemibrain_add_made_matches
 hemibrain_add_made_matches <- function(df,
-                                  direction = c("both","hemibrain-FAFB","FAFB-hemibrain"),
+                                  direction = c("both","hemibrain-FAFB","FAFB-hemibrain","hemisphere"),
                                   User = "flyconnectome",
                                   selected_file = options()$hemibrainr_matching_gsheet,
                                   ...){
@@ -1845,6 +1845,7 @@ id_selector <- function(gs,
     ids = doit[[id]]
   }else{
     ids = intersect(ids,doit[[id]])
+    doit = subset(doit, doit[[id]]%in%ids)
   }
   ids = ids[!grepl("missing",ids)]
   ids = ids[!is.na(ids)]

@@ -593,7 +593,7 @@ neuron_match_scanner <- function(brain,
     message("You chose: ", hit)
     selected[selected[[id]]%in%n,match.field] = hit
     if(match.field%in%c("FAFB.hemisphere.match","flywire.match","FAFB.match","flywire.xyz")){
-      try({selected[selected[[id]]%in%n,"flywire.match.id"] = fafbseg:::flywire_xyz2id(selected[selected[[id]]%in%n,match.field])}, silent = FALSE)
+      try({selected[selected[[id]]%in%n,"flywire.match.id"] = fafbseg::flywire_xyz2id(selected[selected[[id]]%in%n,match.field])}, silent = FALSE)
       show.columns = unique(c(show.columns,"flywire.match.id"))
     }
     if(length(sel)){
@@ -677,7 +677,7 @@ get_match_neuron <- function(query = NULL, n, query.repository, skip.if.absent =
                "remotes::install_github('natverse/nat.flybrains')")
         }
         t = java_xform_brain(query.n, reference = "JRC2018F", sample = "FAFB14", .parallel = FALSE, verbose = TRUE, OmitFailures = TRUE, progress.rjava=TRUE)
-        m = mirror_brain(x = t, brain = nat.flybrains::JRC2018F, .parallel = TRUE, OmitFailures = FALSE, transform = "flip")
+        m = nat.templatebrains::mirror_brain(x = t, brain = nat.flybrains::JRC2018F, .parallel = TRUE, OmitFailures = FALSE, transform = "flip")
         query.n = java_xform_brain(m, reference = "FAFB14", sample = "JRC2018F",.parallel = TRUE, verbose = TRUE, OmitFailures = TRUE, progress.rjava=TRUE)
       }
     }, error = function(e) {NULL})

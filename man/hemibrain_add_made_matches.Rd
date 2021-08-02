@@ -23,7 +23,7 @@ flywire_matching_rewrite(
 
 hemibrain_add_made_matches(
   df,
-  direction = c("both", "hemibrain-FAFB", "FAFB-hemibrain"),
+  direction = c("both", "hemibrain-FAFB", "FAFB-hemibrain", "hemisphere"),
   User = "flyconnectome",
   selected_file = options()$hemibrainr_matching_gsheet,
   ...
