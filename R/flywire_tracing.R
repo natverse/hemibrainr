@@ -431,18 +431,22 @@ flywire_tracing_standardise <- function(ws = NULL,
 #' @name flywire_tracing_sheet
 #' @export
 flywire_deploy_workflows <-function(ws = "flywire",
-                                      main_sheet, # "1nVEkC-WBcRMODhkKAp5KW5OWIRHzdxpY2ipFOV7r7k4"
-                                      target_sheet = main_sheet, # "1WI7ri9yHkCGXDZ68PM5PnwAL6mw2keW7QYcxtz9Fwtw"
-                                      regex = FALSE,
-                                      threshold = 10,
-                                      cleft.threshold = 100,
-                                      transmitters = FALSE,
-                                      local = NULL,
-                                      cloudvolume.url = NULL,
-                                      Verbose = TRUE,
-                                      work.flows = c("inputs","outputs","matches","synapses")){
+                                    main_sheet, # "1nVEkC-WBcRMODhkKAp5KW5OWIRHzdxpY2ipFOV7r7k4"
+                                    target_sheet = main_sheet, # "1WI7ri9yHkCGXDZ68PM5PnwAL6mw2keW7QYcxtz9Fwtw"
+                                    regex = FALSE,
+                                    threshold = 10,
+                                    cleft.threshold = 100,
+                                    transmitters = FALSE,
+                                    local = NULL,
+                                    cloudvolume.url = NULL,
+                                    Verbose = TRUE,
+                                    work.flows = c("inputs","outputs","matches","synapses"),
+                                    nblast = NULL){
+  if(is.null(nblast)){
+    nblast = linked_nblast()
+  }
   if(length(setdiff(work.flows,c("inputs","outputs","matches","synapses")))){
-    stop("The only supported workflows are: inputs, outputs and matches")
+    stop("The only supported workflows are: inputs, outputs, synapses and matches")
   }
   gs = flywire_tracing_sheet(ws=ws,regex=regex,open=FALSE,selected_sheet=main_sheet,Verbose=Verbose)
   if(!all(c("whimsy","workflow")%in%colnames(gs))){
@@ -483,7 +487,8 @@ flywire_deploy_workflows <-function(ws = "flywire",
                           transmitters=transmitters,
                           local = local,
                           cloudvolume.url = cloudvolume.url,
-                          Verbose = Verbose), silent = FALSE)
+                          Verbose = Verbose,
+                          nblast = nblast), silent = FALSE)
     if(grepl("try",class(fw))||is.null(fw)){
       warning("Error in adding information for: ", please.add$flywire.id)
     }else{
@@ -508,7 +513,8 @@ flywire_deploy_workflows <-function(ws = "flywire",
       cleft.threshold = cleft.threshold,
       transmitters=transmitters,
       local = local,
-      cloudvolume.url = cloudvolume.url)
+      cloudvolume.url = cloudvolume.url,
+      nblast = nblast)
   }
 }
 # flywire_deploy_workflows(ws = "flywire",
@@ -520,6 +526,7 @@ flywire_deploy_workflows <-function(ws = "flywire",
 #                          threshold = 3,
 #                          cleft.threshold = 75,
 #                          local = fafbsynapses)
+
 # hidden
 flywire_update_workflow <-function(main,
                                    ws,
@@ -529,7 +536,11 @@ flywire_update_workflow <-function(main,
                                    cleft.threshold = 100,
                                    transmitters = FALSE,
                                    local = NULL,
-                                   cloudvolume.url = NULL){
+                                   cloudvolume.url = NULL,
+                                   nblast = NULL){
+  if(is.null(nblast)){
+    nblast = linked_nlbast()
+  }
   if(length(ws)>1){
     pb = progress::progress_bar$new(
       format = "  updating tab :what [:bar] :percent eta: :eta",
@@ -545,7 +556,8 @@ flywire_update_workflow <-function(main,
                                          cleft.threshold = cleft.threshold,
                                          transmitters=transmitters,
                                          local = local,
-                                         cloudvolume.url = cloudvolume.url)
+                                         cloudvolume.url = cloudvolume.url,
+                              nblast = nblast)
     }
   }else{
     gs = update = flywire_tracing_sheet(ws=ws,regex=FALSE,open=FALSE,selected_sheet=target_sheet,Verbose=Verbose)
@@ -558,11 +570,14 @@ flywire_update_workflow <-function(main,
       if(!gs.bad){
         gs$status = standard_statuses(gs$status)
         id = ifelse("pre_id"%in%colnames(gs),"pre_id","post_id")
-        gs[[id]][is.na(gs[[id]])] = "0"
-        gs[[id]] = tryCatch(fafbseg::flywire_latestid(gs[[id]]), error = function(e){
-          warning(e)
-          unlist(sapply(gs[[id]], function(x) tryCatch(fafbseg::flywire_latestid(x), error = function(e) NA)))
-        })
+        if(id %in% clnames(gs)){
+          gs[[id]][is.na(gs[[id]])] = "0"
+          gs[[id]] = tryCatch(fafbseg::flywire_latestid(gs[[id]]), error = function(e){
+            warning(e)
+            unlist(sapply(gs[[id]], function(x) tryCatch(fafbseg::flywire_latestid(x), error = function(e) NA)))
+          })
+        }
+        id = ifelse("id"%in%colnames(gs),"id",id)
         if(!nrow(gs)){
           warning("Workflow sheet has no rows: ", ws)
           return(invisible())
@@ -575,7 +590,8 @@ flywire_update_workflow <-function(main,
                                        transmitters=transmitters,
                                        local = local,
                                        cloudvolume.url = cloudvolume.url,
-                                       Verbose = Verbose),
+                                       Verbose = Verbose,
+                                       nblast = nblast),
                       error = function(e){
                         message("Failed for tab: ", ws)
                         message(as.character(e))
@@ -583,7 +599,7 @@ flywire_update_workflow <-function(main,
                       })
         if(is.data.frame(fw)){
           if(nrow(fw)){
-            shared.cols = setdiff(intersect(colnames(fw),colnames(gs)),c(id,"weight","count","flywire.id","flywire.xyz","flywire.svid"))
+            shared.cols = setdiff(intersect(colnames(fw),colnames(gs)),c("weight","count","flywire.id","flywire.xyz","flywire.svid","nblast","type"))
             for(sc in shared.cols){
               fw[[sc]] = gs[[sc]][match(fw[[id]],gs[[id]])]
             }
@@ -627,20 +643,44 @@ flywire_workflow <- function(flywire.id,
   syns = grepl("synapses",ws)
   if(match){
     if(is.null(nblast)){
-      nblast = hemibrain_nblast("hemibrain-flywire")
+      nblast.hemibrain = hemibrain_nblast("hemibrain-flywire")
+      nblast.lr = hemibrain_nblast("flywire-mirror")
+    }else{
+      nblast.hemibrain = nblast$nblast.hemibrain
+      nblast.lr = nblast$nblast.lr
     }
-    entries = tab.entries[,colnames(nblast)%in%flywire.id]
-    entries = sort(entries[entries>0],decreasing = TRUE)
-    entries = entries[1:min(max.hits,length(entries))]
-    tab.entries = as.data.frame(bodyid = names(entries),
-                                nblast = unname(entries),
-                                quality = "none",
-                                note = NA,
-                                stringsAsFactors = FALSE)
-    main = data.frame(flywire.id, nblast = "main", quality = "none", note = gsub("_.*","",ws), stringsAsFactors = FALSE)
-    colnames(main) = colnames(tab.entries)
-    tab.entries = as.data.frame(tab.entries, stringsAsFactors = FALSE)
-    plyr::rbind.fill(main, tab.entries)
+    inside.nblast = rownames(nblast.hemibrain)%in%flywire.id
+    inside.nblastLR = colnames(nblast.lr)%in%flywire.id
+    tab.entries = data.frame(id = flywire.id, nblast = "main", status = "unassessed", type = "self", note = gsub("_.*","",ws), stringsAsFactors = FALSE)
+    if(sum(inside.nblast)){
+      entries = nblast.hemibrain[inside.nblast,]
+      names(entries) = colnames(nblast.hemibrain)
+      entries = sort(entries[entries>0],decreasing = TRUE)
+      entries = entries[1:min(max.hits,length(entries))]
+      new.entries = data.frame(id  = names(entries),
+                                  nblast = unname(entries),
+                                  status = "unassessed",
+                                  type = "hemibrain.match",
+                                  note = NA,
+                                  stringsAsFactors = FALSE)
+      new.entries = as.data.frame(new.entries, stringsAsFactors = FALSE)
+      tab.entries = plyr::rbind.fill(tab.entries, new.entries)
+    }
+    if(sum(inside.nblastLR)){
+      entries = nblast.lr[,inside.nblastLR]
+      names(entries) = rownames(nblast.lr)
+      entries = sort(entries[entries>0],decreasing = TRUE)
+      entries = entries[1:min(max.hits,length(entries))]
+      new.entries = data.frame(id = names(entries),
+                                  nblast = unname(entries),
+                                  status = "unassessed",
+                                  type = "FAFB.hemisphere.match",
+                                  note = NA,
+                                  stringsAsFactors = FALSE)
+      new.entries = as.data.frame(tab.entries, stringsAsFactors = FALSE)
+      tab.entries = plyr::rbind.fill(tab.entries, new.entries)
+    }
+    tab.entries
   }else if (syns){
     tab.entries = flywire_annotations_for_synapses(flywire.id,
                                             partners = NULL,
@@ -972,6 +1012,17 @@ flywire_verified_synapses <- function(fw.ids,
   fw.neurons.syn.ac.syns.all
 }
 
+# hidden
+linked_nblast <- function(){
+  nblast.hemibrain = tryCatch(hemibrain_nblast("hemibrain-flywire"), error = function(e){message(as.character(e)); NULL})
+  nblast.lr = tryCatch(hemibrain_nblast("flywire-mirror"), error = function(e){message(as.character(e)); NULL})
+  if(!is.null(nblast.hemibrain)){
+    nblast = list(nblast.hemibrain=nblast.hemibrain,nblast.lr=nblast.lr)
+  }else{
+    nblast = NULL
+  }
+  nblast
+}
 
 
 
