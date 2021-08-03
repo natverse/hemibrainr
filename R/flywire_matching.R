@@ -593,7 +593,7 @@ neuron_match_scanner <- function(brain,
     message("You chose: ", hit)
     selected[selected[[id]]%in%n,match.field] = hit
     if(match.field%in%c("FAFB.hemisphere.match","flywire.match","FAFB.match","flywire.xyz")){
-      try({selected[selected[[id]]%in%n,"flywire.match.id"] = fafbseg::flywire_xyz2id(selected[selected[[id]]%in%n,match.field])}, silent = FALSE)
+      try({selected[selected[[id]]%in%n,"flywire.match.id"] = fafbseg::flywire_xyz2id(selected[selected[[id]]%in%n,match.field], rawcoords = TRUE)}, silent = FALSE)
       show.columns = unique(c(show.columns,"flywire.match.id"))
     }
     if(length(sel)){
