@@ -1277,88 +1277,127 @@ hemibrain_add_made_matches <- function(df,
                                   selected_file = options()$hemibrainr_matching_gsheet,
                                   ...){
   direction = match.arg(direction)
-  cnames = c("bodyid","skid","quality")
-  if(!all(cnames%in%colnames(df))){
-    stop("df must have column names: ", paste(cnames,collapse = ", "))
-  }else{
-    df = subset(df,
-                !is.na(df$skid)
-                & !is.na(df$bodyid)
-                & df$skid!=""
-                & df$bodyid != ""
-                & df$quality %in% c("none","good","medium","poor"))
-  }
+  if(direction %in% c("both","hemibrain-FAFB","FAFB-hemibrain")){
+    cnames = c("bodyid","skid","quality")
+    if(!all(cnames%in%colnames(df))){
+      stop("df must have column names: ", paste(cnames,collapse = ", "))
+    }else{
+      df = subset(df,
+                  !is.na(df$skid)
+                  & !is.na(df$bodyid)
+                  & df$skid!=""
+                  & df$bodyid != ""
+                  & df$quality %in% c("none","good","medium","poor"))
+    }
 
-  # Update hemibrain sheet
-  if(direction%in%c("both","hemibrain-FAFB")){
-    message("Reading hemibrain sheet")
-    gs = hemibrain_match_sheet(sheet = "hemibrain")
-    missing = setdiff(df$bodyid,gs$bodyid)
-    if(length(missing)){
-      message("Adding missing hemibrain bodyids")
-      hemibrain_matching_add(ids = missing, dataset = "hemibrain", User = User, selected_file = selected_file)
+    # Update hemibrain sheet
+    if(direction%in%c("both","hemibrain-FAFB")){
+      message("Reading hemibrain sheet")
       gs = hemibrain_match_sheet(sheet = "hemibrain")
+      missing = setdiff(df$bodyid,gs$bodyid)
+      if(length(missing)){
+        message("Adding missing hemibrain bodyids")
+        hemibrain_matching_add(ids = missing, dataset = "hemibrain", User = User, selected_file = selected_file)
+        gs = hemibrain_match_sheet(sheet = "hemibrain")
+      }
+      message("Checking that FAFB matches exist")
+      hdf = subset(df, df$bodyid %in% gs$bodyid)
+      hdf = hdf[!duplicated(hdf$bodyid),]
+      in.fab = suppressWarnings(sapply(hdf$skid,catmaid::catmaid_skids))
+      in.fab = sapply(in.fab,function(x) length(x)!=0)
+      if(sum(!in.fab)){
+        message("Dropping ", sum(!in.fab)," matches as givens skeleton IDs do not exist for FAFB v14")
+        hdf = hdf[in.fab,]
+      }
+      gs[as.character(hdf$bodyid),"FAFB.match"] = hdf$skid
+      gs[as.character(hdf$bodyid),"FAFB.match.quality"] = hdf$quality
+      gs[as.character(hdf$bodyid),"User"] = User
+      message("Adding matches")
+      write_matches(gs=gs,
+                    ids = as.character(hdf$bodyid),
+                    ws="hemibrain",
+                    id.field ="bodyid",
+                    selected_file = selected_file,
+                    column = "FAFB.match")
+      write_matches(gs=gs,
+                    ids = as.character(hdf$bodyid),
+                    ws="hemibrain",
+                    id.field ="bodyid",
+                    selected_file = selected_file,
+                    column = "FAFB.match.quality")
     }
-    message("Checking that FAFB matches exist")
-    hdf = subset(df, df$bodyid %in% gs$bodyid)
-    hdf = hdf[!duplicated(hdf$bodyid),]
-    in.fab = suppressWarnings(sapply(hdf$skid,catmaid::catmaid_skids))
-    in.fab = sapply(in.fab,function(x) length(x)!=0)
-    if(sum(!in.fab)){
-      message("Dropping ", sum(!in.fab)," matches as givens skeleton IDs do not exist for FAFB v14")
-      hdf = hdf[in.fab,]
-    }
-    gs[as.character(hdf$bodyid),"FAFB.match"] = hdf$skid
-    gs[as.character(hdf$bodyid),"FAFB.match.quality"] = hdf$quality
-    gs[as.character(hdf$bodyid),"User"] = User
-    message("Adding matches")
-    write_matches(gs=gs,
-                  ids = as.character(hdf$bodyid),
-                  ws="hemibrain",
-                  id.field ="bodyid",
-                  selected_file = selected_file,
-                  column = "FAFB.match")
-    write_matches(gs=gs,
-                  ids = as.character(hdf$bodyid),
-                  ws="hemibrain",
-                  id.field ="bodyid",
-                  selected_file = selected_file,
-                  column = "FAFB.match.quality")
-  }
-  if(direction%in%c("both","FAFB-hemibrain")){
-    message("Reading FAFB sheet")
-    gs = hemibrain_match_sheet(sheet = "FAFB")
-    missing = setdiff(df$skid,gs$skid)
-    if(length(missing)){
-      message("Adding missing FAFB bodyids")
-      hemibrain_matching_add(ids = missing, dataset = "FAFB", User = User, selected_file = selected_file)
+    if(direction%in%c("both","FAFB-hemibrain")){
+      message("Reading FAFB sheet")
       gs = hemibrain_match_sheet(sheet = "FAFB")
+      missing = setdiff(df$skid,gs$skid)
+      if(length(missing)){
+        message("Adding missing FAFB bodyids")
+        hemibrain_matching_add(ids = missing, dataset = "FAFB", User = User, selected_file = selected_file)
+        gs = hemibrain_match_sheet(sheet = "FAFB")
+      }
+      message("Checking that hemibrain matches exist")
+      hdf = subset(df, df$skid %in% gs$skid)
+      hdf = hdf[!duplicated(hdf$skid),]
+      in.hemi = suppressWarnings(sapply(hdf$skid,function(x) tryCatch(neuprintr::neuprint_ids(x),error = function(e) NULL)))
+      in.hemi = sapply(in.hemi,function(x) length(x)!=0)
+      if(sum(!in.hemi)){
+        message("Dropping ", sum(!in.hemi)," matches as givens skeleton IDs do not exist for FAFB v14")
+        hdf = hdf[in.hemi,]
+      }
+      gs[as.character(hdf$skid),"hemibrain.match"] = hdf$bodyid
+      gs[as.character(hdf$skid),"hemibrain.match.quality"] = hdf$quality
+      gs[as.character(hdf$skid),"User"] = User
+      message("Adding matches")
+      write_matches(gs=gs,
+                    ids = as.character(hdf$skid),
+                    ws="FAFB",
+                    id.field ="skid",
+                    selected_file = selected_file,
+                    column = "hemibrain.match")
+      write_matches(gs=gs,
+                    ids = as.character(hdf$skid),
+                    ws="FAFB",
+                    id.field ="skid",
+                    selected_file = selected_file,
+                    column = "hemibrain.match.quality")
     }
-    message("Checking that hemibrain matches exist")
-    hdf = subset(df, df$skid %in% gs$skid)
-    hdf = hdf[!duplicated(hdf$skid),]
-    in.hemi = suppressWarnings(sapply(hdf$skid,function(x) tryCatch(neuprintr::neuprint_ids(x),error = function(e) NULL)))
-    in.hemi = sapply(in.hemi,function(x) length(x)!=0)
-    if(sum(!in.hemi)){
-      message("Dropping ", sum(!in.hemi)," matches as givens skeleton IDs do not exist for FAFB v14")
-      hdf = hdf[in.hemi,]
+  }else{
+    cnames = c("flywire.id","FAFB.hemisphere.match","FAFB.hemisphere.match.quality")
+    if(!all(cnames%in%colnames(df))){
+      stop("df must have column names: ", paste(cnames,collapse = ", "))
     }
-    gs[as.character(hdf$skid),"hemibrain.match"] = hdf$bodyid
-    gs[as.character(hdf$skid),"hemibrain.match.quality"] = hdf$quality
-    gs[as.character(hdf$skid),"User"] = User
     message("Adding matches")
+    df = subset(df, !is.na(df$flywire.id) && !is.na(df$FAFB.hemisphere.match) && !is.na(df$FAFB.hemisphere.match.quality))
+    df$flywire.id = correct_id(df$flywire.id)
+    df$FAFB.hemisphere.match.quality = correct_id(df$FAFB.hemisphere.match.quality)
+    df$flywire.id = unlist(sapply(df$flywire.id, function(x) tryCatch(fafbseg::flywire_latestid(x), error = function(e) x)))
+    gs = hemibrain_match_sheet(sheet = "flywire")
+    missing = setdiff(df$flywire.id,gs$flywire.id)
+    if(length(missing)){
+      message("Adding missing flywire neurons")
+      hemibrain_matching_add(ids = missing,  dataset="flywire", selected_file = selected_file) # meta
+      gs = hemibrain_match_sheet(sheet = "flywire")
+    }
+    gs.good = subset(gs, !is.na(gs$FAFB.hemisphere.match.quality) && gs$FAFB.hemisphere.match.quality!="none")
+    df = subset(df$flywire.id %in% gs$flywire.id)
+    gs.new = gs
+    gs.new[,"FAFB.hemisphere.match"] = df[match(gs$flywire.id,df$flywire.id),"FAFB.hemisphere.match"]
+    gs.new[,"FAFB.hemisphere.match.quality"] = df[match(gs$flywire.id,df$flywire.id),"FAFB.hemisphere.match.quality"]
+    gs.new.na = is.na(gs.new[,"FAFB.hemisphere.match"])
+    gs.new[gs.new.na,"FAFB.hemisphere.match"] = gs[gs.new.na,"FAFB.hemisphere.match"]
+    gs.new[gs.new.na,"FAFB.hemisphere.match.quality"] = gs[gs.new.na,"FAFB.hemisphere.match.quality"]
+    write_matches(gs=gs.new,
+                  ids = as.character(df$flywire.id),
+                  ws="flywire",
+                  id.field ="flywire.id",
+                  selected_file = selected_file,
+                  column = "FAFB.hemisphere.match")
     write_matches(gs=gs,
                   ids = as.character(hdf$skid),
-                  ws="FAFB",
-                  id.field ="skid",
+                  ws="flywire",
+                  id.field ="flywire.id",
                   selected_file = selected_file,
-                  column = "hemibrain.match")
-    write_matches(gs=gs,
-                  ids = as.character(hdf$skid),
-                  ws="FAFB",
-                  id.field ="skid",
-                  selected_file = selected_file,
-                  column = "hemibrain.match.quality")
+                  column = "FAFB.hemisphere.match.quality")
   }
 }
 
