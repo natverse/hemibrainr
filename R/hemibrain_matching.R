@@ -1367,7 +1367,7 @@ hemibrain_add_made_matches <- function(df,
       stop("df must have column names: ", paste(cnames,collapse = ", "))
     }
     message("Adding matches")
-    df = subset(df, !is.na(df$flywire.id) && !is.na(df$FAFB.hemisphere.match) && !is.na(df$FAFB.hemisphere.match.quality))
+    df = subset(df, !is.na(df$flywire.id) & !is.na(df$FAFB.hemisphere.match) & !is.na(df$FAFB.hemisphere.match.quality))
     df$flywire.id = correct_id(df$flywire.id)
     df$FAFB.hemisphere.match.quality = correct_id(df$FAFB.hemisphere.match.quality)
     df$flywire.id = unlist(sapply(df$flywire.id, function(x) tryCatch(fafbseg::flywire_latestid(x), error = function(e) x)))
@@ -1375,26 +1375,30 @@ hemibrain_add_made_matches <- function(df,
     missing = setdiff(df$flywire.id,gs$flywire.id)
     if(length(missing)){
       message("Adding missing flywire neurons")
-      hemibrain_matching_add(ids = missing,  dataset="flywire", selected_file = selected_file) # meta
+      meta = flywire_meta()
+      hemibrain_matching_add(ids = missing,  dataset="flywire", meta = meta, selected_file = selected_file) # meta
       gs = hemibrain_match_sheet(sheet = "flywire")
     }
-    gs.good = subset(gs, !is.na(gs$FAFB.hemisphere.match.quality) && gs$FAFB.hemisphere.match.quality!="none")
-    df = subset(df$flywire.id %in% gs$flywire.id)
+    gs.good = subset(gs, !is.na(gs$FAFB.hemisphere.match.quality) & gs$FAFB.hemisphere.match.quality!="none")
+    df = subset(df, !df$flywire.id %in% gs.good$flywire.id)
     gs.new = gs
     gs.new[,"FAFB.hemisphere.match"] = df[match(gs$flywire.id,df$flywire.id),"FAFB.hemisphere.match"]
     gs.new[,"FAFB.hemisphere.match.quality"] = df[match(gs$flywire.id,df$flywire.id),"FAFB.hemisphere.match.quality"]
     gs.new.na = is.na(gs.new[,"FAFB.hemisphere.match"])
+    gs.old.filled = !is.na(gs[,"FAFB.hemisphere.match.quality"])
     gs.new[gs.new.na,"FAFB.hemisphere.match"] = gs[gs.new.na,"FAFB.hemisphere.match"]
     gs.new[gs.new.na,"FAFB.hemisphere.match.quality"] = gs[gs.new.na,"FAFB.hemisphere.match.quality"]
+    gs.new[gs.old.filled,"FAFB.hemisphere.match"] = gs[gs.old.filled,"FAFB.hemisphere.match"]
+    gs.new[gs.old.filled,"FAFB.hemisphere.match.quality"] = gs[gs.old.filled,"FAFB.hemisphere.match.quality"]
     write_matches(gs=gs.new,
                   ids = as.character(df$flywire.id),
-                  ws="flywire",
+                  ws="FAFB",
                   id.field ="flywire.id",
                   selected_file = selected_file,
                   column = "FAFB.hemisphere.match")
     write_matches(gs=gs,
-                  ids = as.character(hdf$skid),
-                  ws="flywire",
+                  ids = as.character(df$flywire.id),
+                  ws="FAFB",
                   id.field ="flywire.id",
                   selected_file = selected_file,
                   column = "FAFB.hemisphere.match.quality")
