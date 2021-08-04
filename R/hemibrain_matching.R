@@ -1396,7 +1396,7 @@ hemibrain_add_made_matches <- function(df,
                   id.field ="flywire.id",
                   selected_file = selected_file,
                   column = "FAFB.hemisphere.match")
-    write_matches(gs=gs,
+    write_matches(gs=gs.new,
                   ids = as.character(df$flywire.id),
                   ws="FAFB",
                   id.field ="flywire.id",
