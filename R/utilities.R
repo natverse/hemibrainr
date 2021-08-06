@@ -682,6 +682,7 @@ check_package_available <- function(pkg) {
 update_metdata <- function(neurons, meta, id){
   check_package_available('dplyr')
   df = neurons[,]
+  df = matchColClasses(meta, df)
   dfn = suppress(dplyr::left_join(df, meta))
   matched = match(dfn[[id]], meta[[id]])
   matched.good = !is.na(matched)
@@ -691,3 +692,15 @@ update_metdata <- function(neurons, meta, id){
   neurons
 }
 
+# hidden
+matchColClasses <- function(df1, df2) {
+
+  sharedColNames <- names(df1)[names(df1) %in% names(df2)]
+  sharedColTypes <- sapply(df1[,sharedColNames], class)
+
+  for (n in sharedColNames) {
+    class(df2[, n]) <- sharedColTypes[n]
+  }
+
+  return(df2)
+}
