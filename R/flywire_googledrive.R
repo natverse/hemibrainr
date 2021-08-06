@@ -427,8 +427,6 @@ flywire_failed <-function(local = FALSE, folder = "flywire_neurons/", sql = FALS
 sql_col_types = readr::cols(.default = "c",
                             edits = "i",
                             total.edits = "i",
-                            pre = "i",
-                            post = "i",
                             upstream = "i",
                             downstream = "i",
                             voxels = "i",
@@ -512,7 +510,13 @@ sql_col_types = readr::cols(.default = "c",
                             bodyid = "c",
                             flywire.id = "c",
                             pre = "c",
-                            post = "c")
+                            post = "c",
+                            postsynapse_side_index='n',
+                            presynapse_side_index='n',
+                            axon_postsynapse_side_index='n',
+                            axon_presynapse_side_index='n',
+                            dendrite_postsynapse_side_index='n',
+                            dendrite_presynapse_side_index='n')
 
 #' @rdname flywire_googledrive_data
 #' @export
