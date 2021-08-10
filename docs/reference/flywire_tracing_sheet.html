@@ -91,12 +91,6 @@ and see if a flywire neuron of interest is among the data stored on the hemibrai
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -227,7 +221,8 @@ and see if a flywire neuron of interest is among the data stored on the hemibrai
   local <span class='op'>=</span> <span class='cn'>NULL</span>,
   cloudvolume.url <span class='op'>=</span> <span class='cn'>NULL</span>,
   Verbose <span class='op'>=</span> <span class='cn'>TRUE</span>,
-  work.flows <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"inputs"</span>, <span class='st'>"outputs"</span>, <span class='st'>"matches"</span>, <span class='st'>"synapses"</span><span class='op'>)</span>
+  work.flows <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"inputs"</span>, <span class='st'>"outputs"</span>, <span class='st'>"matches"</span>, <span class='st'>"synapses"</span><span class='op'>)</span>,
+  nblast <span class='op'>=</span> <span class='cn'>NULL</span>
 <span class='op'>)</span>
 
 <span class='fu'>flywire_dns</span><span class='op'>(</span>
@@ -402,7 +397,7 @@ stable flywire.svid column if it is empty.</p>
 <span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
 
 <span class='co'># Quick look at what we have on the google sheet</span>
-<span class='va'>sheetlist</span><span class='op'>=</span><span class='fu'>googlesheets4</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/googlesheets4/man/sheet_properties.html'>sheet_properties</a></span><span class='op'>(</span>
+<span class='va'>sheetlist</span><span class='op'>=</span><span class='fu'>googlesheets4</span><span class='fu'>::</span><span class='fu'><a href='https://googlesheets4.tidyverse.org/reference/sheet_properties.html'>sheet_properties</a></span><span class='op'>(</span>
 <span class='st'>"1QyuHFdqz705OSxXNynD9moIsLvZGjjBjylx5sGZP2Yg"</span><span class='op'>)</span>
 <span class='fu'><a href='https://rdrr.io/r/utils/View.html'>View</a></span><span class='op'>(</span><span class='va'>sheetlist</span><span class='op'>)</span>
 
@@ -446,7 +441,7 @@ query.type <span class='op'>=</span> <span class='st'>"flywire.xyz"</span>, Verb
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

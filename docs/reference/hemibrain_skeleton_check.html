@@ -91,12 +91,6 @@ of the hemibrain volume." />
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -188,7 +182,7 @@ of the hemibrain volume.</p>
       <th>x</th>
       <td><p>a <code><a href='https://rdrr.io/pkg/nat/man/neuronlist.html'>nat::neuronlist</a></code> or <code><a href='https://rdrr.io/pkg/nat/man/neuron.html'>nat::neuron</a></code> object. It is assumed
 that this neuron has been read in by
-<code><a href='https://rdrr.io/pkg/neuprintr/man/neuprint_read_neurons.html'>neuprintr::neuprint_read_neurons</a></code> or possibly
+<code><a href='https://natverse.org/neuprintr/reference/neuprint_read_neurons.html'>neuprintr::neuprint_read_neurons</a></code> or possibly
 <code><a href='https://rdrr.io/pkg/catmaid/man/read.neuron.catmaid.html'>catmaid::read.neurons.catmaid</a></code>.</p></td>
     </tr>
     <tr>
@@ -243,7 +237,7 @@ message the moment there is an error.</p></td>
 <span class='va'>ids</span><span class='op'>=</span><span class='va'>ids</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span><span class='op'>]</span>
 
 <span class='co'># Read in these neurons</span>
-<span class='va'>neurons</span> <span class='op'>=</span> <span class='fu'>neuprintr</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/neuprintr/man/neuprint_read_neurons.html'>neuprint_read_neurons</a></span><span class='op'>(</span><span class='va'>ids</span><span class='op'>)</span>
+<span class='va'>neurons</span> <span class='op'>=</span> <span class='fu'>neuprintr</span><span class='fu'>::</span><span class='fu'><a href='https://natverse.org/neuprintr/reference/neuprint_read_neurons.html'>neuprint_read_neurons</a></span><span class='op'>(</span><span class='va'>ids</span><span class='op'>)</span>
 <span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
 <span class='co'># Get all the roi meshes</span>
 <span class='va'>hemibrain.rois</span> <span class='op'>=</span> <span class='fu'><a href='hemibrain_roi_meshes.html'>hemibrain_roi_meshes</a></span><span class='op'>(</span><span class='op'>)</span>
@@ -258,7 +252,7 @@ message the moment there is an error.</p></td>
 <span class='co'># whole hemibrain</span>
 
 <span class='va'>neurons.checked</span> <span class='op'>=</span> <span class='fu'>hemibrain_skeleton_check</span><span class='op'>(</span><span class='va'>neurons</span>, meshes <span class='op'>=</span> <span class='va'>hemibrain.surf</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'>Re-rooting 1 neurons without a soma</span></div><div class='output co'>#&gt; <span class='message'>Removing synapses outside the hemibrain neuropil volume for 3 neurons</span></div><div class='input'>
+</div><div class='output co'>#&gt; <span class='message'>Re-rooting 1 neurons without a soma</span></div><div class='output co'>#&gt; <span class='message'>Removing synapses outside the hemibrain neuropil volume for 3 neurons</span></div><div class='output co'>#&gt; <span class='warning'>Warning: invalid factor level, NA generated</span></div><div class='output co'>#&gt; <span class='warning'>Warning: invalid factor level, NA generated</span></div><div class='output co'>#&gt; <span class='warning'>Warning: invalid factor level, NA generated</span></div><div class='output co'>#&gt; <span class='warning'>Warning: invalid factor level, NA generated</span></div><div class='input'>
 <span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
 <span class='co'># Let's check that this worked</span>
 <span class='fu'>nat</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/nat/man/nopen3d.html'>nopen3d</a></span><span class='op'>(</span><span class='op'>)</span>
@@ -287,7 +281,7 @@ message the moment there is an error.</p></td>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

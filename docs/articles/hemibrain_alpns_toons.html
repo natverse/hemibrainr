@@ -45,12 +45,6 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
 <li>
-  <a href="../index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -110,7 +104,7 @@
 
       
 
-      </header><script src="hemibrain_alpns_toons_files/header-attrs-2.8/header-attrs.js"></script><div class="row">
+      </header><script src="hemibrain_alpns_toons_files/header-attrs-2.9/header-attrs.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>olfactory connectivity</h1>
@@ -135,7 +129,7 @@
 <code class="sourceCode R"><span class="co"># Load package</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/flyconnectome/hemibrainr">hemibrainr</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/talgalili/gplots">gplots</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">gplots</span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://had.co.nz/plyr">plyr</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/hadley/reshape">reshape2</a></span><span class="op">)</span>
@@ -220,10 +214,10 @@
 <p>First let us get some clusterings for ALPNs and TONs based on their cross-correlation.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># TON correlation matrix</span>
-<span class="va">cor.mat</span> <span class="op">=</span> <span class="fu">lsa</span><span class="fu">::</span><span class="fu">cosine</span><span class="op">(</span><span class="va">conn.mat.scaled</span><span class="op">)</span>
+<span class="va">cor.mat</span> <span class="op">=</span> <span class="fu">lsa</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/lsa/man/cosine.html">cosine</a></span><span class="op">(</span><span class="va">conn.mat.scaled</span><span class="op">)</span>
 
 <span class="co"># ALPN correlation matrix</span>
-<span class="va">cor.mat.2</span> <span class="op">=</span> <span class="fu">lsa</span><span class="fu">::</span><span class="fu">cosine</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/t.html">t</a></span><span class="op">(</span><span class="va">conn.mat.scaled</span><span class="op">)</span><span class="op">)</span>
+<span class="va">cor.mat.2</span> <span class="op">=</span> <span class="fu">lsa</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/lsa/man/cosine.html">cosine</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/t.html">t</a></span><span class="op">(</span><span class="va">conn.mat.scaled</span><span class="op">)</span><span class="op">)</span>
 
 <span class="co"># Grey tone for heatmap</span>
 <span class="va">heatmap.cols</span> <span class="op">=</span> <span class="fu">circlize</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/circlize/man/colorRamp2.html">colorRamp2</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1</span>, <span class="op">-</span><span class="fl">0.5</span>, <span class="op">-</span><span class="fl">0.25</span>, <span class="fl">0</span>, <span class="fl">0.25</span>, <span class="fl">0.5</span>, <span class="fl">1</span><span class="op">)</span>,
@@ -239,7 +233,7 @@
 
 
 <span class="co"># dendrogram colours</span>
-<span class="va">apricot</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grDevices/colorRamp.html">colorRampPalette</a></span><span class="op">(</span><span class="fu">LaCroixColoR</span><span class="fu">::</span><span class="fu">lacroix_palette</span><span class="op">(</span><span class="st">"Apricot"</span><span class="op">)</span><span class="op">)</span>
+<span class="va">apricot</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grDevices/colorRamp.html">colorRampPalette</a></span><span class="op">(</span><span class="fu">LaCroixColoR</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/LaCroixColoR/man/lacroix_palette.html">lacroix_palette</a></span><span class="op">(</span><span class="st">"Apricot"</span><span class="op">)</span><span class="op">)</span>
 
 <span class="co"># clustering</span>
 <span class="va">cclus</span> <span class="op">=</span>  <span class="fu">dendroextras</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/dendroextras/man/colour_clusters.html">color_clusters</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/hclust.html">hclust</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/dist.html">as.dist</a></span><span class="op">(</span><span class="fl">1</span><span class="op">-</span><span class="va">cor.mat</span><span class="op">)</span>, method <span class="op">=</span> <span class="st">"ward.D2"</span><span class="op">)</span>, h <span class="op">=</span> <span class="fl">0.1</span>, col <span class="op">=</span> <span class="va">apricot</span><span class="op">)</span>
@@ -247,10 +241,10 @@
 <p>Plot dendrograms:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Plot ALPN clustering</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">rclus</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span><span class="op">(</span><span class="va">rclus</span><span class="op">)</span>
 
 <span class="co"># Plot TON clustering</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">cclus</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span><span class="op">(</span><span class="va">cclus</span><span class="op">)</span></code></pre></div>
 <p>We can see what our data like quickly, by plotting some simple heatmaps:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Normalised matrix</span>
@@ -422,7 +416,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

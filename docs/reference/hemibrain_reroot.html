@@ -93,12 +93,6 @@ neurons the soma should be located in a cortex outside of the neuropil proper." 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -230,7 +224,7 @@ from the hemibrain Google team drive overseen by the Drosophila Connectomics gro
 <span class='va'>bad.soma</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"5813015982"</span>,<span class='st'>"885788485"</span>,<span class='st'>"5813013913"</span><span class='op'>)</span>
 
 <span class='co'># Read in these neurons</span>
-<span class='va'>neurons.bs</span> <span class='op'>=</span> <span class='fu'>neuprintr</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/neuprintr/man/neuprint_read_neurons.html'>neuprint_read_neurons</a></span><span class='op'>(</span><span class='va'>bad.soma</span><span class='op'>)</span>
+<span class='va'>neurons.bs</span> <span class='op'>=</span> <span class='fu'>neuprintr</span><span class='fu'>::</span><span class='fu'><a href='https://natverse.org/neuprintr/reference/neuprint_read_neurons.html'>neuprint_read_neurons</a></span><span class='op'>(</span><span class='va'>bad.soma</span><span class='op'>)</span>
 
 <span class='co'># Re-root</span>
 <span class='va'>neurons</span> <span class='op'>=</span> <span class='fu'>hemibrain_reroot</span><span class='op'>(</span><span class='va'>neurons.bs</span>, meshes <span class='op'>=</span> <span class='va'>hemibrain.surf</span><span class='op'>)</span>
@@ -266,7 +260,7 @@ from the hemibrain Google team drive overseen by the Drosophila Connectomics gro
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

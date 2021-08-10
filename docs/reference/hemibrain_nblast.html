@@ -94,12 +94,6 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -184,7 +178,8 @@
     <span class='st'>"hemibrain-primary.neurites"</span>, <span class='st'>"hemibrain-primary.dendrites"</span>, <span class='st'>"hemibrain-axons"</span>,
     <span class='st'>"hemibrain-dendrites"</span>, <span class='st'>"hemibrain-spines"</span>, <span class='st'>"hemibrain-tracts"</span>, <span class='st'>"hemibrain-arbour"</span>,
     <span class='st'>"hemibrain-simplified"</span><span class='op'>)</span>,
-  local <span class='op'>=</span> <span class='cn'>FALSE</span>
+  local <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  fafbsegpy <span class='op'>=</span> <span class='cn'>TRUE</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -201,6 +196,10 @@ branching arbour.
       <th>local</th>
       <td><p><code>FALSE</code> or path. By default (<code>FALSE</code>) data is read from <code>options()$Drive_hemibrain_data</code>),
 but the user can specify an alternative path.</p></td>
+    </tr>
+    <tr>
+      <th>fafbsegpy</th>
+      <td><p>logical. If <code>TRUE</code> the NBLASTs are fetched from Philipp Schlegel's nightly  <a href='https://github.com/flyconnectome/flywire_nblast_pipeline/tree/main/data'>flywire NBLAST pipeline</a>.</p></td>
     </tr>
     </table>
 
@@ -267,7 +266,7 @@ using <code><a href='https://rdrr.io/pkg/fafbseg/man/skeletor.html'>fafbseg::ske
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

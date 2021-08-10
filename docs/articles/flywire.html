@@ -45,12 +45,6 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
 <li>
-  <a href="../index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -110,7 +104,7 @@
 
       
 
-      </header><script src="flywire_files/header-attrs-2.8/header-attrs.js"></script><div class="row">
+      </header><script src="flywire_files/header-attrs-2.9/header-attrs.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>flywire</h1>
@@ -324,7 +318,7 @@
 <p>Let us get some neurons from the ‘flywire interest’ googlesheet:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Get all the flywire IDs (updated regularly based on position information) users have flagged</span>
-<span class="va">gs</span> <span class="op">=</span> <span class="fu">googlesheets4</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/googlesheets4/man/range_read.html">read_sheet</a></span><span class="op">(</span>ss <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">flywire_flagged_gsheet</span>, sheet <span class="op">=</span> <span class="st">"flywire"</span><span class="op">)</span>
+<span class="va">gs</span> <span class="op">=</span> <span class="fu">googlesheets4</span><span class="fu">::</span><span class="fu"><a href="https://googlesheets4.tidyverse.org/reference/range_read.html">read_sheet</a></span><span class="op">(</span>ss <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">flywire_flagged_gsheet</span>, sheet <span class="op">=</span> <span class="st">"flywire"</span><span class="op">)</span>
 
 <span class="co"># Get IDs for User 'Tots'</span>
 <span class="va">gs.chosen</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/nat/man/subset.html">subset</a></span><span class="op">(</span><span class="va">gs</span>, <span class="va">User</span> <span class="op">==</span> <span class="st">"Tots"</span><span class="op">)</span>
@@ -356,7 +350,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>
