@@ -167,6 +167,7 @@ synapse_side_index.neuron <- function(x,
                     axon_postsynapse_side_index=axon_postsynapse_side_index, axon_presynapse_side_index=axon_presynapse_side_index,
                     dendrite_postsynapse_side_index=dendrite_postsynapse_side_index, dendrite_presynapse_side_index=dendrite_presynapse_side_index)
   }
+  df = round(df, 3)
 }
 
 # hidden

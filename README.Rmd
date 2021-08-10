@@ -211,9 +211,91 @@ nat::nopen3d()
 nlscan_split(neurons.flow, WithConnectors = TRUE)
 ```
 
-## Tutorial
+## Flywire data fields
 
+ Here are some of the most useful column entries across these data. Please let me know if I have missed something important:   
 
+| column | description | data entity |
+| ----------- | ----------- | ----------- |
+| flywire.xyz | A cardinal point in raw FlyWire voxel space that defines a neuron | many |
+| flywire.id | The unique 16 digit ID for the flywire neuron, changes when neuron edited | many |
+| flywire.svid | The supervoxel ID that corresponds to flywire.xyz  | flywire_meta |
+| cell.type | If neuron matched to a hemibrain neuron we get its cell type | flywire_meta |
+| side | The hemisphere of the brain that the neuron's soma, or else root-point, is thought to be on | flywire_meta |
+| status | A manually assigned 'status' from a Drosophila Connectomics Group tracer, indicating the quality of the neuron | flywire_meta |
+| skid | The neuron's skeleton ID in CATMAID, if it exists. The CATMAID neuron may have manualyl annotated synapses | flywire_meta |
+| FAFB.xyz | A cardinal point in  FAFB14 voxel space that defines a neuron | flywire_meta |
+| ItoLee_Hemilineage | A meaningful biological category, the developmental hemilineage to which we think the neuron belongs, in the nomenclature of Ito et al. 2013 | flywire_meta |
+| ItoLee_Lineage | A meaningful biological category, the developmental lineage (comprises multiple hemilineages) to which we think the neuron belongs, in the nomenclature of Ito et al. 2013 | flywire_meta |
+| Hartenstein_Hemilineage | A meaningful biological category, the developmental hemilineage to which we think the neuron belongs, in the nomenclature of Lovick/Wong et al. 2013, can be matched to similar names in the larval animal | flywire_meta |
+| Hartenstein_Lineage | A meaningful biological category, the developmental (comprises multiple hemilineages) to which we think the neuron belongs, in the nomenclature of Lovick/Wong et al. 2013, can be matched to similar names in the larval animal | flywire_meta |
+| gsheet | A Drosophila Connectomics Group googlesheet on which the flywire.id ID is recorded | flywire_meta |
+| hemibrain.match | A  semi-manually matched hemibrain neuron's bodyID | flywire_meta |
+| hemibrain.match.quality | A manually assigned quality for the hemibrain match | flywire_meta |
+| FAFB.hemisphere.match | A cardinal point for a neuron on the other hemisphere that has semi-manually been found to match the given neuron | flywire_meta |
+| FAFB.hemisphere.match.quality | A manually assigned quality for the FAFB hemisphere match | flywire_meta |
+| dataset | The dataset to which the given neuron belongs | hemibrain_matches |
+| total.outputs | The total number of output links / postsynapses from the neuron | flywire_meta |
+| axon.outputs | The total number of axonal output links / postsynapses from the neuron | flywire_meta |
+| dend.outputs | The total number of dendritic output links / postsynapses from the neuron | flywire_meta |
+| total.outputs.density | The total number of output links / postsynapses from the neuron, per micron of cable | flywire_meta |
+| axon.outputs.density | The total number of axonal links / postsynapses from the neuron, per micron of cable | flywire_meta |
+| dend.outputs.density | The total number of dendritic links / postsynapses from the neuron, per micron of cable | flywire_meta |
+| total.outputs | The total number of input links / postsynapses from the neuron | flywire_meta |
+| axon.inputs | The total number of axonal input links / postsynapses from the neuron | flywire_meta |
+| dend.inputs | The total number of dendritic input links / postsynapses from the neuron | flywire_meta |
+| total.inputs.density | The total number of input links / postsynapses from the neuron, per micron of cable | flywire_meta |
+| axon.inputs.density | The total number of axonal links / postsynapses from the neuron, per micron of cable | flywire_meta |
+| dend.inputs.density | The total number of dendritic links / postsynapses from the neuron, per micron of cable | flywire_meta |
+| total.length | The total cable length, in microns, for the neuron A cardinal point in raw FlyWire voxel space that defines a neuro | flywire_meta |
+| axon.length | The axonal cable length, in microns, for the neuron A cardinal point in raw FlyWire voxel space that defines a neuro | flywire_meta |
+| dend.length | The dendritic cable length, in microns, for the neuron A cardinal point in raw FlyWire voxel space that defines a neuro | flywire_meta |
+| pd.length | The primary dendrite (linker) cable length, in microns, for the neuron A cardinal point in raw FlyWire voxel space that defines a neuro | flywire_meta |
+| pnt.length | The primary neurite (cell body fibre) cable length, in microns, for the neuron A cardinal point in raw FlyWire voxel space that defines a neuro | flywire_meta |
+| segregation_index | An entropy score for how segregated the neuron's synapses are into axon and dendrite, see Schneider-Mizell et al 2016, eLife | flywire_meta |
+| root | The treenode ID (position in .swc file) of the neuron's root | flywire_meta |
+| nodes | The number of nodes in the neuron | flywire_meta |
+| segments | The number of segments in the neuron | flywire_meta |
+| banchpoints | The number of banchpoints in the neuron | flywire_meta |
+| endpoints | The number of endpoints in the neuron | flywire_meta |
+| nTrees | The number of trees in the neuron, should be 1 | flywire_meta |
+| connectors | The number of synapses in the neuron | flywire_meta |
+| postsynapse_side_index | Side side of the neuron that receives the most input, calculated as: (no. postsynaptic links on right - no. on left)/total | flywire_meta |
+| presynapse_side_index | Side side of the neuron that receives the most output, calculated as: (no. presynaptic links on right - no. on left)/total | flywire_meta |
+| axon_postsynapse_side_index | Same as  postsynapse_side_index, but only for the axon | flywire_meta |
+| axon_presynapse_side_index | Same as  presynapse_side_index, but only for the axon | flywire_meta |
+| dendrite_postsynapse_side_index | Same as  postsynapse_side_index, but only for the dendrite | flywire_meta |
+| dendrite_presynapse_side_index | Same as  presynapse_side_index, but only for the dendrite | flywire_meta |
+| top.nt | The most prominent predicted transmitter for the neurons' presynpses (the modal across all presynaptic links for: the best nt prediction for each synapses above cleft_score of 50) | flywire_meta |
+| offset | The index for the Buhmann synapse in the original .sql table | connectors |
+| x,y,z | The  position of the connection in FlyWire space| connectors |
+| scores | The  Buhmamnn prediction score for the synapse, unsure definition | connectors |
+| top.p | The probability of the top transmitter prediction for the presynaptic end of this connection | connectors |
+| top.nt | The top transmitter prediction for the presynaptic end of this connection | connectors |
+| gaba | The synister prediction score for gaba | connectors |
+| glutamate | The synister prediction score for glutamate | connectors |
+| acetylcholine | The synister prediction score for acetylcholine | connectors |
+| octopamine | The synister prediction score for octopamine | connectors |
+| serotonin | The synister prediction score for serotonin | connectors |
+| dopamine | The synister prediction score for dopamine | connectors |
+| prepost | Whether the synapse is pre- (0, i.e. output synapse) orr post (1, i.e. input) | connectors |
+| segmentid_pre | The segment (?) for the presynaptic side of the link | connectors |
+| segmentid_pre | The segment (?) for the postsynaptic side of the link | connectors |
+| pre_svid | The flywire supervoxel ID for the presynaptic side of the link | connectors |
+| post_svid | The flywire supervoxel ID for the postsynaptic side of the link | connectors |
+| pre_id | The flywire.id for the presynaptic side of the link | connectors |
+| post_id | The flywire.id for the postsynaptic side of the link | connectors |
+| treenode_id | The treenode in the corresponding swc/d to which this synapse is best attached | connectors |
+| strahler_order | The strahler order of the branch on which the synapse is positioned | connectors |
+| Label | The comparment of the neuron on which the synapse is positioned, 2 = axon, 3 - dendrite, 4 = primary.dendrite, 7 = primary.neurite, 1 = soma | connectors |
+| PointNo | The ID for each point in the neuron | swc/d |
+| X,Y,Z | The FlyWire coordinate of the point | swc/d  |
+| W | The width of the point, generally not used | swc/d  |
+| parent | The Parent node, -1 means root | swc/d  |
+| post | The number of postsynapses attachec to node | swc/d  |
+| pre | The Pnumberf of presynapses attached to node| swc/d  |
+| flow.cent | The synaptic flow at this node, see Schneider-Mizell et al. 2016 | swc/d  |
+| strahler_order | The strahler order of this node | swc/d  |
 
 ## Data
 
