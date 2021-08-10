@@ -249,7 +249,7 @@ nat::nopen3d()
 nlscan_split(neurons.flow, WithConnectors = TRUE)
 ```
 
-## Flywire data fields
+## Data fields
 
 Here are some of the most useful column entries across these data.
 Please let me know if I have missed something important:

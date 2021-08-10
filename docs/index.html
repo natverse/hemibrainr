@@ -108,7 +108,7 @@
       </header><div class="row">
   <div class="contents col-md-9">
 
-
+<p><img src="reference/figures/logo.svg" align="right" height="139"><!-- badges: start --><a href="https://github.com/natverse/hemibrainr/actions"><img src="https://github.com/natverse/hemibrainr/workflows/R-CMD-check/badge.svg" alt="R-CMD-check"></a> <a href="https://codecov.io/gh/natverse/hemibrainr?branch=master"><img src="https://codecov.io/gh/natverse/hemibrainr/branch/master/graph/badge.svg" alt="Codecov test coverage"></a> <a href="https://www.tidyverse.org/lifecycle/#experimental"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: experimental"></a> <!-- badges: end --></p>
 <div id="hemibrainr" class="section level1">
 <div class="page-header"><h1 class="hasAnchor">
 <a href="#hemibrainr" class="anchor"></a>hemibrainr</h1></div>
@@ -261,9 +261,419 @@ split <span class="op">=</span> <span class="st">"distance"</span><span class="o
 <span class="fu"><a href="reference/plot3d_split.html">nlscan_split</a></span><span class="op">(</span><span class="va">neurons.flow</span>, WithConnectors <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 </div>
 </div>
-<div id="tutorial" class="section level2">
+<div id="data-fields" class="section level2">
 <h2 class="hasAnchor">
-<a href="#tutorial" class="anchor"></a>Tutorial</h2>
+<a href="#data-fields" class="anchor"></a>Data fields</h2>
+<p>Here are some of the most useful column entries across these data. Please let me know if I have missed something important:</p>
+<table class="table">
+<colgroup>
+<col width="11%">
+<col width="81%">
+<col width="6%">
+</colgroup>
+<thead><tr class="header">
+<th>column</th>
+<th>description</th>
+<th>data entity</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td>flywire.xyz</td>
+<td>A cardinal point in raw FlyWire voxel space that defines a neuron</td>
+<td>many</td>
+</tr>
+<tr class="even">
+<td>flywire.id</td>
+<td>The unique 16 digit ID for the flywire neuron, changes when neuron edited</td>
+<td>many</td>
+</tr>
+<tr class="odd">
+<td>flywire.svid</td>
+<td>The supervoxel ID that corresponds to flywire.xyz</td>
+<td>flywire_meta</td>
+</tr>
+<tr class="even">
+<td>cell.type</td>
+<td>If neuron matched to a hemibrain neuron we get its cell type</td>
+<td>flywire_meta</td>
+</tr>
+<tr class="odd">
+<td>side</td>
+<td>The hemisphere of the brain that the neuron’s soma, or else root-point, is thought to be on</td>
+<td>flywire_meta</td>
+</tr>
+<tr class="even">
+<td>status</td>
+<td>A manually assigned ‘status’ from a Drosophila Connectomics Group tracer, indicating the quality of the neuron</td>
+<td>flywire_meta</td>
+</tr>
+<tr class="odd">
+<td>skid</td>
+<td>The neuron’s skeleton ID in CATMAID, if it exists. The CATMAID neuron may have manualyl annotated synapses</td>
+<td>flywire_meta</td>
+</tr>
+<tr class="even">
+<td>FAFB.xyz</td>
+<td>A cardinal point in FAFB14 voxel space that defines a neuron</td>
+<td>flywire_meta</td>
+</tr>
+<tr class="odd">
+<td>ItoLee_Hemilineage</td>
+<td>A meaningful biological category, the developmental hemilineage to which we think the neuron belongs, in the nomenclature of Ito et al. 2013</td>
+<td>flywire_meta</td>
+</tr>
+<tr class="even">
+<td>ItoLee_Lineage</td>
+<td>A meaningful biological category, the developmental lineage (comprises multiple hemilineages) to which we think the neuron belongs, in the nomenclature of Ito et al. 2013</td>
+<td>flywire_meta</td>
+</tr>
+<tr class="odd">
+<td>Hartenstein_Hemilineage</td>
+<td>A meaningful biological category, the developmental hemilineage to which we think the neuron belongs, in the nomenclature of Lovick/Wong et al. 2013, can be matched to similar names in the larval animal</td>
+<td>flywire_meta</td>
+</tr>
+<tr class="even">
+<td>Hartenstein_Lineage</td>
+<td>A meaningful biological category, the developmental (comprises multiple hemilineages) to which we think the neuron belongs, in the nomenclature of Lovick/Wong et al. 2013, can be matched to similar names in the larval animal</td>
+<td>flywire_meta</td>
+</tr>
+<tr class="odd">
+<td>gsheet</td>
+<td>A Drosophila Connectomics Group googlesheet on which the flywire.id ID is recorded</td>
+<td>flywire_meta</td>
+</tr>
+<tr class="even">
+<td>hemibrain.match</td>
+<td>A semi-manually matched hemibrain neuron’s bodyID</td>
+<td>flywire_meta</td>
+</tr>
+<tr class="odd">
+<td>hemibrain.match.quality</td>
+<td>A manually assigned quality for the hemibrain match</td>
+<td>flywire_meta</td>
+</tr>
+<tr class="even">
+<td>FAFB.hemisphere.match</td>
+<td>A cardinal point for a neuron on the other hemisphere that has semi-manually been found to match the given neuron</td>
+<td>flywire_meta</td>
+</tr>
+<tr class="odd">
+<td>FAFB.hemisphere.match.quality</td>
+<td>A manually assigned quality for the FAFB hemisphere match</td>
+<td>flywire_meta</td>
+</tr>
+<tr class="even">
+<td>dataset</td>
+<td>The dataset to which the given neuron belongs</td>
+<td>hemibrain_matches</td>
+</tr>
+<tr class="odd">
+<td>total.outputs</td>
+<td>The total number of output links / postsynapses from the neuron</td>
+<td>flywire_meta</td>
+</tr>
+<tr class="even">
+<td>axon.outputs</td>
+<td>The total number of axonal output links / postsynapses from the neuron</td>
+<td>flywire_meta</td>
+</tr>
+<tr class="odd">
+<td>dend.outputs</td>
+<td>The total number of dendritic output links / postsynapses from the neuron</td>
+<td>flywire_meta</td>
+</tr>
+<tr class="even">
+<td>total.outputs.density</td>
+<td>The total number of output links / postsynapses from the neuron, per micron of cable</td>
+<td>flywire_meta</td>
+</tr>
+<tr class="odd">
+<td>axon.outputs.density</td>
+<td>The total number of axonal links / postsynapses from the neuron, per micron of cable</td>
+<td>flywire_meta</td>
+</tr>
+<tr class="even">
+<td>dend.outputs.density</td>
+<td>The total number of dendritic links / postsynapses from the neuron, per micron of cable</td>
+<td>flywire_meta</td>
+</tr>
+<tr class="odd">
+<td>total.outputs</td>
+<td>The total number of input links / postsynapses from the neuron</td>
+<td>flywire_meta</td>
+</tr>
+<tr class="even">
+<td>axon.inputs</td>
+<td>The total number of axonal input links / postsynapses from the neuron</td>
+<td>flywire_meta</td>
+</tr>
+<tr class="odd">
+<td>dend.inputs</td>
+<td>The total number of dendritic input links / postsynapses from the neuron</td>
+<td>flywire_meta</td>
+</tr>
+<tr class="even">
+<td>total.inputs.density</td>
+<td>The total number of input links / postsynapses from the neuron, per micron of cable</td>
+<td>flywire_meta</td>
+</tr>
+<tr class="odd">
+<td>axon.inputs.density</td>
+<td>The total number of axonal links / postsynapses from the neuron, per micron of cable</td>
+<td>flywire_meta</td>
+</tr>
+<tr class="even">
+<td>dend.inputs.density</td>
+<td>The total number of dendritic links / postsynapses from the neuron, per micron of cable</td>
+<td>flywire_meta</td>
+</tr>
+<tr class="odd">
+<td>total.length</td>
+<td>The total cable length, in microns, for the neuron A cardinal point in raw FlyWire voxel space that defines a neuro</td>
+<td>flywire_meta</td>
+</tr>
+<tr class="even">
+<td>axon.length</td>
+<td>The axonal cable length, in microns, for the neuron A cardinal point in raw FlyWire voxel space that defines a neuro</td>
+<td>flywire_meta</td>
+</tr>
+<tr class="odd">
+<td>dend.length</td>
+<td>The dendritic cable length, in microns, for the neuron A cardinal point in raw FlyWire voxel space that defines a neuro</td>
+<td>flywire_meta</td>
+</tr>
+<tr class="even">
+<td>pd.length</td>
+<td>The primary dendrite (linker) cable length, in microns, for the neuron A cardinal point in raw FlyWire voxel space that defines a neuro</td>
+<td>flywire_meta</td>
+</tr>
+<tr class="odd">
+<td>pnt.length</td>
+<td>The primary neurite (cell body fibre) cable length, in microns, for the neuron A cardinal point in raw FlyWire voxel space that defines a neuro</td>
+<td>flywire_meta</td>
+</tr>
+<tr class="even">
+<td>segregation_index</td>
+<td>An entropy score for how segregated the neuron’s synapses are into axon and dendrite, see Schneider-Mizell et al 2016, eLife</td>
+<td>flywire_meta</td>
+</tr>
+<tr class="odd">
+<td>root</td>
+<td>The treenode ID (position in .swc file) of the neuron’s root</td>
+<td>flywire_meta</td>
+</tr>
+<tr class="even">
+<td>nodes</td>
+<td>The number of nodes in the neuron</td>
+<td>flywire_meta</td>
+</tr>
+<tr class="odd">
+<td>segments</td>
+<td>The number of segments in the neuron</td>
+<td>flywire_meta</td>
+</tr>
+<tr class="even">
+<td>banchpoints</td>
+<td>The number of banchpoints in the neuron</td>
+<td>flywire_meta</td>
+</tr>
+<tr class="odd">
+<td>endpoints</td>
+<td>The number of endpoints in the neuron</td>
+<td>flywire_meta</td>
+</tr>
+<tr class="even">
+<td>nTrees</td>
+<td>The number of trees in the neuron, should be 1</td>
+<td>flywire_meta</td>
+</tr>
+<tr class="odd">
+<td>connectors</td>
+<td>The number of synapses in the neuron</td>
+<td>flywire_meta</td>
+</tr>
+<tr class="even">
+<td>postsynapse_side_index</td>
+<td>Side side of the neuron that receives the most input, calculated as: (no. postsynaptic links on right - no. on left)/total</td>
+<td>flywire_meta</td>
+</tr>
+<tr class="odd">
+<td>presynapse_side_index</td>
+<td>Side side of the neuron that receives the most output, calculated as: (no. presynaptic links on right - no. on left)/total</td>
+<td>flywire_meta</td>
+</tr>
+<tr class="even">
+<td>axon_postsynapse_side_index</td>
+<td>Same as postsynapse_side_index, but only for the axon</td>
+<td>flywire_meta</td>
+</tr>
+<tr class="odd">
+<td>axon_presynapse_side_index</td>
+<td>Same as presynapse_side_index, but only for the axon</td>
+<td>flywire_meta</td>
+</tr>
+<tr class="even">
+<td>dendrite_postsynapse_side_index</td>
+<td>Same as postsynapse_side_index, but only for the dendrite</td>
+<td>flywire_meta</td>
+</tr>
+<tr class="odd">
+<td>dendrite_presynapse_side_index</td>
+<td>Same as presynapse_side_index, but only for the dendrite</td>
+<td>flywire_meta</td>
+</tr>
+<tr class="even">
+<td>top.nt</td>
+<td>The most prominent predicted transmitter for the neurons’ presynpses (the modal across all presynaptic links for: the best nt prediction for each synapses above cleft_score of 50)</td>
+<td>flywire_meta</td>
+</tr>
+<tr class="odd">
+<td>offset</td>
+<td>The index for the Buhmann synapse in the original .sql table</td>
+<td>connectors</td>
+</tr>
+<tr class="even">
+<td>x,y,z</td>
+<td>The position of the connection in FlyWire space</td>
+<td>connectors</td>
+</tr>
+<tr class="odd">
+<td>scores</td>
+<td>The Buhmamnn prediction score for the synapse, unsure definition</td>
+<td>connectors</td>
+</tr>
+<tr class="even">
+<td>top.p</td>
+<td>The probability of the top transmitter prediction for the presynaptic end of this connection</td>
+<td>connectors</td>
+</tr>
+<tr class="odd">
+<td>top.nt</td>
+<td>The top transmitter prediction for the presynaptic end of this connection</td>
+<td>connectors</td>
+</tr>
+<tr class="even">
+<td>gaba</td>
+<td>The synister prediction score for gaba</td>
+<td>connectors</td>
+</tr>
+<tr class="odd">
+<td>glutamate</td>
+<td>The synister prediction score for glutamate</td>
+<td>connectors</td>
+</tr>
+<tr class="even">
+<td>acetylcholine</td>
+<td>The synister prediction score for acetylcholine</td>
+<td>connectors</td>
+</tr>
+<tr class="odd">
+<td>octopamine</td>
+<td>The synister prediction score for octopamine</td>
+<td>connectors</td>
+</tr>
+<tr class="even">
+<td>serotonin</td>
+<td>The synister prediction score for serotonin</td>
+<td>connectors</td>
+</tr>
+<tr class="odd">
+<td>dopamine</td>
+<td>The synister prediction score for dopamine</td>
+<td>connectors</td>
+</tr>
+<tr class="even">
+<td>prepost</td>
+<td>Whether the synapse is pre- (0, i.e. output synapse) orr post (1, i.e. input)</td>
+<td>connectors</td>
+</tr>
+<tr class="odd">
+<td>segmentid_pre</td>
+<td>The segment (?) for the presynaptic side of the link</td>
+<td>connectors</td>
+</tr>
+<tr class="even">
+<td>segmentid_pre</td>
+<td>The segment (?) for the postsynaptic side of the link</td>
+<td>connectors</td>
+</tr>
+<tr class="odd">
+<td>pre_svid</td>
+<td>The flywire supervoxel ID for the presynaptic side of the link</td>
+<td>connectors</td>
+</tr>
+<tr class="even">
+<td>post_svid</td>
+<td>The flywire supervoxel ID for the postsynaptic side of the link</td>
+<td>connectors</td>
+</tr>
+<tr class="odd">
+<td>pre_id</td>
+<td>The flywire.id for the presynaptic side of the link</td>
+<td>connectors</td>
+</tr>
+<tr class="even">
+<td>post_id</td>
+<td>The flywire.id for the postsynaptic side of the link</td>
+<td>connectors</td>
+</tr>
+<tr class="odd">
+<td>treenode_id</td>
+<td>The treenode in the corresponding swc/d to which this synapse is best attached</td>
+<td>connectors</td>
+</tr>
+<tr class="even">
+<td>strahler_order</td>
+<td>The strahler order of the branch on which the synapse is positioned</td>
+<td>connectors</td>
+</tr>
+<tr class="odd">
+<td>Label</td>
+<td>The comparment of the neuron on which the synapse is positioned, 2 = axon, 3 - dendrite, 4 = primary.dendrite, 7 = primary.neurite, 1 = soma</td>
+<td>connectors</td>
+</tr>
+<tr class="even">
+<td>PointNo</td>
+<td>The ID for each point in the neuron</td>
+<td>swc/d</td>
+</tr>
+<tr class="odd">
+<td>X,Y,Z</td>
+<td>The FlyWire coordinate of the point</td>
+<td>swc/d</td>
+</tr>
+<tr class="even">
+<td>W</td>
+<td>The width of the point, generally not used</td>
+<td>swc/d</td>
+</tr>
+<tr class="odd">
+<td>parent</td>
+<td>The Parent node, -1 means root</td>
+<td>swc/d</td>
+</tr>
+<tr class="even">
+<td>post</td>
+<td>The number of postsynapses attachec to node</td>
+<td>swc/d</td>
+</tr>
+<tr class="odd">
+<td>pre</td>
+<td>The Pnumberf of presynapses attached to node</td>
+<td>swc/d</td>
+</tr>
+<tr class="even">
+<td>flow.cent</td>
+<td>The synaptic flow at this node, see Schneider-Mizell et al. 2016</td>
+<td>swc/d</td>
+</tr>
+<tr class="odd">
+<td>strahler_order</td>
+<td>The strahler order of this node</td>
+<td>swc/d</td>
+</tr>
+</tbody>
+</table>
 </div>
 <div id="data" class="section level2">
 <h2 class="hasAnchor">
@@ -309,15 +719,7 @@ split <span class="op">=</span> <span class="st">"distance"</span><span class="o
 </ul>
 </div>
 
-  <div class="dev-status">
-<h2>Dev status</h2>
-<ul class="list-unstyled">
-<li><a href="https://github.com/natverse/hemibrainr/actions"><img src="https://github.com/natverse/hemibrainr/workflows/R-CMD-check/badge.svg" alt="R-CMD-check"></a></li>
-<li><a href="https://codecov.io/gh/natverse/hemibrainr?branch=master"><img src="https://codecov.io/gh/natverse/hemibrainr/branch/master/graph/badge.svg" alt="Codecov test coverage"></a></li>
-<li><a href="https://www.tidyverse.org/lifecycle/#experimental"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: experimental"></a></li>
-</ul>
-</div>
-</div>
+  </div>
 </div>
 
 
