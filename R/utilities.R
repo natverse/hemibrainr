@@ -608,12 +608,13 @@ update.neuronlistfh <- function(x = NULL,
     nat::write.neurons(x, dir=swc, format='swc', Force = FALSE, metadata=TRUE)
     if(!is.null(meta)){
       if(all(names(x)%in%rownames(meta))){
-        warning("each neuron name in x should be a rowname in meta")
-        fw.ids = unique(as.character(fw.meta$flywire.id))
-        swc.files = list.files(swc, full.names = TRUE)
-        swc.delete = swc.files[!basename(swc.files)%in%paste0(fw.ids,".swc")]
-        message("Removing ", length(swc.delete), " outdated .swc files")
-        file.remove(swc.delete)
+        if("flywire.id"%in%colnames(meta)){
+          fw.ids = unique(as.character(meta$flywire.id))
+          swc.files = list.files(swc, full.names = TRUE)
+          swc.delete = swc.files[!basename(swc.files)%in%paste0(fw.ids,".swc")]
+          message("Removing ", length(swc.delete), " outdated .swc files")
+          file.remove(swc.delete)
+        }
       }
     }
   }
