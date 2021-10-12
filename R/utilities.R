@@ -497,6 +497,7 @@ update.neuronlistfh <- function(x = NULL,
                                 meta = NULL,
                                 compress = TRUE,
                                 id = 'flywire.xyz',
+                                swc = NULL,
                                 ...){
   dbClass = match.arg(dbClass)
   if(grepl("\\.zip$",file)){
@@ -571,7 +572,7 @@ update.neuronlistfh <- function(x = NULL,
       }
     }
     if(compress){
-      y = squeeze_neuronlist(x)
+      x = squeeze_neuronlist(x)
     }
     if(dbClass == "HDF5"){
       given.neurons = nat.hdf5::write.neurons.hdf5(x, file = data, ...)
@@ -598,6 +599,23 @@ update.neuronlistfh <- function(x = NULL,
     }
   }else{
     warning("could not create neuronlistfh/z object")
+  }
+  if(!is.null(swc) & !is.null(x)){
+    ##  Write to SWC
+    if(!dir.exists(swc)){
+      dir.create(swc)
+    }
+    nat::write.neurons(x, dir=swc, format='swc', Force = FALSE, metadata=TRUE)
+    if(!is.null(meta)){
+      if(all(names(x)%in%rownames(meta))){
+        warning("each neuron name in x should be a rowname in meta")
+        fw.ids = unique(as.character(fw.meta$flywire.id))
+        swc.files = list.files(swc, full.names = TRUE)
+        swc.delete = swc.files[!basename(swc.files)%in%paste0(fw.ids,".swc")]
+        message("Removing ", length(swc.delete), " outdated .swc files")
+        file.remove(swc.delete)
+      }
+    }
   }
 }
 
