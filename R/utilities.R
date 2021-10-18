@@ -714,7 +714,7 @@ update_metdata <- function(neurons, meta, id){
 # hidden
 matchColClasses <- function(df1, df2) {
 
-  sharedColNames <- names(df1)[names(df1) %in% names(df2)]
+  sharedColNames <- colnames(df1)[colnames(df1) %in% colnames(df2)]
   if(length(sharedColNames)==1){
     sharedColTypes <- class(df1[,sharedColNames])
   }else{
@@ -722,8 +722,11 @@ matchColClasses <- function(df1, df2) {
   }
 
   for (n in 1:length(sharedColNames)) {
-    class(df2[, n]) <- sharedColTypes[n]
+    class(df2[, sharedColNames[n]]) <- sharedColTypes[n]
   }
 
   return(df2)
 }
+
+
+
