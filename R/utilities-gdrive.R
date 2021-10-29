@@ -629,3 +629,12 @@ gsheet_reorder <- function(gs, tab, selected_sheet, remove.duplicates = TRUE, fi
   }
 }
 
+
+
+###### Seatable functionality #####
+
+
+
+
+
+

@@ -618,7 +618,7 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
   fw.columns = c("flywire.id","fw.x","fw.y","fw.z","flywire.xyz","flywire.svid")
   tracing.list = list()
   for(selected_sheet in selected_sheets){
-    ## Read Google sheets and extract glywire neuron positions
+    ## Read Google sheets and extract flywire neuron positions
     if(Verbose) { message("### Working on google sheet: ", selected_sheet) }
     if(is.null(ws)){
       tabs = gsheet_manipulation(FUN = googlesheets4::sheet_names,
