@@ -590,7 +590,12 @@ update.neuronlistfh <- function(x = NULL,
       }
       try(suppress(file.remove(temp.zip)), silent = TRUE)
     }else{
-      given.neurons = nat::as.neuronlistfh(x, dbdir = data, dbClass = dbClass, WriteObjects = WriteObjects, remote = remote, ...)
+      tryCatch({
+        given.neurons = nat::as.neuronlistfh(x, dbdir = data, dbClass = dbClass, WriteObjects = WriteObjects, remote = remote, ...)
+        }, error = function(e){
+          file.remove(file)
+          error("Neuronlitfh could not be generated, deleting original file")
+        })
       if(dbClass=="DB1"){
         saveRDS(given.neurons, file = file)
       }else{
