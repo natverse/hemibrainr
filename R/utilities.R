@@ -547,7 +547,7 @@ update.neuronlistfh <- function(x = NULL,
             x = old.neurons
           }else{
             x = nat::union(x, old.neurons)
-            message("x combined with ", length(old.neurons), " old neurons from extant: ", file)
+            message(length(x), " given neurons combined with ", length(old.neurons), " old neurons from extant: ", file)
           }
         }
       }
@@ -713,18 +713,15 @@ update_metdata <- function(neurons, meta, id){
 
 # hidden
 matchColClasses <- function(df1, df2) {
-
   sharedColNames <- colnames(df1)[colnames(df1) %in% colnames(df2)]
   if(length(sharedColNames)==1){
     sharedColTypes <- class(df1[,sharedColNames])
   }else{
     sharedColTypes <- sapply(df1[,sharedColNames], class)
   }
-
   for (n in 1:length(sharedColNames)) {
     class(df2[, sharedColNames[n]]) <- sharedColTypes[n]
   }
-
   return(df2)
 }
 
