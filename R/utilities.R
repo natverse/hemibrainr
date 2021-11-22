@@ -784,7 +784,7 @@ find_and_replace <- function(x = c("flywire.xyz",
                                           ),
                              dir = getwd()){
   if(is.data.frame(x)){
-    cols = colnames(meta)
+    cols = colnames(x)
   }else{
     x = cols
   }
