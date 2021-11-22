@@ -18,7 +18,8 @@ nblast_big <-function(query.neuronlistfh,
                       digits = 3,
                       update.old = NULL,
                       outfile = "",
-                      overlap = FALSE){
+                      overlap = FALSE,
+                      split = FALSE){
 
   # Register cores
   check_package_available("nat.nblast")
@@ -40,6 +41,19 @@ nblast_big <-function(query.neuronlistfh,
   }
   target = names(target.neuronlistfh)
 
+  # Split
+  if(split){
+    target.axons = paste0(target, "_axon")
+    target.dendrites = paste0(target, "_dendrites")
+    query.axons = paste0(query, "_axon")
+    query.dendrites = paste0(query, "_dendrites")
+    target.names = c(target.axons, target.dendrites)
+    query.names = c(query.axons, query.dendrites)
+  }else{
+    query.names = query
+    target.names = target
+  }
+
   # Make matrix to fill
   ## Get old matrix
   if(!is.null(update.old)){
@@ -52,18 +66,18 @@ nblast_big <-function(query.neuronlistfh,
     old = old[!colnames(old)%in%query,!rownames(old)%in%target]
     if(length(old)){
       if(nrow(old)&ncol(old)){
-        query = c(sort(colnames(old)), setdiff(query,colnames(old)))
-        target = c(sort(rownames(old)), setdiff(target,rownames(old)))
-        nblast.mat = bigstatsr::FBM(length(target),length(query), init = NA)
-        nblast.mat[match(rownames(old), target),match(colnames(old),query)] = old
+        query.names = c(sort(colnames(old)), setdiff(query.names,colnames(old)))
+        target.names = c(sort(rownames(old)), setdiff(target.names,rownames(old)))
+        nblast.mat = bigstatsr::FBM(length(target.names),length(query.names), init = NA)
+        nblast.mat[match(rownames(old), target.names),match(colnames(old),query.names)] = old
       }else{
-        nblast.mat = bigstatsr::FBM(length(target),length(query), init = NA)
+        nblast.mat = bigstatsr::FBM(length(target.names),length(query.names), init = NA)
       }
     }else{
-      nblast.mat = bigstatsr::FBM(length(target),length(query), init = NA)
+      nblast.mat = bigstatsr::FBM(length(target.names),length(query.names), init = NA)
     }
   }else{
-    nblast.mat = bigstatsr::FBM(length(target),length(query), init = NA)
+    nblast.mat = bigstatsr::FBM(length(target.names),length(query.names), init = NA)
   }
 
   # Get batches to iterate over
@@ -160,6 +174,18 @@ nblast_big <-function(query.neuronlistfh,
             nblast.res.sub = collapse_matrix_by_names(nblast.res.sub, FUN = max)
           }
         }else{
+          if(split){
+            q.axons = axonic_cable(query.neuronlist)
+            names(q.axons) = paste0(names(q.axons),"_axon")
+            q.dendrites = dendritic_cable(query.neuronlist)
+            names(q.dendrites) = paste0(names(q.dendrites),"_dendrite")
+            t.axons = axonic_cable(target.neuronlist)
+            names(t.axons) = paste0(names(t.axons),"_axon")
+            t.dendrites = dendritic_cable(target.neuronlist)
+            names(t.dendrites) = paste0(names(t.dendrites),"_dendrite")
+            query.neuronlist = c(q.axons, q.dendrites)
+            query.neuronlist = c(t.axons, t.dendrites)
+          }
           nblast.res.sub = overlap_score_delta(query.neuronlist, target.neuronlist, ...)
         }
         # Compress
