@@ -138,8 +138,8 @@ flywire_synapse_simplify <- function(x, method = c("cleft_scores","scores","mean
         collap$Label = np$Label[1]
         poss.nts=c("gaba", "acetylcholine", "glutamate", "octopamine", "serotonin","dopamine")
         tops = colSums(collap[,poss.nts])
-        collap$top.p = max(tops)
-        collap$top.nt = names(which.max(tops))
+        collap$top_p = max(tops)
+        collap$top_nt = names(which.max(tops))
       }else{
         np = np[order(np[[method]],decreasing=TRUE),]
         collap = np[1,]
