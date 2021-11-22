@@ -2,7 +2,8 @@
 # nb = nblast_big(kcs20,kcs20[1:10],numCores = 4)
 `%dopar%` <- foreach::`%dopar%`
 `%:%` <- foreach::`%:%`
-nblast_big <-function(query.neuronlistfh, target.neuronlistfh,
+nblast_big <-function(query.neuronlistfh,
+                      target.neuronlistfh,
                       query.addition.neuronlistfh = NULL,
                       query = names(query.neuronlistfh),
                       numCores=1,
@@ -16,7 +17,8 @@ nblast_big <-function(query.neuronlistfh, target.neuronlistfh,
                       threshold = 0, # or -0.5?
                       digits = 3,
                       update.old = NULL,
-                      outfile = ""){
+                      outfile = "",
+                      overlap = FALSE){
 
   # Register cores
   check_package_available("nat.nblast")
@@ -103,34 +105,8 @@ nblast_big <-function(query.neuronlistfh, target.neuronlistfh,
       # Run NBLASTs
       if(length(chosen.query)&&length(chosen.target)){
         ### NBLAST native
-        nblast.res.1 = nat.nblast::nblast(query = query.neuronlist,
-                                          target = target.neuronlist,
-                                          .parallel=FALSE,
-                                          normalised = normalised,
-                                          smat = smat,
-                                          sd = sd,
-                                          version = version,
-                                          UseAlpha = UseAlpha,
-                                          OmitFailures = FALSE)
-        nblast.res.2 = nat.nblast::nblast(query = target.neuronlist,
-                                          target = query.neuronlist,
-                                          .parallel=FALSE,
-                                          normalised = normalised,
-                                          smat = smat,
-                                          sd = sd,
-                                          version = version,
-                                          UseAlpha = UseAlpha,
-                                          OmitFailures = FALSE)
-        if(is.null(dim(nblast.res.2))){
-          nblast.res.2 = matrix(nblast.res.2, nrow = 1, ncol = length(nblast.res.2), dimnames = list(chosen.query,chosen.target))
-        }
-        nblast.res.sub = nblast.res.native = tryCatch((nblast.res.1+t(nblast.res.2))/2, error = function(e){
-          message(as.character(e))
-          nblast.res.1
-        })
-        ### NBLAST mirrored
-        if(!is.null(query.addition.neuronlist)&&length(query.addition.neuronlist)){ # For an additional neuronlist of mirrored neurons
-          nblast.res.3 = nat.nblast::nblast(query = query.addition.neuronlist,
+        if(!overlap){
+          nblast.res.1 = nat.nblast::nblast(query = query.neuronlist,
                                             target = target.neuronlist,
                                             .parallel=FALSE,
                                             normalised = normalised,
@@ -139,8 +115,8 @@ nblast_big <-function(query.neuronlistfh, target.neuronlistfh,
                                             version = version,
                                             UseAlpha = UseAlpha,
                                             OmitFailures = FALSE)
-          nblast.res.4 = nat.nblast::nblast(query = target.neuronlist,
-                                            target = query.addition.neuronlist,
+          nblast.res.2 = nat.nblast::nblast(query = target.neuronlist,
+                                            target = query.neuronlist,
                                             .parallel=FALSE,
                                             normalised = normalised,
                                             smat = smat,
@@ -149,12 +125,42 @@ nblast_big <-function(query.neuronlistfh, target.neuronlistfh,
                                             UseAlpha = UseAlpha,
                                             OmitFailures = FALSE)
           if(is.null(dim(nblast.res.2))){
-            nblast.res.4 = matrix(nblast.res.4, nrow = 1, ncol = length(nblast.res.2), dimnames = list(names(query.addition.neuronlist),chosen.target))
+            nblast.res.2 = matrix(nblast.res.2, nrow = 1, ncol = length(nblast.res.2), dimnames = list(chosen.query,chosen.target))
           }
-          nblast.res.m = (nblast.res.3+t(nblast.res.4))/2
-          nblast.res.sub = plyr::rbind.fill.matrix(t(nblast.res.native), t(nblast.res.m))
-          rownames(nblast.res.sub) = c(colnames(nblast.res.native), colnames(nblast.res.sub))
-          nblast.res.sub = collapse_matrix_by_names(nblast.res.sub, FUN = max)
+          nblast.res.sub = nblast.res.native = tryCatch((nblast.res.1+t(nblast.res.2))/2, error = function(e){
+            message(as.character(e))
+            nblast.res.1
+          })
+          ### NBLAST mirrored
+          if(!is.null(query.addition.neuronlist)&&length(query.addition.neuronlist)){ # For an additional neuronlist of mirrored neurons
+            nblast.res.3 = nat.nblast::nblast(query = query.addition.neuronlist,
+                                              target = target.neuronlist,
+                                              .parallel=FALSE,
+                                              normalised = normalised,
+                                              smat = smat,
+                                              sd = sd,
+                                              version = version,
+                                              UseAlpha = UseAlpha,
+                                              OmitFailures = FALSE)
+            nblast.res.4 = nat.nblast::nblast(query = target.neuronlist,
+                                              target = query.addition.neuronlist,
+                                              .parallel=FALSE,
+                                              normalised = normalised,
+                                              smat = smat,
+                                              sd = sd,
+                                              version = version,
+                                              UseAlpha = UseAlpha,
+                                              OmitFailures = FALSE)
+            if(is.null(dim(nblast.res.2))){
+              nblast.res.4 = matrix(nblast.res.4, nrow = 1, ncol = length(nblast.res.2), dimnames = list(names(query.addition.neuronlist),chosen.target))
+            }
+            nblast.res.m = (nblast.res.3+t(nblast.res.4))/2
+            nblast.res.sub = plyr::rbind.fill.matrix(t(nblast.res.native), t(nblast.res.m))
+            rownames(nblast.res.sub) = c(colnames(nblast.res.native), colnames(nblast.res.sub))
+            nblast.res.sub = collapse_matrix_by_names(nblast.res.sub, FUN = max)
+          }
+        }else{
+          nblast.res.sub = overlap_score_delta(query.neuronlist, target.neuronlist, ...)
         }
         # Compress
         if(compress){
@@ -249,4 +255,80 @@ load_assign <- function(f){
   env <- new.env()
   nm <- load(f, env)[1]
   env[[nm]]
+}
+
+
+# hidden, similar function now in nat
+overlap_score_big <- function(output.neurons,
+                              input.neurons,
+                              delta = 62.5,
+                              just.leaves = TRUE,
+                              max = exp(-delta^2/(2*delta^2)),
+                              normalise = TRUE,
+                              update.old = NULL){
+
+  # Register cores
+  check_package_available("nat.nblast")
+  check_package_available("doParallel")
+  batch.size = numCores #floor(sqrt(numCores))
+  # cl = parallel::makeForkCluster(batch.size)
+  cl = parallel::makeCluster(batch.size, outfile = outfile)
+  doParallel::registerDoParallel(cl)
+  if(numCores<2){
+    `%go%` <- foreach::`%do%`
+  }else{
+    `%go%` <- foreach::`%dopar%`
+  }
+
+  # Make matrix to fill
+  ## Get old matrix
+  if(!is.null(update.old)){
+    if(grepl("rds$",update.old)){
+      old = t(readRDS(update.old))
+    }else{
+      old = t(load_assign(update.old))  # historically, I had the matrix the other way around :(
+    }
+    old = old[apply(old, 1, function(r) sum(is.na(r))==0),apply(old, 2, function(c) sum(is.na(c))==0)]
+    old = old[!colnames(old)%in%query,!rownames(old)%in%target]
+    if(length(old)){
+      if(nrow(old)&ncol(old)){
+        query = c(sort(colnames(old)), setdiff(query,colnames(old)))
+        target = c(sort(rownames(old)), setdiff(target,rownames(old)))
+        overlap.mat = bigstatsr::FBM(length(target),length(query), init = NA)
+        overlap.mat[match(rownames(old), target),match(colnames(old),query)] = old
+      }else{
+        overlap.mat = bigstatsr::FBM(length(target),length(query), init = NA)
+      }
+    }else{
+      overlap.mat = bigstatsr::FBM(length(target),length(query), init = NA)
+    }
+  }else{
+    overlap.mat = bigstatsr::FBM(length(target),length(query), init = NA)
+  }
+
+  # Sort neurons
+  output.neurons = nat::as.neuronlist(output.neurons)
+  input.neurons = nat::as.neuronlist(input.neurons)
+  score.matrix = matrix(0,nrow = length(output.neurons), ncol = length(input.neurons))
+  rownames(score.matrix) = names(output.neurons)
+  colnames(score.matrix) = names(input.neurons)
+  if(just.leaves){
+    input.neurons.d = nat::nlapply(input.neurons, function(x) nat::xyzmatrix(x)[nat::endpoints(x),], .progress = "none")
+  }else{
+    input.neurons.d = nat::nlapply(input.neurons, nat::xyzmatrix, .progress = "none")
+  }
+  for (n in 1:length(output.neurons)){
+    if(just.leaves){
+      a = nat::xyzmatrix(output.neurons[[n]])[nat::endpoints(output.neurons[[n]]),]
+    }else{
+      a = nat::xyzmatrix(output.neurons[[n]])
+    }
+    if(normalise){
+      s = sapply(input.neurons.d, function(x)lengthnorm(maxout(exp(-nabor::knn(query = a, data = x,k=nrow(x))$nn.dists^2/(2*delta^2)),max=max)))
+    }else{
+      s = sapply(input.neurons.d, function(x)sum(maxout(exp(-nabor::knn(query = a, data = x,k=nrow(x))$nn.dists^2/(2*delta^2)),max=max))) # Score similar to that in Schlegel et al. 2015
+    }
+    score.matrix[n,] = s
+  }
+  score.matrix
 }
