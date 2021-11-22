@@ -359,7 +359,7 @@ skeletons  (<code>"lm"</code>) from Dolan et al. and Frechter et al. 2019 (eLife
   is recorded, the user selects a quality for that match. There can be no
   match (none), a poor match (poor) an okay match (okay) or an exact match (good). As a
   rule of thumb, a poor match could be a neuron from a very similar same cell
-  type or a highly untraced neuron that may be the correct cell type. An okay
+  type or a highly untraced neuron that may be the correct cell_type. An okay
   match should be a neuron that looks to be from the same morphological cell
   type but there may be some discrepancies in its arbour. A good match is a
   neuron that corresponds well between FAFB and the hemibrain data.</p>
@@ -388,11 +388,11 @@ skeletons  (<code>"lm"</code>) from Dolan et al. and Frechter et al. 2019 (eLife
 
 <span class='co'># And example of matching neurons in a flywire tracing sheet</span>
 <span class='va'>sheet</span> <span class='op'>=</span> <span class='fu'><a href='flywire_tracing_sheet.html'>flywire_tracing_sheet</a></span><span class='op'>(</span><span class='st'>"SLPal2_dorsal"</span>, regex <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
-<span class='fu'>fafb_matching</span><span class='op'>(</span>ids <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/unique.html'>unique</a></span><span class='op'>(</span><span class='va'>sheet</span><span class='op'>$</span><span class='va'>flywire.id</span><span class='op'>)</span>, repository<span class='op'>=</span><span class='st'>"flywire"</span>,
+<span class='fu'>fafb_matching</span><span class='op'>(</span>ids <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/unique.html'>unique</a></span><span class='op'>(</span><span class='va'>sheet</span><span class='op'>$</span><span class='va'>flywire_id</span><span class='op'>)</span>, repository<span class='op'>=</span><span class='st'>"flywire"</span>,
 overwrite <span class='op'>=</span> <span class='st'>"bad"</span>, User <span class='op'>=</span> <span class='st'>"AJ"</span>, superUser <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
 
 <span class='co'># Look at all poorly made matches</span>
-<span class='fu'>fafb_matching</span><span class='op'>(</span>repository<span class='op'>=</span><span class='st'>"flywire"</span>, column <span class='op'>=</span> <span class='st'>"hemibrain.match.quality"</span>,
+<span class='fu'>fafb_matching</span><span class='op'>(</span>repository<span class='op'>=</span><span class='st'>"flywire"</span>, column <span class='op'>=</span> <span class='st'>"hemibrain_match_quality"</span>,
 entry <span class='op'>=</span> <span class='st'>"poor"</span>, overwrite <span class='op'>=</span> <span class='st'>"TRUE"</span>, User <span class='op'>=</span> <span class='st'>"AJ"</span>, superUser <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
 <span class='op'>}</span><span class='co'># }</span>
 </div></pre>

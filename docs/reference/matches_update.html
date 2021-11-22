@@ -49,7 +49,7 @@
 <meta property="og:title" content="Update neuron match information on a google sheet — matches_update" />
 <meta property="og:description" content="This function retrieves neuron matches (hemibrain_matches) from a master-matching google sheet. If then
 can update other google sheets, specified by the user to update neuron-match information.
-Just columns giving the match, match quality and cell type are updated." />
+Just columns giving the match, match quality and cell_type are updated." />
 <meta property="og:image" content="/logo.svg" />
 
 
@@ -159,17 +159,17 @@ Just columns giving the match, match quality and cell type are updated." />
     <div class="ref-description">
     <p>This function retrieves neuron matches (<code><a href='hemibrain_matches.html'>hemibrain_matches</a></code>) from a master-matching google sheet. If then
 can update other google sheets, specified by the user to update neuron-match information.
-Just columns giving the match, match quality and cell type are updated.</p>
+Just columns giving the match, match quality and cell_type are updated.</p>
     </div>
 
     <pre class="usage"><span class='fu'>matches_update</span><span class='op'>(</span>
   matching_sheet <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>options</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>$</span><span class='va'>hemibrainr_matching_gsheet</span>,
   priority <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"FAFB"</span>, <span class='st'>"hemibrain"</span><span class='op'>)</span>,
   <span class='va'>selected_sheets</span>,
-  id <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"flywire.id"</span>, <span class='st'>"bodyid"</span>, <span class='st'>"skid"</span>, <span class='st'>"id"</span><span class='op'>)</span>,
+  id <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"flywire_id"</span>, <span class='st'>"bodyid"</span>, <span class='st'>"skid"</span>, <span class='st'>"id"</span><span class='op'>)</span>,
   match.field <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"hemibrain"</span>, <span class='st'>"CATMAID"</span>, <span class='st'>"flywire"</span>, <span class='st'>"LM"</span>, <span class='st'>"FAFB.hemisphere"</span><span class='op'>)</span>,
-  chosen.columns <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"cell.type"</span>, <span class='st'>"flywire.xyz"</span>, <span class='st'>"side"</span>, <span class='st'>"ItoLee_Hemilineage"</span>,
-    <span class='st'>"Hartenstein_Hemilineage"</span><span class='op'>)</span>
+  chosen.columns <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"cell_type"</span>, <span class='st'>"flywire_xyz"</span>, <span class='st'>"side"</span>, <span class='st'>"ito_lee_hemilineage"</span>,
+    <span class='st'>"hartenstein_hemilineage"</span><span class='op'>)</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -178,12 +178,12 @@ Just columns giving the match, match quality and cell type are updated.</p>
     <tr>
       <th>matching_sheet</th>
       <td><p>the master matching sheet. Cannot be in <code>selected_sheets</code>. This sheet will be processed using <code><a href='hemibrain_matches.html'>hemibrain_matches</a></code> to produce a
-<code>data.frame</code> describing hemibrain-FAFB and FAFB-hemibrain matches.</p></td>
+<code>data.frame</code> describing hemibrain-FAFB and FAFB-hemibrain_matches.</p></td>
     </tr>
     <tr>
       <th>priority</th>
-      <td><p>whether to use FAFB-&gt;hemibrain matches (FAFB) or hemibrain-&gt;FAFB matches (hemibrain) in order to ascribe
-cell type names to FAFB neurons. In both cases, cell type names are attached to hemibrain bodyids, and propagated to their FAFB matches.</p></td>
+      <td><p>whether to use FAFB-&gt;hemibrain_matches (FAFB) or hemibrain-&gt;FAFB matches (hemibrain) in order to ascribe
+cell_type names to FAFB neurons. In both cases, cell_type names are attached to hemibrain bodyids, and propagated to their FAFB matches.</p></td>
     </tr>
     <tr>
       <th>selected_sheets</th>
@@ -197,8 +197,8 @@ they are for the neuron specified in the <code>id</code> column of each workshee
     </tr>
     <tr>
       <th>match.field</th>
-      <td><p>which match to record. E.g. if <code>id</code> is <code>"flywire.id"</code> you may want to add the hemibrain match from the master matching sheets. To do this
-set <code>match.field</code> to <code>"hemibrain"</code>. Then, if there is a <code>"hemibrain.match"</code> and/or <code>"hemibrain.match.quality"</code> column, it will be updated. You
+      <td><p>which match to record. E.g. if <code>id</code> is <code>"flywire_id"</code> you may want to add the hemibrain_match from the master matching sheets. To do this
+set <code>match.field</code> to <code>"hemibrain"</code>. Then, if there is a <code>"hemibrain_match"</code> and/or <code>"hemibrain_match_quality"</code> column, it will be updated. You
 may also want to know the hemispheric match within FAFB, in which case <code>"FAFB.hemisphere"</code> could be used.</p></td>
     </tr>
     <tr>
@@ -216,8 +216,8 @@ individual tabs, that have been updated. This argument specifies which column yo
     <p>For this function to work, the specified google sheet(s) must have either the column specified with the argument <code>id</code>,
 which gives the ID of a neuron from the FAFB (CATMAID or flywire) data set, or the hemibrain data set.
 Each tab of each specified google sheet is read in turn. The data set match (specified with the argument <code>match.field</code>). A match is recovered
-using <code><a href='LR_matching.html'>hemibrain_matching(selected_file = matching_sheet, priority=priority)</a></code>. If the right columns exist in the google sheet, i.e. 'hemibrain.match'
-and 'hemibrain.match.quality' for a hemibrain match, then this column in the google sheet is wiped and updated. If not, no update takes place.</p>
+using <code><a href='LR_matching.html'>hemibrain_matching(selected_file = matching_sheet, priority=priority)</a></code>. If the right columns exist in the google sheet, i.e. 'hemibrain_match'
+and 'hemibrain_match_quality' for a hemibrain_match, then this column in the google sheet is wiped and updated. If not, no update takes place.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p><code><a href='hemibrain_matches.html'>hemibrain_matches</a></code>,
@@ -228,11 +228,11 @@ and 'hemibrain.match.quality' for a hemibrain match, then this column in the goo
     <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
 <span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
 
-<span class='co'># Update flywire.ids in the sheet:</span>
+<span class='co'># Update flywire_ids in the sheet:</span>
 <span class='co'>## https://docs.google.com/spreadsheets/d/</span>
 <span class='co'>## 1spGSuhUX6Hhn-8HH0U_ArIWUuPpMBFNjIjeSSh_MFVY</span>
 <span class='co'>## /edit#gid=603762040</span>
-<span class='va'>lineage.gsheet.meta</span> <span class='op'>=</span> <span class='fu'>matches_update</span><span class='op'>(</span>id <span class='op'>=</span> <span class='st'>"flywire.id"</span>,
+<span class='va'>lineage.gsheet.meta</span> <span class='op'>=</span> <span class='fu'>matches_update</span><span class='op'>(</span>id <span class='op'>=</span> <span class='st'>"flywire_id"</span>,
 match.field <span class='op'>=</span> <span class='st'>"hemibrain"</span>,
 selected_sheets <span class='op'>=</span> <span class='st'>"1spGSuhUX6Hhn-8HH0U_ArIWUuPpMBFNjIjeSSh_MFVY"</span><span class='op'>)</span>
 
