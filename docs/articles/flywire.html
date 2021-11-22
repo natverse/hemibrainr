@@ -201,7 +201,7 @@
 <span class="fu"><a href="https://rdrr.io/pkg/nat/man/neuronlist-dataframe-methods.html">head</a></span><span class="op">(</span><span class="va">fw.neurons</span><span class="op">)</span> <span class="co"># There is some meta data already attached</span>
 
 <span class="co"># Let's see a selection. All the neurons in the DL1_dorsal lineage</span>
-<span class="va">dl1.dorsal</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/nat/man/subset.html">subset</a></span><span class="op">(</span><span class="va">fw.neurons</span>, <span class="va">ItoLee_Hemilineage</span> <span class="op">==</span> <span class="st">"DL1_dorsal"</span><span class="op">)</span>
+<span class="va">dl1.dorsal</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/nat/man/subset.html">subset</a></span><span class="op">(</span><span class="va">fw.neurons</span>, <span class="va">ito_lee_hemilineage</span> <span class="op">==</span> <span class="st">"DL1_dorsal"</span><span class="op">)</span>
 <span class="co">## There may be some mistakes early on here</span>
 <span class="co">### As the project develops, they should get ironed out ....</span>
 
@@ -284,7 +284,7 @@
 <div id="match-flywire-neurons-to-each-other-and-the-hemibrain" class="section level2">
 <h2 class="hasAnchor">
 <a href="#match-flywire-neurons-to-each-other-and-the-hemibrain" class="anchor"></a>Match flywire neurons to each other and the hemibrain</h2>
-<p>The neuron matching pipeline reads neuron skeletons from Google Drive and and displays them. FlyWire skeletons are shown in dark grey (their mirrored equivalents in light grey) and potential hemibrain matches in red. This depends also on the precomputed NBLASTs on the hemibrain team drive. For full details, see our <code>match_making</code> <a href="https://natverse.github.io/hemibrainr/articles/match_making.html">vignette</a>.</p>
+<p>The neuron matching pipeline reads neuron skeletons from Google Drive and and displays them. FlyWire skeletons are shown in dark grey (their mirrored equivalents in light grey) and potential hemibrain_matches in red. This depends also on the precomputed NBLASTs on the hemibrain team drive. For full details, see our <code>match_making</code> <a href="https://natverse.github.io/hemibrainr/articles/match_making.html">vignette</a>.</p>
 <div id="matching-pipelines" class="section level3">
 <h3 class="hasAnchor">
 <a href="#matching-pipelines" class="anchor"></a>Matching pipelines</h3>
@@ -327,7 +327,7 @@
 <span class="va">fw</span> <span class="op">=</span> <span class="fu"><a href="../reference/flywire_neurons.html">flywire_neurons</a></span><span class="op">(</span><span class="op">)</span>
 
 <span class="co"># Get those for Tots</span>
-<span class="va">fw.tots</span> <span class="op">=</span> <span class="va">fw</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">fw</span><span class="op">)</span><span class="op">%in%</span><span class="va">gs.chosen</span><span class="op">$</span><span class="va">flywire.id</span><span class="op">]</span>
+<span class="va">fw.tots</span> <span class="op">=</span> <span class="va">fw</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">fw</span><span class="op">)</span><span class="op">%in%</span><span class="va">gs.chosen</span><span class="op">$</span><span class="va">flywire_id</span><span class="op">]</span>
 
 <span class="co"># Examine their meta data</span>
 <span class="va">fw.tots</span><span class="op">[</span>,<span class="op">]</span></code></pre></div>
