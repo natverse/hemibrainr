@@ -182,7 +182,7 @@ and see if a flywire neuron of interest is among the data stored on the hemibrai
 
 <span class='fu'>flywire_in</span><span class='op'>(</span>
   <span class='va'>query</span>,
-  query.type <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"flywire.id"</span>, <span class='st'>"flywire.xyz"</span>, <span class='st'>"flywire.svid"</span><span class='op'>)</span>,
+  query.type <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"flywire_id"</span>, <span class='st'>"flywire_xyz"</span>, <span class='st'>"flywire_svid"</span><span class='op'>)</span>,
   ws <span class='op'>=</span> <span class='cn'>NULL</span>,
   fw.meta <span class='op'>=</span> <span class='fu'><a href='flywire_googledrive_data.html'>flywire_meta</a></span><span class='op'>(</span><span class='op'>)</span>,
   cloudvolume.url <span class='op'>=</span> <span class='cn'>NULL</span>,
@@ -194,7 +194,7 @@ and see if a flywire neuron of interest is among the data stored on the hemibrai
   <span class='va'>selected_sheet</span>,
   <span class='va'>update</span>,
   write.cols <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span><span class='op'>(</span><span class='va'>update</span><span class='op'>)</span>,
-  by <span class='op'>=</span> <span class='st'>"flywire.id"</span>,
+  by <span class='op'>=</span> <span class='st'>"flywire_id"</span>,
   Verbose <span class='op'>=</span> <span class='cn'>TRUE</span>,
   return <span class='op'>=</span> <span class='cn'>FALSE</span>
 <span class='op'>)</span>
@@ -202,7 +202,7 @@ and see if a flywire neuron of interest is among the data stored on the hemibrai
 <span class='fu'>flywire_tracing_standardise</span><span class='op'>(</span>
   ws <span class='op'>=</span> <span class='cn'>NULL</span>,
   regex <span class='op'>=</span> <span class='cn'>FALSE</span>,
-  field <span class='op'>=</span> <span class='st'>"flywire.id"</span>,
+  field <span class='op'>=</span> <span class='st'>"flywire_id"</span>,
   selected_sheets <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>options</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>$</span><span class='va'>flywire_lineages_gsheets</span>,
   Verbose <span class='op'>=</span> <span class='cn'>TRUE</span>,
   whimsy <span class='op'>=</span> <span class='cn'>FALSE</span>,
@@ -229,7 +229,7 @@ and see if a flywire neuron of interest is among the data stored on the hemibrai
   side <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"both"</span>, <span class='st'>"right"</span>, <span class='st'>"left"</span><span class='op'>)</span>,
   gsheets <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span>left <span class='op'>=</span> <span class='st'>"1Gq_-L1tpvuSxYs5O-_PggiI2qdF52xoTG64WzSs9KTU"</span>, right <span class='op'>=</span>
     <span class='st'>"10T0JE6nVSz_uUdoHGOpV2odO_k75-arRPKdOiBXlS80"</span><span class='op'>)</span>,
-  chosen.columns <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"flywire.id"</span>, <span class='st'>"flywire_id"</span>, <span class='st'>"flywire.xyz"</span>, <span class='st'>"Tags"</span><span class='op'>)</span>,
+  chosen.columns <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"flywire_id"</span>, <span class='st'>"flywire_id"</span>, <span class='st'>"flywire_xyz"</span>, <span class='st'>"Tags"</span><span class='op'>)</span>,
   <span class='va'>...</span>
 <span class='op'>)</span></pre>
 
@@ -271,7 +271,7 @@ results from <code>flywire_tracing_sheets</code>.</p></td>
     </tr>
     <tr>
       <th>query.type</th>
-      <td><p>whether the query is a vector of xyz positions, flywire supervoxel IDs or flywire IDs ("flywire.xyz"/"flywire.svid"/"flywire.id").</p></td>
+      <td><p>whether the query is a vector of xyz positions, flywire supervoxel IDs or flywire IDs ("flywire_xyz"/"flywire_svid"/"flywire_id").</p></td>
     </tr>
     <tr>
       <th>fw.meta</th>
@@ -319,7 +319,7 @@ is generated (unless there is already a name in this column).</p></td>
     </tr>
     <tr>
       <th>reorder</th>
-      <td><p>logical, if <code>TRUE</code> then the googlesheet is reordered by cell type, connection weight and users.</p></td>
+      <td><p>logical, if <code>TRUE</code> then the googlesheet is reordered by cell_type, connection weight and users.</p></td>
     </tr>
     <tr>
       <th>remove.duplicates</th>
@@ -328,7 +328,7 @@ this will also trigger <code>reorder</code> even if it is set to <code>FALSE</co
     </tr>
     <tr>
       <th>main_sheet</th>
-      <td><p>a google sheet of flywire neurons with columns: <code>workflow</code>, <code>whimsy</code>, <code>flywire.id</code>. See <code><a href='standard_transmitters.html'>standard_workflow</a></code>.
+      <td><p>a google sheet of flywire neurons with columns: <code>workflow</code>, <code>whimsy</code>, <code>flywire_id</code>. See <code><a href='standard_transmitters.html'>standard_workflow</a></code>.
 This sheet is read, and a separate tab in <code>target_sheet</code> is made for each workflow.</p></td>
     </tr>
     <tr>
@@ -381,11 +381,11 @@ this data and place it in <code>~/projects/JanFunke</code>.</p></td>
 specified using the argument <code>chosen.columns</code>.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>flywire tracing google sheets should have the columns: flywire.xyz (a single cardinal position for each neuron in raw FlyWire voxel space),
-flywire.svid (the supervoxel ID for this position) and flywire.id (the flywire root ID for the neuron that can be found at this position). Additional, informative columns
+    <p>flywire tracing google sheets should have the columns: flywire_xyz (a single cardinal position for each neuron in raw FlyWire voxel space),
+flywire_svid (the supervoxel ID for this position) and flywire_id (the flywire root ID for the neuron that can be found at this position). Additional, informative columns
 are encouraged. A sheet in this format can be updated using <code><a href='flywire_ids_update.html'>flywire_ids_update</a></code>.
-This updates the 'unstable' flywire.id column based on the stable flywire.xyz column, and also provides
-stable flywire.svid column if it is empty.</p>
+This updates the 'unstable' flywire_id column based on the stable flywire_xyz column, and also provides
+stable flywire_svid column if it is empty.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p><code><a href='flywire_googledrive_data.html'>flywire_ids</a></code>,
@@ -417,12 +417,12 @@ stable flywire.svid column if it is empty.</p>
 
 <span class='co'># See if we have a certain flywire neuron in our sheets</span>
 <span class='va'>in.lin</span> <span class='op'>=</span> <span class='fu'>flywire_in</span><span class='op'>(</span>query <span class='op'>=</span> <span class='st'>"111437.5,21121.25,2661"</span>,
-query.type <span class='op'>=</span> <span class='st'>"flywire.xyz"</span>, Verbose <span class='op'>=</span> <span class='cn'>TRUE</span>,
+query.type <span class='op'>=</span> <span class='st'>"flywire_xyz"</span>, Verbose <span class='op'>=</span> <span class='cn'>TRUE</span>,
 fw.meta <span class='op'>=</span> <span class='fu'>flywire_tracing_sheets</span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
 
 <span class='co'># And in the meta data for neurons on the google drive</span>
 <span class='va'>in.meta</span> <span class='op'>=</span> <span class='fu'>flywire_in</span><span class='op'>(</span>query <span class='op'>=</span> <span class='st'>"111437.5,21121.25,2661"</span>,
-query.type <span class='op'>=</span> <span class='st'>"flywire.xyz"</span>, Verbose <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+query.type <span class='op'>=</span> <span class='st'>"flywire_xyz"</span>, Verbose <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
 
 <span class='op'>}</span><span class='co'># }</span>
 </div></pre>
