@@ -2,7 +2,7 @@
 
 #' @rdname hemibrain_add_made_matches
 #' @export
-flywire_matching_rewrite <- function(flywire.ids = names(flywire_neurons()),
+flywire_matching_rewrite <- function(flywire_ids = names(flywire_neurons()),
                                      meta = flywire_neurons()[,],
                                      catmaid.update = TRUE,
                                      selected_file  = options()$hemibrainr_matching_gsheet, # 1_RXfVRw2nVjzk6yXOKiOr_JKwqk2dGSVG_Xe7_v8roU
@@ -34,21 +34,21 @@ flywire_matching_rewrite <- function(flywire.ids = names(flywire_neurons()),
       simp = nat::nlapply(cat,nat::simplify_neuron,n=1, .parallel = TRUE, OmitFailures = TRUE)
       branchpoints = sapply(simp, function(y) nat::xyzmatrix(y)[ifelse(length(nat::branchpoints(y)),nat::branchpoints(y),max(nat::endpoints(y))),])
       branchpoints = t(branchpoints)
-      FAFB.xyz = apply(branchpoints, 1, paste_coords)
+      fafb_xyz = apply(branchpoints, 1, paste_coords)
 
       # Get FlyWire voxel coordinates
       branchpoints.flywire = nat.templatebrains::xform_brain(branchpoints, reference = "FlyWire", sample = "FAFB14", .parallel = TRUE, verbose = TRUE)
       rownames(branchpoints.flywire) = rownames(branchpoints)
       branchpoints.flywire.raw = scale(branchpoints.flywire, scale = c(4, 4, 40), center = FALSE)
       fw.ids = fafbseg::flywire_xyz2id(branchpoints.flywire.raw, rawcoords = TRUE)
-      flywire.xyz = apply(branchpoints.flywire.raw, 1, paste_coords)
+      flywire_xyz = apply(branchpoints.flywire.raw, 1, paste_coords)
 
       # Add
-      indices = match(names(FAFB.xyz),gs$skid)
+      indices = match(names(fafb_xyz),gs$skid)
       if(length(indices)){
-        gs[indices,]$FAFB.xyz = FAFB.xyz
-        gs[indices,]$flywire.xyz = flywire.xyz
-        gs[indices,]$flywire.id = fw.ids
+        gs[indices,]$fafb_xyz = fafb_xyz
+        gs[indices,]$flywire_xyz = flywire_xyz
+        gs[indices,]$flywire_id = fw.ids
       }
     }
   }
@@ -59,43 +59,43 @@ flywire_matching_rewrite <- function(flywire.ids = names(flywire_neurons()),
       nblast = tryCatch(hemibrain_nblast('hemibrain-flywire'), error = function(e) NULL)
     }
     if(!is.null(nblast)){
-      nblast.top = nblast[match(gs$flywire.id,rownames(nblast)),]
+      nblast.top = nblast[match(gs$flywire_id,rownames(nblast)),]
       tops = apply(nblast.top,1,function(r) which.max(r))
       top = colnames(nblast)[unlist(tops)]
-      top[!gs$flywire.id%in%rownames(nblast)] = NA
+      top[!gs$flywire_id%in%rownames(nblast)] = NA
       gs$hemibrain.nblast.top = top
     }
   }
 
-  # flywire svids
-  svids = fafbseg::flywire_xyz2id(nat::xyzmatrix(gs$flywire.xyz), root=FALSE, rawcoords = TRUE)
-  gs[,]$flywire.svid = svids
+  # flywire_svids
+  svids = fafbseg::flywire_xyz2id(nat::xyzmatrix(gs$flywire_xyz), root=FALSE, rawcoords = TRUE)
+  gs[,]$flywire_svid = svids
 
-  # Update FAFB.xyz column
-  empty = is.na(gs$FAFB.xyz) & ! is.na(gs$flywire.xyz)
+  # Update fafb_xyz column
+  empty = is.na(gs$fafb_xyz) & ! is.na(gs$flywire_xyz)
   if(sum(empty)){
-    FAFB.xyz = meta[gs[empty,"flywire.id"],"FAFB.xyz"]
-    gs[empty,"FAFB.xyz"] = FAFB.xyz
+    fafb_xyz = meta[gs[empty,"flywire_id"],"fafb_xyz"]
+    gs[empty,"fafb_xyz"] = fafb_xyz
   }
-  empty = is.na(gs$FAFB.xyz) & ! is.na(gs$flywire.xyz)
+  empty = is.na(gs$fafb_xyz) & ! is.na(gs$flywire_xyz)
   if(sum(empty)){
-    points.raw = nat::xyzmatrix(gs[empty,"flywire.xyz"])
+    points.raw = nat::xyzmatrix(gs[empty,"flywire_xyz"])
     points.nm = scale(points.raw, scale = c(4, 4, 40), center = FALSE)
     points.fafb = nat.templatebrains::xform_brain(points.nm, sample = "FlyWire", reference = "FAFB14", .parallel = TRUE, verbose = TRUE)
-    FAFB.xyz = apply(points.fafb, 1, paste_coords)
-    gs[empty,"FAFB.xyz"] = FAFB.xyz
+    fafb_xyz = apply(points.fafb, 1, paste_coords)
+    gs[empty,"fafb_xyz"] = fafb_xyz
   }
 
   # Update side information
   if(!is.null(meta$side)){
     # Update side
-    sides = meta[match(gs$flywire.id,meta$flywire.id),"side"]
+    sides = meta[match(gs$flywire_id,meta$flywire_id),"side"]
     sides[is.na(sides)] = gs$side[is.na(sides)]
     gs$side = sides
   }
 
   # Update
-  write.cols = intersect(c("FAFB.xyz", "flywire.xyz", "flywire.id", "flywire.svid", "side", "nblast.top"),colnames(gs))
+  write.cols = intersect(c("fafb_xyz", "flywire_xyz", "flywire_id", "flywire_svid", "side", "nblast.top"),colnames(gs))
   gsheet_update_cols(
       write.cols = write.cols,
       gs=gs,
@@ -106,7 +106,7 @@ flywire_matching_rewrite <- function(flywire.ids = names(flywire_neurons()),
   fg = hemibrain_match_sheet(sheet = "FAFB", selected_file = selected_file)
   fg$index = 1:nrow(fg)+1
   removals = data.frame()
-  for(set in c('skid',"flywire.xyz","flywire.svid")){
+  for(set in c('skid',"flywire_xyz","flywire_svid")){
     dupes = unique(fg[[set]][duplicated(fg[[set]])])
     dupes = id_okay(dupes)
     for(dupe in dupes){
@@ -118,9 +118,9 @@ flywire_matching_rewrite <- function(flywire.ids = names(flywire_neurons()),
       if(length(skd)>1){
         next
       }
-      best = which.max(apply(sub, 1, function(r) sum(!is.na(r[c("hemibrain.match", "hemibrain.match.quality",
+      best = which.max(apply(sub, 1, function(r) sum(!is.na(r[c("hemibrain_match", "hemibrain_match_quality",
                                                                 "LM.match", "LM.match.quality",
-                                                                "FAFB.hemisphere.match", "FAFB.hemisphere.match.quality")]))))
+                                                                "fafb_hemisphere_match", "fafb_hemisphere_match.quality")]))))
       remove = sub[-best,]
       removals = rbind(removals, remove)
     }
@@ -130,8 +130,8 @@ flywire_matching_rewrite <- function(flywire.ids = names(flywire_neurons()),
       n = fg[!fg$index%in%removals$index,]
     }
     n$index = NULL
-    n = n[!is.na(n$flywire.xyz)|!is.na(n$skid),]
-    gsheet_reorder(gs=n,tab="FAFB",selected_sheet=selected_file,field = "flywire.xyz", remove.duplicates = FALSE)
+    n = n[!is.na(n$flywire_xyz)|!is.na(n$skid),]
+    gsheet_reorder(gs=n,tab="FAFB",selected_sheet=selected_file,field = "flywire_xyz", remove.duplicates = FALSE)
   }else if (nrow(removals)){
     for(r in sort(removals$index,decreasing = TRUE)){
       range.del = googlesheets4::cell_rows(r)
@@ -145,8 +145,8 @@ flywire_matching_rewrite <- function(flywire.ids = names(flywire_neurons()),
 
   # Add missing flywire information
   fg = hemibrain_match_sheet(sheet = "FAFB", selected_file = selected_file)
-  all.ids = correct_id(unique(fg$flywire.id))
-  missing = setdiff(flywire.ids, all.ids)
+  all.ids = correct_id(unique(fg$flywire_id))
+  missing = setdiff(flywire_ids, all.ids)
   if(length(missing)){
     hemibrain_matching_add(ids = missing, meta = meta, dataset="flywire", selected_file = selected_file, ...)
   }
@@ -154,9 +154,9 @@ flywire_matching_rewrite <- function(flywire.ids = names(flywire_neurons()),
   # ## Read the LM Google Sheet
   # lmg = hemibrain_match_sheet(sheet = "lm", selected_file = selected_file)
   # if(nrow(lmg)){
-  #   lmg$flywire.xyz = fg$flywire.xyz[match(lmg$id,fg$LM.match)]
+  #   lmg$flywire_xyz = fg$flywire_xyz[match(lmg$id,fg$LM.match)]
   #   gsheet_update_cols(
-  #     write.cols = "flywire.xyz",
+  #     write.cols = "flywire_xyz",
   #     gs=lmg,
   #     selected_sheet = selected_file,
   #     sheet = "lm")
@@ -165,9 +165,9 @@ flywire_matching_rewrite <- function(flywire.ids = names(flywire_neurons()),
   # ## Read the hemibrain Google Sheet
   # hg = hemibrain_match_sheet(sheet = "hemibrain", selected_file = selected_file)
   # if(nrow(hg)){
-  #   hg$flywire.xyz = fg$flywire.xyz[match(hg$bodyid,fg$hemibrain.match)]
+  #   hg$flywire_xyz = fg$flywire_xyz[match(hg$bodyid,fg$hemibrain_match)]
   #   gsheet_update_cols(
-  #     write.cols = "flywire.xyz",
+  #     write.cols = "flywire_xyz",
   #     gs=hg,
   #     selected_sheet = selected_file,
   #     sheet = "hemibrain")
@@ -211,9 +211,9 @@ LR_matching <- function(ids = NULL,
           black = FAFB CATMAID neuron,
           dark grey = flywire neuron,
           blue = mirrrored flywire neuron you are trying to match,
-          red = potential hemibrain matches based on NBLAST score,
+          red = potential hemibrain_matches based on NBLAST score,
           green = a chosen hemibrain neuron during scanning,
-          dark blue = your selected hemibrain match.
+          dark blue = your selected hemibrain_match.
           #######################Colours##########################
           ")
   ## Get NBLAST
@@ -224,7 +224,7 @@ LR_matching <- function(ids = NULL,
   }
   # Read the Google Sheet
   gs = hemibrain_match_sheet(selected_file = selected_file, sheet = "flywire")
-  id = "flywire.id"
+  id = "flywire_id"
   # Get neuron data repo
   if(missing(db)) {
     db=tryCatch(force(db), error=function(e) {
@@ -271,7 +271,7 @@ LR_matching <- function(ids = NULL,
                                        id = id,
                                        unsaved = unsaved,
                                        saved = saved,
-                                       chosen.field = "flywire.xyz",
+                                       chosen.field = "flywire_xyz",
                                        nblast = mirror.nblast,
                                        threshold = threshold,
                                        batch_size = batch_size,
@@ -284,7 +284,7 @@ LR_matching <- function(ids = NULL,
                                        match.field = match.field,
                                        quality.field = quality.field,
                                        soma.size = 4000,
-                                       show.columns = c("cell.type","ItoLee_Hemilineage","status", match.field, quality.field,"note"),
+                                       show.columns = c("cell_type","ito_lee_hemilineage","status", match.field, quality.field,"note"),
                                        skip.if.absent = !verbose,
                                        mirror.query = mirror)
     if(is.null(match_cycle)){
@@ -338,7 +338,7 @@ neuron_match_scanner <- function(brain,
                                  unsaved = c(),
                                  saved = c(),
                                  soma.size = 4000,
-                                 show.columns = c("cell.type","ItoLee_Hemilineage","status",  match.field, quality.field,"note"),
+                                 show.columns = c("cell_type","ito_lee_hemilineage","status",  match.field, quality.field,"note"),
                                  skip.if.absent = TRUE,
                                  mirror.query = FALSE){
   targets.repository = match.arg(targets.repository)
@@ -402,7 +402,7 @@ neuron_match_scanner <- function(brain,
         sk = selected[n,]$skid[1]
         extra.n = try(get_match_neuron(query = NULL, n = sk, query.repository = extra.repository), silent = FALSE)
       }else{
-        fw.id = selected[n,]$flywire.id[1]
+        fw.id = selected[n,]$flywire_id[1]
         extra.n = try(get_match_neuron(query = flywire_neurons(), n = fw.id, query.repository = extra.repository), silent = FALSE)
       }
     }else{
@@ -414,15 +414,15 @@ neuron_match_scanner <- function(brain,
         NULL
       })
       if(is.null(another.n)){
-        fw.id = selected[n,]$flywire.id[1]
+        fw.id = selected[n,]$flywire_id[1]
         another.n = get_match_neuron(query = flywire_neurons(), n = fw.id, query.repository = query.repository)
       }
     }else{
       another.n = NULL
     }
     ### Get old matches
-    if(match.field=="flywire.xyz"){
-      old.match = selected[selected[[id]]%in%n,"flywire.id"][1]
+    if(match.field=="flywire_xyz"){
+      old.match = selected[selected[[id]]%in%n,"flywire_id"][1]
     }else{
       old.match = selected[selected[[id]]%in%n,match.field][1]
     }
@@ -592,7 +592,7 @@ neuron_match_scanner <- function(brain,
     }
     message("You chose: ", hit)
     selected[selected[[id]]%in%n,match.field] = hit
-    if(match.field%in%c("FAFB.hemisphere.match","flywire.match","FAFB.match","flywire.xyz")){
+    if(match.field%in%c("fafb_hemisphere_match","flywire.match","FAFB.match","flywire_xyz")){
       try({selected[selected[[id]]%in%n,"flywire.match.id"] = fafbseg::flywire_xyz2id(selected[selected[[id]]%in%n,match.field], rawcoords = TRUE)}, silent = FALSE)
       show.columns = unique(c(show.columns,"flywire.match.id"))
     }
