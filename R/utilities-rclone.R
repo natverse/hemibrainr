@@ -4,21 +4,35 @@
 #' @export
 hemibrainr_rclone <- function(drive = "hemibrainr", path=file.path(getwd(),"hemibrainr_data/")){
   os = get_os()
-  if(!dir.exists(path)){
-    dir.create(path)
-  }
-  empty=list.files(path)
-  if(length(empty)){
-    stop("path must lead to an empty directory.
+  if(os=="osx"){
+    if(!dir.exists(path)){
+      dir.create(path)
+    }
+    empty=list.files(path)
+    if(length(empty)){
+      stop("path must lead to an empty directory.
     This directory will be 'replaced' by the mounted drive.
     You chose: ",
-    path,"
+           path,"
     Perhaps try a new path, like: ",
-    file.path(getwd(),"hemibrainr_rclone/"))
-  }
-  if(os=="osx"){
+           file.path(getwd(),"hemibrainr_rclone/"))
+    }
     command = sprintf("rclone cmount %s: %s", drive, path)
+  }else if (os == "windows"){
+    command = sprintf("rclone mount %s: %s", drive, path)
   }else{
+    if(!dir.exists(path)){
+      dir.create(path)
+    }
+    empty=list.files(path)
+    if(length(empty)){
+      stop("path must lead to an empty directory.
+    This directory will be 'replaced' by the mounted drive.
+    You chose: ",
+           path,"
+    Perhaps try a new path, like: ",
+           file.path(getwd(),"hemibrainr_rclone/"))
+    }
     command = sprintf("rclone mount %s: %s", drive, path)
   }
   options(Gdrive_hemibrain_data = path)
