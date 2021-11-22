@@ -6,7 +6,7 @@
 #'
 #' @description Read meta data for hemibrain neurons from NeuPrint and supplement this with other data available in this package.
 #' Specifically, neuron lineage, class, olfactory system layer and FAFB match information,
-#' as well as numbers related to neurons' putative axon-dendrite split, e.g. for synapses or cable length.
+#' as well as numbers related to neurons' putative axon-dendrite split, e.g. for synapses or cable_length.
 #'
 #' @param x a vector of bodyids that can be read from \url{'https://neuprint.janelia.org/'}.
 #' @param ... arguments passed to \code{neuprintr::neuprint_get_meta}.
@@ -34,45 +34,45 @@
 #'
 #'   \item{"name"} { - the name of this neuron.}
 #'
-#'   \item{"connectivity.type"}{ - the neuPrint designated 'type' for the neuron. A subset of neurons within a cell type that share similar connectivity. A connectivity
-#'   type is distinguished from a cell type by an ending _letter, defined using CBLAST (Scheffer et al. 2020).}
+#'   \item{"connectivity.type"}{ - the neuPrint designated 'type' for the neuron. A subset of neurons within a cell_type that share similar connectivity. A connectivity
+#'   type is distinguished from a cell_type by an ending _letter, defined using CBLAST (Scheffer et al. 2020).}
 #'
-#'   \item{"cell.type"}{ - neurons of a shared morphology that take the same cell body fibre tract and come from the same hemilineage (Bates 2019).}
+#'   \item{"cell_type"}{ - neurons of a shared morphology that take the same cell body fibre tract and come from the same hemilineage (Bates 2019).}
 #'
 #'   \item{"cellBodyFiber"}{ - The cell body fiber for a neuron, as read from neuPrint and annotated by a team under \href{https://www.janelia.org/people/kei-ito}{Kei Ito}.}
 #'
 #'   \item{"putative.classic.transmitter"}{ - putative neurotransmitter based on what neurons in the hemilineage in question has been shown to express, out of acetylcholine, GABA, glutamate.}
 #'
-#'   \item{"ItoLee_Hemilineage"}{ - the hemilineage that we reckon this cell type belongs to, based on expert review of light level data from the K. Ito and T. Lee groups (Yu 2013, Ito 2013).
+#'   \item{"ito_lee_hemilineage"}{ - the hemilineage that we reckon this cell_type belongs to, based on expert review of light level data from the K. Ito and T. Lee groups (Yu 2013, Ito 2013).
 #'    See \code{\link{hemibrain_hemilineages}}.}
 #'
-#'   \item{"Hartenstein_Hemilineage"}{ - the hemilineage that we reckon this cell type belongs to, based on expert review of light level data from the V. Hartenstein Lee group (Wong 2013, Lovick 2013).
+#'   \item{"hartenstein_hemilineage"}{ - the hemilineage that we reckon this cell_type belongs to, based on expert review of light level data from the V. Hartenstein Lee group (Wong 2013, Lovick 2013).
 #'    See \code{\link{hemibrain_hemilineages}}.}
 #'
 #'   \item{"FAFB.match"}{ - the ID of the manual match from the FAFB data set. ID indicates a neuron reconstructed in FAFBv14 CATMAID. Many of these neurons will be available through Virtual Fly Brain.}
 #'
-#'   \item{"FAFB.match.quality"}{ - the matcher makers qualitative assessment of how good this match is: a poor match could be a neuron from a very similar same cell type or a highly untraced neuron that may be the correct cell type. An okay match should be a neuron that looks to be from the same morphological cell type but there may be some discrepancies in its arbour. A good match is a
+#'   \item{"FAFB.match.quality"}{ - the matcher makers qualitative assessment of how good this match is: a poor match could be a neuron from a very similar same cell_type or a highly untraced neuron that may be the correct cell_type. An okay match should be a neuron that looks to be from the same morphological cell_type but there may be some discrepancies in its arbour. A good match is a
 #'   neuron that corresponds well between FAFB and the hemibrain data.}
 #'
 #'   \item{"layer"}{ - probabilistic mean path length from neuron from ALRNs, depends on connection strengths.}
 #'
-#'   \item{"layer.ct"}{- the mean layer for cell type, rounded to the nearest whole number.}
+#'   \item{"layer.ct"}{- the mean layer for cell_type, rounded to the nearest whole number.}
 #'
-#'   \item{"axon.outputs"}{- number of outgoing connections from the neuron's predicted axon.}
+#'   \item{"axon_outputs"}{- number of outgoing connections from the neuron's predicted axon.}
 #'
-#'   \item{"dend.outputs"}{- number of outgoing connections from the neuron's predicted dendrite.}
+#'   \item{"dend_outputs"}{- number of outgoing connections from the neuron's predicted dendrite.}
 #'
-#'   \item{"axon.inputs"}{- number of incoming connections from the neuron's predicted axon.}
+#'   \item{"axon_inputs"}{- number of incoming connections from the neuron's predicted axon.}
 #'
-#'   \item{"dend.inputs"}{- number of incoming connections from the neuron's predicted dendrite.}
+#'   \item{"dend_inputs"}{- number of incoming connections from the neuron's predicted dendrite.}
 #'
-#'   \item{"total.length"}{- total cable length of the neuron in micrometers.}
+#'   \item{"total_length"}{- total cable_length of the neuron in micrometers.}
 #'
-#'   \item{"axon.length"}{- total axon cable length of the neuron in micrometers.}
+#'   \item{"axon_length"}{- total axon cable_length of the neuron in micrometers.}
 #'
-#'   \item{"dend.length"}{- total dendrite cable length of the neuron in micrometers.}
+#'   \item{"dend_length"}{- total dendrite cable_length of the neuron in micrometers.}
 #'
-#'   \item{"pd.length"}{- total  cable length of the primary dendrite 'linker' between axon and dendrite.}
+#'   \item{"pd_length"}{- total  cable_length of the primary dendrite 'linker' between axon and dendrite.}
 #'
 #'   \item{"segregation_index"}{- a quantification of how polarised a neuron is, in terms of its segregation of inputs onto its predicted dendrite and outputs onto its axon,
 #'    where 0 is no-polarisation and 1 is totally polarised (Schneider-Mizell 2016).}
@@ -102,8 +102,8 @@ hemibrain_get_meta <- function(x, ...){
   }else{
     # Add cell. type
     nmeta$connectivity.type = nmeta$type
-    nmeta$cell.type = gsub("_[a-z]{1}$","",nmeta$type)
-    nmeta$cell.type[is.na(nmeta$cell.type)] = "uncertain"
+    nmeta$cell_type = gsub("_[a-z]{1}$","",nmeta$type)
+    nmeta$cell_type[is.na(nmeta$cell_type)] = "uncertain"
     nmeta$connectivity.type[is.na(nmeta$connectivity.type)] = "uncertain"
 
     # Add lineage information
@@ -144,11 +144,11 @@ hemibrain_get_meta <- function(x, ...){
 
     # Add split information
     selcols = c("soma.edit", "skeletonization", "edited.cable",
-                "axon.outputs", "dend.outputs", "axon.inputs",
-                "dend.inputs", "total.outputs.density", "total.inputs.density",
-                "axon.outputs.density", "dend.outputs.density", "axon.inputs.density",
-                "dend.inputs.density", "total.length", "axon.length", "dend.length",
-                "pd.length", "segregation_index")
+                "axon_outputs", "dend_outputs", "axon_inputs",
+                "dend_inputs", "total_outputs_density", "total_inputs_density",
+                "axon_outputs_density", "dend_outputs_density", "axon_inputs_density",
+                "dend_inputs_density", "total_length", "axon_length", "dend_length",
+                "pd_length", "segregation_index")
     selcols = intersect(selcols, colnames(hemibrainr::hemibrain_metrics))
     #selcols=setdiff(colnames(hemibrainr::hemibrain_metrics), colnames(nmeta2))
     hemibrain_metrics_sel = hemibrainr::hemibrain_metrics[as.character(nmeta2$bodyid), selcols]
@@ -169,7 +169,7 @@ hemibrain_get_meta <- function(x, ...){
 #' @param x a vector of FAFB skeleton IDs (skids) that can be read with \code{catmaid::catmaid_skids()}
 #' @param find an annotation/search term/vector of skids passed to \code{catmaid::catmaid_skids}.
 #' @param dataset either FAFB or hemibrain. If hemibrain, then \code{find} must be a vector of valid bodyids. Matches to FAFB neurons will be annotated for these bodyids, using \code{hemibrain_matches}.
-#' @param ItoLee_Hemilineage character, the correct K. Ito / T. Lee hemilineage. Must be an entry in \code{\link{hemibrain_hemilineages}}. If set to 'wipe' all lineage related annotations will be removed.
+#' @param ito_lee_hemilineage character, the correct K. Ito / T. Lee hemilineage. Must be an entry in \code{\link{hemibrain_hemilineages}}. If set to 'wipe' all lineage related annotations will be removed.
 #' @param transmitter character, the known or putative transmitter identity of the neurons that will be fetched using \code{find}.
 #' @param delete.find logical, is \code{TRUE} then if \code{find} is an annotation, it will be wiped from the neuron after this function is used (if you have permission to remove it)
 #' @param putative if \code{TRUE} the word 'putative' is added to all lineage annotations to indicate to users that the labelled neurons may not have been given the correct lineages. More work may need to be done to solidify these assignments.
@@ -227,7 +227,7 @@ fafb_hemibrain_annotate <- function(x,
   for(i in x){
 
     # Print neuron under consideration
-    print(knitr::kable(matches[i,c("id", "cell.type", "ItoLee_Hemilineage", "match", "quality")]))
+    print(knitr::kable(matches[i,c("id", "cell_type", "ito_lee_hemilineage", "match", "quality")]))
 
     # Get old annotations
     a = catmaid::catmaid_get_annotations_for_skeletons(i, ...)
@@ -242,7 +242,7 @@ fafb_hemibrain_annotate <- function(x,
       # Get xyz for root points
       roots = sapply(cat, function(y) nat::xyzmatrix(y)[nat::rootpoints(y),])
       roots = t(roots)
-      FAFB.xyz = apply(roots, 1, paste, collapse = ",")
+      fafb_xyz = apply(roots, 1, paste, collapse = ",")
 
       # Get FlyWire voxel coordinates
       roots.flywire = nat.templatebrains::xform_brain(roots, reference = "FlyWire", sample = "FAFB14", .parallel = TRUE, verbose = TRUE)
@@ -250,14 +250,14 @@ fafb_hemibrain_annotate <- function(x,
       roots.flywire.raw = scale(roots.flywire, scale = c(4, 4, 40), center = FALSE)
       fw.ids = fafbseg::flywire_xyz2id(roots.flywire.raw, rawcoords = TRUE)
       fw.ids[fw.ids=="0"] = NA
-      flywire.xyz = apply(roots.flywire.raw, 1, paste, collapse = ",")
+      flywire_xyz = apply(roots.flywire.raw, 1, paste, collapse = ",")
 
       # Make annotation
       afid = paste0('flywire_id: ', fw.ids[1])
       message(afid)
-      afw = paste0('flywire_xyz: ', flywire.xyz[1])
+      afw = paste0('flywire_xyz: ', flywire_xyz[1])
       message(afw)
-      afafb = paste0('FAFB_xyz: ', FAFB.xyz[1])
+      afafb = paste0('fafb_xyz: ', fafb_xyz[1])
       message(afafb)
 
     }
@@ -299,13 +299,13 @@ fafb_hemibrain_annotate <- function(x,
                                                    force = TRUE, ...)
 
     # Meta-annotate
-    catmaid::catmaid_set_meta_annotations(meta_annotations = "cell type", annotations = act, ...)
+    catmaid::catmaid_set_meta_annotations(meta_annotations = "cell_type", annotations = act, ...)
     catmaid::catmaid_set_meta_annotations(meta_annotations = "cell body fiber", annotations = acbf, ...)
-    catmaid::catmaid_set_meta_annotations(meta_annotations = "hemibrain match", annotations = am, ...)
+    catmaid::catmaid_set_meta_annotations(meta_annotations = "hemibrain_match", annotations = am, ...)
     if(flywire){
-      catmaid::catmaid_set_meta_annotations(meta_annotations = "flywire id", annotations = afid, ...)
-      catmaid::catmaid_set_meta_annotations(meta_annotations = "flywire xyz", annotations = afw, ...)
-      catmaid::catmaid_set_meta_annotations(meta_annotations = "FAFB xyz", annotations = afafb, ...)
+      catmaid::catmaid_set_meta_annotations(meta_annotations = "flywire_id", annotations = afid, ...)
+      catmaid::catmaid_set_meta_annotations(meta_annotations = "flywire_xyz", annotations = afw, ...)
+      catmaid::catmaid_set_meta_annotations(meta_annotations = "fafb_xyz", annotations = afafb, ...)
     }
 
     # remove annotions
@@ -324,7 +324,7 @@ fafb_hemibrain_annotate <- function(x,
 #' @rdname fafb_hemibrain_annotate
 #' @export
 fafb_set_hemilineage <- function(find,
-                                 ItoLee_Hemilineage,
+                                 ito_lee_hemilineage,
                                  dataset = c("FAFB","hemibrain"),
                                  putative = TRUE,
                                  delete.find = FALSE,
@@ -349,34 +349,34 @@ fafb_set_hemilineage <- function(find,
   if(!length(skds)){
     stop("FAFB skeleton IDs could not be found")
   }
-  if(ItoLee_Hemilineage!="wipe"){
+  if(ito_lee_hemilineage!="wipe"){
     # Make sure we have a valid hemilineage
-    if(length(ItoLee_Hemilineage)>1|length(ItoLee_Hemilineage)==0){
-      stop("Please provide a single ItoLee_Hemilineage")
+    if(length(ito_lee_hemilineage)>1|length(ito_lee_hemilineage)==0){
+      stop("Please provide a single ito_lee_hemilineage")
     }
-    if(!ItoLee_Hemilineage%in%hemibrainr::hemibrain_hemilineages$ItoLee_Hemilineage){
-      stop("Please provide a valid ItoLee_Hemilineage. See 'hemibrain_hemilineages'")
+    if(!ito_lee_hemilineage%in%hemibrainr::hemibrain_hemilineages$ito_lee_hemilineage){
+      stop("Please provide a valid ito_lee_hemilineage. See 'hemibrain_hemilineages'")
     }
     # Get meta information
-    i = ItoLee_Hemilineage
-    ItoLee_Lineage = subset(hemibrainr::hemibrain_hemilineages, hemibrainr::hemibrain_hemilineages$ItoLee_Hemilineage == i)$ItoLee_Lineage[1]
-    Hartenstein_Lineage = subset(hemibrainr::hemibrain_hemilineages, hemibrainr::hemibrain_hemilineages$ItoLee_Hemilineage == i)$Hartenstein_Lineage[1]
-    Hartenstein_Hemilineage = subset(hemibrainr::hemibrain_hemilineages, hemibrainr::hemibrain_hemilineages$ItoLee_Hemilineage == i)$Hartenstein_Hemilineage[1]
+    i = ito_lee_hemilineage
+    ito_lee_lineage = subset(hemibrainr::hemibrain_hemilineages, hemibrainr::hemibrain_hemilineages$ito_lee_hemilineage == i)$ito_lee_lineage[1]
+    hartenstein_lineage = subset(hemibrainr::hemibrain_hemilineages, hemibrainr::hemibrain_hemilineages$ito_lee_hemilineage == i)$hartenstein_lineage[1]
+    hartenstein_hemilineage = subset(hemibrainr::hemibrain_hemilineages, hemibrainr::hemibrain_hemilineages$ito_lee_hemilineage == i)$hartenstein_hemilineage[1]
     # Make new annotations
-    ItoLee_Lineage = paste0("ItoLee_Lineage: " , ItoLee_Lineage)
-    ItoLee_Hemilineage = paste0("ItoLee_Hemilineage: " , ItoLee_Hemilineage)
-    Hartenstein_Lineage = paste0("Hartenstein_Lineage: " , Hartenstein_Lineage)
-    Hartenstein_Hemilineage = paste0("Hartenstein_Hemilineage: " , Hartenstein_Hemilineage)
+    ito_lee_lineage = paste0("ito_lee_lineage: " , ito_lee_lineage)
+    ito_lee_hemilineage = paste0("ito_lee_hemilineage: " , ito_lee_hemilineage)
+    hartenstein_lineage = paste0("hartenstein_lineage: " , hartenstein_lineage)
+    hartenstein_hemilineage = paste0("hartenstein_hemilineage: " , hartenstein_hemilineage)
     # Set these as putative?
     if(putative){
-      ItoLee_Lineage = paste0(ItoLee_Lineage, "_putative")
-      ItoLee_Hemilineage = paste0(ItoLee_Hemilineage, "_putative")
-      Hartenstein_Lineage = paste0(Hartenstein_Lineage, "_putative")
-      Hartenstein_Hemilineage = paste0(Hartenstein_Hemilineage, "_putative")
-      lins = c(ItoLee_Lineage,
-               ItoLee_Hemilineage,
-               Hartenstein_Lineage,
-               Hartenstein_Hemilineage,
+      ito_lee_lineage = paste0(ito_lee_lineage, "_putative")
+      ito_lee_hemilineage = paste0(ito_lee_hemilineage, "_putative")
+      hartenstein_lineage = paste0(hartenstein_lineage, "_putative")
+      hartenstein_hemilineage = paste0(hartenstein_hemilineage, "_putative")
+      lins = c(ito_lee_lineage,
+               ito_lee_hemilineage,
+               hartenstein_lineage,
+               hartenstein_hemilineage,
                "Lineage_putative")
       message("Adding annotations:   ", paste(lins, collapse = "  ", sep = "  "))
       # Set annotations
@@ -384,19 +384,19 @@ fafb_set_hemilineage <- function(find,
                                                      annotations = lins, force = TRUE, ...)
     }else{
       # Set annotations
-      lins = c(ItoLee_Lineage,
-               ItoLee_Hemilineage,
-               Hartenstein_Lineage,
-               Hartenstein_Hemilineage,
+      lins = c(ito_lee_lineage,
+               ito_lee_hemilineage,
+               hartenstein_lineage,
+               hartenstein_hemilineage,
                "Lineage_annotated")
       message("Adding annotations:   ", paste(lins, collapse = "  ", sep = "  "))
       catmaid::catmaid_set_annotations_for_skeletons(skids = skds,
                                                      annotations = lins,
                                                      force = TRUE, ...)
-      catmaid::catmaid_set_meta_annotations(meta_annotations = "ItoLee_Lineage", annotations = ItoLee_Lineage,...)
-      catmaid::catmaid_set_meta_annotations(meta_annotations = "ItoLee_Hemilineage", annotations = ItoLee_Hemilineage,...)
-      catmaid::catmaid_set_meta_annotations(meta_annotations = "Hartenstein_Lineage", annotations = Hartenstein_Lineage,...)
-      catmaid::catmaid_set_meta_annotations(meta_annotations = "Hartenstein_Hemilineage", annotations = Hartenstein_Hemilineage,...)
+      catmaid::catmaid_set_meta_annotations(meta_annotations = "ito_lee_lineage", annotations = ito_lee_lineage,...)
+      catmaid::catmaid_set_meta_annotations(meta_annotations = "ito_lee_hemilineage", annotations = ito_lee_hemilineage,...)
+      catmaid::catmaid_set_meta_annotations(meta_annotations = "hartenstein_lineage", annotations = hartenstein_lineage,...)
+      catmaid::catmaid_set_meta_annotations(meta_annotations = "hartenstein_hemilineage", annotations = hartenstein_hemilineage,...)
     }
   }
 
