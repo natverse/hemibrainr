@@ -70,7 +70,8 @@ Imports:
     stats,
     checkmate,
     pbapply,
-    snakecase
+    snakecase,
+    xfun
 Remotes: 
     natverse/neuprintr,
     natverse/rcatmaid,
