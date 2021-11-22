@@ -705,6 +705,7 @@ check_package_available <- function(pkg) {
 # hidden
 update_metdata <- function(neurons, meta, id){
   check_package_available('dplyr')
+  check_package_available('snakecase')
   df = neurons[,]
   df = matchColClasses(meta, df)
   dfn = suppress(dplyr::left_join(df, meta))
@@ -712,6 +713,7 @@ update_metdata <- function(neurons, meta, id){
   matched.good = !is.na(matched)
   shared.cols = intersect(colnames(dfn[,]),colnames(meta))
   dfn[matched.good,shared.cols] = meta[matched[matched.good],shared.cols]
+  colnames(dfn) = snakecase::to_snake_case(dfn)
   attr(neurons,'df') = dfn
   neurons
 }
@@ -798,5 +800,41 @@ find_and_replace <- function(x = c("flywire.xyz",
   }
 }
 
+# gsheet cols to snake cases
+to_snake_case_gsheets  <- function(gsheets){
+  for(ss in gsheets){
+    message(ss)
+    tabs = gsheet_manipulation(FUN = googlesheets4::sheet_names,
+                               ss = ss,
+                               return = TRUE,
+                               Verbose = FALSE)
+    for(ws in tabs){
+      message(ss, " -> ", ws)
+      df = gsheet_manipulation(
+        FUN = googlesheets4::range_read,
+        ss = ss,
+        sheet = ws,
+        range = NULL,
+        col_names = TRUE,
+        col_types = NULL,
+        na = "",
+        trim_ws = TRUE,
+        skip = 0,
+        n_max = 1,
+        .name_repair = "unique"
+      )
+      colnames(df) = snakecase::to_snake_case(colnames(df))
+      gsheet_manipulation(
+        FUN = googlesheets4::range_write,
+        ss = ss,
+        data = df,
+        sheet = ws,
+        range = NULL,
+        col_names = TRUE,
+        reformat = FALSE
+      )
+    }
+  }
+}
 
 
