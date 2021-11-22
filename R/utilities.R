@@ -730,7 +730,7 @@ matchColClasses <- function(df1, df2) {
   return(df2)
 }
 
-# Change to snakcase
+# Change to snakecase
 find_and_replace <- function(x = c("flywire.xyz",
                                           "flywire.id",
                                           "flywire.svid",
