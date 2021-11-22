@@ -116,9 +116,9 @@ plot3d_split = function(someneuronlist,
       if(transmitters){
         input.synapses = conns[conns$prepost==1,,drop=FALSE]
         output.synapses = conns[conns$prepost==0,,drop=FALSE]
-        cols1 = hemibrainr::paper_colours[input.synapses$top.nt]
+        cols1 = hemibrainr::paper_colours[input.synapses$top_nt]
         cols1[is.na(cols1)] = "black"
-        cols2 = hemibrainr::paper_colours[output.synapses$top.nt]
+        cols2 = hemibrainr::paper_colours[output.synapses$top_nt]
         cols2[is.na(cols2)] = "black"
         if("PRE"%in%plot.prepost){
           tryCatch(rgl::spheres3d(nat::xyzmatrix(output.synapses),
@@ -345,7 +345,7 @@ plot3d_somas <- function(someneuronlist,
 #' @param someneuronlist a neuronlist or neuron object to plot. If \code{bodyids} is \code{NULL} then \code{bodyids = names(someneuronlist)}.
 #' @param bodyids bodyids for the neurons you want to plot. If \code{someneuronlist} is null then \code{hemibrain_neurons} will be used
 #' to load a neuron database.
-#' @param print logical, whether or not to print the name of the cell types being plotted and their Body IDs.
+#' @param print logical, whether or not to print the name of the cell_types being plotted and their Body IDs.
 #' @param meta a \code{data.frame} with a \code{bodyid} and a \code{type} field, such as one pulled by \code{neuprint_get_meta}. If \code{NULL}
 #' then meta will be acquired as \code{neuprint_get_meta(bodyids)}.
 #' @param brain a \code{mesh3d} or \code{hxsurf} object, such as a template brain, to plot alongside neurons of interest.
