@@ -730,5 +730,73 @@ matchColClasses <- function(df1, df2) {
   return(df2)
 }
 
+# Change to snakcase
+find_and_replace <- function(x = c("flywire.xyz",
+                                          "flywire.id",
+                                          "flywire.svid",
+                                          "cell.type",
+                                          "FAFB.xyz",
+                                          "ItoLee_Hemilineage",
+                                          "Hartenstein_Hemilineage",
+                                          "hemibrain.match",
+                                          "hemibrain.match.quality",
+                                          "FAFB.hemisphere.match",
+                                          "FAFB.hemisphere.match.quality",
+                                          "ItoLee_Lineage",
+                                          "Hartenstein_Lineage",
+                                          "dataset",
+                                          "total.outputs",
+                                          "total.inputs",
+                                          "axon.outputs",
+                                          "dend.outputs",
+                                          "axon.inputs",
+                                          "dend.inputs",
+                                          "total.outputs.density",
+                                          "total.inputs.density",
+                                          "axon.outputs.density",
+                                          "dend.outputs.density",
+                                          "axon.inputs.density",
+                                          "dend.inputs.density",
+                                          "total.length",
+                                          "axon.length",
+                                          "dend.length",
+                                          "pd.length",
+                                          "cable.length",
+                                          "top.nt",
+                                          "top.p",
+                                          "total.pre",
+                                          "total.post",
+                                          "axon.pre",
+                                          "axon.post",
+                                          "dend.post",
+                                          "dend.pre",
+                                          "hemibrain.match.qualiy",
+                                          "putative.classic.transmitter",
+                                          "putative.other.transmitter",
+                                          "FAFB.match",
+                                          "FAFB.match.quality",
+                                          "ct.layer"
+                                          #, "soma.edit",
+                                          # "edited.cable",
+                                          #"orig.soma",
+                                          #"orig.cut",
+                                          #"soma.checked"
+                                          ),
+                             dir = getwd()){
+  if(is.data.frame(x)){
+    cols = colnames(meta)
+  }else{
+    x = cols
+  }
+  cols = cols[nchar(cols)>1]
+  for(col in cols){
+    col_new = snakecase::to_snake_case(col)
+    if(col!=col_new){
+      message(sprintf("Replacing %s with %s within %s", col, col_new, dir))
+      xfun::gsub_dir(dir = dir, pattern = col, replacement = col_new, rw_error = FALSE, mimetype =  '^text/')
+    }
+  }
+}
+
 
 
