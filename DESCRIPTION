@@ -1,7 +1,7 @@
 Package: hemibrainr
 Type: Package
-Title: Code for Working with Data from Janelia FlyEM's Hemibrain Project``
-Version: 0.3.0
+Title: Code for Working with Data from Janelia FlyEM's Hemibrain Project and the flywire data sets``
+Version: 0.4.0
 Authors@R: c(
     person("Alexander", "Bates", email = "alexander.shakeel.bates@gmail.com", 
       role = c("aut", "cre"), comment = c(ORCID = "0000-0002-1195-0445")),
@@ -69,7 +69,8 @@ Imports:
     dendextend,
     stats,
     checkmate,
-    pbapply
+    pbapply,
+    snakecase
 Remotes: 
     natverse/neuprintr,
     natverse/rcatmaid,
