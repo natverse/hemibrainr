@@ -236,5 +236,5 @@ usethis::use_data(lc.ids, overwrite = TRUE)
 # Badly skeletonised: "5812986485"
 # fafb_set_hemilineage(find = "YY_SMPpv1_to_DM6_dorsal",
 #                      putative = FALSE,
-#                      ItoLee_Hemilineage = "DM6_dorsal")
+#                      ito_lee_hemilineage = "DM6_dorsal")
 #catmaid::catmaid_set_annotations_for_skeletons(skids = "YY_DM5_ventral_to_AOTUv3_ventral",annotations = "side: left")
