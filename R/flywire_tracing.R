@@ -95,10 +95,12 @@ flywire_tracing_sheet <- function(ws,
           warning("Multiple matches. Keeping first: ", paste(sel$name, collapse = ','))
           sel=sel[1,,drop=F]
         }
-        ws = sel$name
+        wss = sel$name
+      }else{
+        wss = ws
       }
       gs = data.frame(stringsAsFactors = FALSE)
-      for(w in ws){
+      for(w in wss){
         gm = gsheet_manipulation(FUN = googlesheets4::read_sheet,
                                  wait = 20,
                                  ss = ss,
@@ -205,7 +207,7 @@ flywire_in <- function(query,
   }
   if(Verbose){
     message(sprintf("%s of %s queries found:",sum(query%in%df$query),length(query)))
-    key.cols = c("query", "flywire.xyz", "flywire.svid","flywire.id", "status", "cell.type", "ItoLee_Hemilineage",
+    key.cols = c("query", "flywire.xyz", "flywire.svid","flywire.id", "status", "confirmed", "cell.type", "ItoLee_Hemilineage",
                  "side", "hemibrain.match", "hemibrain.match.quality", "tab", "ws")
     print(knitr::kable(df[,intersect(key.cols,colnames(df))]))
   }
