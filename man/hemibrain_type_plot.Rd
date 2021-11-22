@@ -23,7 +23,7 @@ to load a neuron database.}
 
 \item{brain}{a \code{mesh3d} or \code{hxsurf} object, such as a template brain, to plot alongside neurons of interest.}
 
-\item{print}{logical, whether or not to print the name of the cell types being plotted and their Body IDs.}
+\item{print}{logical, whether or not to print the name of the cell_types being plotted and their Body IDs.}
 
 \item{meta}{a \code{data.frame} with a \code{bodyid} and a \code{type} field, such as one pulled by \code{neuprint_get_meta}. If \code{NULL}
 then meta will be acquired as \code{neuprint_get_meta(bodyids)}.}

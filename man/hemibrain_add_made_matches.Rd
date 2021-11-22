@@ -11,7 +11,7 @@
 \title{Manage hemibrain-FAFB neuron matches}
 \usage{
 flywire_matching_rewrite(
-  flywire.ids = names(flywire_neurons()),
+  flywire_ids = names(flywire_neurons()),
   meta = flywire_neurons()[, ],
   catmaid.update = TRUE,
   selected_file = options()$hemibrainr_matching_gsheet,
@@ -67,11 +67,11 @@ flycircuit_matching_rewrite(
 )
 }
 \arguments{
-\item{flywire.ids}{flywire IDs to add to Google sheet if not already present.}
+\item{flywire_ids}{flywire IDs to add to Google sheet if not already present.}
 
 \item{meta}{meta data for the given flycircuit IDs.}
 
-\item{catmaid.update}{logical. Whether or not to update \code{flywire.xyz} and \code{flywire.id} columns, based on e CATMAID neuron specified by a \code{skid} column.}
+\item{catmaid.update}{logical. Whether or not to update \code{flywire_xyz} and \code{flywire_id} columns, based on e CATMAID neuron specified by a \code{skid} column.}
 
 \item{selected_file}{Specifies which Google Sheet to use. Unless you are using a personal Google Sheet, this should be \code{options()$hemibrainr_matching_gsheet}.}
 
@@ -85,7 +85,7 @@ flycircuit_matching_rewrite(
 
 \item{df}{a \code{data.frame} of pre-made matches that the user wants to transfer onto the Google Sheet. This will erase any extant matches for the specified neurons. This data frame
 must have columns: bodyid (i.e. the hemibrain neuron), skid (i.e. the FAFB neuron) and quality (i.e. match quality). Matches have three levels of 'quality', largely dependent on the degree of manual tracing for FAFB neurons
- - good (could be the same cell), medium (same cell type) and poor (could be the same or similar cell type).}
+ - good (could be the same cell), medium (same cell_type) and poor (could be the same or similar cell_type).}
 
 \item{direction}{the match direction, i.e. hemibrain->FAFB (hemibrain tab) or FAFB->hemibrain (fafb tab). Defaults to updating both.}
 

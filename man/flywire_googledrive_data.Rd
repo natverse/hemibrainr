@@ -63,10 +63,10 @@ a \code{data.frame}. Depending on which synapse function was called, it can cont
 
 \itemize{
 
-  \item{"flywire.xyz"} { - coordinates of a point in the neuron in flywire voxel space. XYZ, separated by a semicolon.}
+  \item{"flywire_xyz"} { - coordinates of a point in the neuron in flywire voxel space. XYZ, separated by a semicolon.}
 
-  \item{"flywire.id"}{ - the unique ID associated with this flywire neuron. This ID changes every time a neuron is, even slightly, modified. So it is an unstable identifier.
-  This is why \code{flywire.xyz} is sometimes used.}
+  \item{"flywire_id"}{ - the unique ID associated with this flywire neuron. This ID changes every time a neuron is, even slightly, modified. So it is an unstable identifier.
+  This is why \code{flywire_xyz} is sometimes used.}
 
   \item{"fw.x"}{ - the x coordinate of a point in the flywire neuron, in flywire voxel space..}
 
@@ -76,7 +76,7 @@ a \code{data.frame}. Depending on which synapse function was called, it can cont
 
   \item{"user_name"}{ - the name of the user who made the number of edits given in this row.}
 
-  \item{"edits"}{ - the number of edits (merges, splits, etc.) made by a user for the given \code{flywire.id}.}
+  \item{"edits"}{ - the number of edits (merges, splits, etc.) made by a user for the given \code{flywire_id}.}
 
   \item{"proportion"}{ - the proportion of total edits for this neuron, that the given user made.}
 

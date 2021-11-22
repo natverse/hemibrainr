@@ -85,7 +85,7 @@ a \code{data.frame}. Depending on which synapse function was called, it can cont
   \item{"count"}{ - The number of synapses that make the given connection. Sometimes referred to as 'weight'.}
 
   \item{"norm"}{ - The normalised synapse weight. \code{count} is divided by the total number of inputs that the
-  target neuron's (\code{post}) compartment (\code{Label}) has. I.e. this normalisation is by total inputs onto a dendrite or axon, not the whole neuron.}
+  target neuron's (\code{post}) compartment (\code{Label}) has. I.e. this normalisation is by total_inputs onto a dendrite or axon, not the whole neuron.}
 
 }
 }

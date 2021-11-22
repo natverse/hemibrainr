@@ -31,7 +31,7 @@ hemibrain_connectivity_similarity_matrix(
 )
 }
 \arguments{
-\item{x}{a vector/matrix of connectivities, where each entry in the vector or each column in the matrix is a different target/input neuron/cell type}
+\item{x}{a vector/matrix of connectivities, where each entry in the vector or each column in the matrix is a different target/input neuron/cell_type}
 
 \item{y}{a different vector/matrix of connectivities}
 

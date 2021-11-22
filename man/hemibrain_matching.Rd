@@ -161,7 +161,7 @@ Currently, the
   is recorded, the user selects a quality for that match. There can be no
   match (none), a poor match (poor) an okay match (okay) or an exact match (good). As a
   rule of thumb, a poor match could be a neuron from a very similar same cell
-  type or a highly untraced neuron that may be the correct cell type. An okay
+  type or a highly untraced neuron that may be the correct cell_type. An okay
   match should be a neuron that looks to be from the same morphological cell
   type but there may be some discrepancies in its arbour. A good match is a
   neuron that corresponds well between FAFB and the hemibrain data.
@@ -187,11 +187,11 @@ hemibrain_matching(hemibrain.nblast = fib.fafb.crossnblast.twigs5.mean.compress)
 
 # And example of matching neurons in a flywire tracing sheet
 sheet = flywire_tracing_sheet("SLPal2_dorsal", regex = TRUE)
-fafb_matching(ids = unique(sheet$flywire.id), repository="flywire",
+fafb_matching(ids = unique(sheet$flywire_id), repository="flywire",
 overwrite = "bad", User = "AJ", superUser = TRUE)
 
 # Look at all poorly made matches
-fafb_matching(repository="flywire", column = "hemibrain.match.quality",
+fafb_matching(repository="flywire", column = "hemibrain_match_quality",
 entry = "poor", overwrite = "TRUE", User = "AJ", superUser = TRUE)
 }}
 }

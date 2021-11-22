@@ -16,8 +16,8 @@ lm_matches(
 )
 }
 \arguments{
-\item{priority}{whether to use FAFB->hemibrain matches (FAFB) or hemibrain->FAFB matches (hemibrain) in order to ascribe
-cell type names to FAFB neurons. In both cases, cell type names are attached to hemibrain bodyids, and propagated to their FAFB matches.}
+\item{priority}{whether to use FAFB->hemibrain_matches (FAFB) or hemibrain->FAFB matches (hemibrain) in order to ascribe
+cell_type names to FAFB neurons. In both cases, cell_type names are attached to hemibrain bodyids, and propagated to their FAFB matches.}
 
 \item{selected_file}{the Google Sheet database to read and write from. For
 now, defaults to this
@@ -26,28 +26,28 @@ now, defaults to this
 }
 \value{
 a \code{data.frame} which includes neuron's ID (either its CATMAID skeleton ID or neuprint body ID), the data set from which it comes,
-its putative cell type and connectivity type, and its match in the other dataset.
+its putative cell_type and connectivity type, and its match in the other dataset.
 
 a \code{data.frame} where each row is a neuron, either from the hemibrain or FAFB data sets. Each row gives you its matching neuron in the other data set. These matches have been
 manually assigned using \code{\link{fafb_matching}}, \code{\link{hemibrain_matching}} and \code{\link{LR_matching}}. If you use this information make sure you credit it appropriately.
 Contact us if unsure:
 \itemize{
 
-  \item{"cell.type"}{ - the neuPrint designated 'type' for the neuron. If \code{dataset} is not \code{"hemibrain"}, then this is based on the hemibrain \code{match}.}
+  \item{"cell_type"}{ - the neuPrint designated 'type' for the neuron. If \code{dataset} is not \code{"hemibrain"}, then this is based on the hemibrain \code{match}.}
 
-  \item{"cell"}{ - the unique cell, which is just \code{cell.type#number}.}
+  \item{"cell"}{ - the unique cell, which is just \code{cell_type#number}.}
 
   \item{"cellBodyFiber"}{ - the cell body fiber to which this neuron belongs}
 
-  \item{"ItoLee_Hemilineage"}{ - the hemilineage to which this neuron belongs. Seer \code{\link{hemibrain_hemilineages}}.}
+  \item{"ito_lee_hemilineage"}{ - the hemilineage to which this neuron belongs. Seer \code{\link{hemibrain_hemilineages}}.}
 
-  \item{"match"}{ - the ID of the manual match from the other data set. If \code{dataset=="hemibrain"} then this is a \code{flywire.id} that can be found in \code{flywire_neurons}.If \code{"CATMAID"} or \code{"flywire"} then it is a hemibrain body ID.}
+  \item{"match"}{ - the ID of the manual match from the other data set. If \code{dataset=="hemibrain"} then this is a \code{flywire_id} that can be found in \code{flywire_neurons}.If \code{"CATMAID"} or \code{"flywire"} then it is a hemibrain body ID.}
 
   \item{"quality"}{ - the matcher makers qualitative assessment of how good this match is.}
 
-  \item{"FAFB.hemisphere.match"}{ - the flywire coordinates of a neuron on the opposite hemisphere, which a match maker has designated as this \code{id}'s cognate.}
+  \item{"fafb_hemisphere_match"}{ - the flywire coordinates of a neuron on the opposite hemisphere, which a match maker has designated as this \code{id}'s cognate.}
 
-  \item{"FAFB.hemisphere.match.quality"}{ - the quality of this match.}
+  \item{"fafb_hemisphere_match.quality"}{ - the quality of this match.}
 
   \item{"LM.match"}{ - indicates a light level neuron that is a match for \code{id}. This neuron will be in \code{flycircuit_neurons()} or other light level data.}
 
@@ -55,8 +55,8 @@ Contact us if unsure:
 
   \item{"dataset"}{ - the data set to which \code{id} belongs. Either \code{"hemibrain"}, or one of the two FAFB repositories, \code{"CATMAID"} or \code{"flywire"}.}
 
-  \item{"priority"}{ - whether FAFB->hemibrain matches (\code{"FAFB"}) or hemibrain->FAFB matches (\code{"hemibrain"}) were used in order to ascribe cell type names to FAFB neurons.
-  In both cases, cell type names are attached to hemibrain bodyids, and propagated to their FAFB matches.}
+  \item{"priority"}{ - whether FAFB->hemibrain_matches (\code{"FAFB"}) or hemibrain->FAFB matches (\code{"hemibrain"}) were used in order to ascribe cell_type names to FAFB neurons.
+  In both cases, cell_type names are attached to hemibrain bodyids, and propagated to their FAFB matches.}
 
 }
 }
@@ -67,7 +67,7 @@ Flyconnectome Group at the University of Cambridge, and are recorded on a
 \href{https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit#gid=0}{Google
   Sheet} on our hemibrain Google Team Drive, to which you will need access
 through an authenticated account to view and use this function. Matches have three levels of 'quality', largely
-dependent on the degree of manual tracing for FAFB neurons - good (could be the same cell), medium (same cell type) and poor (could be the same or similar cell type).
+dependent on the degree of manual tracing for FAFB neurons - good (could be the same cell), medium (same cell_type) and poor (could be the same or similar cell_type).
 }
 \details{
 Currently, the

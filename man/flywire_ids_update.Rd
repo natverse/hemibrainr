@@ -2,12 +2,12 @@
 % Please edit documentation in R/flywire_googledrive.R
 \name{flywire_ids_update}
 \alias{flywire_ids_update}
-\title{Update the flywire.id column in a set of google sheets based on flywire xyz positions}
+\title{Update the flywire_id column in a set of google sheets based on flywire_xyz positions}
 \usage{
 flywire_ids_update(
   selected_sheets = NULL,
-  chosen.columns = c("flywire.xyz", "flywire.svid", "flywire.id", "skid", "FAFB.xyz",
-    "cell.type", "side", "ItoLee_Hemilineage", "Hartenstein_Hemilineage", "status"),
+  chosen.columns = c("flywire_xyz", "flywire_svid", "flywire_id", "skid", "fafb_xyz",
+    "cell_type", "side", "ito_lee_hemilineage", "hartenstein_hemilineage", "status"),
   ws = NULL,
   regex = FALSE,
   meta = NULL,
@@ -30,16 +30,16 @@ If set to \code{NULL} for \code{flywire_tracing_sheets}, the whole google sheet 
 
 \item{regex}{logical, use \code{ws} with regex.}
 
-\item{meta}{meta data for flywire neurons, e.g. as retrieved using \code{\link{flywire_meta}}. Used to efficiently input \code{flywire.xyz} column if only a \code{flywire.id} entry has been given.
+\item{meta}{meta data for flywire neurons, e.g. as retrieved using \code{\link{flywire_meta}}. Used to efficiently input \code{flywire_xyz} column if only a \code{flywire_id} entry has been given.
 Only works if that id is also in this provided \code{data.frame}, \code{meta}.}
 
-\item{match}{logical. If \code{TRUE}, hemibrain matches given.}
+\item{match}{logical. If \code{TRUE}, hemibrain_matches given.}
 
 \item{matching_sheet}{the master matching sheet. Cannot be in \code{selected_sheets}. This sheet will be processed using \code{\link{hemibrain_matches}} to produce a
-\code{data.frame} describing hemibrain-FAFB and FAFB-hemibrain matches.}
+\code{data.frame} describing hemibrain-FAFB and FAFB-hemibrain_matches.}
 
-\item{priority}{whether to use FAFB->hemibrain matches (FAFB) or hemibrain->FAFB matches (hemibrain) in order to ascribe
-cell type names to FAFB neurons. In both cases, cell type names are attached to hemibrain bodyids, and propagated to their FAFB matches.}
+\item{priority}{whether to use FAFB->hemibrain_matches (FAFB) or hemibrain->FAFB matches (hemibrain) in order to ascribe
+cell_type names to FAFB neurons. In both cases, cell_type names are attached to hemibrain bodyids, and propagated to their FAFB matches.}
 
 \item{Verbose}{logical, whether or not to supply you with messages.}
 
@@ -55,16 +55,16 @@ a neuron is modified even slightly. Users can record 'stable' points in a neuron
 then use this function to update and get the correct flywire ID whenever they wish.
 }
 \details{
-For this function to work, the specified google sheet(s) must have either the column \code{flywire.xyz},
+For this function to work, the specified google sheet(s) must have either the column \code{flywire_xyz},
 which gives the xyz position of points in a format that can be read by \code{nat::xyzmatrix}, for example \code{"(135767,79463,5284)"} or \code{"(135767;79463;5284)"}.
 If this is missing, then the columns: \code{fw.x}, \code{fw.y}, \code{fw.z} must be specified. The xyz positions must be in FlyWire voxel space, which is what you get if you use the
 copy location tool in the flywire.ai web-interface.
 
-The logic of the update procedure is:, find the \code{flywire.xyz} column.
-If that does not exist, find: \code{fw.x}, \code{fw.y}, \code{fw.z}, and use that to create a \code{flywire.xyz} column.
-We use \code{flywire.xyz} if both are given, and there is a mismatch.
-For each row, a \code{flywire.id} is then found based on these points, using \code{fafbseg::flywire_xyz2id} (using the argument \code{rawcoords = TRUE}).
-The google sheet columns \code{flywire.id},\code{flywire.xyz}, \code{fw.x}, \code{fw.y}, \code{fw.z} are then updated if they exist in the original google sheet.
+The logic of the update procedure is:, find the \code{flywire_xyz} column.
+If that does not exist, find: \code{fw.x}, \code{fw.y}, \code{fw.z}, and use that to create a \code{flywire_xyz} column.
+We use \code{flywire_xyz} if both are given, and there is a mismatch.
+For each row, a \code{flywire_id} is then found based on these points, using \code{fafbseg::flywire_xyz2id} (using the argument \code{rawcoords = TRUE}).
+The google sheet columns \code{flywire_id},\code{flywire_xyz}, \code{fw.x}, \code{fw.y}, \code{fw.z} are then updated if they exist in the original google sheet.
 If they do not, they are not updated. The function returns a \code{data.frame} combining all tabs of all googlesheets specified, but returning only the columns
 specified by the argument \code{chosen.columns}.
 }
@@ -72,7 +72,7 @@ specified by the argument \code{chosen.columns}.
 \donttest{
 \dontrun{
 
-# Update flywire.ids in the sheet:
+# Update flywire_ids in the sheet:
 ### https://docs.google.com/spreadsheets/d/
 ### 1rzG1MuZYacM-vbW7100aK8HeA-BY6dWAVXQ7TB6E2cQ
 ### /edit#gid=0

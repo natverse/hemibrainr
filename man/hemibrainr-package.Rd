@@ -6,8 +6,7 @@
 \alias{hemibrainr-package}
 \title{hemibrainr: Code for Working with Data from Janelia FlyEM's Hemibrain Project``}
 \description{
-Useful functions for pre-processing and analysing data from Janelia FlyEM's hemibrain project <https://www.janelia.org/project-team/flyem/hemibrain>. 
-             Data can be accessed from a neuPrint instance <https://neuprint.janelia.org/> using the R package neuprintr.
+Useful functions for pre-processing and analysing data from Janelia FlyEM's hemibrain project <https://www.janelia.org/project-team/flyem/hemibrain>. Data can be accessed from a neuPrint instance <https://neuprint.janelia.org/> using the R package neuprintr.
 }
 \seealso{
 Useful links:

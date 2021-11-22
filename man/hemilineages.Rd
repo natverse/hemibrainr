@@ -6,13 +6,13 @@
 \alias{hemibrain_hemilineages}
 \title{Hemilineages names from T. Lee, K. Ito and V. Hartenstein}
 \format{
-An object of class \code{data.frame} with 199 rows and 8 columns.
+An object of class \code{data.frame} with 216 rows and 8 columns.
 }
 \usage{
 hemibrain_hemilineages
 }
 \description{
 Hemilineages names and putative transmitter.
-Transmitter guesses are based on observing at least one cell type in the literature from the hemilineage in question, known to express the given transmitter
+Transmitter guesses are based on observing at least one cell_type in the literature from the hemilineage in question, known to express the given transmitter
 }
 \keyword{datasets}
