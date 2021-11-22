@@ -496,7 +496,7 @@ update.neuronlistfh <- function(x = NULL,
                                 pref.meta = NULL,
                                 meta = NULL,
                                 compress = TRUE,
-                                id = 'flywire.xyz',
+                                id = 'flywire_xyz',
                                 swc = NULL,
                                 ...){
   dbClass = match.arg(dbClass)
@@ -613,8 +613,8 @@ update.neuronlistfh <- function(x = NULL,
     nat::write.neurons(x, dir=swc, format='swc', Force = FALSE, metadata=TRUE)
     if(!is.null(meta)){
       if(all(names(x)%in%rownames(meta))){
-        if("flywire.id"%in%colnames(meta)){
-          fw.ids = unique(as.character(meta$flywire.id))
+        if("flywire_id"%in%colnames(meta)){
+          fw.ids = unique(as.character(meta$flywire_id))
           swc.files = list.files(swc, full.names = TRUE)
           swc.delete = swc.files[!basename(swc.files)%in%paste0(fw.ids,".swc")]
           message("Removing ", length(swc.delete), " outdated .swc files")
