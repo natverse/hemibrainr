@@ -181,7 +181,7 @@ and add pre-made matches (<code>hemibrain_add_matches</code>).</p>
       <th>df</th>
       <td><p>a <code>data.frame</code> of pre-made matches that the user wants to transfer onto the Google Sheet. This will erase any extant matches for the specified neurons. This data frame
 must have columns: bodyid (i.e. the hemibrain neuron), skid (i.e. the FAFB neuron) and quality (i.e. match quality). Matches have three levels of 'quality', largely dependent on the degree of manual tracing for FAFB neurons
- - good (could be the same cell), medium (same cell type) and poor (could be the same or similar cell type).
+ - good (could be the same cell), medium (same cell_type) and poor (could be the same or similar cell_type).
  @param ids either hemibrain bodyids or FAFB skids to add to a Google Sheet. You will want to add IDs where they do not already exist, so that
  you can use, for example, <code><a href='hemibrain_matching.html'>hemibrain_matching</a></code>.
  @param sheet the tab to which to add your new information. You are either adding to information related ot hemibrain neurons, or FAFB neurons.</p></td>
