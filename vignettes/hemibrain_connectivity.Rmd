@@ -111,7 +111,7 @@ lhmb1.elist <- elist %>%
   dplyr::filter(pre == lhmb1.bodyid | post == lhmb1.bodyid, count > 10 | norm > 0.01) %>%
   mutate(feedback = ifelse( (post %in% .data$pre & post %in% .data$post)) & !post%in%lhmb1.bodyid ) %>%
   arrange(desc(norm), desc(count)) %>% # sort
-  mutate(post.type = hemi.meta[match(post, hemi.meta$bodyid),"type"]) %>% # cell type
+  mutate(post.type = hemi.meta[match(post, hemi.meta$bodyid),"type"]) %>% # cell_type
   mutate(post.layer = hemi.meta[match(post, hemi.meta$bodyid),"ct.layer"]) %>% # 'layre' in the olfactory system
   mutate(pre.type = hemi.meta[match(pre, hemi.meta$bodyid),"type"]) %>%
   mutate(pre.layer = hemi.meta[match(pre, hemi.meta$bodyid),"ct.layer"]) %>%

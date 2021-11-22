@@ -111,7 +111,7 @@ length(fw.neurons) # That's a lot of neurons!
 head(fw.neurons) # There is some meta data already attached
 
 # Let's see a selection. All the neurons in the DL1_dorsal lineage
-dl1.dorsal = subset(fw.neurons, ItoLee_Hemilineage == "DL1_dorsal")
+dl1.dorsal = subset(fw.neurons, ito_lee_hemilineage == "DL1_dorsal")
 ## There may be some mistakes early on here
 ### As the project develops, they should get ironed out ....
 
@@ -201,7 +201,7 @@ flywire_request(request = ids)
 
 ## Match flywire neurons to each other and the hemibrain
 
-The neuron matching pipeline reads neuron skeletons from Google Drive and and displays them. FlyWire skeletons are shown in dark grey (their mirrored equivalents in light grey) and potential hemibrain matches in red. This depends also on the precomputed NBLASTs on the hemibrain team drive. For full details, see our `match_making` [vignette](https://natverse.github.io/hemibrainr/articles/match_making.html). 
+The neuron matching pipeline reads neuron skeletons from Google Drive and and displays them. FlyWire skeletons are shown in dark grey (their mirrored equivalents in light grey) and potential hemibrain_matches in red. This depends also on the precomputed NBLASTs on the hemibrain team drive. For full details, see our `match_making` [vignette](https://natverse.github.io/hemibrainr/articles/match_making.html). 
 
 ### Matching pipelines
 
@@ -248,7 +248,7 @@ gs.chosen = subset(gs, User == "Tots")
 fw = flywire_neurons()
 
 # Get those for Tots
-fw.tots = fw[names(fw)%in%gs.chosen$flywire.id]
+fw.tots = fw[names(fw)%in%gs.chosen$flywire_id]
 
 # Examine their meta data
 fw.tots[,]
