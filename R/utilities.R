@@ -706,6 +706,10 @@ check_package_available <- function(pkg) {
 update_metdata <- function(neurons, meta, id){
   check_package_available('dplyr')
   df = neurons[,]
+  i <- sapply(df, is.factor)
+  if(sum(i)){
+    df[i] <- lapply(df[i], as.character)
+  }
   df = matchColClasses(meta, df)
   dfn = suppress(dplyr::left_join(df, meta))
   matched = match(dfn[[id]], meta[[id]])
