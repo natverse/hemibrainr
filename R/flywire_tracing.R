@@ -719,14 +719,14 @@ flywire_workflow <- function(flywire.id,
           nts.all[[i]] = data.frame(id = i, top.nt = top.nt)
         }
         nts = do.call(plyr::rbind.fill, nts.all)
-        tab.entries$top.nt = nts$top.nt[match(tab.entries[,1],nts$id)]
+        tab.entries$top.nt = unlist(nts$top.nt[match(tab.entries[[1]],nts$id)])
       }
     }
     tab.entries$status = "unassessed"
     tab.entries$note = NA
-    main = data.frame(flywire.id,weight = "main", status = status, note = gsub("_.*","",ws), stringsAsFactors = FALSE)
-    colnames(main) = colnames(tab.entries)
+    main = data.frame(flywire.id, weight = "main", top.nt = "", status = status, note = gsub("_.*","",ws), stringsAsFactors = FALSE)
     tab.entries = as.data.frame(tab.entries, stringsAsFactors = FALSE)
+    colnames(main) = colnames(tab.entries)
     plyr::rbind.fill(main, tab.entries)
   }
 }
