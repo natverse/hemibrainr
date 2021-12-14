@@ -710,7 +710,7 @@ flywire_workflow <- function(flywire.id,
         warning("Cannot find transmitter predictions")
       } else {
         nts.all = list()
-        for(i in tab.entries[,1]){
+        for(i in tab.entries[[1]]){
           nt = fafbseg::flywire_ntpred(i,
                                        local = local,
                                        cleft.threshold=cleft.threshold,
