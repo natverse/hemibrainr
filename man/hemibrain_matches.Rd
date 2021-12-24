@@ -41,7 +41,7 @@ Contact us if unsure:
 
   \item{"ito_lee_hemilineage"}{ - the hemilineage to which this neuron belongs. Seer \code{\link{hemibrain_hemilineages}}.}
 
-  \item{"match"}{ - the ID of the manual match from the other data set. If \code{dataset=="hemibrain"} then this is a \code{flywire_id} that can be found in \code{flywire_neurons}.If \code{"CATMAID"} or \code{"flywire"} then it is a hemibrain body ID.}
+  \item{"match"}{ - the ID of the manual match from the other data set. If \code{dataset=="hemibrain"} then this is a \code{root_id} that can be found in \code{flywire_neurons}.If \code{"CATMAID"} or \code{"flywire"} then it is a hemibrain body ID.}
 
   \item{"quality"}{ - the matcher makers qualitative assessment of how good this match is.}
 

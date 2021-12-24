@@ -166,7 +166,7 @@ Just columns giving the match, match quality and cell_type are updated.</p>
   matching_sheet <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>options</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>$</span><span class='va'>hemibrainr_matching_gsheet</span>,
   priority <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"FAFB"</span>, <span class='st'>"hemibrain"</span><span class='op'>)</span>,
   <span class='va'>selected_sheets</span>,
-  id <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"flywire_id"</span>, <span class='st'>"bodyid"</span>, <span class='st'>"skid"</span>, <span class='st'>"id"</span><span class='op'>)</span>,
+  id <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"root_id"</span>, <span class='st'>"bodyid"</span>, <span class='st'>"skid"</span>, <span class='st'>"id"</span><span class='op'>)</span>,
   match.field <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"hemibrain"</span>, <span class='st'>"CATMAID"</span>, <span class='st'>"flywire"</span>, <span class='st'>"LM"</span>, <span class='st'>"FAFB.hemisphere"</span><span class='op'>)</span>,
   chosen.columns <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"cell_type"</span>, <span class='st'>"flywire_xyz"</span>, <span class='st'>"side"</span>, <span class='st'>"ito_lee_hemilineage"</span>,
     <span class='st'>"hartenstein_hemilineage"</span><span class='op'>)</span>
@@ -197,7 +197,7 @@ they are for the neuron specified in the <code>id</code> column of each workshee
     </tr>
     <tr>
       <th>match.field</th>
-      <td><p>which match to record. E.g. if <code>id</code> is <code>"flywire_id"</code> you may want to add the hemibrain_match from the master matching sheets. To do this
+      <td><p>which match to record. E.g. if <code>id</code> is <code>"root_id"</code> you may want to add the hemibrain_match from the master matching sheets. To do this
 set <code>match.field</code> to <code>"hemibrain"</code>. Then, if there is a <code>"hemibrain_match"</code> and/or <code>"hemibrain_match_quality"</code> column, it will be updated. You
 may also want to know the hemispheric match within FAFB, in which case <code>"FAFB.hemisphere"</code> could be used.</p></td>
     </tr>
@@ -232,7 +232,7 @@ and 'hemibrain_match_quality' for a hemibrain_match, then this column in the goo
 <span class='co'>## https://docs.google.com/spreadsheets/d/</span>
 <span class='co'>## 1spGSuhUX6Hhn-8HH0U_ArIWUuPpMBFNjIjeSSh_MFVY</span>
 <span class='co'>## /edit#gid=603762040</span>
-<span class='va'>lineage.gsheet.meta</span> <span class='op'>=</span> <span class='fu'>matches_update</span><span class='op'>(</span>id <span class='op'>=</span> <span class='st'>"flywire_id"</span>,
+<span class='va'>lineage.gsheet.meta</span> <span class='op'>=</span> <span class='fu'>matches_update</span><span class='op'>(</span>id <span class='op'>=</span> <span class='st'>"root_id"</span>,
 match.field <span class='op'>=</span> <span class='st'>"hemibrain"</span>,
 selected_sheets <span class='op'>=</span> <span class='st'>"1spGSuhUX6Hhn-8HH0U_ArIWUuPpMBFNjIjeSSh_MFVY"</span><span class='op'>)</span>
 

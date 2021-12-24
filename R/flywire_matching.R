@@ -2,7 +2,7 @@
 
 #' @rdname hemibrain_add_made_matches
 #' @export
-flywire_matching_rewrite <- function(flywire_ids = names(flywire_neurons()),
+flywire_matching_gsheet_rewrite <- function(flywire_ids = names(flywire_neurons()),
                                      meta = flywire_neurons()[,],
                                      catmaid.update = TRUE,
                                      selected_file  = options()$hemibrainr_matching_gsheet, # 1_RXfVRw2nVjzk6yXOKiOr_JKwqk2dGSVG_Xe7_v8roU
@@ -48,7 +48,7 @@ flywire_matching_rewrite <- function(flywire_ids = names(flywire_neurons()),
       if(length(indices)){
         gs[indices,]$fafb_xyz = fafb_xyz
         gs[indices,]$flywire_xyz = flywire_xyz
-        gs[indices,]$flywire_id = fw.ids
+        gs[indices,]$root_id = fw.ids
       }
     }
   }
@@ -59,10 +59,10 @@ flywire_matching_rewrite <- function(flywire_ids = names(flywire_neurons()),
       nblast = tryCatch(hemibrain_nblast('hemibrain-flywire'), error = function(e) NULL)
     }
     if(!is.null(nblast)){
-      nblast.top = nblast[match(gs$flywire_id,rownames(nblast)),]
+      nblast.top = nblast[match(gs$root_id,rownames(nblast)),]
       tops = apply(nblast.top,1,function(r) which.max(r))
       top = colnames(nblast)[unlist(tops)]
-      top[!gs$flywire_id%in%rownames(nblast)] = NA
+      top[!gs$root_id%in%rownames(nblast)] = NA
       gs$hemibrain.nblast.top = top
     }
   }
@@ -74,7 +74,7 @@ flywire_matching_rewrite <- function(flywire_ids = names(flywire_neurons()),
   # Update fafb_xyz column
   empty = is.na(gs$fafb_xyz) & ! is.na(gs$flywire_xyz)
   if(sum(empty)){
-    fafb_xyz = meta[gs[empty,"flywire_id"],"fafb_xyz"]
+    fafb_xyz = meta[gs[empty,"root_id"],"fafb_xyz"]
     gs[empty,"fafb_xyz"] = fafb_xyz
   }
   empty = is.na(gs$fafb_xyz) & ! is.na(gs$flywire_xyz)
@@ -89,13 +89,13 @@ flywire_matching_rewrite <- function(flywire_ids = names(flywire_neurons()),
   # Update side information
   if(!is.null(meta$side)){
     # Update side
-    sides = meta[match(gs$flywire_id,meta$flywire_id),"side"]
+    sides = meta[match(gs$root_id,meta$root_id),"side"]
     sides[is.na(sides)] = gs$side[is.na(sides)]
     gs$side = sides
   }
 
   # Update
-  write.cols = intersect(c("fafb_xyz", "flywire_xyz", "flywire_id", "flywire_svid", "side", "nblast.top"),colnames(gs))
+  write.cols = intersect(c("fafb_xyz", "flywire_xyz", "root_id", "flywire_svid", "side", "nblast.top"),colnames(gs))
   gsheet_update_cols(
       write.cols = write.cols,
       gs=gs,
@@ -145,7 +145,7 @@ flywire_matching_rewrite <- function(flywire_ids = names(flywire_neurons()),
 
   # Add missing flywire information
   fg = hemibrain_match_sheet(sheet = "FAFB", selected_file = selected_file)
-  all.ids = correct_id(unique(fg$flywire_id))
+  all.ids = correct_id(unique(fg$root_id))
   missing = setdiff(flywire_ids, all.ids)
   if(length(missing)){
     hemibrain_matching_add(ids = missing, meta = meta, dataset="flywire", selected_file = selected_file, ...)
@@ -180,6 +180,7 @@ flywire_matching_rewrite <- function(flywire_ids = names(flywire_neurons()),
 LR_matching <- function(ids = NULL,
                         threshold = 0,
                         mirror.nblast = NULL,
+                        flytable = TRUE,
                         selected_file = options()$hemibrainr_matching_gsheet,
                         batch_size = 50,
                         db = flywire_neurons(),
@@ -222,9 +223,13 @@ LR_matching <- function(ids = NULL,
     message(file.path(options()$Gdrive_hemibrain_data,"hemibrain_nblast/flywire.mirror.mean.rda"))
     mirror.nblast = hemibrain_nblast("flywire-mirror")
   }
-  # Read the Google Sheet
-  gs = hemibrain_match_sheet(selected_file = selected_file, sheet = "flywire")
-  id = "flywire_id"
+  # Read the Google Sheet or setable
+  if(flytable){
+    gs = flytable_matches(dataset="flywire")
+  }else{
+    gs = hemibrain_match_sheet(selected_file = selected_file, sheet = "flywire")
+  }
+  id = "root_id"
   # Get neuron data repo
   if(missing(db)) {
     db=tryCatch(force(db), error=function(e) {
@@ -239,9 +244,9 @@ LR_matching <- function(ids = NULL,
     })
   }
   # How much is done?
-  match.field = paste0("FAFB.hemisphere",".match")
-  quality.field = paste0("FAFB.hemisphere",".match.quality")
-  done = subset(gs, !is.na(gs[[match.field]]))
+  match.field = paste0("fafb_hemisphere","_match")
+  quality.field = paste0("fafb_hemisphere","_match_quality")
+  done = subset(gs, !is.na(gs[[match.field]]) & !gs[[match.field]]%in%c("none","unknown","NA","na"))
   message("Neuron matches: ", nrow(done), "/", nrow(gs))
   print(table(gs[[quality.field]]))
   # choose user
@@ -398,11 +403,11 @@ neuron_match_scanner <- function(brain,
     }
     # Other neurons to always plot
     if(extra.repository!="none"){
-      if(extra.repository=="CATMAID"){
+      if(extra.repository=="CATMAID" & "skid" %in% colnames(selected)){
         sk = selected[n,]$skid[1]
         extra.n = try(get_match_neuron(query = NULL, n = sk, query.repository = extra.repository), silent = FALSE)
       }else{
-        fw.id = selected[n,]$flywire_id[1]
+        fw.id = selected[n,]$root_id[1]
         extra.n = try(get_match_neuron(query = flywire_neurons(), n = fw.id, query.repository = extra.repository), silent = FALSE)
       }
     }else{
@@ -414,7 +419,7 @@ neuron_match_scanner <- function(brain,
         NULL
       })
       if(is.null(another.n)){
-        fw.id = selected[n,]$flywire_id[1]
+        fw.id = selected[n,]$root_id[1]
         another.n = get_match_neuron(query = flywire_neurons(), n = fw.id, query.repository = query.repository)
       }
     }else{
@@ -422,7 +427,7 @@ neuron_match_scanner <- function(brain,
     }
     ### Get old matches
     if(match.field=="flywire_xyz"){
-      old.match = selected[selected[[id]]%in%n,"flywire_id"][1]
+      old.match = selected[selected[[id]]%in%n,"root_id"][1]
     }else{
       old.match = selected[selected[[id]]%in%n,match.field][1]
     }
@@ -464,6 +469,7 @@ neuron_match_scanner <- function(brain,
       if(targets.repository=="flywire"){
         fafbseg::choose_segmentation("flywire")
         native  = fafbseg::skeletor(batch, mesh3d = FALSE, clean = FALSE)
+        native[,"root_id"] = names(native)
       }else if (targets.repository == "hemibrain"){
         native  = neuprintr::neuprint_read_neurons(batch, all_segments = TRUE, heal = FALSE)
         native = scale_neurons.neuronlist(native, scaling = (8/1000))
@@ -497,6 +503,7 @@ neuron_match_scanner <- function(brain,
                                 })
       if(!is.issue(old.match)){
         sel = union(old.match,sel)
+        sel = sel[!sel%in%c("none","NA","na","unknown")]
       }
       if(length(sel)>1){
         message("Note: You selected more than one neuron")

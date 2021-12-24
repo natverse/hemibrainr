@@ -85,7 +85,7 @@ LNO1.meshes = fafbseg::read_cloudvolume_meshes(LNO1)
 # Let us get the skeletons 
 LNO1.skels = fafbseg::skeletor(LNO1)
 ### If this crashes, follow these instructions instead: http://natverse.org/fafbseg/articles/articles/installing-cloudvolume-meshparty.html
-### Or cheat and just get the skeletons from the drive:  LNO1.skels = subset(flywire_neurons(), flywire_id %in% LNO1)
+### Or cheat and just get the skeletons from the drive:  LNO1.skels = subset(flywire_neurons(), root_id %in% LNO1)
 
 # This points to a location on your computer where you have the synapse SQL database 
 fafbsynapses = "/Volumes/nnautilus/projects/JanFunke"

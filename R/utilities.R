@@ -613,8 +613,8 @@ update.neuronlistfh <- function(x = NULL,
     nat::write.neurons(x, dir=swc, format='swc', Force = FALSE, metadata=TRUE)
     if(!is.null(meta)){
       if(all(names(x)%in%rownames(meta))){
-        if("flywire_id"%in%colnames(meta)){
-          fw.ids = unique(as.character(meta$flywire_id))
+        if("root_id"%in%colnames(meta)){
+          fw.ids = unique(as.character(meta$root_id))
           swc.files = list.files(swc, full.names = TRUE)
           swc.delete = swc.files[!basename(swc.files)%in%paste0(fw.ids,".swc")]
           message("Removing ", length(swc.delete), " outdated .swc files")
@@ -793,6 +793,15 @@ find_and_replace <- function(x = c("flywire.xyz",
   cols = cols[nchar(cols)>1]
   for(col in cols){
     col_new = snakecase::to_snake_case(col)
+    if (col == "flywire.id"){
+      col_new = "root_id"
+    }
+    if (col_new == "itolee_hemilineage"){
+      col_new = "ito_lee_hemilineage"
+    }
+    if (col_new == "itolee_lineage"){
+      col_new = "ito_lee_lineage"
+    }
     if(col!=col_new){
       message(sprintf("Replacing %s with %s within %s", col, col_new, dir))
       xfun::gsub_dir(dir = dir, pattern = col, replacement = col_new, rw_error = FALSE, mimetype =  '^text/')
@@ -823,7 +832,22 @@ to_snake_case_gsheets  <- function(gsheets){
         n_max = 1,
         .name_repair = "unique"
       )
-      colnames(df) = snakecase::to_snake_case(colnames(df))
+      cols_new = snakecase::to_snake_case(colnames(df))
+      for (col in 1:length(cols_new)){
+        if (cols_new[col] == "flywire.id"){
+          cols_new[col] = "root_id"
+        }
+        if (cols_new[col] == "root_id"){
+          cols_new[col] = "root_id"
+        }
+        if (cols_new[col] == "itolee_hemilineage"){
+          cols_new[col] = "ito_lee_hemilineage"
+        }
+        if (cols_new[col] == "itolee_lineage"){
+          cols_new[col] = "ito_lee_lineage"
+        }
+      }
+      colnames(df) = cols_new
       gsheet_manipulation(
         FUN = googlesheets4::range_write,
         ss = ss,

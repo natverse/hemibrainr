@@ -44,7 +44,7 @@ dm6.upn.ids.all = fafb14_to_flywire_ids("name:Uniglomerular mALT DM6 adPN")
 # This now gives you one flywire ID per neuron
 dm6.upn.ids.biggest = fafb14_to_flywire_ids("name:Uniglomerular mALT DM6 adPN",
                                         only.biggest = TRUE)
-dm6.upn.ids = dm6.upn.ids.biggest$flywire_id
+dm6.upn.ids = dm6.upn.ids.biggest$root_id
 
 # Get meshes
 dm6.upn.meshes = fafbseg::read_cloudvolume_meshes(dm6.upn.ids)
@@ -59,7 +59,7 @@ plot3d(FAFB14, col = "grey", alpha = 0.1)
 # Let us get the skeletons 
 dm6.upn.skels = fafbseg::skeletor(dm6.upn.ids, method = 'wavefront')
 ### If this crashes, follow these instructions instead: http://natverse.org/fafbseg/articles/articles/installing-cloudvolume-meshparty.html
-### Or cheat and just get the skeletons from the drive:  dm6.upn.skels = subset(flywire_neurons(), flywire_id %in% dm6.upn.ids)
+### Or cheat and just get the skeletons from the drive:  dm6.upn.skels = subset(flywire_neurons(), root_id %in% dm6.upn.ids)
 
 # Look good?
 nopen3d()
@@ -137,14 +137,14 @@ plot3d(dm6.upn.partner.skels, soma = 5000)
 ```{r dm6.connectivity.matrix, eval = FALSE}
 # Get up- and downstream connectivity matrices
 dm6.conn.mat.downstream = acast(data = subset(dm6.upn.conns.strong, prepost == 1), 
-                 formula = flywire_id ~ partner, 
+                 formula = root_id ~ partner, 
                  fun.aggregate = sum,
                  value.var = "count",
                  fill = 0)
 ComplexHeatmap::Heatmap(dm6.conn.mat.downstream)
 
 dm6.conn.mat.upstream = acast(data = subset(dm6.upn.conns.strong, prepost == 0), 
-                 formula = flywire_id ~ partner, 
+                 formula = root_id ~ partner, 
                  fun.aggregate = sum,
                  value.var = "count",
                  fill = 0)

@@ -2,11 +2,11 @@
 % Please edit documentation in R/flywire_googledrive.R
 \name{flywire_ids_update}
 \alias{flywire_ids_update}
-\title{Update the flywire_id column in a set of google sheets based on flywire_xyz positions}
+\title{Update the root_id column in a set of google sheets based on flywire_xyz positions}
 \usage{
 flywire_ids_update(
   selected_sheets = NULL,
-  chosen.columns = c("flywire_xyz", "flywire_svid", "flywire_id", "skid", "fafb_xyz",
+  chosen.columns = c("flywire_xyz", "flywire_svid", "root_id", "skid", "fafb_xyz",
     "cell_type", "side", "ito_lee_hemilineage", "hartenstein_hemilineage", "status"),
   ws = NULL,
   regex = FALSE,
@@ -30,7 +30,7 @@ If set to \code{NULL} for \code{flywire_tracing_sheets}, the whole google sheet 
 
 \item{regex}{logical, use \code{ws} with regex.}
 
-\item{meta}{meta data for flywire neurons, e.g. as retrieved using \code{\link{flywire_meta}}. Used to efficiently input \code{flywire_xyz} column if only a \code{flywire_id} entry has been given.
+\item{meta}{meta data for flywire neurons, e.g. as retrieved using \code{\link{flywire_meta}}. Used to efficiently input \code{flywire_xyz} column if only a \code{root_id} entry has been given.
 Only works if that id is also in this provided \code{data.frame}, \code{meta}.}
 
 \item{match}{logical. If \code{TRUE}, hemibrain_matches given.}
@@ -63,8 +63,8 @@ copy location tool in the flywire.ai web-interface.
 The logic of the update procedure is:, find the \code{flywire_xyz} column.
 If that does not exist, find: \code{fw.x}, \code{fw.y}, \code{fw.z}, and use that to create a \code{flywire_xyz} column.
 We use \code{flywire_xyz} if both are given, and there is a mismatch.
-For each row, a \code{flywire_id} is then found based on these points, using \code{fafbseg::flywire_xyz2id} (using the argument \code{rawcoords = TRUE}).
-The google sheet columns \code{flywire_id},\code{flywire_xyz}, \code{fw.x}, \code{fw.y}, \code{fw.z} are then updated if they exist in the original google sheet.
+For each row, a \code{root_id} is then found based on these points, using \code{fafbseg::flywire_xyz2id} (using the argument \code{rawcoords = TRUE}).
+The google sheet columns \code{root_id},\code{flywire_xyz}, \code{fw.x}, \code{fw.y}, \code{fw.z} are then updated if they exist in the original google sheet.
 If they do not, they are not updated. The function returns a \code{data.frame} combining all tabs of all googlesheets specified, but returning only the columns
 specified by the argument \code{chosen.columns}.
 }

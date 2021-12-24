@@ -234,13 +234,13 @@ using <code>hemibrainr:::flywire_synapse_simplify</code>.</p></td>
     <p>a <code>data.frame</code>. Depending on which synapse function was called, it can contain the columns:</p>
 <ul>
 <li><p>"flywire_xyz"  - coordinates of a point in the neuron in flywire voxel space. XYZ, separated by a semicolon.</p></li>
-<li><p>"flywire_id" - the unique ID associated with this flywire neuron. This ID changes every time a neuron is, even slightly, modified. So it is an unstable identifier.
+<li><p>"root_id" - the unique ID associated with this flywire neuron. This ID changes every time a neuron is, even slightly, modified. So it is an unstable identifier.
   This is why <code>flywire_xyz</code> is sometimes used.</p></li>
 <li><p>"fw.x" - the x coordinate of a point in the flywire neuron, in flywire voxel space..</p></li>
 <li><p>"fw.y" - the y coordinate of a point in the flywire neuron, in flywire voxel space..</p></li>
 <li><p>"fw.z" - the z coordinate of a point in the flywire neuron, in flywire voxel space..</p></li>
 <li><p>"user_name" - the name of the user who made the number of edits given in this row.</p></li>
-<li><p>"edits" - the number of edits (merges, splits, etc.) made by a user for the given <code>flywire_id</code>.</p></li>
+<li><p>"edits" - the number of edits (merges, splits, etc.) made by a user for the given <code>root_id</code>.</p></li>
 <li><p>"proportion" - the proportion of total edits for this neuron, that the given user made.</p></li>
 <li><p>"dataset" - the dataset this neuron is from, i.e. flywire.</p></li>
 </ul>

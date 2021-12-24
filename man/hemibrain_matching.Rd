@@ -187,7 +187,7 @@ hemibrain_matching(hemibrain.nblast = fib.fafb.crossnblast.twigs5.mean.compress)
 
 # And example of matching neurons in a flywire tracing sheet
 sheet = flywire_tracing_sheet("SLPal2_dorsal", regex = TRUE)
-fafb_matching(ids = unique(sheet$flywire_id), repository="flywire",
+fafb_matching(ids = unique(sheet$root_id), repository="flywire",
 overwrite = "bad", User = "AJ", superUser = TRUE)
 
 # Look at all poorly made matches

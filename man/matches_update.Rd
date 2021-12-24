@@ -8,7 +8,7 @@ matches_update(
   matching_sheet = options()$hemibrainr_matching_gsheet,
   priority = c("FAFB", "hemibrain"),
   selected_sheets,
-  id = c("flywire_id", "bodyid", "skid", "id"),
+  id = c("root_id", "bodyid", "skid", "id"),
   match.field = c("hemibrain", "CATMAID", "flywire", "LM", "FAFB.hemisphere"),
   chosen.columns = c("cell_type", "flywire_xyz", "side", "ito_lee_hemilineage",
     "hartenstein_hemilineage")
@@ -27,7 +27,7 @@ If \code{NULL} then defaults to \code{option('hemibrainr_gsheets')}.}
 \item{id}{the ID specifying unique neuron identity for each row, for each tab of the google sheets specified with \code{selected_sheets}. When matches are added
 they are for the neuron specified in the \code{id} column of each worksheet.}
 
-\item{match.field}{which match to record. E.g. if \code{id} is \code{"flywire_id"} you may want to add the hemibrain_match from the master matching sheets. To do this
+\item{match.field}{which match to record. E.g. if \code{id} is \code{"root_id"} you may want to add the hemibrain_match from the master matching sheets. To do this
 set \code{match.field} to \code{"hemibrain"}. Then, if there is a \code{"hemibrain_match"} and/or \code{"hemibrain_match_quality"} column, it will be updated. You
 may also want to know the hemispheric match within FAFB, in which case \code{"FAFB.hemisphere"} could be used.}
 
@@ -57,7 +57,7 @@ and 'hemibrain_match_quality' for a hemibrain_match, then this column in the goo
 ## https://docs.google.com/spreadsheets/d/
 ## 1spGSuhUX6Hhn-8HH0U_ArIWUuPpMBFNjIjeSSh_MFVY
 ## /edit#gid=603762040
-lineage.gsheet.meta = matches_update(id = "flywire_id",
+lineage.gsheet.meta = matches_update(id = "root_id",
 match.field = "hemibrain",
 selected_sheets = "1spGSuhUX6Hhn-8HH0U_ArIWUuPpMBFNjIjeSSh_MFVY")
 

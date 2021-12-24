@@ -71,7 +71,7 @@ flycircuit_matching_rewrite(
 
 \item{meta}{meta data for the given flycircuit IDs.}
 
-\item{catmaid.update}{logical. Whether or not to update \code{flywire_xyz} and \code{flywire_id} columns, based on e CATMAID neuron specified by a \code{skid} column.}
+\item{catmaid.update}{logical. Whether or not to update \code{flywire_xyz} and \code{root_id} columns, based on e CATMAID neuron specified by a \code{skid} column.}
 
 \item{selected_file}{Specifies which Google Sheet to use. Unless you are using a personal Google Sheet, this should be \code{options()$hemibrainr_matching_gsheet}.}
 

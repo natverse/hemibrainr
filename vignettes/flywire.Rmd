@@ -248,7 +248,7 @@ gs.chosen = subset(gs, User == "Tots")
 fw = flywire_neurons()
 
 # Get those for Tots
-fw.tots = fw[names(fw)%in%gs.chosen$flywire_id]
+fw.tots = fw[names(fw)%in%gs.chosen$root_id]
 
 # Examine their meta data
 fw.tots[,]

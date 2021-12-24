@@ -237,7 +237,7 @@ fafb_hemibrain_annotate <- function(x,
 
     # Get flywire information
     if(flywire){
-      fid = a$annotation[grepl("flywire_id: |FlyWire_id: ",a$annotation)]
+      fid = a$annotation[grepl("root_id: |root_id: ",a$annotation)]
       cat = catmaid::read.neurons.catmaid(i, ...)
       # Get xyz for root points
       roots = sapply(cat, function(y) nat::xyzmatrix(y)[nat::rootpoints(y),])
@@ -253,7 +253,7 @@ fafb_hemibrain_annotate <- function(x,
       flywire_xyz = apply(roots.flywire.raw, 1, paste, collapse = ",")
 
       # Make annotation
-      afid = paste0('flywire_id: ', fw.ids[1])
+      afid = paste0('root_id: ', fw.ids[1])
       message(afid)
       afw = paste0('flywire_xyz: ', flywire_xyz[1])
       message(afw)
@@ -303,7 +303,7 @@ fafb_hemibrain_annotate <- function(x,
     catmaid::catmaid_set_meta_annotations(meta_annotations = "cell body fiber", annotations = acbf, ...)
     catmaid::catmaid_set_meta_annotations(meta_annotations = "hemibrain_match", annotations = am, ...)
     if(flywire){
-      catmaid::catmaid_set_meta_annotations(meta_annotations = "flywire_id", annotations = afid, ...)
+      catmaid::catmaid_set_meta_annotations(meta_annotations = "root_id", annotations = afid, ...)
       catmaid::catmaid_set_meta_annotations(meta_annotations = "flywire_xyz", annotations = afw, ...)
       catmaid::catmaid_set_meta_annotations(meta_annotations = "fafb_xyz", annotations = afafb, ...)
     }

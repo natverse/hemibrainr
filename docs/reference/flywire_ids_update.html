@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Update the flywire_id column in a set of google sheets based on flywire_xyz positions — flywire_ids_update • hemibrainr</title>
+<title>Update the root_id column in a set of google sheets based on flywire_xyz positions — flywire_ids_update • hemibrainr</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,7 +46,7 @@
 
 
 
-<meta property="og:title" content="Update the flywire_id column in a set of google sheets based on flywire_xyz positions — flywire_ids_update" />
+<meta property="og:title" content="Update the root_id column in a set of google sheets based on flywire_xyz positions — flywire_ids_update" />
 <meta property="og:description" content="This function retrieves flywire IDs based on xyz positions in flywire voxel space, from a set of google sheets.
 It also writes the updated flywire IDs to the same google sheets. This is often helpful because flywire IDs are inherently unstable, they change every time
 a neuron is modified even slightly. Users can record 'stable' points in a neuron that identify it, e.g. a single xyz position in the cell body fibre, or at the soma, and
@@ -152,7 +152,7 @@ then use this function to update and get the correct flywire ID whenever they wi
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Update the flywire_id column in a set of google sheets based on flywire_xyz positions</h1>
+    <h1>Update the root_id column in a set of google sheets based on flywire_xyz positions</h1>
     <small class="dont-index">Source: <a href='https://github.com/flyconnectome/hemibrainr/blob/master/R/flywire_googledrive.R'><code>R/flywire_googledrive.R</code></a></small>
     <div class="hidden name"><code>flywire_ids_update.Rd</code></div>
     </div>
@@ -166,7 +166,7 @@ then use this function to update and get the correct flywire ID whenever they wi
 
     <pre class="usage"><span class='fu'>flywire_ids_update</span><span class='op'>(</span>
   selected_sheets <span class='op'>=</span> <span class='cn'>NULL</span>,
-  chosen.columns <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"flywire_xyz"</span>, <span class='st'>"flywire_svid"</span>, <span class='st'>"flywire_id"</span>, <span class='st'>"skid"</span>, <span class='st'>"fafb_xyz"</span>,
+  chosen.columns <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"flywire_xyz"</span>, <span class='st'>"flywire_svid"</span>, <span class='st'>"root_id"</span>, <span class='st'>"skid"</span>, <span class='st'>"fafb_xyz"</span>,
     <span class='st'>"cell_type"</span>, <span class='st'>"side"</span>, <span class='st'>"ito_lee_hemilineage"</span>, <span class='st'>"hartenstein_hemilineage"</span>, <span class='st'>"status"</span><span class='op'>)</span>,
   ws <span class='op'>=</span> <span class='cn'>NULL</span>,
   regex <span class='op'>=</span> <span class='cn'>FALSE</span>,
@@ -202,7 +202,7 @@ If set to <code>NULL</code> for <code>flywire_tracing_sheets</code>, the whole g
     </tr>
     <tr>
       <th>meta</th>
-      <td><p>meta data for flywire neurons, e.g. as retrieved using <code><a href='flywire_googledrive_data.html'>flywire_meta</a></code>. Used to efficiently input <code>flywire_xyz</code> column if only a <code>flywire_id</code> entry has been given.
+      <td><p>meta data for flywire neurons, e.g. as retrieved using <code><a href='flywire_googledrive_data.html'>flywire_meta</a></code>. Used to efficiently input <code>flywire_xyz</code> column if only a <code>root_id</code> entry has been given.
 Only works if that id is also in this provided <code>data.frame</code>, <code>meta</code>.</p></td>
     </tr>
     <tr>
@@ -241,8 +241,8 @@ copy location tool in the flywire.ai web-interface.</p>
 <p>The logic of the update procedure is:, find the <code>flywire_xyz</code> column.
 If that does not exist, find: <code>fw.x</code>, <code>fw.y</code>, <code>fw.z</code>, and use that to create a <code>flywire_xyz</code> column.
 We use <code>flywire_xyz</code> if both are given, and there is a mismatch.
-For each row, a <code>flywire_id</code> is then found based on these points, using <code><a href='https://rdrr.io/pkg/fafbseg/man/flywire_xyz2id.html'>fafbseg::flywire_xyz2id</a></code> (using the argument <code>rawcoords = TRUE</code>).
-The google sheet columns <code>flywire_id</code>,<code>flywire_xyz</code>, <code>fw.x</code>, <code>fw.y</code>, <code>fw.z</code> are then updated if they exist in the original google sheet.
+For each row, a <code>root_id</code> is then found based on these points, using <code><a href='https://rdrr.io/pkg/fafbseg/man/flywire_xyz2id.html'>fafbseg::flywire_xyz2id</a></code> (using the argument <code>rawcoords = TRUE</code>).
+The google sheet columns <code>root_id</code>,<code>flywire_xyz</code>, <code>fw.x</code>, <code>fw.y</code>, <code>fw.z</code> are then updated if they exist in the original google sheet.
 If they do not, they are not updated. The function returns a <code>data.frame</code> combining all tabs of all googlesheets specified, but returning only the columns
 specified by the argument <code>chosen.columns</code>.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>

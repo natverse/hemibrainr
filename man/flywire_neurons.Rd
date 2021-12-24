@@ -70,11 +70,11 @@ A \code{neuronlist} object containing flywire skeletons. In the meta-data, it mi
 you will get:
 
 \itemize{
- \item{"flywire_id"}{ The ID given to the corresponding volumetric body in flywire.
+ \item{"root_id"}{ The ID given to the corresponding volumetric body in flywire.
  These are used to do things like fetch volumes and are the input to the \code{skeletor} function. However, they are highly volatile and
  change a lot with active tracing.}
  \item{"flywire_xyz"}{ The voxel coordinate of a single point in this neuron, usually a cell body fiber tract position. This is a more accurate way
- of keeping tract of neuron as it will always correspond to the same 'neuron' even though its related flywire_id will change with merge/split events in flywire.}
+ of keeping tract of neuron as it will always correspond to the same 'neuron' even though its related root_id will change with merge/split events in flywire.}
  \item{"hemilineage"}{ An estimated hemilineage identity from both of two naming systems, Ito et al. 2013 and Wong et al. 2013}
  \item{"side"}{ An estimate as to the 'side', i.e. brain hemisphere, in which the neuron lies}
  \item{"skid"}{ The 'skeleton ID' of this neuron's match in CATMAID for FAFBv14}

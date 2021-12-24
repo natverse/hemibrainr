@@ -266,11 +266,11 @@ the sheet specified by <code>selected_sheet</code>.</p></td>
     <p>A <code>neuronlist</code> object containing flywire skeletons. In the meta-data, it might be useful for some users to note that
 you will get:</p>
 <ul>
-<li><p>"flywire_id" The ID given to the corresponding volumetric body in flywire.
+<li><p>"root_id" The ID given to the corresponding volumetric body in flywire.
  These are used to do things like fetch volumes and are the input to the <code>skeletor</code> function. However, they are highly volatile and
  change a lot with active tracing.</p></li>
 <li><p>"flywire_xyz" The voxel coordinate of a single point in this neuron, usually a cell body fiber tract position. This is a more accurate way
- of keeping tract of neuron as it will always correspond to the same 'neuron' even though its related flywire_id will change with merge/split events in flywire.</p></li>
+ of keeping tract of neuron as it will always correspond to the same 'neuron' even though its related root_id will change with merge/split events in flywire.</p></li>
 <li><p>"hemilineage" An estimated hemilineage identity from both of two naming systems, Ito et al. 2013 and Wong et al. 2013</p></li>
 <li><p>"side" An estimate as to the 'side', i.e. brain hemisphere, in which the neuron lies</p></li>
 <li><p>"skid" The 'skeleton ID' of this neuron's match in CATMAID for FAFBv14</p></li>

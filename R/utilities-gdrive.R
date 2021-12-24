@@ -588,7 +588,7 @@ gsheet_update_cols <- function(write.cols,
 }
 
 # Reorder sheets and remove duplicates
-gsheet_reorder <- function(gs, tab, selected_sheet, remove.duplicates = TRUE, field = "flywire_id", Verbose = TRUE){
+gsheet_reorder <- function(gs, tab, selected_sheet, remove.duplicates = TRUE, field = "root_id", Verbose = TRUE){
   if(remove.duplicates){
     gs = gs[!duplicated(gs),]
     if(!field%in%colnames(gs)){

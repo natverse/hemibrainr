@@ -142,7 +142,7 @@ dn.info$class = "DN"
 dn.info = dn.info[,!grepl("dend\\.|pd\\.|segregation|axon\\.",colnames(dn.info))]
 
 # chatacter when needs
-char_df <- function(df, cols = c("bodyid","match","FAFB.match","skid","flywire_id")){
+char_df <- function(df, cols = c("bodyid","match","FAFB.match","skid","root_id")){
   cols = intersect(cols,colnames(df))
   for(col in cols){
     df[[col]] = as.character(df[[col]])

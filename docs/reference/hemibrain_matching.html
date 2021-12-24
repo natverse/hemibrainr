@@ -388,7 +388,7 @@ skeletons  (<code>"lm"</code>) from Dolan et al. and Frechter et al. 2019 (eLife
 
 <span class='co'># And example of matching neurons in a flywire tracing sheet</span>
 <span class='va'>sheet</span> <span class='op'>=</span> <span class='fu'><a href='flywire_tracing_sheet.html'>flywire_tracing_sheet</a></span><span class='op'>(</span><span class='st'>"SLPal2_dorsal"</span>, regex <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
-<span class='fu'>fafb_matching</span><span class='op'>(</span>ids <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/unique.html'>unique</a></span><span class='op'>(</span><span class='va'>sheet</span><span class='op'>$</span><span class='va'>flywire_id</span><span class='op'>)</span>, repository<span class='op'>=</span><span class='st'>"flywire"</span>,
+<span class='fu'>fafb_matching</span><span class='op'>(</span>ids <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/unique.html'>unique</a></span><span class='op'>(</span><span class='va'>sheet</span><span class='op'>$</span><span class='va'>root_id</span><span class='op'>)</span>, repository<span class='op'>=</span><span class='st'>"flywire"</span>,
 overwrite <span class='op'>=</span> <span class='st'>"bad"</span>, User <span class='op'>=</span> <span class='st'>"AJ"</span>, superUser <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
 
 <span class='co'># Look at all poorly made matches</span>

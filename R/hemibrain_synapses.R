@@ -94,8 +94,8 @@ hemibrain_extract_synapses <- function(x,
   if(nat::is.neuronlist(x)){
     if("bodyid"%in%colnames(x[,])){
       x = add_field_seq(x,x[,"bodyid"],field="bodyid")
-    }else if("flywire_id"%in%colnames(x[,])){
-      x = add_field_seq(x,x[,"flywire_id"],field="flywire_id")
+    }else if("root_id"%in%colnames(x[,])){
+      x = add_field_seq(x,x[,"root_id"],field="root_id")
     }else if("skid"%in%colnames(x[,])){
       x = add_field_seq(x,x[,"skid"],field="skid")
     }else if(!is.null(names(x))){
@@ -131,8 +131,8 @@ hemibrain_extract_connections <- function(x,
   if(nat::is.neuronlist(x)){
     if("bodyid"%in%colnames(x[,])){
       x = add_field_seq(x,x[,"bodyid"],field="bodyid")
-    }else if("flywire_id"%in%colnames(x[,])){
-      x = add_field_seq(x,x[,"flywire_id"],field="flywire_id")
+    }else if("root_id"%in%colnames(x[,])){
+      x = add_field_seq(x,x[,"root_id"],field="root_id")
     }else if("skid"%in%colnames(x[,])){
       x = add_field_seq(x,x[,"skid"],field="skid")
     }else if(!is.null(names(x))){
@@ -172,8 +172,8 @@ extract_synapses <-function(x, unitary = FALSE, meta = NULL){
   }else{
     syn = x
   }
-  if(!is.null(x$flywire_id)){
-    id = "flywire_id"
+  if(!is.null(x$root_id)){
+    id = "root_id"
   } else if(!is.null(x$skid)){
     id = "skid"
   } else if(!is.null(x$bodyid)){
@@ -229,7 +229,7 @@ extract_synapses <-function(x, unitary = FALSE, meta = NULL){
     syn$top_nt = "unknown"
   }
   if(unitary){ # connections, rather than synapses
-    if(id == "flywire_id"){
+    if(id == "root_id"){
       syn %>%
         dplyr::mutate(partner = dplyr::case_when(
           .data$prepost==0 ~ .data$post_id,
@@ -266,8 +266,8 @@ extract_synapses <-function(x, unitary = FALSE, meta = NULL){
 hemibrain_extract_compartment_edgelist <- function(x, meta = NULL, ...){
   if(nat::is.neuronlist(x)){
     y = x[[1]]
-    if(!is.null(y$flywire_id)){
-      id = "flywire_id"
+    if(!is.null(y$root_id)){
+      id = "root_id"
       partner = "post_id"
     } else if(!is.null(y$skid)){
       id = "skid"
@@ -289,7 +289,7 @@ hemibrain_extract_compartment_edgelist <- function(x, meta = NULL, ...){
   lookup = nat::nlapply(syns.list, extract_lookup,...)
   lookup = unlist(lookup)
   if(!is.null(meta)){
-    lookup.nt = meta[,c("flywire_id","top_nt")]
+    lookup.nt = meta[,c("root_id","top_nt")]
     lookup.nt = as.data.frame(lookup.nt)
   }else{
     lookup.nt = NULL

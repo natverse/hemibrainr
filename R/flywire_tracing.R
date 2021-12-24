@@ -18,7 +18,7 @@
 #' @param query a vector of data indicating flywire neurons. These can be a vector of flywire XYZ positions (readable by \code{nat::xyzmatrix}),
 #' flywire root IDs or flywire supervoxel IDs. These are used to get the most up to date root IDs from FlyWire, which are then matched to the
 #' results from \code{flywire_tracing_sheets}.
-#' @param query.type  whether the query is a vector of xyz positions, flywire supervoxel IDs or flywire IDs ("flywire_xyz"/"flywire_svid"/"flywire_id").
+#' @param query.type  whether the query is a vector of xyz positions, flywire supervoxel IDs or flywire IDs ("flywire_xyz"/"flywire_svid"/"root_id").
 #' @param fw.meta a \code{data.frame} of meta data on flywire neurons, e.g. as produced by \code{flywire_tracing_sheets}.or read by \code{flywire_meta}.
 #' @param cloudvolume.url URL for CloudVolume to fetch segmentation image data. The default value of NULL choose
 #' @param nblast the nblast matrix used to update your workflow googlesheet.
@@ -26,9 +26,9 @@
 #' @param ... methods passed to \code{googlesheets4} functions.
 #'.
 #' @details flywire tracing google sheets should have the columns: flywire_xyz (a single cardinal position for each neuron in raw FlyWire voxel space),
-#'flywire_svid (the supervoxel ID for this position) and flywire_id (the flywire root ID for the neuron that can be found at this position). Additional, informative columns
+#'flywire_svid (the supervoxel ID for this position) and root_id (the flywire root ID for the neuron that can be found at this position). Additional, informative columns
 #'are encouraged. A sheet in this format can be updated using \code{\link{flywire_ids_update}}.
-#'This updates the 'unstable' flywire_id column based on the stable flywire_xyz column, and also provides
+#'This updates the 'unstable' root_id column based on the stable flywire_xyz column, and also provides
 #'stable flywire_svid column if it is empty.
 #'
 #' @return a \code{data.frame} with columns from the right tab, chosen using \code{regex}, from the given google sheet(s) \code{selected_sheet},
@@ -172,7 +172,7 @@ flywire_tracing_sheets.now <- function(ws = NULL,
 #' @export
 #' @rdname flywire_tracing_sheet
 flywire_in <- function(query,
-                             query.type = c("flywire_id","flywire_xyz","flywire_svid"),
+                             query.type = c("root_id","flywire_xyz","flywire_svid"),
                              ws = NULL,
                              fw.meta = flywire_meta(),
                              cloudvolume.url = NULL,
@@ -208,7 +208,7 @@ flywire_in <- function(query,
   }
   if(Verbose){
     message(sprintf("%s of %s queries found:",sum(query%in%df$query),length(query)))
-    key.cols = c("query", "flywire_xyz", "flywire_svid","flywire_id", "status", "confirmed", "cell_type", "ito_lee_hemilineage",
+    key.cols = c("query", "flywire_xyz", "flywire_svid","root_id", "status", "confirmed", "cell_type", "ito_lee_hemilineage",
                  "side", "hemibrain_match", "hemibrain_match_quality", "tab", "ws")
     print(knitr::kable(df[,intersect(key.cols,colnames(df))]))
   }
@@ -228,7 +228,7 @@ flywire_tracing_update <- function(tab,
                                    selected_sheet,
                                    update,
                                    write.cols = colnames(update),
-                                   by = "flywire_id",
+                                   by = "root_id",
                                    Verbose = TRUE,
                                    return = FALSE){
   # Read sheet
@@ -323,7 +323,7 @@ flywire_tracing_update <- function(tab,
 #' @export
 flywire_tracing_standardise <- function(ws = NULL,
                                         regex = FALSE,
-                                        field = "flywire_id",
+                                        field = "root_id",
                                         selected_sheets = options()$flywire_lineages_gsheets,
                                         Verbose = TRUE,
                                         whimsy = FALSE,
@@ -423,7 +423,7 @@ flywire_tracing_standardise <- function(ws = NULL,
   }
 }
 
-#' @param main_sheet a google sheet of flywire neurons with columns: \code{workflow}, \code{whimsy}, \code{flywire_id}. See \code{\link{standard_workflow}}.
+#' @param main_sheet a google sheet of flywire neurons with columns: \code{workflow}, \code{whimsy}, \code{root_id}. See \code{\link{standard_workflow}}.
 #' This sheet is read, and a separate tab in \code{target_sheet} is made for each workflow.
 #' @param target_sheet a sheet to which to add 'workflow' tabs. Workflow tabs are lists of flywire neurons up/downstream of neurons
 #' entered into the \code{main_sheet}. Accepted workflows: inputs, outputs, matches.
@@ -453,7 +453,7 @@ flywire_deploy_workflows <-function(ws = "flywire",
   }
   gs = flywire_tracing_sheet(ws=ws,regex=regex,open=FALSE,selected_sheet=main_sheet,Verbose=Verbose)
   if(!all(c("whimsy","workflow")%in%colnames(gs))){
-    stop("Please give a column named 'whimsy' with human-memorable names for neurons\n Make sure there is a flywire_id column with valid entires.")
+    stop("Please give a column named 'whimsy' with human-memorable names for neurons\n Make sure there is a root_id column with valid entires.")
   }else if (!nrow(gs)){
     return(NULL)
   }
@@ -482,7 +482,7 @@ flywire_deploy_workflows <-function(ws = "flywire",
   for(missing in workflow.tabs.missing){
     try(pbm$tick(tokens = list(what = missing)), silent = TRUE)
     please.add = subset(main, main$tab == missing)
-    fw = try(flywire_workflow(flywire_id = please.add$flywire_id,
+    fw = try(flywire_workflow(root_id = please.add$root_id,
                           status = please.add$status,
                           ws=missing,
                           threshold = threshold,
@@ -493,7 +493,7 @@ flywire_deploy_workflows <-function(ws = "flywire",
                           Verbose = Verbose,
                           nblast = nblast), silent = FALSE)
     if(grepl("try",class(fw))||is.null(fw)){
-      warning("Error in adding information for: ", please.add$flywire_id)
+      warning("Error in adding information for: ", please.add$root_id)
     }else{
       gs.added = gsheet_manipulation(FUN = googlesheets4::sheet_add,
                                      ss = target_sheet,
@@ -585,7 +585,7 @@ flywire_update_workflow <-function(main,
           warning("Workflow sheet has no rows: ", ws)
           return(invisible())
         }
-        fw = tryCatch(flywire_workflow(flywire_id = main$flywire_id,
+        fw = tryCatch(flywire_workflow(root_id = main$root_id,
                                        status = main$status,
                                        ws=ws,
                                        threshold = threshold,
@@ -602,7 +602,7 @@ flywire_update_workflow <-function(main,
                       })
         if(is.data.frame(fw)){
           if(nrow(fw)){
-            shared.cols = setdiff(intersect(colnames(fw),colnames(gs)),c("weight","count","flywire_id","flywire_xyz","flywire_svid","nblast","type"))
+            shared.cols = setdiff(intersect(colnames(fw),colnames(gs)),c("weight","count","root_id","flywire_xyz","flywire_svid","nblast","type"))
             for(sc in shared.cols){
               fw[[sc]] = gs[[sc]][match(fw[[id]],gs[[id]])]
             }
@@ -623,7 +623,7 @@ flywire_update_workflow <-function(main,
 
 # hidden
 #' @import fafbseg
-flywire_workflow <- function(flywire_id,
+flywire_workflow <- function(root_id,
                              status = "unassessed",
                               ws,
                               threshold = 10,
@@ -635,11 +635,11 @@ flywire_workflow <- function(flywire_id,
                              Verbose = TRUE,
                              max.hits = 50,
                              db = flywire_neurons(WithConnectors = TRUE)){
-  if(length(flywire_id)>1){
-    stop("Only one flywire_id at a time please")
+  if(length(root_id)>1){
+    stop("Only one root_id at a time please")
   }
-  if(is.null(flywire_id)||is.na(flywire_id)||flywire_id%in%c("0","NA","none","None"," ","")){
-    warning("flywire_id invalid ", flywire_id)
+  if(is.null(root_id)||is.na(root_id)||root_id%in%c("0","NA","none","None"," ","")){
+    warning("root_id invalid ", root_id)
     return(NULL)
   }
   match = grepl("match",ws)
@@ -652,9 +652,9 @@ flywire_workflow <- function(flywire_id,
       nblast.hemibrain = nblast$nblast.hemibrain
       nblast.lr = nblast$nblast.lr
     }
-    inside.nblast = rownames(nblast.hemibrain)%in%flywire_id
-    inside.nblastLR = colnames(nblast.lr)%in%flywire_id
-    tab.entries = data.frame(id = flywire_id, nblast = "main", status = "unassessed", type = "self", note = gsub("_.*","",ws), stringsAsFactors = FALSE)
+    inside.nblast = rownames(nblast.hemibrain)%in%root_id
+    inside.nblastLR = colnames(nblast.lr)%in%root_id
+    tab.entries = data.frame(id = root_id, nblast = "main", status = "unassessed", type = "self", note = gsub("_.*","",ws), stringsAsFactors = FALSE)
     if(sum(inside.nblast)){
       entries = nblast.hemibrain[inside.nblast,]
       names(entries) = colnames(nblast.hemibrain)
@@ -685,7 +685,7 @@ flywire_workflow <- function(flywire_id,
     }
     tab.entries
   }else if (syns){
-    tab.entries = flywire_annotations_for_synapses(flywire_id,
+    tab.entries = flywire_annotations_for_synapses(root_id,
                                             partners = NULL,
                                             db = db,
                                             keep.dist.nm = NULL,
@@ -695,7 +695,7 @@ flywire_workflow <- function(flywire_id,
     tab.entries
   }else{
     partners = ifelse(grepl("outputs",ws),"outputs","inputs")
-    tab.entries = fafbseg::flywire_partner_summary(flywire_id,
+    tab.entries = fafbseg::flywire_partner_summary(root_id,
                                                     partners = partners,
                                                     threshold = threshold,
                                                     remove_autapses = TRUE,
@@ -725,7 +725,7 @@ flywire_workflow <- function(flywire_id,
     }
     tab.entries$status = "unassessed"
     tab.entries$note = NA
-    main = data.frame(flywire_id,weight = "main", status = status, note = gsub("_.*","",ws), stringsAsFactors = FALSE)
+    main = data.frame(root_id,weight = "main", status = status, note = gsub("_.*","",ws), stringsAsFactors = FALSE)
     colnames(main) = colnames(tab.entries)
     tab.entries = as.data.frame(tab.entries, stringsAsFactors = FALSE)
     plyr::rbind.fill(main, tab.entries)
@@ -743,7 +743,7 @@ sheet_properties.memo <- memoise::memoise(googlesheets4::sheet_properties, ~memo
 #' @export
 flywire_dns <- function(side = c("both","right","left"),
                         gsheets = c(left = "1Gq_-L1tpvuSxYs5O-_PggiI2qdF52xoTG64WzSs9KTU", right = "10T0JE6nVSz_uUdoHGOpV2odO_k75-arRPKdOiBXlS80"),
-                        chosen.columns = c("flywire_id","flywire_id","flywire_xyz","Tags"),
+                        chosen.columns = c("root_id","root_id","flywire_xyz","Tags"),
                         ...){
   side = match.arg(side)
   if(side=="both"){
@@ -763,8 +763,8 @@ flywire_dns <- function(side = c("both","right","left"),
     gm = gm[,colnames(gm)%in%chosen.columns]
     gm$side = si
     gm$ws = "DNs"
-    if(!is.null(gm$flywire_id)){
-      gm$flywire_id = as.character(gm$flywire_id)
+    if(!is.null(gm$root_id)){
+      gm$root_id = as.character(gm$root_id)
     }
     gs = plyr::rbind.fill(gs, gm)
   }
@@ -917,13 +917,13 @@ flywire_annotations_for_synapses <- function(fw.ids,
                               scores = nullToNA(synister.synapse.sample$scores),
                               cleft_scores = nullToNA(synister.synapse.sample$cleft_scores),
                               Label = nullToNA(synister.synapse.sample$Label),
-                              flywire_id = as.character(fw.id),
+                              root_id = as.character(fw.id),
                               prepost = nullToNA(as.character(synister.synapse.sample$prepost)),
                               partner = nullToNA(as.character(synister.synapse.sample$partner)))
     colnames(flywire.scan) = gsub("\\."," ",colnames(flywire.scan))
     flywire.scan$`Coordinate 1` = as.character(flywire.scan$`Coordinate 1`)
     if(write.csv){
-      for(id in c("flywire_id","partner")){
+      for(id in c("root_id","partner")){
         flywire.scan[[id]] = paste0('"=""', as.character(flywire.scan[[id]]), '"""')
       }
       csv.file = file.path(csv.path, paste0("flywire_",fw.id,"_synapse_annotations.csv"))
@@ -959,7 +959,7 @@ flywire_annotation_csv <- function(xyz,
   colnames(flywire.scan) = gsub("\\."," ",colnames(flywire.scan))
   flywire.scan$`Coordinate 1` = as.character(flywire.scan$`Coordinate 1`)
   if(write.csv){
-    for(id in intersect(c("pre_id","post_id","flywire_id","partner"),colnames(flywire.scan))){
+    for(id in intersect(c("pre_id","post_id","root_id","partner"),colnames(flywire.scan))){
       flywire.scan[[id]] = paste0('"=""', as.character(flywire.scan[[id]]), '"""')
     }
     csv.file = file.path(csv.path, csv.name)
@@ -1005,7 +1005,7 @@ flywire_verified_synapses <- function(fw.ids,
     fw.neurons.syn.ac.syns.all = plyr::rbind.fill(fw.neurons.syn.ac.syns.all,fw.neurons.syn.ac.syns)
   }
   if(write.csv){
-    for(id in c("pre_svid","post_svid","pre_id","post_id","flywire_id","partner")){
+    for(id in c("pre_svid","post_svid","pre_id","post_id","root_id","partner")){
       fw.neurons.syn.ac.syns.all[[id]] = paste0('"=""', as.character(fw.neurons.syn.ac.syns.all[[id]]), '"""')
     }
     csv.file = file.path(csv.path, gsub("\\.csv$","_verified.csv",csv.name))

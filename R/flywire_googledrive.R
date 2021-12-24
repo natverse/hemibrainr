@@ -72,11 +72,11 @@
 #'you will get:
 #'
 ##' \itemize{
-##'  \item{"flywire_id"}{ The ID given to the corresponding volumetric body in flywire.
+##'  \item{"root_id"}{ The ID given to the corresponding volumetric body in flywire.
 ##'  These are used to do things like fetch volumes and are the input to the \code{skeletor} function. However, they are highly volatile and
 ##'  change a lot with active tracing.}
 ##'  \item{"flywire_xyz"}{ The voxel coordinate of a single point in this neuron, usually a cell body fiber tract position. This is a more accurate way
-##'  of keeping tract of neuron as it will always correspond to the same 'neuron' even though its related flywire_id will change with merge/split events in flywire.}
+##'  of keeping tract of neuron as it will always correspond to the same 'neuron' even though its related root_id will change with merge/split events in flywire.}
 ##'  \item{"hemilineage"}{ An estimated hemilineage identity from both of two naming systems, Ito et al. 2013 and Wong et al. 2013}
 ##'  \item{"side"}{ An estimate as to the 'side', i.e. brain hemisphere, in which the neuron lies}
 ##'  \item{"skid"}{ The 'skeleton ID' of this neuron's match in CATMAID for FAFBv14}
@@ -155,7 +155,7 @@ flywire_neurons <- function(x = NULL,
     }
     neurons.fh = nat::read.neurons(paths = swc.list)
     fw.meta = flywire_meta(sql=FALSE)
-    neurons.fh[,] = fw.meta[match(names(neurons.fh),fw.meta$flywire_id),]
+    neurons.fh[,] = fw.meta[match(names(neurons.fh),fw.meta$root_id),]
   }else{
     message("Loading ", fhdir)
     filelist = list.files(path = fhdir, pattern = pattern, full.names = TRUE)
@@ -196,7 +196,17 @@ flywire_neurons <- function(x = NULL,
   if(!is.null(x)){
     neurons.fh = neurons.fh[names(neurons.fh)%in%x]
   }
+  neurons.fh[,] = root_id_correct(neurons.fh[,])
   neurons.fh
+}
+
+# hidden
+root_id_correct <- function(a){
+  if(!"root_id"%in%colnames(a)){
+    a[,"root_id"] = a[,"flywire.id"]
+  }
+  colnames(a) = snakecase::to_snake_case(colnames(a))
+  a
 }
 
 #' @rdname flywire_neurons
@@ -225,7 +235,7 @@ flywire_basics <- function(flywire.neurons, ...){
   #fafb_xyz = ""
 
   # Add meta data
-  flywire.neurons[,"flywire_id"] =  names(flywire.neurons)
+  flywire.neurons[,"root_id"] =  names(flywire.neurons)
   flywire.neurons[,"flywire_xyz"] = flywire_xyz
   flywire.neurons[,"flywire_svid"] = svids
   flywire.neurons[,"fafb_xyz"] = fafb_xyz
@@ -233,7 +243,7 @@ flywire_basics <- function(flywire.neurons, ...){
   flywire.neurons[,"id"] = NULL
 
   # Add IDs
-  flywire.neurons = add_field_seq(flywire.neurons,flywire.neurons[,"flywire_id"],field="flywire_id")
+  flywire.neurons = add_field_seq(flywire.neurons,flywire.neurons[,"root_id"],field="root_id")
 
   # return
   flywire.neurons
@@ -359,7 +369,7 @@ flywire_request <- function(request,
 #'
 #'   \item{"flywire_xyz"} { - coordinates of a point in the neuron in flywire voxel space. XYZ, separated by a semicolon.}
 #'
-#'   \item{"flywire_id"}{ - the unique ID associated with this flywire neuron. This ID changes every time a neuron is, even slightly, modified. So it is an unstable identifier.
+#'   \item{"root_id"}{ - the unique ID associated with this flywire neuron. This ID changes every time a neuron is, even slightly, modified. So it is an unstable identifier.
 #'   This is why \code{flywire_xyz} is sometimes used.}
 #'
 #'   \item{"fw.x"}{ - the x coordinate of a point in the flywire neuron, in flywire voxel space..}
@@ -370,7 +380,7 @@ flywire_request <- function(request,
 #'
 #'   \item{"user_name"}{ - the name of the user who made the number of edits given in this row.}
 #'
-#'   \item{"edits"}{ - the number of edits (merges, splits, etc.) made by a user for the given \code{flywire_id}.}
+#'   \item{"edits"}{ - the number of edits (merges, splits, etc.) made by a user for the given \code{root_id}.}
 #'
 #'   \item{"proportion"}{ - the proportion of total edits for this neuron, that the given user made.}
 #'
@@ -518,7 +528,7 @@ sql_col_types = readr::cols(.default = "c",
                             position = "i",
                             confidence = "n",
                             bodyid = "c",
-                            flywire_id = "c",
+                            root_id = "c",
                             pre = "c",
                             post = "c",
                             postsynapse_side_index='n',
@@ -557,7 +567,7 @@ flywire_ids <-function(local = FALSE, folder = "flywire_neurons/", sql = FALSE, 
   gcsv
 }
 
-#' Update the flywire_id column in a set of google sheets based on flywire_xyz positions
+#' Update the root_id column in a set of google sheets based on flywire_xyz positions
 #'
 #' @description This function retrieves flywire IDs based on xyz positions in flywire voxel space, from a set of google sheets.
 #' It also writes the updated flywire IDs to the same google sheets. This is often helpful because flywire IDs are inherently unstable, they change every time
@@ -572,7 +582,7 @@ flywire_ids <-function(local = FALSE, folder = "flywire_neurons/", sql = FALSE, 
 #' If set to \code{NULL} for \code{flywire_tracing_sheets}, the whole google sheet is read and all tabs are combined using \code{plyr::rbind.fill}.
 #' @param regex logical, use \code{ws} with regex.
 #' @param match logical. If \code{TRUE}, hemibrain_matches given.
-#' @param meta meta data for flywire neurons, e.g. as retrieved using \code{\link{flywire_meta}}. Used to efficiently input \code{flywire_xyz} column if only a \code{flywire_id} entry has been given.
+#' @param meta meta data for flywire neurons, e.g. as retrieved using \code{\link{flywire_meta}}. Used to efficiently input \code{flywire_xyz} column if only a \code{root_id} entry has been given.
 #' Only works if that id is also in this provided \code{data.frame}, \code{meta}.
 #' @param Verbose logical, whether or not to supply you with messages.
 #' @param retry integer, sometimes \code{fafbseg::flywire_xyz2id} fails due to a server timeout. This is the number of times to re-attempt failed calls before accepting defeat.
@@ -586,8 +596,8 @@ flywire_ids <-function(local = FALSE, folder = "flywire_neurons/", sql = FALSE, 
 #' The logic of the update procedure is:, find the \code{flywire_xyz} column.
 #' If that does not exist, find: \code{fw.x}, \code{fw.y}, \code{fw.z}, and use that to create a \code{flywire_xyz} column.
 #' We use \code{flywire_xyz} if both are given, and there is a mismatch.
-#' For each row, a \code{flywire_id} is then found based on these points, using \code{fafbseg::flywire_xyz2id} (using the argument \code{rawcoords = TRUE}).
-#' The google sheet columns \code{flywire_id},\code{flywire_xyz}, \code{fw.x}, \code{fw.y}, \code{fw.z} are then updated if they exist in the original google sheet.
+#' For each row, a \code{root_id} is then found based on these points, using \code{fafbseg::flywire_xyz2id} (using the argument \code{rawcoords = TRUE}).
+#' The google sheet columns \code{root_id},\code{flywire_xyz}, \code{fw.x}, \code{fw.y}, \code{fw.z} are then updated if they exist in the original google sheet.
 #' If they do not, they are not updated. The function returns a \code{data.frame} combining all tabs of all googlesheets specified, but returning only the columns
 #' specified by the argument \code{chosen.columns}.
 #'
@@ -613,7 +623,7 @@ flywire_ids <-function(local = FALSE, folder = "flywire_neurons/", sql = FALSE, 
 #' @export
 flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK8HeA-BY6dWAVXQ7TB6E2cQ"
                                chosen.columns = c('flywire_xyz', "flywire_svid",
-                                                  "flywire_id", "skid",
+                                                  "root_id", "skid",
                                                   "fafb_xyz", "cell_type", "side",
                                                   "ito_lee_hemilineage", "hartenstein_hemilineage",
                                                   "status"),
@@ -628,7 +638,7 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
   if(is.null(selected_sheets)){
     selected_sheets = getOption("hemibrainr_gsheets", stop("Please set option('hemibrainr_gsheets')"))
   }
-  fw.columns = c("flywire_id","fw.x","fw.y","fw.z","flywire_xyz","flywire_svid")
+  fw.columns = c("root_id","fw.x","fw.y","fw.z","flywire_xyz","flywire_svid")
   tracing.list = list()
   for(selected_sheet in selected_sheets){
     ## Read Google sheets and extract flywire neuron positions
@@ -685,8 +695,8 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
         fids = NULL
         if(!all(is.na(gs.t$flywire_xyz))){
           # Get the ids that need to be updated
-          fwids.old = gs.t$flywire_id
-          fwids.old.not.good = is.na(gs.t$flywire_id)|gs.t$flywire_id%in%c("0","NA",""," ","\n")|!grepl("^[0-9]{1,}$", gs.t$flywire_id)
+          fwids.old = gs.t$root_id
+          fwids.old.not.good = is.na(gs.t$root_id)|gs.t$root_id%in%c("0","NA",""," ","\n")|!grepl("^[0-9]{1,}$", gs.t$root_id)
           latest = !fwids.old.not.good
           latest[latest] = tryCatch(fafbseg::flywire_islatest(fwids.old[latest]), error = function(e){
             sapply(fwids.old[latest], function(fo) tryCatch(fafbseg::flywire_islatest(fo), error = function(e) FALSE))
@@ -732,25 +742,25 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
               coordsmissing = gs.n$flywire_xyz==paste_coords(matrix(NA,ncol=3))
               coordsmissing[is.na(gs.n$flywire_xyz)] = TRUE
               coordsmissing[is.na(replacement)] = TRUE
-              replacement[coordsmissing] = gs.n$flywire_id[coordsmissing]
-              gs.t$flywire_id[!latest] = as.character(replacement)
+              replacement[coordsmissing] = gs.n$root_id[coordsmissing]
+              gs.t$root_id[!latest] = as.character(replacement)
             }
           }
         }
         # If ID is given and no xyz
-        bad.xyz = (is.na(gs.t$flywire_xyz)|gs.t$flywire_xyz=="0")&!is.na(gs.t$flywire_id)
+        bad.xyz = (is.na(gs.t$flywire_xyz)|gs.t$flywire_xyz=="0")&!is.na(gs.t$root_id)
         if(sum(bad.xyz)>0){
-          ids.fresh = try(fafbseg::flywire_latestid(gs.t$flywire_id[bad.xyz]),silent = TRUE)
+          ids.fresh = try(fafbseg::flywire_latestid(gs.t$root_id[bad.xyz]),silent = TRUE)
           if(!"try-error"%in%class(ids.fresh)){
-            gs.t$flywire_id[bad.xyz] = as.character(ids.fresh)
+            gs.t$root_id[bad.xyz] = as.character(ids.fresh)
           }else{
             warning(ids.fresh)
           }
         }
-        # If only skid given try and guess flywire_id
+        # If only skid given try and guess root_id
         if("skid"%in%used.cols){
           justskids=((gs.t$flywire_xyz==paste_coords(matrix(NA,ncol=3))|is.na(gs.t$flywire_xyz))
-                     &(is.na(gs.t$flywire_id)|gs.t$flywire_id=='0')
+                     &(is.na(gs.t$root_id)|gs.t$root_id=='0')
                      &!is.na(gs.t$skid))
           justskids[is.na(justskids)] = FALSE
           if(sum(justskids)>0){
@@ -760,8 +770,8 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
             if(inherits(replacement.ids,"try-error")){
               warning(replacement.ids)
             }else{
-              replacement.ids = tryCatch(as.character(replacement.ids$flywire_id), error = function(e) NA)
-              gs.t[justskids,"flywire_id"] = replacement.ids
+              replacement.ids = tryCatch(as.character(replacement.ids$root_id), error = function(e) NA)
+              gs.t[justskids,"root_id"] = replacement.ids
             }
           }
         }
@@ -769,10 +779,10 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
         if(!is.null(meta)){
           justids=(gs.t$flywire_xyz==paste_coords(matrix(NA,ncol=3))
                   |is.na(gs.t$flywire_xyz)
-                  &!is.na(gs.t$flywire_id))
+                  &!is.na(gs.t$root_id))
           justids[is.na(justids)] = FALSE
           if(sum(justids)>0){
-            replacement.xyz = meta[match(gs.t[justids,"flywire_id"],meta$flywire_id),]$flywire_xyz
+            replacement.xyz = meta[match(gs.t[justids,"root_id"],meta$root_id),]$flywire_xyz
             gs.t[justids,"flywire_xyz"] = replacement.xyz
           }
         }
@@ -782,12 +792,12 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
           gs.t$flywire_xyz[good.xyz] = try(apply(nat::xyzmatrix(gs.t$flywire_xyz[good.xyz]),1,paste_coords), silent = TRUE)
         }
         gs.t$flywire_xyz[gs.t$flywire_xyz==paste_coords(matrix(NA,ncol=3))] = NA
-        gs.t$flywire_id[gs.t$flywire_id==0]=NA
+        gs.t$root_id[gs.t$root_id==0]=NA
         # Write to google sheet
         if(nrow(gs.t)!=nrow(gs.t.current)){
           stop("Sheet processing corruption. Flywire.id update failed.")
         }
-        gs.t$flywire_id = as.character(gs.t$flywire_id)
+        gs.t$root_id = as.character(gs.t$root_id)
         gs.t$flywire_svid = as.character(gs.t$flywire_svid)
         write.cols = intersect(fw.columns,used.cols)
         if(length(fids) & length(write.cols)){
@@ -820,18 +830,18 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
   master = master[order(master$filled,decreasing = TRUE),]
   master = master[!duplicated(master$flywire_xyz),]
   rownames(master) = master$flywire_xyz
-  master$flywire_id = bit64::as.integer64(master$flywire_id)
+  master$root_id = bit64::as.integer64(master$root_id)
   master$flywire_svid = bit64::as.integer64(master$flywire_svid)
   if(match){
     matches = hemibrain_matches(selected_file = matching_sheet, priority = priority)
     matches = subset(matches, matches$match.dataset == "hemibrain" &  matches$dataset == "flywire")
-    master$hemibrain_match = matches[match(master$flywire_id, matches$id), "match"]
-    master$hemibrain_match_quality = matches[match(master$flywire_id, matches$id),"quality"]
-    master$fafb_hemisphere_match = matches[match(master$flywire_id, matches$id), "fafb_hemisphere_match"]
-    master$fafb_hemisphere_match.quality = matches[match(master$flywire_id, matches$id),"fafb_hemisphere_match.quality"]
-    master$cell_type = matches[match(master$flywire_id, matches$id), "cell_type"]
+    master$hemibrain_match = matches[match(master$root_id, matches$id), "match"]
+    master$hemibrain_match_quality = matches[match(master$root_id, matches$id),"quality"]
+    master$fafb_hemisphere_match = matches[match(master$root_id, matches$id), "fafb_hemisphere_match"]
+    master$fafb_hemisphere_match.quality = matches[match(master$root_id, matches$id),"fafb_hemisphere_match.quality"]
+    master$cell_type = matches[match(master$root_id, matches$id), "cell_type"]
   }
-  master = subset(master, !is.na(master$flywire_id))
+  master = subset(master, !is.na(master$root_id))
   master$filled = NULL
   colnames(master) = snakecase::to_snake_case(colnames(master))
   master
@@ -851,7 +861,7 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
 #' cell_type names to FAFB neurons. In both cases, cell_type names are attached to hemibrain bodyids, and propagated to their FAFB matches.
 #' @param id the ID specifying unique neuron identity for each row, for each tab of the google sheets specified with \code{selected_sheets}. When matches are added
 #' they are for the neuron specified in the \code{id} column of each worksheet.
-#' @param match.field which match to record. E.g. if \code{id} is \code{"flywire_id"} you may want to add the hemibrain_match from the master matching sheets. To do this
+#' @param match.field which match to record. E.g. if \code{id} is \code{"root_id"} you may want to add the hemibrain_match from the master matching sheets. To do this
 #' set \code{match.field} to \code{"hemibrain"}. Then, if there is a \code{"hemibrain_match"} and/or \code{"hemibrain_match_quality"} column, it will be updated. You
 #' may also want to know the hemispheric match within FAFB, in which case \code{"FAFB.hemisphere"} could be used.
 #' @param chosen.columns as well as writing column updates to the specified google sheets, this function returns a \code{data.frame} built from all given sheets and their
@@ -873,7 +883,7 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
 #' ## https://docs.google.com/spreadsheets/d/
 #' ## 1spGSuhUX6Hhn-8HH0U_ArIWUuPpMBFNjIjeSSh_MFVY
 #' ## /edit#gid=603762040
-#' lineage.gsheet.meta = matches_update(id = "flywire_id",
+#' lineage.gsheet.meta = matches_update(id = "root_id",
 #' match.field = "hemibrain",
 #' selected_sheets = "1spGSuhUX6Hhn-8HH0U_ArIWUuPpMBFNjIjeSSh_MFVY")
 #'
@@ -886,7 +896,7 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
 matches_update <- function(matching_sheet = options()$hemibrainr_matching_gsheet,
                            priority = c("FAFB","hemibrain"),
                            selected_sheets,
-                           id = c("flywire_id","bodyid","skid","id"),
+                           id = c("root_id","bodyid","skid","id"),
                            match.field = c("hemibrain","CATMAID","flywire","LM","FAFB.hemisphere"),
                            chosen.columns = c("cell_type", "flywire_xyz", "side",
                                               "ito_lee_hemilineage", "hartenstein_hemilineage")){
