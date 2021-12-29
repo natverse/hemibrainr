@@ -610,7 +610,6 @@ update.neuronlistfh <- function(x = NULL,
     if(!dir.exists(swc)){
       dir.create(swc)
     }
-    nat::write.neurons(x, dir=swc, format='swc', Force = FALSE, metadata=TRUE)
     if(!is.null(meta)){
       if(all(names(x)%in%rownames(meta))){
         if("root_id"%in%colnames(meta)){
@@ -622,6 +621,7 @@ update.neuronlistfh <- function(x = NULL,
         }
       }
     }
+    nat::write.neurons(x, dir=swc, format='swc', Force = FALSE, metadata=TRUE)
   }
 }
 
