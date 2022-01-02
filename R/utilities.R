@@ -819,8 +819,7 @@ to_snake_case_gsheets  <- function(gsheets){
                                Verbose = FALSE)
     for(ws in tabs){
       message(ss, " -> ", ws)
-      df = gsheet_manipulation(
-        FUN = googlesheets4::range_read,
+      df = googlesheets4::read_sheet(
         ss = ss,
         sheet = ws,
         range = NULL,
@@ -832,24 +831,22 @@ to_snake_case_gsheets  <- function(gsheets){
         n_max = 1,
         .name_repair = "unique"
       )
+      if(is.null(df)){
+        next
+      }else if(!nrow(df)){
+        next
+      }
       cols_new = snakecase::to_snake_case(colnames(df))
       for (col in 1:length(cols_new)){
         if (cols_new[col] == "flywire.id"){
           cols_new[col] = "root_id"
         }
-        if (cols_new[col] == "root_id"){
+        if (cols_new[col] == "flywire_id"){
           cols_new[col] = "root_id"
-        }
-        if (cols_new[col] == "itolee_hemilineage"){
-          cols_new[col] = "ito_lee_hemilineage"
-        }
-        if (cols_new[col] == "itolee_lineage"){
-          cols_new[col] = "ito_lee_lineage"
         }
       }
       colnames(df) = cols_new
-      gsheet_manipulation(
-        FUN = googlesheets4::range_write,
+      googlesheets4::range_write(
         ss = ss,
         data = df,
         sheet = ws,

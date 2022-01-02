@@ -11,6 +11,7 @@ LR_matching(
   ids = NULL,
   threshold = 0,
   mirror.nblast = NULL,
+  flytable = TRUE,
   selected_file = options()$hemibrainr_matching_gsheet,
   batch_size = 50,
   db = flywire_neurons(),
@@ -36,7 +37,7 @@ hemibrain_matching(
   overwrite = c("FALSE", "bad", "TRUE", "review"),
   column = NULL,
   entry = NULL,
-  User = NULL,
+  user = NULL,
   superUser = FALSE,
   verbose = FALSE
 )
@@ -51,7 +52,7 @@ lm_matching(
   overwrite = c("FALSE", "bad", "TRUE", "review"),
   column = NULL,
   entry = NULL,
-  User = NULL,
+  user = NULL,
   superUser = FALSE
 )
 
@@ -67,7 +68,7 @@ fafb_matching(
   overwrite = c("FALSE", "bad", "TRUE", "review"),
   column = NULL,
   entry = NULL,
-  User = NULL,
+  user = NULL,
   superUser = FALSE,
   flywire.good = FALSE
 )
@@ -115,9 +116,6 @@ Only  neurons with a certain value (\code{entry}) in that column will be chosen 
 
 \item{entry}{defaults to \code{NULL}, no further subsetting. Else, it is a value in \code{column}.}
 
-\item{User}{the initials of the matching 'Users', i.e. you, which should also be recorded on the master matching google sheet. However, you can enter a new user
-for the matches you make in R. If set to \code{NULL} then all Users are 'selected'.}
-
 \item{superUser}{if \code{FALSE} then you will only be given neurons flagged for your user. If \code{TRUE} then
 you will be given neurons flagged for any user. To select whether or not you want to look at neurons with no match, neurons with a match
 or either, use the \code{overwrite} argument.}
@@ -134,6 +132,9 @@ NBLAST matrix. By default this is read from the flyconnectome Team Drive.}
 CATMAID (using \code{catmaid::read.neurons.catmaid}) or flywire (using \code{flywire_neurons}) for matching. Alternatively,light level
 skeletons  (\code{"lm"}) from Dolan et al. and Frechter et al. 2019 (eLife), stored in the package \code{lhns} as
 \code{most.lhns}.}
+
+\item{user}{the initials of the matching 'users', i.e. you, which should also be recorded on the master matching google sheet. However, you can enter a new user
+for the matches you make in R. If set to \code{NULL} then all users are 'selected'.}
 }
 \description{
 Match up neurons between the hemibrain, FAFB and light level data and save the
@@ -146,7 +147,7 @@ Match up neurons between the hemibrain, FAFB and light level data and save the
   Filestream application or rclone, which should be installed on your machine. Further,
   note that neurons are read from the FAFB CATMAID project when \code{repository=="CATMAID"}, and you must have
   login details for this project recorded in your .Renviron for these
-  functions to work. You are given neurons assigned to your initials on the matching google sheet (the \code{User} column)
+  functions to work. You are given neurons assigned to your initials on the matching google sheet (the \code{user} column)
   though you can look at other's assigned matches using \code{superUser=TRUE}. Your selection is further narrowed
   by omitting neurons whose matches have already been made, when using the default \code{overwrite="TRUE"}. However, you
   can change this to overwrite matches, and to review made matches.
@@ -157,7 +158,7 @@ Currently, the
    Sheet} is set up with  limited number of users, each of whom have been
   assigned a number of neurons to match up. In order to add yourself as a
   user, simply open this Google Sheet in your browser and add your initials
-  to neurons of your choosing on the rightmost column 'Users'. Once a match
+  to neurons of your choosing on the rightmost column 'users'. Once a match
   is recorded, the user selects a quality for that match. There can be no
   match (none), a poor match (poor) an okay match (okay) or an exact match (good). As a
   rule of thumb, a poor match could be a neuron from a very similar same cell
@@ -188,11 +189,11 @@ hemibrain_matching(hemibrain.nblast = fib.fafb.crossnblast.twigs5.mean.compress)
 # And example of matching neurons in a flywire tracing sheet
 sheet = flywire_tracing_sheet("SLPal2_dorsal", regex = TRUE)
 fafb_matching(ids = unique(sheet$root_id), repository="flywire",
-overwrite = "bad", User = "AJ", superUser = TRUE)
+overwrite = "bad", user = "AJ", superUser = TRUE)
 
 # Look at all poorly made matches
 fafb_matching(repository="flywire", column = "hemibrain_match_quality",
-entry = "poor", overwrite = "TRUE", User = "AJ", superUser = TRUE)
+entry = "poor", overwrite = "TRUE", user = "AJ", superUser = TRUE)
 }}
 }
 \seealso{

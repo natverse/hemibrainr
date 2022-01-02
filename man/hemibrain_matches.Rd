@@ -6,6 +6,7 @@
 \title{Retrieve matched up neurons between the hemibrain and FAFB}
 \usage{
 hemibrain_matches(
+  flytable = TRUE,
   priority = c("FAFB", "hemibrain"),
   selected_file = options()$hemibrainr_matching_gsheet
 )
@@ -16,6 +17,9 @@ lm_matches(
 )
 }
 \arguments{
+\item{flytable}{logical. If \code{TRUE} then match data is pulled from the Drosophila Connectomics Group's seatable databse.Otherwise, we will use a googlesheet.
+indicated by \code{selected_file}.}
+
 \item{priority}{whether to use FAFB->hemibrain_matches (FAFB) or hemibrain->FAFB matches (hemibrain) in order to ascribe
 cell_type names to FAFB neurons. In both cases, cell_type names are attached to hemibrain bodyids, and propagated to their FAFB matches.}
 
@@ -75,7 +79,7 @@ Currently, the
    Sheet} is set up with  limited number of users, each of whom have been
   assigned a number of neurons to match up. In order to add yourself as a
   user, simply open this Google Sheet in your browser and add your initials
-  to neurons of your choosing on the rightmost column 'Users'.
+  to neurons of your choosing on the rightmost column 'users'.
 }
 \examples{
 \donttest{

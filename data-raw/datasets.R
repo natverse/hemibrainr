@@ -10,6 +10,22 @@ paper_colours["neuron"] = "grey80"
 paper_colours = paper_colours[!duplicated(names(paper_colours))]
 usethis::use_data(paper_colours, overwrite = TRUE)
 
+# Set up seatable from old google sheet matches
+hemibrain_matched_gsheet = hemibrain_matches(flytable = FALSE)
+colnames(hemibrain_matched_gsheet) = snakecase::to_snake_case(colnames(hemibrain_matched_gsheet))
+hemibrain_matched_gsheet$cell_type = hemibrain_matched_gsheet$connectivity_type
+hemibrain_matched_gsheet = hemibrain_matched_gsheet[,c("id", "cell_type", "cell", "cell_body_fiber", "ito_lee_hemilineage",
+                                                       "match", "quality", "fafb_hemisphere_match", "fafb_hemisphere_match_quality",
+                                                       "dataset", "match_dataset")]
+hemibrain_matched_gsheet$cell[grepl("NA",hemibrain_matched_gsheet$cell)] = "uncertain"
+hemibrain_matched_gsheet$ito_lee_hemilineage[is.na(hemibrain_matched_gsheet$ito_lee_hemilineage)] = "uncertain"
+hemibrain_matched_gsheet = hemibrain_matched_gsheet[!duplicated(hemibrain_matched_gsheet$id),]
+hemibrain_matched_gsheet$user = "flyconnectome"
+hemibrain_matched = subset(hemibrain_matched_gsheet, dataset == "hemibrain")
+flywire_matched = subset(hemibrain_matched_gsheet, dataset == "flywire")
+fafbseg::flytable_append_rows(df=flywire_matched, table = "matches", base = "matching")
+fafbseg::flytable_append_rows(df=hemibrain_matched, table = "hemibrain_matches")
+
 ### Match information ###
 hemibrain_matched = hemibrain_matches()
 lm_matched = lm_matches()
