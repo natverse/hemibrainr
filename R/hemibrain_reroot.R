@@ -2,7 +2,7 @@
 ################################ Preprocess neurons ##################################
 ######################################################################################
 
-#' Re-root (a) hemibrain neuron/neurons
+#' Re-root (a) hemibrain/flywire neuron/neurons
 #'
 #' @description Re-root neurons by predicting their soma location. Somas have been manually tagged by the FlyEM project.
 #' However, in some cases the roots are wrong, or somas are outside of the volume. The Fly Connectome team at the University of Cambridge has
@@ -17,6 +17,7 @@
 #' if \code{method == "manual"}.
 #' @param hemibrain_somas a \code{data.frame} that gives soma locations for hemibrain neurons. See the default, \code{\link{hemibrain_somas}}. If \code{googelsheet} is \code{TRUE} this is read fresh
 #' from the hemibrain Google team drive overseen by the Drosophila Connectomics group.
+#' @param flywire_nuclei a \code{data.frame} that gives auto-detected nuclei locations in the Flywire dataset. This is provided by
 #' @param meshes a list/a single object of class \code{mesh3d} or \code{hxsurf}. Only used for estimation.
 #' If \code{NULL} then \code{hemibrain_roi_meshes} is called.
 #' @param ... methods sent to \code{nat::nlapply}
@@ -171,6 +172,45 @@ hemibrain_reroot.neuronlist <- function(x,
   neurons
 }
 
+#' @export
+flywire_reroot <- function(x,
+                           flywire_nuclei = fafbseg::flywire_nuclei(),
+                           ...) UseMethod("flywire_reroot")
+
+#' @export
+flywire_reroot.neuron <- function(x, flywire_nuclei = fafbseg::flywire_nuclei(), ...){
+  root.id = x$root_id
+  if(is.null(root.id)){
+    stop("no root_id at x$rootid for given neuron")
+  }
+  if(!root.id%in%flywire_nuclei$pt_root_id){
+    warning(root.id, " not in flywire_nuclei")
+    y = x
+  }else{
+    flywire.nucleus = subset(flywire_nuclei, flywire_nuclei$pt_root_id == root.id)[1,]
+    som = matrix(flywire.nucleus$pt_position[[1]], ncol = 3)
+    root = nabor::knn(query = som, data = nat::xyzmatrix(x$d), k = 1)$nn.idx
+    somid = x$d$PointNo[match(root, 1:nrow(x$d))]
+    y = nat::as.neuron(nat::as.ngraph(x$d), origin = somid)
+    y = hemibrain_carryover_labels(x=x,y=y)
+    y = hemibrain_carryover_tags(x=x,y=y)
+    y$connectors = x$connectors
+    y$connectors$treenode_id = y$d$PointNo[match(x$connectors$treenode_id, y$d$PointNo)]
+    flywire.nucleus$treenode_id = somid
+    y$soma = flywire.nucleus
+  }
+  # return
+  y = hemibrain_neuron_class(y)
+  y
+}
+
+#' @export
+flywire_reroot.neuronlist <- function(x, flywire_nuclei = fafbseg::flywire_nuclei(), ...){
+  x = tryCatch(add_field_seq(x,x[,"root_id"],field="root_id"),
+               error = function(e) add_field_seq(x,names(x),field="root_id"))
+  y = nat::nlapply(x = x, flywire_nuclei = flywire_nuclei, ...)
+  y
+}
 
 #' Remove incorrectly placed synapses
 #'
@@ -464,3 +504,4 @@ subbbx <- function(n.dps, bbx, scale, ret='inside'){
     subset(n.dps,!inside)
   }
 }
+
