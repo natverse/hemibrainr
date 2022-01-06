@@ -23,6 +23,8 @@ hemibrain_matched_gsheet = hemibrain_matched_gsheet[!duplicated(hemibrain_matche
 hemibrain_matched_gsheet$user = "flyconnectome"
 hemibrain_matched = subset(hemibrain_matched_gsheet, dataset == "hemibrain")
 flywire_matched = subset(hemibrain_matched_gsheet, dataset == "flywire")
+flywire_matched$root_id = flywire_matched$id
+flywire_matched$id = fw.meta$flywire_xyz[match(fw.meta$root_id,flywire_matched$root_id)]
 fafbseg::flytable_append_rows(df=flywire_matched, table = "matches", base = "matching")
 fafbseg::flytable_append_rows(df=hemibrain_matched, table = "hemibrain_matches")
 
