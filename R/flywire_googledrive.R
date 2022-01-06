@@ -27,7 +27,7 @@
 #' the sheet specified by \code{selected_sheet}.
 #' @param type When using neurons with \code{flywire_neurons} from the Google drive a neuronlistfh object of neuron skeletons (default),
 #' the saved \code{.swc} files, a \code{nat::dotprops} objects or a \code{nat::dotprops object} cut to the hemibrain volume. Not all brainspaces supported.
-#' @param User character, the user who is added new data.
+#' @param user character, the user who is added new data.
 #' @param ... Additional arguments passed to \code{nat::nlapply}.and/or \code{fafbseg::skeletor}.
 #'
 #' @examples
@@ -47,7 +47,7 @@
 #' ## to the nightly processing so they are available from Google drive.
 #' ## And they are stored in a .csv:
 #' library(readr)
-#' csv = read_csv("/Users/abates/Downloads/FlyWire_list.txt",
+#' csv = read_csv("/users/abates/Downloads/FlyWire_list.txt",
 #' col_type = cols(.default = "c"))
 #' ids = csv[,1][[1]]
 #' neurons = skeletor(ids)
@@ -257,7 +257,7 @@ flywire_request <- function(request,
                             gsheet = FALSE,
                             selected_sheet = options()$flywire_flagged_gsheet,
                             sheet = "flywire",
-                            User = "hemibrainr",
+                            user = "hemibrainr",
                             ...){
   if(!requireNamespace("fafbseg", quietly = TRUE)) {
     stop("Please install fafbseg using:\n", call. = FALSE,
@@ -320,17 +320,17 @@ flywire_request <- function(request,
   }
   if(class(gs)!="try-error"){
     fw.xyz = setdiff(fw.xyz,gs$flywire_xyz)
-    update = data.frame(User = "flywire", flywire_xyz = fw.xyz)
+    update = data.frame(user = "flywire", flywire_xyz = fw.xyz)
     for(col in setdiff(colnames(gs),colnames(update))){
       if(col=="status"){
         update[[col]] = "unassessed"
       }else if(col=="workflow"){
         update[[col]] = "trace"
       }else if(col=="added_by"){
-        update[[col]] = User
-      }else if(col=="User"){
-        update[[col]] = User
-      }else if(col=="User"){
+        update[[col]] = user
+      }else if(col=="user"){
+        update[[col]] = user
+      }else if(col=="user"){
         update[[col]] = randomwords(n=nrow(update),words= 2,collapse = "_")
       }else{
         update[[col]] = NA
@@ -338,7 +338,7 @@ flywire_request <- function(request,
     }
     update = update[,colnames(gs)]
   }else{
-    update = data.frame(User = "flywire", flywire_xyz = fw.xyz)
+    update = data.frame(user = "flywire", flywire_xyz = fw.xyz)
   }
   batches = split(1:nrow(update), ceiling(seq_along(1:nrow(update))/500))
   for(i in batches){
@@ -571,7 +571,7 @@ flywire_ids <-function(local = FALSE, folder = "flywire_neurons/", sql = FALSE, 
 #'
 #' @description This function retrieves flywire IDs based on xyz positions in flywire voxel space, from a set of google sheets.
 #' It also writes the updated flywire IDs to the same google sheets. This is often helpful because flywire IDs are inherently unstable, they change every time
-#' a neuron is modified even slightly. Users can record 'stable' points in a neuron that identify it, e.g. a single xyz position in the cell body fibre, or at the soma, and
+#' a neuron is modified even slightly. users can record 'stable' points in a neuron that identify it, e.g. a single xyz position in the cell body fibre, or at the soma, and
 #' then use this function to update and get the correct flywire ID whenever they wish.
 #'
 #' @param selected_sheets character vector. the google sheet(s) to update. Each entry is a unique google sheet ID. You can find these in a sheet's URL.
