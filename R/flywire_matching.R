@@ -188,8 +188,8 @@ LR_matching <- function(ids = NULL,
                         overwrite = c("FALSE","bad","TRUE","review"),
                         column = NULL,
                         entry = NULL,
-                        User = NULL,
-                        superUser = FALSE,
+                        user = NULL,
+                        superuser = FALSE,
                         flywire.good = FALSE,
                         verbose = FALSE){
   message("Matching mirrored flywire neurons (blue) to non-mirrored flywire neurons (red)")
@@ -223,7 +223,7 @@ LR_matching <- function(ids = NULL,
     message(file.path(options()$Gdrive_hemibrain_data,"hemibrain_nblast/flywire.mirror.mean.rda"))
     mirror.nblast = hemibrain_nblast("flywire-mirror")
   }
-  # Read the Google Sheet or setable
+  # Read the Google Sheet or seatable
   if(flytable){
     gs = flytable_matches(dataset="flywire")
   }else{
@@ -250,11 +250,11 @@ LR_matching <- function(ids = NULL,
   message("Neuron matches: ", nrow(done), "/", nrow(gs))
   print(table(gs[[quality.field]]))
   # choose user
-  initials = choose_user(gs, User = User)
+  initials = choose_user(gs, user = user)
   # choose ids
   selected = id_selector(gs=gs, ids=ids, id=id, overwrite = overwrite,
                          quality.field = quality.field, match.field = match.field,
-                         initials = initials, column = column, entry = entry, superUser = superUser,
+                         initials = initials, column = column, entry = entry, superuser = superuser,
                          flywire.good = flywire.good)
   if(!verbose){
     rem = gs[[id]][!gs[[id]]%in%selected[[id]]]
@@ -297,24 +297,28 @@ LR_matching <- function(ids = NULL,
     }
     selected = match_cycle[["selected"]]
     unsaved = match_cycle[["unsaved"]]
-    selected$User = initials
+    selected$user = initials
     if(length(unsaved)){
       plot_inspirobot()
       say_encouragement(initials)
-      # Read!
-      gs2 = hemibrain_match_sheet(selected_file = selected_file, sheet = "flywire")
-      selected.unsaved = subset(selected, selected[[id]]%in%unsaved)
-      for(i in unsaved){
-        gs2[gs2[[id]]%in%i,c(match.field,quality.field,"note","User")] = selected.unsaved[match(i,selected.unsaved[[id]]),c(match.field,quality.field,"note","User")]
-      }
-      # Write!
-      if(!identical(gs,gs2)){
-        gsheet_update_cols(
-          write.cols = c(match.field,quality.field,"note","User"),
-          gs=gs2,
-          selected_sheet = selected_file,
-          sheet = "FAFB",
-          Verbose = TRUE)
+      if(flytable){ # seatable
+        flytable_matches_update(selected)
+      }else{ # google sheet
+        # Read!
+        gs2 = hemibrain_match_sheet(selected_file = selected_file, sheet = "flywire")
+        selected.unsaved = subset(selected, selected[[id]]%in%unsaved)
+        for(i in unsaved){
+          gs2[gs2[[id]]%in%i,c(match.field,quality.field,"note","user")] = selected.unsaved[match(i,selected.unsaved[[id]]),c(match.field,quality.field,"note","user")]
+        }
+        # Write!
+        if(!identical(gs,gs2)){
+          gsheet_update_cols(
+            write.cols = c(match.field,quality.field,"note","user"),
+            gs=gs2,
+            selected_sheet = selected_file,
+            sheet = "FAFB",
+            Verbose = TRUE)
+        }
       }
       saved = c(unsaved, saved)
       unsaved = c()
