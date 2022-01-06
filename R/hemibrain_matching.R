@@ -15,7 +15,7 @@
 #'   note that neurons are read from the FAFB CATMAID project when \code{repository=="CATMAID"}, and you must have
 #'   login details for this project recorded in your .Renviron for these
 #'   functions to work. You are given neurons assigned to your initials on the matching google sheet (the \code{user} column)
-#'   though you can look at other's assigned matches using \code{superUser=TRUE}. Your selection is further narrowed
+#'   though you can look at other's assigned matches using \code{superuser=TRUE}. Your selection is further narrowed
 #'   by omitting neurons whose matches have already been made, when using the default \code{overwrite="TRUE"}. However, you
 #'   can change this to overwrite matches, and to review made matches.
 #'
@@ -52,14 +52,14 @@
 #' If \code{"review"} then you will only be shown already-matched neurons, which appear in green.
 #' If you make no new selection (hit 't' to exit selection mode) then the made selection will persist.
 #' If \code{ids} is not \code{NULL}, then the selected neurons will be further sub-setted by their unique id. Note that selection
-#' also works with \code{superUser}, the default is to only take neurons allocated to you. In order to change this,
-#' you can user \code{superUser=TRUE}.
+#' also works with \code{superuser}, the default is to only take neurons allocated to you. In order to change this,
+#' you can user \code{superuser=TRUE}.
 #' @param column defaults to \code{NULL}, no further subsetting. Else, you can select a column from the Google sheet.
 #' Only  neurons with a certain value (\code{entry}) in that column will be chosen for matching.
 #' @param entry defaults to \code{NULL}, no further subsetting. Else, it is a value in \code{column}.
 #' @param user the initials of the matching 'users', i.e. you, which should also be recorded on the master matching google sheet. However, you can enter a new user
 #' for the matches you make in R. If set to \code{NULL} then all users are 'selected'.
-#' @param superUser if \code{FALSE} then you will only be given neurons flagged for your user. If \code{TRUE} then
+#' @param superuser if \code{FALSE} then you will only be given neurons flagged for your user. If \code{TRUE} then
 #' you will be given neurons flagged for any user. To select whether or not you want to look at neurons with no match, neurons with a match
 #' or either, use the \code{overwrite} argument.
 #' @param flywire.good logical, whether or not to only take 'well traced' flywire neurons, as annotated by the Drosophila Connectomics Group. This relies on the status column retrieved
@@ -102,11 +102,11 @@
 #' # And example of matching neurons in a flywire tracing sheet
 #' sheet = flywire_tracing_sheet("SLPal2_dorsal", regex = TRUE)
 #' fafb_matching(ids = unique(sheet$root_id), repository="flywire",
-#' overwrite = "bad", user = "AJ", superUser = TRUE)
+#' overwrite = "bad", user = "AJ", superuser = TRUE)
 #'
 #' # Look at all poorly made matches
 #' fafb_matching(repository="flywire", column = "hemibrain_match_quality",
-#' entry = "poor", overwrite = "TRUE", user = "AJ", superUser = TRUE)
+#' entry = "poor", overwrite = "TRUE", user = "AJ", superuser = TRUE)
 #' }}
 #' @rdname hemibrain_matching
 #' @export
@@ -114,6 +114,7 @@
 hemibrain_matching <- function(ids = NULL,
                          hemibrain.nblast = NULL,
                          threshold = 0,
+                         flytable = TRUE,
                          selected_file = options()$hemibrainr_matching_gsheet,
                          batch_size = 50,
                          db=NULL, # brain="FAFB"
@@ -123,7 +124,7 @@ hemibrain_matching <- function(ids = NULL,
                          column = NULL,
                          entry = NULL,
                          user = NULL,
-                         superUser = FALSE,
+                         superuser = FALSE,
                          verbose = FALSE){
   repository = match.arg(repository)
   message("Matching hemibrain neurons (blue) to ", repository," neurons (red)")
@@ -165,8 +166,12 @@ hemibrain_matching <- function(ids = NULL,
     hemibrain.nblast = hemibrain.nblast
     rm("hemibrain.lhns.mean.compressed")
   }
-  # Read the Google Sheet
-  gs = hemibrain_match_sheet(sheet = "hemibrain", selected_file = selected_file)
+  # Read the Google Sheet or seatable
+  if(flytable){
+    gs = flytable_matches(dataset="hemibrain")
+  }else{
+    gs = hemibrain_match_sheet(selected_file = selected_file, sheet = "hemibrain")
+  }
   gs$user[is.na(gs$user)] = ""
   # Get hemibrain neurons
   if(missing(query)) {
@@ -220,7 +225,7 @@ hemibrain_matching <- function(ids = NULL,
   # choose ids
   selected = id_selector(gs=gs, ids=ids, id = id, overwrite = overwrite,
                          quality.field = quality.field, match.field = match.field,
-                         initials = initials, column = column, entry = entry, superUser = superUser)
+                         initials = initials, column = column, entry = entry, superuser = superuser)
   if(!verbose){
     rem = gs[[id]][!gs[[id]]%in%selected[[id]]]
     if(length(rem)){
@@ -260,7 +265,7 @@ hemibrain_matching <- function(ids = NULL,
       plot_inspirobot()
       say_encouragement(initials)
       if(flytable){ # seatable
-        flytable_matches_update(selected)
+        flytable_matches_update(selected, dataset = "hemibrain")
       }else{ # google sheet
         # Read!
         gs2 = hemibrain_match_sheet(selected_file = selected_file, sheet = "hemibrain")
@@ -336,7 +341,7 @@ lm_matching <- function(ids = NULL,
                         column = NULL,
                         entry = NULL,
                         user = NULL,
-                        superUser = FALSE){
+                        superuser = FALSE){
   # Motivate!
   nat::nopen3d()
   plot_inspirobot()
@@ -398,7 +403,7 @@ lm_matching <- function(ids = NULL,
   # choose ids
   selected = id_selector(gs=gs, ids=ids, id=id, overwrite = overwrite,
                          quality.field = quality.field, match.field = match.field,
-                         initials = initials, column = column, entry = entry, superUser = superUser)
+                         initials = initials, column = column, entry = entry, superuser = superuser)
   ids = unique(selected[[id]])
   # choose brain
   brain = hemibrainr::hemibrain.surf
@@ -584,7 +589,7 @@ fafb_matching <- function(ids = NULL,
                         column = NULL,
                         entry = NULL,
                         user = NULL,
-                        superUser = FALSE,
+                        superuser = FALSE,
                         flywire.good = FALSE){
   repository = match.arg(repository)
   message("Matching ",repository," FAFB neurons (blue) to hemibrain neurons (red)")
@@ -669,7 +674,7 @@ fafb_matching <- function(ids = NULL,
   # choose ids
   selected = id_selector(gs=gs, ids=ids, id=id, overwrite = overwrite,
                          quality.field = quality.field, match.field = match.field,
-                         initials = initials, column = column, entry = entry, superUser = superUser,
+                         initials = initials, column = column, entry = entry, superuser = superuser,
                          flywire.good = FALSE)
   # Make matches!
   match.more = TRUE
@@ -1832,7 +1837,7 @@ id_selector <- function(gs,
                         initials = NULL,
                         column = NULL,
                         entry = NULL,
-                        superUser = FALSE,
+                        superuser = FALSE,
                         flywire.good = FALSE){
   id = match.arg(id)
   ids = id_okay(ids)
@@ -1861,7 +1866,7 @@ id_selector <- function(gs,
   }else{ # review
     doit = subset(gs, ( (!is.na(gs[[match.field]]) | gs[[match.field]] != 0) | !is.na(gs[[quality.field]])) )
   }
-  if(!superUser){
+  if(!superuser){
     doit = subset(doit, doit$user==initials)
     users = paste0("for matches flagged for user ", initials)
   }else{
@@ -1915,7 +1920,7 @@ id = '%s'; overwrite = '%s'; quality.field = '%s'; match.field = '%s'; initials 
                  nullToNA(column),
                  nullToNA(entry)))
   }else{
-    message(sprintf("Out of %s possible %ss there are %s valid ones considering arguments user + superUser + overwrite + column + entry",id.len,id,length(ids)))
+    message(sprintf("Out of %s possible %ss there are %s valid ones considering arguments user + superuser + overwrite + column + entry",id.len,id,length(ids)))
   }
   # order doit
   user.order = unique(c(initials,sort(doit$user)))
