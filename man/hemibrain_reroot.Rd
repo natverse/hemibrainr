@@ -2,7 +2,7 @@
 % Please edit documentation in R/hemibrain_reroot.R
 \name{hemibrain_reroot}
 \alias{hemibrain_reroot}
-\title{Re-root (a) hemibrain neuron/neurons}
+\title{Re-root (a) hemibrain/flywire neuron/neurons}
 \usage{
 hemibrain_reroot(
   x,
@@ -28,6 +28,8 @@ if \code{method == "manual"}.}
 from the hemibrain Google team drive overseen by the Drosophila Connectomics group.}
 
 \item{...}{methods sent to \code{nat::nlapply}}
+
+\item{flywire_nuclei}{a \code{data.frame} that gives auto-detected nuclei locations in the Flywire dataset. This is provided by}
 }
 \value{
 a \code{nat::neuronlist} or \code{nat::neuron} object

@@ -25,7 +25,7 @@ flywire_request(
   gsheet = FALSE,
   selected_sheet = options()$flywire_flagged_gsheet,
   sheet = "flywire",
-  User = "hemibrainr",
+  user = "hemibrainr",
   ...
 )
 }
@@ -63,7 +63,7 @@ the sheet specified by \code{selected_sheet}.}
 
 \item{sheet}{the tab onto which to add your requests.}
 
-\item{User}{character, the user who is added new data.}
+\item{user}{character, the user who is added new data.}
 }
 \value{
 A \code{neuronlist} object containing flywire skeletons. In the meta-data, it might be useful for some users to note that
@@ -108,7 +108,7 @@ fw.neurons.jrc2018f.m = flywire_neurons(brain = "JRC2018F", mirror = TRUE)
 ## to the nightly processing so they are available from Google drive.
 ## And they are stored in a .csv:
 library(readr)
-csv = read_csv("/Users/abates/Downloads/FlyWire_list.txt",
+csv = read_csv("/users/abates/Downloads/FlyWire_list.txt",
 col_type = cols(.default = "c"))
 ids = csv[,1][[1]]
 neurons = skeletor(ids)

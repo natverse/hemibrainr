@@ -19,8 +19,8 @@ LR_matching(
   overwrite = c("FALSE", "bad", "TRUE", "review"),
   column = NULL,
   entry = NULL,
-  User = NULL,
-  superUser = FALSE,
+  user = NULL,
+  superuser = FALSE,
   flywire.good = FALSE,
   verbose = FALSE
 )
@@ -29,6 +29,7 @@ hemibrain_matching(
   ids = NULL,
   hemibrain.nblast = NULL,
   threshold = 0,
+  flytable = TRUE,
   selected_file = options()$hemibrainr_matching_gsheet,
   batch_size = 50,
   db = NULL,
@@ -38,7 +39,7 @@ hemibrain_matching(
   column = NULL,
   entry = NULL,
   user = NULL,
-  superUser = FALSE,
+  superuser = FALSE,
   verbose = FALSE
 )
 
@@ -53,7 +54,7 @@ lm_matching(
   column = NULL,
   entry = NULL,
   user = NULL,
-  superUser = FALSE
+  superuser = FALSE
 )
 
 fafb_matching(
@@ -69,7 +70,7 @@ fafb_matching(
   column = NULL,
   entry = NULL,
   user = NULL,
-  superUser = FALSE,
+  superuser = FALSE,
   flywire.good = FALSE
 )
 }
@@ -108,15 +109,18 @@ If \code{"bad"} then you can overwrite made matches that are 'tract-only' or 'no
 If \code{"review"} then you will only be shown already-matched neurons, which appear in green.
 If you make no new selection (hit 't' to exit selection mode) then the made selection will persist.
 If \code{ids} is not \code{NULL}, then the selected neurons will be further sub-setted by their unique id. Note that selection
-also works with \code{superUser}, the default is to only take neurons allocated to you. In order to change this,
-you can user \code{superUser=TRUE}.}
+also works with \code{superuser}, the default is to only take neurons allocated to you. In order to change this,
+you can user \code{superuser=TRUE}.}
 
 \item{column}{defaults to \code{NULL}, no further subsetting. Else, you can select a column from the Google sheet.
 Only  neurons with a certain value (\code{entry}) in that column will be chosen for matching.}
 
 \item{entry}{defaults to \code{NULL}, no further subsetting. Else, it is a value in \code{column}.}
 
-\item{superUser}{if \code{FALSE} then you will only be given neurons flagged for your user. If \code{TRUE} then
+\item{user}{the initials of the matching 'users', i.e. you, which should also be recorded on the master matching google sheet. However, you can enter a new user
+for the matches you make in R. If set to \code{NULL} then all users are 'selected'.}
+
+\item{superuser}{if \code{FALSE} then you will only be given neurons flagged for your user. If \code{TRUE} then
 you will be given neurons flagged for any user. To select whether or not you want to look at neurons with no match, neurons with a match
 or either, use the \code{overwrite} argument.}
 
@@ -132,9 +136,6 @@ NBLAST matrix. By default this is read from the flyconnectome Team Drive.}
 CATMAID (using \code{catmaid::read.neurons.catmaid}) or flywire (using \code{flywire_neurons}) for matching. Alternatively,light level
 skeletons  (\code{"lm"}) from Dolan et al. and Frechter et al. 2019 (eLife), stored in the package \code{lhns} as
 \code{most.lhns}.}
-
-\item{user}{the initials of the matching 'users', i.e. you, which should also be recorded on the master matching google sheet. However, you can enter a new user
-for the matches you make in R. If set to \code{NULL} then all users are 'selected'.}
 }
 \description{
 Match up neurons between the hemibrain, FAFB and light level data and save the
@@ -148,7 +149,7 @@ Match up neurons between the hemibrain, FAFB and light level data and save the
   note that neurons are read from the FAFB CATMAID project when \code{repository=="CATMAID"}, and you must have
   login details for this project recorded in your .Renviron for these
   functions to work. You are given neurons assigned to your initials on the matching google sheet (the \code{user} column)
-  though you can look at other's assigned matches using \code{superUser=TRUE}. Your selection is further narrowed
+  though you can look at other's assigned matches using \code{superuser=TRUE}. Your selection is further narrowed
   by omitting neurons whose matches have already been made, when using the default \code{overwrite="TRUE"}. However, you
   can change this to overwrite matches, and to review made matches.
 }
@@ -189,11 +190,11 @@ hemibrain_matching(hemibrain.nblast = fib.fafb.crossnblast.twigs5.mean.compress)
 # And example of matching neurons in a flywire tracing sheet
 sheet = flywire_tracing_sheet("SLPal2_dorsal", regex = TRUE)
 fafb_matching(ids = unique(sheet$root_id), repository="flywire",
-overwrite = "bad", user = "AJ", superUser = TRUE)
+overwrite = "bad", user = "AJ", superuser = TRUE)
 
 # Look at all poorly made matches
 fafb_matching(repository="flywire", column = "hemibrain_match_quality",
-entry = "poor", overwrite = "TRUE", user = "AJ", superUser = TRUE)
+entry = "poor", overwrite = "TRUE", user = "AJ", superuser = TRUE)
 }}
 }
 \seealso{

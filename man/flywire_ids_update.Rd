@@ -51,7 +51,7 @@ a \code{data.frame} with columns from the given google sheet(s), specified using
 \description{
 This function retrieves flywire IDs based on xyz positions in flywire voxel space, from a set of google sheets.
 It also writes the updated flywire IDs to the same google sheets. This is often helpful because flywire IDs are inherently unstable, they change every time
-a neuron is modified even slightly. Users can record 'stable' points in a neuron that identify it, e.g. a single xyz position in the cell body fibre, or at the soma, and
+a neuron is modified even slightly. users can record 'stable' points in a neuron that identify it, e.g. a single xyz position in the cell body fibre, or at the soma, and
 then use this function to update and get the correct flywire ID whenever they wish.
 }
 \details{
