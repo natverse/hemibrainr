@@ -208,7 +208,7 @@ flywire_reroot.neuron <- function(x, flywire_nuclei = fafbseg::flywire_nuclei(),
 flywire_reroot.neuronlist <- function(x, flywire_nuclei = fafbseg::flywire_nuclei(), ...){
   x = tryCatch(add_field_seq(x,x[,"root_id"],field="root_id"),
                error = function(e) add_field_seq(x,names(x),field="root_id"))
-  y = nat::nlapply(x = x, flywire_nuclei = flywire_nuclei, ...)
+  y = nat::nlapply(X = x, FUN = flywire_reroot.neuron, flywire_nuclei = flywire_nuclei, ...)
   y
 }
 
