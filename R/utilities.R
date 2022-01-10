@@ -708,7 +708,7 @@ root_id_correct <- function(a){
   if(!"root_id"%in%colnames(a)){
     a[,"root_id"] = a[,"flywire.id"]
   }
-  a = a[!duplicated(colnames(a)),]
+  a = a[,!duplicated(colnames(a))]
   a
 }
 
@@ -723,11 +723,11 @@ update_metdata <- function(neurons, meta, id, correction = TRUE){
   }
   df = matchColClasses(meta, df)
   dfn = suppress(dplyr::left_join(df, meta))
+  rownames(dfn) = rownames(df)
   matched = match(dfn[[id]], meta[[id]])
   matched.good = !is.na(matched)
   shared.cols = intersect(colnames(dfn[,]),colnames(meta))
   dfn[matched.good,shared.cols] = meta[matched[matched.good],shared.cols]
-  colnames(dfn) = snakecase::to_snake_case(dfn)
   attr(neurons,'df') = dfn
   neurons
 }
