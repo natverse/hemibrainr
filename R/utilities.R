@@ -703,10 +703,24 @@ check_package_available <- function(pkg) {
 }
 
 # hidden
-update_metdata <- function(neurons, meta, id){
+root_id_correct <- function(a){
+  colnames(a) = snakecase::to_snake_case(colnames(a))
+  if(!"root_id"%in%colnames(a)){
+    a[,"root_id"] = a[,"flywire.id"]
+  }
+  a = a[!duplicated(colnames(a)),]
+  a
+}
+
+# hidden
+update_metdata <- function(neurons, meta, id, correction = TRUE){
   check_package_available('dplyr')
   check_package_available('snakecase')
   df = neurons[,]
+  if(correction){
+    df = root_id_correct(df)
+    meta = root_id_correct(meta)
+  }
   df = matchColClasses(meta, df)
   dfn = suppress(dplyr::left_join(df, meta))
   matched = match(dfn[[id]], meta[[id]])
