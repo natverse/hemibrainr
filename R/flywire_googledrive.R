@@ -833,7 +833,12 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
   master$root_id = bit64::as.integer64(master$root_id)
   master$flywire_svid = bit64::as.integer64(master$flywire_svid)
   if(match){
-    matches = hemibrain_matches(selected_file = matching_sheet, priority = priority)
+    if(is.null(matching_sheet)){
+      flytable = TRUE
+    }else{
+      flytable = FALSE
+    }
+    matches = hemibrain_matches(selected_file = matching_sheet, priority = priority, flytable = flytable)
     matches = subset(matches, matches$match.dataset == "hemibrain" &  matches$dataset == "flywire")
     master$hemibrain_match = matches[match(master$root_id, matches$id), "match"]
     master$hemibrain_match_quality = matches[match(master$root_id, matches$id),"quality"]

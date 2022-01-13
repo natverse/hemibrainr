@@ -51,11 +51,11 @@ Contact us if unsure:
 
   \item{"fafb_hemisphere_match"}{ - the flywire coordinates of a neuron on the opposite hemisphere, which a match maker has designated as this \code{id}'s cognate.}
 
-  \item{"fafb_hemisphere_match.quality"}{ - the quality of this match.}
+  \item{"fafb_hemisphere_match_quality"}{ - the quality of this match.}
 
-  \item{"LM.match"}{ - indicates a light level neuron that is a match for \code{id}. This neuron will be in \code{flycircuit_neurons()} or other light level data.}
+  \item{"lm_match"}{ - indicates a light level neuron that is a match for \code{id}. This neuron will be in \code{flycircuit_neurons()} or other light level data.}
 
-  \item{"LM.match.quality"}{ - the quality of this match.}
+  \item{"lm_match_quality"}{ - the quality of this match.}
 
   \item{"dataset"}{ - the data set to which \code{id} belongs. Either \code{"hemibrain"}, or one of the two FAFB repositories, \code{"CATMAID"} or \code{"flywire"}.}
 
