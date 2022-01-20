@@ -727,7 +727,7 @@ get_idfield <- function(repository = c("hemibrain","CATMAID","flywire","LM","lm"
   if(repository=="hemibrain"){
     id.field = "bodyid"
   }else if (repository == c("flywire")){
-    id.field = "flywire.id"
+    id.field = "root_id"
     sheet = "FAFB"
   }else if (repository%in%c("CATMAID","FAFB")){
     id.field = "skid"
@@ -735,28 +735,28 @@ get_idfield <- function(repository = c("hemibrain","CATMAID","flywire","LM","lm"
   }else if (repository=="FAFB"){
     id.field = "skid"
   }else if(repository=="FAFB.hemisphere"){
-    id.field = "FAFB.hemisphere.match"
+    id.field = "fafb_hemisphere_match"
   }else{
     id.field = "id"
   }
   if(return=="sheet"){
     sheet
-  }else if(return%in%c("match.field","match.quality")){
+  }else if(return%in%c("match.field","match_quality")){
     if(repository%in%c("CATMAID","FAFB")){
-      match.field  = "FAFB.match"
-      match.quality = "FAFB.match.quality"
+      match.field  = "fafb_match"
+      match.quality = "fafb_match_quality"
     }else if(repository%in%c("LM","lm")){
       match.field = "LM.match"
-      match.quality = "LM.match.quality"
+      match.quality = "lm_match_quality"
     }else if(repository=="hemibrain"){
-      match.field = "hemibrain.match"
-      match.quality = "hemibrain.match.quality"
+      match.field = "hemibrain_match"
+      match.quality = "hemibrain_match_quality"
     }else if(repository=="flywire"){
-      match.field = "flywire.xyz"
-      match.quality = "FAFB.match.quality"
+      match.field = "flywire_xyz"
+      match.quality = "fafb_match_quality"
     }else if(repository%in%c("FAFB.hemisphere","hemisphere")){
-      match.field = "FAFB.hemisphere.match"
-      match.quality = "FAFB.hemisphere.match.quality"
+      match.field = "fafb_hemisphere_match"
+      match.quality = "fafb_hemisphere_match_quality"
     }else{
       match.field = "match"
       match.quality = "quality"
@@ -876,7 +876,7 @@ hemibrain_matches <- function(priority = c("FAFB","hemibrain"),
   hemibrain.matches$bodyid = correct_id(hemibrain.matches$bodyid)
   hemibrain.matches = hemibrain.matches[!duplicated(hemibrain.matches$bodyid),]
   hemibrain.matches = hemibrain.matches[hemibrain.matches$bodyid!="",]
-  hemibrain.matches$ItoLee_Lineage = gsub("_.*","",hemibrain.matches$ItoLee_Hemilineage)
+  hemibrain.matches$ito_lee_hemilineage = gsub("_.*","",hemibrain.matches$ito_lee_hemilineage)
   hemibrain.matches$dataset = "hemibrain"
   hemibrain.matches = subset(hemibrain.matches, !is.na(hemibrain.matches$bodyid))
   hemibrain.matches = hemibrain.matches[!duplicated(hemibrain.matches$bodyid),]
@@ -888,10 +888,10 @@ hemibrain_matches <- function(priority = c("FAFB","hemibrain"),
                                                   sheet = "FAFB",
                                                   return = TRUE,
                                      Verbose = FALSE)
-  fafb.matches = subset(fafb.matches, !is.na(fafb.matches$skid)|!is.na(fafb.matches$flywire.id))
-  fafb.matches = fafb.matches[!(duplicated(fafb.matches$skid)&duplicated(fafb.matches$flywire.id)),]
+  fafb.matches = subset(fafb.matches, !is.na(fafb.matches$skid)|!is.na(fafb.matches$root_id))
+  fafb.matches = fafb.matches[!(duplicated(fafb.matches$skid)&duplicated(fafb.matches$root_id)),]
   fafb.matches$skid = correct_id(fafb.matches$skid)
-  fafb.matches$flywire.id = correct_id(fafb.matches$flywire.id)
+  fafb.matches$root_id = correct_id(fafb.matches$root_id)
   fafb.matches$dataset = "FAFB"
   fafb.matches$skid[is.na(fafb.matches$skid)] = "missing"
   rownames(fafb.matches) = paste0(fafb.matches$skid,"#",ave(fafb.matches$skid,fafb.matches$skid,FUN= seq.int))
@@ -901,19 +901,19 @@ hemibrain_matches <- function(priority = c("FAFB","hemibrain"),
   for(nt in nblast.tops){
     if(!is.null(hemibrain.matches[[nt]])){
       present = !is.na(hemibrain.matches[[nt]])
-      missing = is.na(hemibrain.matches$flywire.xyz)
+      missing = is.na(hemibrain.matches$flywire_xyz)
       replace = (present+missing)>1
       if(sum(replace)){
         if(nt=="CATMAID.nblast.top"){
-          hemibrain.matches$FAFB.match[replace] = hemibrain.matches[[nt]][replace]
-          hemibrain.matches$flywire.xyz[replace] = fafb.matches$flywire.xyz[match(hemibrain.matches$FAFB.match[replace],fafb.matches$skid)]
-          hemibrain.matches$flywire.id[replace] = fafb.matches$flywire.id[match(hemibrain.matches$FAFB.match[replace],fafb.matches$skid)]
+          hemibrain.matches$fafb_match[replace] = hemibrain.matches[[nt]][replace]
+          hemibrain.matches$flywire_xyz[replace] = fafb.matches$flywire_xyz[match(hemibrain.matches$fafb_match[replace],fafb.matches$skid)]
+          hemibrain.matches$root_id[replace] = fafb.matches$root_id[match(hemibrain.matches$fafb_match[replace],fafb.matches$skid)]
         }else{
-          hemibrain.matches$flywire.id[replace] = hemibrain.matches[[nt]][replace]
-          hemibrain.matches$flywire.xyz[replace] = fafb.matches$flywire.xyz[match(fafb.matches$flywire.id[replace],fafb.matches$flywire.id)]
-          hemibrain.matches$FAFB.match[replace] = fafb.matches$skid[match(hemibrain.matches$flywire.id[replace],fafb.matches$flywire.id)]
+          hemibrain.matches$root_id[replace] = hemibrain.matches[[nt]][replace]
+          hemibrain.matches$flywire_xyz[replace] = fafb.matches$flywire_xyz[match(fafb.matches$root_id[replace],fafb.matches$root_id)]
+          hemibrain.matches$FAFB.match[replace] = fafb.matches$skid[match(hemibrain.matches$root_id[replace],fafb.matches$root_id)]
         }
-        hemibrain.matches$FAFB.match.quality[replace] = "NBLAST"
+        hemibrain.matches$fafb_match_quality[replace] = "NBLAST"
       }
       }
   }
@@ -923,40 +923,40 @@ hemibrain_matches <- function(priority = c("FAFB","hemibrain"),
   for(nt in nblast.tops){
     if(!is.null(fafb.matches[[nt]])){
       present = !is.na(fafb.matches[[nt]])
-      missing = is.na(fafb.matches$hemibrain.match)
+      missing = is.na(fafb.matches$hemibrain_match)
       replace = (present+missing)>1
       if(sum(replace)){
-        fafb.matches$hemibrain.match[replace] = fafb.matches[[nt]][replace]
-        fafb.matches$hemibrain.match.quality[replace] = "NBLAST"
+        fafb.matches$hemibrain_match[replace] = fafb.matches[[nt]][replace]
+        fafb.matches$hemibrain_match_quality[replace] = "NBLAST"
       }
     }
   }
 
   # Match to other side
-  side.match = fafb.matches$FAFB.hemisphere.match[match(hemibrain.matches$flywire.xyz,fafb.matches$flywire.xyz)]
-  side.quality = fafb.matches$FAFB.hemisphere.match.quality[match(hemibrain.matches$flywire.xyz,fafb.matches$flywire.xyz)]
-  hemibrain.matches$FAFB.hemisphere.match = ifelse(length(side.match),side.match,NA)
-  hemibrain.matches$FAFB.hemisphere.match.quality = ifelse(length(side.quality),side.quality,NA)
+  side.match = fafb.matches$fafb_hemisphere_match[match(hemibrain.matches$flywire_xyz,fafb.matches$flywire_xyz)]
+  side.quality = fafb.matches$fafb_hemisphere_match_quality[match(hemibrain.matches$flywire_xyz,fafb.matches$flywire_xyz)]
+  hemibrain.matches$fafb_hemisphere_match = ifelse(length(side.match),side.match,NA)
+  hemibrain.matches$fafb_hemisphere_match_quality = ifelse(length(side.quality),side.quality,NA)
 
   # Unmatched
-  fafb.unmatched = is.na(fafb.matches$hemibrain.match)|fafb.matches$hemibrain.match==""
-  fafb.matches$hemibrain.match.quality[fafb.unmatched] = "none"
-  fafb.matches$hemibrain.match[fafb.unmatched] = "none"
-  hemibrain.unmatched = is.na(hemibrain.matches$FAFB.match)|hemibrain.matches$FAFB.match==""
-  hemibrain.matches$FAFB.match.quality[hemibrain.unmatched] = "none"
-  hemibrain.matches$FAFB.match[hemibrain.unmatched] = "none"
-  side.unmatched = is.na(hemibrain.matches$FAFB.hemisphere.match)|hemibrain.matches$FAFB.hemisphere.match==""
-  hemibrain.matches$FAFB.hemisphere.match.quality[side.unmatched] = "none"
-  hemibrain.matches$FAFB.hemisphere.match[side.unmatched] = "none"
-  side.unmatched = is.na(fafb.matches$FAFB.hemisphere.match)|fafb.matches$FAFB.hemisphere.match==""
-  fafb.matches$FAFB.hemisphere.match.quality[side.unmatched] = "none"
-  fafb.matches$FAFB.hemisphere.match[side.unmatched] = "none"
+  fafb.unmatched = is.na(fafb.matches$hemibrain_match)|fafb.matches$hemibrain_match==""
+  fafb.matches$hemibrain_match_quality[fafb.unmatched] = "none"
+  fafb.matches$hemibrain_match[fafb.unmatched] = "none"
+  hemibrain.unmatched = is.na(hemibrain.matches$fafb_match)|hemibrain.matches$fafb_match==""
+  hemibrain.matches$fafb_match_quality[hemibrain.unmatched] = "none"
+  hemibrain.matches$fafb_match[hemibrain.unmatched] = "none"
+  side.unmatched = is.na(hemibrain.matches$fafb_hemisphere_match)|hemibrain.matches$fafb_hemisphere_match==""
+  hemibrain.matches$fafb_hemisphere_match_quality[side.unmatched] = "none"
+  hemibrain.matches$fafb_hemisphere_match[side.unmatched] = "none"
+  side.unmatched = is.na(fafb.matches$fafb_hemisphere_match)|fafb.matches$fafb_hemisphere_match==""
+  fafb.matches$fafb_hemisphere_match_quality[side.unmatched] = "none"
+  fafb.matches$fafb_hemisphere_match[side.unmatched] = "none"
 
   # Add in neuprint types
   meta = neuprintr::neuprint_get_meta(hemibrain.matches$bodyid)
   types = meta$type
   names(types) = meta$bodyid
-  hemibrain.matches[,"cell.type"] = types[as.character(hemibrain.matches$bodyid)]
+  hemibrain.matches[,"cell_type"] = types[as.character(hemibrain.matches$bodyid)]
 
   # Address FAFB cell types
   fafb.matches$cell.type = NA
@@ -966,39 +966,39 @@ hemibrain_matches <- function(priority = c("FAFB","hemibrain"),
     }
     if(priority=="FAFB"){
       # FAFB -> Hemibrain
-      inq = as.character(subset(fafb.matches, fafb.matches$hemibrain.match.quality==q)$flywire.xyz)
+      inq = as.character(subset(fafb.matches, fafb.matches$hemibrain_match_quality==q)$flywire_xyz)
       inq = inq[!is.na(inq)]
-      isna = is.na(fafb.matches[inq,]$cell.type)
-      cts = hemibrain.matches$cell.type[match(fafb.matches[inq,]$hemibrain.match,hemibrain.matches$bodyid)]
-      fafb.matches[inq,]$cell.type[isna] = cts[isna]
+      isna = is.na(fafb.matches[inq,]$cell_type)
+      cts = hemibrain.matches$cell_type[match(fafb.matches[inq,]$hemibrain_match,hemibrain.matches$bodyid)]
+      fafb.matches[inq,]$cell_type[isna] = cts[isna]
       # Hemibrain -> FAFB
-      inq = as.character(subset(hemibrain.matches, hemibrain.matches$FAFB.match.quality==q)$flywire.xyz)
+      inq = as.character(subset(hemibrain.matches, hemibrain.matches$fafb_match_quality==q)$flywire_xyz)
       inq = inq[!is.na(inq)]
-      isna = is.na(fafb.matches[inq,]$cell.type)
-      fafb.matches[inq,]$cell.type[isna] = hemibrain.matches$cell.type[match(fafb.matches[inq,]$flywire.xyz[isna],hemibrain.matches$flywire.xyz)]
+      isna = is.na(fafb.matches[inq,]$cell_type)
+      fafb.matches[inq,]$cell_type[isna] = hemibrain.matches$cell_type[match(fafb.matches[inq,]$flywire_xyz[isna],hemibrain.matches$flywire_xyz)]
     }else{
       # Hemibrain -> FAFB
-      inq = as.character(subset(hemibrain.matches, hemibrain.matches$FAFB.match.quality==q)$flywire.xyz)
+      inq = as.character(subset(hemibrain.matches, hemibrain.matches$fafb_match_quality==q)$flywire_xyz)
       inq = inq[!is.na(inq)]
-      isna = is.na(fafb.matches[inq,]$cell.type)
-      fafb.matches[inq,]$cell.type[isna] = hemibrain.matches$cell.type[match(fafb.matches[inq,]$flywire.xyz[isna],hemibrain.matches$flywire.xyz)]
+      isna = is.na(fafb.matches[inq,]$cell_type)
+      fafb.matches[inq,]$cell_type[isna] = hemibrain.matches$cell_type[match(fafb.matches[inq,]$flywire_xyz[isna],hemibrain.matches$flywire_xyz)]
       # FAFB -> Hemibrain
-      inq = as.character(subset(fafb.matches, fafb.matches$hemibrain.match.quality==q)$flywire.xyz)
+      inq = as.character(subset(fafb.matches, fafb.matches$hemibrain_match_quality==q)$flywire_xyz)
       inq = inq[!is.na(inq)]
-      isna = is.na(fafb.matches[inq,]$cell.type)
-      cts = hemibrain.matches$cell.type[match(fafb.matches[inq,]$hemibrain.match,hemibrain.matches$bodyid)]
-      fafb.matches[inq,]$cell.type[isna] = cts[isna]
+      isna = is.na(fafb.matches[inq,]$cell_type)
+      cts = hemibrain.matches$cell_type[match(fafb.matches[inq,]$hemibrain_match,hemibrain.matches$bodyid)]
+      fafb.matches[inq,]$cell_type[isna] = cts[isna]
     }
   }
 
   # Add in neuprint types
-  ntotype = fafb.matches$hemibrain.match[is.na(fafb.matches$cell.type)]
+  ntotype = fafb.matches$hemibrain.match[is.na(fafb.matches$cell_type)]
   ntotype = ntotype[ntotype!="none" & !is.na(ntotype)]
   meta = neuprintr::neuprint_get_meta(ntotype)
   types = meta$type
   names(types) = meta$bodyid
   types = types[!is.na(types)]
-  fafb.matches[match(names(types),fafb.matches$hemibrain.match),"cell.type"] = types
+  fafb.matches[match(names(types),fafb.matches$hemibrain_match),"cell_type"] = types
 
   # Work out lineages
   for(repo in c("CATMAID","flywire")){
@@ -1009,74 +1009,87 @@ hemibrain_matches <- function(priority = c("FAFB","hemibrain"),
       idx = match(id,fafb.matches[[id.field]])
       idx2 = match(id,hemibrain.matches[[match.field]])
       if(!is.na(idx2)){
-        ct = fafb.matches[idx,"cell.type"]
+        ct = fafb.matches[idx,"cell_type"]
         if(is.na(ct)){
-          fafb.matches[idx,"cell.type"] = hemibrain.matches$cell.type[idx2]
-          if(is.na(fafb.matches[idx,"cell.type"])){
-            fafb.matches[idx,"cell.type"] = "uncertain"
+          fafb.matches[idx,"cell_type"] = hemibrain.matches$cell_type[idx2]
+          if(is.na(fafb.matches[idx,"cell_type"])){
+            fafb.matches[idx,"cell_type"] = "uncertain"
           }else{
-            fafb.matches[idx,"ItoLee_Hemilineage"] = hemibrain.matches$ItoLee_Hemilineage[idx2]
+            fafb.matches[idx,"ito_lee_hemilineage"] = hemibrain.matches$ito_lee_hemilineage[idx2]
           }
         }else{
-          fafb.matches[idx,"ItoLee_Hemilineage"] = hemibrain.matches$ItoLee_Hemilineage[match(ct,hemibrain.matches$cell.type)]
+          fafb.matches[idx,"ito_lee_hemilineage"] = hemibrain.matches$ito_lee_hemilineage[match(ct,hemibrain.matches$cell_type)]
         }
       }
     }
   }
 
   # Add cell body fiber infor for FAFB cells
-  cbf.match = hemibrain.matches$cellBodyFiber[match(fafb.matches$hemibrain.match,hemibrain.matches$bodyid)]
-  fafb.matches$cellBodyFiber = ifelse(length(cbf.match),cbf.match,NA)
+  cbf.match = hemibrain.matches$cell_body_fiber[match(fafb.matches$hemibrain_match,hemibrain.matches$bodyid)]
+  fafb.matches$cell_body_fiber = ifelse(length(cbf.match),cbf.match,NA)
 
   # Rename cells
-  fafb.matches = fafb.matches[order(fafb.matches$hemibrain.match,decreasing = TRUE),]
+  fafb.matches = fafb.matches[order(fafb.matches$hemibrain_match,decreasing = TRUE),]
   hemibrain.matches = hemibrain.matches[order(hemibrain.matches$bodyid,decreasing = TRUE),]
-  fafb.matches$cell = paste0(fafb.matches$cell.type,"#",ave(fafb.matches$cell.type,fafb.matches$cell.type,FUN= seq.int))
-  hemibrain.matches$cell = paste0(hemibrain.matches$cell.type,"#",ave(hemibrain.matches$cell.type,hemibrain.matches$cell.type,FUN= seq.int))
+  fafb.matches$cell = paste0(fafb.matches$cell_type,"#",ave(fafb.matches$cell_type,fafb.matches$cell_type,FUN= seq.int))
+  hemibrain.matches$cell = paste0(hemibrain.matches$cell_type,"#",ave(hemibrain.matches$cell_type,hemibrain.matches$cell_type,FUN= seq.int))
 
   # Separate flywire and CATMAID matches
   catmaid.matches = subset(fafb.matches, !is.na(fafb.matches$skid)& !fafb.matches$skid%in%c(""," ","NA","0","error","none"))
-  flywire.matches = subset(fafb.matches, !is.na(fafb.matches$flywire.id)& !fafb.matches$flywire.id%in%c(""," ","NA","0","error","none"))
+  flywire.matches = subset(fafb.matches, !is.na(fafb.matches$root_id)& !fafb.matches$root_id%in%c(""," ","NA","0","error","none"))
   hemibrain.matches$dataset = "hemibrain"
   flywire.matches$dataset = "flywire"
   catmaid.matches$dataset = "CATMAID"
-  hemibrain.matches$match.dataset = "flywire"
-  flywire.matches$match.dataset = "hemibrain"
-  catmaid.matches$match.dataset = "hemibrain"
+  hemibrain.matches$match_dataset = "flywire"
+  flywire.matches$match_dataset = "hemibrain"
+  catmaid.matches$match_dataset = "hemibrain"
   hemibrain.matches.catmaid = hemibrain.matches
-  hemibrain.matches.catmaid$match.dataset = "CATMAID"
+  hemibrain.matches.catmaid$match_dataset = "CATMAID"
 
   # Make matching data frame
-  matched.h = hemibrain.matches[,c("bodyid", "cell.type", "cell", "cellBodyFiber", "ItoLee_Hemilineage",
-                                   "flywire.id", "FAFB.match.quality",
-                                   "FAFB.hemisphere.match", "FAFB.hemisphere.match.quality",
-                                   "LM.match", "LM.match.quality", "dataset", "match.dataset")]
-  matched.hc = hemibrain.matches.catmaid[,c("bodyid", "cell.type", "cell", "cellBodyFiber", "ItoLee_Hemilineage",
-                                   "FAFB.match", "FAFB.match.quality",
-                                   "FAFB.hemisphere.match", "FAFB.hemisphere.match.quality",
-                                   "LM.match", "LM.match.quality", "dataset", "match.dataset")]
-  matched.c = catmaid.matches[,c("skid",  "cell.type",  "cell", "cellBodyFiber", "ItoLee_Hemilineage",
-                              "hemibrain.match", "hemibrain.match.quality",
-                              "FAFB.hemisphere.match", "FAFB.hemisphere.match.quality",
-                              "LM.match", "LM.match.quality","dataset", "match.dataset")]
-  matched.f = flywire.matches[,c("flywire.id",  "cell.type",  "cell", "cellBodyFiber", "ItoLee_Hemilineage",
-                              "hemibrain.match", "hemibrain.match.quality",
-                              "FAFB.hemisphere.match", "FAFB.hemisphere.match.quality",
-                              "LM.match", "LM.match.quality","dataset", "match.dataset")]
-  colnames(matched.h) = colnames(matched.hc) = colnames(matched.c) = colnames(matched.f) = c("id","cell.type", "cell","cellBodyFiber","ItoLee_Hemilineage",
-                                                "match","quality",
-                                                "FAFB.hemisphere.match", "FAFB.hemisphere.match.quality",
-                                                "LM.match", "LM.match.quality","dataset", "match.dataset")
+  matched.h = hemibrain.matches[,c("bodyid", "cell_type", "cell", "cell_body_fiber", "ito_lee_hemilineage",
+                                   "root_id", "fafb_match_quality", "fafb_hemisphere_match",
+                                   "fafb_hemisphere_match_quality", "lm_match", "lm_match_quality",
+                                   "dataset", "match_dataset")]
+  matched.hc = hemibrain.matches.catmaid[, c(
+    "bodyid",
+    "cell_type",
+    "cell",
+    "cell_body_fiber",
+    "ito_lee_hemilineage",
+    "fafb_match",
+    "fafb_match_quality",
+    "fafb_hemisphere_match",
+    "fafb_hemisphere_match_quality",
+    "lm_match",
+    "lm_match_quality",
+    "dataset",
+    "match_dataset"
+  )]
+  matched.c = catmaid.matches[,c("skid", "cell_type", "cell", "cell_body_fiber",
+                                 "ito_lee_hemilineage", "hemibrain_match",
+                                 "hemibrain_match_quality", "fafb_hemisphere_match",
+                                 "fafb_hemisphere_match_quality", "lm_match", "lm_match_quality",
+                                 "dataset", "match_dataset")]
+  matched.f = flywire.matches[,c("root_id", "cell_type", "cell", "cell_body_fiber",
+                                 "ito_lee_hemilineage", "hemibrain_match",
+                                 "hemibrain_match_quality", "fafb_hemisphere_match",
+                                 "fafb_hemisphere_match_quality", "lm_match", "lm_match_quality",
+                                 "dataset", "match_dataset")]
+  colnames(matched.h) = colnames(matched.hc) = colnames(matched.c) = colnames(matched.f) =
+    c("id", "cell_type", "cell", "cell_body_fiber", "ito_lee_hemilineage",
+      "match", "quality", "fafb_hemisphere_match", "fafb_hemisphere_match_quality",
+      "lm_match", "lm_match_quality", "dataset", "match_dataset")
   matched = rbind(matched.h,matched.hc,matched.f,matched.c)
   matched$quality[is.na(matched$match)] = "none"
   matched$match[is.na(matched$match)] = "none"
-  matched$ItoLee_Lineage = gsub("_.*","",matched$ItoLee_Hemilineage)
+  matched$ito_lee_hemilineage = gsub("_.*","",matched$ito_lee_hemilineage)
 
   # Sort out types
-  matched$connectivity.type = matched$cell.type
-  matched$cell.type = gsub("_[a-z]{1}$","",matched$cell.type)
-  matched$cell.type[is.na(matched$cell.type)] = "uncertain"
-  matched$connectivity.type[is.na(matched$connectivity.type)] = "uncertain"
+  matched$connectivity_type = matched$cell_type
+  matched$cell_type = gsub("_[a-z]{1}$","",matched$cell_type)
+  matched$cell_type[is.na(matched$cell_type)] = "uncertain"
+  matched$connectivity.type[is.na(matched$connectivity_type)] = "uncertain"
   matched$priority = priority
   rownames(matched) = 1:nrow(matched)
 
