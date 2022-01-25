@@ -166,7 +166,7 @@ Not that <code>catmaid::flywire_matching_rewrite()</code> will write annotations
 
 <span class='fu'>fafb_set_hemilineage</span><span class='op'>(</span>
   <span class='va'>find</span>,
-  <span class='va'>ItoLee_Hemilineage</span>,
+  <span class='va'>ito_lee_hemilineage</span>,
   dataset <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"FAFB"</span>, <span class='st'>"hemibrain"</span><span class='op'>)</span>,
   putative <span class='op'>=</span> <span class='cn'>TRUE</span>,
   delete.find <span class='op'>=</span> <span class='cn'>FALSE</span>,
@@ -202,7 +202,7 @@ Not that <code>catmaid::flywire_matching_rewrite()</code> will write annotations
       <td><p>an annotation/search term/vector of skids passed to <code><a href='https://rdrr.io/pkg/catmaid/man/catmaid_skids.html'>catmaid::catmaid_skids</a></code>.</p></td>
     </tr>
     <tr>
-      <th>ItoLee_Hemilineage</th>
+      <th>ito_lee_hemilineage</th>
       <td><p>character, the correct K. Ito / T. Lee hemilineage. Must be an entry in <code><a href='hemilineages.html'>hemibrain_hemilineages</a></code>. If set to 'wipe' all lineage related annotations will be removed.</p></td>
     </tr>
     <tr>

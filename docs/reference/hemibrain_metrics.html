@@ -47,7 +47,7 @@
 
 
 <meta property="og:title" content="Neuron metrics for all neurons in the hemibrain dataset — hemibrain_metrics" />
-<meta property="og:description" content="This data.frame give metrics for neurons, such as cable lengths and pre/post synapse numbers and densities,
+<meta property="og:description" content="This data.frame give metrics for neurons, such as cable_lengths and pre/post synapse numbers and densities,
 broken down by putative compartment. E.g. axons versus dendrite. This has been calculated for neurons across the hemibrain dataset,
 hemibrain:v1.0.1. The file used to generate this can be found in this package,
 as data-raw/hemibrain_split_all_neurons.R. Neurons were split as described by hemibrain_precomputed_splitpoints. Note
@@ -162,7 +162,7 @@ a neuron's axon and dendrite." />
     </div>
 
     <div class="ref-description">
-    <p>This <code>data.frame</code> give metrics for neurons, such as cable lengths and pre/post synapse numbers and densities,
+    <p>This <code>data.frame</code> give metrics for neurons, such as cable_lengths and pre/post synapse numbers and densities,
 broken down by putative compartment. E.g. axons versus dendrite. This has been calculated for neurons across the hemibrain dataset,
 hemibrain:v1.0.1. The file used to generate this can be found in this package,
 as <code>data-raw/hemibrain_split_all_neurons.R</code>. Neurons were split as described by <code><a href='hemibrain_precomputed_splitpoints.html'>hemibrain_precomputed_splitpoints</a></code>. Note
@@ -212,14 +212,14 @@ a neuron's axon and dendrite.</p>
 #&gt; 358424052            5       1 2002         FB7H  17600   395    1
 #&gt; 326530038            5       1 6892   PDM22c_pct   4460    NA    2
 #&gt; 203594175            5       1 2311       FQ12_a   3441   177    2
-#&gt;            ItoLee_Lineage ItoLee_Hemilineage Hartenstein_Lineage
+#&gt;            ito_lee_lineage ito_lee_hemilineage hartenstein_lineage
 #&gt; 5812980768             43                 67                  90
 #&gt; 480918798              34                 55                  76
 #&gt; 599674785              42                 66                  89
 #&gt; 358424052               9                 20                  52
 #&gt; 326530038              18                 42                  87
 #&gt; 203594175              18                 42                  87
-#&gt;            Hartenstein_Hemilineage putative.classic.transmitter
+#&gt;            hartenstein_hemilineage putative.classic.transmitter
 #&gt; 5812980768                     134                            1
 #&gt; 480918798                      116                            4
 #&gt; 599674785                      133                            1
@@ -254,35 +254,35 @@ a neuron's axon and dendrite.</p>
 #&gt; 358424052  flyconnectome 1587120331.87611 none        0            0     FALSE
 #&gt; 326530038  flyconnectome 1587120331.87611 none        0            0      TRUE
 #&gt; 203594175  flyconnectome 1587120331.87611 none        0            0      TRUE
-#&gt;            orig.cut soma.checked     cbf total.outputs total.inputs
+#&gt;            orig.cut soma.checked     cbf total_outputs total_inputs
 #&gt; 5812980768    FALSE         TRUE   PDL03           737          411
 #&gt; 480918798     FALSE         TRUE   PDL13           959          112
 #&gt; 599674785     FALSE         TRUE   PDL02           710          645
 #&gt; 358424052     FALSE         TRUE unknown          1800         1008
 #&gt; 326530038     FALSE         TRUE   PDM22          2972         4122
 #&gt; 203594175     FALSE         TRUE   PDM03           380          342
-#&gt;            axon.outputs dend.outputs axon.inputs dend.inputs
+#&gt;            axon_outputs dend_outputs axon_inputs dend_inputs
 #&gt; 5812980768          231          286         117         175
 #&gt; 480918798           912           27          83          29
 #&gt; 599674785           519           58         402         153
 #&gt; 358424052          1673          120         846         157
 #&gt; 326530038          2264          704        1660        2415
 #&gt; 203594175           307           45          31         289
-#&gt;            total.outputs.density total.inputs.density axon.outputs.density
+#&gt;            total_outputs_density total_inputs_density axon_outputs_density
 #&gt; 5812980768             1.1657676            0.6501092            1.9553200
 #&gt; 480918798              1.0857725            0.1268055            2.5803720
 #&gt; 599674785              0.7475305            0.6790946            1.5012897
 #&gt; 358424052              0.9851495            0.5516837            1.7191172
 #&gt; 326530038              0.3981166            0.5521657            0.8698357
 #&gt; 203594175              0.4307125            0.3876412            2.1063067
-#&gt;            dend.outputs.density axon.inputs.density dend.inputs.density
+#&gt;            dend_outputs_density axon_inputs_density dend_inputs_density
 #&gt; 5812980768            1.2005536           0.9903569           0.7346045
 #&gt; 480918798             0.1912590           0.2348365           0.2054263
 #&gt; 599674785             0.2494194           1.1628487           0.6579513
 #&gt; 358424052             0.2488725           0.8693205           0.3256081
 #&gt; 326530038             0.1983176           0.6377771           0.6803083
 #&gt; 203594175             0.1386399           0.2126890           0.8903761
-#&gt;            total.length axon.length dend.length pd.length segregation_index
+#&gt;            total_length axon_length dend_length pd_length segregation_index
 #&gt; 5812980768     632.2015    118.1392    238.2234  35.60497       0.001535072
 #&gt; 480918798      883.2421    353.4374    141.1698  25.92909       0.090286543
 #&gt; 599674785      949.7940    345.7028    232.5400 238.69601       0.037495571

@@ -10,7 +10,7 @@ fafb_hemibrain_annotate(x, flywire = TRUE, ...)
 
 fafb_set_hemilineage(
   find,
-  ItoLee_Hemilineage,
+  ito_lee_hemilineage,
   dataset = c("FAFB", "hemibrain"),
   putative = TRUE,
   delete.find = FALSE,
@@ -35,7 +35,7 @@ fafb_set_transmitter(
 
 \item{find}{an annotation/search term/vector of skids passed to \code{catmaid::catmaid_skids}.}
 
-\item{ItoLee_Hemilineage}{character, the correct K. Ito / T. Lee hemilineage. Must be an entry in \code{\link{hemibrain_hemilineages}}. If set to 'wipe' all lineage related annotations will be removed.}
+\item{ito_lee_hemilineage}{character, the correct K. Ito / T. Lee hemilineage. Must be an entry in \code{\link{hemibrain_hemilineages}}. If set to 'wipe' all lineage related annotations will be removed.}
 
 \item{dataset}{either FAFB or hemibrain. If hemibrain, then \code{find} must be a vector of valid bodyids. Matches to FAFB neurons will be annotated for these bodyids, using \code{hemibrain_matches}.}
 

@@ -77,12 +77,12 @@ standard_statuses <- function(x, invert= FALSE){
 #' @export
 #' @rdname standardise
 standard_lineages <- function(x){
-  x[grepl("^ItoLee_l|^itolee_l|^ItoLee_L|^itolee_L",x)] = "ItoLee_Lineage"
+  x[grepl("^ItoLee_l|^itolee_l|^ItoLee_L|^itolee_L",x)] = "ito_lee_lineage"
   x[grepl("^hartenstein_l|^Hartenstein_l|^Volker_l|^volker_l|
-          ^hartenstein_L|^Hartenstein_L|^Volker_L|^volker_L",x)] = "Hartenstein_Lineage"
-  x[grepl("^ItoLee_h|^itolee_h",x)] = "ItoLee_Hemilineage"
+          ^hartenstein_L|^Hartenstein_L|^Volker_L|^volker_L",x)] = "hartenstein_lineage"
+  x[grepl("^ItoLee_h|^itolee_h",x)] = "ito_lee_hemilineage"
   x[grepl("^hartenstein_h|^Hartenstein_h|^Volker_h|^volker_h|
-          ^hartenstein_H|^Hartenstein_H|^Volker_h|^volker_H",x)] = "Hartenstein_Hemilineage"
+          ^hartenstein_H|^Hartenstein_H|^Volker_h|^volker_H",x)] = "hartenstein_hemilineage"
   x[is.na(x)] = "unknown"
   x
 }

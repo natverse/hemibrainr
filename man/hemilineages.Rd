@@ -13,6 +13,6 @@ hemibrain_hemilineages
 }
 \description{
 Hemilineages names and putative transmitter.
-Transmitter guesses are based on observing at least one cell type in the literature from the hemilineage in question, known to express the given transmitter
+Transmitter guesses are based on observing at least one cell_type in the literature from the hemilineage in question, known to express the given transmitter
 }
 \keyword{datasets}

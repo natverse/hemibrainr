@@ -24,7 +24,7 @@ flywire_annotation_csv(
   xyz,
   write.csv = TRUE,
   csv.path = getwd(),
-  description = "top.nt",
+  description = "top_nt",
   csv.name = "flywire_points_annotations.csv"
 )
 

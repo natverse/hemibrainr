@@ -170,9 +170,9 @@ You can find their meta information in <code><a href='hemilineages.html'>hemibra
 
 <span class='fu'>lineage_converter</span><span class='op'>(</span>
   <span class='va'>x</span>,
-  from <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"ItoLee_Hemilineage"</span>, <span class='st'>"cellBodyFiber"</span>, <span class='st'>"ItoLee_Lineage"</span>,
-    <span class='st'>"Hartenstein_Lineage"</span>, <span class='st'>"Hartenstein_Hemilineage"</span><span class='op'>)</span>,
-  to <span class='op'>=</span> <span class='st'>"Hartenstein_Hemilineage"</span>
+  from <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"ito_lee_hemilineage"</span>, <span class='st'>"cellBodyFiber"</span>, <span class='st'>"ito_lee_lineage"</span>,
+    <span class='st'>"hartenstein_lineage"</span>, <span class='st'>"hartenstein_hemilineage"</span><span class='op'>)</span>,
+  to <span class='op'>=</span> <span class='st'>"hartenstein_hemilineage"</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -196,11 +196,11 @@ You can find their meta information in <code><a href='hemilineages.html'>hemibra
     </tr>
     <tr>
       <th>from</th>
-      <td><p>the name system in which you can find <code>x</code>. One of: cellBodyFiber, ItoLee_Lineage, ItoLee_Hemilineage, Hartenstein_Lineage, Hartenstein_Hemilineage</p></td>
+      <td><p>the name system in which you can find <code>x</code>. One of: cellBodyFiber, ito_lee_lineage, ito_lee_hemilineage, hartenstein_lineage, hartenstein_hemilineage</p></td>
     </tr>
     <tr>
       <th>to</th>
-      <td><p>the lineage name system you want to move to, can be multiple of: cellBodyFiber, ItoLee_Lineage, ItoLee_Hemilineage, Hartenstein_Lineage, Hartenstein_Hemilineage</p></td>
+      <td><p>the lineage name system you want to move to, can be multiple of: cellBodyFiber, ito_lee_lineage, ito_lee_hemilineage, hartenstein_lineage, hartenstein_hemilineage</p></td>
     </tr>
     </table>
 
@@ -209,9 +209,9 @@ You can find their meta information in <code><a href='hemilineages.html'>hemibra
     <p>A <code>neuronlist</code> object containing point clouds for neuron lineage clones. In the meta-data, it might be useful for some users to note that
 you will get:</p>
 <ul>
-<li><p>"Hartenstein_Lineage" The Hartenstein lineage name based on expert review of light level data from the V. Hartenstein group (Wong 2013, Lovick 2013).
+<li><p>"hartenstein_lineage" The Hartenstein lineage name based on expert review of light level data from the V. Hartenstein group (Wong 2013, Lovick 2013).
    See <code><a href='hemilineages.html'>hemibrain_hemilineages</a></code>.</p></li>
-<li><p>"ItoLee_Lineage" Lineage name, data from the K. Ito and T. Lee groups (Yu 2013, Ito 2013).
+<li><p>"ito_lee_lineage" Lineage name, data from the K. Ito and T. Lee groups (Yu 2013, Ito 2013).
    See <code><a href='hemilineages.html'>hemibrain_hemilineages</a></code></p></li>
 <li><p>"side" The hemisphere of the brain onto which this clone is registered</p></li>
 </ul>
@@ -241,23 +241,23 @@ doi: 10.1016/j.cub.2013.02.057. Epub 2013 Mar 28. PMID: 23541733; PMCID: PMC3637
 <span class='fu'><a href='https://rdrr.io/pkg/nat/man/plot3d.html'>plot3d</a></span><span class='op'>(</span><span class='va'>FAFB</span><span class='op'>)</span>
 
 <span class='co'># Plot WEDd1</span>
-<span class='va'>lee.lins.wedd1</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/pkg/nat/man/subset.html'>subset</a></span><span class='op'>(</span><span class='va'>lee.lins</span>, <span class='va'>ItoLee_Lineage</span> <span class='op'>==</span> <span class='st'>"WEDd1"</span><span class='op'>)</span>
+<span class='va'>lee.lins.wedd1</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/pkg/nat/man/subset.html'>subset</a></span><span class='op'>(</span><span class='va'>lee.lins</span>, <span class='va'>ito_lee_lineage</span> <span class='op'>==</span> <span class='st'>"WEDd1"</span><span class='op'>)</span>
 <span class='fu'><a href='https://rdrr.io/pkg/nat/man/plot3d.html'>plot3d</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/pkg/nat/man/xyzmatrix.html'>xyzmatrix</a></span><span class='op'>(</span><span class='va'>lee.lins.wedd1</span><span class='op'>)</span>,
 add <span class='op'>=</span> <span class='cn'>TRUE</span>, col <span class='op'>=</span> <span class='va'>hemibrain_bright_colors</span><span class='op'>[</span><span class='st'>"green"</span><span class='op'>]</span><span class='op'>)</span>
 
 <span class='co'># Plot WEDd1 from the other clonal data set</span>
-<span class='va'>ito.lins.wedd1</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/pkg/nat/man/subset.html'>subset</a></span><span class='op'>(</span><span class='va'>ito.lins</span>, <span class='va'>ItoLee_Lineage</span> <span class='op'>==</span> <span class='st'>"WEDd1"</span><span class='op'>)</span>
+<span class='va'>ito.lins.wedd1</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/pkg/nat/man/subset.html'>subset</a></span><span class='op'>(</span><span class='va'>ito.lins</span>, <span class='va'>ito_lee_lineage</span> <span class='op'>==</span> <span class='st'>"WEDd1"</span><span class='op'>)</span>
 <span class='fu'><a href='https://rdrr.io/pkg/nat/man/plot3d.html'>plot3d</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/pkg/nat/man/xyzmatrix.html'>xyzmatrix</a></span><span class='op'>(</span><span class='va'>ito.lins.wedd1</span><span class='op'>)</span>,
 add <span class='op'>=</span> <span class='cn'>TRUE</span>, col <span class='op'>=</span> <span class='va'>hemibrain_bright_colors</span><span class='op'>[</span><span class='st'>"darkgreen"</span><span class='op'>]</span><span class='op'>)</span>
 
 <span class='co'># Get flywire neurons</span>
 <span class='va'>fw.neurons</span> <span class='op'>=</span> <span class='fu'><a href='flywire_neurons.html'>flywire_neurons</a></span><span class='op'>(</span><span class='op'>)</span>
-<span class='va'>fw.neurons.wedd1</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/pkg/nat/man/subset.html'>subset</a></span><span class='op'>(</span><span class='va'>fw.neurons</span>, <span class='va'>ItoLee_Hemilineage</span> <span class='op'>==</span> <span class='st'>"WEDd1"</span><span class='op'>)</span>
+<span class='va'>fw.neurons.wedd1</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/pkg/nat/man/subset.html'>subset</a></span><span class='op'>(</span><span class='va'>fw.neurons</span>, <span class='va'>ito_lee_hemilineage</span> <span class='op'>==</span> <span class='st'>"WEDd1"</span><span class='op'>)</span>
 <span class='fu'><a href='https://rdrr.io/pkg/nat/man/plot3d.html'>plot3d</a></span><span class='op'>(</span><span class='va'>fw.neurons.wedd1</span>,
 col <span class='op'>=</span> <span class='va'>hemibrain_bright_colors</span><span class='op'>[</span><span class='st'>"marine"</span><span class='op'>]</span>, soma <span class='op'>=</span> <span class='fl'>4000</span><span class='op'>)</span>
 
 <span class='co'># What are the equivalent hemibrain neurons?</span>
-<span class='va'>cbf.hl</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/pkg/nat/man/subset.html'>subset</a></span><span class='op'>(</span><span class='va'>hemibrain_hemilineages</span>, <span class='va'>ItoLee_Lineage</span> <span class='op'>==</span> <span class='st'>"WEDd1"</span><span class='op'>)</span>
+<span class='va'>cbf.hl</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/pkg/nat/man/subset.html'>subset</a></span><span class='op'>(</span><span class='va'>hemibrain_hemilineages</span>, <span class='va'>ito_lee_lineage</span> <span class='op'>==</span> <span class='st'>"WEDd1"</span><span class='op'>)</span>
 <span class='va'>hb.neurons</span> <span class='op'>=</span> <span class='fu'><a href='hemibrain_read_neurons.html'>hemibrain_neurons</a></span><span class='op'>(</span>brain<span class='op'>=</span><span class='st'>"FAFB14"</span><span class='op'>)</span>
 <span class='va'>hb.neurons.wedd1</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/pkg/nat/man/subset.html'>subset</a></span><span class='op'>(</span><span class='va'>hb.neurons</span>,<span class='va'>cellBodyFiber</span><span class='op'>%in%</span><span class='va'>cbf.hl</span><span class='op'>$</span><span class='va'>cellBodyFiber</span><span class='op'>)</span>
 <span class='fu'><a href='https://rdrr.io/pkg/nat/man/plot3d.html'>plot3d</a></span><span class='op'>(</span><span class='va'>hb.neurons.wedd1</span>,

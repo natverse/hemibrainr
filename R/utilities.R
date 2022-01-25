@@ -496,7 +496,7 @@ update.neuronlistfh <- function(x = NULL,
                                 pref.meta = NULL,
                                 meta = NULL,
                                 compress = TRUE,
-                                id = 'flywire.xyz',
+                                id = 'flywire_xyz',
                                 swc = NULL,
                                 ...){
   dbClass = match.arg(dbClass)
@@ -610,11 +610,10 @@ update.neuronlistfh <- function(x = NULL,
     if(!dir.exists(swc)){
       dir.create(swc)
     }
-    nat::write.neurons(x, dir=swc, format='swc', Force = FALSE, metadata=TRUE)
     if(!is.null(meta)){
       if(all(names(x)%in%rownames(meta))){
-        if("flywire.id"%in%colnames(meta)){
-          fw.ids = unique(as.character(meta$flywire.id))
+        if("root_id"%in%colnames(meta)){
+          fw.ids = unique(as.character(meta$root_id))
           swc.files = list.files(swc, full.names = TRUE)
           swc.delete = swc.files[!basename(swc.files)%in%paste0(fw.ids,".swc")]
           message("Removing ", length(swc.delete), " outdated .swc files")
@@ -622,6 +621,7 @@ update.neuronlistfh <- function(x = NULL,
         }
       }
     }
+    nat::write.neurons(x, dir=swc, format='swc', Force = FALSE, metadata=TRUE)
   }
 }
 
@@ -703,15 +703,31 @@ check_package_available <- function(pkg) {
 }
 
 # hidden
-update_metdata <- function(neurons, meta, id){
+root_id_correct <- function(a){
+  colnames(a) = snakecase::to_snake_case(colnames(a))
+  if(!"root_id"%in%colnames(a)){
+    a[,"root_id"] = a[,"flywire.id"]
+  }
+  a = a[,!duplicated(colnames(a))]
+  a
+}
+
+# hidden
+update_metdata <- function(neurons, meta, id, correction = TRUE){
   check_package_available('dplyr')
+  check_package_available('snakecase')
   df = neurons[,]
+  if(correction){
+    df = root_id_correct(df)
+    meta = root_id_correct(meta)
+  }
   i <- sapply(df, is.factor)
   if(sum(i)){
     df[i] <- lapply(df[i], as.character)
   }
   df = matchColClasses(meta, df)
   dfn = suppress(dplyr::left_join(df, meta))
+  rownames(dfn) = rownames(df)
   matched = match(dfn[[id]], meta[[id]])
   matched.good = !is.na(matched)
   shared.cols = intersect(colnames(dfn[,]),colnames(meta))
@@ -859,4 +875,3 @@ to_snake_case_gsheets  <- function(gsheets){
     }
   }
 }
-

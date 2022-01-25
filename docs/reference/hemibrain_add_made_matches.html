@@ -173,7 +173,7 @@ locations in flywire space, based on CATMAID skids.</p>
     </div>
 
     <pre class="usage"><span class='fu'>flywire_matching_rewrite</span><span class='op'>(</span>
-  flywire.ids <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span><span class='op'>(</span><span class='fu'><a href='flywire_neurons.html'>flywire_neurons</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>,
+  flywire_ids <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span><span class='op'>(</span><span class='fu'><a href='flywire_neurons.html'>flywire_neurons</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>,
   meta <span class='op'>=</span> <span class='fu'><a href='flywire_neurons.html'>flywire_neurons</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>[</span>, <span class='op'>]</span>,
   catmaid.update <span class='op'>=</span> <span class='cn'>TRUE</span>,
   selected_file <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>options</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>$</span><span class='va'>hemibrainr_matching_gsheet</span>,
@@ -232,7 +232,7 @@ locations in flywire space, based on CATMAID skids.</p>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>flywire.ids</th>
+      <th>flywire_ids</th>
       <td><p>flywire IDs to add to Google sheet if not already present.</p></td>
     </tr>
     <tr>
@@ -241,7 +241,7 @@ locations in flywire space, based on CATMAID skids.</p>
     </tr>
     <tr>
       <th>catmaid.update</th>
-      <td><p>logical. Whether or not to update <code>flywire.xyz</code> and <code>flywire.id</code> columns, based on e CATMAID neuron specified by a <code>skid</code> column.</p></td>
+      <td><p>logical. Whether or not to update <code>flywire_xyz</code> and <code>root_id</code> columns, based on e CATMAID neuron specified by a <code>skid</code> column.</p></td>
     </tr>
     <tr>
       <th>selected_file</th>
@@ -267,7 +267,7 @@ locations in flywire space, based on CATMAID skids.</p>
       <th>df</th>
       <td><p>a <code>data.frame</code> of pre-made matches that the user wants to transfer onto the Google Sheet. This will erase any extant matches for the specified neurons. This data frame
 must have columns: bodyid (i.e. the hemibrain neuron), skid (i.e. the FAFB neuron) and quality (i.e. match quality). Matches have three levels of 'quality', largely dependent on the degree of manual tracing for FAFB neurons
- - good (could be the same cell), medium (same cell type) and poor (could be the same or similar cell type).</p></td>
+ - good (could be the same cell), medium (same cell_type) and poor (could be the same or similar cell_type).</p></td>
     </tr>
     <tr>
       <th>direction</th>

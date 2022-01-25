@@ -87,7 +87,7 @@ This mapping may be in precise, and we are working on creating a direct neuron-h
 
 ## Hemibrain annotations for olfactory neurons
 
-Many olfactory neurons have been annotated into their classes, cell types and olfactory layers in recent work [Schlegel & Bates et al., 2021](https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit). This information is available in our packages as:
+Many olfactory neurons have been annotated into their classes, cell_types and olfactory layers in recent work [Schlegel & Bates et al., 2021](https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit). This information is available in our packages as:
 
 ```{r olf.meta, eval = FALSE}
 # These are all data frames available through the hemibrainr package:
@@ -98,7 +98,7 @@ head(ton.info)  # meta data related to antennal lobe projection neurons' targets
 head(dn.info)  # meta data related to antennal lobe projection neurons
 ?pn.info # get help information, including meaning of columns
 
-# Includes things like cell types, connectivity types, lineage
+# Includes things like cell_types, connectivity types, lineage
 # information, which olfactory layer a neuron belongs to 
 # (Schlegel and Bates 2021), putative transmitter, etc.
 

@@ -40,7 +40,7 @@ pn.info$side = "right"
 pn.info[rownames(pn.info)%in%upns.left.fib.info$bodyId] = "left"
 pn.meta = hemibrain_get_meta(as.character(pn.info$bodyid))
 pn.info = cbind(pn.info, pn.meta[as.character(pn.info$bodyid),setdiff(colnames(pn.meta),colnames(pn.info))])
-pn.info$n.cell.type = sapply(pn.info$type, function(x) nrow(subset(pn.info,type==x)))
+pn.info$n.cell_type = sapply(pn.info$type, function(x) nrow(subset(pn.info,type==x)))
 pn.info$class = pn.info$PN_type
 pn.info$neurotransmitter = ifelse(pn.info$tract=="mlALT","GABA","acetylcholine")
 pn.info$glomerulus = gsub(" ","",pn.info$glomerulus)
@@ -120,7 +120,7 @@ alln.info$group = gsub(" |  ","/",alln.summary$grouped[match(alln.info$bodyid,al
 alln.info$notes = paste0("Type: ",alln.summary$type.description[match(alln.info$bodyid,alln.summary$bodyid)],". Group: ", alln.summary$type.description[match(alln.info$bodyid,alln.summary$bodyid)])
 
 # See what the status of our FAB matches is. We need presynapses for predictions.
-# a = alln.info[,c("bodyid", "cellBodyFiber","type", "ItoLee_Hemilineage", "FAFB.match", "FAFB.match.quality", "class")]
+# a = alln.info[,c("bodyid", "cellBodyFiber","type", "ito_lee_hemilineage", "FAFB.match", "FAFB.match.quality", "class")]
 # a = subset(a, FAFB.match!='none' & !is.na(FAFB.match))
 # a$catmaid_name = catmaid_get_neuronnames(a$FAFB.match)
 # a$pre = sapply(a$FAFB.match,function(s) length(unique(catmaid_get_connector_table(s, direction = "outgoing")$connector_id)))
@@ -142,7 +142,7 @@ dn.info$class = "DN"
 dn.info = dn.info[,!grepl("dend\\.|pd\\.|segregation|axon\\.",colnames(dn.info))]
 
 # chatacter when needs
-char_df <- function(df, cols = c("bodyid","match","FAFB.match","skid","flywire.id")){
+char_df <- function(df, cols = c("bodyid","match","FAFB.match","skid","root_id")){
   cols = intersect(cols,colnames(df))
   for(col in cols){
     df[[col]] = as.character(df[[col]])
@@ -176,13 +176,13 @@ usethis::use_data(odour_scenes, overwrite = TRUE)
 ### Supplementary data for Schlegel and Bates 2021:
 supp.cols = c("bodyid", "pre", "post", "upstream", "downstream",
               "status", "name",  "voxels", "soma", "side",
-              "connectivity.type", "cell.type", "group","anatomy.group", "class", "cellBodyFiber",
-              # "ItoLee_Lineage", "ItoLee_Hemilineage", "Hartenstein_Lineage", "Hartenstein_Hemilineage",
+              "connectivity.type", "cell_type", "group","anatomy.group", "class", "cellBodyFiber",
+              # "ito_lee_lineage", "ito_lee_hemilineage", "hartenstein_lineage", "hartenstein_hemilineage",
               "putative.classic.transmitter", "putative.other.transmitter", "glomerulus", "presyn.glom",
               "FAFB.match", "FAFB.match.quality", "layer", "ct.layer",
-              "axon.outputs", "dend.outputs",
-              "axon.inputs", "dend.inputs", "total.length", "cable.length.um", "cable.length.glom.um","axon.length", "dend.length",
-              "pd.length", "segregation_index", "notes")
+              "axon_outputs", "dend_outputs",
+              "axon_inputs", "dend_inputs", "total_length", "cable_length.um", "cable_length.glom.um","axon_length", "dend_length",
+              "pd_length", "segregation_index", "notes")
 toon.supp = ton.info[,colnames(ton.info)%in%supp.cols]
 order = match(supp.cols,colnames(toon.supp))
 order = order[!is.na(order)]

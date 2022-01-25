@@ -9,8 +9,8 @@
 #' @param brain the brainspace in which hemibrain neurons have been registered. Defaults to raw voxel space for the FlyWire project.
 #' @param dataset whether to get clonal data from Ito et al. 2013 \code{"Ito"} or Yu et al. 2013 \code{"Lee"}.
 #' @param local \code{FALSE} or path. By default (\code{FALSE}) data is read from \code{options()$Drive_hemibrain_data}), but the user can specify an alternative path.
-#' @param from the name system in which you can find \code{x}. One of: cellBodyFiber, ItoLee_Lineage, ItoLee_Hemilineage, Hartenstein_Lineage, Hartenstein_Hemilineage
-#' @param to the lineage name system you want to move to, can be multiple of: cellBodyFiber, ItoLee_Lineage, ItoLee_Hemilineage, Hartenstein_Lineage, Hartenstein_Hemilineage
+#' @param from the name system in which you can find \code{x}. One of: cellBodyFiber, ito_lee_lineage, ito_lee_hemilineage, hartenstein_lineage, hartenstein_hemilineage
+#' @param to the lineage name system you want to move to, can be multiple of: cellBodyFiber, ito_lee_lineage, ito_lee_hemilineage, hartenstein_lineage, hartenstein_hemilineage
 #'
 #' @references Ito M, Masuda N, Shinomiya K, Endo K, Ito K.
 #' Systematic analysis of neural projections reveals clonal composition of the Drosophila brain.
@@ -33,23 +33,23 @@
 #' plot3d(FAFB)
 #'
 #' # Plot WEDd1
-#' lee.lins.wedd1 = subset(lee.lins, ItoLee_Lineage == "WEDd1")
+#' lee.lins.wedd1 = subset(lee.lins, ito_lee_lineage == "WEDd1")
 #' plot3d(xyzmatrix(lee.lins.wedd1),
 #' add = TRUE, col = hemibrain_bright_colors["green"])
 #'
 #' # Plot WEDd1 from the other clonal data set
-#' ito.lins.wedd1 = subset(ito.lins, ItoLee_Lineage == "WEDd1")
+#' ito.lins.wedd1 = subset(ito.lins, ito_lee_lineage == "WEDd1")
 #' plot3d(xyzmatrix(ito.lins.wedd1),
 #' add = TRUE, col = hemibrain_bright_colors["darkgreen"])
 #'
 #' # Get flywire neurons
 #' fw.neurons = flywire_neurons()
-#' fw.neurons.wedd1 = subset(fw.neurons, ItoLee_Hemilineage == "WEDd1")
+#' fw.neurons.wedd1 = subset(fw.neurons, ito_lee_hemilineage == "WEDd1")
 #' plot3d(fw.neurons.wedd1,
 #' col = hemibrain_bright_colors["marine"], soma = 4000)
 #'
 #' # What are the equivalent hemibrain neurons?
-#' cbf.hl = subset(hemibrain_hemilineages, ItoLee_Lineage == "WEDd1")
+#' cbf.hl = subset(hemibrain_hemilineages, ito_lee_lineage == "WEDd1")
 #' hb.neurons = hemibrain_neurons(brain="FAFB14")
 #' hb.neurons.wedd1 = subset(hb.neurons,cellBodyFiber%in%cbf.hl$cellBodyFiber)
 #' plot3d(hb.neurons.wedd1,
@@ -60,9 +60,9 @@
 #' you will get:
 #'
 ##' \itemize{
-##'  \item{"Hartenstein_Lineage"}{ The Hartenstein lineage name based on expert review of light level data from the V. Hartenstein group (Wong 2013, Lovick 2013).
+##'  \item{"hartenstein_lineage"}{ The Hartenstein lineage name based on expert review of light level data from the V. Hartenstein group (Wong 2013, Lovick 2013).
 #'    See \code{\link{hemibrain_hemilineages}}.}
-##'  \item{"ItoLee_Lineage"}{ Lineage name, data from the K. Ito and T. Lee groups (Yu 2013, Ito 2013).
+##'  \item{"ito_lee_lineage"}{ Lineage name, data from the K. Ito and T. Lee groups (Yu 2013, Ito 2013).
 #'    See \code{\link{hemibrain_hemilineages}}}
 ##'  \item{"side"}{ The hemisphere of the brain onto which this clone is registered}
 ##' }
@@ -127,7 +127,7 @@ lineage_clones <- function(x = NULL,
 
 #'@export
 #'@rdname lineage_clones
-lineage_converter <- function(x, from = c("ItoLee_Hemilineage", "cellBodyFiber", "ItoLee_Lineage", "Hartenstein_Lineage", "Hartenstein_Hemilineage"), to = 'Hartenstein_Hemilineage'){
+lineage_converter <- function(x, from = c("ito_lee_hemilineage", "cellBodyFiber", "ito_lee_lineage", "hartenstein_lineage", "hartenstein_hemilineage"), to = 'hartenstein_hemilineage'){
   from = match.arg(from)
   df = hemibrainr::hemibrain_hemilineages[match(x, hemibrainr::hemibrain_hemilineages[[from]]),colnames(hemibrainr::hemibrain_hemilineages)%in%to]
   as.vector(df)

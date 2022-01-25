@@ -244,7 +244,7 @@ flagged to be processed into neuron skeletons that can be called by <code>flywir
     </tr>
     <tr>
       <th>gsheet</th>
-      <td><p>logical, whether or not the request is are googlesheet keys. If they are, every item in their <code>flywire.xyz</code> columns is added to
+      <td><p>logical, whether or not the request is are googlesheet keys. If they are, every item in their <code>flywire_xyz</code> columns is added to
 the sheet specified by <code>selected_sheet</code>.</p></td>
     </tr>
     <tr>
@@ -266,16 +266,16 @@ the sheet specified by <code>selected_sheet</code>.</p></td>
     <p>A <code>neuronlist</code> object containing flywire skeletons. In the meta-data, it might be useful for some users to note that
 you will get:</p>
 <ul>
-<li><p>"flywire.id" The ID given to the corresponding volumetric body in flywire.
+<li><p>"root_id" The ID given to the corresponding volumetric body in flywire.
  These are used to do things like fetch volumes and are the input to the <code>skeletor</code> function. However, they are highly volatile and
  change a lot with active tracing.</p></li>
-<li><p>"flywire.xyz" The voxel coordinate of a single point in this neuron, usually a cell body fiber tract position. This is a more accurate way
- of keeping tract of neuron as it will always correspond to the same 'neuron' even though its related flywire.id will change with merge/split events in flywire.</p></li>
+<li><p>"flywire_xyz" The voxel coordinate of a single point in this neuron, usually a cell body fiber tract position. This is a more accurate way
+ of keeping tract of neuron as it will always correspond to the same 'neuron' even though its related root_id will change with merge/split events in flywire.</p></li>
 <li><p>"hemilineage" An estimated hemilineage identity from both of two naming systems, Ito et al. 2013 and Wong et al. 2013</p></li>
 <li><p>"side" An estimate as to the 'side', i.e. brain hemisphere, in which the neuron lies</p></li>
 <li><p>"skid" The 'skeleton ID' of this neuron's match in CATMAID for FAFBv14</p></li>
-<li><p>"FAFB.xyz" The coordinates in nanometres of a point in the neuron, in FAFBv14 space</p></li>
-<li><p>"hemibrain_match" The bodyid of an estimated hemibrain match</p></li>
+<li><p>"fafb_xyz" The coordinates in nanometres of a point in the neuron, in FAFBv14 space</p></li>
+<li><p>"hemibrain_match" The bodyid of an estimated hemibrain_match</p></li>
 </ul>
 
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
@@ -304,7 +304,7 @@ col_type <span class='op'>=</span> <span class='fu'><a href='https://readr.tidyv
 <span class='va'>ids</span> <span class='op'>=</span> <span class='va'>csv</span><span class='op'>[</span>,<span class='fl'>1</span><span class='op'>]</span><span class='op'>[[</span><span class='fl'>1</span><span class='op'>]</span><span class='op'>]</span>
 <span class='va'>neurons</span> <span class='op'>=</span> <span class='fu'>skeletor</span><span class='op'>(</span><span class='va'>ids</span><span class='op'>)</span>
 <span class='va'>neurons.with.info</span> <span class='op'>=</span> <span class='fu'>hemibrainr</span><span class='fu'>:::</span><span class='fu'>flywire_basics</span><span class='op'>(</span><span class='va'>neurons</span><span class='op'>)</span>
-<span class='va'>new.points</span> <span class='op'>=</span> <span class='fu'>nat</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/nat/man/xyzmatrix.html'>xyzmatrix</a></span><span class='op'>(</span><span class='va'>neurons.with.info</span><span class='op'>[</span>,<span class='st'>"flywire.xyz"</span><span class='op'>]</span><span class='op'>)</span>
+<span class='va'>new.points</span> <span class='op'>=</span> <span class='fu'>nat</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/nat/man/xyzmatrix.html'>xyzmatrix</a></span><span class='op'>(</span><span class='va'>neurons.with.info</span><span class='op'>[</span>,<span class='st'>"flywire_xyz"</span><span class='op'>]</span><span class='op'>)</span>
 <span class='fu'>flywire_request</span><span class='op'>(</span><span class='va'>new.points</span><span class='op'>)</span>
 <span class='co'>## Now they are added to a google sheet, and will be read and</span>
 <span class='co'>##  processed as part of this nightly pipeline:</span>

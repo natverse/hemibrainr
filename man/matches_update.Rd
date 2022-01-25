@@ -8,18 +8,18 @@ matches_update(
   matching_sheet = options()$hemibrainr_matching_gsheet,
   priority = c("FAFB", "hemibrain"),
   selected_sheets,
-  id = c("flywire.id", "bodyid", "skid", "id"),
+  id = c("root_id", "bodyid", "skid", "id"),
   match.field = c("hemibrain", "CATMAID", "flywire", "LM", "FAFB.hemisphere"),
-  chosen.columns = c("cell.type", "flywire.xyz", "side", "ItoLee_Hemilineage",
-    "Hartenstein_Hemilineage")
+  chosen.columns = c("cell_type", "flywire_xyz", "side", "ito_lee_hemilineage",
+    "hartenstein_hemilineage")
 )
 }
 \arguments{
 \item{matching_sheet}{the master matching sheet. Cannot be in \code{selected_sheets}. This sheet will be processed using \code{\link{hemibrain_matches}} to produce a
-\code{data.frame} describing hemibrain-FAFB and FAFB-hemibrain matches.}
+\code{data.frame} describing hemibrain-FAFB and FAFB-hemibrain_matches.}
 
-\item{priority}{whether to use FAFB->hemibrain matches (FAFB) or hemibrain->FAFB matches (hemibrain) in order to ascribe
-cell type names to FAFB neurons. In both cases, cell type names are attached to hemibrain bodyids, and propagated to their FAFB matches.}
+\item{priority}{whether to use FAFB->hemibrain_matches (FAFB) or hemibrain->FAFB matches (hemibrain) in order to ascribe
+cell_type names to FAFB neurons. In both cases, cell_type names are attached to hemibrain bodyids, and propagated to their FAFB matches.}
 
 \item{selected_sheets}{character vector. the google sheet(s) to update. Each entry is a unique google sheet ID. You can find these in a sheet's URL.
 If \code{NULL} then defaults to \code{option('hemibrainr_gsheets')}.}
@@ -27,8 +27,8 @@ If \code{NULL} then defaults to \code{option('hemibrainr_gsheets')}.}
 \item{id}{the ID specifying unique neuron identity for each row, for each tab of the google sheets specified with \code{selected_sheets}. When matches are added
 they are for the neuron specified in the \code{id} column of each worksheet.}
 
-\item{match.field}{which match to record. E.g. if \code{id} is \code{"flywire.id"} you may want to add the hemibrain match from the master matching sheets. To do this
-set \code{match.field} to \code{"hemibrain"}. Then, if there is a \code{"hemibrain.match"} and/or \code{"hemibrain.match.quality"} column, it will be updated. You
+\item{match.field}{which match to record. E.g. if \code{id} is \code{"root_id"} you may want to add the hemibrain_match from the master matching sheets. To do this
+set \code{match.field} to \code{"hemibrain"}. Then, if there is a \code{"hemibrain_match"} and/or \code{"hemibrain_match_quality"} column, it will be updated. You
 may also want to know the hemispheric match within FAFB, in which case \code{"FAFB.hemisphere"} could be used.}
 
 \item{chosen.columns}{as well as writing column updates to the specified google sheets, this function returns a \code{data.frame} built from all given sheets and their
@@ -40,24 +40,24 @@ a \code{data.frame} with columns from the given google sheet(s), specified using
 \description{
 This function retrieves neuron matches (\code{\link{hemibrain_matches}}) from a master-matching google sheet. If then
 can update other google sheets, specified by the user to update neuron-match information.
-Just columns giving the match, match quality and cell type are updated.
+Just columns giving the match, match quality and cell_type are updated.
 }
 \details{
 For this function to work, the specified google sheet(s) must have either the column specified with the argument \code{id},
 which gives the ID of a neuron from the FAFB (CATMAID or flywire) data set, or the hemibrain data set.
 Each tab of each specified google sheet is read in turn. The data set match (specified with the argument \code{match.field}). A match is recovered
-using \code{hemibrain_matching(selected_file = matching_sheet, priority=priority)}. If the right columns exist in the google sheet, i.e. 'hemibrain.match'
-and 'hemibrain.match.quality' for a hemibrain match, then this column in the google sheet is wiped and updated. If not, no update takes place.
+using \code{hemibrain_matching(selected_file = matching_sheet, priority=priority)}. If the right columns exist in the google sheet, i.e. 'hemibrain_match'
+and 'hemibrain_match_quality' for a hemibrain_match, then this column in the google sheet is wiped and updated. If not, no update takes place.
 }
 \examples{
 \donttest{
 \dontrun{
 
-# Update flywire.ids in the sheet:
+# Update flywire_ids in the sheet:
 ## https://docs.google.com/spreadsheets/d/
 ## 1spGSuhUX6Hhn-8HH0U_ArIWUuPpMBFNjIjeSSh_MFVY
 ## /edit#gid=603762040
-lineage.gsheet.meta = matches_update(id = "flywire.id",
+lineage.gsheet.meta = matches_update(id = "root_id",
 match.field = "hemibrain",
 selected_sheets = "1spGSuhUX6Hhn-8HH0U_ArIWUuPpMBFNjIjeSSh_MFVY")
 
