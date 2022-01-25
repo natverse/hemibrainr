@@ -6,7 +6,7 @@ flytable_meta <- function(){
                              side, top_nt, top_p, ito_lee_hemilineage, hartenstein_hemilineage,
                              cell_type, hemibrain_match, root_duplicated from info")
   ft = as.data.frame(ft)
-  rownames(ft) = ft$root_id
+  #rownames(ft) = ft$root_id
   ft
 }
 
