@@ -721,6 +721,10 @@ update_metdata <- function(neurons, meta, id, correction = TRUE){
     df = root_id_correct(df)
     meta = root_id_correct(meta)
   }
+  i <- sapply(df, is.factor)
+  if(sum(i)){
+    df[i] <- lapply(df[i], as.character)
+  }
   df = matchColClasses(meta, df)
   dfn = suppress(dplyr::left_join(df, meta))
   rownames(dfn) = rownames(df)
@@ -747,7 +751,7 @@ matchColClasses <- function(df1, df2) {
 }
 
 # Change to snakecase
-find_and_replace <- function(x = c("flywire.xyz",
+find_and_replace_snakecase <- function(x = c("flywire.xyz",
                                           "flywire.id",
                                           "flywire.svid",
                                           "cell.type",
@@ -802,7 +806,7 @@ find_and_replace <- function(x = c("flywire.xyz",
   if(is.data.frame(x)){
     cols = colnames(x)
   }else{
-    x = cols
+    cols = x
   }
   cols = cols[nchar(cols)>1]
   for(col in cols){
@@ -871,5 +875,3 @@ to_snake_case_gsheets  <- function(gsheets){
     }
   }
 }
-
-

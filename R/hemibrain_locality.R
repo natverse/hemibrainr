@@ -182,10 +182,10 @@ overlap_locality <- function(x,
   axon.res = prune_synapseless_branches(axon.res)
 
   # Calculate compartment overlap scores
-  oad = overlap_score(axon.res, dend.res, delta = delta, ...)
-  oda = overlap_score(dend.res, axon.res, delta = delta, ...)
-  oa = overlap_score(axon.res, axon.res, delta = delta, ...)
-  od = overlap_score(dend.res, dend.res, delta = delta, ...)
+  oad = overlap_score_delta(axon.res, dend.res, delta = delta, ...)
+  oda = overlap_score_delta(dend.res, axon.res, delta = delta, ...)
+  oa = overlap_score_delta(axon.res, axon.res, delta = delta, ...)
+  od = overlap_score_delta(dend.res, dend.res, delta = delta, ...)
   onorm = sum(oad,oda)/sum(oa,od)
 
   # Return
@@ -194,19 +194,22 @@ overlap_locality <- function(x,
 }
 
 # hidden, similar function now in nat
-overlap_score <- function(output.neurons, input.neurons, delta = 62.5, just.leaves = TRUE, max = exp(-delta^2/(2*delta^2)), normalise = TRUE){
+overlap_score_delta <- function(output.neurons, input.neurons, delta = 62.5, just.leaves = TRUE, max = exp(-delta^2/(2*delta^2)), normalise = TRUE){
   output.neurons = nat::as.neuronlist(output.neurons)
   input.neurons = nat::as.neuronlist(input.neurons)
   score.matrix = matrix(0,nrow = length(output.neurons), ncol = length(input.neurons))
   rownames(score.matrix) = names(output.neurons)
   colnames(score.matrix) = names(input.neurons)
+  if(just.leaves){
+    input.neurons.d = nat::nlapply(input.neurons, function(x) nat::xyzmatrix(x)[nat::endpoints(x),], .progress = "none")
+  }else{
+    input.neurons.d = nat::nlapply(input.neurons, nat::xyzmatrix, .progress = "none")
+  }
   for (n in 1:length(output.neurons)){
     if(just.leaves){
       a = nat::xyzmatrix(output.neurons[[n]])[nat::endpoints(output.neurons[[n]]),]
-      input.neurons.d = nat::nlapply(input.neurons, function(x) nat::xyzmatrix(x)[nat::endpoints(x),], .progress = "none")
     }else{
       a = nat::xyzmatrix(output.neurons[[n]])
-      input.neurons.d = nat::nlapply(input.neurons, nat::xyzmatrix, .progress = "none")
     }
     if(normalise){
       s = sapply(input.neurons.d, function(x)lengthnorm(maxout(exp(-nabor::knn(query = a, data = x,k=nrow(x))$nn.dists^2/(2*delta^2)),max=max)))

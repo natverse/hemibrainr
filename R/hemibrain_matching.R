@@ -945,7 +945,7 @@ hemibrain_matches <- function(flytable = TRUE,
         }
       }
     }
-
+    
     # Match to other side
     side.match = fafb_matches$fafb_hemisphere_match[match(hemibrain_matches$flywire_xyz,fafb_matches$flywire_xyz)]
     side.quality = fafb_matches$fafb_hemisphere_match_quality[match(hemibrain_matches$flywire_xyz,fafb_matches$flywire_xyz)]
@@ -1096,7 +1096,6 @@ hemibrain_matches <- function(flytable = TRUE,
 
 
   }
-
   # Return
   matched
 }

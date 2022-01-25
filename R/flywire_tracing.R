@@ -711,7 +711,7 @@ flywire_workflow <- function(root_id,
         warning("Cannot find transmitter predictions")
       } else {
         nts.all = list()
-        for(i in tab.entries[,1]){
+        for(i in tab.entries[[1]]){
           nt = fafbseg::flywire_ntpred(i,
                                        local = local,
                                        cleft.threshold=cleft.threshold,
@@ -721,13 +721,14 @@ flywire_workflow <- function(root_id,
         }
         nts = do.call(plyr::rbind.fill, nts.all)
         tab.entries$top_nt = nts$top_nt[match(tab.entries[,1],nts$id)]
+        tab.entries$top.nt = unlist(nts$top.nt[match(tab.entries[[1]],nts$id)])
       }
     }
     tab.entries$status = "unassessed"
     tab.entries$note = NA
     main = data.frame(root_id,weight = "main", status = status, note = gsub("_.*","",ws), stringsAsFactors = FALSE)
-    colnames(main) = colnames(tab.entries)
     tab.entries = as.data.frame(tab.entries, stringsAsFactors = FALSE)
+    colnames(main) = colnames(tab.entries)
     plyr::rbind.fill(main, tab.entries)
   }
 }
@@ -771,6 +772,36 @@ flywire_dns <- function(side = c("both","right","left"),
   gs
 }
 
+#' @export
+flywire_ans <- function(side = c("both","right","left"),
+                        gsheets = c(left = "1Gq_-L1tpvuSxYs5O-_PggiI2qdF52xoTG64WzSs9KTU", right = "10T0JE6nVSz_uUdoHGOpV2odO_k75-arRPKdOiBXlS80"),
+                        chosen.columns = c("root_id","root_id","flywire_xyz","Tags"),
+                        ...){
+  side = match.arg(side)
+  if(side=="both"){
+    side = c("right","left")
+  }
+  gs = data.frame()
+  for(si in side){
+    selected_sheet = gsheets[si]
+    gm = gsheet_manipulation(FUN = googlesheets4::read_sheet,
+                             wait = 20,
+                             ss = selected_sheet,
+                             guess_max = 3000,
+                             sheet = "ANs",
+                             return = TRUE,
+                             Verbose = FALSE,
+                             ...)
+    gm = gm[,colnames(gm)%in%chosen.columns]
+    gm$side = si
+    gm$ws = "ANs"
+    if(!is.null(gm$root_id)){
+      gm$root_id = as.character(gm$root_id)
+    }
+    gs = plyr::rbind.fill(gs, gm)
+  }
+  gs
+}
 #' Generate a CSV of neuron synapses to import to a flywire annotation layer
 #'
 #' @param fw.ids character vector, a vector of valid flywire IDs
