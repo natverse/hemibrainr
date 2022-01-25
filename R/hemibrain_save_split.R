@@ -182,11 +182,11 @@ hemibrain_task_update <- function(bodyids,
 #' using \code{db = hemibrain_read_neurons(savedir=TRUE)}. This can then be given as the argument to \code{db}.
 #' @param check_thresh when checking skeleton splits and correcting them, we do not want to look at skeletons that have already been checked by others many times.
 #' If a skeleton has already been checked by this many users or more, it will not be given to the user to edit.
-#' @param batch_size when reviewing splits for hemibrain neurons, we examine neurons (or putative cell types, see parameter \code{by.type}) in batches of this size. We then go through two phases,
+#' @param batch_size when reviewing splits for hemibrain neurons, we examine neurons (or putative cell_types, see parameter \code{by.type}) in batches of this size. We then go through two phases,
 #' choosing neurons that are incorrect in some way (wrongly split, cropped) and then editing them manually, before saving them to a Google Sheet.
 #' You may not have access to this Google Sheet, in which case you will not be able to contribute manual splits for neurons to this package. Contact us
 #' if you would like access.
-#' @param by.type logical. If \code{TRUE} then putative cell types (as assigned as the type field in neuPrint) of neurons are presented. The number of cell types pulled
+#' @param by.type logical. If \code{TRUE} then putative cell_types (as assigned as the type field in neuPrint) of neurons are presented. The number of cell_types pulled
 #' are of size \code{batch_size}.
 #' @param assignments logical. If TRUE then the user is invited to examine only neurons that they are flagged for them. These are entries into the 'roots' tab of the Google Sheet,
 #' where the user column is the same as the initials the user enters.
@@ -289,7 +289,7 @@ hemibrain_adjust_saved_split <- function(bodyids = NULL,
                                 by.type = by.type)
   ### Make batches
   if(by.type){
-    message("You will be presented with ", batch_size, " cell types at a time (which may be more neurons)")
+    message("You will be presented with ", batch_size, " cell_types at a time (which may be more neurons)")
     batches = type_batches(undone.ids, gs = gs, batch_size = batch_size)
   }else{
     batches = split(undone.ids, ceiling(seq_along(undone.ids)/batch_size))
@@ -748,14 +748,14 @@ check_undoneids <- function(bodyids,
   }
   ### Prioritise
   if(prioritise){
-    message("Prioritising 1st-3rd order olfactory ",ifelse(by.type,"neurons","putative cell types"))
+    message("Prioritising 1st-3rd order olfactory ",ifelse(by.type,"neurons","putative cell_types"))
     undone.ids = sample(undone.ids, length(undone.ids), replace = FALSE)
     ranks = as.numeric(gs[match(undone.ids,gs$bodyid),"priority"])
     undone.ids = undone.ids[order(ranks,decreasing = TRUE)]
     message("Priorities: ")
     print(table(ranks))
   }else{
-    message("Choosing un-checked ",ifelse(by.type,"neurons","putative cell types")," at random")
+    message("Choosing un-checked ",ifelse(by.type,"neurons","putative cell_types")," at random")
     undone.ids = sample(undone.ids, length(undone.ids), replace = FALSE)
   }
   ### Do we have IDs?

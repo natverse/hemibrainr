@@ -91,23 +91,23 @@ alpn.lhn.elist <- elist %>%
                 & (count > 10 | norm > 0.01)) %>%
   collect() # this is now a data frame. This may take a while to load into R.
 
-# Add some cell type information
+# Add some cell_type information
 alpn.lhn.elist <- alpn.lhn.elist %>%
-  mutate(pre.cell.type = meta[match(pre,meta$bodyid),"cell.type"]) %>%
-  mutate(post.cell.type = meta[match(post,meta$bodyid),"cell.type"]) %>%
-  filter(pre.cell.type != "NA") %>%
-  filter(post.cell.type != "NA") %>%
+  mutate(pre.cell_type = meta[match(pre,meta$bodyid),"cell_type"]) %>%
+  mutate(post.cell_type = meta[match(post,meta$bodyid),"cell_type"]) %>%
+  filter(pre.cell_type != "NA") %>%
+  filter(post.cell_type != "NA") %>%
   as.data.frame(stringsAsFactors=FALSE)
 
 # Convert edgelist to a connectivity matrix
 conn.mat = acast(data = alpn.lhn.elist, 
-                 formula = pre.cell.type ~ post.cell.type + post.Label, 
+                 formula = pre.cell_type ~ post.cell_type + post.Label, 
                  fun.aggregate = mean,
                  value.var = "norm",
                  fill = 0)
 
 # Negative weights for inhibitory connections
-inhib.pns = unique(subset(pn.info, neurotransmitter %in% c("GABA","glutamate"))$cell.type)
+inhib.pns = unique(subset(pn.info, neurotransmitter %in% c("GABA","glutamate"))$cell_type)
 conn.mat[inhib.pns,] = -conn.mat[inhib.pns,]
 
 # Max normalisation
@@ -187,12 +187,12 @@ And now we can fully annotate our data with a more complex heatmap:
 # columns annotations
 ton.compartment = ifelse(grepl("axon",colnames(conn.mat.scaled)),"axon","dendrite")
 cts = gsub("_axon$|_dendrite$","",colnames(conn.mat.scaled))
-ton.layers = paste0("layer_",ton.info[match(cts,ton.info$cell.type),"ct.layer"])
+ton.layers = paste0("layer_",ton.info[match(cts,ton.info$cell_type),"ct.layer"])
 ton.layers[ton.layers=="layer_NA"] = NA
-ton.transmitter = ton.info[match(cts,ton.info$cell.type),"putative.classic.transmitter"]
+ton.transmitter = ton.info[match(cts,ton.info$cell_type),"putative.classic.transmitter"]
 ton.transmitter[ton.transmitter=="unknown"] = NA
 ton.transmitter[ton.transmitter=="acetlcholine"] = "acetylcholine"
-ton.class = ton.info[match(cts,ton.info$cell.type),"class"]
+ton.class = ton.info[match(cts,ton.info$cell_type),"class"]
 ton.class[ton.class=="LHN"] = "LHON"
 ha = HeatmapAnnotation(
   df = data.frame(class = ton.class,
@@ -205,12 +205,12 @@ ha = HeatmapAnnotation(
 )
 
 # Row annotations
-pn.class = pn.info[match(rownames(conn.mat.scaled),pn.info$cell.type),"class"]
+pn.class = pn.info[match(rownames(conn.mat.scaled),pn.info$cell_type),"class"]
 pn.class[pn.class=="biPN"] = "mPN"
 pn.class[is.na(pn.class)] = "mPN"
-pn.neurotransmitter = pn.info[match(rownames(conn.mat.scaled),pn.info$cell.type),"neurotransmitter"]
-pn.ct.layer = as.character(pn.info[match(rownames(conn.mat.scaled),pn.info$cell.type),"ct.layer"])
-pn.os = pn.info[match(rownames(conn.mat.scaled),pn.info$cell.type),"odour_scenes"]
+pn.neurotransmitter = pn.info[match(rownames(conn.mat.scaled),pn.info$cell_type),"neurotransmitter"]
+pn.ct.layer = as.character(pn.info[match(rownames(conn.mat.scaled),pn.info$cell_type),"ct.layer"])
+pn.os = pn.info[match(rownames(conn.mat.scaled),pn.info$cell_type),"odour_scenes"]
 pn.os = strsplit(pn.os,"/")
 pn.os = sapply(pn.os, sort)
 pn.os.1  = sapply(pn.os, function(x) hemibrainr:::nullToNA(x[1]))

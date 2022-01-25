@@ -144,7 +144,7 @@
 <span class="co"># This now gives you one flywire ID per neuron</span>
 <span class="va">dm6.upn.ids.biggest</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/fafbseg/man/fafb14_to_flywire_ids.html">fafb14_to_flywire_ids</a></span><span class="op">(</span><span class="st">"name:Uniglomerular mALT DM6 adPN"</span>,
                                         only.biggest <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="va">dm6.upn.ids</span> <span class="op">=</span> <span class="va">dm6.upn.ids.biggest</span><span class="op">$</span><span class="va">flywire.id</span>
+<span class="va">dm6.upn.ids</span> <span class="op">=</span> <span class="va">dm6.upn.ids.biggest</span><span class="op">$</span><span class="va">root_id</span>
 
 <span class="co"># Get meshes</span>
 <span class="va">dm6.upn.meshes</span> <span class="op">=</span> <span class="fu">fafbseg</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/fafbseg/man/read_cloudvolume_meshes.html">read_cloudvolume_meshes</a></span><span class="op">(</span><span class="va">dm6.upn.ids</span><span class="op">)</span>
@@ -157,7 +157,7 @@
 <code class="sourceCode R"><span class="co"># Let us get the skeletons </span>
 <span class="va">dm6.upn.skels</span> <span class="op">=</span> <span class="fu">fafbseg</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/fafbseg/man/skeletor.html">skeletor</a></span><span class="op">(</span><span class="va">dm6.upn.ids</span>, method <span class="op">=</span> <span class="st">'wavefront'</span><span class="op">)</span>
 <span class="co">### If this crashes, follow these instructions instead: http://natverse.org/fafbseg/articles/articles/installing-cloudvolume-meshparty.html</span>
-<span class="co">### Or cheat and just get the skeletons from the drive:  dm6.upn.skels = subset(flywire_neurons(), flywire.id %in% dm6.upn.ids)</span>
+<span class="co">### Or cheat and just get the skeletons from the drive:  dm6.upn.skels = subset(flywire_neurons(), root_id %in% dm6.upn.ids)</span>
 
 <span class="co"># Look good?</span>
 <span class="fu"><a href="https://rdrr.io/pkg/nat/man/nopen3d.html">nopen3d</a></span><span class="op">(</span><span class="op">)</span>
@@ -211,7 +211,7 @@
 <span class="co">## These IDs constitute the neurons you should examine and 'clean up' in flywire</span>
 
 <span class="co"># Treat GABA/Glut synapses as inhibitory (if you have the predicted transmitters)</span>
-<span class="va">dm6.upn.conns.strong</span><span class="op">$</span><span class="va">count</span><span class="op">[</span><span class="va">dm6.upn.conns.strong</span><span class="op">$</span><span class="va">top.nt</span><span class="op">%in%</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"gaba"</span>,<span class="st">"glutamate"</span><span class="op">)</span><span class="op">]</span> <span class="op">=</span> <span class="op">-</span><span class="fl">1</span><span class="op">*</span><span class="va">dm6.upn.conns.strong</span><span class="op">$</span><span class="va">count</span><span class="op">[</span><span class="va">dm6.upn.conns.strong</span><span class="op">$</span><span class="va">top.nt</span><span class="op">%in%</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"gaba"</span>,<span class="st">"glutamate"</span><span class="op">)</span><span class="op">]</span>
+<span class="va">dm6.upn.conns.strong</span><span class="op">$</span><span class="va">count</span><span class="op">[</span><span class="va">dm6.upn.conns.strong</span><span class="op">$</span><span class="va">top_nt</span><span class="op">%in%</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"gaba"</span>,<span class="st">"glutamate"</span><span class="op">)</span><span class="op">]</span> <span class="op">=</span> <span class="op">-</span><span class="fl">1</span><span class="op">*</span><span class="va">dm6.upn.conns.strong</span><span class="op">$</span><span class="va">count</span><span class="op">[</span><span class="va">dm6.upn.conns.strong</span><span class="op">$</span><span class="va">top_nt</span><span class="op">%in%</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"gaba"</span>,<span class="st">"glutamate"</span><span class="op">)</span><span class="op">]</span>
 
 <span class="co"># Plot!</span>
 <span class="fu"><a href="https://rdrr.io/pkg/nat/man/nopen3d.html">nopen3d</a></span><span class="op">(</span><span class="op">)</span>
@@ -223,14 +223,14 @@
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Get up- and downstream connectivity matrices</span>
 <span class="va">dm6.conn.mat.downstream</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/reshape2/man/cast.html">acast</a></span><span class="op">(</span>data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/nat/man/subset.html">subset</a></span><span class="op">(</span><span class="va">dm6.upn.conns.strong</span>, <span class="va">prepost</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span>, 
-                 formula <span class="op">=</span> <span class="va">flywire.id</span> <span class="op">~</span> <span class="va">partner</span>, 
+                 formula <span class="op">=</span> <span class="va">root_id</span> <span class="op">~</span> <span class="va">partner</span>, 
                  fun.aggregate <span class="op">=</span> <span class="va">sum</span>,
                  value.var <span class="op">=</span> <span class="st">"count"</span>,
                  fill <span class="op">=</span> <span class="fl">0</span><span class="op">)</span>
 <span class="fu">ComplexHeatmap</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ComplexHeatmap/man/Heatmap.html">Heatmap</a></span><span class="op">(</span><span class="va">dm6.conn.mat.downstream</span><span class="op">)</span>
 
 <span class="va">dm6.conn.mat.upstream</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/reshape2/man/cast.html">acast</a></span><span class="op">(</span>data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/nat/man/subset.html">subset</a></span><span class="op">(</span><span class="va">dm6.upn.conns.strong</span>, <span class="va">prepost</span> <span class="op">==</span> <span class="fl">0</span><span class="op">)</span>, 
-                 formula <span class="op">=</span> <span class="va">flywire.id</span> <span class="op">~</span> <span class="va">partner</span>, 
+                 formula <span class="op">=</span> <span class="va">root_id</span> <span class="op">~</span> <span class="va">partner</span>, 
                  fun.aggregate <span class="op">=</span> <span class="va">sum</span>,
                  value.var <span class="op">=</span> <span class="st">"count"</span>,
                  fill <span class="op">=</span> <span class="fl">0</span><span class="op">)</span>

@@ -26,7 +26,7 @@ flywire_tracing_sheets(
 
 flywire_in(
   query,
-  query.type = c("flywire.id", "flywire.xyz", "flywire.svid"),
+  query.type = c("root_id", "flywire_xyz", "flywire_svid"),
   ws = NULL,
   fw.meta = flywire_meta(),
   cloudvolume.url = NULL,
@@ -38,7 +38,7 @@ flywire_tracing_update(
   selected_sheet,
   update,
   write.cols = colnames(update),
-  by = "flywire.id",
+  by = "root_id",
   Verbose = TRUE,
   return = FALSE
 )
@@ -46,7 +46,7 @@ flywire_tracing_update(
 flywire_tracing_standardise(
   ws = NULL,
   regex = FALSE,
-  field = "flywire.id",
+  field = "root_id",
   selected_sheets = options()$flywire_lineages_gsheets,
   Verbose = TRUE,
   whimsy = FALSE,
@@ -73,7 +73,7 @@ flywire_dns(
   side = c("both", "right", "left"),
   gsheets = c(left = "1Gq_-L1tpvuSxYs5O-_PggiI2qdF52xoTG64WzSs9KTU", right =
     "10T0JE6nVSz_uUdoHGOpV2odO_k75-arRPKdOiBXlS80"),
-  chosen.columns = c("flywire.id", "flywire_id", "flywire.xyz", "Tags"),
+  chosen.columns = c("root_id", "root_id", "flywire_xyz", "Tags"),
   ...
 )
 }
@@ -97,7 +97,7 @@ store annotations on flywire neurons in different developmental lineages. Note: 
 flywire root IDs or flywire supervoxel IDs. These are used to get the most up to date root IDs from FlyWire, which are then matched to the
 results from \code{flywire_tracing_sheets}.}
 
-\item{query.type}{whether the query is a vector of xyz positions, flywire supervoxel IDs or flywire IDs ("flywire.xyz"/"flywire.svid"/"flywire.id").}
+\item{query.type}{whether the query is a vector of xyz positions, flywire supervoxel IDs or flywire IDs ("flywire_xyz"/"flywire_svid"/"root_id").}
 
 \item{fw.meta}{a \code{data.frame} of meta data on flywire neurons, e.g. as produced by \code{flywire_tracing_sheets}.or read by \code{flywire_meta}.}
 
@@ -123,12 +123,12 @@ when \code{remove.duplicates} is \code{TRUE}.}
 \item{whimsy}{logical. If TRUE then a column with randomly generated 'whimsical' names
 is generated (unless there is already a name in this column).}
 
-\item{reorder}{logical, if \code{TRUE} then the googlesheet is reordered by cell type, connection weight and users.}
+\item{reorder}{logical, if \code{TRUE} then the googlesheet is reordered by cell_type, connection weight and users.}
 
 \item{remove.duplicates}{logical, whether or not to remove duplicate rows from google sheet. Currently,
 this will also trigger \code{reorder} even if it is set to \code{FALSE}.}
 
-\item{main_sheet}{a google sheet of flywire neurons with columns: \code{workflow}, \code{whimsy}, \code{flywire.id}. See \code{\link{standard_workflow}}.
+\item{main_sheet}{a google sheet of flywire neurons with columns: \code{workflow}, \code{whimsy}, \code{root_id}. See \code{\link{standard_workflow}}.
 This sheet is read, and a separate tab in \code{target_sheet} is made for each workflow.}
 
 \item{target_sheet}{a sheet to which to add 'workflow' tabs. Workflow tabs are lists of flywire neurons up/downstream of neurons
@@ -149,6 +149,8 @@ this data and place it in \code{~/projects/JanFunke}.}
 
 \item{work.flows}{a workflow for a flywire neuron. Either we want to trace upstream of it, downstream of it, or match it to a hemibrain neuron.}
 
+\item{nblast}{the nblast matrix used to update your workflow googlesheet.}
+
 \item{side}{logical. The side of the brain these neurons are manually annotated, as being on.}
 
 \item{gsheets}{character, google sheet codes for google sheets independently containing flywire IDs for right and left DNs.}
@@ -167,11 +169,11 @@ You can also see if a flywire neuron of interest in in a google sheet (\code{fly
 and see if a flywire neuron of interest is among the data stored on the hemibrainr drive, i.e. (\code{flywire_in(fw.meta = flywire_meta())}).
 }
 \details{
-flywire tracing google sheets should have the columns: flywire.xyz (a single cardinal position for each neuron in raw FlyWire voxel space),
-flywire.svid (the supervoxel ID for this position) and flywire.id (the flywire root ID for the neuron that can be found at this position). Additional, informative columns
+flywire tracing google sheets should have the columns: flywire_xyz (a single cardinal position for each neuron in raw FlyWire voxel space),
+flywire_svid (the supervoxel ID for this position) and root_id (the flywire root ID for the neuron that can be found at this position). Additional, informative columns
 are encouraged. A sheet in this format can be updated using \code{\link{flywire_ids_update}}.
-This updates the 'unstable' flywire.id column based on the stable flywire.xyz column, and also provides
-stable flywire.svid column if it is empty.
+This updates the 'unstable' root_id column based on the stable flywire_xyz column, and also provides
+stable flywire_svid column if it is empty.
 }
 \examples{
 \donttest{
@@ -198,12 +200,12 @@ flywire.lineage.sheet = flywire_tracing_sheets()
 
 # See if we have a certain flywire neuron in our sheets
 in.lin = flywire_in(query = "111437.5,21121.25,2661",
-query.type = "flywire.xyz", Verbose = TRUE,
+query.type = "flywire_xyz", Verbose = TRUE,
 fw.meta = flywire_tracing_sheets())
 
 # And in the meta data for neurons on the google drive
 in.meta = flywire_in(query = "111437.5,21121.25,2661",
-query.type = "flywire.xyz", Verbose = TRUE)
+query.type = "flywire_xyz", Verbose = TRUE)
 
 }}
 }

@@ -58,12 +58,12 @@ using \code{db = hemibrain_read_neurons(savedir=TRUE)}. This can then be given a
 \item{check_thresh}{when checking skeleton splits and correcting them, we do not want to look at skeletons that have already been checked by others many times.
 If a skeleton has already been checked by this many users or more, it will not be given to the user to edit.}
 
-\item{batch_size}{when reviewing splits for hemibrain neurons, we examine neurons (or putative cell types, see parameter \code{by.type}) in batches of this size. We then go through two phases,
+\item{batch_size}{when reviewing splits for hemibrain neurons, we examine neurons (or putative cell_types, see parameter \code{by.type}) in batches of this size. We then go through two phases,
 choosing neurons that are incorrect in some way (wrongly split, cropped) and then editing them manually, before saving them to a Google Sheet.
 You may not have access to this Google Sheet, in which case you will not be able to contribute manual splits for neurons to this package. Contact us
 if you would like access.}
 
-\item{by.type}{logical. If \code{TRUE} then putative cell types (as assigned as the type field in neuPrint) of neurons are presented. The number of cell types pulled
+\item{by.type}{logical. If \code{TRUE} then putative cell_types (as assigned as the type field in neuPrint) of neurons are presented. The number of cell_types pulled
 are of size \code{batch_size}.}
 
 \item{assignments}{logical. If TRUE then the user is invited to examine only neurons that they are flagged for them. These are entries into the 'roots' tab of the Google Sheet,

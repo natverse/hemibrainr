@@ -25,7 +25,7 @@ flywire_request(
   gsheet = FALSE,
   selected_sheet = options()$flywire_flagged_gsheet,
   sheet = "flywire",
-  User = "hemibrainr",
+  user = "hemibrainr",
   ...
 )
 }
@@ -56,30 +56,30 @@ a point in the primary neurite tract that can be used as a stable reference for 
 \href{https://docs.google.com/spreadsheets/d/1rzG1MuZYacM-vbW7100aK8HeA-BY6dWAVXQ7TB6E2cQ/edit#gid=0}{Google sheet} that records flywire positions
 flagged to be processed into neuron skeletons that can be called by \code{flywire_neurons}.}
 
-\item{gsheet}{logical, whether or not the request is are googlesheet keys. If they are, every item in their \code{flywire.xyz} columns is added to
+\item{gsheet}{logical, whether or not the request is are googlesheet keys. If they are, every item in their \code{flywire_xyz} columns is added to
 the sheet specified by \code{selected_sheet}.}
 
 \item{selected_sheet}{the Google sheet onto which to add new flywire coordinate. I.e. \href{https://docs.google.com/spreadsheets/d/1rzG1MuZYacM-vbW7100aK8HeA-BY6dWAVXQ7TB6E2cQ/edit#gid=0}{Google sheet}.}
 
 \item{sheet}{the tab onto which to add your requests.}
 
-\item{User}{character, the user who is added new data.}
+\item{user}{character, the user who is added new data.}
 }
 \value{
 A \code{neuronlist} object containing flywire skeletons. In the meta-data, it might be useful for some users to note that
 you will get:
 
 \itemize{
- \item{"flywire.id"}{ The ID given to the corresponding volumetric body in flywire.
+ \item{"root_id"}{ The ID given to the corresponding volumetric body in flywire.
  These are used to do things like fetch volumes and are the input to the \code{skeletor} function. However, they are highly volatile and
  change a lot with active tracing.}
- \item{"flywire.xyz"}{ The voxel coordinate of a single point in this neuron, usually a cell body fiber tract position. This is a more accurate way
- of keeping tract of neuron as it will always correspond to the same 'neuron' even though its related flywire.id will change with merge/split events in flywire.}
+ \item{"flywire_xyz"}{ The voxel coordinate of a single point in this neuron, usually a cell body fiber tract position. This is a more accurate way
+ of keeping tract of neuron as it will always correspond to the same 'neuron' even though its related root_id will change with merge/split events in flywire.}
  \item{"hemilineage"}{ An estimated hemilineage identity from both of two naming systems, Ito et al. 2013 and Wong et al. 2013}
  \item{"side"}{ An estimate as to the 'side', i.e. brain hemisphere, in which the neuron lies}
  \item{"skid"}{ The 'skeleton ID' of this neuron's match in CATMAID for FAFBv14}
- \item{"FAFB.xyz"}{ The coordinates in nanometres of a point in the neuron, in FAFBv14 space}
- \item{"hemibrain_match"}{ The bodyid of an estimated hemibrain match}
+ \item{"fafb_xyz"}{ The coordinates in nanometres of a point in the neuron, in FAFBv14 space}
+ \item{"hemibrain_match"}{ The bodyid of an estimated hemibrain_match}
 }
 }
 \description{
@@ -108,12 +108,12 @@ fw.neurons.jrc2018f.m = flywire_neurons(brain = "JRC2018F", mirror = TRUE)
 ## to the nightly processing so they are available from Google drive.
 ## And they are stored in a .csv:
 library(readr)
-csv = read_csv("/Users/abates/Downloads/FlyWire_list.txt",
+csv = read_csv("/users/abates/Downloads/FlyWire_list.txt",
 col_type = cols(.default = "c"))
 ids = csv[,1][[1]]
 neurons = skeletor(ids)
 neurons.with.info = hemibrainr:::flywire_basics(neurons)
-new.points = nat::xyzmatrix(neurons.with.info[,"flywire.xyz"])
+new.points = nat::xyzmatrix(neurons.with.info[,"flywire_xyz"])
 flywire_request(new.points)
 ## Now they are added to a google sheet, and will be read and
 ##  processed as part of this nightly pipeline:

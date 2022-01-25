@@ -24,7 +24,7 @@ hemibrain_metrics_polypre_centrifugal_distance
 hemibrain_metrics_polypre_centrifugal_synapses
 }
 \description{
-This \code{data.frame} give metrics for neurons, such as cable lengths and pre/post synapse numbers and densities,
+This \code{data.frame} give metrics for neurons, such as cable_lengths and pre/post synapse numbers and densities,
 broken down by putative compartment. E.g. axons versus dendrite. This has been calculated for neurons across the hemibrain dataset,
 hemibrain:v1.0.1. The file used to generate this can be found in this package,
 as \code{data-raw/hemibrain_split_all_neurons.R}. Neurons were split as described by \code{\link{hemibrain_precomputed_splitpoints}}. Note

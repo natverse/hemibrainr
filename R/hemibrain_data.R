@@ -207,7 +207,7 @@
 
 #' Neuron metrics for all neurons in the hemibrain dataset
 #'
-#' This \code{data.frame} give metrics for neurons, such as cable lengths and pre/post synapse numbers and densities,
+#' This \code{data.frame} give metrics for neurons, such as cable_lengths and pre/post synapse numbers and densities,
 #' broken down by putative compartment. E.g. axons versus dendrite. This has been calculated for neurons across the hemibrain dataset,
 #' hemibrain:v1.0.1. The file used to generate this can be found in this package,
 #' as \code{data-raw/hemibrain_split_all_neurons.R}. Neurons were split as described by \code{\link{hemibrain_precomputed_splitpoints}}. Note
@@ -237,7 +237,7 @@
 #' Hemilineages names from T. Lee, K. Ito and V. Hartenstein
 #'
 #' Hemilineages names and putative transmitter.
-#' Transmitter guesses are based on observing at least one cell type in the literature from the hemilineage in question, known to express the given transmitter
+#' Transmitter guesses are based on observing at least one cell_type in the literature from the hemilineage in question, known to express the given transmitter
 #'
 #' @name hemilineages
 #' @rdname hemilineages
@@ -323,7 +323,7 @@
 #' There can be no
 #'   match (none), a poor match (poor) an okay match (okay) or an exact match (good). As a
 #'   rule of thumb, a poor match could be a neuron from a very similar same cell
-#'   type or a highly untraced neuron that may be the correct cell type. An okay
+#'   type or a highly untraced neuron that may be the correct cell_type. An okay
 #'   match should be a neuron that looks to be from the same morphological cell
 #'   type but there may be some discrepancies in its arbour. An exact match is a
 #'   neuron that corresponds well between FAFB and the hemibrain data.
@@ -335,21 +335,21 @@
 #' Contact us if unsure:
 #' \itemize{
 #'
-#'   \item{"cell.type"}{ - the neuPrint designated 'type' for the neuron. If \code{dataset} is not \code{"hemibrain"}, then this is based on the hemibrain \code{match}.}
+#'   \item{"cell_type"}{ - the neuPrint designated 'type' for the neuron. If \code{dataset} is not \code{"hemibrain"}, then this is based on the hemibrain \code{match}.}
 #'
-#'   \item{"cell"}{ - the unique cell, which is just \code{cell.type#number}.}
+#'   \item{"cell"}{ - the unique cell, which is just \code{cell_type#number}.}
 #'
 #'   \item{"cellBodyFiber"}{ - the cell body fiber to which this neuron belongs}
 #'
-#'   \item{"ItoLee_Hemilineage"}{ - the hemilineage to which this neuron belongs. Seer \code{\link{hemibrain_hemilineages}}.}
+#'   \item{"ito_lee_hemilineage"}{ - the hemilineage to which this neuron belongs. Seer \code{\link{hemibrain_hemilineages}}.}
 #'
-#'   \item{"match"}{ - the ID of the manual match from the other data set. If \code{dataset=="hemibrain"} then this is a \code{flywire.id} that can be found in \code{flywire_neurons}.If \code{"CATMAID"} or \code{"flywire"} then it is a hemibrain body ID.}
+#'   \item{"match"}{ - the ID of the manual match from the other data set. If \code{dataset=="hemibrain"} then this is a \code{root_id} that can be found in \code{flywire_neurons}.If \code{"CATMAID"} or \code{"flywire"} then it is a hemibrain body ID.}
 #'
 #'   \item{"quality"}{ - the matcher makers qualitative assessment of how good this match is.}
 #'
-#'   \item{"FAFB.hemisphere.match"}{ - the flywire coordinates of a neuron on the opposite hemisphere, which a match maker has designated as this \code{id}'s cognate.}
+#'   \item{"fafb_hemisphere_match"}{ - the flywire coordinates of a neuron on the opposite hemisphere, which a match maker has designated as this \code{id}'s cognate.}
 #'
-#'   \item{"FAFB.hemisphere.match.quality"}{ - the quality of this match.}
+#'   \item{"fafb_hemisphere_match.quality"}{ - the quality of this match.}
 #'
 #'   \item{"LM.match"}{ - indicates a light level neuron that is a match for \code{id}. This neuron will be in \code{flycircuit_neurons()} or other light level data.}
 #'
@@ -357,8 +357,8 @@
 #'
 #'   \item{"dataset"}{ - the data set to which \code{id} belongs. Either \code{"hemibrain"}, or one of the two FAFB repositories, \code{"CATMAID"} or \code{"flywire"}.}
 #'
-#'   \item{"priority"}{ - whether FAFB->hemibrain matches (\code{"FAFB"}) or hemibrain->FAFB matches (\code{"hemibrain"}) were used in order to ascribe cell type names to FAFB neurons.
-#'   In both cases, cell type names are attached to hemibrain bodyids, and propagated to their FAFB matches.}
+#'   \item{"priority"}{ - whether FAFB->hemibrain_matches (\code{"FAFB"}) or hemibrain->FAFB matches (\code{"hemibrain"}) were used in order to ascribe cell_type names to FAFB neurons.
+#'   In both cases, cell_type names are attached to hemibrain bodyids, and propagated to their FAFB matches.}
 #'
 #' }
 #' @name hemibrain_matched
@@ -394,45 +394,45 @@
 #'
 #'   \item{"name"} { - the name of this neuron.}
 #'
-#'   \item{"connectivity.type"}{ - the neuPrint designated 'type' for the neuron. A subset of neurons within a cell type that share similar connectivity. A connectivity
-#'   type is distinguished from a cell type by an ending _letter, defined using CBLAST (Scheffer et al. 2020).}
+#'   \item{"connectivity.type"}{ - the neuPrint designated 'type' for the neuron. A subset of neurons within a cell_type that share similar connectivity. A connectivity
+#'   type is distinguished from a cell_type by an ending _letter, defined using CBLAST (Scheffer et al. 2020).}
 #'
-#'   \item{"cell.type"}{ - neurons of a shared morphology that take the same cell body fibre tract and come from the same hemilineage (Bates 2019).}
+#'   \item{"cell_type"}{ - neurons of a shared morphology that take the same cell body fibre tract and come from the same hemilineage (Bates 2019).}
 #'
 #'   \item{"cellBodyFiber"}{ - The cell body fiber for a neuron, as read from neuPrint and annotated by a team under \href{https://www.janelia.org/people/kei-ito}{Kei Ito}.}
 #'
 #'   \item{"putative.classic.transmitter"}{ - putative neurotransmitter based on what neurons in the hemilineage in question has been shown to express, out of acetylcholine, GABA, glutamate.}
 #'
-#'   \item{"ItoLee_Hemilineage"}{ - the hemilineage that we reckon this cell type belongs to, based on expert review of light level data from the K. Ito and T. Lee groups (Yu 2013, Ito 2013).
+#'   \item{"ito_lee_hemilineage"}{ - the hemilineage that we reckon this cell_type belongs to, based on expert review of light level data from the K. Ito and T. Lee groups (Yu 2013, Ito 2013).
 #'    See \code{\link{hemibrain_hemilineages}}.}
 #'
-#'   \item{"Hartenstein_Hemilineage"}{ - the hemilineage that we reckon this cell type belongs to, based on expert review of light level data from the V. Hartenstein Lee group (Wong 2013, Lovick 2013).
+#'   \item{"hartenstein_hemilineage"}{ - the hemilineage that we reckon this cell_type belongs to, based on expert review of light level data from the V. Hartenstein Lee group (Wong 2013, Lovick 2013).
 #'    See \code{\link{hemibrain_hemilineages}}.}
 #'
 #'   \item{"FAFB.match"}{ - the ID of the manual match from the FAFB data set. ID indicates a neuron reconstructed in FAFBv14 CATMAID. Many of these neurons will be available through Virtual Fly Brain.}
 #'
-#'   \item{"FAFB.match.quality"}{ - the matcher makers qualitative assessment of how good this match is: a poor match could be a neuron from a very similar same cell type or a highly untraced neuron that may be the correct cell type. An okay match should be a neuron that looks to be from the same morphological cell type but there may be some discrepancies in its arbour. A good match is a
+#'   \item{"FAFB.match.quality"}{ - the matcher makers qualitative assessment of how good this match is: a poor match could be a neuron from a very similar same cell_type or a highly untraced neuron that may be the correct cell_type. An okay match should be a neuron that looks to be from the same morphological cell_type but there may be some discrepancies in its arbour. A good match is a
 #'   neuron that corresponds well between FAFB and the hemibrain data.}
 #'
 #'   \item{"layer"}{ - probabilistic mean path length from neuron from ALRNs, depends on connection strengths.}
 #'
-#'   \item{"layer.ct"}{- the mean layer for cell type, rounded to the nearest whole number.}
+#'   \item{"layer.ct"}{- the mean layer for cell_type, rounded to the nearest whole number.}
 #'
-#'   \item{"axon.outputs"}{- number of outgoing connections from the neuron's predicted axon.}
+#'   \item{"axon_outputs"}{- number of outgoing connections from the neuron's predicted axon.}
 #'
-#'   \item{"dend.outputs"}{- number of outgoing connections from the neuron's predicted dendrite.}
+#'   \item{"dend_outputs"}{- number of outgoing connections from the neuron's predicted dendrite.}
 #'
-#'   \item{"axon.inputs"}{- number of incoming connections from the neuron's predicted axon.}
+#'   \item{"axon_inputs"}{- number of incoming connections from the neuron's predicted axon.}
 #'
-#'   \item{"dend.inputs"}{- number of incoming connections from the neuron's predicted dendrite.}
+#'   \item{"dend_inputs"}{- number of incoming connections from the neuron's predicted dendrite.}
 #'
-#'   \item{"total.length"}{- total cable length of the neuron in micrometers.}
+#'   \item{"total_length"}{- total cable_length of the neuron in micrometers.}
 #'
-#'   \item{"axon.length"}{- total axon cable length of the neuron in micrometers.}
+#'   \item{"axon_length"}{- total axon cable_length of the neuron in micrometers.}
 #'
-#'   \item{"dend.length"}{- total dendrite cable length of the neuron in micrometers.}
+#'   \item{"dend_length"}{- total dendrite cable_length of the neuron in micrometers.}
 #'
-#'   \item{"pd.length"}{- total  cable length of the primary dendrite 'linker' between axon and dendrite.}
+#'   \item{"pd_length"}{- total  cable_length of the primary dendrite 'linker' between axon and dendrite.}
 #'
 #'   \item{"segregation_index"}{- a quantification of how polarised a neuron is, in terms of its segregation of inputs onto its predicted dendrite and outputs onto its axon,
 #'    where 0 is no-polarisation and 1 is totally polarised (Schneider-Mizell 2016).}

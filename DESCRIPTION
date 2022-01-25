@@ -69,7 +69,9 @@ Imports:
     dendextend,
     stats,
     checkmate,
-    pbapply
+    pbapply,
+    snakecase,
+    xfun
 Remotes: 
     natverse/neuprintr,
     natverse/rcatmaid,

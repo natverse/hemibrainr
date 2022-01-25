@@ -53,7 +53,7 @@ Flyconnectome Group at the University of Cambridge, and are recorded on a
 Google
   Sheet on our hemibrain Google Team Drive, to which you will need access
 through an authenticated account to view and use this function. Matches have three levels of 'quality', largely
-dependent on the degree of manual tracing for FAFB neurons - good (could be the same cell), medium (same cell type) and poor (could be the same or similar cell type)." />
+dependent on the degree of manual tracing for FAFB neurons - good (could be the same cell), medium (same cell_type) and poor (could be the same or similar cell_type)." />
 <meta property="og:image" content="/logo.svg" />
 
 
@@ -167,7 +167,7 @@ Flyconnectome Group at the University of Cambridge, and are recorded on a
 <a href='https://docs.google.com/spreadsheets/d/1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw/edit#gid=0'>Google
   Sheet</a> on our hemibrain Google Team Drive, to which you will need access
 through an authenticated account to view and use this function. Matches have three levels of 'quality', largely
-dependent on the degree of manual tracing for FAFB neurons - good (could be the same cell), medium (same cell type) and poor (could be the same or similar cell type).</p>
+dependent on the degree of manual tracing for FAFB neurons - good (could be the same cell), medium (same cell_type) and poor (could be the same or similar cell_type).</p>
     </div>
 
     <pre class="usage"><span class='fu'>hemibrain_matches</span><span class='op'>(</span>
@@ -185,8 +185,8 @@ dependent on the degree of manual tracing for FAFB neurons - good (could be the 
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>priority</th>
-      <td><p>whether to use FAFB-&gt;hemibrain matches (FAFB) or hemibrain-&gt;FAFB matches (hemibrain) in order to ascribe
-cell type names to FAFB neurons. In both cases, cell type names are attached to hemibrain bodyids, and propagated to their FAFB matches.</p></td>
+      <td><p>whether to use FAFB-&gt;hemibrain_matches (FAFB) or hemibrain-&gt;FAFB matches (hemibrain) in order to ascribe
+cell_type names to FAFB neurons. In both cases, cell_type names are attached to hemibrain bodyids, and propagated to their FAFB matches.</p></td>
     </tr>
     <tr>
       <th>selected_file</th>
@@ -200,23 +200,23 @@ now, defaults to this
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>a <code>data.frame</code> which includes neuron's ID (either its CATMAID skeleton ID or neuprint body ID), the data set from which it comes,
-its putative cell type and connectivity type, and its match in the other dataset.</p>
+its putative cell_type and connectivity type, and its match in the other dataset.</p>
 <p>a <code>data.frame</code> where each row is a neuron, either from the hemibrain or FAFB data sets. Each row gives you its matching neuron in the other data set. These matches have been
 manually assigned using <code><a href='LR_matching.html'>fafb_matching</a></code>, <code><a href='LR_matching.html'>hemibrain_matching</a></code> and <code><a href='LR_matching.html'>LR_matching</a></code>. If you use this information make sure you credit it appropriately.
 Contact us if unsure:</p><ul>
-<li><p>"cell.type" - the neuPrint designated 'type' for the neuron. If <code>dataset</code> is not <code>"hemibrain"</code>, then this is based on the hemibrain <code>match</code>.</p></li>
-<li><p>"cell" - the unique cell, which is just <code>cell.type#number</code>.</p></li>
+<li><p>"cell_type" - the neuPrint designated 'type' for the neuron. If <code>dataset</code> is not <code>"hemibrain"</code>, then this is based on the hemibrain <code>match</code>.</p></li>
+<li><p>"cell" - the unique cell, which is just <code>cell_type#number</code>.</p></li>
 <li><p>"cellBodyFiber" - the cell body fiber to which this neuron belongs</p></li>
-<li><p>"ItoLee_Hemilineage" - the hemilineage to which this neuron belongs. Seer <code><a href='hemilineages.html'>hemibrain_hemilineages</a></code>.</p></li>
-<li><p>"match" - the ID of the manual match from the other data set. If <code>dataset=="hemibrain"</code> then this is a <code>flywire.id</code> that can be found in <code>flywire_neurons</code>.If <code>"CATMAID"</code> or <code>"flywire"</code> then it is a hemibrain body ID.</p></li>
+<li><p>"ito_lee_hemilineage" - the hemilineage to which this neuron belongs. Seer <code><a href='hemilineages.html'>hemibrain_hemilineages</a></code>.</p></li>
+<li><p>"match" - the ID of the manual match from the other data set. If <code>dataset=="hemibrain"</code> then this is a <code>root_id</code> that can be found in <code>flywire_neurons</code>.If <code>"CATMAID"</code> or <code>"flywire"</code> then it is a hemibrain body ID.</p></li>
 <li><p>"quality" - the matcher makers qualitative assessment of how good this match is.</p></li>
-<li><p>"FAFB.hemisphere.match" - the flywire coordinates of a neuron on the opposite hemisphere, which a match maker has designated as this <code>id</code>'s cognate.</p></li>
-<li><p>"FAFB.hemisphere.match.quality" - the quality of this match.</p></li>
+<li><p>"fafb_hemisphere_match" - the flywire coordinates of a neuron on the opposite hemisphere, which a match maker has designated as this <code>id</code>'s cognate.</p></li>
+<li><p>"fafb_hemisphere_match.quality" - the quality of this match.</p></li>
 <li><p>"LM.match" - indicates a light level neuron that is a match for <code>id</code>. This neuron will be in <code><a href='flycircuit_neurons.html'>flycircuit_neurons()</a></code> or other light level data.</p></li>
 <li><p>"LM.match.quality" - the quality of this match.</p></li>
 <li><p>"dataset" - the data set to which <code>id</code> belongs. Either <code>"hemibrain"</code>, or one of the two FAFB repositories, <code>"CATMAID"</code> or <code>"flywire"</code>.</p></li>
-<li><p>"priority" - whether FAFB-&gt;hemibrain matches (<code>"FAFB"</code>) or hemibrain-&gt;FAFB matches (<code>"hemibrain"</code>) were used in order to ascribe cell type names to FAFB neurons.
-  In both cases, cell type names are attached to hemibrain bodyids, and propagated to their FAFB matches.</p></li>
+<li><p>"priority" - whether FAFB-&gt;hemibrain_matches (<code>"FAFB"</code>) or hemibrain-&gt;FAFB matches (<code>"hemibrain"</code>) were used in order to ascribe cell_type names to FAFB neurons.
+  In both cases, cell_type names are attached to hemibrain bodyids, and propagated to their FAFB matches.</p></li>
 </ul>
 
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>

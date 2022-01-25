@@ -47,12 +47,12 @@ LNO1.synapses.outputs = subset(LNO1.synapses, prepost == 0 & Label!="dendrite")
 
 # Cluster by transmitter
 LNO1.select = aggregate(list(count = LNO1.synapses.outputs$prepost),list(pre_id = LNO1.synapses.outputs$pre_id,
-                                                    top.nt = LNO1.synapses.outputs$top.nt,
+                                                    top_nt = LNO1.synapses.outputs$top_nt,
                                                     post_id = LNO1.synapses.outputs$post_id),
                  length)
 LNO1.select.strong = subset(LNO1.select, count >= 5)
 conn.mat = reshape2::acast(data = LNO1.select.strong,
-                     formula = top.nt ~ post_id , # pre ~ post, to use bodyids instead of cells
+                     formula = top_nt ~ post_id , # pre ~ post, to use bodyids instead of cells
                      fun.aggregate = sum,
                      value.var = "count", # for raw synapses, change to count
                      fill = 0)
@@ -85,7 +85,7 @@ LNO1.meshes = fafbseg::read_cloudvolume_meshes(LNO1)
 # Let us get the skeletons 
 LNO1.skels = fafbseg::skeletor(LNO1)
 ### If this crashes, follow these instructions instead: http://natverse.org/fafbseg/articles/articles/installing-cloudvolume-meshparty.html
-### Or cheat and just get the skeletons from the drive:  LNO1.skels = subset(flywire_neurons(), flywire.id %in% LNO1)
+### Or cheat and just get the skeletons from the drive:  LNO1.skels = subset(flywire_neurons(), root_id %in% LNO1)
 
 # This points to a location on your computer where you have the synapse SQL database 
 fafbsynapses = "/Volumes/nnautilus/projects/JanFunke"
@@ -154,8 +154,8 @@ interesting.syns <- partners %>%
       dplyr::inner_join(nts, by = "offset", copy = TRUE) %>%
       dplyr::filter(prepost==0, pre_id %in% interesting) %>%
       dplyr::collect()
-interesting.syns$cell.type = "LNO1"
-interesting.syns$cell.type[interesting.syns$pre_id%in%il3LN1] = "il3LN1"
+interesting.syns$cell_type = "LNO1"
+interesting.syns$cell_type[interesting.syns$pre_id%in%il3LN1] = "il3LN1"
 ```
 
 
