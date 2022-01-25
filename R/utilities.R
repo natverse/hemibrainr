@@ -734,5 +734,129 @@ matchColClasses <- function(df1, df2) {
   return(df2)
 }
 
+# Change to snakecase
+find_and_replace_snakecase <- function(x = c("flywire.xyz",
+                                          "flywire.id",
+                                          "flywire.svid",
+                                          "cell.type",
+                                          "FAFB.xyz",
+                                          "ItoLee_Hemilineage",
+                                          "Hartenstein_Hemilineage",
+                                          "hemibrain.match",
+                                          "hemibrain.match.quality",
+                                          "FAFB.hemisphere.match",
+                                          "FAFB.hemisphere.match.quality",
+                                          "ItoLee_Lineage",
+                                          "Hartenstein_Lineage",
+                                          "dataset",
+                                          "total.outputs",
+                                          "total.inputs",
+                                          "axon.outputs",
+                                          "dend.outputs",
+                                          "axon.inputs",
+                                          "dend.inputs",
+                                          "total.outputs.density",
+                                          "total.inputs.density",
+                                          "axon.outputs.density",
+                                          "dend.outputs.density",
+                                          "axon.inputs.density",
+                                          "dend.inputs.density",
+                                          "total.length",
+                                          "axon.length",
+                                          "dend.length",
+                                          "pd.length",
+                                          "cable.length",
+                                          "top.nt",
+                                          "top.p",
+                                          "total.pre",
+                                          "total.post",
+                                          "axon.pre",
+                                          "axon.post",
+                                          "dend.post",
+                                          "dend.pre",
+                                          "hemibrain.match.qualiy",
+                                          "putative.classic.transmitter",
+                                          "putative.other.transmitter",
+                                          "FAFB.match",
+                                          "FAFB.match.quality",
+                                          "ct.layer"
+                                          #, "soma.edit",
+                                          # "edited.cable",
+                                          #"orig.soma",
+                                          #"orig.cut",
+                                          #"soma.checked"
+                                          ),
+                             dir = getwd()){
+  if(is.data.frame(x)){
+    cols = colnames(x)
+  }else{
+    cols = x
+  }
+  cols = cols[nchar(cols)>1]
+  for(col in cols){
+    col_new = snakecase::to_snake_case(col)
+    if (col == "flywire.id"){
+      col_new = "root_id"
+    }
+    if (col_new == "itolee_hemilineage"){
+      col_new = "ito_lee_hemilineage"
+    }
+    if (col_new == "itolee_lineage"){
+      col_new = "ito_lee_lineage"
+    }
+    if(col!=col_new){
+      message(sprintf("Replacing %s with %s within %s", col, col_new, dir))
+      xfun::gsub_dir(dir = dir, pattern = col, replacement = col_new, rw_error = FALSE, mimetype =  '^text/')
+    }
+  }
+}
 
+# gsheet cols to snake cases
+to_snake_case_gsheets  <- function(gsheets){
+  for(ss in gsheets){
+    message(ss)
+    tabs = gsheet_manipulation(FUN = googlesheets4::sheet_names,
+                               ss = ss,
+                               return = TRUE,
+                               Verbose = FALSE)
+    for(ws in tabs){
+      message(ss, " -> ", ws)
+      df = googlesheets4::read_sheet(
+        ss = ss,
+        sheet = ws,
+        range = NULL,
+        col_names = TRUE,
+        col_types = NULL,
+        na = "",
+        trim_ws = TRUE,
+        skip = 0,
+        n_max = 1,
+        .name_repair = "unique"
+      )
+      if(is.null(df)){
+        next
+      }else if(!nrow(df)){
+        next
+      }
+      cols_new = snakecase::to_snake_case(colnames(df))
+      for (col in 1:length(cols_new)){
+        if (cols_new[col] == "flywire.id"){
+          cols_new[col] = "root_id"
+        }
+        if (cols_new[col] == "flywire_id"){
+          cols_new[col] = "root_id"
+        }
+      }
+      colnames(df) = cols_new
+      googlesheets4::range_write(
+        ss = ss,
+        data = df,
+        sheet = ws,
+        range = NULL,
+        col_names = TRUE,
+        reformat = FALSE
+      )
+    }
+  }
+}
 

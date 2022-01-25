@@ -770,6 +770,36 @@ flywire_dns <- function(side = c("both","right","left"),
   gs
 }
 
+#' @export
+flywire_ans <- function(side = c("both","right","left"),
+                        gsheets = c(left = "1Gq_-L1tpvuSxYs5O-_PggiI2qdF52xoTG64WzSs9KTU", right = "10T0JE6nVSz_uUdoHGOpV2odO_k75-arRPKdOiBXlS80"),
+                        chosen.columns = c("root_id","root_id","flywire_xyz","Tags"),
+                        ...){
+  side = match.arg(side)
+  if(side=="both"){
+    side = c("right","left")
+  }
+  gs = data.frame()
+  for(si in side){
+    selected_sheet = gsheets[si]
+    gm = gsheet_manipulation(FUN = googlesheets4::read_sheet,
+                             wait = 20,
+                             ss = selected_sheet,
+                             guess_max = 3000,
+                             sheet = "ANs",
+                             return = TRUE,
+                             Verbose = FALSE,
+                             ...)
+    gm = gm[,colnames(gm)%in%chosen.columns]
+    gm$side = si
+    gm$ws = "ANs"
+    if(!is.null(gm$root_id)){
+      gm$root_id = as.character(gm$root_id)
+    }
+    gs = plyr::rbind.fill(gs, gm)
+  }
+  gs
+}
 #' Generate a CSV of neuron synapses to import to a flywire annotation layer
 #'
 #' @param fw.ids character vector, a vector of valid flywire IDs
