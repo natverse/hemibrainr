@@ -840,7 +840,7 @@ matching_user <- function(selected_file,
 #'
 #'   \item{"cell"}{ - the unique cell, which is just \code{cell_type#number}.}
 #'
-#'   \item{"cellBodyFiber"}{ - the cell body fiber to which this neuron belongs}
+#'   \item{"cell_body_fiber"}{ - the cell body fiber to which this neuron belongs}
 #'
 #'   \item{"ito_lee_hemilineage"}{ - the hemilineage to which this neuron belongs. Seer \code{\link{hemibrain_hemilineages}}.}
 #'
@@ -945,7 +945,7 @@ hemibrain_matches <- function(flytable = TRUE,
         }
       }
     }
-    
+
     # Match to other side
     side.match = fafb_matches$fafb_hemisphere_match[match(hemibrain_matches$flywire_xyz,fafb_matches$flywire_xyz)]
     side.quality = fafb_matches$fafb_hemisphere_match_quality[match(hemibrain_matches$flywire_xyz,fafb_matches$flywire_xyz)]
@@ -1039,8 +1039,8 @@ hemibrain_matches <- function(flytable = TRUE,
     }
 
     # Add cell body fiber infor for FAFB cells
-    cbf.match = hemibrain_matches$cellBodyFiber[match(fafb_matches$hemibrain_match,hemibrain_matches$bodyid)]
-    fafb_matches$cellBodyFiber = ifelse(length(cbf.match),cbf.match,NA)
+    cbf.match = hemibrain_matches$cell_body_fiber[match(fafb_matches$hemibrain_match,hemibrain_matches$bodyid)]
+    fafb_matches$cell_body_fiber = ifelse(length(cbf.match),cbf.match,NA)
 
     # Rename cells
     fafb_matches = fafb_matches[order(fafb_matches$hemibrain_match,decreasing = TRUE),]
@@ -1054,33 +1054,33 @@ hemibrain_matches <- function(flytable = TRUE,
     hemibrain_matches$dataset = "hemibrain"
     flywire.matches$dataset = "flywire"
     catmaid.matches$dataset = "CATMAID"
-    hemibrain_matches$match.dataset = "flywire"
-    flywire.matches$match.dataset = "hemibrain"
-    catmaid.matches$match.dataset = "hemibrain"
+    hemibrain_matches$match_dataset = "flywire"
+    flywire.matches$match_dataset = "hemibrain"
+    catmaid.matches$match_dataset = "hemibrain"
     hemibrain_matches.catmaid = hemibrain_matches
-    hemibrain_matches.catmaid$match.dataset = "CATMAID"
+    hemibrain_matches.catmaid$match_dataset = "CATMAID"
 
     # Make matching data frame
-    matched.h = hemibrain_matches[,c("bodyid", "cell_type", "cell", "cellBodyFiber", "ito_lee_hemilineage",
+    matched.h = hemibrain_matches[,c("bodyid", "cell_type", "cell", "cell_body_fiber", "ito_lee_hemilineage",
                                      "root_id", "fafb_match_quality",
                                      "fafb_hemisphere_match", "fafb_hemisphere_match_quality",
-                                     "lm_match", "lm_match_quality", "dataset", "match.dataset")]
-    matched.hc = hemibrain_matches.catmaid[,c("bodyid", "cell_type", "cell", "cellBodyFiber", "ito_lee_hemilineage",
+                                     "lm_match", "lm_match_quality", "dataset", "match_dataset")]
+    matched.hc = hemibrain_matches.catmaid[,c("bodyid", "cell_type", "cell", "cell_body_fiber", "ito_lee_hemilineage",
                                               "fafb_match", "fafb_match_quality",
                                               "fafb_hemisphere_match", "fafb_hemisphere_match_quality",
-                                              "lm_match", "lm_match_quality", "dataset", "match.dataset")]
-    matched.c = catmaid.matches[,c("skid",  "cell_type",  "cell", "cellBodyFiber", "ito_lee_hemilineage",
+                                              "lm_match", "lm_match_quality", "dataset", "match_dataset")]
+    matched.c = catmaid.matches[,c("skid",  "cell_type",  "cell", "cell_body_fiber", "ito_lee_hemilineage",
                                    "hemibrain_match", "hemibrain_match_quality",
                                    "fafb_hemisphere_match", "fafb_hemisphere_match_quality",
-                                   "lm_match", "lm_match_quality","dataset", "match.dataset")]
-    matched.f = flywire.matches[,c("root_id",  "cell_type",  "cell", "cellBodyFiber", "ito_lee_hemilineage",
+                                   "lm_match", "lm_match_quality","dataset", "match_dataset")]
+    matched.f = flywire.matches[,c("root_id",  "cell_type",  "cell", "cell_body_fiber", "ito_lee_hemilineage",
                                    "hemibrain_match", "hemibrain_match_quality",
                                    "fafb_hemisphere_match", "fafb_hemisphere_match_quality",
-                                   "lm_match", "lm_match_quality","dataset", "match.dataset")]
-    colnames(matched.h) = colnames(matched.hc) = colnames(matched.c) = colnames(matched.f) = c("id","cell_type", "cell","cellBodyFiber","ito_lee_hemilineage",
+                                   "lm_match", "lm_match_quality","dataset", "match_dataset")]
+    colnames(matched.h) = colnames(matched.hc) = colnames(matched.c) = colnames(matched.f) = c("id","cell_type", "cell","cell_body_fiber","ito_lee_hemilineage",
                                                                                                "match","quality",
                                                                                                "fafb_hemisphere_match", "fafb_hemisphere_match_quality",
-                                                                                               "lm_match", "lm_match_quality","dataset", "match.dataset")
+                                                                                               "lm_match", "lm_match_quality","dataset", "match_dataset")
     matched = rbind(matched.h,matched.hc,matched.f,matched.c)
     matched$quality[is.na(matched$match)] = "none"
     matched$match[is.na(matched$match)] = "none"
@@ -1213,16 +1213,16 @@ lm_matches <- function(priority = c("hemibrain","lm"), selected_file = options()
   lm_matches$ito_lee_lineage[!is.na(l)] = l[!is.na(l)]
 
   # Add cell body fiber infor for FAFB cells
-  lm_matches$cellBodyFiber = hemibrain_matches$cellBodyFiber[match(lm_matches$hemibrain_match,hemibrain_matches$bodyid)]
+  lm_matches$cell_body_fiber = hemibrain_matches$cell_body_fiber[match(lm_matches$hemibrain_match,hemibrain_matches$bodyid)]
 
   # Make matching data frame
   hemibrain_matches$dataset = "hemibrain"
   lm_matches$dataset = "lm"
-  matched.h = hemibrain_matches[,c("bodyid", "cell_type", "cell", "cellBodyFiber", "ito_lee_hemilineage",
+  matched.h = hemibrain_matches[,c("bodyid", "cell_type", "cell", "cell_body_fiber", "ito_lee_hemilineage",
                                    "lm_match", "lm_match_quality", "fafb_match", "fafb_match_quality", "dataset")]
-  matched.f = lm_matches[,c("id",  "cell_type",  "cell", "cellBodyFiber", "ito_lee_hemilineage",
+  matched.f = lm_matches[,c("id",  "cell_type",  "cell", "cell_body_fiber", "ito_lee_hemilineage",
                               "hemibrain_match", "hemibrain_match_quality", "fafb_match", "fafb_match_quality","dataset")]
-  colnames(matched.h) = colnames(matched.f) = c("id","cell_type", "cell","cellBodyFiber","ito_lee_hemilineage","match","quality", "fafb_match", "fafb_match_quality","dataset")
+  colnames(matched.h) = colnames(matched.f) = c("id","cell_type", "cell","cell_body_fiber","ito_lee_hemilineage","match","quality", "fafb_match", "fafb_match_quality","dataset")
   matched = rbind(matched.h,matched.f)
   matched$quality[is.na(matched$match)] = "none"
   matched$match[is.na(matched$match)] = "none"
@@ -1675,8 +1675,8 @@ fafb_matching_rewrite <- function(selected_file  = options()$hemibrainr_matching
 
   # Add any missing data
   if(!is.null(matches)){
-    missing = setdiff(subset(matches,matches$dataset=="hemibrain" & matches$match.dataset == "CATMAID")$match,
-                      subset(matches,matches$dataset=="CATMAID" & matches$match.dataset == "hemibrain")$id)
+    missing = setdiff(subset(matches,matches$dataset=="hemibrain" & matches$match_dataset == "CATMAID")$match,
+                      subset(matches,matches$dataset=="CATMAID" & matches$match_dataset == "hemibrain")$id)
     missing = setdiff(missing, n$skid)
     missing = missing[!grepl("missing|none|NA|good|medium|poor|tract|,|;|)",missing)]
     missing = id_okay(missing)
@@ -1723,7 +1723,7 @@ hemibrain_matching_rewrite <- function(ids = NULL,
     meta = meta1
   }
   meta$cell_type = meta$type
-  chosen.cols = c("bodyid","ito_lee_hemilineage","hartenstein_hemilineage","cellBodyFiber","cell_type","layer","ct.layer","flywire_xyz","root_id","top.nblast")
+  chosen.cols = c("bodyid","ito_lee_hemilineage","hartenstein_hemilineage","cell_body_fiber","cell_type","layer","ct.layer","flywire_xyz","root_id","top.nblast")
   meta = meta[,intersect(colnames(meta),chosen.cols)]
   meta$fafb_match = gs$fafb_match[match(meta$bodyid,gs$bodyid)]
   meta$fafb_match_quality = gs$fafb_match_quality[match(meta$bodyid,gs$bodyid)]
