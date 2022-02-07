@@ -42,6 +42,7 @@ hemibrain_hemilineages = hemibrain_hemilineages[hemibrain_hemilineages$cellBodyF
 hemibrain_hemilineages = hemibrain_hemilineages[!duplicated(hemibrain_hemilineages$cellBodyFiber),]
 rownames(hemibrain_hemilineages) = NULL
 hemibrain_hemilineages = as.data.frame(apply(hemibrain_hemilineages,2,function(c) gsub(" ","",c)), stringsAsFactors = FALSE)
+colnames(hemibrain_hemilineages) = snakecase::to_snake_case(colnames(hemibrain_hemilineages))
 usethis::use_data(hemibrain_hemilineages, overwrite = TRUE)
 
 ### Olfactory layers ###

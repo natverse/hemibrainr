@@ -200,15 +200,6 @@ flywire_neurons <- function(x = NULL,
   neurons.fh
 }
 
-# hidden
-root_id_correct <- function(a){
-  if(!"root_id"%in%colnames(a)){
-    a[,"root_id"] = a[,"flywire.id"]
-  }
-  colnames(a) = snakecase::to_snake_case(colnames(a))
-  a
-}
-
 #' @rdname flywire_neurons
 #' @export
 flywire_basics <- function(flywire.neurons, ...){

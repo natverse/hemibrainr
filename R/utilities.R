@@ -704,14 +704,18 @@ check_package_available <- function(pkg) {
 
 # hidden
 root_id_correct <- function(a){
-  colnames(a) = snakecase::to_snake_case(colnames(a))
   if(!"root_id"%in%colnames(a)){
-    a[,"root_id"] = a[,"flywire.id"]
+    if("flywire.id"%in%colnames(a)){
+      a[,"root_id"] = a[,"flywire.id"]
+    }
+    if("flywire_id"%in%colnames(a)){
+      a[,"root_id"] = a[,"flywire.id"]
+    }
   }
+  colnames(a) = snakecase::to_snake_case(colnames(a))
   a = a[,!duplicated(colnames(a))]
   a
 }
-
 # hidden
 update_metdata <- function(neurons, meta, id, correction = TRUE){
   check_package_available('dplyr')
