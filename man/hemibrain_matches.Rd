@@ -41,7 +41,7 @@ Contact us if unsure:
 
   \item{"cell"}{ - the unique cell, which is just \code{cell_type#number}.}
 
-  \item{"cellBodyFiber"}{ - the cell body fiber to which this neuron belongs}
+  \item{"cell_body_fiber"}{ - the cell body fiber to which this neuron belongs}
 
   \item{"ito_lee_hemilineage"}{ - the hemilineage to which this neuron belongs. Seer \code{\link{hemibrain_hemilineages}}.}
 
