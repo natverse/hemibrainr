@@ -713,7 +713,9 @@ root_id_correct <- function(a){
     }
   }
   colnames(a) = snakecase::to_snake_case(colnames(a))
-  a = a[,!duplicated(colnames(a))]
+  if(sum(duplicated(colnames(a)))){
+    a = a[,!duplicated(colnames(a))]
+  }
   a
 }
 # hidden
