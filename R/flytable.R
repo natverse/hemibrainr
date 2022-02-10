@@ -11,12 +11,10 @@ flytable_meta <- function(){
 }
 
 get_matching_flytable <- function(dataset=c("flywire","hemibrain")){
-  tab = switch(dataset, flywire = {"matching"}, hemibrain = {"hemibrain_matches"})
-  ft=fafbseg::flytable_query(sprintf("select _id, id, side, cell, cell_type,cell_body_fiber,
-                             ito_lee_hemilineage, match, quality, fafb_hemisphere_match,
-                             fafb_hemisphere_match_quality, d
-                             ataset, match_dataset, user from %s", "matches"), base = tab)
-  ft = subset(ft, ft$dataset == dataset)
+  dataset = match.arg(dataset)
+  tab = switch(dataset, flywire = {"flywire_matching"}, hemibrain = {"hemibrain_matches"})
+  ft=fafbseg::flytable_query(sprintf("select _id, id, side, cell, cell_type,cell_body_fiber, ito_lee_hemilineage, match, quality, fafb_hemisphere_match, fafb_hemisphere_match_quality, dataset, match_dataset, user from %s", tab), base = tab)
+  ft=subset(ft, ft$dataset == dataset)
   if(dataset=="flywire"){
     ft$root_id = ft$id
   }else if(dataset=="hemibrain"){
@@ -25,6 +23,7 @@ get_matching_flytable <- function(dataset=c("flywire","hemibrain")){
 }
 
 flytable_matches <- function(dataset=c("flywire","hemibrain")){
+  dataset = match.arg(dataset)
   ft=get_matching_flytable(dataset=dataset)
   ft = as.data.frame(ft)
   rownames(ft) = ft$id
