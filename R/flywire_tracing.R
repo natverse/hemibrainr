@@ -133,38 +133,43 @@ regex_tab_names <- function(regex, selected_sheet, ...){
 #' @export
 #' @rdname flywire_tracing_sheet
 flywire_tracing_sheets <- memoise::memoise(function(ws = NULL,
+                                                    flytable = TRUE,
                                                     selected_sheet = options()$flywire_lineages_gsheets){
   flywire_tracing_sheets.now(ws = ws, selected_sheet=selected_sheet)
 },  ~memoise::timeout(30*60))
 
 # hidden
 flywire_tracing_sheets.now <- function(ws = NULL,
+                                      flytable = TRUE,
                                       selected_sheet = options()$flywire_lineages_gsheets){
-
-  data = data.frame()
-  for(ss in selected_sheet){
-    if(!is.null(ws)){
-      sel=regex_tab_names(regex=ws,selected_sheet=ss)
-      tabs=sel$name
-    }else{
-      tabs=gsheet_manipulation(FUN = googlesheets4::sheet_names,
-                               ss = ss,
-                               return = TRUE)
-    }
-    pb = progress::progress_bar$new(
-      format = "  downloading :what [:bar] :percent eta: :eta",
-      clear = FALSE, total = length(tabs))
-    tracing.list = list()
-    for(tab in tabs){
-      pb$tick(tokens = list(what = paste0(ss,": ", tab)))
-      gs.lin = flywire_tracing_sheet(ws = tab, selected_sheet=ss, Verbose = FALSE)
-      if(sum(nrow(gs.lin))){
-        gs.lin$ws = tab
-        tracing.list[[tab]] = gs.lin
+  if(flytable){
+    data = flytable_meta()
+  }else{
+    data = data.frame()
+    for(ss in selected_sheet){
+      if(!is.null(ws)){
+        sel=regex_tab_names(regex=ws,selected_sheet=ss)
+        tabs=sel$name
+      }else{
+        tabs=gsheet_manipulation(FUN = googlesheets4::sheet_names,
+                                 ss = ss,
+                                 return = TRUE)
       }
+      pb = progress::progress_bar$new(
+        format = "  downloading :what [:bar] :percent eta: :eta",
+        clear = FALSE, total = length(tabs))
+      tracing.list = list()
+      for(tab in tabs){
+        pb$tick(tokens = list(what = paste0(ss,": ", tab)))
+        gs.lin = flywire_tracing_sheet(ws = tab, selected_sheet=ss, Verbose = FALSE)
+        if(sum(nrow(gs.lin))){
+          gs.lin$ws = tab
+          tracing.list[[tab]] = gs.lin
+        }
+      }
+      df = do.call(plyr::rbind.fill,tracing.list)
+      data = plyr::rbind.fill(data,df)
     }
-    df = do.call(plyr::rbind.fill,tracing.list)
-    data = plyr::rbind.fill(data,df)
   }
   data
 }
