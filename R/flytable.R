@@ -3,10 +3,18 @@
 flytable_meta <- function(){
   ft=fafbseg::flytable_query("select _id, root_id, supervoxel_id,
                              proofread, status, pos_x, pos_y, pos_z, nucleus_id,
-                             side, top_nt, top_p, ito_lee_hemilineage, hartenstein_hemilineage,
-                             cell_type, hemibrain_match, root_duplicated from info")
+                             side, ito_lee_hemilineage, hartenstein_hemilineage,
+                             cell_class, cell_type, root_duplicated from info")
   ft = as.data.frame(ft)
-  #rownames(ft) = ft$root_id
+  ft
+}
+
+flytable_lineages <- function(){
+  ft=fafbseg::flytable_query("select _id, root_id, supervoxel_id,
+                             proofread, status, pos_x, pos_y, pos_z, nucleus_id,
+                             side, ito_lee_hemilineage, hartenstein_hemilineage,
+                             cell_class, cell_type, root_duplicated from lineage_project")
+  ft = as.data.frame(ft)
   ft
 }
 
