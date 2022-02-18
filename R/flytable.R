@@ -5,6 +5,7 @@ flytable_meta <- function(){
                              proofread, status, pos_x, pos_y, pos_z, nucleus_id,
                              side, ito_lee_hemilineage, hartenstein_hemilineage,
                              cell_class, cell_type, root_duplicated from info")
+  ft$flywire_xyz = apply(ft[,c("pos_x", "pos_y", "pos_z")], 1, paste_coords)
   ft = as.data.frame(ft)
   ft
 }
