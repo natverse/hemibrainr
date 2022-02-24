@@ -4,6 +4,8 @@
 #'
 #' @param bodyid character,  a vector of one or more valid hemibrain body IDs
 #' @param flywire.id character, a vector of one or more valid flywire root IDs
+#' @param hb.rainbow logical, if \code{TRUE} hemibrain neurons are shown in rainbow colours, else in shades of blue
+#' @param fw.rainbow logical, if \code{TRUE} flywire neurons are shown in rainbow colours, else in shades of red
 #' @param ... Additional arguments passed to \code{fafbseg::ngl_encode_url}.
 #'
 #' @examples
@@ -20,6 +22,8 @@
 #'@seealso \code{\link{hemibrain_read_neurons}}
 flywire_hemibrain_scene <- function(bodyid,
                                     flywire.id,
+                                    hb.rainbow = FALSE,
+                                    fw.rainbow = FALSE,
                                     ...
                                          ){
   if(missing(flywire.id)) {
@@ -28,14 +32,22 @@ flywire_hemibrain_scene <- function(bodyid,
     bodyid=bodyid[[1]]
   }
   # Colours, hemibrain blues
-  blues = grDevices::colorRampPalette(c(hemibrain_bright_colors[["cyan"]], hemibrain_bright_colors[["blue"]],hemibrain_bright_colors[["navy"]]))
-  hb.blues = blues(length(bodyid))
+  if(hb.rainbow){
+    hb.blues = grDevices::rainbow(length(bodyid))
+  }else{
+    blues = grDevices::colorRampPalette(c(hemibrain_bright_colors[["cyan"]], hemibrain_bright_colors[["blue"]],hemibrain_bright_colors[["navy"]]))
+    hb.blues = blues(length(bodyid))
+  }
   names(hb.blues) = bodyid
-  reds = grDevices::colorRampPalette(c(hemibrain_bright_colors[["pink"]],hemibrain_bright_colors[["cerise"]],hemibrain_bright_colors[["red"]], hemibrain_bright_colors[["darkred"]]))
-  fw.reds = reds(length(flywire.id))
+  if(fw.rainbow){
+    fw.reds = grDevices::rainbow(length(flywire.id))
+  }else{
+    reds = grDevices::colorRampPalette(c(hemibrain_bright_colors[["pink"]],hemibrain_bright_colors[["cerise"]], hemibrain_bright_colors[["red"]], hemibrain_bright_colors[["darkred"]]))
+    fw.reds = reds(length(flywire.id))
+  }
   names(fw.reds) = flywire.id
   # Colours, flywire reds
-  sriurl2 <- "https://ngl.flywire.ai/?json_url=https://globalv1.flywire-daf.com/nglstate/5891269037391872"
+  sriurl2 <- "https://ngl.flywire.ai/?json_url=https://globalv1.flywire-daf.com/nglstate/5324713777692672"
   sriscene <- fafbseg::ngl_decode_scene(fafbseg::flywire_expandurl(sriurl2))
   sriscene$layers$`Production-segmentation_with_graph`$segments=as.list(as.character(flywire.id))
   sriscene$layers$hemibrain_meshes$segments=as.list(as.character(bodyid))
