@@ -21,6 +21,7 @@ flywire_tracing_sheet(
 
 flywire_tracing_sheets(
   ws = NULL,
+  flytable = TRUE,
   selected_sheet = options()$flywire_lineages_gsheets
 )
 
