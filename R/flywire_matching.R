@@ -244,8 +244,8 @@ LR_matching <- function(ids = NULL,
     })
   }
   # How much is done?
-  match.field = paste0("fafb_hemisphere","_match")
-  quality.field = paste0("fafb_hemisphere","_match_quality")
+  match.field = "hemisphere_match_xyz"
+  quality.field = "hemisphere_match_quality"
   done = subset(gs, !is.na(gs[[match.field]]) & !gs[[match.field]]%in%c("none","unknown","NA","na"))
   message("Neuron matches: ", nrow(done), "/", nrow(gs))
   print(table(gs[[quality.field]]))
