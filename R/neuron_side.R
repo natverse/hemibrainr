@@ -36,6 +36,7 @@
 #' @export
 #' @rdname soma_side
 soma_side <-function(x,
+                     flywire_nuclei = FALSE, #= fafbseg::flywire_nuclei(),
                      brain = nat.flybrains::JRC2018F,
                      bound = NULL,
                      transform = FALSE) UseMethod("soma_side")
@@ -43,6 +44,7 @@ soma_side <-function(x,
 #' @export
 #' @rdname soma_side
 soma_side.neuronlist <- function(x,
+                                 flywire_nuclei = FALSE,
                                  brain = nat.flybrains::JRC2018F,
                                  bound = NULL,
                                  transform = FALSE){
@@ -50,7 +52,12 @@ soma_side.neuronlist <- function(x,
   ss = sort_side(x=x, brain=brain, bound=bound, transform=transform)
   y = ss$y
   bound = ss$bound
-  leftsomas = unlist(nat::nlapply(y, soma_side.neuron, brain = "JRC2018F", bound = bound))
+  if(flywire_nuclei){
+    flywire.nuclei = fafbseg::flywire_nuclei()
+  }else{
+    flywire.nuclei = NULL
+  }
+  leftsomas = unlist(nat::nlapply(y, soma_side.neuron, nuclei = flywire.nuclei, brain = "JRC2018F", bound = bound))
   leftsomas = leftsomas[!is.na(leftsomas)]
   x[names(leftsomas),"side"] = leftsomas
   x
@@ -59,6 +66,7 @@ soma_side.neuronlist <- function(x,
 #' @export
 #' @rdname soma_side
 soma_side.neuron <- function(x,
+                             nuclei = NULL,
                              brain = nat.flybrains::JRC2018F,
                              bound = NULL,
                              transform = FALSE){
@@ -69,7 +77,20 @@ soma_side.neuron <- function(x,
   }else{
     y=x
   }
-  r = nat::rootpoints(x)
+  if(!is.null(nuclei)){
+    id = x$NeuronName
+    if(is.null(id)){
+      id = x$root_id
+    }
+    if(is.null(id)){
+      return(NULL)
+    }
+    id = fafbseg::flywire_updateids(id, Verbose = FALSE)
+    r = subset(nuclei, as.character(nuclei$pt_root_id) == id)[1,]
+    r = matrix(r$pt_position[[1]],ncol=3)
+  }else{
+    r = nat::rootpoints(x)
+  }
   if(is.numeric(r)){
     position = nat::xyzmatrix(x$d[r,])
     ifelse(position[,"X"]>bound,"left","right")
@@ -100,7 +121,9 @@ synapse_side_index.neuronlist <- function(x,
   x[names(leftsomas),"side"] = leftsomas
   # synapse side
   ssi = nat::nlapply(y, synapse_side_index.neuron, bound = bound)
-  ssi = do.call(rbind,ssi)
+  ssi = do.call(plyr::rbind.fill,ssi)
+  an = t(apply(ssi, 1, is.nan))
+  ssi[an] = NA
   rownames(ssi) = names(y)
   x[rownames(ssi),colnames(ssi)] = ssi
   # return
@@ -121,7 +144,7 @@ synapse_side_index.neuron <- function(x,
     y=x
   }
   x$connectors$side = ifelse(nat::xyzmatrix(x$connectors)[,"X"]>bound,"left","right")
-  if(is.nrowlength(x$connectors)){
+  if(nrow(x$connectors)){
     agg = stats::aggregate(list(count = x$connectors$connector_id),
                     list(side = x$connectors$side,
                          prepost = x$connectors$prepost),
