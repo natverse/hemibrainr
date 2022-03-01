@@ -101,8 +101,8 @@ flytable_matches_update <- function(df = NULL, update_roots=TRUE, DryRun = FALSE
 }
 
 # hidden
-flytable_update_proofread <- function(DryRun=FALSE, update_roots=TRUE) {
-  proofread_st=fafbseg::flytable_query("select _id, root_id, supervoxel_id, proofread from info")
+flytable_update_proofread <- function(DryRun=FALSE, update_roots=TRUE, tab = "info", base = "main") {
+  proofread_st=fafbseg::flytable_query(sprintf("elect _id, root_id, supervoxel_id, proofread from from %s", tab), base = base)
   if(update_roots)
     proofread_st$root_id=fafbseg::flywire_updateids(proofread_st$root_id, svids = proofread_st$supervoxel_id)
   psp=fafbseg::flywire_cave_query("proofreading_status_public_v1")
@@ -121,8 +121,8 @@ flytable_update_proofread <- function(DryRun=FALSE, update_roots=TRUE) {
 }
 
 # hidden
-flytable_update_status <- function(DryRun=FALSE, tab = "info") {
-  ft=fafbseg::flytable_query(sprintf("select _id, root_id, status from %s", tab))
+flytable_update_status <- function(DryRun=FALSE, tab = "info", base = "main") {
+  ft=fafbseg::flytable_query(sprintf("select _id, root_id, status from %s", tab), base = base)
   ft$status.new = standard_statuses(ft$status )
   toupdate=ft %>%
     dplyr::filter(status.new!=status) %>%
@@ -138,11 +138,11 @@ flytable_update_status <- function(DryRun=FALSE, tab = "info") {
 }
 
 # hidden
-flytable_update_top_nt <- function( df = NULL, DryRun=FALSE, update_roots=T, tab = "info") {
+flytable_update_top_nt <- function( df = NULL, DryRun=FALSE, update_roots=T, tab = "info", base = "main") {
   if(is.null(df)){
     df=flywire_meta(flytable = FALSE)
   }
-  nt_st=fafbseg::flytable_query(sprintf("select _id, root_id, supervoxel_id, top_nt from %s", tab))
+  nt_st=fafbseg::flytable_query(sprintf("select _id, root_id, supervoxel_id, top_nt from %s", tab), base = base)
   nt_st[is.na(nt_st)] = ""
   if(update_roots)
     nt_st$root_id=fafbseg::flywire_updateids(nt_st$root_id, svids = nt_st$supervoxel_id)
@@ -162,11 +162,11 @@ flytable_update_top_nt <- function( df = NULL, DryRun=FALSE, update_roots=T, tab
 }
 
 # hidden
-flytable_update_side <- function(df = NULL, DryRun=FALSE, update_roots=T, tab = "info", replace = FALSE) {
+flytable_update_side <- function(df = NULL, DryRun=FALSE, update_roots=T, tab = "info", base = "main", replace = FALSE) {
   if(is.null(df)){
     df=flywire_meta(flytable = FALSE)
   }
-  nt_st=fafbseg::flytable_query(sprintf("select _id, root_id, supervoxel_id, side from %s", tab))
+  nt_st=fafbseg::flytable_query(sprintf("select _id, root_id, supervoxel_id, side from %s", tab), base = "main")
   if (replace){
     nt_st = subset(nt_st, !is.na(nt_st$side) | nt_st$side %in% c("none", "unknown", NA, "", " "))
   }
