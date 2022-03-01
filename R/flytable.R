@@ -162,11 +162,14 @@ flytable_update_top_nt <- function( df = NULL, DryRun=FALSE, update_roots=T, tab
 }
 
 # hidden
-flytable_update_side <- function(df = NULL, DryRun=FALSE, update_roots=T, tab = "info") {
+flytable_update_side <- function(df = NULL, DryRun=FALSE, update_roots=T, tab = "info", replace = FALSE) {
   if(is.null(df)){
     df=flywire_meta(flytable = FALSE)
   }
   nt_st=fafbseg::flytable_query(sprintf("select _id, root_id, supervoxel_id, side from %s", tab))
+  if (replace){
+    nt_st = subset(nt_st, !is.na(nt_st$side) | nt_st$side %in% c("none", "unknown", NA, "", " "))
+  }
   if(update_roots)
     nt_st$root_id=fafbseg::flywire_updateids(nt_st$root_id, svids = nt_st$supervoxel_id)
   toupdate=nt_st %>%
