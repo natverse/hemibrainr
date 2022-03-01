@@ -138,7 +138,7 @@ flytable_update_status <- function(DryRun=FALSE, tab = "info") {
 }
 
 # hidden
-flytable_update_top_nt <- function(DryRun=FALSE, update_roots=T, tab = "info") {
+flytable_update_top_nt <- function( df = NULL, DryRun=FALSE, update_roots=T, tab = "info") {
   if(is.null(df)){
     df=flywire_meta(flytable = FALSE)
   }
@@ -146,6 +146,7 @@ flytable_update_top_nt <- function(DryRun=FALSE, update_roots=T, tab = "info") {
   nt_st[is.na(nt_st)] = ""
   if(update_roots)
     nt_st$root_id=fafbseg::flywire_updateids(nt_st$root_id, svids = nt_st$supervoxel_id)
+    df$root_id=fafbseg::flywire_updateids(df$root_id, svids = df$flywire_xyz, rawcoords = TRUE)
   toupdate=nt_st %>%
     dplyr::mutate(top_nt.new = df$top_nt[match(root_id,df$root_id)]) %>%
     dplyr::filter(top_nt.new!=top_nt) %>%
