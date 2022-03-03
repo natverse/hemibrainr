@@ -414,6 +414,10 @@ hemibrain_top_nt <- function(syns.nt,
                              classic = FALSE,
                              confidence.thresh = 0.5){
   syns.nt = subset(syns.nt, syns.nt$confidence >= confidence.thresh)
+  syns.nt = syns.nt[!duplicated(syns.nt$confidence),]
+  if(!nrow(syns.nt)){
+    return( data.frame(top_nt = "unknown", top_p = "unknown") )
+  }
   if("prepost" %in% colnames(syns.nt)){
     syns.nt = subset(syns.nt, syns.nt$prepost == 0)
   }
