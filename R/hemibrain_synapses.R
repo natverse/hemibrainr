@@ -166,7 +166,7 @@ magrittr::`%>%`
 # hidden
 #' @importFrom dplyr filter mutate group_by distinct select n case_when
 #' @importFrom rlang .data
-extract_synapses <-function(x, unitary = FALSE, meta = NULL){
+extract_synapses <-function(x, pre_id = "pre_id", unitary = FALSE, meta = NULL){
   if(nat::is.neuron(x)){
     syn = x$connectors
   }else{
@@ -203,14 +203,14 @@ extract_synapses <-function(x, unitary = FALSE, meta = NULL){
       syn$top_nt = NULL
     }
     if(all(c(id,"top_nt")%in%colnames(meta))){
-      meta$pre_id  = meta[[id]]
-      if(bit64::is.integer64(syn$pre_id)){
-        meta$pre_id = bit64::as.integer64(meta$pre_id)
-      }else if(is.character(syn$pre_id)){
-        meta$pre_id = as.character(meta$pre_id)
+      meta[[pre_id]]  = meta[[id]]
+      if(bit64::is.integer64(syn[[pre_id]])){
+        meta[[pre_id]] = bit64::as.integer64(meta[[pre_id]])
+      }else if(is.character(syn[[pre_id]])){
+        meta[[pre_id]] = as.character(meta[[pre_id]])
       }
-      syn = dplyr::inner_join(syn, meta[,c("pre_id","top_nt")],
-                              by = "pre_id",
+      syn = dplyr::inner_join(syn, meta[,c(pre_id,"top_nt")],
+                              by = pre_id,
                               copy = TRUE,
                               auto_index = TRUE)
     }else{
@@ -233,7 +233,7 @@ extract_synapses <-function(x, unitary = FALSE, meta = NULL){
       syn %>%
         dplyr::mutate(partner = dplyr::case_when(
           .data$prepost==0 ~ .data$post_id,
-          .data$prepost==1  ~ .data$pre_id
+          .data$prepost==1  ~ .data[[pre_id]]
         )) %>%
         dplyr::mutate(prepost = dplyr::case_when(
           .data$prepost==0 ~ 1,
@@ -268,7 +268,7 @@ hemibrain_extract_compartment_edgelist <- function(x, meta = NULL, ...){
     y = x[[1]]
     if(!is.null(y$root_id)){
       id = "root_id"
-      partner = "post_id"
+      partner = "pre_id" #"post_id" ????
     } else if(!is.null(y$skid)){
       id = "skid"
       partner = "partner"
@@ -280,7 +280,7 @@ hemibrain_extract_compartment_edgelist <- function(x, meta = NULL, ...){
       partner = "partner"
     }
     x = add_field_seq(x,names(x),field=id)
-    syns.list = nat::nlapply(x, extract_synapses, unitary = FALSE, meta = meta, ...)
+    syns.list = nat::nlapply(x, extract_synapses, pre_id = partner, unitary = FALSE, meta = meta, ...)
   }else{
     syns.list = x
     warning("x should be a neuronlist object")
@@ -289,12 +289,12 @@ hemibrain_extract_compartment_edgelist <- function(x, meta = NULL, ...){
   lookup = nat::nlapply(syns.list, extract_lookup,...)
   lookup = unlist(lookup)
   if(!is.null(meta)){
-    lookup.nt = meta[,c("root_id","top_nt")]
+    lookup.nt = meta[,c(id,"top_nt")]
     lookup.nt = as.data.frame(lookup.nt)
   }else{
     lookup.nt = NULL
   }
-  elists = nat::nlapply(syns.list, extract_elist, lookup = lookup, lookup.nt = lookup.nt, id = id, partner = "pre_id", ...)
+  elists = nat::nlapply(syns.list, extract_elist, lookup = lookup, lookup.nt = lookup.nt, id = id, partner = partner, ...)
   elist = do.call(rbind, elists)
   if(length(elist)){
     rownames(elist) = 1:nrow(elist)
@@ -324,7 +324,11 @@ extract_elist <- function(syns, lookup, lookup.nt = NULL, id = "bodyid", partner
     dplyr::mutate(pre_Label = lookup[as.character(.data$connector_id)]) %>%
     dplyr::mutate(pre_Label = ifelse(is.na(.data$pre_Label),"unknown",.data$pre_Label)) %>%
     # Transmitter
-    dplyr::mutate(top_nt = lookup.nt[match(as.character(.data$pre),lookup.nt[[id]]),"top_nt"]) %>%
+    { if(is.null(lookup.nt)){
+      dplyr::mutate(.,top_nt = "unknown")
+    }else{
+      dplyr::mutate(.,top_nt = lookup.nt[match(as.character(.data$pre),lookup.nt[[id]]),"top_nt"])
+    } }  %>%
     # Synapse counts
     dplyr::group_by(.data$post, .data$pre, .data$post_Label, .data$pre_Label) %>%
     dplyr::mutate(count = dplyr::n()) %>%
@@ -362,3 +366,75 @@ extract_lookup <- function(syns){
   lookup = lookup[!names(lookup)%in%c("0","NA")]
   lookup
 }
+
+# read synapes
+hemibrain_syns_nt <- function(nt.file = "/Volumes/GoogleDrive/Shared drives/hemibrain/fafbsynapses/synister_hemi_whole_volume_v0_t8.feather"){
+  arf = arrow::read_feather(nt.file)
+  colnames(arf) = gsub("nts_8\\.","",colnames(arf))
+  arf %>%
+    dplyr::rename(connector_id = id)
+}
+
+# hidden
+hemibrain_add_nt <- function(x,
+                   nts = hemibrain_syns_nt(nt.file),
+                   nt.file = "/Volumes/GoogleDrive/Shared drives/hemibrain/fafbsynapses/synister_hemi_whole_volume_v0_t8.feather",
+                   classic = FALSE,
+                           ...) UseMethod("hemibrain_add_nt")
+
+# hidden
+hemibrain_add_nt.neuronlist <- function(x, nts = NULL, nt.file = "/Volumes/GoogleDrive/Shared drives/hemibrain/fafbsynapses/synister_hemi_whole_volume_v0_t8.feather", classic = FALSE, ...){
+  if(is.null(nts)){
+    nts = hemibrain_syns_nt(nt.file = nt.file)
+  }
+  x = nat::nlapply(x, hemibrain_add_nt.neuron, nts = nts, nt.file=nt.file, classic=classic)
+  df.nt = do.call(plyr::rbind.fill, lapply(x, function(y) y$ntpred))
+  df.nt[is.na(df.nt)] = 0
+  x[,] = cbind(x[,setdiff(colnames(x[,]),colnames(df.nt))],df.nt)
+  x
+}
+
+# hidden
+hemibrain_add_nt.neuron <- function(x, nts = NULL, nt.file = "/Volumes/GoogleDrive/Shared drives/hemibrain/fafbsynapses/synister_hemi_whole_volume_v0_t8.feather", classic = FALSE, ...){
+  if(is.null(nts)){
+    nts = hemibrain_syns_nt(nt.file=nt.file)
+  }
+  syns = x$connectors
+  syns.nt = syns %>%
+    dplyr::left_join(nts[,intersect(colnames(nts),c("x", "y", "z","gaba", "acetylcholine", "glutamate", "serotonin", "octopamine", "dopamine", "neither"))],
+                      by = c("x","y","z"))
+  x$connectors = syns.nt
+  x$ntpred = hemibrain_top_nt(syns.nt, classic=classic, ...)
+  x
+}
+
+# find top_nt
+hemibrain_top_nt <- function(syns.nt, poss.nts=c("gaba", "acetylcholine", "glutamate", "octopamine", "serotonin","dopamine", "neither"), classic = FALSE){
+  if("prepost" %in% colnames(syns.nt)){
+    syns.nt = subset(syns.nt, syns.nt$prepost == 0)
+  }
+  if(classic){
+    poss.nts = c("gaba", "acetylcholine", "glutamate", "neither")
+  }
+  nts = syns.nt[,c(poss.nts)]
+  nts[,'top_p']=do.call(pmax, as.list(nts[poss.nts]))
+  top.col=max.col(nts[poss.nts], ties.method = "first")
+  nts[,'top_nt']=poss.nts[top.col]
+  tx=table(nts$top_nt)
+  tx=tx/sum(tx)*100
+  tops = colSums(nts[,poss.nts])/nrow(nts)
+  top_p = max(tops)
+  top_nt = names(which.max(tx))
+  trans = t(c(tx))
+  trans[is.na(trans)] = 0
+  trans = as.data.frame(trans)
+  trans$top_nt = ifelse(is.null(top_nt),"unknown",top_nt)
+  trans$top_p = ifelse(is.null(top_nt),"unknown",top_p)
+  trans %>%
+    dplyr::mutate_if(is.numeric, round, 3)
+}
+
+
+
+
+

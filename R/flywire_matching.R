@@ -696,5 +696,3 @@ get_match_neuron <- function(query = NULL, n, query.repository, skip.if.absent =
   query.n
 }
 
-
-
