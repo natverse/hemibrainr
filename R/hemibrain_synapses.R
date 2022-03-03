@@ -380,7 +380,7 @@ hemibrain_add_nt <- function(x,
                    nts = hemibrain_syns_nt(nt.file),
                    nt.file = "/Volumes/GoogleDrive/Shared drives/hemibrain/fafbsynapses/synister_hemi_whole_volume_v0_t8.feather",
                    classic = FALSE,
-                           ...) UseMethod("hemibrain_add_nt")
+                   ...) UseMethod("hemibrain_add_nt")
 
 # hidden
 hemibrain_add_nt.neuronlist <- function(x, nts = NULL, nt.file = "/Volumes/GoogleDrive/Shared drives/hemibrain/fafbsynapses/synister_hemi_whole_volume_v0_t8.feather", classic = FALSE, ...){
@@ -409,7 +409,11 @@ hemibrain_add_nt.neuron <- function(x, nts = NULL, nt.file = "/Volumes/GoogleDri
 }
 
 # find top_nt
-hemibrain_top_nt <- function(syns.nt, poss.nts=c("gaba", "acetylcholine", "glutamate", "octopamine", "serotonin","dopamine", "neither"), classic = FALSE){
+hemibrain_top_nt <- function(syns.nt,
+                             poss.nts=c("gaba", "acetylcholine", "glutamate", "octopamine", "serotonin","dopamine", "neither"),
+                             classic = FALSE,
+                             confidence.thresh = 0.5){
+  syns.nt = subset(syns.nt, syns.nt$confidence >= confidence.thresh)
   if("prepost" %in% colnames(syns.nt)){
     syns.nt = subset(syns.nt, syns.nt$prepost == 0)
   }
