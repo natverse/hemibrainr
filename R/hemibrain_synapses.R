@@ -511,6 +511,7 @@ hemibrain_ntplot.data.frame <- function(x,
                                         poss.nts=c("gaba", "acetylcholine", "glutamate","octopamine", "serotonin", "dopamine", 'neither'),
                                         classic = FALSE,
                                         confidence.thresh = 0.5,
+                                        collapse = FALSE,
                                         y.plot = c("confidence", "top_p"),
                                         ...) {
   check_package_available('ggplot2')
@@ -537,10 +538,10 @@ hemibrain_ntplot.data.frame <- function(x,
     serotonin = "#93A3CF",
     dopamine = "#CF6F6C",
     neither = "grey70")[poss.nts]
-  if("Label" %in% colnames(syns.nt)){
+  if("Label" %in% colnames(syns.nt) & !collapse){
     syns.nt$Label = hemibrainr:::standard_compartments(syns.nt$Label)
     syns.nt = subset(syns.nt, `Label` %in% c("axon","dendrite"))
-    ggplot2::ggplot(data=syns.nt, ggplot2::aes(x= ifelse(plot.p,`top_p`,`confidence`), fill = `top_nt`)) +
+    ggplot2::ggplot(data=syns.nt, ggplot2::aes(x = .data[[y.plot]], fill = `top_nt`)) +
       ggplot2::geom_histogram(binwidth = 0.01) +
       ggplot2::scale_fill_manual(values = ntcols) +
       ggplot2::theme_minimal() +
@@ -548,7 +549,7 @@ hemibrain_ntplot.data.frame <- function(x,
       ggplot2::labs(x = tit) +
       ggplot2::facet_wrap(~`Label`, ncol=1)
   }else{
-    ggplot2::ggplot(data=syns.nt, ggplot2::aes(x= ifelse(plot.p,`top_p`,`confidence`), fill = `top_nt`)) +
+    ggplot2::ggplot(data=syns.nt, ggplot2::aes(x= .data[[y.plot]], fill = `top_nt`)) +
       ggplot2::geom_histogram(binwidth = 0.01) +
       ggplot2::scale_fill_manual(values = ntcols) +
       ggplot2::theme_minimal() +
