@@ -495,7 +495,9 @@ hemibrain_ntplot.neuronlist <- function(x,
     do.call(gridExtra::grid.arrange, c(plist, ncol=nCol))
   }else{
     syns.nt = lapply(x, function(y) y$connectors)
-    syns.nt = do.call()
+    syns.nt = do.call(pluyr::rbind.fill, syns.nt)
+    syns.nt$id = "collapse"
+    hemibrain_ntplot.data.frame(syns.nt)
   }
 }
 
@@ -552,11 +554,14 @@ hemibrain_ntplot.character <- function(x,
                                        poss.nts=c("gaba", "acetylcholine", "glutamate","octopamine", "serotonin", "dopamine", 'neither'),
                                        classic = FALSE,
                                        confidence.thresh = 0.5,
+                                       collapse = FALSE,
                                        ...) {
   n = neuprint_search(x, ...)
-  neurons = hemibrain_read_neurons(n$bodyid, ...)
+  bids = hemibrain_neuron_bodyids()
+  bids = intersect(n$bodyid, bids)
+  neurons = hemibrain_read_neurons(bids, ...)
   neurons.nt = hemibrain_add_nt.neuronlist(neurons, poss.nts=poss.nts, classic=classic, confidence.thresh=confidence.thresh)
-  hemibrain_ntplot.neuronlist(neurons.nt)
+  hemibrain_ntplot.neuronlist(neurons.nt, poss.nts=poss.nts, classic=classic, confidence.thresh=confidence.thresh, collapse=collapse)
   ntcols = c(
     gaba = "#E6A749",
     acetylcholine = "#4B506B",
@@ -567,6 +572,7 @@ hemibrain_ntplot.character <- function(x,
     neither = "grey70")
   plot3d(neurons.nt, lwd = 2, col = ntcols[neurons.nt[,"top_nt"]])
   print(neurons.nt[,])
+  return(neurons.nt[,])
 }
 
 
