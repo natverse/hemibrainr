@@ -395,14 +395,23 @@ hemibrain_add_nt.neuronlist <- function(x, nts = NULL, nt.file = "/Volumes/Googl
 }
 
 # hidden
-hemibrain_add_nt.neuron <- function(x, nts = NULL, nt.file = "/Volumes/GoogleDrive/Shared drives/hemibrain/fafbsynapses/synister_hemi_whole_volume_v0_t8.feather", classic = FALSE, ...){
+hemibrain_add_nt.neuron <- function(x,
+                                    nts = NULL,
+                                    nt.file = "/Volumes/GoogleDrive/Shared drives/hemibrain/fafbsynapses/synister_hemi_whole_volume_v0_t8.feather",
+                                    classic = FALSE, ...){
   if(is.null(nts)){
     nts = hemibrain_syns_nt(nt.file=nt.file)
   }
   syns = x$connectors
+  poss.nts = c("gaba", "acetylcholine", "glutamate", "serotonin", "octopamine", "dopamine", "neither")
+  syns[,poss.nts] = NULL
   syns.nt = syns %>%
-    dplyr::left_join(nts[,intersect(colnames(nts),c("x", "y", "z","gaba", "acetylcholine", "glutamate", "serotonin", "octopamine", "dopamine", "neither"))],
-                      by = c("x","y","z"))
+    dplyr::left_join(nts[,intersect(colnames(nts),c("x", "y", "z", poss.nts))], by = c("x","y","z"))
+  tops = syns.nt[,c(poss.nts)]
+  tops[,'top_p']=do.call(pmax, as.list(tops[poss.nts]))
+  top.col=max.col(tops[poss.nts], ties.method = "first")
+  tops[,'top_nt']=poss.nts[top.col]
+  syns.nt = cbind(syns.nt,tops[,c(poss.nts,"top_p","top_nt")])
   x$connectors = syns.nt
   x$ntpred = hemibrain_top_nt(syns.nt, classic=classic, ...)
   x
@@ -420,6 +429,10 @@ hemibrain_top_nt <- function(syns.nt,
   }
   if("prepost" %in% colnames(syns.nt)){
     syns.nt = subset(syns.nt, syns.nt$prepost == 0)
+  }
+  if("Label" %in% colnames(syns.nt)){
+    syns.nt$Label = hemibrainr:::standard_compartments(syns.nt$Label)
+    syns.nt = subset(syns.nt, `Label` %in% c("axon","dendrite"))
   }
   if(classic){
     poss.nts = c("gaba", "acetylcholine", "glutamate", "neither")
@@ -442,7 +455,88 @@ hemibrain_top_nt <- function(syns.nt,
     dplyr::mutate_if(is.numeric, round, 3)
 }
 
+# hidden
+hemibrain_ntplot <- function(x,
+                             poss.nts=c("gaba", "acetylcholine", "glutamate","octopamine", "serotonin", "dopamine", 'neither'),
+                             classic = FALSE,
+                             confidence.thresh = 0.5,
+                             ...) UseMethod("hemibrain_ntplot")
 
+# plot neurotransmitter distributions
+hemibrain_ntplot.neuron <- function(x,
+                                    poss.nts=c("gaba", "acetylcholine", "glutamate","octopamine", "serotonin", "dopamine", 'neither'),
+                                    classic = FALSE,
+                                    confidence.thresh = 0.5,
+                                    ...) {
+  check_package_available('ggplot2')
+  poss.nts=match.arg(poss.nts, several.ok = T)
+  syns = x$connectors
+  if("prepost" %in% colnames(syns)){
+    syns = subset(syns, syns$prepost == 0)
+  }
+  syns.nt=dplyr::filter(syns, .data$confidence>=confidence.thresh &
+                    .data$top_nt %in% poss.nts)
+  syns.nt$id = x$bodyid
+  hemibrain_ntplot.data.frame(x=syns.nt, syns.nt=syns.nt, poss.nts=poss.nts, classic=classic, confidence.thresh=confidence.thresh, ...)
+}
+
+# Plot from a neuronlist
+hemibrain_ntplot.neuronlist <- function(x,
+                                    poss.nts=c("gaba", "acetylcholine", "glutamate","octopamine", "serotonin", "dopamine", 'neither'),
+                                    classic = FALSE,
+                                    confidence.thresh = 0.5,
+                                    ...) {
+  check_package_available('gridExtra')
+  plist = lapply(x, hemibrain_ntplot.neuron, poss.nts=poss.nts, classic=classic, confidence.thresh=confidence.thresh, ...)
+  n <- length(plist)
+  nCol <- floor(sqrt(n))
+  do.call("grid.arrange", c(plist, ncol=nCol))
+}
+
+# hidden
+hemibrain_ntplot.data.frame <- function(x,
+                                        poss.nts=c("gaba", "acetylcholine", "glutamate","octopamine", "serotonin", "dopamine", 'neither'),
+                                        classic = FALSE,
+                                        confidence.thresh = 0.5,
+                                        ...) {
+  check_package_available('ggplot2')
+  poss.nts=match.arg(poss.nts, several.ok = T)
+  if("id" %in% colnames(x)){
+    tit = x$id[1]
+  }else{
+    tit = ""
+  }
+  if("prepost" %in% colnames(x)){
+    x = subset(x, `prepost` == 0)
+  }
+  syns.nt=dplyr::filter(x, .data$confidence>=confidence.thresh & .data$top_nt %in% poss.nts)
+  ntcols = c(
+    gaba = "#E6A749",
+    acetylcholine = "#4B506B",
+    glutamate = "#70B657",
+    octopamine = "#7A4F98",
+    serotonin = "#93A3CF",
+    dopamine = "#CF6F6C",
+    neither = "grey70")[poss.nts]
+  if("Label" %in% colnames(syns.nt)){
+    syns.nt$Label = hemibrainr:::standard_compartments(syns.nt$Label)
+    syns.nt = subset(syns.nt, `Label` %in% c("axon","dendrite"))
+    ggplot2::ggplot(data=syns.nt, ggplot2::aes(x=`confidence`, fill = `top_nt`)) +
+      ggplot2::geom_histogram(binwidth = 0.01) +
+      ggplot2::scale_fill_manual(values = ntcols) +
+      ggplot2::theme_minimal() +
+      ggplot2::theme(legend.position="none") +
+      ggplot2::labs(x = tit) +
+      facet_wrap(~`Label`, ncol=1)
+  }else{
+    ggplot2::ggplot(data=syns.nt, ggplot2::aes(x=`confidence`, fill = `top_nt`)) +
+      ggplot2::geom_histogram(binwidth = 0.01) +
+      ggplot2::scale_fill_manual(values = ntcols) +
+      ggplot2::theme_minimal() +
+      ggplot2::theme(legend.position="none") +
+      ggplot2::labs(x = tit)
+  }
+}
 
 
 
