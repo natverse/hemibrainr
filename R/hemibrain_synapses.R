@@ -214,7 +214,7 @@ extract_synapses <-function(x, pre_id = "pre_id", unitary = FALSE, meta = NULL){
                               copy = TRUE,
                               auto_index = TRUE)
     }else{
-      warning("top_nt must not in colnames(meta)")
+      warning("top_nt must be in colnames(meta)")
     }
   }else if(length(poss.nts) && syn$top_nt != "unknown"){
     if(sum(syn[,colnames(syn)%in%poss.nts],na.rm = TRUE)==0){
@@ -460,6 +460,8 @@ hemibrain_ntplot <- function(x,
                              poss.nts=c("gaba", "acetylcholine", "glutamate","octopamine", "serotonin", "dopamine", 'neither'),
                              classic = FALSE,
                              confidence.thresh = 0.5,
+                             collapse = FALSE,
+                             y.plot = c("confidence", "top_p"),
                              ...) UseMethod("hemibrain_ntplot")
 
 # plot neurotransmitter distributions
@@ -467,6 +469,8 @@ hemibrain_ntplot.neuron <- function(x,
                                     poss.nts=c("gaba", "acetylcholine", "glutamate","octopamine", "serotonin", "dopamine", 'neither'),
                                     classic = FALSE,
                                     confidence.thresh = 0.5,
+                                    collapse = FALSE,
+                                    y.plot = c("confidence", "top_p"),
                                     ...) {
   check_package_available('ggplot2')
   poss.nts=match.arg(poss.nts, several.ok = T)
@@ -477,7 +481,7 @@ hemibrain_ntplot.neuron <- function(x,
   syns.nt=dplyr::filter(syns, .data$confidence>=confidence.thresh &
                     .data$top_nt %in% poss.nts)
   syns.nt$id = x$bodyid
-  hemibrain_ntplot.data.frame(x=syns.nt, syns.nt=syns.nt, poss.nts=poss.nts, classic=classic, confidence.thresh=confidence.thresh, ...)
+  hemibrain_ntplot.data.frame(x=syns.nt, syns.nt=syns.nt, poss.nts=poss.nts, classic=classic, confidence.thresh=confidence.thresh,y.plot=y.plot, ...)
 }
 
 # Plot from a neuronlist
@@ -486,10 +490,11 @@ hemibrain_ntplot.neuronlist <- function(x,
                                     classic = FALSE,
                                     confidence.thresh = 0.5,
                                     collapse = FALSE,
+                                    y.plot = c("confidence", "top_p"),
                                     ...) {
   check_package_available('gridExtra')
   if(!collapse){
-    plist = lapply(x, hemibrain_ntplot.neuron, poss.nts=poss.nts, classic=classic, confidence.thresh=confidence.thresh, ...)
+    plist = lapply(x, hemibrain_ntplot.neuron, poss.nts=poss.nts, classic=classic, confidence.thresh=confidence.thresh, y.plot=y.plot,...)
     n <- length(plist)
     nCol <- floor(sqrt(n))
     do.call(gridExtra::grid.arrange, c(plist, ncol=nCol))
@@ -506,9 +511,12 @@ hemibrain_ntplot.data.frame <- function(x,
                                         poss.nts=c("gaba", "acetylcholine", "glutamate","octopamine", "serotonin", "dopamine", 'neither'),
                                         classic = FALSE,
                                         confidence.thresh = 0.5,
+                                        y.plot = c("confidence", "top_p"),
                                         ...) {
   check_package_available('ggplot2')
   poss.nts=match.arg(poss.nts, several.ok = TRUE)
+  y.plot=match.arg(y.plot)
+  plot.p = y.plot=="top_p"
   if("id" %in% colnames(x)){
     tit = x$id[1]
   }else{
@@ -532,7 +540,7 @@ hemibrain_ntplot.data.frame <- function(x,
   if("Label" %in% colnames(syns.nt)){
     syns.nt$Label = hemibrainr:::standard_compartments(syns.nt$Label)
     syns.nt = subset(syns.nt, `Label` %in% c("axon","dendrite"))
-    ggplot2::ggplot(data=syns.nt, ggplot2::aes(x=`confidence`, fill = `top_nt`)) +
+    ggplot2::ggplot(data=syns.nt, ggplot2::aes(x= ifelse(plot.p,`top_p`,`confidence`), fill = `top_nt`)) +
       ggplot2::geom_histogram(binwidth = 0.01) +
       ggplot2::scale_fill_manual(values = ntcols) +
       ggplot2::theme_minimal() +
@@ -540,7 +548,7 @@ hemibrain_ntplot.data.frame <- function(x,
       ggplot2::labs(x = tit) +
       ggplot2::facet_wrap(~`Label`, ncol=1)
   }else{
-    ggplot2::ggplot(data=syns.nt, ggplot2::aes(x=`confidence`, fill = `top_nt`)) +
+    ggplot2::ggplot(data=syns.nt, ggplot2::aes(x= ifelse(plot.p,`top_p`,`confidence`), fill = `top_nt`)) +
       ggplot2::geom_histogram(binwidth = 0.01) +
       ggplot2::scale_fill_manual(values = ntcols) +
       ggplot2::theme_minimal() +
@@ -555,13 +563,14 @@ hemibrain_ntplot.character <- function(x,
                                        classic = FALSE,
                                        confidence.thresh = 0.5,
                                        collapse = FALSE,
+                                       y.plot = c("confidence", "top_p"),
                                        ...) {
   n = neuprint_search(x, ...)
   bids = hemibrain_neuron_bodyids()
   bids = intersect(n$bodyid, bids)
   neurons = hemibrain_read_neurons(bids, ...)
   neurons.nt = hemibrain_add_nt.neuronlist(neurons, poss.nts=poss.nts, classic=classic, confidence.thresh=confidence.thresh)
-  hemibrain_ntplot.neuronlist(neurons.nt, poss.nts=poss.nts, classic=classic, confidence.thresh=confidence.thresh, collapse=collapse)
+  hemibrain_ntplot.neuronlist(neurons.nt, poss.nts=poss.nts, classic=classic, confidence.thresh=confidence.thresh, collapse=collapse, y.plot=y.plot)
   ntcols = c(
     gaba = "#E6A749",
     acetylcholine = "#4B506B",

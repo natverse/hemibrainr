@@ -194,17 +194,16 @@ flytable_update_hl_predictions <- function(df = NULL, DryRun=FALSE, update_roots
   nt_st=fafbseg::flytable_query(sprintf("select _id, root_id, supervoxel_id, hemilineage_nblast_1, hemilineage_nblast_2, hemilineage_nblast_3 from %s", tab))
   if(update_roots)
     nt_st$root_id=fafbseg::flywire_updateids(nt_st$root_id, svids = nt_st$supervoxel_id)
+  df = subset(df, !is.na(hemilineage_nblast_1))
   toupdate=nt_st %>%
     dplyr::mutate(hemilineage_nblast_1.new = df$hemilineage_nblast_1[match(root_id,df$root_id)]) %>%
     dplyr::mutate(hemilineage_nblast_2.new = df$hemilineage_nblast_2[match(root_id,df$root_id)]) %>%
     dplyr::mutate(hemilineage_nblast_3.new = df$hemilineage_nblast_3[match(root_id,df$root_id)]) %>%
-    dplyr::filter(hemilineage_nblast_1.new!=hemilineage_nblast_1) %>%
-    dplyr::filter(hemilineage_nblast_2.new!=hemilineage_nblast_2) %>%
-    dplyr::filter(hemilineage_nblast_3.new!=hemilineage_nblast_3) %>%
     dplyr::select(`_id`, hemilineage_nblast_1.new, hemilineage_nblast_2.new, hemilineage_nblast_3.new) %>%
     dplyr::rename(hemilineage_nblast_1=hemilineage_nblast_1.new) %>%
     dplyr::rename(hemilineage_nblast_2=hemilineage_nblast_2.new) %>%
     dplyr::rename(hemilineage_nblast_3=hemilineage_nblast_3.new)
+  toupdate[is.na(toupdate)] = ""
   if(DryRun)
     toupdate
   else if(nrow(toupdate)){
