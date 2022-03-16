@@ -398,13 +398,14 @@ hemibrain_add_nt.neuronlist <- function(x, nts = NULL, nt.file = "/Volumes/Googl
 hemibrain_add_nt.neuron <- function(x,
                                     nts = NULL,
                                     nt.file = "/Volumes/GoogleDrive/Shared drives/hemibrain/fafbsynapses/synister_hemi_whole_volume_v0_t8.feather",
-                                    classic = FALSE, ...){
+                                    classic = FALSE,
+                                    ...){
   if(is.null(nts)){
     nts = hemibrain_syns_nt(nt.file=nt.file)
   }
   syns = x$connectors
   poss.nts = c("gaba", "acetylcholine", "glutamate", "serotonin", "octopamine", "dopamine", "neither")
-  syns[,poss.nts] = NULL
+  syns[,colnames(syns)%in%poss.nts] = NULL
   syns.nt = syns %>%
     dplyr::left_join(nts[,intersect(colnames(nts),c("x", "y", "z", poss.nts))], by = c("x","y","z"))
   tops = syns.nt[,c(poss.nts)]
