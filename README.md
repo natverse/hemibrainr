@@ -2,6 +2,7 @@
 
 <img src="man/figures/logo.svg" align="right" height="139" />
 <!-- badges: start -->
+
 [![R-CMD-check](https://github.com/natverse/hemibrainr/workflows/R-CMD-check/badge.svg)](https://github.com/natverse/hemibrainr/actions)
 [![Codecov test
 coverage](https://codecov.io/gh/natverse/hemibrainr/branch/master/graph/badge.svg)](https://codecov.io/gh/natverse/hemibrainr?branch=master)
