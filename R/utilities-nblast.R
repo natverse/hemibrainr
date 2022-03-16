@@ -358,3 +358,133 @@ overlap_score_big <- function(output.neurons,
   }
   score.matrix
 }
+
+
+hemibrain_flywire_match_check <-function(matchcheck = "~/Downloads/"){
+
+  # Colors
+  nt.cols = c(
+    gaba = "#E6A749",
+    acetylcholine = "#4B506B",
+    glutamate = "#70B657",
+    octopamine = "#7A4F98",
+    serotonin = "#93A3CF",
+    dopamine = "#CF6F6C",
+    neither = "grey70",
+    unknown = "grey10",
+    hemibrain = hemibrain_bright_colors[["marine"]],
+    flywire = hemibrain_bright_colors[["cerise"]],
+    hemisphere = hemibrain_bright_colors[["green"]])
+
+  # Get flywire meta data
+  fw.meta = flywire_meta()
+  matches = flytable_matches()
+
+  # Get matches
+  hb.ids = unique(matches$hemibrain_match)
+
+  # Get hemibrain remote data
+  hb = hemibrain_neurons()
+  hb = hb[names(hb) %in% hb.ids]
+  hb = hemibrain_add_nt.neuronlist(hb)
+  hb.meta = hb[,]
+  matches$cell_type = hb.meta$type[match(matches$hemibrain_match,hb.meta$bodyid)]
+  exclude = c("none","unknown","NA", "", " ")
+  matches.lr = subset(matches, ! hemisphere_match %in% exclude & !is.na(hemisphere_match) )
+  matches.hb = subset(matches, !is.na(hemibrain_match) & !hemibrain_match %in% exclude)
+
+  # Get nblast scores
+  nb.flywire.mirrored = hemibrain_nblast("flywire-mirror")
+  nb.flywire.hemibrain = hemibrain_nblast("hemibrain-flywire")
+
+  # NBLAST LR matches
+  hits = unlist(apply(nb.flywire.mirrored[matches.lr$root_id,], 1, function(x) colnames(nb.flywire.mirrored)[which.max(x)]))
+  hits.value = unlist(apply(nb.flywire.mirrored[matches.lr$root_id,], 1, function(x) max(x)))
+  match.value = unlist(sapply(seq_along(matches.lr$root_id), function(x)  nullToNA(nb.flywire.mirrored[matches.lr$root_id[x],matches.lr$hemisphere_match[x]])))
+  matches.lr$hemisphere_nblast = match.value
+
+  # NBLAST hemibrain_matches
+  hits.hb = unlist(apply(nb.flywire.hemibrain[matches.hb$hemibrain_match,], 1, function(x) colnames(nb.flywire.hemibrain)[which.max(x)]))
+  hits.hb.value = unlist(nb.flywire.hemibrain[matches.hb$hemibrain_match,], 1, function(x) max(x))
+  match.value = unlist(sapply(seq_along(matches.hb$hemibrain_match), function(x) nullToNA(nb.flywire.hemibrain[matches.hb$root_id[x],matches.hb$hemibrain_match[x]]) ))
+  matches.hb$hemibrain_nblast = match.value
+
+  # Add nt information
+  matches.hb$hb_top_nt = hb.meta$top_nt[match(matches.hb$hemibrain_match, hb.meta$bodyid)]
+  matches.hb$fw_top_nt = fw.meta$top_nt[match(matches.hb$root_id, fw.meta$root_id)]
+  matches.lr$n_top_nt = fw.meta$top_nt[match(matches.lr$root_id, fw.meta$root_id)]
+  matches.lr$m_top_nt = fw.meta$top_nt[match(matches.lr$hemisphere_match, fw.meta$root_id)]
+
+  # Create directories
+  matchcheck.lr = file.path(matchcheck,"lr_match_check")
+  matchcheck.hb = file.path(matchcheck,"hemibrain_match_check")
+  dir.create(matchcheck.lr, showWarnings = FALSE)
+  dir.create(matchcheck.hb, showWarnings = FALSE)
+
+  # Plot for flywire, local
+  fafb14_view()
+  for (i in 1:nrow(matches.lr)){
+    try({
+      a = matches.lr[i,"root_id"]
+      a.nt = matches.lr[i,"n_top_nt"]
+      b = matches.lr[i,"hemisphere_match"]
+      b.nt = matches.lr[i,"m_top_nt"]
+      v = matches.lr[i,"hemisphere_nblast"]
+      v = ifelse(is.na(v),NA,round(v, 4))
+      an = read_cloudvolume_meshes(a)
+      bn = read_cloudvolume_meshes(b)
+      plot3d(elmr::FAFB14, alpha = 0.1)
+      plot3d(an, col = nt.cols[["flywire"]])
+      plot3d(bn, col = nt.cols[["hemisphere"]])
+      par3d(cex=3.0)
+      a.nt = ifelse(is.na(a.nt),"unknown",a.nt)
+      b.nt = ifelse(is.na(b.nt),"unknown",b.nt)
+      rgl::text3d(x = 350000, y = 400000, z = 100000, texts = paste0("flywire: ", a.nt), col = nt.cols[[a.nt]])
+      rgl::text3d(x = 700000, y = 400000, z = 100000, texts = paste0("hemisphere: ", b.nt), col = nt.cols[[b.nt]])
+      shot = file.path(matchcheck.lr, sprintf("%s_%s_%s_flywire_LR_%s_%s.png",a.nt, b.nt, v,a,b))
+      rgl::rgl.snapshot(shot)
+    })
+    print(i)
+    rgl::clear3d()
+  }
+
+  # Plot for hemibrain, local
+  fafb14_view()
+  hb.fafb14 = hemibrain_neurons(brain = "FAFB14")
+  for (i in 1:nrow(matches.hb)){
+    try({
+      ct = matches.hb[i,"cell_type"]
+      a = matches.hb[i,"root_id"]
+      a.nt = matches.hb[i,"fw_top_nt"]
+      b = matches.hb[i,"hemibrain_match"]
+      b.nt = matches.hb[i,"hb_top_nt"]
+      v = matches.hb[i,"hemibrain_nblast"]
+      v = ifelse(is.na(v),NA,round(v, 4))
+      an = read_cloudvolume_meshes(a)
+      bn = hb.fafb14[names(hb.fafb14)%in%b]
+      plot3d(elmr::FAFB14, alpha = 0.1)
+      plot3d(an, col = nt.cols[["flywire"]])
+      plot3d(bn, col = nt.cols[["hemibrain"]])
+      rgl::par3d(cex=3.0)
+      a.nt = ifelse(is.na(a.nt),"unknown",a.nt)
+      b.nt = ifelse(is.na(b.nt),"unknown",b.nt)
+      rgl::text3d(x = 350000, y = 400000, z = 100000, texts = paste0("flywire: ", a.nt), col = nt.cols[[a.nt]])
+      rgl::text3d(x = 700000, y = 400000, z = 100000, texts = paste0("hemibrain: ", b.nt), col = nt.cols[[b.nt]])
+      shot = file.path(matchcheck.hb, sprintf("%s_%s_%s_%s_flywire_hemibrain_%s_%s.png", a.nt, b.nt, ct, v, a,b))
+      rgl::rgl.snapshot(shot)
+    })
+    print(i)
+    rgl::clear3d()
+  }
+
+}
+
+# flywire view
+fafb14_view <- function(){
+  open3d(userMatrix = structure(c(0.994450092315674, 0.0210675243288279,
+                                  -0.103079274296761, 0, 0.0466670729219913, -0.966418564319611,
+                                  0.252699792385101, 0, -0.0942939221858978, -0.256107956171036,
+                                  -0.962038159370422, 0, 0, 0, 0, 1), .Dim = c(4L, 4L)), zoom = 0.644609212875366,
+         windowRect = c(1440L, 45L, 3790L, 1416L))
+}
+
