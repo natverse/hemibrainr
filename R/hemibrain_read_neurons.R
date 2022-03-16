@@ -99,7 +99,10 @@ hemibrain_read_neurons<-function(x = NULL,
       neurons.flow = neurons.flow.fh[y]
     }
   }else{
-    neurons = neuprintr::neuprint_read_neurons(x, ...)
+    neurons = neuprintr::neuprint_read_neurons(x, OmitFailures = TRUE, ...)
+    if(!length(neurons)){
+      return(NULL)
+    }
     if(reroot){
       neurons = hemibrain_reroot(neurons, method = "manual", googlesheet = googlesheet, ...)
     }
