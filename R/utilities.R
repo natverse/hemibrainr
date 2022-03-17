@@ -718,6 +718,20 @@ root_id_correct <- function(a){
   }
   a
 }
+
+# Update synapse columns
+update_internal_neuron_columns <-function(x, ...) UseMethod("update_internal_neuron_columns")
+update_internal_neuron_columns.neuronlist <- function(x, ...){
+  nat::nlapply(x, update_internal_neuron_columns.neuron)
+}
+update_internal_neuron_columns.neuron <- function(x, ...){
+ #colnames(x$d) = snakecase::to_snake_case(colnames(x$d))
+ if(!is.null(x$connectors)){
+   colnames(x$connectors) = snakecase::to_snake_case(colnames(x$connectors))
+ }
+  x
+}
+
 # hidden
 update_metdata <- function(neurons, meta, id, correction = TRUE){
   check_package_available('dplyr')
