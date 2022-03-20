@@ -191,8 +191,8 @@ extract_synapses <-function(x, pre_id = "pre_id", unitary = FALSE, meta = NULL){
   if(is.null(syn$label)){
     syn$label = nullToNA(x$d$Label[match(syn$treenode_id,x$d$PointNo)])
   }
-  if(is.null(syn$label)){
-    syn$label = nullToNA(x$d$Label[match(syn$treenode_id,x$d$PointNo)])
+  if(is.null(syn$Label)){
+    syn$Label = nullToNA(x$d$Label[match(syn$treenode_id,x$d$PointNo)])
   }
   poss.nts=c("gaba", "acetylcholine", "glutamate", "octopamine", "serotonin", "dopamine", "neither")
   if(!all(c(poss.nts,"top_nt")%in%colnames(syn))){
@@ -613,7 +613,7 @@ hemibrain_ntplot.character <- function(x,
 top_nt <- function(x,  id = "root_id"){
   y = x$ntpred
   y = y[sapply(y,is.numeric)]
-  y$top_p = NULL
+  y =  y[!names(y)%in%c("top_p","top_nt")]
   top_nt = names(y)[which.max(y)]
   top_p = max(y)
   if(is.null(x[[id]])){
