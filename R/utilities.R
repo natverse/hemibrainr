@@ -722,7 +722,7 @@ root_id_correct <- function(a){
 # Update synapse columns
 update_internal_neuron_columns <-function(x, ...) UseMethod("update_internal_neuron_columns")
 update_internal_neuron_columns.neuronlist <- function(x, ...){
-  nat::nlapply(x, update_internal_neuron_columns.neuron)
+  nat::nlapply(x, update_internal_neuron_columns.neuron, ...)
 }
 update_internal_neuron_columns.neuron <- function(x, ...){
  #colnames(x$d) = snakecase::to_snake_case(colnames(x$d))
