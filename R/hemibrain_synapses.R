@@ -166,23 +166,24 @@ magrittr::`%>%`
 # hidden
 #' @importFrom dplyr filter mutate group_by distinct select n case_when
 #' @importFrom rlang .data
-extract_synapses <-function(x, pre_id = "pre_id", unitary = FALSE, meta = NULL){
+extract_synapses <-function(x, pre_id = "pre_id", unitary = FALSE, meta = NULL){ # top_nt may be taken on a per synapse, rather than per neuron, basis
   if(nat::is.neuron(x)){
     syn = x$connectors
   }else{
     syn = x
   }
+  if(!nrow(syn)){
+    warning("neuron ", x$id," has no synapses")
+    return(NULL)
+  }
   if(!is.null(x$root_id)){
     id = "root_id"
-  } else if(!is.null(x$skid)){
+  }else if(!is.null(x$skid)){
     id = "skid"
   } else if(!is.null(x$bodyid)){
       id = "bodyid"
   }else{
     id = "id"
-  }
-  if(!nrow(syn)){
-    warning("Neuron ", x$id," has no synapses")
   }
   syn[[id]] = nullToNA(as.character(x[[id]]))
   syn[[id]] = gsub(" ","",syn[[id]])
@@ -193,19 +194,24 @@ extract_synapses <-function(x, pre_id = "pre_id", unitary = FALSE, meta = NULL){
   if(is.null(syn$label)){
     syn$label = nullToNA(x$d$Label[match(syn$treenode_id,x$d$PointNo)])
   }
-  poss.nts=c("gaba", "acetylcholine", "glutamate", "octopamine", "serotonin", "dopamine")
+  poss.nts=c("gaba", "acetylcholine", "glutamate", "octopamine", "serotonin", "dopamine", "neither")
   if(!all(c(poss.nts,"top_nt")%in%colnames(syn))){
     for(pnt in setdiff(poss.nts,colnames(syn))){
       syn[[pnt]] = NA
     }
-    syn$top_nt = "unknown"
   }
   poss.nts = intersect(poss.nts, colnames(syn))
+  if(!is.null(syn$top_nt)){ # top_nt on a per synapse level
+    syn$syn_top_nt = syn$top_nt
+    syn$top_nt = NULL
+    syn$syn_top_p = syn$top_p
+    syn$top_p = NULL
+  }else{
+    syn$syn_top_nt = NA
+    syn$syn_top_p = NA
+  }
+  # Now work out top_nt at the neuron level
   if(!is.null(meta)){
-    if(!is.null(syn$top_nt)){
-      syn$syn.top_nt = syn$top_nt
-      syn$top_nt = NULL
-    }
     if(all(c(id,"top_nt")%in%colnames(meta))){
       meta[[pre_id]]  = meta[[id]]
       if(bit64::is.integer64(syn[[pre_id]])){
@@ -220,15 +226,18 @@ extract_synapses <-function(x, pre_id = "pre_id", unitary = FALSE, meta = NULL){
     }else{
       warning("top_nt must be in colnames(meta)")
     }
-  }else if(length(poss.nts) && syn$top_nt != "unknown"){
+  }else if(length(poss.nts) && is.null(syn$top_nt)){
     if(sum(syn[,colnames(syn)%in%poss.nts],na.rm = TRUE)==0){
       syn$top_nt = "unknown"
     }else{
-      zeros=apply(syn[,colnames(syn)%in%poss.nts], 1, function(x) sum(x,na.rm=TRUE)==0)
-      syn$top_nt = apply(syn[,colnames(syn)%in%poss.nts], 1, function(x) names(x)[which.max(x)])
-      syn$top_nt[zeros] = "unknown"
+      if(!is.null(x$ntpred)){
+        topnt = top_nt(x, id = id)
+      }else if (id == "bodyid"){
+        topnt = get_top_nt(syn)
+      }
+      syn$top_nt = topnt$top_nt
+      syn$top_p = topnt$top_p
     }
-    warning("top_nt may be taken on a per synapse, rather than per neuron, basis")
   }else{
     syn$top_nt = "unknown"
   }
@@ -420,17 +429,23 @@ hemibrain_add_nt.neuron <- function(x,
   tops[,'top_nt']=poss.nts[top.col]
   syns.nt = cbind(syns.nt,tops[,c(poss.nts,"top_p","top_nt")])
   x$connectors = syns.nt
-  x$ntpred = hemibrain_top_nt(syns.nt, classic=classic, ...)
+  x$ntpred = get_top_nt(syns.nt, classic=classic, ...)
   x
 }
 
 # find top_nt
-hemibrain_top_nt <- function(syns.nt,
+get_top_nt <- function(syns.nt,
                              poss.nts=c("gaba", "acetylcholine", "glutamate", "octopamine", "serotonin","dopamine", "neither"),
                              classic = FALSE,
-                             confidence.thresh = 0.5){
-  syns.nt = subset(syns.nt, syns.nt$confidence >= confidence.thresh)
-  syns.nt = syns.nt[!duplicated(syns.nt$confidence),]
+                             confidence.thresh = 0.5,
+                             cleft.threshold = 75){
+  if("confidence.thresh"%in%colnames(syns.nt)){
+    syns.nt = subset(syns.nt, syns.nt$confidence >= confidence.thresh)
+    #   syns.nt = syns.nt[!duplicated(syns.nt$confidence),]
+  }
+  if("cleft.threshold"%in%colnames(syns.nt)){
+    syns.nt = subset(syns.nt, syns.nt$confidence >= cleft.threshold)
+  }
   if(!nrow(syns.nt)){
     return( data.frame(top_nt = "unknown", top_p = "unknown") )
   }
@@ -592,6 +607,22 @@ hemibrain_ntplot.character <- function(x,
   plot3d(neurons.nt, lwd = 2, col = ntcols[neurons.nt[,"top_nt"]])
   print(neurons.nt[,])
   return(neurons.nt[,])
+}
+
+# Get top_nt
+top_nt <- function(x,  id = "root_id"){
+  y = x$ntpred
+  y = y[sapply(y,is.numeric)]
+  y$top_p = NULL
+  top_nt = names(y)[which.max(y)]
+  top_p = max(y)
+  if(is.null(x[[id]])){
+    df = data.frame(top_nt=top_nt,top_p=top_p)
+  }else{
+    df = data.frame(id=x[[id]], top_nt=top_nt,top_p=top_p)
+    colnames(df) = c(id, "top_nt", "top_p")
+  }
+  df
 }
 
 
