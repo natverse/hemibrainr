@@ -7,7 +7,7 @@
 #' @description Extract a single data frame describing synapse/connection types,
 #'   partners, locations and position on a neuron's axon/dendrite. You can
 #'   either get all synapses returned or all unitary connections to a neuron's
-#'   partners returned. Broken down by axon/dendrite (\code{Label}), and
+#'   partners returned. Broken down by axon/dendrite (\code{label}), and
 #'   pre/postsynapses or pre/postsynaptic partners. Note that \code{hemibrain_extract_compartment_edgelist} will
 #'   only return connections between neurons given in the argument \code{x}.
 #'
@@ -44,15 +44,15 @@
 #'
 #'   \item{"partner"}{ - The body ID for the presynaptic (target) neuron.}
 #'
-#'   \item{"Label"}{ - The compartment of the \code{bodyid} neuron on which the synapse is placed / which receives/makes the given connection.
+#'   \item{"label"}{ - The compartment of the \code{bodyid} neuron on which the synapse is placed / which receives/makes the given connection.
 #'   See \code{?standardise}.}
 #'
-#'   \item{"partner_Label"}{ - The compartment of the \code{partner} neuron on which the synapse is placed / which receives/makes the given connection.}
+#'   \item{"partner_label"}{ - The compartment of the \code{partner} neuron on which the synapse is placed / which receives/makes the given connection.}
 #'
 #'   \item{"count"}{ - The number of synapses that make the given connection. Sometimes referred to as 'weight'.}
 #'
 #'   \item{"norm"}{ - The normalised synapse weight. \code{count} is divided by the total number of inputs that the
-#'   target neuron's (\code{post}) compartment (\code{Label}) has. I.e. this normalisation is by total_inputs onto a dendrite or axon, not the whole neuron.}
+#'   target neuron's (\code{post}) compartment (\code{label}) has. I.e. this normalisation is by total_inputs onto a dendrite or axon, not the whole neuron.}
 #'
 #'   \item{"connection"}{ - The type of compartment-compartment connection specified by this row. The first compartment is the source (pre), the second, the target (post).}
 #'
@@ -153,7 +153,7 @@ hemibrain_extract_connections <- function(x,
     syns = syns[syns$prepost==1,]
   }
   if(length(syns)){
-    syns$Label = standard_compartments(syns$Label)
+    syns$label = standard_compartments(syns$label)
     rownames(syns) = 1:nrow(syns)
     syns = syns[order(syns$count, decreasing = TRUE),]
   }
@@ -186,13 +186,17 @@ extract_synapses <-function(x, pre_id = "pre_id", unitary = FALSE, meta = NULL){
   }
   syn[[id]] = nullToNA(as.character(x[[id]]))
   syn[[id]] = gsub(" ","",syn[[id]])
-  if(is.null(syn$Label)){
-    syn$Label = nullToNA(x$d$Label[match(syn$treenode_id,x$d$PointNo)])
+  colnames(syn) = snakecase::to_snake_case(colnames(syn))
+  if(is.null(syn$label)){
+    syn$label = nullToNA(x$d$Label[match(syn$treenode_id,x$d$PointNo)])
+  }
+  if(is.null(syn$label)){
+    syn$label = nullToNA(x$d$Label[match(syn$treenode_id,x$d$PointNo)])
   }
   poss.nts=c("gaba", "acetylcholine", "glutamate", "octopamine", "serotonin", "dopamine")
   if(!all(c(poss.nts,"top_nt")%in%colnames(syn))){
     for(pnt in setdiff(poss.nts,colnames(syn))){
-      syn[[pnt]] = 0
+      syn[[pnt]] = NA
     }
     syn$top_nt = "unknown"
   }
@@ -239,9 +243,9 @@ extract_synapses <-function(x, pre_id = "pre_id", unitary = FALSE, meta = NULL){
           .data$prepost==0 ~ 1,
           .data$prepost==1  ~ 0
         )) %>% # i.e. switch perspective, presynapses connect to postsynaptic partners
-        dplyr::group_by(.data[[id]], .data$partner, .data$prepost, .data$Label) %>%
+        dplyr::group_by(.data[[id]], .data$partner, .data$prepost, .data$label) %>%
         dplyr::mutate(count = dplyr::n()) %>%
-        dplyr::distinct(.data[[id]], .data$partner, .data$prepost, .data$Label, .data$count, .data$top_nt, .keep_all = FALSE) %>%
+        dplyr::distinct(.data[[id]], .data$partner, .data$prepost, .data$label, .data$count, .data$top_nt, .keep_all = FALSE) %>%
         as.data.frame(stringsAsFactors = FALSE) ->
         syn
     }else{
@@ -250,14 +254,14 @@ extract_synapses <-function(x, pre_id = "pre_id", unitary = FALSE, meta = NULL){
           .data$prepost==0 ~ 1,
           .data$prepost==1  ~ 0
         )) %>% # i.e. switch perspective, presynapses connect to postsynaptic partners
-        dplyr::group_by(.data[[id]], .data$partner, .data$prepost, .data$Label) %>%
+        dplyr::group_by(.data[[id]], .data$partner, .data$prepost, .data$label) %>%
         dplyr::mutate(count = dplyr::n()) %>%
-        dplyr::distinct(.data[[id]], .data$partner, .data$prepost, .data$Label, .data$count, .data$top_nt, .keep_all = FALSE) %>%
+        dplyr::distinct(.data[[id]], .data$partner, .data$prepost, .data$label, .data$count, .data$top_nt, .keep_all = FALSE) %>%
         as.data.frame(stringsAsFactors = FALSE) ->
         syn
     }
   }
-  syn$Label = standard_compartments(syn$Label)
+  syn$label = standard_compartments(syn$label)
   syn
 }
 
@@ -306,10 +310,11 @@ hemibrain_extract_compartment_edgelist <- function(x, meta = NULL, ...){
 
 # hidden, for one pre neuron
 extract_elist <- function(syns, lookup, lookup.nt = NULL, id = "bodyid", partner = "partner"){
+  colnames(syns) = snakecase::to_snake_case(colnames(syns))
   ids = unique(nullToNA(as.character(syns[[id]])))
   compartment.inputs = c()
-  for(l in unique(syns$Label)){
-    d.post = nrow(subset(syns, syns$prepost==1 & syns$Label==l))
+  for(l in unique(syns$label)){
+    d.post = nrow(subset(syns, syns$prepost==1 & syns$label==l))
     names(d.post) = l
     compartment.inputs = c(compartment.inputs, d.post)
   }
@@ -319,10 +324,10 @@ extract_elist <- function(syns, lookup, lookup.nt = NULL, id = "bodyid", partner
     dplyr::filter(.data$prepost==1) %>%
     dplyr::rename(post = .data[[id]]) %>%
     dplyr::rename(pre = .data[[partner]]) %>%
-    dplyr::rename(post_Label = .data$Label) %>%
+    dplyr::rename(post_label = .data$label) %>%
     # Compartment labels
-    dplyr::mutate(pre_Label = lookup[as.character(.data$connector_id)]) %>%
-    dplyr::mutate(pre_Label = ifelse(is.na(.data$pre_Label),"unknown",.data$pre_Label)) %>%
+    dplyr::mutate(pre_label = lookup[as.character(.data$connector_id)]) %>%
+    dplyr::mutate(pre_label = ifelse(is.na(.data$pre_label),"unknown",.data$pre_label)) %>%
     # Transmitter
     { if(is.null(lookup.nt)){
       dplyr::mutate(.,top_nt = "unknown")
@@ -330,24 +335,24 @@ extract_elist <- function(syns, lookup, lookup.nt = NULL, id = "bodyid", partner
       dplyr::mutate(.,top_nt = lookup.nt[match(as.character(.data$pre),lookup.nt[[id]]),"top_nt"])
     } }  %>%
     # Synapse counts
-    dplyr::group_by(.data$post, .data$pre, .data$post_Label, .data$pre_Label) %>%
+    dplyr::group_by(.data$post, .data$pre, .data$post_label, .data$pre_label) %>%
     dplyr::mutate(count = dplyr::n()) %>%
     # Normalised synapses, by compartment
     dplyr::ungroup() %>%
-    dplyr::group_by(.data$post,.data$post_Label) %>%
-    dplyr::mutate(norm = .data$count/compartment.inputs[as.character(.data$post_Label)]) %>%
+    dplyr::group_by(.data$post,.data$post_label) %>%
+    dplyr::mutate(norm = .data$count/compartment.inputs[as.character(.data$post_label)]) %>%
     # Clean up
-    dplyr::distinct(.data$post, .data$pre,.data$post_Label, .data$pre_Label, .data$count, .data$norm, .data$top_nt, .keep_all = FALSE) %>%
-    dplyr::filter(!is.na(.data$pre_Label) & .data$count > 0) %>%
+    dplyr::distinct(.data$post, .data$pre,.data$post_label, .data$pre_label, .data$count, .data$norm, .data$top_nt, .keep_all = FALSE) %>%
+    dplyr::filter(!is.na(.data$pre_label) & .data$count > 0) %>%
     as.data.frame(stringsAsFactors = FALSE) ->
     elist
   elist$top_nt[is.na(elist$top_nt)] = "unknown"
   if(nrow(elist)){
     rownames(elist) = 1:nrow(elist)
-    elist$post_Label = standard_compartments(elist$post_Label)
-    elist$pre_Label = standard_compartments(elist$pre_Label)
-    elist[,c("pre", "post", "pre_Label", "post_Label", "count", "norm", "top_nt")]
-    elist$connection = paste(elist$pre_Label,elist$post_Label,sep="-")
+    elist$post_label = standard_compartments(elist$post_label)
+    elist$pre_label = standard_compartments(elist$pre_label)
+    elist[,c("pre", "post", "pre_label", "post_label", "count", "norm", "top_nt")]
+    elist$connection = paste(elist$pre_label,elist$post_label,sep="-")
     elist
   }else{
     NULL
@@ -356,12 +361,13 @@ extract_elist <- function(syns, lookup, lookup.nt = NULL, id = "bodyid", partner
 
 # hidden
 extract_lookup <- function(syns){
+  colnames(syns) = snakecase::to_snake_case(colnames(syns))
   syns %>%
     dplyr::filter(.data$prepost==0) %>%
-    dplyr::distinct(.data$connector_id, .data$Label, .keep_all = FALSE) %>%
+    dplyr::distinct(.data$connector_id, .data$label, .keep_all = FALSE) %>%
     as.data.frame(stringsAsFactors = FALSE) ->
     conn.lookup
-  lookup = conn.lookup$Label
+  lookup = conn.lookup$label
   names(lookup) = as.character(conn.lookup$connector_id)
   lookup = lookup[!names(lookup)%in%c("0","NA")]
   lookup
@@ -428,12 +434,13 @@ hemibrain_top_nt <- function(syns.nt,
   if(!nrow(syns.nt)){
     return( data.frame(top_nt = "unknown", top_p = "unknown") )
   }
+  colnames(syns.nt) = snakecase::to_snake_case(colnames(syns.nt))
   if("prepost" %in% colnames(syns.nt)){
     syns.nt = subset(syns.nt, syns.nt$prepost == 0)
   }
-  if("Label" %in% colnames(syns.nt)){
-    syns.nt$Label = hemibrainr:::standard_compartments(syns.nt$Label)
-    syns.nt = subset(syns.nt, `Label` %in% c("axon","dendrite"))
+  if("label" %in% colnames(syns.nt)){
+    syns.nt$label = hemibrainr:::standard_compartments(syns.nt$label)
+    syns.nt = subset(syns.nt, `label` %in% c("axon","dendrite"))
   }
   if(classic){
     poss.nts = c("gaba", "acetylcholine", "glutamate", "neither")
@@ -531,6 +538,7 @@ hemibrain_ntplot.data.frame <- function(x,
     poss.nts = c("gaba", "acetylcholine", "glutamate",'neither')
   }
   syns.nt=dplyr::filter(x, .data$confidence>=confidence.thresh & .data$top_nt %in% poss.nts)
+  colnames(syns.nt) = snakecase::to_snake_case(syns.nt)
   ntcols = c(
     gaba = "#E6A749",
     acetylcholine = "#4B506B",
@@ -539,16 +547,16 @@ hemibrain_ntplot.data.frame <- function(x,
     serotonin = "#93A3CF",
     dopamine = "#CF6F6C",
     neither = "grey70")[poss.nts]
-  if("Label" %in% colnames(syns.nt) & !collapse){
-    syns.nt$Label = hemibrainr:::standard_compartments(syns.nt$Label)
-    syns.nt = subset(syns.nt, `Label` %in% c("axon","dendrite"))
+  if("label" %in% colnames(syns.nt) & !collapse){
+    syns.nt$label = hemibrainr:::standard_compartments(syns.nt$label)
+    syns.nt = subset(syns.nt, `label` %in% c("axon","dendrite"))
     ggplot2::ggplot(data=syns.nt, ggplot2::aes(x = .data[[y.plot]], fill = `top_nt`)) +
       ggplot2::geom_histogram(binwidth = 0.01) +
       ggplot2::scale_fill_manual(values = ntcols) +
       ggplot2::theme_minimal() +
       ggplot2::theme(legend.position="none") +
       ggplot2::labs(x = tit) +
-      ggplot2::facet_wrap(~`Label`, ncol=1)
+      ggplot2::facet_wrap(~`label`, ncol=1)
   }else{
     ggplot2::ggplot(data=syns.nt, ggplot2::aes(x= .data[[y.plot]], fill = `top_nt`)) +
       ggplot2::geom_histogram(binwidth = 0.01) +
