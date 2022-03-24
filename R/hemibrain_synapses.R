@@ -191,9 +191,6 @@ extract_synapses <-function(x, pre_id = "pre_id", unitary = FALSE, meta = NULL){
   if(is.null(syn$label)){
     syn$label = nullToNA(x$d$Label[match(syn$treenode_id,x$d$PointNo)])
   }
-  if(is.null(syn$Label)){
-    syn$Label = nullToNA(x$d$Label[match(syn$treenode_id,x$d$PointNo)])
-  }
   poss.nts=c("gaba", "acetylcholine", "glutamate", "octopamine", "serotonin", "dopamine", "neither")
   if(!all(c(poss.nts,"top_nt")%in%colnames(syn))){
     for(pnt in setdiff(poss.nts,colnames(syn))){
@@ -227,8 +224,10 @@ extract_synapses <-function(x, pre_id = "pre_id", unitary = FALSE, meta = NULL){
       warning("top_nt must be in colnames(meta)")
     }
   }else if(length(poss.nts) && is.null(syn$top_nt)){
-    if(sum(syn[,colnames(syn)%in%poss.nts],na.rm = TRUE)==0){
+    bad = tryCatch(sum(syn[,colnames(syn)%in%poss.nts],na.rm = TRUE)==0, error = function(e) 1)
+    if(bad){
       syn$top_nt = "unknown"
+      syn$top_p = 0
     }else{
       if(!is.null(x$ntpred)){
         topnt = top_nt(x, id = id)
@@ -240,6 +239,7 @@ extract_synapses <-function(x, pre_id = "pre_id", unitary = FALSE, meta = NULL){
     }
   }else{
     syn$top_nt = "unknown"
+    syn$top_p = 0
   }
   if(unitary){ # connections, rather than synapses
     if(id == "root_id"){
@@ -298,15 +298,24 @@ hemibrain_extract_compartment_edgelist <- function(x, meta = NULL, ...){
     syns.list = x
     warning("x should be a neuronlist object")
   }
+  if(!is.null(meta)){
+    lookup.nt = meta[,c(id,"top_nt","top_p")]
+    lookup.nt = as.data.frame(lookup.nt)
+    rownames(lookup.nt) = lookup.nt[[id]]
+  }else{
+    lookup.nt = nat::nlapply(syns.list, get_top_nt)
+    lookup.nt = lapply(names(lookup.nt), function(n){
+      v = lookup.nt[[n]]
+      rownames(v) = n
+      v[[id]] = n
+      v
+    })
+    lookup.nt = do.call(plyr::rbind.fill,lookup.nt)
+    rownames(lookup.nt) = lookup.nt[[id]]
+  }
   names(syns.list) = NULL
   lookup = nat::nlapply(syns.list, extract_lookup,...)
   lookup = unlist(lookup)
-  if(!is.null(meta)){
-    lookup.nt = meta[,c(id,"top_nt")]
-    lookup.nt = as.data.frame(lookup.nt)
-  }else{
-    lookup.nt = NULL
-  }
   elists = nat::nlapply(syns.list, extract_elist, lookup = lookup, lookup.nt = lookup.nt, id = id, partner = partner, ...)
   elist = do.call(rbind, elists)
   if(length(elist)){
@@ -327,7 +336,6 @@ extract_elist <- function(syns, lookup, lookup.nt = NULL, id = "bodyid", partner
     names(d.post) = l
     compartment.inputs = c(compartment.inputs, d.post)
   }
-  syns$top_nt = "unknown"
   syns %>%
     # Re-name for clarity
     dplyr::filter(.data$prepost==1) %>%
@@ -339,9 +347,15 @@ extract_elist <- function(syns, lookup, lookup.nt = NULL, id = "bodyid", partner
     dplyr::mutate(pre_label = ifelse(is.na(.data$pre_label),"unknown",.data$pre_label)) %>%
     # Transmitter
     { if(is.null(lookup.nt)){
-      dplyr::mutate(.,top_nt = "unknown")
+      dplyr::mutate(.,post_top_nt = "unknown") %>%
+      dplyr::mutate(.,pre_top_nt = "unknown") %>%
+      dplyr::mutate(.,post_top_p = 0) %>%
+      dplyr::mutate(.,pre_top_p = 0)
     }else{
-      dplyr::mutate(.,top_nt = lookup.nt[match(as.character(.data$pre),lookup.nt[[id]]),"top_nt"])
+      dplyr::mutate(.,pre_top_nt = lookup.nt[as.character(.data$pre),"top_nt"]) %>%
+      dplyr::mutate(.,post_top_nt = lookup.nt[as.character(.data$post),"top_nt"]) %>%
+      dplyr::mutate(.,pre_top_p = lookup.nt[as.character(.data$pre),"top_p"]) %>%
+      dplyr::mutate(.,post_top_p = lookup.nt[as.character(.data$post),"top_p"])
     } }  %>%
     # Synapse counts
     dplyr::group_by(.data$post, .data$pre, .data$post_label, .data$pre_label) %>%
@@ -351,16 +365,19 @@ extract_elist <- function(syns, lookup, lookup.nt = NULL, id = "bodyid", partner
     dplyr::group_by(.data$post,.data$post_label) %>%
     dplyr::mutate(norm = .data$count/compartment.inputs[as.character(.data$post_label)]) %>%
     # Clean up
-    dplyr::distinct(.data$post, .data$pre,.data$post_label, .data$pre_label, .data$count, .data$norm, .data$top_nt, .keep_all = FALSE) %>%
+    dplyr::distinct(.data$post, .data$pre,.data$post_label, .data$pre_label, .data$count, .data$norm,
+                    .data$pre_top_nt, .data$pre_top_p, .data$post_top_nt, .data$post_top_p, .keep_all = FALSE) %>%
     dplyr::filter(!is.na(.data$pre_label) & .data$count > 0) %>%
     as.data.frame(stringsAsFactors = FALSE) ->
     elist
-  elist$top_nt[is.na(elist$top_nt)] = "unknown"
+  elist$post_top_nt[is.na(elist$post_top_nt)] = "unknown"
+  elist$pre_top_nt[is.na(elist$pre_top_nt)] = "unknown"
+  elist$post_top_p[is.na(elist$post_top_p)] = 0
+  elist$pre_top_p[is.na(elist$pre_top_p)] = 0
   if(nrow(elist)){
     rownames(elist) = 1:nrow(elist)
     elist$post_label = standard_compartments(elist$post_label)
     elist$pre_label = standard_compartments(elist$pre_label)
-    elist[,c("pre", "post", "pre_label", "post_label", "count", "norm", "top_nt")]
     elist$connection = paste(elist$pre_label,elist$post_label,sep="-")
     elist
   }else{
@@ -369,14 +386,15 @@ extract_elist <- function(syns, lookup, lookup.nt = NULL, id = "bodyid", partner
 }
 
 # hidden
-extract_lookup <- function(syns){
+extract_lookup <- function(syns, type = c("label","top_nt")){
+  type = match.arg(type)
   colnames(syns) = snakecase::to_snake_case(colnames(syns))
   syns %>%
     dplyr::filter(.data$prepost==0) %>%
-    dplyr::distinct(.data$connector_id, .data$label, .keep_all = FALSE) %>%
+    dplyr::distinct(.data$connector_id, .data[[type]], .keep_all = FALSE) %>%
     as.data.frame(stringsAsFactors = FALSE) ->
     conn.lookup
-  lookup = conn.lookup$label
+  lookup = conn.lookup[[type]]
   names(lookup) = as.character(conn.lookup$connector_id)
   lookup = lookup[!names(lookup)%in%c("0","NA")]
   lookup

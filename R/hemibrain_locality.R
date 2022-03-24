@@ -83,11 +83,12 @@ compartment_metrics <- function(x, resample = 10, delta = 62.5, locality = FALSE
     overlap_locality = NA
   }else{
     # Synapses
+    lab = ifelse("label" %in% colnames(syns), "label", "Label")
     syns = tryCatch(hemibrain_extract_synapses(x), error = function(e) NULL)
-    axon_outputs = tryCatch(sum(syns$prepost==0&syns$Label%in%c(2,"axon")), error = function(e) NA)
-    dend_outputs = tryCatch(sum(syns$prepost==0&syns$Label%in%c(3,"dendrite")), error = function(e) NA)
-    axon_inputs = tryCatch(sum(syns$prepost==1&syns$Label%in%c(2,"axon")), error = function(e) NA)
-    dend_inputs = tryCatch(sum(syns$prepost==1&syns$Label%in%c(3,"dendrite")), error = function(e) NA)
+    axon_outputs = tryCatch(sum(syns$prepost==0&syns[[lab]]%in%c(2,"axon")), error = function(e) NA)
+    dend_outputs = tryCatch(sum(syns$prepost==0&syns[[lab]]%in%c(3,"dendrite")), error = function(e) NA)
+    axon_inputs = tryCatch(sum(syns$prepost==1&syns[[lab]]%in%c(2,"axon")), error = function(e) NA)
+    dend_inputs = tryCatch(sum(syns$prepost==1&syns[[lab]]%in%c(3,"dendrite")), error = function(e) NA)
     total_outputs = tryCatch(sum(syns$prepost==0), error = function(e) NA)
     total_inputs = tryCatch(sum(syns$prepost==1), error = function(e) NA)
 
@@ -100,10 +101,10 @@ compartment_metrics <- function(x, resample = 10, delta = 62.5, locality = FALSE
     }
 
     # Cable length
-    axon_length = tryCatch(summary(axonic_cable(x))$cable_length, error = function(e) NA)
-    dend_length = tryCatch(summary(dendritic_cable(x))$cable_length, error = function(e) NA)
-    pd_length = tryCatch(summary(primary_dendrite_cable(x))$cable_length, error = function(e) NA)
-    total_length = tryCatch(summary(x)$cable_length, error = function(e) NA)
+    axon_length = tryCatch(summary(axonic_cable(x))$cable.length, error = function(e) NA)
+    dend_length = tryCatch(summary(dendritic_cable(x))$cable.length, error = function(e) NA)
+    pd_length = tryCatch(summary(primary_dendrite_cable(x))$cable.length, error = function(e) NA)
+    total_length = tryCatch(summary(x)$cable.length, error = function(e) NA)
   }
 
   # Assemble
@@ -130,9 +131,9 @@ compartment_metrics <- function(x, resample = 10, delta = 62.5, locality = FALSE
   if(!locality){
     met$overlap_locality = NULL
   }
+  met = apply(met,2,function(c) signif(c, digits = 6))
   as.data.frame(t(apply(met, 1, unlist)), stringsAsFactors = FALSE)
 }
-
 
 #' Calculate the overlap score between a neurons axon dendrite
 #'
