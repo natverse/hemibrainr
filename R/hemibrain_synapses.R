@@ -464,7 +464,11 @@ get_top_nt <- function(syns.nt,
   if("cleft.threshold"%in%colnames(syns.nt)){
     syns.nt = subset(syns.nt, syns.nt$confidence >= cleft.threshold)
   }
-  if(is.issue(syns.nt)){
+  if(is.null(syns.nt)){
+    return( data.frame(top_nt = "unknown", top_p = "unknown") )
+  }else if(!length(syns.nt)){
+    return( data.frame(top_nt = "unknown", top_p = "unknown") )
+  }else if(is.na(syns.nt)|is.nan(syns.nt)){
     return( data.frame(top_nt = "unknown", top_p = "unknown") )
   }else if(!nrow(syns.nt)){
     return( data.frame(top_nt = "unknown", top_p = "unknown") )
