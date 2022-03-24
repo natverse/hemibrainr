@@ -215,6 +215,8 @@ extract_synapses <-function(x, pre_id = "pre_id", unitary = FALSE, meta = NULL){
         meta[[pre_id]] = bit64::as.integer64(meta[[pre_id]])
       }else if(is.character(syn[[pre_id]])){
         meta[[pre_id]] = as.character(meta[[pre_id]])
+      }else if(is.numeric(syn[[pre_id]])){
+        syn[[pre_id]] = as.character(syn[[pre_id]])
       }
       syn = dplyr::inner_join(syn, meta[,c(pre_id,"top_nt")],
                               by = pre_id,
@@ -467,8 +469,6 @@ get_top_nt <- function(syns.nt,
   if(is.null(syns.nt)){
     return( data.frame(top_nt = "unknown", top_p = "unknown") )
   }else if(!length(syns.nt)){
-    return( data.frame(top_nt = "unknown", top_p = "unknown") )
-  }else if(is.na(syns.nt)|is.nan(syns.nt)){
     return( data.frame(top_nt = "unknown", top_p = "unknown") )
   }else if(!nrow(syns.nt)){
     return( data.frame(top_nt = "unknown", top_p = "unknown") )
