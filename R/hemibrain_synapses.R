@@ -455,10 +455,10 @@ hemibrain_add_nt.neuron <- function(x,
 
 # find top_nt
 get_top_nt <- function(syns.nt,
-                             poss.nts=c("gaba", "acetylcholine", "glutamate", "octopamine", "serotonin","dopamine", "neither"),
-                             classic = FALSE,
-                             confidence.thresh = 0.5,
-                             cleft.threshold = 75){
+                       poss.nts=c("gaba", "acetylcholine", "glutamate", "octopamine", "serotonin","dopamine", "neither"),
+                       classic = FALSE,
+                       confidence.thresh = 0.5,
+                       cleft.threshold = 75){
   if("confidence.thresh"%in%colnames(syns.nt)){
     syns.nt = subset(syns.nt, syns.nt$confidence >= confidence.thresh)
     #   syns.nt = syns.nt[!duplicated(syns.nt$confidence),]
