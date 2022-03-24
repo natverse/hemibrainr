@@ -464,7 +464,9 @@ get_top_nt <- function(syns.nt,
   if("cleft.threshold"%in%colnames(syns.nt)){
     syns.nt = subset(syns.nt, syns.nt$confidence >= cleft.threshold)
   }
-  if(!nrow(syns.nt)){
+  if(is.issue(syns.nt)){
+    return( data.frame(top_nt = "unknown", top_p = "unknown") )
+  }else if(!nrow(syns.nt)){
     return( data.frame(top_nt = "unknown", top_p = "unknown") )
   }
   colnames(syns.nt) = snakecase::to_snake_case(colnames(syns.nt))
