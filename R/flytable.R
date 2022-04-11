@@ -35,7 +35,8 @@ hemibrain_ngl_scene, user from %s", tab), base = "flywire_matching")
 }
 
 # hidden
-flytable_matches_update <- function(df, dataset=c("flywire","hemibrain"), DryRun = FALSE){
+flytable_matches_meta_update <- function(df, dataset=c("flywire","hemibrain"), DryRun = FALSE){
+  dataset = match.arg(dataset)
   ft=flytable_matches(dataset=dataset)
   ft$id = NULL
   tab = "flywire_right" #switch(dataset, flywire = {"matching"}, hemibrain = {"hemibrain_matches"})
@@ -50,7 +51,8 @@ flytable_matches_update <- function(df, dataset=c("flywire","hemibrain"), DryRun
 }
 
 # hidden
-flytable_matches_update <- function(df = NULL, update_roots=TRUE, DryRun = FALSE, tab = "flywire_right"){
+flytable_matches_update <- function(df = NULL, update_roots=TRUE, DryRun = FALSE, tab = "flywire_right",  dataset=c("flywire","hemibrain")){
+  dataset = match.arg(dataset)
 
   # Get master data
   if(is.null(df)){
