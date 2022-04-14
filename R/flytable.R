@@ -35,12 +35,25 @@ hemibrain_ngl_scene, user from %s", tab), base = "flywire_matching")
 }
 
 # hidden
-flytable_matches_meta_update <- function(df, dataset=c("flywire","hemibrain"), DryRun = FALSE){
+flytable_matches_meta_update <- function(df, dataset=c("flywire","hemibrain"), DryRun = FALSE, tab = "flywire_right"){
+  key.cols = c("status", "root_id", "proofread", "status", "flywire_xyz", "cell_type",
+               "cell_class", "ito_lee_hemilineage", "top_nt",  "hemisphere_match_top_nt",
+               "hemibrain_match_top_nt",
+               "hemisphere_match_nblast", "hemibrain_match_nblast", "hemisphere_ngl_scene",
+               "hemibrain_ngl_scene", "hemilineage_nblast_1", "hemilineage_nblast_2", "hemilineage_nblast_3")
   dataset = match.arg(dataset)
   ft=flytable_matches(dataset=dataset)
-  ft$id = NULL
-  tab = "flywire_right" #switch(dataset, flywire = {"matching"}, hemibrain = {"hemibrain_matches"})
-  toupdate = setdiff(df, ft)
+  ft = subset(ft, ! flywire_xyz %in% c("none"," ",""))
+  ft2 = ft
+  key.cols = intersect(key.cols, colnames(ft))
+  key.cols = intersect(key.cols, colnames(df))
+  ft2[,key.cols] = df[match(ft2$flywire_xyz, df$flywire_xyz), key.cols]
+  #switch(dataset, flywire = {"matching"}, hemibrain = {"hemibrain_matches"})
+  if("top_nt"%in%colnames(df)){
+    ft2$hemisphere_match_top_nt = df$top_nt[match(ft2$hemisphere_match, df$root_id)]
+    # add hemibrain???
+  }
+  toupdate = setdiff(ft2, ft)
   if(DryRun)
     toupdate
   else {
@@ -124,8 +137,11 @@ flytable_update_proofread <- function(DryRun=FALSE, update_roots=TRUE, tab = "in
 
 # hidden
 flytable_update_status <- function(DryRun=FALSE, tab = "info", base = "main") {
-  ft=fafbseg::flytable_query(sprintf("select _id, root_id, status from %s", tab), base = base)
-  ft$status.new = standard_statuses(ft$status )
+  ft=fafbseg::flytable_query(sprintf("select _id, root_id, status, proofread from %s", tab), base = base)
+  ft$status.new = standard_statuses(ft$status)
+  bad.but.good = ft$status.new %in% c("incomplete","unknown","tiny","unassessed","needs_extending","hard") & ft$proofread
+  bad.but.good[is.na(bad.but.good)] = TRUE
+  ft$status.new[bad.but.good] = "adequate"
   toupdate=ft %>%
     dplyr::filter(status.new!=status) %>%
     dplyr::select(`_id`, status.new) %>%
