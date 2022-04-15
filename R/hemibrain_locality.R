@@ -48,6 +48,7 @@
 hemibrain_compartment_metrics <- function(x, resample = 10, delta = 62.5, locality = FALSE, ...){
   mets = nat::nlapply(x, compartment_metrics, resample = resample, delta = delta, locality = locality, ...)
   mets.df = do.call(rbind, mets)
+  mets.df$id = names(mets)
   if(nrow(mets.df)==length(x)){
     unik = setdiff(colnames(x[,]), colnames(mets.df))
     cbind(x[,unik],mets.df)
@@ -59,7 +60,8 @@ hemibrain_compartment_metrics <- function(x, resample = 10, delta = 62.5, locali
 
 # hidden
 compartment_metrics <- function(x, resample = 10, delta = 62.5, locality = FALSE, ...){
-
+  syns = tryCatch(hemibrain_extract_synapses(x), error = function(e) NULL)
+  lab = ifelse("label" %in% colnames(syns), "label", "Label")
   # Axon-dendrite split?
   if(!(sum(x$d$Label%in%c(2,"axon"))&sum(x$d$Label%in%c(3,"dendrite")))){
     warning("Axon / dendrite missing")
@@ -83,8 +85,6 @@ compartment_metrics <- function(x, resample = 10, delta = 62.5, locality = FALSE
     overlap_locality = NA
   }else{
     # Synapses
-    lab = ifelse("label" %in% colnames(syns), "label", "Label")
-    syns = tryCatch(hemibrain_extract_synapses(x), error = function(e) NULL)
     axon_outputs = tryCatch(sum(syns$prepost==0&syns[[lab]]%in%c(2,"axon")), error = function(e) NA)
     dend_outputs = tryCatch(sum(syns$prepost==0&syns[[lab]]%in%c(3,"dendrite")), error = function(e) NA)
     axon_inputs = tryCatch(sum(syns$prepost==1&syns[[lab]]%in%c(2,"axon")), error = function(e) NA)
@@ -132,7 +132,7 @@ compartment_metrics <- function(x, resample = 10, delta = 62.5, locality = FALSE
     met$overlap_locality = NULL
   }
   met = apply(met,2,function(c) signif(c, digits = 6))
-  as.data.frame(t(apply(met, 1, unlist)), stringsAsFactors = FALSE)
+  t(as.data.frame(met, stringsAsFactors = FALSE))
 }
 
 #' Calculate the overlap score between a neurons axon dendrite
