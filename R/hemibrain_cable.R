@@ -446,14 +446,12 @@ tract_cable.neuronlist <- function(x, ...){
 #' @inheritParams nat::prune_vertices
 #' @seealso \code{nat::\link[nat]{prune_vertices}}
 prune_vertices.neuprintneuron <- function (x, verticestoprune, invert = FALSE, ...){
-  pruned = nat::prune_vertices(x, verticestoprune, invert = invert,
-                               ...)
+  pruned = nat::prune_vertices(x, verticestoprune, invert = invert, ...)
   pruned$connectors = x$connectors[x$connectors$treenode_id %in%
                                      pruned$d$PointNo, ]
   relevant.points = subset(x$d, x$d$PointNo %in% pruned$d$PointNo)
   y = pruned
-  y$d = relevant.points[match(pruned$d$PointNo, relevant.points$PointNo),
-                        ]
+  y$d = relevant.points[match(pruned$d$PointNo, relevant.points$PointNo),]
   y$d$Parent = pruned$d$Parent
   y$tags = lapply(x$tags, function(t) t[t %in% pruned$d$PointNo])
   y$url = x$url
