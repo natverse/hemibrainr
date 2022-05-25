@@ -222,6 +222,54 @@ overlap_score_delta <- function(output.neurons, input.neurons, delta = 62.5, jus
   score.matrix
 }
 
+#
+projection_score.neuronlist <- function(x,
+                                        resample = NULL,
+                                        ...){
+  y = nat::nlapply(x,projection_score.neuron)
+  data.frame(id = names(y), projection_score = unlist(y))
+}
+
+projection_score.neuron <- function(x,
+                                    resample = NULL,
+                                    ...){
+
+  # Axon-dendrite split?
+  if(!(sum(x$d$Label%in%c(2,"axon"))&sum(x$d$Label%in%c(3,"dendrite")))){
+    warning("Axon / dendrite missing")
+  }
+
+  # Extract compartment cable
+  axon = axonic_cable(x)
+  dend = dendritic_cable(x)
+
+  # Resample compartments
+  if(!is.null(resample)){
+    axon.res = nat::resample(axon, stepsize = resample)
+    dend.res = nat::resample(dend, stepsize = resample)
+  }else{
+    axon.res = axon
+    dend.res = dend
+  }
+
+  # Calculate midpoints
+  axon.mid = colMeans(nat::xyzmatrix(axon.res))
+  dend.mid = colMeans(nat::xyzmatrix(dend.res))
+
+  # Euclidean distance between them
+  euc.dist = dist(rbind(axon.mid, dend.mid), method = "euclidean")[[1]]
+  euc.dist
+
+}
+
+
+
+
+
+
+
+
+
 
 
 
