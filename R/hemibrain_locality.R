@@ -226,7 +226,7 @@ overlap_score_delta <- function(output.neurons, input.neurons, delta = 62.5, jus
 projection_score.neuronlist <- function(x,
                                         resample = NULL,
                                         ...){
-  y = nat::nlapply(x,projection_score.neuron)
+  y = nat::nlapply(x,projection_score.neuron, ...)
   data.frame(id = names(y), projection_score = unlist(y))
 }
 
