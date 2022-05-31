@@ -21,7 +21,7 @@
 #' @param query.type  whether the query is a vector of xyz positions, flywire supervoxel IDs or flywire IDs ("flywire_xyz"/"flywire_svid"/"root_id").
 #' @param fw.meta a \code{data.frame} of meta data on flywire neurons, e.g. as produced by \code{flywire_tracing_sheets}.or read by \code{flywire_meta}.
 #' @param cloudvolume.url URL for CloudVolume to fetch segmentation image data. The default value of NULL choose
-#' @param nblast the nblast matrix used to update your workflow googlesheet.
+#' @param nblast the nblast matrix used to update your workflow googlesheet.f
 #' @param Verbose logical, if \code{TRUE} then \code{hemibrainr} communicates what it has found.
 #' @param ... methods passed to \code{googlesheets4} functions.
 #'.
@@ -486,7 +486,7 @@ flywire_deploy_workflows <-function(ws = "flywire",
     clear = FALSE, total = length(tabs))
   for(missing in workflow.tabs.missing){
     try(pbm$tick(tokens = list(what = missing)), silent = TRUE)
-    please.add = subset(main, main$tab == missing)
+    please.add = subset(main, main$tab == missing)[1,]
     fw = try(flywire_workflow(root_id = please.add$root_id,
                           status = please.add$status,
                           ws=missing,
