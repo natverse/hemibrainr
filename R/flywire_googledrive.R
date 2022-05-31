@@ -637,7 +637,6 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
   if(is.null(selected_sheets)){
     selected_sheets = getOption("hemibrainr_gsheets", stop("Please set option('hemibrainr_gsheets')"))
   }
-  fw.columns = c("root_id","fw.x","fw.y","fw.z","flywire_xyz","flywire_svid")
   tracing.list = list()
   for(selected_sheet in selected_sheets){
     ## Read Google sheets and extract flywire neuron positions
@@ -657,109 +656,126 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
       format = "  updating tab :what [:bar] :percent eta: :eta",
       clear = !Verbose, total = length(tabs))
     for(tab in tabs){
+      fw.columns = c("root_id","fw_x","fw_y","fw_z","flywire_xyz","flywire_svid")
       # Update progress bar
       pb$tick(tokens = list(what = tab))
       # Get google sheet tab as data frame
       gs.t = gs.t.current = flywire_tracing_sheet(ws = tab, selected_sheet=selected_sheet, Verbose = FALSE)
+      # If post_id or pre_id a stand in for root_id
+      if(!"root_id"%in%gs.t.current){
+        if(sum(c("pre_id","post_id")%in%colnames(gs.t.current))==1){
+          fw.id = intersect(c("pre_id","post_id"), colnames(gs.t.current))
+          fw.columns = c(fw.columns,fw.id)
+        }
+      }else{
+        fw.id = "root_id"
+      }
       # Get original columns for later
       used.cols = colnames(gs.t.current)
       ## if valid data frame with flywire columnes
       if(nrow(gs.t)&&ncol(gs.t)&&sum(fw.columns%in%used.cols)>0){
-        # Separate x,y,z positions
-        for(fw.c in fw.columns){
-          if(is.null(gs.t[[fw.c]])){
-            gs.t[[fw.c]] = NA
-          }
-        }
-        # Get seemingly good xyz flywire positions
-        good.xyz = sapply(gs.t$flywire_xyz,function(x) length(tryCatch(nat::xyzmatrix(x),error = function(e) NA))==3)
-        # If coordinates separately given, combine
-        gs.t[!good.xyz,c("flywire_xyz")] = apply(gs.t[!good.xyz,c("fw.x","fw.y",'fw.z')],1,paste_coords)
-        good.xyz = sapply(gs.t$flywire_xyz,function(x) length(tryCatch(nat::xyzmatrix(x),error = function(e) NA))==3)
-        # Provide separate columns for x,y,z positions
-        if(sum(good.xyz)){
-          gs.t[good.xyz,c("fw.x","fw.y","fw.z")] = nat::xyzmatrix(gs.t[good.xyz,"flywire_xyz"])
-        }
-        # If flywire_svid missing, update
-        bad.svids = (is.na(gs.t$flywire_svid)|gs.t$flywire_svid=="0")&!is.na(gs.t$flywire_xyz)
-        if(sum(bad.svids)>0 & "flywire_svid"%in%colnames(gs.t)){
-          gs.t$flywire_svid[bad.svids] = tryCatch(fafbseg::flywire_xyz2id(nat::xyzmatrix(gs.t$flywire_xyz[bad.svids]),
-                                                                 root=FALSE,
-                                                                 rawcoords = TRUE),
-                                                  error = function(e){
-                                                    warning(as.character(e))
-                                                    NA
-                                                  })
-        }
-        fids = NULL
-        if(!all(is.na(gs.t$flywire_xyz))){
-          # Get the ids that need to be updated
-          fwids.old = gs.t$root_id
-          fwids.old.not.good = is.na(gs.t$root_id)|gs.t$root_id%in%c("0","NA",""," ","\n")|!grepl("^[0-9]{1,}$", gs.t$root_id)
-          latest = !fwids.old.not.good
-          latest[latest] = tryCatch(fafbseg::flywire_islatest(fwids.old[latest]), error = function(e){
-            sapply(fwids.old[latest], function(fo) tryCatch(fafbseg::flywire_islatest(fo), error = function(e) FALSE))
+        xyz_there = "flywire_xyz" %in% used.cols | all( c("fw_x","fw_y","fw_z") %in% used.cols )
+        if(xyz_there){
+          # Separate x,y,z positions
+          for(fw.c in fw.columns){
+            if(is.null(gs.t[[fw.c]])){
+              gs.t[[fw.c]] = NA
             }
-          )
-          latest = as.logical(latest)
-          latest[is.na(latest)] = FALSE
-          gs.n = gs.t[!latest,]
-          if(sum(!latest)>0){
-            # Get flywire IDs from these positions
-            bbx = matrix(c(5100, 1440, 16, 59200, 29600, 7062),ncol=3,byrow = TRUE)
-            bbx = nat::boundingbox(scale(bbx, scale = 1/c(4, 4, 40), center = FALSE))
-            gs.n$fw.x = as.numeric(gs.n$fw.x)
-            gs.n$fw.y = as.numeric(gs.n$fw.y)
-            gs.n$fw.z = as.numeric(gs.n$fw.z)
-            pos = gs.n[apply(gs.n, 1, function(row) sum(is.na(row[c("fw.x","fw.y",'fw.z')]))==0),]
-            p = nat::pointsinside(pos[,c("fw.x","fw.y",'fw.z')],bbx)
-            pos = pos[p,]
-            pos = pos[!is.na(pos$fw.x),]
-            if(nrow(pos)){
-              foreach.ids = try(fafbseg::flywire_xyz2id(pos[,c("fw.x","fw.y",'fw.z')], rawcoords = TRUE), silent = TRUE)
-              sleep = 10
-              if(class(foreach.ids)=="try-error" & retry>0){
-                retry = as.integer(retry)
-                while(retry>0&class(foreach.ids)=="try-error"){
-                  Sys.sleep(sleep)
-                  retry=retry-1
-                  foreach.ids = try(fafbseg::flywire_xyz2id(pos[,c("fw.x","fw.y",'fw.z')], rawcoords = TRUE), silent = TRUE)
-                  sleep = sleep+sleep
+          }
+
+          # Get seemingly good xyz flywire positions
+          good.xyz = sapply(gs.t$flywire_xyz,function(x) length(tryCatch(nat::xyzmatrix(x),error = function(e) NA))==3)
+          # If coordinates separately given, combine
+          gs.t[!good.xyz,c("flywire_xyz")] = apply(gs.t[!good.xyz,c("fw_x","fw_y",'fw_z')],1,paste_coords)
+          good.xyz = sapply(gs.t$flywire_xyz,function(x) length(tryCatch(nat::xyzmatrix(x),error = function(e) NA))==3)
+          # Provide separate columns for x,y,z positions
+          if(sum(good.xyz)){
+            gs.t[good.xyz,c("fw_x","fw_y","fw_z")] = nat::xyzmatrix(gs.t[good.xyz,"flywire_xyz"])
+          }
+          good.xyz = !is.na(gs.t$fw_x)
+          # If flywire_svid missing, update
+          bad.svids = (is.na(gs.t$flywire_svid)|gs.t$flywire_svid=="0")&!is.na(gs.t$flywire_xyz)
+          if(sum(bad.svids)>0 & "flywire_svid"%in%colnames(gs.t) & sum(good.xyz)>1){
+            gs.t$flywire_svid[bad.svids] = tryCatch(fafbseg::flywire_xyz2id(nat::xyzmatrix(gs.t$flywire_xyz[bad.svids]),
+                                                                            root=FALSE,
+                                                                            rawcoords = TRUE),
+                                                    error = function(e){
+                                                      warning(as.character(e))
+                                                      NA
+                                                    })
+          }
+          fids = NULL
+          if(!all(is.na(gs.t$flywire_xyz))){
+            # Get the ids that need to be updated
+            fwids.old = gs.t[[fw.id]]
+            fwids.old.not.good = is.na(gs.t[[fw.id]])|gs.t[[fw.id]]%in%c("0","NA",""," ","\n")|!grepl("^[0-9]{1,}$", gs.t[[fw.id]])
+            latest = !fwids.old.not.good
+            latest[latest] = tryCatch(fafbseg::flywire_islatest(fwids.old[latest]), error = function(e){
+              sapply(fwids.old[latest], function(fo) tryCatch(fafbseg::flywire_islatest(fo), error = function(e) FALSE))
+            }
+            )
+            latest = as.logical(latest)
+            latest[is.na(latest)] = FALSE
+            #gs.n = gs.t[!latest,]
+            if(sum(!latest)>0){ ### Try to work out from xyz even if out of range
+              # Get flywire IDs from these positions
+              bbx = matrix(c(5100, 1440, 16, 59200, 29600, 7062),ncol=3,byrow = TRUE)
+              bbx = nat::boundingbox(scale(bbx, scale = 1/c(4, 4, 40), center = FALSE))
+              gs.n$fw.x = as.numeric(gs.n$fw.x)
+              gs.n$fw.y = as.numeric(gs.n$fw.y)
+              gs.n$fw.z = as.numeric(gs.n$fw.z)
+              pos = gs.n[apply(gs.n, 1, function(row) sum(is.na(row[c("fw.x","fw.y",'fw.z')]))==0),]
+              p = nat::pointsinside(pos[,c("fw.x","fw.y",'fw.z')],bbx)
+              pos = pos[p,]
+              pos = pos[!is.na(pos$fw.x),]
+              if(nrow(pos)){
+                foreach.ids = try(fafbseg::flywire_xyz2id(pos[,c("fw.x","fw.y",'fw.z')], rawcoords = TRUE), silent = TRUE)
+                sleep = 10
+                if(class(foreach.ids)=="try-error" & retry>0){
+                  retry = as.integer(retry)
+                  while(retry>0&class(foreach.ids)=="try-error"){
+                    Sys.sleep(sleep)
+                    retry=retry-1
+                    foreach.ids = try(fafbseg::flywire_xyz2id(pos[,c("fw.x","fw.y",'fw.z')], rawcoords = TRUE), silent = TRUE)
+                    sleep = sleep+sleep
+                  }
                 }
+                if(class(foreach.ids)=="try-error"){
+                  stop(paste0("fafbseg::flywire_xyz2id could not be used for ", tab," in sheet ", selected_sheet))
+                }
+                names(foreach.ids) = pos[,"flywire_xyz"]
+              }else{
+                foreach.ids = NULL
               }
-              if(class(foreach.ids)=="try-error"){
-                stop(paste0("fafbseg::flywire_xyz2id could not be used for ", tab," in sheet ", selected_sheet))
+              fids = unlist(foreach.ids)
+              if(!is.null(fids)){
+                fids[is.na(fids)|is.nan(fids)] = "0"
+                replacement = fids[match(gs.n$flywire_xyz ,names(fids))]
+                coordsmissing = gs.n$flywire_xyz==paste_coords(matrix(NA,ncol=3))
+                coordsmissing[is.na(gs.n$flywire_xyz)] = TRUE
+                coordsmissing[is.na(replacement)] = TRUE
+                replacement[coordsmissing] = gs.n[[fw.id]][coordsmissing]
+                gs.t[[fw.id]][!latest] = as.character(replacement)
               }
-              names(foreach.ids) = pos[,"flywire_xyz"]
+            }# END latest
+          }
+
+          # If ID is given and no xyz
+          bad.xyz = (is.na(gs.t$flywire_xyz)|gs.t$flywire_xyz=="0")&!is.na(gs.t[[fw.id]])
+          if(sum(bad.xyz)>0){
+            ids.fresh = try(fafbseg::flywire_updateids(gs.t[[fw.id]][bad.xyz]),silent = TRUE)
+            if(!"try-error"%in%class(ids.fresh)){
+              gs.t[[fw.id]][bad.xyz] = as.character(ids.fresh)
             }else{
-              foreach.ids = NULL
-            }
-            fids = unlist(foreach.ids)
-            if(!is.null(fids)){
-              fids[is.na(fids)|is.nan(fids)] = "0"
-              replacement = fids[match(gs.n$flywire_xyz ,names(fids))]
-              coordsmissing = gs.n$flywire_xyz==paste_coords(matrix(NA,ncol=3))
-              coordsmissing[is.na(gs.n$flywire_xyz)] = TRUE
-              coordsmissing[is.na(replacement)] = TRUE
-              replacement[coordsmissing] = gs.n$root_id[coordsmissing]
-              gs.t$root_id[!latest] = as.character(replacement)
+              warning(ids.fresh)
             }
           }
         }
-        # If ID is given and no xyz
-        bad.xyz = (is.na(gs.t$flywire_xyz)|gs.t$flywire_xyz=="0")&!is.na(gs.t$root_id)
-        if(sum(bad.xyz)>0){
-          ids.fresh = try(fafbseg::flywire_latestid(gs.t$root_id[bad.xyz]),silent = TRUE)
-          if(!"try-error"%in%class(ids.fresh)){
-            gs.t$root_id[bad.xyz] = as.character(ids.fresh)
-          }else{
-            warning(ids.fresh)
-          }
-        }
+
         # If only skid given try and guess root_id
         if("skid"%in%used.cols){
           justskids=((gs.t$flywire_xyz==paste_coords(matrix(NA,ncol=3))|is.na(gs.t$flywire_xyz))
-                     &(is.na(gs.t$root_id)|gs.t$root_id=='0')
+                     &(is.na(gs.t[[fw.id]])|gs.t[[fw.id]]=='0')
                      &!is.na(gs.t$skid))
           justskids[is.na(justskids)] = FALSE
           if(sum(justskids)>0){
@@ -769,34 +785,37 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
             if(inherits(replacement.ids,"try-error")){
               warning(replacement.ids)
             }else{
-              replacement.ids = tryCatch(as.character(replacement.ids$root_id), error = function(e) NA)
+              replacement.ids = tryCatch(as.character(replacement.ids[[fw.id]]), error = function(e) NA)
               gs.t[justskids,"root_id"] = replacement.ids
             }
           }
         }
+
         # update with flywire_xyz if possible
         if(!is.null(meta)){
           justids=(gs.t$flywire_xyz==paste_coords(matrix(NA,ncol=3))
                   |is.na(gs.t$flywire_xyz)
-                  &!is.na(gs.t$root_id))
+                  &!is.na(gs.t[[fw.id]]))
           justids[is.na(justids)] = FALSE
           if(sum(justids)>0){
-            replacement.xyz = meta[match(gs.t[justids,"root_id"],meta$root_id),]$flywire_xyz
+            replacement.xyz = meta[match(gs.t[justids,"root_id"],meta[[fw.id]]),]$flywire_xyz
             gs.t[justids,"flywire_xyz"] = replacement.xyz
           }
         }
+
         # Change 0 to NA
         good.xyz = sapply(gs.t$flywire_xyz,function(x) length(tryCatch(nat::xyzmatrix(x),error = function(e) NA))==3)
         if(sum(good.xyz)){
           gs.t$flywire_xyz[good.xyz] = try(apply(nat::xyzmatrix(gs.t$flywire_xyz[good.xyz]),1,paste_coords), silent = TRUE)
         }
         gs.t$flywire_xyz[gs.t$flywire_xyz==paste_coords(matrix(NA,ncol=3))] = NA
-        gs.t$root_id[gs.t$root_id==0]=NA
+        gs.t[[fw.id]][gs.t[[fw.id]]==0]=NA
+
         # Write to google sheet
         if(nrow(gs.t)!=nrow(gs.t.current)){
           stop("Sheet processing corruption. Flywire.id update failed.")
         }
-        gs.t$root_id = as.character(gs.t$root_id)
+        gs.t[[fw.id]] = as.character(gs.t[[fw.id]])
         gs.t$flywire_svid = as.character(gs.t$flywire_svid)
         write.cols = intersect(fw.columns,used.cols)
         if(length(fids) & length(write.cols)){
@@ -807,6 +826,7 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
             sheet = tab,
             Verbose = FALSE)
         }
+
         # Now continue processing
         gs.t = gs.t[,colnames(gs.t)%in%chosen.columns]
         for(col in chosen.columns){
@@ -824,31 +844,90 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
   }
   # Make this unique, but keep row with most information
   master = do.call(plyr::rbind.fill, tracing.list)
-  master = master[!is.na(master$flywire_xyz),]
-  master$filled = apply(master, 1, function(r) sum(!is.na(r)))
-  master = master[order(master$filled,decreasing = TRUE),]
-  master = master[!duplicated(master$flywire_xyz),]
-  rownames(master) = master$flywire_xyz
-  master$root_id = bit64::as.integer64(master$root_id)
-  master$flywire_svid = bit64::as.integer64(master$flywire_svid)
-  if(match){
-    if(is.null(matching_sheet)){
-      flytable = TRUE
-    }else{
-      flytable = FALSE
+  if("root_id"%in%colnames(master)){
+    master = master[!is.na(master$flywire_xyz),]
+    master$filled = apply(master, 1, function(r) sum(!is.na(r)))
+    master = master[order(master$filled,decreasing = TRUE),]
+    master = master[!duplicated(master$flywire_xyz),]
+    rownames(master) = master$flywire_xyz
+    master$root_id = bit64::as.integer64(master$root_id)
+    master$flywire_svid = bit64::as.integer64(master$flywire_svid)
+    if(match){
+      if(is.null(matching_sheet)){
+        flytable = TRUE
+      }else{
+        flytable = FALSE
+      }
+      matches = hemibrain_matches(selected_file = matching_sheet, priority = priority, flytable = flytable)
+      matches = subset(matches, matches$match.dataset == "hemibrain" &  matches$dataset == "flywire")
+      master$hemibrain_match = matches[match(master$root_id, matches$id), "match"]
+      master$hemibrain_match_quality = matches[match(master$root_id, matches$id),"quality"]
+      master$fafb_hemisphere_match = matches[match(master$root_id, matches$id), "fafb_hemisphere_match"]
+      master$fafb_hemisphere_match.quality = matches[match(master$root_id, matches$id),"fafb_hemisphere_match.quality"]
+      master$cell_type = matches[match(master$root_id, matches$id), "cell_type"]
     }
-    matches = hemibrain_matches(selected_file = matching_sheet, priority = priority, flytable = flytable)
-    matches = subset(matches, matches$match.dataset == "hemibrain" &  matches$dataset == "flywire")
-    master$hemibrain_match = matches[match(master$root_id, matches$id), "match"]
-    master$hemibrain_match_quality = matches[match(master$root_id, matches$id),"quality"]
-    master$fafb_hemisphere_match = matches[match(master$root_id, matches$id), "fafb_hemisphere_match"]
-    master$fafb_hemisphere_match.quality = matches[match(master$root_id, matches$id),"fafb_hemisphere_match.quality"]
-    master$cell_type = matches[match(master$root_id, matches$id), "cell_type"]
+    master = subset(master, !is.na(master$root_id))
+    master$filled = NULL
+    colnames(master) = snakecase::to_snake_case(colnames(master))
+    master
+  }else{
+    invisible()
   }
-  master = subset(master, !is.na(master$root_id))
-  master$filled = NULL
-  colnames(master) = snakecase::to_snake_case(colnames(master))
-  master
+}
+
+flywire_gsheet_update_ids <- function(selected_sheets, ws = NULL){
+  for(selected_sheet in selected_sheets){
+    ## Read Google sheets and extract flywire neuron positions
+    message("### Working on google sheet: ", selected_sheet)
+    if(is.null(ws)){
+      tabs = gsheet_manipulation(FUN = googlesheets4::sheet_names,
+                                 ss = selected_sheet,
+                                 return = TRUE,
+                                 Verbose = FALSE)
+    }else{
+      if(regex){
+        ws=regex_tab_names(regex=ws,selected_sheet=selected_sheet)$name
+      }
+      tabs=ws
+    }
+    pb = progress::progress_bar$new(
+      format = "  updating tab :what [:bar] :percent eta: :eta",
+      clear = FALSE, total = length(tabs))
+    for(tab in tabs){
+      pb$tick(tokens = list(what = tab))
+      # Get google sheet tab as data frame
+      gs.t = gs.t.current = flywire_tracing_sheet(ws = tab, selected_sheet=selected_sheet, Verbose = FALSE)
+      # If post_id or pre_id a stand in for root_id
+      if(!"root_id"%in%gs.t.current){
+        if(sum(c("pre_id","post_id")%in%colnames(gs.t.current))==1){
+          fw.id = intersect(c("pre_id","post_id"), colnames(gs.t.current))
+        }else{
+          warning("not root_id column to update for ", tab)
+          next
+        }
+      }else{
+        fw.id = "root_id"
+      }
+
+      # Update ID
+      gs.t[[fw.id]] = tryCatch(flywire_updateids(x=gs.t[[fw.id]]),
+                               error = function(e)
+                               pbapply::pbsapply(gs.t[[fw.id]], function(x) tryCatch(flywire_updateids(x=x),error=function(e) x))
+                                 )
+
+      # Write to google sheet
+      if(nrow(gs.t)!=nrow(gs.t.current)){
+        stop("Sheet processing corruption. Flywire.id update failed.")
+      }
+      gs.t[[fw.id]] = as.character(gs.t[[fw.id]])
+      gsheet_update_cols(
+        write.cols = fw.id,
+        gs=gs.t,
+        selected_sheet = selected_sheet,
+        sheet = tab,
+        Verbose = FALSE)
+    }
+  }
 }
 
 #' Update neuron match information on a google sheet
