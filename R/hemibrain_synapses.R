@@ -404,18 +404,32 @@ extract_lookup <- function(syns, type = c("label","top_nt")){
 
 # read synapes
 hemibrain_syns_nt <- function(nt.file = "/Volumes/GoogleDrive/Shared drives/hemibrain/fafbsynapses/synister_hemi_whole_volume_v0_t8.feather"){
-  arf = arrow::read_feather(nt.file)
-  colnames(arf) = gsub("nts_3\\.","",colnames(arf))
-  arf %>%
-    dplyr::rename(connector_id = id)
+  if(grepl("parquet$",nt.file)){
+    arf = arrow::read_parquet(nt.file)
+    colnames(arf) = gsub("nts_8\\.","",colnames(arf))
+    arf %>%
+      dplyr::rename(connector_id = id)
+  }else{
+    arf = arrow::read_feather(nt.file)
+    colnames(arf) = gsub("nts_3\\.","",colnames(arf))
+    arf %>%
+      dplyr::rename(connector_id = id)
+  }
 }
 
 # read synapes
 flywire_syns_nt <- function(nt.file = "/Volumes/GoogleDrive/Shared drives/hemibrain/fafbsynapses/synister_fafb_whole_volume_v3_t11.parquet"){
-  arf = arrow::read_parquet(nt.file)
-  colnames(arf) = gsub("nts_8\\.","",colnames(arf))
-  arf %>%
-    dplyr::rename(connector_id = id)
+  if(grepl("feather$",nt.file)){
+    arf = arrow::read_feather(nt.file)
+    colnames(arf) = gsub("nts_3\\.","",colnames(arf))
+    arf %>%
+      dplyr::rename(connector_id = id)
+  }else{
+    arf = arrow::read_parquet(nt.file)
+    colnames(arf) = gsub("nts_8\\.","",colnames(arf))
+    arf %>%
+      dplyr::rename(connector_id = id)
+  }
 }
 
 # hidden
