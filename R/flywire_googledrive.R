@@ -897,6 +897,9 @@ flywire_gsheet_update_ids <- function(selected_sheets, ws = NULL){
       pb$tick(tokens = list(what = tab))
       # Get google sheet tab as data frame
       gs.t = gs.t.current = flywire_tracing_sheet(ws = tab, selected_sheet=selected_sheet, Verbose = FALSE)
+      if(!nrow(gs.t)){
+        next
+      }
       # If post_id or pre_id a stand in for root_id
       if(!"root_id"%in%gs.t.current){
         if(sum(c("pre_id","post_id")%in%colnames(gs.t.current))==1){
