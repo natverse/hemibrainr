@@ -535,7 +535,12 @@ sql_col_types = readr::cols(.default = "c",
                             axon_postsynapse_side_index='n',
                             axon_presynapse_side_index='n',
                             dendrite_postsynapse_side_index='n',
-                            dendrite_presynapse_side_index='n')
+                            dendrite_presynapse_side_index='n',
+                            conf_nt = 'c',
+                            conf_nt_p = 'n',
+                            Tags = 'c',
+                            tags = 'c',
+                            neither = 'n')
 
 #' @rdname flywire_googledrive_data
 #' @export
