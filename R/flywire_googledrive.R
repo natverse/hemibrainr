@@ -540,7 +540,14 @@ sql_col_types = readr::cols(.default = "c",
                             conf_nt_p = 'n',
                             Tags = 'c',
                             tags = 'c',
-                            neither = 'n')
+                            neither = 'n',
+                            conf_nt_p = 'n',
+                            hemibrain_match_conf_nt_p='n',
+                            hemisphere_match_conf_nt_p='n',
+                            match_conf_nt_p='n',
+                            prod_i='n',
+                            sum_a='n',
+                            conf_nt = 'c')
 
 #' @rdname flywire_googledrive_data
 #' @export
