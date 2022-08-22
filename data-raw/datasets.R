@@ -39,7 +39,7 @@ hemibrain_hemilineages = read.csv("data-raw/annotations/hemibrain_hemilineages_c
 hemibrain_hemilineages = hemibrain_hemilineages[order(hemibrain_hemilineages$cellBodyFiber),]
 hemibrain_hemilineages$notes = NULL
 hemibrain_hemilineages = hemibrain_hemilineages[hemibrain_hemilineages$cellBodyFiber!="",]
-hemibrain_hemilineages = hemibrain_hemilineages[!duplicated(hemibrain_hemilineages$cellBodyFiber),]
+#hemibrain_hemilineages = hemibrain_hemilineages[!duplicated(hemibrain_hemilineages$cellBodyFiber),]
 rownames(hemibrain_hemilineages) = NULL
 hemibrain_hemilineages = as.data.frame(apply(hemibrain_hemilineages,2,function(c) gsub(" ","",c)), stringsAsFactors = FALSE)
 colnames(hemibrain_hemilineages) = snakecase::to_snake_case(colnames(hemibrain_hemilineages))
