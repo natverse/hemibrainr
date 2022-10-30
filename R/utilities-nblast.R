@@ -19,15 +19,18 @@ nblast_big <-function(query.neuronlistfh,
                       update.old = NULL,
                       outfile = "",
                       overlap = FALSE,
-                      split = FALSE){
+                      split = FALSE,
+                      check_function = is_big_dps){
 
   # Register cores
   check_package_available("nat.nblast")
   check_package_available("doParallel")
+  check_package_available("doSNOW")
   batch.size = numCores #floor(sqrt(numCores))
   # cl = parallel::makeForkCluster(batch.size)
   cl = parallel::makeCluster(batch.size, outfile = outfile)
   doParallel::registerDoParallel(cl)
+  doSNOW::registerDoSNOW(cl)
   if(numCores<2){
     `%go%` <- foreach::`%do%`
   }else{
@@ -52,6 +55,12 @@ nblast_big <-function(query.neuronlistfh,
   }else{
     query.names = query
     target.names = target
+  }
+
+  # Initialize matrix
+  nblast.mat = bigstatsr::FBM(length(target.names),length(query.names), init = NA)
+  if(!file.exists(update.old)){
+    update.old = NULL
   }
 
   # Make matrix to fill
@@ -92,16 +101,26 @@ nblast_big <-function(query.neuronlistfh,
   ### This is a slightly more inefficient way
   batches.query = split(sample(query), round(seq(from = 1, to = batch.size, length.out = length(query))))
   batches.target = split(sample(target), round(seq(from = 1, to = batch.size, length.out = length(target))))
-  by.query <- foreach::foreach (chosen.query = batches.query, .combine = 'c', .errorhandling='pass') %:%
-    foreach::foreach (chosen.target = batches.target, .combine = 'c', .errorhandling='pass') %go% {
+
+  # Progress bar
+  iterations <- length(batches.query)
+  pb <- txtProgressBar(max = iterations, style = 3)
+  progress <- function(n) setTxtProgressBar(pb, n)
+  opts <- list(progress = progress)
+
+  # Parallel process
+  by.query <- foreach::foreach(chosen.query = batches.query, .combine = 'c', .errorhandling='pass', .options.snow = opts) %:%
+    foreach::foreach(chosen.target = batches.target, .combine = 'c', .errorhandling='pass') %go% {
       ## this would be a better way of doing it, but at the moment thwarted by DB1 lock files
       query.neuronlist = query.neuronlistfh[chosen.query]
       target.neuronlist = target.neuronlistfh[chosen.target]
       query.addition.neuronlist = NULL
       if(!is.null(query.neuronlist)&&length(query.neuronlist)){
         ### This is a slightly more inefficient way
-        query.neuronlist = query.neuronlist[unlist(sapply(query.neuronlist, is_big_dps,no.points=no.points))]
-        target.neuronlist = target.neuronlist[unlist(sapply(target.neuronlist, is_big_dps,no.points=no.points))]
+        if(!is.null(check_function)){
+          query.neuronlist = query.neuronlist[unlist(sapply(query.neuronlist, check_function ,no.points=no.points))]
+          target.neuronlist = target.neuronlist[unlist(sapply(target.neuronlist, check_function,no.points=no.points))]
+        }
         if(!is.null(query.addition.neuronlistfh)){
           query.addition.neuronlist = query.addition.neuronlistfh[names(query.addition.neuronlistfh)%in%chosen.query]
         }else{
@@ -186,7 +205,7 @@ nblast_big <-function(query.neuronlistfh,
             query.neuronlist = c(q.axons, q.dendrites)
             query.neuronlist = c(t.axons, t.dendrites)
           }
-          nblast.res.sub = overlap_score_delta(query.neuronlist, target.neuronlist, ...)
+          nblast.res.sub = overlap_score_delta(query.neuronlist, target.neuronlist)
         }
         # Compress
         if(compress){
@@ -195,7 +214,8 @@ nblast_big <-function(query.neuronlistfh,
         }
         nblast.mat[match(chosen.target, target),match(chosen.query, query)] = nblast.res.sub
         #try({nblast.mat[match(chosen.target, target),match(chosen.query, query)] = nblast.res.sub}, silent = FALSE)
-        nblast.res.sub
+        #nblast.res.sub
+        NULL
       }
     }
   parallel::stopCluster(cl)
