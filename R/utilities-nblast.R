@@ -109,17 +109,23 @@ nblast_big <-function(query.neuronlistfh,
   opts <- list(progress = progress)
 
   # Parallel process
-  by.query <- foreach::foreach(chosen.query = batches.query, .combine = 'c', .errorhandling='pass', .options.snow = opts) %:%
-    foreach::foreach(chosen.target = batches.target, .combine = 'c', .errorhandling='pass') %go% {
+  by.query <- foreach::foreach(chosen.query = batches.query, .combine = 'c', .errorhandling='pass', .options.snow = opts) %do%
+     foreach::foreach(chosen.target = batches.target, .combine = 'c', .errorhandling='pass') %go% {
       ## this would be a better way of doing it, but at the moment thwarted by DB1 lock files
-      query.neuronlist = query.neuronlistfh[chosen.query]
-      target.neuronlist = target.neuronlistfh[chosen.target]
+      query.neuronlist = query.neuronlistfh[names(query.neuronlistfh)%in%unlist(chosen.query)]
+      target.neuronlist = target.neuronlistfh[names(target.neuronlistfh)%in%unlist(chosen.target)]
+      chosen.query = names(query.neuronlist)
+      chosen.target = names(target.neuronlist)
+      if(!length(query.neuronlist)|!length(target.neuronlist)){
+        message("chosen not in data")
+        next
+      }
       query.addition.neuronlist = NULL
       if(!is.null(query.neuronlist)&&length(query.neuronlist)){
         ### This is a slightly more inefficient way
         if(!is.null(check_function)){
-          query.neuronlist = query.neuronlist[unlist(sapply(query.neuronlist, check_function ,no.points=no.points))]
-          target.neuronlist = target.neuronlist[unlist(sapply(target.neuronlist, check_function,no.points=no.points))]
+          query.neuronlist = query.neuronlist[unlist(sapply(query.neuronlist, check_function , no.points))]
+          target.neuronlist = target.neuronlist[unlist(sapply(target.neuronlist, check_function, no.points))]
         }
         if(!is.null(query.addition.neuronlistfh)){
           query.addition.neuronlist = query.addition.neuronlistfh[names(query.addition.neuronlistfh)%in%chosen.query]
@@ -205,6 +211,7 @@ nblast_big <-function(query.neuronlistfh,
             query.neuronlist = c(q.axons, q.dendrites)
             query.neuronlist = c(t.axons, t.dendrites)
           }
+          message("Running overlap")
           nblast.res.sub = overlap_score_delta(query.neuronlist, target.neuronlist)
         }
         # Compress
@@ -212,7 +219,7 @@ nblast_big <-function(query.neuronlistfh,
           nblast.res.sub[nblast.res.sub<threshold] = threshold
           nblast.res.sub = round(nblast.res.sub, digits=digits)
         }
-        nblast.mat[match(chosen.target, target),match(chosen.query, query)] = nblast.res.sub
+        nblast.mat[match(unlist(chosen.target), target),match(unlist(chosen.query), query)] = nblast.res.sub
         #try({nblast.mat[match(chosen.target, target),match(chosen.query, query)] = nblast.res.sub}, silent = FALSE)
         #nblast.res.sub
         NULL
