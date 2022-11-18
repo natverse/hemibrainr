@@ -8,7 +8,6 @@ examples
 .httr-oauth
 .Renviron
 *hemibrain_data/
-data-raw/annotations/
 .DS_Store
 vignettes/future/*
 data-raw/metrics/

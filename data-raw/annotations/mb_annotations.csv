@@ -1,0 +1,79 @@
+bodyId,primary_neurite,type,instance,compartments,pre,post,status,classification,typical_atypical,comment,soma,dendrite,axon,naive_valence,valence,neurotransmitter,included,exclusion_reason
+518930199,,MBON35,MBON35(y2)(ADM02)_R,y2,1746,21187,Traced,safe,Atypical,,R,R,R,None,None,None,x,
+611089775,,MBON35,MBON35(y2)_L,y2,465,14115,Traced,safe,Atypical,,L,L,L,None,None,None,x,
+673509195,,MBON01,MBON01(y5B'2a)(ADM07)_L,y5B'2a,2231,28757,Traced,safe,Typical,,L,L,L & small RHS axon,aver,app,glut,x,
+612371421,,MBON01,MBON01(y5B'2a)(ADM07)_R,y5B'2a,2208,32516,Traced,safe,Typical,,R,R,R,aver,app,glut,x,
+5813022341,,MBON02,MBON02(B2B'2a)(ADM07)_L,B2B'2a,99,17924,Traced,safe,Typical,,R,B,None,aver,app,glut,x,unsure - no axon
+424789697,,MBON02,MBON02(B2B'2a)(ADM07)_R,B2B'2a,1155,19555,Traced,safe,Typical,,R,B,None,aver,app,glut,x,
+612738462,,MBON03,MBON03(B'2mp)(ADM07)_L,B'2mp,1374,17488,Traced,safe,Typical,,R,B,R,aver,app,glut,x,
+487925037,,MBON03,MBON03(B'2mp)(ADM07)_R,B'2mp,1368,18217,Traced,safe,Typical,,R,B,L,aver,app,glut,,axon is LHS
+613079053,,MBON04,MBON04(B'2mp_bilateral)(ADM07)_L,B'2mp_bilateral,1594,16649,Traced,safe,Typical,,R,R,L (maybe R too),aver,app,glut,x,
+487925063,,MBON04,MBON04(B'2mp_bilateral)(ADM07)_R,B'2mp_bilateral,1820,15584,Traced,safe,Typical,,R,L,R,aver,app,glut,x,
+799586652,,MBON05,MBON05(y4>y1y2)(AVM07)_L,y4>y1y2,1565,27110,Traced,safe,Typical,,L,R,R,aver,app,glut,x,
+1386512867,,MBON05,MBON05(y4>y1y2)(AVM07)_R,y4>y1y2,1073,20106,Traced,safe,Typical,,R,L,L,aver,app,glut,x,unsure - maybe only include for KC analysis
+422725634,,MBON06,MBON06(B1>a)(AVM07)_L,B1>a,1356,21000,Traced,safe,Typical,,L,R,R,aver,app,glut,x,
+5813061512,,MBON06,MBON06(B1>a)(AVM07)_R,B1>a,496,12120,Traced,safe,Typical,,R,L,L,aver,app,glut,,
+920470959,,MBON07,MBON07(a1)_L,a,2,13,Traced,safe,Typical,,L,L,L,aver,app,glut,,fragment
+1234386037,,MBON07,MBON07(a1)_R,a,512,15490,Traced,safe,Typical,,R,R,R,aver,app,glut,x,
+733036127,,MBON07,MBON07(a1)(ADM10)_R,a1,474,15509,Traced,safe,Typical,,R,R,R,aver,app,glut,,
+611477605,,MBON07,MBON07(a1)_L,a1,0,32,Traced,safe,Typical,,L,L,L,aver,app,glut,,fragment
+1016835041,,MBON09,MBON09(y3B'1)(AVM17)_L,y3B'1,1291,20260,Traced,safe,Typical,,L,B,B,app,aver,gaba,x,
+1048215779,,MBON09,MBON09(y3B'1)(AVM17)_L,y3B'1,1448,20234,Traced,safe,Typical,,L,B,B,app,aver,gaba,x,
+1078693835,,MBON09,MBON09(y3B'1)(AVM17)_R,y3B'1,1297,23111,Traced,safe,Typical,,R,B,L,app,aver,gaba,x,"maybe only include in KC analysis, not in DS"
+672352543,,MBON10,MBON10(B'1)(AVM07)_R,B'1,214,1298,Traced,need reclassification,,,R,R,R,app,aver,gaba,,wait reclassification
+613719036,,MBON10,MBON10(B'1)(AVM07)_R,B'1,198,1217,Traced,need reclassification,,,R,R,R,app,aver,gaba,,wait reclassification
+581678043,,MBON10,MBON10(B'1)(AVM07)_R,B'1,185,1144,Traced,need reclassification,,,R,R,R,app,aver,gaba,,wait reclassification
+673085197,,MBON10,MBON10(B'1)(AVM07)_R,B'1,184,1361,Traced,need reclassification,,,R,R,R,app,aver,gaba,,wait reclassification
+706840303,,MBON10,MBON10(B'1)(AVM07)_R,B'1,187,968,Traced,need reclassification,,,R,R,R,app,aver,gaba,,wait reclassification
+768555687,,MBON10,MBON10(B'1)(AVM07)_R,B'1,170,1512,Traced,need reclassification,,,R,R,R,app,aver,gaba,,wait reclassification
+5812982924,,MBON10,MBON10(B'1)(AVM07)_R,B'1,191,862,Traced,need reclassification,,,R,R,R,app,aver,gaba,,wait reclassification
+424767514,,MBON11,MBON11(y1pedc>a/B)(ADM05)_R,y1pedc>a/B,1643,27641,Traced,safe,Typical,,R,R,B,app,aver,gaba,x,
+517518166,,MBON11,MBON11(y1pedc>a/B)_L,y1pedc>a/B,1378,1160,Traced,safe,Typical,,L,L,B,app,aver,gaba,,potentially merge with RHS MVP2
+861665641,,MBON12,MBON12(y2a'1)_R,y2a'1,1156,8756,Traced,safe,Typical,,R,R,R,app,aver,ach,x,
+704466265,,MBON12,MBON12(y2a'1)_R,y2a'1,1132,9126,Traced,safe,Typical,,R,R,R,app,aver,ach,x,
+1139667240,,MBON13,MBON13(a'2)_R,a'2,1277,9649,Traced,safe,Typical,,R,R,R,app,aver,ach,x,
+394225044,,MBON14,MBON14(a3)_L,a3,187,5176,Traced,safe,Typical,,L,L,None,app,aver,ach,,fragment
+5813067721,,MBON14,MBON14(a3)_L,a3,20,2162,Traced,safe,Typical,,L,L,None,app,aver,ach,,fragment
+300972942,,MBON14,MBON14(a3)_R,a3,543,13634,Traced,safe,Typical,,R,R,R,app,aver,ach,x,
+5813068729,,MBON14,MBON14(a3)_R,a3,738,14391,Traced,safe,Typical,,R,R,R,app,aver,ach,x,
+642664141,,MBON15,MBON15(a'1)(PDL05)_R,a'1,234,1864,Traced,safe,Typical,,R,R,R,app,aver,ach,x,
+673702721,,MBON15,MBON15(a'1)(PDL05)_R,a'1,231,1249,Traced,safe,Typical,,R,R,R,app,aver,ach,x,
+673366098,,MBON16,MBON16(a'3ap)(PDL05)_R,a'3ap,449,6065,Traced,safe,Typical,,R,R,R,app,aver,ach,x,
+457196643,,MBON16-like,MBON36a'3a)(PDL05)_R,a'3a,385,3624,Traced,safe,Atypical,,R,R,R,app,aver,ach,x,
+5812981264,,MBON17,MBON17(a'3m)(PDL05)_R,a'3m,352,3797,Traced,safe,Typical,,R,R,R,app,aver,ach,x,
+5812981543,,MBON17-like,MBON17-like(a'2a'3)(PDL05)_R,a'2a'3,291,2913,Traced,safe,Typical,,R,R,R,app,aver,None,x,
+5813020828,,MBON18,MBON18(a2sc)(PDL05)_R,a2sc,663,12965,Traced,safe,Typical,,R,R,R,app,aver,ach,x,
+610463953,,MBON18,MBON18(a2sc)_L(1),a2sc,51,2313,Traced,safe,Typical,,L,L,None,app,aver,ach,,fragment
+457196444,,MBON18,MBON18(a2sc)_L(2),a2sc,468,388,Traced,safe,Typical,,L,R,R,app,aver,ach,x,"only include for DS analysis, not KC->MBON"
+423774471,,MBON19,MBON19(a2p3p)(PDL05)_R,a2p3p,299,1484,Traced,safe,Typical,,R,R,R,app,aver,ach,x,
+517854468,,MBON19,MBON19(a2p3p)(PDL19)_R,a2p3p,310,1869,Traced,safe,Typical,,R,R,R,app,aver,ach,x,
+792368888,,MBON20,MBON20(y1y2)(AVM04)_R,y1y2a,1988,6119,Traced,safe,Typical,,R,R,R,app,aver,None,x,
+5813022896,,MBON21,MBON21(y4y5)(PVL06)_R,y4y5a,1168,12501,Traced,safe,Typical,,R,R,B,aver,app,None,x,
+5813042659,,MBON22,MBON22(calyx)(PVL06)_R,calyx,810,14077,Traced,safe,Typical,,R,R,B,None,None,None,x,
+423382015,,MBON23,MBON23(a2sp)(PDL05)_R,a2sp,733,4466,Traced,safe,Typical,,R,R,R,app,aver,None,x,
+487143497,,MBON24,MBON24(B2y5)(PDL05)_R,B2y5,723,8248,Traced,safe,Atypical,,R,R,R,aver,app,None,x,
+550081497,,MBON24,MBON24(B2y5)_L,B2y5,67,5926,Traced,safe,Atypical,,L,L,L,aver,app,None,,only include for KC->MBON not DS
+612742248,,MBON25,MBON25(y1y2)(ADM07)_L,y1y2b,232,1414,Traced,safe,Atypical,,L,R,B,aver,app,None,x,unsure
+612422902,,MBON25,MBON25(y1y2)(ADM07)_R,y1y2b,177,386,Traced,safe,Atypical,,R,None,L,aver,app,None,,unsure
+895441451,,MBON26,MBON26(B'2d)(PDM28)_R,B'2d,1283,11518,Traced,safe,Atypical,,R,R,R,aver,app,None,x,
+5813075634,,MBON26,MBON26(B'2d)_L,B'2d,673,4955,Traced,safe,Atypical,,L,L,L,aver,app,None,,fragment
+5813061538,,MBON27,MBON27(y5d)(PVM03)_L,y5d,795,5861,Traced,safe,Atypical,,L,L,R,aver,app,None,x,"only for DS analysis, not KC-MBON"
+5813117385,,MBON27,MBON27(y5d)(PVM03)_R,y5d,667,7616,Traced,safe,Atypical,,R,R,L,aver,app,None,x,unsure of whether to include for DS analysis
+5813021291,,MBON28,MBON28(PLPF4)(PVL03)_R,,817,4274,Traced,safe,Atypical,,R,R,R,None,None,None,,MB-C1 - not an MBON
+5813075020,,MBON28,MBON28(PLPF4)(PVL03)_R,,783,4144,Traced,safe,Atypical,,R,R,R,None,None,None,,MB-C1 - not an MBON
+5813052909,,MBON29,MBON29(y4y5)(PVL06)_L,y4y5b,752,5180,Traced,safe,Atypical,,L,B,B,aver,app,None,x,
+5813058048,,MBON29,MBON29(y4y5)(PVL06)_R,y4y5b,761,8466,Traced,safe,Atypical,,R,B,B,aver,app,None,x,
+5813022234,,MBON30,MBON30(y1y2y3)(AVM07)_R,y1y2y3,1452,13026,Traced,safe,Atypical,,R,B,B,app,aver,None,x,
+894020730,,MBON31,MBON31(a'1a)(ADM10)_R,a'1a,1085,10429,Traced,safe,Atypical,,R,R,B,app,aver,None,x,
+706948318,,MBON31,MBON31(a'1a)_L,a'1a,932,3287,Traced,safe,Atypical,,L,L,B,app,aver,None,x,
+642732835,,MBON32,MBON32(y2)(ADM08)_R,y2a,687,15067,Traced,safe,Atypical,,R,R,B,app,aver,None,x,
+643847447,,MBON32,MBON32(y2)_L,y2a,1062,9105,Traced,safe,Atypical,,L,L,B,app,aver,None,x,
+547552266,,MBON33,MBON33(y2y3)(ADM05)_R,y2y3,710,6338,Traced,safe,Atypical,,R,R,R,app,aver,None,x,
+1173814525,,MBON34,MBON34(y2)(ADM07)_L,y2b,204,933,Traced,safe,Atypical,,L,R,B,app,aver,None,x,
+5813033000,,MBON34,MBON34(y2)(ADM07)_R,y2b,202,596,Traced,safe,Atypical,,R,L,B,app,aver,None,x,
+579916831,,PDL05v_pct,MBON15-like(a'1a'2)(PDL05)_R,a'1a'2,245,2622,Traced,safe,Typical,,R,R,R,app,aver,None,x,
+457175171,,PDL05v_pct,MBON15-like(a'1a'2)(PDL05)_R,a'1a'2,270,2029,Traced,safe,Typical,,R,R,R,app,aver,None,x,
+5813040205,,,MBON08(y3)_L,y3,1214,5799,Traced,uncertain,,,L,L,R,app,aver,gaba,x,unsure
+5813088360,,,MBON35(y2)_L?notMBON,y2,1,2302,Traced,needs reclassification,,,,L,L,,,,,fragment
+5813057583,,,MBON36(y4y5)_L,y4y5,327,9204,Traced,roughly traced,Atypical,,,L,L,,,,,fragment
+425104178,,,MBONnew?,,943,3053,Traced,needs reclassification,Atypical,,,B,B,,,,,unsure

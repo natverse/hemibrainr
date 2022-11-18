@@ -1,0 +1,124 @@
+volker.hemilineage,itolee.hemilineage,classic.transmitter,other.transmitter,found
+BAla4,FLAa1,unknown,unknown,FALSE
+BAmd2,WEDd2,unknown,unknown,FALSE
+BLAd4,SLPal5,unknown,unknown,FALSE
+BLAvm2_lateral,VPNl&d1_lateral,unknown,unknown,FALSE
+BLP1_ventral,VPNp&v1_ventral,unknown,unknown,FALSE
+BLVp1_lateral,VLPl&p2_posterior,unknown,unknown,FALSE
+CM1 ,DM5,unknown,unknown,FALSE
+CM3 ,DM6,unknown,unknown,FALSE
+CM4,DM4,unknown,unknown,FALSE
+CM5 ,PSp2,unknown,unknown,FALSE
+CP4 ,CLp2,unknown,unknown,FALSE
+CP5,SLPpl2,unknown,unknown,FALSE
+DALl2 ,VLPa1,unknown,unknown,FALSE
+DAMd1 ,SMPad3,unknown,unknown,FALSE
+DAMd2/3,SMPad2,unknown,unknown,FALSE
+DAMv1/2,SMPad1,unknown,unknown,FALSE
+DPLc5_posterior,SMPp&v1_posterior,unknown,unknown,FALSE
+DPLc5_ventral,SMPp&v1_ventral,unknown,unknown,FALSE
+DPLp2_ventral,SLPp&v1_ventral,unknown,unknown,FALSE
+DPMl1/2,PSp3,unknown,unknown,FALSE
+DPMm1,DM1,unknown,unknown,FALSE
+DPMm2 ,unknown7,unknown,unknown,FALSE
+DPMpl1 ,SMPpv1,unknown,unknown,FALSE
+DPMpl3 ,VLPp2,unknown,unknown,FALSE
+DPMpm1 ,DM2,unknown,unknown,FALSE
+DPMpm2,DM3,unknown,unknown,FALSE
+BAla1,ALv1,GABA,unknown,TRUE
+BAla2,ALv2,unknown,unknown,TRUE
+BAla3,VESa1,unknown,unknown,TRUE
+BAlc_dorsal,ALl1_dorsal,acetylcoline,unknown,TRUE
+BAlc_ventral,ALl1_ventral,GABA,unknown,TRUE
+BAlp1,PSa1,unknown,unknown,TRUE
+BAlp2_posterior,new2_posterior,unknown,unknown,TRUE
+BAlp3,WEDa2,GABA,unknown,TRUE
+BAlp4,ALlv1,acetylcoline,unknown,TRUE
+BAlv,WEDa1,unknown,unknown,TRUE
+BAmas1,FLAa2,unknown,unknown,TRUE
+BAmas2,FLAa3,unknown,unknown,TRUE
+BAmd1_ventral,CREa1_ventral,GABA,unknown,TRUE
+BAmv1,LALv1,unknown,unknown,TRUE
+BAmv2 ,VESa2,unknown,unknown,TRUE
+BAmv3,ALad1,acetylcoline,unknown,TRUE
+BLAd1_medial,LHa1_medial,acetylcoline,unknown,TRUE
+BLAd2_dorsal,SIPa1_dorsal,GABA,unknown,TRUE
+BLAd2_ventral,SIPa1_ventral,glutamate,unknown,TRUE
+BLAd3_dorsal,SLPal3_dorsal,unknown,unknown,TRUE
+BLAl_lateral,SLPav1_lateral,unknown,unknown,TRUE
+BLAl_medial,SLPav1_medial,unknown,unknown,TRUE
+BLAv1_dorsal,VLPl&d1_dorsal,unknown,unknown,TRUE
+BLAv1_lateral,VLPl&d1_lateral,unknown,unknown,TRUE
+BLAv2_dorsal,VLPl2_dorsal,unknown,unknown,TRUE
+BLAv2_ventral,VLPl2_ventral,unknown,unknown,TRUE
+BLAvm1_anterior,SLPa&l1_anterior,unknown,unknown,TRUE
+BLAvm1_lateral,SLPa&l1_lateral,unknown,unknown,TRUE
+BLAvm2_dorsal,VPNl&d1_dorsal,unknown,unknown,TRUE
+BLD1_lateral,LHl4_lateral,GABA,unknown,TRUE
+BLD1_posterior,LHl4_posterior,unknown,unknown,TRUE
+BLD2_dorsal,SLPav2_dorsal,unknown,unknown,TRUE
+BLD3,VLPl4,unknown,unknown,TRUE
+BLD4_lateral,LHl1_lateral,GABA,unknown,TRUE
+BLD5_posterior,VPNp1_posterior,acetylcoline,unknown,TRUE
+BLD6 ,VPNd1,unknown,unknown,TRUE
+BLP1_posterior,VPNp&v1_posterior,GABA,unknown,TRUE
+BLP2,VLPp1,unknown,unknown,TRUE
+BLP3_dorsal,unknown6_dorsal,glutamate,unknown,TRUE
+BLP3_ventral,unknown6_ventral,glutamate,unknown,TRUE
+BLP4,LHp1,glutamate,unknown,TRUE
+BLVa1,LHa2,acetylcoline,unknown,TRUE
+BLVa2,LHa3,GABA,unknown,TRUE
+BLVa2a,SLPav3,unknown,unknown,TRUE
+BLVa3/4,VLPl1,unknown,unknown,TRUE
+BLVp1_posterior,VLPl&p2_posterior,unknown,unknown,TRUE
+BLVp2_anterior,VLPl&p1_anterior,acetylcoline,unknown,TRUE
+BLVp2_posterior,VLPl&p1_posterior,unknown,unknown,TRUE
+CP1,SMPpv2,unknown,unknown,TRUE
+CP2_dorsal,DL1_dorsal,acetylcoline,unknown,TRUE
+CP2_ventral,DL1_ventral,unknown,unknown,TRUE
+CP3_lateral,DL2_lateral,acetylcoline,unknown,TRUE
+CP3_medial,DL2_medial,unknown,dopamine,TRUE
+DALcl1_dorsal,AOTUv3_dorsal,unknown,unknown,TRUE
+DALcl1_ventral,AOTUv3_ventral,unknown,unknown,TRUE
+DALcl2_dorsal,AOTUv4_dorsal,unknown,unknown,TRUE
+DALcl2_ventral,AOTUv4_ventral,unknown,unknown,TRUE
+DALcm1     ,CREa2,unknown,unknown,TRUE
+DALcm2  ,AOTUv1,unknown,unknown,TRUE
+DALd,WEDd1,unknown,unknown,TRUE
+DALl1,AOTUv2,GABA,unknown,TRUE
+DALv1,unknown5,unknown,unknown,TRUE
+DALv2,EBa1,GABA,unknown,TRUE
+DALv3,new,unknown,unknown,TRUE
+DAMd2/3,SMPad2,unknown,unknown,TRUE
+DPLal1,SLPal1,acetylcoline,unknown,TRUE
+DPLal2_lateral,LHl2_lateral,unknown,unknown,TRUE
+DPLal2_medial,LHl2_medial,acetylcoline,unknown,TRUE
+DPLal3_dorsal,SLPal2_dorsal,GABA,unknown,TRUE
+DPLal3_ventral,SLPal2_ventral,acetylcoline,unknown,TRUE
+DPLam,VLPd1,unknown,unknown,TRUE
+DPLc1,SMPpd1,unknown,unknown,TRUE
+DPLc2/4,CLp1,unknown,unknown,TRUE
+DPLc3,SLPpm3,unknown,unknown,TRUE
+DPLd,LHd1,acetylcoline,unknown,TRUE
+DPLl1,SLPpl1,unknown,unknown,TRUE
+DPLl2_anterior,VLPd&p1_anterior,unknown,unknown,TRUE
+DPLl2_dorsal,VLPd&p1_dorsal,acetylcoline,unknown,TRUE
+DPLl3_anterior,SLPad1_anterior,unknown,unknown,TRUE
+DPLl3_anterior,SLPad1,unknown,unknown,TRUE
+DPLl3_posterior,SLPad1_posterior,unknown,unknown,TRUE
+DPLm1,SLPpm1,unknown,unknown,TRUE
+DPLm2_dorsal,LHd2_dorsal,glutamate,unknown,TRUE
+DPLp1_lateral,LHp2_lateral,unknown,unknown,TRUE
+DPLp1_medial,LHp2_medial,acetylcoline,unknown,TRUE
+DPLp2_posterior,SLPp&v1_posterior,glutamate,unknown,TRUE
+DPLpv_dorsal,VLPp&l1_dorsal,unknown,unknown,TRUE
+DPLpv_ventral,VLPp&l1_ventral,acetylcoline,unknown,TRUE
+DPMl1_ventral,PSp3,unknown,unknown,TRUE
+DPMm1,DM1,unknown,unknown,TRUE
+DPMpl1,SMPpv1,unknown,unknown,TRUE
+DPMpl2,SIPp1,unknown,unknown,TRUE
+new_lateral,SLPpl3_lateral,unknown,unknown,TRUE
+new_posterior,SLPpl3_posterior,unknown,unknown,TRUE
+Primary,Primary,unknown,unknown,TRUE
+unknown2,unknown2,unknown,unknown,TRUE
+unknown4,unknown4,unknown,unknown,TRUE
