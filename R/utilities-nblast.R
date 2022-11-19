@@ -15,12 +15,15 @@ nblast_big <-function(query.neuronlistfh,
                       no.points = 2,
                       compress = TRUE,
                       threshold = 0, # or -0.5?
-                      digits = 3,
+                      digits = 6,
                       update.old = NULL,
                       outfile = "",
                       overlap = FALSE,
                       split = FALSE,
-                      check_function = is_big_dps){
+                      check_function = is_big,
+                      just.leaves = TRUE,
+                      normalise = FALSE
+                      ){
 
   # Register cores
   check_package_available("nat.nblast")
@@ -59,7 +62,9 @@ nblast_big <-function(query.neuronlistfh,
 
   # Initialize matrix
   nblast.mat = bigstatsr::FBM(length(target.names),length(query.names), init = NA)
-  if(!file.exists(update.old)){
+  if(is.null(update.old)){
+    update.old = NULL
+  }else  if(!file.exists(update.old)){
     update.old = NULL
   }
 
@@ -209,22 +214,29 @@ nblast_big <-function(query.neuronlistfh,
             t.dendrites = dendritic_cable(target.neuronlist)
             names(t.dendrites) = paste0(names(t.dendrites),"_dendrite")
             query.neuronlist = c(q.axons, q.dendrites)
-            query.neuronlist = c(t.axons, t.dendrites)
+            target.neuronlist = c(t.axons, t.dendrites)
+            chosen.query = names(query.neuronlist)
+            chosen.query = names(target.neuronlist)
           }
-          message("Running overlap")
-          nblast.res.sub = overlap_score_delta(query.neuronlist, target.neuronlist)
+          nblast.res.sub = overlap_score_delta(query.neuronlist, target.neuronlist, just.leaves=just.leaves, normalise=normalise)
+          nblast.res.sub = t(nblast.res.sub)
         }
         # Compress
         if(compress){
           nblast.res.sub[nblast.res.sub<threshold] = threshold
-          nblast.res.sub = round(nblast.res.sub, digits=digits)
+          nblast.res.sub = signif(nblast.res.sub, digits=digits)
         }
         nblast.mat[match(unlist(chosen.target), target),match(unlist(chosen.query), query)] = nblast.res.sub
         #try({nblast.mat[match(chosen.target, target),match(chosen.query, query)] = nblast.res.sub}, silent = FALSE)
         #nblast.res.sub
         NULL
       }
+  }
+  for(i in 1:length(by.query)){
+    if(!is.null(by.query[[i]])){
+      message(by.query[[i]])
     }
+  }
   parallel::stopCluster(cl)
   clear = gc()
   nmat = matrix(nblast.mat[,], nrow = length(target), ncol = length(query))
@@ -235,6 +247,10 @@ nblast_big <-function(query.neuronlistfh,
 # hidden
 is_big_dps <- function(dps, no.points = 5){
   !is.null(dps$points)&&"matrix"%in%class(dps$points)&&nrow(dps$points)>=no.points
+}
+is_big <- function(dps, no.points = 5){
+  xyz <- nat::xyzmatrix(dps)
+  !is.null(xyz)&&nrow(xyz)>=no.points
 }
 
 # We can make another version of the matrix that contains essentially all
