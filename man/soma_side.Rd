@@ -9,11 +9,29 @@
 \alias{synapse_side_index.neuron}
 \title{Calculate which side of the brain a neuron is on}
 \usage{
-soma_side(x, brain = nat.flybrains::JRC2018F, bound = NULL, transform = FALSE)
+soma_side(
+  x,
+  flywire_nuclei = FALSE,
+  brain = nat.flybrains::JRC2018F,
+  bound = NULL,
+  transform = FALSE
+)
 
-\method{soma_side}{neuronlist}(x, brain = nat.flybrains::JRC2018F, bound = NULL, transform = FALSE)
+\method{soma_side}{neuronlist}(
+  x,
+  flywire_nuclei = FALSE,
+  brain = nat.flybrains::JRC2018F,
+  bound = NULL,
+  transform = FALSE
+)
 
-\method{soma_side}{neuron}(x, brain = nat.flybrains::JRC2018F, bound = NULL, transform = FALSE)
+\method{soma_side}{neuron}(
+  x,
+  nuclei = NULL,
+  brain = nat.flybrains::JRC2018F,
+  bound = NULL,
+  transform = FALSE
+)
 
 synapse_side_index(
   x,

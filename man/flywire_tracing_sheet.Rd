@@ -150,7 +150,7 @@ this data and place it in \code{~/projects/JanFunke}.}
 
 \item{work.flows}{a workflow for a flywire neuron. Either we want to trace upstream of it, downstream of it, or match it to a hemibrain neuron.}
 
-\item{nblast}{the nblast matrix used to update your workflow googlesheet.}
+\item{nblast}{the nblast matrix used to update your workflow googlesheet.f}
 
 \item{side}{logical. The side of the brain these neurons are manually annotated, as being on.}
 

@@ -222,3 +222,16 @@ hemibrain.roots = hemibrain_somas[,c("bodyid","X","Y","Z")]
 write.csv(hemibrain.roots, file = "/Users/GD/LMBD/Papers/hemibrain_olf_data/Schlegel2021_supp/hemibrain_root_points.csv", row.names = FALSE)
 hemibrain.splitpoints = c("bodyid", "position", "point", "X", "Y", "Z")
 write.csv(hemibrain.splitpoints, file = "/Users/GD/LMBD/Papers/hemibrain_olf_data/Schlegel2021_supp/hemibrain_compartment_startpoints.csv", row.names = FALSE)
+
+#hb.confusion
+hb.nt.cmat <- readr::read_csv("/Users/GD/LMBD/Papers/synister/synister_analysis/data/confusion_matrices/cm_hemibrain_v0_t8_i375000_validation.csv", show_col_types = FALSE)
+rownames(hb.nt.cmat) <- colnames(hb.nt.cmat)
+hb.nt.cmat <- apply(hb.nt.cmat,2,function(x) round(x/sum(x),2))
+usethis::use_data(hb.nt.cmat, overwrite = TRUE)
+
+#fw.confusion =
+fw.nt.cmat <- readr::read_csv("/Users/GD/LMBD/Papers/synister/synister_analysis/data/confusion_matrices/cm_fafb_v3_t11_i475000_validation.csv", show_col_types = FALSE)
+rownames(fw.nt.cmat) <- colnames(fw.nt.cmat)
+fw.nt.cmat <- apply(fw.nt.cmat,2,function(x) round(x/sum(x),2))
+usethis::use_data(fw.nt.cmat, overwrite = TRUE)
+

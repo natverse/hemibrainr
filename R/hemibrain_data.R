@@ -474,3 +474,21 @@
 #' @name classed.ids
 #' @rdname classed.ids
 "rn.info"
+
+
+#' Neurotransmitter prediction confidence matrices
+#'
+#' Neurotransmitter prediction confidence matrices for both the
+#' hemibriain and FAFB dataset..
+#'
+#'
+#' @examples
+#' \donttest{
+#' head(hb.nt.cmat)
+#' }
+#'
+#' @name nt.cmat
+#' @rdname nt.cmat
+"hb.nt.cmat"
+#' @rdname nt.cmat
+"fw.nt.cmat"

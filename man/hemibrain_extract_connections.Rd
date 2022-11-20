@@ -59,15 +59,15 @@ a \code{data.frame}. Depending on which synapse function was called, it can cont
 
   \item{"partner"}{ - The body ID for the presynaptic (target) neuron.}
 
-  \item{"Label"}{ - The compartment of the \code{bodyid} neuron on which the synapse is placed / which receives/makes the given connection.
+  \item{"label"}{ - The compartment of the \code{bodyid} neuron on which the synapse is placed / which receives/makes the given connection.
   See \code{?standardise}.}
 
-  \item{"partner_Label"}{ - The compartment of the \code{partner} neuron on which the synapse is placed / which receives/makes the given connection.}
+  \item{"partner_label"}{ - The compartment of the \code{partner} neuron on which the synapse is placed / which receives/makes the given connection.}
 
   \item{"count"}{ - The number of synapses that make the given connection. Sometimes referred to as 'weight'.}
 
   \item{"norm"}{ - The normalised synapse weight. \code{count} is divided by the total number of inputs that the
-  target neuron's (\code{post}) compartment (\code{Label}) has. I.e. this normalisation is by total_inputs onto a dendrite or axon, not the whole neuron.}
+  target neuron's (\code{post}) compartment (\code{label}) has. I.e. this normalisation is by total_inputs onto a dendrite or axon, not the whole neuron.}
 
   \item{"connection"}{ - The type of compartment-compartment connection specified by this row. The first compartment is the source (pre), the second, the target (post).}
 
@@ -77,7 +77,7 @@ a \code{data.frame}. Depending on which synapse function was called, it can cont
 Extract a single data frame describing synapse/connection types,
   partners, locations and position on a neuron's axon/dendrite. You can
   either get all synapses returned or all unitary connections to a neuron's
-  partners returned. Broken down by axon/dendrite (\code{Label}), and
+  partners returned. Broken down by axon/dendrite (\code{label}), and
   pre/postsynapses or pre/postsynaptic partners. Note that \code{hemibrain_extract_compartment_edgelist} will
   only return connections between neurons given in the argument \code{x}.
 }

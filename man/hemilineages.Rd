@@ -6,7 +6,7 @@
 \alias{hemibrain_hemilineages}
 \title{Hemilineages names from T. Lee, K. Ito and V. Hartenstein}
 \format{
-An object of class \code{data.frame} with 216 rows and 8 columns.
+An object of class \code{data.frame} with 219 rows and 9 columns.
 }
 \usage{
 hemibrain_hemilineages
