@@ -29,9 +29,8 @@ nblast_big <-function(query.neuronlistfh,
   check_package_available("nat.nblast")
   check_package_available("doParallel")
   check_package_available("doSNOW")
-  batch.size = numCores #floor(sqrt(numCores))
-  # cl = parallel::makeForkCluster(batch.size)
-  cl = parallel::makeCluster(batch.size, outfile = outfile)
+  # cl = parallel::makeForkCluster(numCores)
+  cl = parallel::makeCluster(numCores, outfile = outfile)
   doParallel::registerDoParallel(cl)
   doSNOW::registerDoSNOW(cl)
   if(numCores<2){
@@ -50,9 +49,9 @@ nblast_big <-function(query.neuronlistfh,
   # Split
   if(split){
     target.axons = paste0(target, "_axon")
-    target.dendrites = paste0(target, "_dendrites")
+    target.dendrites = paste0(target, "_dendrite")
     query.axons = paste0(query, "_axon")
-    query.dendrites = paste0(query, "_dendrites")
+    query.dendrites = paste0(query, "_dendrite")
     target.names = c(target.axons, target.dendrites)
     query.names = c(query.axons, query.dendrites)
   }else{
@@ -96,16 +95,16 @@ nblast_big <-function(query.neuronlistfh,
 
   # Get batches to iterate over
   ## this would be a better way of doing it, but at the moment thwarted by DB1 lock files
-  # batches.query = split(sample(query), round(seq(from = 1, to = batch.size, length.out = length(query))))
-  # batches.target = split(sample(target), round(seq(from = 1, to = batch.size, length.out = length(target))))
+  # batches.query = split(sample(query), round(seq(from = 1, to = numCores, length.out = length(query))))
+  # batches.target = split(sample(target), round(seq(from = 1, to = numCores, length.out = length(target))))
 
   # Foreach loop
   ## this would be a better way of doing it, but at the moment thwarted by DB1 lock files
   # by.query <- foreach::foreach (chosen.query = batches.query, .combine = 'c') %:%
   #   foreach::foreach (chosen.target = batches.target, .combine = 'c') %dopar% {
   ### This is a slightly more inefficient way
-  batches.query = split(sample(query), round(seq(from = 1, to = batch.size, length.out = length(query))))
-  batches.target = split(sample(target), round(seq(from = 1, to = batch.size, length.out = length(target))))
+  batches.query = split(sample(query), round(seq(from = 1, to = numCores, length.out = length(query))))
+  batches.target = split(sample(target), round(seq(from = 1, to = numCores, length.out = length(target))))
 
   # Progress bar
   iterations <- length(batches.query)
@@ -216,7 +215,7 @@ nblast_big <-function(query.neuronlistfh,
             query.neuronlist = c(q.axons, q.dendrites)
             target.neuronlist = c(t.axons, t.dendrites)
             chosen.query = names(query.neuronlist)
-            chosen.query = names(target.neuronlist)
+            chosen.target = names(target.neuronlist)
           }
           nblast.res.sub = overlap_score_delta(query.neuronlist, target.neuronlist, just.leaves=just.leaves, normalise=normalise)
           nblast.res.sub = t(nblast.res.sub)
@@ -226,7 +225,7 @@ nblast_big <-function(query.neuronlistfh,
           nblast.res.sub[nblast.res.sub<threshold] = threshold
           nblast.res.sub = signif(nblast.res.sub, digits=digits)
         }
-        nblast.mat[match(unlist(chosen.target), target),match(unlist(chosen.query), query)] = nblast.res.sub
+        nblast.mat[na.omit(match(unlist(chosen.target), target.names)),na.omit(match(unlist(chosen.query), query.names))] = nblast.res.sub
         #try({nblast.mat[match(chosen.target, target),match(chosen.query, query)] = nblast.res.sub}, silent = FALSE)
         #nblast.res.sub
         NULL
@@ -239,8 +238,8 @@ nblast_big <-function(query.neuronlistfh,
   }
   parallel::stopCluster(cl)
   clear = gc()
-  nmat = matrix(nblast.mat[,], nrow = length(target), ncol = length(query))
-  dimnames(nmat) = list(target, query)
+  nmat = matrix(nblast.mat[,], nrow = length(target.names), ncol = length(query.names))
+  dimnames(nmat) = list(target.names, query.names)
   nmat
 }
 
@@ -259,7 +258,7 @@ save_compressed_nblast_mat <- function(x,
                                        overwrite = c("combine","yes","no"),
                                        file = NULL,
                                        threshold= 0, # or -0.5?
-                                       digits=3,
+                                       digits=6,
                                        format=c("rda", "rds"),
                                        remove = NULL,
                                        ...) {
@@ -290,7 +289,7 @@ save_compressed_nblast_mat <- function(x,
   x = apply(x, 2, function(i) tapply(i, rownames(x), sum, na.rm = TRUE))
   x = t(apply(t(x), 2, function(i) tapply(i, colnames(x), sum, na.rm = TRUE)))
   x[x<threshold]=threshold
-  x=round(x, digits=digits)
+  x = signif(x, digits=digits)
   y = x
   if(combine){
     old = old[!rownames(old)%in%rownames(x),]
@@ -341,7 +340,7 @@ overlap_score_big <- function(output.neurons,
   check_package_available("doParallel")
   batch.size = numCores #floor(sqrt(numCores))
   # cl = parallel::makeForkCluster(batch.size)
-  cl = parallel::makeCluster(batch.size, outfile = outfile)
+  cl = parallel::makeCluster(numCores, outfile = outfile)
   doParallel::registerDoParallel(cl)
   if(numCores<2){
     `%go%` <- foreach::`%do%`
