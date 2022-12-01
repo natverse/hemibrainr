@@ -453,7 +453,7 @@ skeletor_batch <- function(obj, swc, numCores = 1, multiplier = 10, max.file.siz
   batches <- split(ids, round(seq(from = 1, to = upper, length.out = length(ids))))
 
   # Register cores
-  registerDoParallel(numCores)
+  doParallel::registerDoParallel(numCores)
 
   # Set up progress bar
   iterations <- length(batches)
