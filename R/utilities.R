@@ -469,7 +469,7 @@ skeletor_batch <- function(obj, swc, numCores = 1, multiplier = 10, max.file.siz
     neuron.ids = batches[[batch]]
     skels = suppressMessages(fafbseg::skeletor(neuron.ids, save.obj = NULL, mesh3d = FALSE))
     skels[,"id"] = names(skels) = basename(gsub("\\.obj","",names(skels)))
-    nat::write.neurons(skels, dir=swc, format='swc', Force = FALSE)
+    nat::write.neurons(skels, dir=swc, format='swc', Force = TRUE)
     NULL
   }
 
