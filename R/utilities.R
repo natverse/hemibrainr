@@ -435,7 +435,7 @@ remove_unused_filehash <- function(path,
 }
 
 # Skeletonise neurons in parallel from a folder of obj files
-skeletor_batch <- function(obj, swc, numCores = 1, max.file.size = 1000000000, ...){
+skeletor_batch <- function(obj, swc, numCores = 1, multiplier = 100, max.file.size = 1000000000, ...){
   if(dir.exists(obj[1])){
     obj.files = list.files(obj, pattern = "obj$", full.names = TRUE)
   }else{
@@ -449,42 +449,73 @@ skeletor_batch <- function(obj, swc, numCores = 1, max.file.size = 1000000000, .
   if(length(big)){
     warning("Dropping ", length(big), " .obj files larger than ", max.file.size, " bytes")
   }
-  batches = split(ids, round(seq(from = 1, to = numCores, length.out = length(ids))))
+  upper <- ifelse(numCores*multiplier<length(ids),numCores*multiplier,ids)
+  batches = split(ids, round(seq(from = 1, to = upper, length.out = length(ids))))
   batch = 0
-  foreach.skeletons <- foreach::foreach (batch = seq_along(batches)) %dopar% {
+
+  # Set up progress bar
+  iterations <- length(batches)
+  pb <- utils::txtProgressBar(max = iterations, style = 3)
+  progress <- function(n) utils::setTxtProgressBar(pb, n)
+  opts <- list(progress = progress)
+
+  # Run foreach loop
+  by.query <- foreach::foreach (batch = seq_along(batches),
+                                         .combine = 'c',
+                                         .errorhandling='pass',
+                                         .options.snow = opts) %dopar% {
     neuron.ids = batches[[batch]]
-    j = tryCatch({
-      skels = suppressMessages(fafbseg::skeletor(neuron.ids, save.obj = NULL, mesh3d = FALSE, ...))
-      skels[,"id"] = names(skels) = basename(gsub("\\.obj","",names(skels)))
-      nat::write.neurons(skels, dir=swc, format='swc', Force = FALSE)
-      skels},
-      error = function(e){
-        warning(paste(as.character(e), neuron.ids,collapse=",") )
-        NULL
-      })
+    skels = suppressMessages(fafbseg::skeletor(neuron.ids, save.obj = NULL, mesh3d = FALSE, ...))
+    skels[,"id"] = names(skels) = basename(gsub("\\.obj","",names(skels)))
+    nat::write.neurons(skels, dir=swc, format='swc', Force = FALSE)
+    NULL
   }
-  isnl = sapply(foreach.skeletons, nat::is.neuronlist)
-  do.call(c, foreach.skeletons[isnl])
+
+  # Were there errors?
+  for(i in 1:length(by.query)){
+    if(!is.null(by.query[[i]])){
+      message(by.query[[i]])
+    }
+  }
+
+  # Return
+  invisible()
 }
 
 # hidden
-download_neuron_obj_batch <- function(ids, numCores = 1, ratio = 1, save.obj = "obj"){
+download_neuron_obj_batch <- function(ids, numCores = 1, multiplier = 100, ratio = 1, save.obj = "obj"){
   if(!length(ids)){
     return(NULL)
   }
-  batches = split(ids, round(seq(from = 1, to = numCores, length.out = length(ids))))
+  upper <- ifelse(numCores*multiplier<length(ids),numCores*multiplier,ids)
+  batches = split(ids, round(seq(from = 1, to = upper, length.out = length(ids))))
   batch = 0
-  foreach.skeletons <- foreach::foreach (batch = seq_along(batches)) %dopar% {
+
+  # Set up progress bar
+  iterations <- length(batches)
+  pb <- utils::txtProgressBar(max = iterations, style = 3)
+  progress <- function(n) utils::setTxtProgressBar(pb, n)
+  opts <- list(progress = progress)
+
+  # do par process
+  by.query <- foreach::foreach (batch = seq_along(batches)) %dopar% {
     neuron.ids = batches[[batch]]
-    j = tryCatch(suppressMessages(fafbseg::download_neuron_obj(segments = neuron.ids,
+    fafbseg::download_neuron_obj(segments = neuron.ids,
                                               ratio = ratio,
-                                              save.obj = save.obj)),
-                 error = function(e){
-                   warning(as.character(e))
-                   NULL
-                 })
+                                              save.obj = save.obj)
     NULL
   }
+
+  # Were there errors?
+  for(i in 1:length(by.query)){
+    if(!is.null(by.query[[i]])){
+      message(by.query[[i]])
+    }
+  }
+
+  # Return
+  invisible()
+
 }
 
 # hidden
