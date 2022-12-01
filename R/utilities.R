@@ -435,7 +435,7 @@ remove_unused_filehash <- function(path,
 }
 
 # Skeletonise neurons in parallel from a folder of obj files
-skeletor_batch <- function(obj, swc, numCores = 1, multiplier = 100, max.file.size = 1000000000, ...){
+skeletor_batch <- function(obj, swc, numCores = 1, multiplier = 10, max.file.size = 1000000000, ...){
   if(dir.exists(obj[1])){
     obj.files = list.files(obj, pattern = "obj$", full.names = TRUE)
   }else{
@@ -449,9 +449,11 @@ skeletor_batch <- function(obj, swc, numCores = 1, multiplier = 100, max.file.si
   if(length(big)){
     warning("Dropping ", length(big), " .obj files larger than ", max.file.size, " bytes")
   }
-  upper <- ifelse(numCores*multiplier<length(ids),numCores*multiplier,ids)
-  batches = split(ids, round(seq(from = 1, to = upper, length.out = length(ids))))
-  batch = 0
+  upper <- ifelse((numCores*multiplier)<length(ids),numCores*multiplier,length(ids))
+  batches <- split(ids, round(seq(from = 1, to = upper, length.out = length(ids))))
+
+  # Register cores
+  registerDoParallel(numCores)
 
   # Set up progress bar
   iterations <- length(batches)
@@ -479,17 +481,20 @@ skeletor_batch <- function(obj, swc, numCores = 1, multiplier = 100, max.file.si
   }
 
   # Return
+  doParallel::stopImplicitCluster()
   invisible()
 }
 
 # hidden
-download_neuron_obj_batch <- function(ids, numCores = 1, multiplier = 100, ratio = 1, save.obj = "obj"){
+download_neuron_obj_batch <- function(ids, numCores = 1, multiplier = 10, ratio = 1, save.obj = "obj"){
   if(!length(ids)){
     return(NULL)
   }
-  upper <- ifelse(numCores*multiplier<length(ids),numCores*multiplier,ids)
+  upper <- ifelse((numCores*multiplier)<length(ids),numCores*multiplier,length(ids))
   batches = split(ids, round(seq(from = 1, to = upper, length.out = length(ids))))
-  batch = 0
+
+  # Register cores
+  doParallel::registerDoParallel(numCores)
 
   # Set up progress bar
   iterations <- length(batches)
@@ -514,6 +519,7 @@ download_neuron_obj_batch <- function(ids, numCores = 1, multiplier = 100, ratio
   }
 
   # Return
+  doParallel::stopImplicitCluster()
   invisible()
 
 }
