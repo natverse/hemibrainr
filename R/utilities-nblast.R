@@ -113,7 +113,8 @@ nblast_big <-function(query.neuronlistfh,
   opts <- list(progress = progress)
 
   # Parallel process
-  by.query <- foreach::foreach(chosen.query = batches.query, .combine = 'c', .errorhandling='pass', .options.snow = opts) %do%
+  `%fdo%` <- foreach::`%do%`
+  by.query <- foreach::foreach(chosen.query = batches.query, .combine = 'c', .errorhandling='pass', .options.snow = opts) %fdo%
      foreach::foreach(chosen.target = batches.target, .combine = 'c', .errorhandling='pass') %go% {
       ## this would be a better way of doing it, but at the moment thwarted by DB1 lock files
       query.neuronlist = query.neuronlistfh[names(query.neuronlistfh)%in%unlist(chosen.query)]
