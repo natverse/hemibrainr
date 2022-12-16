@@ -466,10 +466,12 @@ skeletor_batch <- function(obj, swc, numCores = 1, multiplier = 10, max.file.siz
                                          .combine = 'c',
                                          .errorhandling='pass',
                                          .options.snow = opts) %dopar% {
+    message(batch)
     neuron.ids = batches[[batch]]
-    skels = suppressMessages(fafbseg::skeletor(neuron.ids, save.obj = NULL, mesh3d = FALSE))
+    skels = fafbseg::skeletor(obj = neuron.ids, save.obj = NULL, mesh3d = FALSE)
     skels[,"id"] = names(skels) = basename(gsub("\\.obj","",names(skels)))
     nat::write.neurons(skels, dir=swc, format='swc', Force = TRUE)
+    message("Completed: ", length(skels), " skeletonisations")
     NULL
   }
 
