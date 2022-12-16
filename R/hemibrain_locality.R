@@ -60,7 +60,7 @@ hemibrain_compartment_metrics <- function(x, resample = 10, delta = 62.5, locali
 
 # hidden
 compartment_metrics <- function(x, resample = 10, delta = 62.5, locality = FALSE, ...){
-  syns = tryCatch(hemibrain_extract_synapses(x), error = function(e) NULL)
+  syns = x$connectors # tryCatch(hemibrain_extract_synapses(x), error = function(e) NULL)
   lab = ifelse("label" %in% colnames(syns), "label", "Label")
   # Axon-dendrite split?
   if(!(sum(x$d$Label%in%c(2,"axon"))&sum(x$d$Label%in%c(3,"dendrite")))){
@@ -84,6 +84,7 @@ compartment_metrics <- function(x, resample = 10, delta = 62.5, locality = FALSE
     segregation_index = NA
     overlap_locality = NA
   }else{
+
     # Synapses
     axon_outputs = tryCatch(sum(syns$prepost==0&syns[[lab]]%in%c(2,"axon")), error = function(e) NA)
     dend_outputs = tryCatch(sum(syns$prepost==0&syns[[lab]]%in%c(3,"dendrite")), error = function(e) NA)
@@ -195,7 +196,7 @@ overlap_locality <- function(x,
 }
 
 # hidden, similar function now in nat
-overlap_score_delta <- function(output.neurons, input.neurons, delta = 62.5, just.leaves = TRUE, max = exp(-delta^2/(2*delta^2)), normalise = TRUE){
+overlap_score_delta <- function(output.neurons, input.neurons, delta = 62.5, just.leaves = TRUE, max = exp(-delta^2/(2*delta^2)), normalise = FALSE){
   output.neurons = nat::as.neuronlist(output.neurons)
   input.neurons = nat::as.neuronlist(input.neurons)
   score.matrix = matrix(0,nrow = length(output.neurons), ncol = length(input.neurons))
@@ -213,9 +214,13 @@ overlap_score_delta <- function(output.neurons, input.neurons, delta = 62.5, jus
       a = nat::xyzmatrix(output.neurons[[n]])
     }
     if(normalise){
-      s = sapply(input.neurons.d, function(x)lengthnorm(maxout(exp(-nabor::knn(query = a, data = x,k=nrow(x))$nn.dists^2/(2*delta^2)),max=max)))
+      s = sapply(input.neurons.d, function(x)
+        lengthnorm(maxout(exp(-nabor::knn(query = a, data = x,k=nrow(x))$nn.dists^2/(2*delta^2)),max=max))
+        )
     }else{
-      s = sapply(input.neurons.d, function(x)sum(maxout(exp(-nabor::knn(query = a, data = x,k=nrow(x))$nn.dists^2/(2*delta^2)),max=max))) # Score similar to that in Schlegel et al. 2015
+      s = sapply(input.neurons.d, function(x)
+        sum(maxout(exp(-nabor::knn(query = a, data = x,k=nrow(x))$nn.dists^2/(2*delta^2)),max=max))
+      ) # Score similar to that in Schlegel et al. 2015
     }
     score.matrix[n,] = s
   }
