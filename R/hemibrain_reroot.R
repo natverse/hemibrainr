@@ -198,6 +198,9 @@ flywire_reroot.neuron <- function(x, flywire_nuclei = fafbseg::flywire_nuclei(),
     y$connectors$treenode_id = y$d$PointNo[match(x$connectors$treenode_id, y$d$PointNo)]
     flywire.nucleus$treenode_id = somid
     y$soma = flywire.nucleus
+    if(!is.null(y$d$Label)){
+      y$d$Label[somid] = 1
+    }
   }
   # return
   y = hemibrain_neuron_class(y)
