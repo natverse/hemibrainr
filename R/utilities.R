@@ -719,20 +719,20 @@ squeeze_neuron <- function(x, digits=6, ...) {
 # hidden
 squeeze_dataframe <- function(x, exclude=NULL, digits = 6, sig.digits = NULL, ...) {
   numcols <- names(x)[sapply(x, function(c) is.numeric(c) && !inherits(c, 'integer64'))]
-  numcols=setdiff(numcols, exclude)
+  numcols <- setdiff(numcols, exclude)
   for(i in numcols) {
-    col=x[[i]]
+    col=x[,numcols][[i]]
     # does it look like an int, if so, make it one
     intcol=try(checkmate::asInteger(col), silent = TRUE)
     if((sum(is.na(col))==length(col))){
-      x[[i]]=col
+      x[,numcols][[i]]=col
     }else if(is.integer(intcol)){
-      x[[i]]=intcol
+      x[,numcols][[i]]=intcol
     } else {
       if(!is.null(sig.digits)){
         col <- signif(col, digits = sig.digits)
       }
-      x[[i]]=bitsqueezr::squeeze_bits(col, digits = digits, ...)
+      x[,numcols][[i]]=bitsqueezr::squeeze_bits(col, digits = digits, ...)
     }
   }
   x
