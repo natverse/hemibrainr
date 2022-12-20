@@ -717,7 +717,7 @@ squeeze_neuron <- function(x, digits=6, ...) {
 }
 
 # hidden
-squeeze_dataframe <- function(x, exclude=NULL, digits = 6, ...) {
+squeeze_dataframe <- function(x, exclude=NULL, digits = 6, sig.digits = NULL, ...) {
   numcols <- names(x)[sapply(x, function(c) is.numeric(c) && !inherits(c, 'integer64'))]
   numcols=setdiff(numcols, exclude)
   for(i in numcols) {
@@ -728,8 +728,12 @@ squeeze_dataframe <- function(x, exclude=NULL, digits = 6, ...) {
       x[[i]]=col
     }else if(is.integer(intcol)){
       x[[i]]=intcol
+    } else {
+      if(!is.null(sig.digits)){
+        col <- signif(col, digits = sig.digits)
+      }
+      x[[i]]=bitsqueezr::squeeze_bits(col, digits = digits, ...)
     }
-    else x[[i]]=bitsqueezr::squeeze_bits(col, digits = digits, ...)
   }
   x
 }
