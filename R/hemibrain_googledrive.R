@@ -337,6 +337,7 @@ hemibrain_connections <- function(local = FALSE, folder = "hemibrain_neurons/", 
 #' @export
 hemibrain_nblast <- function(nblast = c("hemibrain",
                                         "flywire",
+                                        "flywire-sameside",
                                         "hemibrain-flywire",
                                         "hemibrain-fafb14",
                                         "hemibrain-flycircuit",
@@ -373,7 +374,8 @@ hemibrain_nblast <- function(nblast = c("hemibrain",
                   `flywire-mirror` = "flywire_mirror_fafbpy.rda",
                   `flywire-spine` = "flywire.spine.mean.compressed.rda",
                   `flywire-pnt` = "flywire_pnt_fafbpy.rda",
-                  flywire = "flywire.fafbsegpy.rda",
+                  flywire = "flywire_fafbsegpy.rda",
+                  flywire_sameside = "flywire_sameside_fafbsegpy.rda",
                   stop("Unrecognised value for nblast argument!")
     )
   }else{
