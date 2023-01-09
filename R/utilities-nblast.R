@@ -328,20 +328,24 @@ load_assign <- function(f){
 
 
 # hidden, similar function now in nat
-overlap_score_big <- function(output.neurons,
-                              input.neurons,
-                              delta = 62.5,
+overlap_score_big <- function(query.neuronlistfh,
+                              target.neuronlistfh,
+                              query = names(query.neurons),
+                              delta = 1000, # nm
+                              max.radius = delta*5,
                               just.leaves = TRUE,
-                              max = exp(-delta^2/(2*delta^2)),
-                              normalise = TRUE,
-                              update.old = NULL){
+                              normalise = FALSE,
+                              update.old = NULL,
+                              numCores = 1,
+                              outfile = "",
+                              digits = 4,
+                              split = TRUE,
+                              compress = TRUE,
+                              check_function = NULL){
 
   # Register cores
-  check_package_available("nat.nblast")
   check_package_available("doParallel")
-  batch.size = numCores #floor(sqrt(numCores))
-  # cl = parallel::makeForkCluster(batch.size)
-  cl = parallel::makeCluster(numCores, outfile = outfile)
+  cl <- parallel::makeCluster(numCores, outfile = outfile)
   doParallel::registerDoParallel(cl)
   if(numCores<2){
     `%go%` <- foreach::`%do%`
@@ -349,8 +353,35 @@ overlap_score_big <- function(output.neurons,
     `%go%` <- foreach::`%dopar%`
   }
 
+  # What are our query and target neurons
+  query = intersect(names(query.neuronlistfh),query)
+  if(!length(query)){
+    stop("query neurons not in query.neurons")
+  }
+  target = names(target.neuronlistfh)
+
+  # Split
+  if(split){
+    target.axons = paste0(target, "_axon")
+    target.dendrites = paste0(target, "_dendrite")
+    query.axons = paste0(query, "_axon")
+    query.dendrites = paste0(query, "_dendrite")
+    target.names = c(target.axons, target.dendrites)
+    query.names = c(query.axons, query.dendrites)
+  }else{
+    query.names = query
+    target.names = target
+  }
+
+  # Initialize matrix
+  overlap.mat = bigstatsr::FBM(length(target.names),length(query.names), init = NA)
+  if(is.null(update.old)){
+    update.old = NULL
+  }else  if(!file.exists(update.old)){
+    update.old = NULL
+  }
+
   # Make matrix to fill
-  ## Get old matrix
   if(!is.null(update.old)){
     if(grepl("rds$",update.old)){
       old = t(readRDS(update.old))
@@ -361,45 +392,162 @@ overlap_score_big <- function(output.neurons,
     old = old[!colnames(old)%in%query,!rownames(old)%in%target]
     if(length(old)){
       if(nrow(old)&ncol(old)){
-        query = c(sort(colnames(old)), setdiff(query,colnames(old)))
-        target = c(sort(rownames(old)), setdiff(target,rownames(old)))
-        overlap.mat = bigstatsr::FBM(length(target),length(query), init = NA)
-        overlap.mat[match(rownames(old), target),match(colnames(old),query)] = old
+        query.names = c(sort(colnames(old)), setdiff(query.names,colnames(old)))
+        target.names = c(sort(rownames(old)), setdiff(target.names,rownames(old)))
+        overlap.mat = bigstatsr::FBM(length(target.names),length(query.names), init = NA)
+        overlap.mat[match(rownames(old), target.names),match(colnames(old),query.names)] = old
       }else{
-        overlap.mat = bigstatsr::FBM(length(target),length(query), init = NA)
+        overlap.mat = bigstatsr::FBM(length(target.names),length(query.names), init = NA)
       }
     }else{
-      overlap.mat = bigstatsr::FBM(length(target),length(query), init = NA)
+      overlap.mat = bigstatsr::FBM(length(target.names),length(query.names), init = NA)
     }
   }else{
-    overlap.mat = bigstatsr::FBM(length(target),length(query), init = NA)
+    overlap.mat = bigstatsr::FBM(length(target.names),length(query.names), init = NA)
   }
 
-  # Sort neurons
-  output.neurons = nat::as.neuronlist(output.neurons)
-  input.neurons = nat::as.neuronlist(input.neurons)
-  score.matrix = matrix(0,nrow = length(output.neurons), ncol = length(input.neurons))
-  rownames(score.matrix) = names(output.neurons)
-  colnames(score.matrix) = names(input.neurons)
-  if(just.leaves){
-    input.neurons.d = nat::nlapply(input.neurons, function(x) nat::xyzmatrix(x)[nat::endpoints(x),], .progress = "none")
-  }else{
-    input.neurons.d = nat::nlapply(input.neurons, nat::xyzmatrix, .progress = "none")
-  }
-  for (n in 1:length(output.neurons)){
-    if(just.leaves){
-      a = nat::xyzmatrix(output.neurons[[n]])[nat::endpoints(output.neurons[[n]]),]
-    }else{
-      a = nat::xyzmatrix(output.neurons[[n]])
+  # Batch it up
+  batches.query = split(sample(query), round(seq(from = 1, to = numCores, length.out = length(query))))
+  batches.target = split(sample(target), round(seq(from = 1, to = numCores, length.out = length(target))))
+
+  # Progress bar
+  iterations <- length(batches.query)
+  pb <- txtProgressBar(max = iterations, style = 3)
+  progress <- function(n) setTxtProgressBar(pb, n)
+  opts <- list(progress = progress)
+
+  # Get overlap calculation
+  `%fdo%` <- foreach::`%do%`
+  by.query <- foreach::foreach(chosen.query = batches.query, .combine = 'c', .errorhandling='pass', .options.snow = opts) %fdo% {
+
+    # Choose query neurons
+    query.neuronlist = query.neuronlistfh[names(query.neuronlistfh)%in%unlist(chosen.query)]
+    chosen.query = names(query.neuronlist)
+    if(!length(query.neuronlist)){
+      # message("chosen queries not in data")
+      next
     }
-    if(normalise){
-      s = sapply(input.neurons.d, function(x)lengthnorm(maxout(exp(-nabor::knn(query = a, data = x,k=nrow(x))$nn.dists^2/(2*delta^2)),max=max)))
-    }else{
-      s = sapply(input.neurons.d, function(x)sum(maxout(exp(-nabor::knn(query = a, data = x,k=nrow(x))$nn.dists^2/(2*delta^2)),max=max))) # Score similar to that in Schlegel et al. 2015
+    if(split){
+      q.axons = axonic_cable(query.neuronlist, OmitFailures = TRUE)
+      names(q.axons) = paste0(names(q.axons),"_axon")
+      q.dendrites = dendritic_cable(query.neuronlist, OmitFailures = TRUE)
+      names(q.dendrites) = paste0(names(q.dendrites),"_dendrite")
+      query.neuronlist = c(q.axons, q.dendrites)
+      chosen.query = names(query.neuronlist)
     }
-    score.matrix[n,] = s
+
+    # Loop across target groups
+    foreach::foreach(chosen.target = batches.target, .combine = 'c', .errorhandling='pass') %go% {
+      library("hemibrainr")
+
+      # Choose neuron sets
+      target.neuronlist = target.neuronlistfh[names(target.neuronlistfh)%in%unlist(chosen.target)]
+      chosen.target = names(target.neuronlist)
+      if(!length(target.neuronlist)){
+        # message("chosen targets not in data")
+        next
+      }
+      if(split){
+        t.axons = axonic_cable(target.neuronlist, OmitFailures = TRUE)
+        names(t.axons) = paste0(names(t.axons),"_axon")
+        t.dendrites = dendritic_cable(target.neuronlist, OmitFailures = TRUE)
+        names(t.dendrites) = paste0(names(t.dendrites),"_dendrite")
+        target.neuronlist = c(t.axons, t.dendrites)
+        chosen.target = names(target.neuronlist)
+      }
+
+      # Acquire point clouds
+      if(just.leaves){
+        target.neurons.d = nat::nlapply(target.neuronlist, function(x) nat::xyzmatrix(x)[nat::endpoints(x),], .progress = "none")
+      }else{
+        target.neurons.d = nat::nlapply(target.neuronlist, nat::xyzmatrix, .progress = "none")
+      }
+
+      # For each source neurons in set
+      for(cq in chosen.query){
+
+        # Get point cloud for query neurons
+        # message("Extracting source neuron: ", cq)
+        if(just.leaves){
+          a = nat::xyzmatrix(query.neuronlist[cq][[1]])[nat::endpoints(query.neuronlist[cq][[1]]),]
+        }else{
+          a = nat::xyzmatrix(query.neuronlist[cq][[1]])
+        }
+
+        # Get bounding box
+        if(!nrow(a)){
+          next
+        }
+        bb <- nat::boundingbox(a)
+
+        # Subset by bounding box
+        # message("Cutting target neurons to bounding box")
+        b <- lapply(target.neurons.d, function(b){
+          b %>%
+            as.data.frame() %>%
+            dplyr::filter(X>=bb[1,1]+max.radius,
+                          X<=bb[2,1]-max.radius,
+                          Y>=bb[1,2]+max.radius,
+                          Y<=bb[2,2]-max.radius,
+                          Z>=bb[1,3]+max.radius,
+                          Z<=bb[2,3]-max.radius) %>%
+            as.matrix()
+          b
+        })
+
+        # Calculate score
+        ## Score similar to that in Schlegel et al. 2015
+        # message("Calculating overlap scores for source neuron")
+        if(normalise){
+          s = sapply(b, function(x){
+            if(nrow(x)){
+              lengthnorm(exp(-nabor::knn(query = a, data = x, radius = max.radius, k= 1)$nn.dists^2/(2*delta^2)))
+            }else{
+              0
+            }
+          })
+        }else{
+          s = sapply(b, function(x) {
+            if(nrow(x)){
+              sum(exp(-nabor::knn(query = a, data = x, radius = max.radius, k = 1)$nn.dists^2/(2*delta^2)))
+            }else{
+              0
+            }
+          })
+        }
+
+        # Compress
+        if(compress){
+          s <- signif(s, digits = digits)
+        }
+
+        # Add to score matrix
+        overlap.mat[na.omit(match(unlist(chosen.target), target.names)), na.omit(match(unlist(cq), query.names))] = s
+      }
+
+      # Message
+      # message("Completed batch with ", length(batches.target)," neurons")
+
+      # Return
+      NULL
+    }
   }
-  score.matrix
+
+  # See errors
+  for(i in 1:length(by.query)){
+    if(!is.null(by.query[[i]])){
+      message(by.query[[i]])
+    }
+  }
+
+  # Stop cluster
+  parallel::stopCluster(cl)
+  clear <- gc()
+
+  # Return score matrix
+  omat = matrix(overlap.mat[,], nrow = length(target.names), ncol = length(query.names))
+  dimnames(omat) = list(target.names, query.names)
+  omat
 }
 
 
