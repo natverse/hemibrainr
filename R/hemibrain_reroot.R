@@ -179,7 +179,8 @@ flywire_reroot <- function(x,
 
 #' @export
 flywire_reroot.neuron <- function(x, flywire_nuclei = fafbseg::flywire_nuclei(), ...){
-  root.id = x$root_id
+  root.id = as.character(x$root_id)
+  flywire_nuclei$pt_root_id = as.character(flywire_nuclei$pt_root_id)
   if(is.null(root.id)){
     stop("no root_id at x$rootid for given neuron")
   }
