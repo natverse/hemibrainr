@@ -330,13 +330,14 @@ load_assign <- function(f){
 # hidden, similar function now in nat
 overlap_score_big <- function(query.neuronlistfh,
                               target.neuronlistfh,
-                              query = names(query.neurons),
+                              query = names(query.neuronlistfh),
                               delta = 1000, # nm
                               max.radius = delta*5,
                               just.leaves = TRUE,
                               normalise = FALSE,
                               update.old = NULL,
                               numCores = 1,
+                              batches = numCores,
                               outfile = "",
                               digits = 4,
                               split = TRUE,
@@ -407,8 +408,9 @@ overlap_score_big <- function(query.neuronlistfh,
   }
 
   # Batch it up
-  batches.query = split(sample(query), round(seq(from = 1, to = numCores, length.out = length(query))))
-  batches.target = split(sample(target), round(seq(from = 1, to = numCores, length.out = length(target))))
+  num <- batches*ceiling(length(query)/100) + 1
+  batches.query = split(sample(query), round(seq(from = 1, to = num, length.out = length(query))))
+  batches.target = split(sample(target), round(seq(from = 1, to = batches, length.out = length(target))))
 
   # Progress bar
   iterations <- length(batches.query)
@@ -419,6 +421,7 @@ overlap_score_big <- function(query.neuronlistfh,
   # Get overlap calculation
   `%fdo%` <- foreach::`%do%`
   by.query <- foreach::foreach(chosen.query = batches.query, .combine = 'c', .errorhandling='pass', .options.snow = opts) %fdo% {
+    library("hemibrainr")
 
     # Choose query neurons
     query.neuronlist = query.neuronlistfh[names(query.neuronlistfh)%in%unlist(chosen.query)]
