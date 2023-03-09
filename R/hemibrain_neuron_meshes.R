@@ -70,7 +70,9 @@ hemibrain_neuron_meshes <- function(bodyids, lod=2L, cloudvolume.url=NULL, conn=
   bodyids=as.character(bodyids)
   nn=bodyids;names(nn) <- bodyids
   res=nlapply(nn, hemibrain_neuron_mesh, lod=lod, cloudvolume.url=cloudvolume.url, ...)
-  res[,] <- neuprint_get_meta(names(res), conn=conn, dataset = dataset)
+  df <- neuprint_get_meta(names(res), conn = conn, dataset = dataset)
+  rownames(df) <- df$bodyid
+  res[,] <- df
   return(res)
 }
 
