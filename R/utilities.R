@@ -435,17 +435,24 @@ remove_unused_filehash <- function(path,
 }
 
 # Skeletonise neurons in parallel from a folder of obj files
-skeletor_batch <- function(obj, swc, numCores = 1, multiplier = 10, max.file.size = 1000000000, ...){
+skeletor_batch <- function(obj,
+                           swc,
+                           numCores = 1,
+                           multiplier = 10,
+                           max.file.size = 10000000000,
+                           ...){
+
+  # Get obj files
   if(dir.exists(obj[1])){
-    obj.files = list.files(obj, pattern = "obj$", full.names = TRUE)
+    obj.files <- list.files(obj, pattern = "obj$", full.names = TRUE)
   }else{
-    obj.files = obj
+    obj.files <- obj
   }
-  ids = obj.files[sapply(obj.files, file.size) < max.file.size]
+  ids <- obj.files[sapply(obj.files, file.size) < max.file.size]
   if(!length(ids)){
     return(NULL)
   }
-  big = setdiff(obj.files,ids)
+  big <- setdiff(obj.files,ids)
   if(length(big)){
     warning("Dropping ", length(big), " .obj files larger than ", max.file.size, " bytes")
   }
@@ -453,7 +460,8 @@ skeletor_batch <- function(obj, swc, numCores = 1, multiplier = 10, max.file.siz
   batches <- split(ids, round(seq(from = 1, to = upper, length.out = length(ids))))
 
   # Register cores
-  doParallel::registerDoParallel(numCores)
+  cl <- parallel::makeForkCluster(numCores)
+  doParallel::registerDoParallel(cl)
 
   # Set up progress bar
   iterations <- length(batches)
@@ -466,12 +474,15 @@ skeletor_batch <- function(obj, swc, numCores = 1, multiplier = 10, max.file.siz
                                          .combine = 'c',
                                          .errorhandling='pass',
                                          .options.snow = opts) %dopar% {
-    message(batch)
     neuron.ids = batches[[batch]]
-    skels = fafbseg::skeletor(obj = neuron.ids, save.obj = NULL, mesh3d = FALSE)
+    skels = fafbseg::skeletor(neuron.ids,
+                              method = "wavefront",
+                              save.obj = NULL,
+                              mesh3d = FALSE,
+                              waves = 1)
     skels[,"id"] = names(skels) = basename(gsub("\\.obj","",names(skels)))
     nat::write.neurons(skels, dir=swc, format='swc', Force = TRUE)
-    message("Completed: ", length(skels), " skeletonisations")
+    message("completed: ", length(skels), " skeletonisations")
     NULL
   }
 
@@ -493,10 +504,11 @@ download_neuron_obj_batch <- function(ids, numCores = 1, multiplier = 10, ratio 
     return(NULL)
   }
   upper <- ifelse((numCores*multiplier)<length(ids),numCores*multiplier,length(ids))
-  batches = split(ids, round(seq(from = 1, to = upper, length.out = length(ids))))
+  batches <- split(ids, round(seq(from = 1, to = upper, length.out = length(ids))))
 
   # Register cores
-  doParallel::registerDoParallel(numCores)
+  cl <- parallel::makeForkCluster(numCores) # does not work on windows
+  doParallel::registerDoParallel(cl)
 
   # Set up progress bar
   iterations <- length(batches)
@@ -521,7 +533,7 @@ download_neuron_obj_batch <- function(ids, numCores = 1, multiplier = 10, ratio 
   }
 
   # Return
-  doParallel::stopImplicitCluster()
+  parallel::stopCluster(cl)
   invisible()
 
 }
