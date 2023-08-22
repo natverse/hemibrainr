@@ -460,8 +460,12 @@ skeletor_batch <- function(obj,
   batches <- split(ids, round(seq(from = 1, to = upper, length.out = length(ids))))
 
   # Register cores
-  cl <- parallel::makeForkCluster(numCores)
-  doParallel::registerDoParallel(cl)
+  if(numCores<2){
+    `%go%` <- foreach::`%do%`
+  }else{
+    `%go%` <- foreach::`%dopar%`
+  }
+  doParallel::registerDoParallel(cl <- parallel::makeForkCluster(numCores))
 
   # Set up progress bar
   iterations <- length(batches)
@@ -472,8 +476,9 @@ skeletor_batch <- function(obj,
   # Run foreach loop
   by.query <- foreach::foreach (batch = seq_along(batches),
                                          .combine = 'c',
+                                         .verbose = numCores>1,
                                          .errorhandling='pass',
-                                         .options.snow = opts) %dopar% {
+                                         .options.snow = opts) %go% {
     neuron.ids = batches[[batch]]
     skels = fafbseg::skeletor(neuron.ids,
                               method = "wavefront",
@@ -483,7 +488,7 @@ skeletor_batch <- function(obj,
     skels[,"id"] = names(skels) = basename(gsub("\\.obj","",names(skels)))
     nat::write.neurons(skels, dir=swc, format='swc', Force = TRUE)
     message("completed: ", length(skels), " skeletonisations")
-    NULL
+    sprintf("batch %s neurons %s / %s complete", batch, length(neuron.ids), length(skels))
   }
 
   # Were there errors?
@@ -506,9 +511,14 @@ download_neuron_obj_batch <- function(ids, numCores = 1, multiplier = 10, ratio 
   upper <- ifelse((numCores*multiplier)<length(ids),numCores*multiplier,length(ids))
   batches <- split(ids, round(seq(from = 1, to = upper, length.out = length(ids))))
 
+
   # Register cores
-  cl <- parallel::makeForkCluster(numCores) # does not work on windows
-  doParallel::registerDoParallel(cl)
+  if(numCores<2){
+    `%go%` <- foreach::`%do%`
+  }else{
+    `%go%` <- foreach::`%dopar%`
+  }
+  doParallel::registerDoParallel(cl <- parallel::makeForkCluster(numCores)) # does not work on windows
 
   # Set up progress bar
   iterations <- length(batches)
@@ -517,12 +527,16 @@ download_neuron_obj_batch <- function(ids, numCores = 1, multiplier = 10, ratio 
   opts <- list(progress = progress)
 
   # do par process
-  by.query <- foreach::foreach (batch = seq_along(batches)) %dopar% {
+  by.query <- foreach::foreach(batch = seq_along(batches),
+                               .combine = 'c',
+                               .verbose = numCores>1,
+                                .errorhandling = 'pass',
+                                .options.snow = opts) %go% {
     neuron.ids = batches[[batch]]
     fafbseg::download_neuron_obj(segments = neuron.ids,
                                               ratio = ratio,
                                               save.obj = save.obj)
-    NULL
+    sprintf("batch %s of %s complete", batch, length(neuron.ids))
   }
 
   # Were there errors?
