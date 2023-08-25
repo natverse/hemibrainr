@@ -254,11 +254,11 @@ flywire_reroot.neuronlist <- function(x, flywire_nuclei = fafbseg::flywire_nucle
 #' }
 #'
 #' # remove any synapses outside of this surface (or on the cell body fibre)
-#' neuron.fixed = hemibrain_remove_bad_synapses(neuron, meshes=hemibrain.surf)
+#' neuron.fixed = remove_bad_synapses(neuron, meshes=hemibrain.surf)
 #' \dontrun{
 #' # previously we used all the individual hemibrain meshes. This may produce
 #' # slightly different results but using *hemibrain.surf* is much faster
-#' neuron.fixed = hemibrain_remove_bad_synapses(neuron, meshes=hemibrain_roi_meshes())
+#' neuron.fixed = remove_bad_synapses(neuron, meshes=hemibrain_roi_meshes())
 #' }
 #' \dontrun{
 #' library(nat)
@@ -266,27 +266,83 @@ flywire_reroot.neuronlist <- function(x, flywire_nuclei = fafbseg::flywire_nucle
 #' plot3d(neuron.fixed)
 #' points3d(xyzmatrix(neuron.fixed[[1]]$connectors), size = 5, col = "green")
 #'
-#' }}
+#' }
+#' \dontrun{
+#' # Now an example with flywire neurons.
+
+#' }
+#'}
 #' @export
 #' @seealso \code{\link{hemibrain_reroot}}
-hemibrain_remove_bad_synapses <- function(x,
-                                          meshes = hemibrainr::hemibrain.surf,
-                                          soma = TRUE,
-                                          min.nodes.from.soma = 100,
-                                          min.nodes.from.pnt = 5,
-                                          primary.branchpoint = 0.25,
-                                          ...) UseMethod("hemibrain_remove_bad_synapses")
+remove_bad_synapses <- function(x,
+                                meshes = NULL, # hemibrainr::hemibrain.surf,
+                                soma = TRUE,
+                                min.nodes.from.soma = 100,
+                                min.nodes.from.pnt = 5,
+                                primary.branchpoint = 0.25,
+                                ...) UseMethod("remove_bad_synapses")
 
+
+
+# # Get our exemplar FAFB neurons
+# nx <- xform_brain(elmr::dense_core_neurons, ref="FlyWire", sample="FAFB14")
+#
+# # Get flywire IDs
+# choose_segmentation("flywire")
+# xyz <- xyzmatrix(nx)
+# ids <- unique(flywire_xyz2id(xyz[sample(1:nrow(xyz),100),]))
+#
+# # Skeletonise
+# neurons <- fafbseg::skeletor(ids,
+#                    method = "wavefront",
+#                    save.obj = NULL,
+#                    mesh3d = FALSE,
+#                    waves = 1)
+#
+# # Re-root the soma
+# # Get flywire nuclei
+# flywire_n <- fafbseg::flywire_nuclei()
+# flywire_n <- as.data.frame(flywire_n)
+# flywire_n$pt_root_id <- as.character(flywire_n$pt_root_id)
+# neurons.rerooted <- flywire_reroot(neurons, .parallel = FALSE, flywire_nuclei = flywire_n)
+#
+# # Add synapses
+# neurons.syn <- fafbseg::flywire_neurons_add_synapses(x = neurons.rerooted,
+#                                                      cleft.threshold = 50,
+#                                                      transmitters = TRUE,
+#                                                      local = NULL,
+#                                                      Verbose = FALSE,
+#                                                      OmitFailures = FALSE,
+#                                                      .parallel = FALSE)
+#
+# # Split into axon and dendrite
+# neurons.syn.split <- flow_centrality(neurons.syn)
+#
+# # Flag bad synapses
+# neurons.syn.split.flagged <- remove_bad_synapses(neurons.syn.split,
+#                                                  soma = TRUE,
+#                                                  min.nodes.from.soma = 100,
+#                                                  min.nodes.from.pnt = 5,
+#                                                  primary.branchpoint = 0.25)
+#
+# # NT predictions in good versus bad synapses
+# syns <- nlapply(neurons.syn.split.flagged, function(x) x$connectors)
+# syns.df <- do.call(rbind, syns)
+# table(syns.df$Label, syns.df$status)
 
 #' @export
-hemibrain_remove_bad_synapses.neuron <- function(x,
-                                                 meshes = hemibrainr::hemibrain.surf,
-                                                 soma = TRUE,
-                                                 min.nodes.from.soma = 100,
-                                                 min.nodes.from.pnt = 5,
-                                                 primary.branchpoint = 0.25,
-                                                 ...){
+remove_bad_synapses.neuron <- function(x,
+                                       meshes = NULL, # hemibrainr::hemibrain.surf,
+                                       soma = TRUE,
+                                       min.nodes.from.soma = 50,
+                                       min.nodes.from.pnt = 5,
+                                       primary.branchpoint = 0.25,
+                                       ...){
   x.safe = x
+  split = !is.null(x$AD.segregation.index)
+  if(is.null(x$connectors$status)){
+    x$connectors$status='good'
+  }
   if(!is.null(meshes)){
     x$connectors$inside = NA
     if(is.hxsurf(meshes)){
@@ -302,48 +358,66 @@ hemibrain_remove_bad_synapses.neuron <- function(x,
       x$connectors = x$connectors[!is.na(x$connectors$inside),]
     }
   }
-  if(soma){
+  if(split){
+    soma.nodes <- x$connectors$Label %in% c("soma",'1',1)
+    pnt.nodes <- x$connectors$Label %in% c("pnt",'primary_neurite','primary.neurite','7',7)
+    pd.nodes <- x$connectors$Label %in% c("pnt",'primary_dendrite','primary.dendrite','4',4)
+    x$connectors[soma.nodes,"status"]="on_soma"
+    x$connectors[pnt.nodes,"status"]="on_pnt"
+    x$connectors[pd.nodes,"status"]="on_pd"
+  }else{
     primary.branch.point = primary_branchpoint(x, primary_neurite = TRUE, first = primary.branchpoint)
-    pnt = suppressWarnings(unique(unlist(igraph::shortest_paths(nat::as.ngraph(x), nat::rootpoints(x), to = primary.branch.point, mode = "all")$vpath)))
-    x$connectors = x$connectors[!x$connectors$treenode_id%in%pnt,]
+    pnt = suppressWarnings(unique(unlist(igraph::shortest_paths(graph = nat::as.ngraph(x),
+                                                                from = nat::rootpoints(x),
+                                                                to = primary.branch.point,
+                                                                mode = "all")$vpath)))
+    x$connectors[x$connectors$treenode_id%in%pnt,"status"]="near_pnt"
     syns = unique(x$connectors$treenode_id)
     syns = (1:nrow(x$d))[match(syns,x$d$PointNo)]
-    # not within radius of soma
-    dists = igraph::distances(nat::as.ngraph(x), v = nat::rootpoints(x), to = syns, mode = "all")
-    names(dists) = syns
-    x$connectors = x$connectors[x$connectors$treenode_id %in% names(dists)[dists>min.nodes.from.soma],]
     # not within radius of pnt
     dists = igraph::distances(nat::as.ngraph(x), v = pnt, to = syns, mode = "all")
     dists = apply(dists, 2, function(x) sum(x<min.nodes.from.pnt))
     names(dists) = syns
-    x$connectors = x$connectors[x$connectors$treenode_id %in% names(dists)[dists==0],]
+    x$connectors[x$connectors$treenode_id %in% names(dists)[as.numeric(dists)==0],"status"]="on_pnt"
   }
-  removed = nrow(x.safe$connectors) - nrow(x$connectors)
+  if(soma){
+    # not within radius of soma
+    syns = unique(x$connectors$treenode_id)
+    syns = (1:nrow(x$d))[match(syns,x$d$PointNo)]
+    dists = igraph::distances(graph = nat::as.ngraph(x),
+                              v = nat::rootpoints(x),
+                              to = syns,
+                              mode = "all")
+    names(dists) = syns
+    x$connectors[x$connectors$treenode_id %in% names(dists)[as.numeric(dists)<=min.nodes.from.soma],'status']="near_soma"
+  }
+  removed = sum(x$connectors$status!="good", na.rm = TRUE)
   if(removed>0){
     x$tags$synapses.removed = removed
+    message('flagged ', removed," of ",  nrow(x$connectors), " bad synapses on skeleton, see x$connectors$status")
   }else{
     x$tags$synapses.removed = 0
   }
-  x = hemibrain_neuron_class(x)
+  x <- hemibrain_neuron_class(x)
   x
 }
 
 #' @export
-hemibrain_remove_bad_synapses.neuronlist <- function(x,
-                                                     meshes = hemibrainr::hemibrain.surf,
-                                                     soma = TRUE,
-                                                     min.nodes.from.soma = 125,
-                                                     min.nodes.from.pnt = 5,
-                                                     primary.branchpoint = 0.25,
-                                                     ...){
+remove_bad_synapses.neuronlist <- function(x,
+                                           meshes = NULL, #hemibrainr::hemibrain.surf,
+                                           soma = TRUE,
+                                           min.nodes.from.soma = 125,
+                                           min.nodes.from.pnt = 5,
+                                           primary.branchpoint = 0.25,
+                                           ...){
   nat::nlapply(x,
-                        hemibrain_remove_bad_synapses.neuron,
-                        meshes = meshes,
-                        soma = soma,
-                        min.nodes.from.soma=min.nodes.from.soma,
-                        min.nodes.from.pnt=min.nodes.from.pnt,
-                        primary.branchpoint = primary.branchpoint,
-                        ...)
+              remove_bad_synapses.neuron,
+              meshes = meshes,
+              soma = soma,
+              min.nodes.from.soma=min.nodes.from.soma,
+              min.nodes.from.pnt=min.nodes.from.pnt,
+              primary.branchpoint = primary.branchpoint,
+              ...)
 }
 
 
@@ -351,10 +425,10 @@ hemibrain_remove_bad_synapses.neuronlist <- function(x,
 #'
 #' @description Call \code{\link{hemibrain_reroot}} on neurons read from
 #' the hemibrain neuprintr project, that have no marked soma, and
-#' \code{\link{hemibrain_remove_bad_synapses}} on all neurons. Does not prune synapses
+#' \code{\link{remove_bad_synapses}} on all neurons. Does not prune synapses
 #' from soma positions / along the primary neurite, but does remove synapses outside
 #' of the hemibrain volume.
-#' @inheritParams hemibrain_remove_bad_synapses
+#' @inheritParams remove_bad_synapses
 #' @inheritParams hemibrain_reroot
 #' @param OmitFailures Whether to omit neurons for which FUN gives an error.
 #' The default value (NA) will result in nlapply stopping with an error
@@ -431,12 +505,12 @@ hemibrain_skeleton_check <- function(x, # as read by neuprint_read_neurons
 
   # Remove erroneous synapses, out of mesh and on pnt/soma
   message("Removing synapses outside the hemibrain neuropil volume for ", length(x.new), " neurons")
-  x.goodsyn = hemibrain_remove_bad_synapses(x.new,
-                                            meshes = meshes,
-                                            soma = FALSE,
-                                            min.nodes.from.soma = min.nodes.from.soma,
-                                            min.nodes.from.pnt = min.nodes.from.pnt,
-                                            OmitFailures = OmitFailures)
+  x.goodsyn = remove_bad_synapses(x.new,
+                                  meshes = meshes,
+                                  soma = FALSE,
+                                  min.nodes.from.soma = min.nodes.from.soma,
+                                  min.nodes.from.pnt = min.nodes.from.pnt,
+                                  OmitFailures = OmitFailures)
 
   # Add new info to meta-data
   x.goodsyn = metadata_add_tags(x.goodsyn)

@@ -428,6 +428,9 @@ flow_centrality.neuron <- function(x,
   x$d = nodes
   x = internal_assignments(x)
   ### Prepare neuron for release
+  if(!is.null(x$connectors$treenode_id)){
+    x$connectors$Label = x$d$Label[match(x$connectors$treenode_id, x$d$PointNo)]
+  }
   x$AD.segregation.index = segregation.index
   x$max.flow.centrality = as.numeric(ais)
   x$split = x$tags$split = TRUE
