@@ -369,12 +369,12 @@ remove_bad_synapses <- function(x,
 # neurons.syn.split <- flow_centrality(neurons.syn)
 #
 # # Flag bad synapses
-neurons.syn.split.flagged <- remove_bad_synapses(neurons.syn.split,
-                                                 soma = TRUE,
-                                                 mesh = elmr::FAFB14.surf,
-                                                 min.nodes.from.soma = 100,
-                                                 min.nodes.from.pnt = 5,
-                                                 primary.branchpoint = 0.25)
+# neurons.syn.split.flagged <- remove_bad_synapses(neurons.syn.split,
+#                                                  soma = TRUE,
+#                                                  mesh = elmr::FAFB14.surf,
+#                                                  min.nodes.from.soma = 100,
+#                                                  min.nodes.from.pnt = 5,
+#                                                  primary.branchpoint = 0.25)
 #
 # # NT predictions in good versus bad synapses
 # syns <- nlapply(neurons.syn.split.flagged, function(x) x$connectors)
