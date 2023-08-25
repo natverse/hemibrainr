@@ -29,7 +29,12 @@ from the hemibrain Google team drive overseen by the Drosophila Connectomics gro
 
 \item{...}{methods sent to \code{nat::nlapply}}
 
-\item{flywire_nuclei}{a \code{data.frame} that gives auto-detected nuclei locations in the Flywire dataset. This is provided by}
+\item{flywire_nuclei}{a \code{data.frame} that gives auto-detected nuclei locations in the Flywire dataset. This is provided by fafbseg::flywire_nuclei(rawcoords = TRUE).
+This assumes the flywire neuron is in its untransformed, raw coordinates.}
+
+\item{try_hairball}{logical, if TRUE when a match to flywire_nuclei cannot be foudn soma is estimated using fafbseg:::reroot_hairball.}
+
+\item{rootid_backup}{logical, if TRUE then if the nucleus_id cannot be used, attempt to use root_id with result rfom fafbseg::flywire_nuclei.}
 }
 \value{
 a \code{nat::neuronlist} or \code{nat::neuron} object

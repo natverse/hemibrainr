@@ -17,7 +17,10 @@
 #' if \code{method == "manual"}.
 #' @param hemibrain_somas a \code{data.frame} that gives soma locations for hemibrain neurons. See the default, \code{\link{hemibrain_somas}}. If \code{googelsheet} is \code{TRUE} this is read fresh
 #' from the hemibrain Google team drive overseen by the Drosophila Connectomics group.
-#' @param flywire_nuclei a \code{data.frame} that gives auto-detected nuclei locations in the Flywire dataset. This is provided by
+#' @param flywire_nuclei a \code{data.frame} that gives auto-detected nuclei locations in the Flywire dataset. This is provided by fafbseg::flywire_nuclei(rawcoords = TRUE).
+#' This assumes the flywire neuron is in its untransformed, raw coordinates.
+#' @param try_hairball logical, if TRUE when a match to flywire_nuclei cannot be foudn soma is estimated using fafbseg:::reroot_hairball.
+#' @param rootid_backup logical, if TRUE then if the nucleus_id cannot be used, attempt to use root_id with result rfom fafbseg::flywire_nuclei.
 #' @param meshes a list/a single object of class \code{mesh3d} or \code{hxsurf}. Only used for estimation.
 #' If \code{NULL} then \code{hemibrain_roi_meshes} is called.
 #' @param ... methods sent to \code{nat::nlapply}
@@ -174,57 +177,92 @@ hemibrain_reroot.neuronlist <- function(x,
 
 #' @export
 flywire_reroot <- function(x,
-                           flywire_nuclei = fafbseg::flywire_nuclei(),
+                           flywire_nuclei = fafbseg::flywire_nuclei(rawcoords = TRUE),
+                           rootid_backup = FALSE,
+                           try_hairball = TRUE,
                            ...) UseMethod("flywire_reroot")
 
 #' @export
 flywire_reroot.neuron <- function(x,
-                                  flywire_nuclei = fafbseg::flywire_nuclei(),
+                                  flywire_nuclei = fafbseg::flywire_nuclei(rawcoords = TRUE),
+                                  rootid_backup = FALSE,
+                                  try_hairball = TRUE,
                                   ...){
   root.id = as.character(x$root_id)
   nucleus.id = as.character(x$nucleus_id)
   flywire_nuclei$pt_root_id = as.character(flywire_nuclei$pt_root_id)
-  if(is.null(root.id)){
-    stop("no root_id at x$rootid for given neuron")
-  }
+  flywire_nuclei$id = as.character(flywire_nuclei$id)
   if(length(nucleus.id)){
     flywire.nucleus = subset(flywire_nuclei, flywire_nuclei$id == nucleus.id)
-  }else if(length(root.id)){
+  }else if(length(root.id)&&rootid_backup){
     warning('no nucleus id given, using rootid: ', root.id)
-    flywire.nucleus = subset(flywire_nuclei, flywire_nuclei$pt_root_id == root.id)
+    if(is.null(root.id)){
+      stop("no root_id at x$rootid for given neuron")
+    }
+    flywire.nucleus = subset(flywire_nuclei, flywire_nuclei$pt_root_id == root.id, valid == 't')
+    if(nrow(flywire.nucleus)>1){
+      pts = do.call(rbind,flywire.nucleus$pt_position)
+      pin = !nat::pointsinside(x = pts, surf = elmr::FAFB14.surf)
+      pin[is.na(pin)|is.infinite(pin)|is.nan(pin)] = FALSE
+      flywire.nucleus=flywire.nucleus[pin,]
+    }
+    if(nrow(flywire.nucleus)>1){
+      warning("multiple nuclei detected for root id:", rootid, " will not use any")
+      flywire.nucleus = data.frame()
+    }
   }else{
+    flywire.nucleus = data.frame()
     warning("no valid nucleus or rootid given")
   }
   if(!nrow(flywire.nucleus)){
-    warning("nucleus cannot be ascertained")
-    return(hemibrain_neuron_class(x))
+    if(try_hairball){
+      warning("nucleus cannot be ascertained, looking for hairball in: ", root.id)
+      y = fafbseg:::reroot_hairball(x,
+                                    k.soma.search = 100,
+                                    radius.soma.search=10000,
+                                    reroot_method = "density",
+                                    brain = elmr::FAFB14.surf)
+      somid = y$tags$soma = somid
+      y$soma  = "estimated"
+      y$somid = somid
+    }else{
+      warning("nucleus cannot be ascertained for: ", root.id)
+      x$soma = x$somid = NA
+      return(hemibrain_neuron_class(x))
+    }
+  }else{
+    flywire.nucleus = flywire.nucleus[1,]
+    som = matrix(flywire.nucleus$pt_position[[1]], ncol = 3)
+    root = nabor::knn(query = som, data = nat::xyzmatrix(x$d), k = 1)$nn.idx
+    somid = x$d$PointNo[match(root, 1:nrow(x$d))]
+    y = nat::as.neuron(nat::as.ngraph(x$d), origin = somid)
+    flywire.nucleus$treenode_id = somid
+    y$soma = flywire.nucleus
   }
-  flywire.nucleus = flywire.nucleus[1,]
-  som = matrix(flywire.nucleus$pt_position[[1]], ncol = 3)
-  root = nabor::knn(query = som, data = nat::xyzmatrix(x$d), k = 1)$nn.idx
-  somid = x$d$PointNo[match(root, 1:nrow(x$d))]
-  y = nat::as.neuron(nat::as.ngraph(x$d), origin = somid)
   y = hemibrain_carryover_labels(x=x,y=y)
   y = hemibrain_carryover_tags(x=x,y=y)
   y$connectors = x$connectors
   y$connectors$treenode_id = y$d$PointNo[match(x$connectors$treenode_id, y$d$PointNo)]
-  flywire.nucleus$treenode_id = somid
-  y$soma = flywire.nucleus
+  y$somid  = somid
   if(!is.null(y$d$Label)){
     y$d$Label[somid] = 1
   }
+
   # return
-  y = hemibrain_neuron_class(y)
-  y
+  hemibrain_neuron_class(y)
 }
 
 #' @export
-flywire_reroot.neuronlist <- function(x, flywire_nuclei = fafbseg::flywire_nuclei(), ...){
+flywire_reroot.neuronlist <- function(x,
+                                      flywire_nuclei = fafbseg::flywire_nuclei(rawcoords = TRUE),
+                                      rootid_backup = FALSE,
+                                      try_hairball = TRUE,
+                                      ...){
   x = tryCatch(add_field_seq(x,x[,"root_id"],field="root_id"),
                error = function(e) add_field_seq(x,names(x),field="root_id"))
   x = tryCatch(add_field_seq(x,x[,"nucleus_id"],field="nucleus_id"),
                error = function(e) add_field_seq(x,names(x),field="root_id"))
-  y = nat::nlapply(X = x, FUN = flywire_reroot.neuron, flywire_nuclei = flywire_nuclei, ...)
+  y = nat::nlapply(X = x, FUN = flywire_reroot.neuron, flywire_nuclei = flywire_nuclei,rootid_backup=rootid_backup,try_hairball=try_hairball, ...)
   y
 }
 
@@ -313,7 +351,7 @@ remove_bad_synapses <- function(x,
 #
 # # Re-root the soma
 # # Get flywire nuclei
-# flywire_n <- fafbseg::flywire_nuclei()
+# flywire_n <- fafbseg::flywire_nuclei(rawcoords = TRUE)
 # flywire_n <- as.data.frame(flywire_n)
 # flywire_n$pt_root_id <- as.character(flywire_n$pt_root_id)
 # neurons.rerooted <- flywire_reroot(neurons, .parallel = FALSE, flywire_nuclei = flywire_n)
@@ -346,7 +384,7 @@ remove_bad_synapses <- function(x,
 remove_bad_synapses.neuron <- function(x,
                                        meshes = NULL, # hemibrainr::hemibrain.surf,
                                        soma = TRUE,
-                                       min.nodes.from.soma = 50,
+                                       min.nodes.from.soma = 100,
                                        min.nodes.from.pnt = 5,
                                        primary.branchpoint = 0.25,
                                        ...){
@@ -418,7 +456,7 @@ remove_bad_synapses.neuron <- function(x,
 remove_bad_synapses.neuronlist <- function(x,
                                            meshes = NULL, #hemibrainr::hemibrain.surf,
                                            soma = TRUE,
-                                           min.nodes.from.soma = 125,
+                                           min.nodes.from.soma = 100,
                                            min.nodes.from.pnt = 5,
                                            primary.branchpoint = 0.25,
                                            ...){
