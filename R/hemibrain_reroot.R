@@ -434,14 +434,14 @@ remove_bad_synapses.neuron <- function(x,
                                                                 from = nat::rootpoints(x),
                                                                 to = primary.branch.point,
                                                                 mode = "all")$vpath)))
-    x$connectors[x$connectors$treenode_id%in%pnt,"status"]="near_pnt"
+    x$connectors[x$connectors$treenode_id%in%pnt,"status"]="on_pnt"
     syns = unique(x$connectors$treenode_id)
     syns = (1:nrow(x$d))[match(syns,x$d$PointNo)]
     # not within radius of pnt
     dists = igraph::distances(nat::as.ngraph(x), v = pnt, to = syns, mode = "all")
     dists = apply(dists, 2, function(x) sum(x<min.nodes.from.pnt))
     names(dists) = syns
-    x$connectors[x$connectors$treenode_id %in% names(dists)[as.numeric(dists)==0],"status"]="on_pnt"
+    x$connectors[x$connectors$treenode_id %in% names(dists)[as.numeric(dists)==0],"status"]="near_pnt"
   }
   if(soma){
     # not within radius of soma
