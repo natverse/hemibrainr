@@ -199,7 +199,7 @@ flywire_reroot.neuron <- function(x,
     warning("nucleus cannot be ascertained")
     return(hemibrain_neuron_class(x))
   }
-  flywire.nucleus = subset(flywire_nuclei, flywire_nuclei$pt_root_id == root.id)
+  flywire.nucleus = flywire.nucleus[1,]
   som = matrix(flywire.nucleus$pt_position[[1]], ncol = 3)
   root = nabor::knn(query = som, data = nat::xyzmatrix(x$d), k = 1)$nn.idx
   somid = x$d$PointNo[match(root, 1:nrow(x$d))]
