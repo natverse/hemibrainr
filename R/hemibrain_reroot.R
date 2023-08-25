@@ -187,34 +187,31 @@ flywire_reroot.neuron <- function(x,
   if(is.null(root.id)){
     stop("no root_id at x$rootid for given neuron")
   }
-  if(!root.id%in%flywire_nuclei$pt_root_id){
-    warning(root.id, " not in flywire_nuclei")
-    y = x
+  if(length(nucleus.id)){
+    flywire.nucleus = subset(flywire_nuclei, flywire_nuclei$id == nucleus.id)
+  }else if(length(root.id)){
+    warning('no nucleus id given, using rootid: ', root.id)
+    flywire.nucleus = subset(flywire_nuclei, flywire_nuclei$pt_root_id == root.id)
   }else{
-    if(length(nucleus.id)){
-      flywire.nucleus = subset(flywire_nuclei, flywire_nuclei$id == nucleus.id)[1,]
-    }else if(length(root.id)){
-      warning('no nucleus id given, using rootid: ', rootid)
-      flywire.nucleus = subset(flywire_nuclei, flywire_nuclei$pt_root_id == root.id)[1,]
-    }else{
-      stop("no valid nucleus or rootid given")
-    }
-    if(!nrow(flywire.nucleus)){
-      stop("nucleus cannot be ascertained")
-    }
-    som = matrix(flywire.nucleus$pt_position[[1]], ncol = 3)
-    root = nabor::knn(query = som, data = nat::xyzmatrix(x$d), k = 1)$nn.idx
-    somid = x$d$PointNo[match(root, 1:nrow(x$d))]
-    y = nat::as.neuron(nat::as.ngraph(x$d), origin = somid)
-    y = hemibrain_carryover_labels(x=x,y=y)
-    y = hemibrain_carryover_tags(x=x,y=y)
-    y$connectors = x$connectors
-    y$connectors$treenode_id = y$d$PointNo[match(x$connectors$treenode_id, y$d$PointNo)]
-    flywire.nucleus$treenode_id = somid
-    y$soma = flywire.nucleus
-    if(!is.null(y$d$Label)){
-      y$d$Label[somid] = 1
-    }
+    warning("no valid nucleus or rootid given")
+  }
+  if(!nrow(flywire.nucleus)){
+    warning("nucleus cannot be ascertained")
+    return(hemibrain_neuron_class(x))
+  }
+  flywire.nucleus = subset(flywire_nuclei, flywire_nuclei$pt_root_id == root.id)
+  som = matrix(flywire.nucleus$pt_position[[1]], ncol = 3)
+  root = nabor::knn(query = som, data = nat::xyzmatrix(x$d), k = 1)$nn.idx
+  somid = x$d$PointNo[match(root, 1:nrow(x$d))]
+  y = nat::as.neuron(nat::as.ngraph(x$d), origin = somid)
+  y = hemibrain_carryover_labels(x=x,y=y)
+  y = hemibrain_carryover_tags(x=x,y=y)
+  y$connectors = x$connectors
+  y$connectors$treenode_id = y$d$PointNo[match(x$connectors$treenode_id, y$d$PointNo)]
+  flywire.nucleus$treenode_id = somid
+  y$soma = flywire.nucleus
+  if(!is.null(y$d$Label)){
+    y$d$Label[somid] = 1
   }
   # return
   y = hemibrain_neuron_class(y)
@@ -319,7 +316,7 @@ remove_bad_synapses <- function(x,
 # flywire_n <- fafbseg::flywire_nuclei()
 # flywire_n <- as.data.frame(flywire_n)
 # flywire_n$pt_root_id <- as.character(flywire_n$pt_root_id)
-neurons.rerooted <- flywire_reroot(neurons, .parallel = FALSE, flywire_nuclei = flywire_n)
+# neurons.rerooted <- flywire_reroot(neurons, .parallel = FALSE, flywire_nuclei = flywire_n)
 #
 # # Add synapses
 # neurons.syn <- fafbseg::flywire_neurons_add_synapses(x = neurons.rerooted,
