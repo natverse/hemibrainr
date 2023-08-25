@@ -288,6 +288,10 @@ flywire_reroot.neuronlist <- function(x,
 #' @param min.nodes.from.pnt the minimum number of nodes (geodesic distance) a
 #'   synapse can be from a point along the primary neurite. Synapses closes than
 #'   this will be removed.
+#' @param method, whether to estimate the primary neurite tract ('unsplit') or
+#'   use the results from flow_centrality.
+#' @param wipe logical, whether or not to remove previous flags left on synapses
+#' by this function.
 #' @param ... methods sent to \code{nat::nlapply}
 #'
 #' @return a \code{nat::neuronlist} or \code{nat::neuron} object
@@ -330,6 +334,8 @@ remove_bad_synapses <- function(x,
                                 min.nodes.from.soma = 100,
                                 min.nodes.from.pnt = 5,
                                 primary.branchpoint = 0.25,
+                                method = c("unsplit","split"),
+                                wipe = TRUE,
                                 ...) UseMethod("remove_bad_synapses")
 
 
@@ -389,6 +395,7 @@ remove_bad_synapses.neuron <- function(x,
                                        min.nodes.from.pnt = 5,
                                        primary.branchpoint = 0.25,
                                        method = c("unsplit","split"),
+                                       wipe = TRUE,
                                        ...){
   method = match.arg(method)
   x.safe = x
@@ -396,7 +403,9 @@ remove_bad_synapses.neuron <- function(x,
   if(method=='split'&&!split){
     stop('method split cannot be used on unsplit neurons')
   }
-  if(is.null(x$connectors$status)){
+  if(wipe){
+    x$connectors$status='good'
+  }else if(is.null(x$connectors$status)){
     x$connectors$status='good'
   }
   if(!is.null(meshes)){
@@ -463,6 +472,8 @@ remove_bad_synapses.neuronlist <- function(x,
                                            min.nodes.from.soma = 100,
                                            min.nodes.from.pnt = 5,
                                            primary.branchpoint = 0.25,
+                                           method = c("unsplit","split"),
+                                           wipe = TRUE,
                                            ...){
   nat::nlapply(x,
               remove_bad_synapses.neuron,
@@ -471,6 +482,8 @@ remove_bad_synapses.neuronlist <- function(x,
               min.nodes.from.soma=min.nodes.from.soma,
               min.nodes.from.pnt=min.nodes.from.pnt,
               primary.branchpoint = primary.branchpoint,
+              method = method,
+              wipe = wipe,
               ...)
 }
 

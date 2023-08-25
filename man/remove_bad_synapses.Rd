@@ -11,6 +11,8 @@ remove_bad_synapses(
   min.nodes.from.soma = 100,
   min.nodes.from.pnt = 5,
   primary.branchpoint = 0.25,
+  method = c("unsplit", "split"),
+  wipe = TRUE,
   ...
 )
 }
@@ -40,6 +42,12 @@ this will be removed.}
 needed for a point to be assigned as the primary branchpoint. Used only
 when \code{soma = TRUE}. See the \code{first} argument in
 \code{\link{primary_neurite}} for details.}
+
+\item{method, }{whether to estimate the primary neurite tract ('unsplit') or
+use the results from flow_centrality.}
+
+\item{wipe}{logical, whether or not to remove previous flags left on synapses
+by this function.}
 
 \item{...}{methods sent to \code{nat::nlapply}}
 }
