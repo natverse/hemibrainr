@@ -369,11 +369,12 @@ remove_bad_synapses <- function(x,
 # neurons.syn.split <- flow_centrality(neurons.syn)
 #
 # # Flag bad synapses
-# neurons.syn.split.flagged <- remove_bad_synapses(neurons.syn.split,
-#                                                  soma = TRUE,
-#                                                  min.nodes.from.soma = 100,
-#                                                  min.nodes.from.pnt = 5,
-#                                                  primary.branchpoint = 0.25)
+neurons.syn.split.flagged <- remove_bad_synapses(neurons.syn.split,
+                                                 soma = TRUE,
+                                                 mesh = elmr::FAFB14.surf,
+                                                 min.nodes.from.soma = 100,
+                                                 min.nodes.from.pnt = 5,
+                                                 primary.branchpoint = 0.25)
 #
 # # NT predictions in good versus bad synapses
 # syns <- nlapply(neurons.syn.split.flagged, function(x) x$connectors)
@@ -387,14 +388,19 @@ remove_bad_synapses.neuron <- function(x,
                                        min.nodes.from.soma = 100,
                                        min.nodes.from.pnt = 5,
                                        primary.branchpoint = 0.25,
+                                       method = c("unsplit","split"),
                                        ...){
+  method = match.arg(method)
   x.safe = x
-  split = !is.null(x$AD.segregation.index)
+  split = !is.null(x$AD.segregation.index) && method == "split"
+  if(method=='split'&&!split){
+    stop('method split cannot be used on unsplit neurons')
+  }
   if(is.null(x$connectors$status)){
     x$connectors$status='good'
   }
   if(!is.null(meshes)){
-    x$connectors$inside = NA
+    x$connectors$inside = 'outside_neuropil'
     if(is.hxsurf(meshes)){
       inside = nat::pointsinside(nat::xyzmatrix(x$connectors), surf = meshes)
       x$connectors$inside[inside] = deparse(substitute(meshes))
@@ -404,9 +410,7 @@ remove_bad_synapses.neuron <- function(x,
         x$connectors$inside[inside] = roi
       }
     }
-    if(sum(is.na(x$connectors$inside))>0){
-      x$connectors = x$connectors[!is.na(x$connectors$inside),]
-    }
+    x$connectors[x$connectors$inside=='outside_neuropil','status']='outside_neuropil'
   }
   if(split){
     soma.nodes <- x$connectors$Label %in% c("soma",'1',1)
