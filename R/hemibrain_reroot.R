@@ -178,8 +178,11 @@ flywire_reroot <- function(x,
                            ...) UseMethod("flywire_reroot")
 
 #' @export
-flywire_reroot.neuron <- function(x, flywire_nuclei = fafbseg::flywire_nuclei(), ...){
+flywire_reroot.neuron <- function(x,
+                                  flywire_nuclei = fafbseg::flywire_nuclei(),
+                                  ...){
   root.id = as.character(x$root_id)
+  nucleus.id = as.character(x$nucleus_id)
   flywire_nuclei$pt_root_id = as.character(flywire_nuclei$pt_root_id)
   if(is.null(root.id)){
     stop("no root_id at x$rootid for given neuron")
@@ -188,7 +191,17 @@ flywire_reroot.neuron <- function(x, flywire_nuclei = fafbseg::flywire_nuclei(),
     warning(root.id, " not in flywire_nuclei")
     y = x
   }else{
-    flywire.nucleus = subset(flywire_nuclei, flywire_nuclei$pt_root_id == root.id)[1,]
+    if(length(nucleus.id)){
+      flywire.nucleus = subset(flywire_nuclei, flywire_nuclei$id == nucleus.id)[1,]
+    }else if(length(root.id)){
+      warning('no nucleus id given, using rootid: ', rootid)
+      flywire.nucleus = subset(flywire_nuclei, flywire_nuclei$pt_root_id == root.id)[1,]
+    }else{
+      stop("no valid nucleus or rootid given")
+    }
+    if(!nrow(flywire.nucleus)){
+      stop("nucleus cannot be ascertained")
+    }
     som = matrix(flywire.nucleus$pt_position[[1]], ncol = 3)
     root = nabor::knn(query = som, data = nat::xyzmatrix(x$d), k = 1)$nn.idx
     somid = x$d$PointNo[match(root, 1:nrow(x$d))]
@@ -211,6 +224,8 @@ flywire_reroot.neuron <- function(x, flywire_nuclei = fafbseg::flywire_nuclei(),
 #' @export
 flywire_reroot.neuronlist <- function(x, flywire_nuclei = fafbseg::flywire_nuclei(), ...){
   x = tryCatch(add_field_seq(x,x[,"root_id"],field="root_id"),
+               error = function(e) add_field_seq(x,names(x),field="root_id"))
+  x = tryCatch(add_field_seq(x,x[,"nucleus_id"],field="nucleus_id"),
                error = function(e) add_field_seq(x,names(x),field="root_id"))
   y = nat::nlapply(X = x, FUN = flywire_reroot.neuron, flywire_nuclei = flywire_nuclei, ...)
   y
@@ -304,7 +319,7 @@ remove_bad_synapses <- function(x,
 # flywire_n <- fafbseg::flywire_nuclei()
 # flywire_n <- as.data.frame(flywire_n)
 # flywire_n$pt_root_id <- as.character(flywire_n$pt_root_id)
-# neurons.rerooted <- flywire_reroot(neurons, .parallel = FALSE, flywire_nuclei = flywire_n)
+neurons.rerooted <- flywire_reroot(neurons, .parallel = FALSE, flywire_nuclei = flywire_n)
 #
 # # Add synapses
 # neurons.syn <- fafbseg::flywire_neurons_add_synapses(x = neurons.rerooted,
