@@ -562,7 +562,7 @@ hemibrain_skeleton_check <- function(x, # as read by neuprint_read_neurons
   x.soma = nat::setdiff(x,x.nosoma)
   x.soma = hemibrain_settags(x.soma, soma.edit = rep(FALSE,length(x.soma)))
   if(length(x.nosoma)){
-    message("Re-rooting ", length(x.nosoma), " neurons without a soma")
+    message("re-rooting ", length(x.nosoma), " neurons without a soma")
     x.estsoma = hemibrain_reroot(x = x.nosoma, meshes = meshes, OmitFailures = OmitFailures)
     nams = intersect(names(x),c(names(x.soma),names(x.estsoma)))
     x.new = c(x.soma, x.estsoma)[nams]

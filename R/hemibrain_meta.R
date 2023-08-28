@@ -95,7 +95,9 @@
 #' \code{\link{hemibrain_hemilineages}}, \code{\link{classed.ids}}, \code{\link{hemibrain_read_neurons}}
 hemibrain_get_meta <- function(x, ...){
   # Get information from neuprint
-  nmeta = neuprintr::neuprint_get_meta(x, possibleFields = neuprintr::neuprint_get_fields(), ...)
+  nmeta = neuprintr::neuprint_get_meta(x,
+                                       possibleFields = c(neuprint_get_fields(),"mito"),
+                                       ...)
   if(!nrow(nmeta)){
     warning("No meta data could be retieved, returning NULL")
     NULL
