@@ -42,7 +42,7 @@ flywire_synapses(
 )
 }
 \arguments{
-\item{local}{\code{FALSE} or path. By default (\code{FALSE}) data is read from \code{options()$Drive_hemibrain_data}),
+\item{local}{\code{FALSE} or path. By default (\code{FALSE}) data is read from \code{options()$remote_connectome_data}),
 but the user can specify an alternative path.}
 
 \item{folder}{A subfolder on the hemibrain team drive or your local data folder

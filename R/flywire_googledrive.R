@@ -12,7 +12,7 @@
 #' @param x flywire IDs for desired. If left as \code{NULL}, all flywire neurons that can be summoned from the hemibrainr Google drive are summoned.
 #' @param WithConnectors logical, if \code{TRUE} the neuron fetched have predicted synapses located within each neuron at \code{neuron$connectors} and
 #' have a predicted axon/dendrite split at \code{neuron$d$Label} for each point in its skeleton, created using \code{\link{flow_centrality}}.
-#' @param local \code{FALSE} or path. By default (\code{FALSE}) data is read from \code{options()$Drive_hemibrain_data}), but the user can specify an alternative path.
+#' @param local \code{FALSE} or path. By default (\code{FALSE}) data is read from \code{options()$remote_connectome_data}), but the user can specify an alternative path.
 #' @param mirror logical, whether or not to read neurons that have been mirrored (i.e. flipped to the 'other' brain hemisphere).
 #' @param zip logical. If \code{TRUE} then \code{nat::neuronlistz} is used to read neurons from a \code{.zip} archive. Otherwise, \code{nat::neuronlistfh} is used to read neurons from a \code{.rds} file with a linked 'data' folder.
 #' The \code{.zip} method is preferred. Both methods load a dynamic neuronlist, which only loads skeleton data into memory at the point where it is processed.
@@ -408,6 +408,9 @@ flywire_meta <-function(local = FALSE, folder = "flywire_neurons/", sql = FALSE,
     gfile = find_gfile(savedir = savedir, file = "flywire_meta", folder = folder)
     gcsv = suppressWarnings(readr::read_csv(gfile, col_types = sql_col_types))
   }
+  if(!length(gcsv)){
+    warning('no data, file may be online-only?')
+  }
   colnames(gcsv) = snakecase::to_snake_case(colnames(gcsv))
   gcsv
 }
@@ -421,6 +424,9 @@ flywire_failed <-function(local = FALSE, folder = "flywire_neurons/", sql = FALS
   }else{
     gfile = find_gfile(savedir = savedir, file = "flywire_failed", folder = folder)
     gcsv = suppressWarnings(readr::read_csv(gfile, col_types = sql_col_types))
+  }
+  if(!length(gcsv)){
+    warning('no data, file may be online-only?')
   }
   colnames(gcsv) = snakecase::to_snake_case(colnames(gcsv))
   gcsv
@@ -652,7 +658,7 @@ flywire_ids_update <- function(selected_sheets = NULL, # "1rzG1MuZYacM-vbW7100aK
   tracing.list = list()
   for(selected_sheet in selected_sheets){
     ## Read Google sheets and extract flywire neuron positions
-    if(Verbose) { message("### Working on google sheet: ", selected_sheet) }
+    if(Verbose) { message("### working on google sheet: ", selected_sheet) }
     if(is.null(ws)){
       tabs = gsheet_manipulation(FUN = googlesheets4::sheet_names,
                                  ss = selected_sheet,

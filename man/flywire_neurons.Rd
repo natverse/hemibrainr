@@ -35,7 +35,7 @@ flywire_request(
 \item{WithConnectors}{logical, if \code{TRUE} the neuron fetched have predicted synapses located within each neuron at \code{neuron$connectors} and
 have a predicted axon/dendrite split at \code{neuron$d$Label} for each point in its skeleton, created using \code{\link{flow_centrality}}.}
 
-\item{local}{\code{FALSE} or path. By default (\code{FALSE}) data is read from \code{options()$Drive_hemibrain_data}), but the user can specify an alternative path.}
+\item{local}{\code{FALSE} or path. By default (\code{FALSE}) data is read from \code{options()$remote_connectome_data}), but the user can specify an alternative path.}
 
 \item{brain}{the brainspace in which hemibrain neurons have been registered. Defaults to raw voxel space for the FlyWire project.}
 

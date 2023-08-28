@@ -8,7 +8,7 @@
 #' @param x a specific lineage, e.g. ALlv1. If \code{NULL}, the default, all lineages are fetched
 #' @param brain the brainspace in which hemibrain neurons have been registered. Defaults to raw voxel space for the FlyWire project.
 #' @param dataset whether to get clonal data from Ito et al. 2013 \code{"Ito"} or Yu et al. 2013 \code{"Lee"}.
-#' @param local \code{FALSE} or path. By default (\code{FALSE}) data is read from \code{options()$Drive_hemibrain_data}), but the user can specify an alternative path.
+#' @param local \code{FALSE} or path. By default (\code{FALSE}) data is read from \code{options()$remote_connectome_data}), but the user can specify an alternative path.
 #' @param from the name system in which you can find \code{x}. One of: cellBodyFiber, ito_lee_lineage, ito_lee_hemilineage, hartenstein_lineage, hartenstein_hemilineage
 #' @param to the lineage name system you want to move to, can be multiple of: cellBodyFiber, ito_lee_lineage, ito_lee_hemilineage, hartenstein_lineage, hartenstein_hemilineage
 #'

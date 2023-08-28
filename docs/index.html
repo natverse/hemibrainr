@@ -147,7 +147,7 @@
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/flyconnectome/hemibrainr">hemibrainr</a></span><span class="op">)</span>
 
 <span class="co"># Else, it wants to see it on the mounted team drive, here</span>
-<span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span><span class="op">(</span><span class="st">"Gdrive_hemibrain_data"</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span><span class="op">(</span><span class="st">"remote_connectome_data"</span><span class="op">)</span>
 
 <span class="co"># We can load meta data for all neurons in hemibrain</span>
 <span class="va">db</span> <span class="op">=</span> <span class="fu"><a href="reference/hemibrain_read_neurons.html">hemibrain_neurons</a></span><span class="op">(</span><span class="op">)</span>
@@ -218,13 +218,13 @@
 <span class="fu">plot3d</span><span class="op">(</span><span class="va">hemibrain_neurons</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span><span class="op">)</span>
 
 <span class="co"># Specifically, from here</span>
-<span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span><span class="op">(</span><span class="st">"Gdrive_hemibrain_data"</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span><span class="op">(</span><span class="st">"remote_connectome_data"</span><span class="op">)</span>
 
 <span class="co"># unmounts</span>
 <span class="fu"><a href="reference/hemibrainr_set_drive.html">hemibrainr_rclone_unmount</a></span><span class="op">(</span><span class="op">)</span>
 
 <span class="co"># And now we are back to:</span>
-<span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span><span class="op">(</span><span class="st">"Gdrive_hemibrain_data"</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span><span class="op">(</span><span class="st">"remote_connectome_data"</span><span class="op">)</span></code></pre></div>
 <p>For more detailed instructions, see <a href="https://natverse.github.io/hemibrainr/articles/google_filestream.html">this article</a>.</p>
 </div>
 <div id="example-splitting-neurons" class="section level3">

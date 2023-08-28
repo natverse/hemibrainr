@@ -3,10 +3,10 @@
 # hidden
 good_savedir <- function(local=FALSE, Verbose = TRUE){
   if(isFALSE(local)){
-    if(is.null(options()$Gdrive_hemibrain_data)){
+    if(is.null(options()$remote_connectome_data)){
       hemibrainr_set_drive()
     }
-    savedir = options()$Gdrive_hemibrain_data
+    savedir = options()$remote_connectome_data
     if(dir.exists(savedir)){
       if(Verbose) message("Reading from Google Team Drive: ", hemibrainr_team_drive())
     }else{
@@ -267,6 +267,35 @@ google_drive_place <- function(media,
                            verbose = verbose,
                            ...)
   }
+}
+
+# upload function
+remote_upload <- function(file,
+                          path,
+                          remote = c("gdrive","dropbox"),
+                          check = TRUE,
+                          verbose = FALSE){
+
+  # Upload
+  try({
+    if(remote=="gdrive"){
+      if(check){
+      }else{
+        googledrive::drive_put(media = file,
+                               path = path,
+                               verbose = verbose)
+      }
+    }else if(remote=="dropbox"){
+      rdrop2::drop_upload(file = file,
+                          path = path,
+                          mode = "overwrite",
+                          mute = TRUE,
+                          verbose = verbose)
+    }
+  }, silent = TRUE)
+
+  # return
+  invisible()
 }
 
 # Remove unused filehash files

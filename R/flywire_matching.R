@@ -220,7 +220,7 @@ LR_matching <- function(ids = NULL,
   ## Get NBLAST
   if(is.null(mirror.nblast)){
     message("Loading flywire NBLAST from flyconnectome Google Team Drive using Google Filestream: ")
-    message(file.path(options()$Gdrive_hemibrain_data,"hemibrain_nblast/flywire.mirror.mean.rda"))
+    message(file.path(options()$remote_connectome_data,"hemibrain_nblast/flywire.mirror.mean.rda"))
     mirror.nblast = hemibrain_nblast("flywire-mirror")
   }
   # Read the Google Sheet or seatable

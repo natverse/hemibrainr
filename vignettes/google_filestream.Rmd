@@ -58,7 +58,7 @@ Let us have a look at the default `hemibrainr` settings, letting it to know wher
 library(hemibrainr)
 
 # Else, it wants to see it on the mounted team drive, here
-options("Gdrive_hemibrain_data")
+options("remote_connectome_data")
 
 # Get hemibrain skeletons
 db <- hemibrain_neurons(local=FALSE) 
@@ -209,13 +209,13 @@ db = hemibrain_neurons()
 length(db)
 
 # Specifically, from here
-options("Gdrive_hemibrain_data")
+options("remote_connectome_data")
 
 # unmounts
 hemibrainr_rclone_unmount()
 
 # And now we are back to:
-options("Gdrive_hemibrain_data")
+options("remote_connectome_data")
 ```
 
 ## Option 3: local data and hemibrainr

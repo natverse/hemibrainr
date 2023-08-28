@@ -20,7 +20,7 @@ hemibrain_nblast(
 branching arbour.
 \code{\link{dotprops}} object.}
 
-\item{local}{\code{FALSE} or path. By default (\code{FALSE}) data is read from \code{options()$Drive_hemibrain_data}),
+\item{local}{\code{FALSE} or path. By default (\code{FALSE}) data is read from \code{options()$remote_connectome_data}),
 but the user can specify an alternative path.}
 
 \item{fafbsegpy}{logical. If \code{TRUE} the NBLASTs are fetched from Philipp Schlegel's nightly  \href{https://github.com/flyconnectome/flywire_nblast_pipeline/tree/main/data}{flywire NBLAST pipeline}.}

@@ -23,7 +23,7 @@ lineage_converter(
 \arguments{
 \item{x}{a specific lineage, e.g. ALlv1. If \code{NULL}, the default, all lineages are fetched}
 
-\item{local}{\code{FALSE} or path. By default (\code{FALSE}) data is read from \code{options()$Drive_hemibrain_data}), but the user can specify an alternative path.}
+\item{local}{\code{FALSE} or path. By default (\code{FALSE}) data is read from \code{options()$remote_connectome_data}), but the user can specify an alternative path.}
 
 \item{brain}{the brainspace in which hemibrain neurons have been registered. Defaults to raw voxel space for the FlyWire project.}
 

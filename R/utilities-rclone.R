@@ -35,8 +35,8 @@ hemibrainr_rclone <- function(drive = "hemibrainr", path=file.path(getwd(),"hemi
     }
     command = sprintf("rclone mount %s: %s", drive, path)
   }
-  options(Gdrive_hemibrain_data = path)
-  message("Google drive path set to: ", options()$Gdrive_hemibrain_data)
+  options(remote_connectome_data = path)
+  message("Google drive path set to: ", options()$remote_connectome_data)
   system(command, wait = FALSE)
   try(hemibrainr_google_login(),silent=TRUE)
   invisible()
@@ -53,7 +53,7 @@ hemibrainr_rclone_unmount <- function(path=file.path(getwd(),"hemibrainr_data/")
     # Linux
     system(sprintf("fusermount -u %s", path))
   }
-  options(Gdrive_hemibrain_data = "/Volumes/GoogleDrive/Shared\ drives/hemibrainr/")
+  options(remote_connectome_data = "/Volumes/GoogleDrive/Shared\ drives/hemibrainr/")
 }
 
 # hidden
@@ -76,7 +76,7 @@ get_os <- function(){
 # hidden
 hemibrainr_google_login <- function(path = NULL){
   if(is.null(path)){
-    path = file.path(options()$Gdrive_hemibrain_data,"annotations")
+    path = file.path(options()$remote_connectome_data,"annotations")
   }
   hemibrainr_service_account_key = file.path(path,"hemibrainr-571dd013f664.json")
   if(file.exists(hemibrainr_service_account_key)){

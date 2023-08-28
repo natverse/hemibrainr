@@ -34,7 +34,7 @@ hemibrain_neurons(
 \arguments{
 \item{x}{a vector of bodyids that can be read from \url{'https://neuprint.janelia.org/'}.}
 
-\item{local}{\code{FALSE} or path. By default (\code{FALSE}) data is read from \code{options()$Drive_hemibrain_data}), but the user can specify an alternative path.}
+\item{local}{\code{FALSE} or path. By default (\code{FALSE}) data is read from \code{options()$remote_connectome_data}), but the user can specify an alternative path.}
 
 \item{microns}{convert dimensions from raw voxels into microns (template brain: \code{JRCFIB2018F}, else \code{JRCFIB2018Fraw}).}
 
@@ -68,7 +68,7 @@ The \code{.zip} method is preferred. Both methods load a dynamic neuronlist, whi
 
 \item{folder}{the sub-folder in which to look for a \code{nat::neuronlistfh} .rds file and its data, representing hemibrain neurons. The function will look for this
 folder in the location: \code{hemibrainr:::good_savedir(local=local)},
-by default the mounted Google drive (\code{options()$Gdrive_hemibrain_data}) or locally ((\code{options()$hemibrain_data}))}
+by default the mounted Google drive (\code{options()$remote_connectome_data}) or locally ((\code{options()$hemibrain_data}))}
 }
 \value{
 the neuron or neuron list object inputted, with centripetal flow

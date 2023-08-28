@@ -64,7 +64,7 @@ Which is all useful stuff. You can explore our articles for more detailed inform
 library(hemibrainr)
 
 # Else, it wants to see it on the mounted team drive, here
-options("Gdrive_hemibrain_data")
+options("remote_connectome_data")
 
 # We can load meta data for all neurons in hemibrain
 db = hemibrain_neurons()
@@ -167,13 +167,13 @@ length(db)
 plot3d(hemibrain_neurons[1:10])
 
 # Specifically, from here
-options("Gdrive_hemibrain_data")
+options("remote_connectome_data")
 
 # unmounts
 hemibrainr_rclone_unmount()
 
 # And now we are back to:
-options("Gdrive_hemibrain_data")
+options("remote_connectome_data")
 ```
 
 For more detailed instructions, see [this article](https://natverse.github.io/hemibrainr/articles/google_filestream.html).

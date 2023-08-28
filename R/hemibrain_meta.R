@@ -95,7 +95,7 @@
 #' \code{\link{hemibrain_hemilineages}}, \code{\link{classed.ids}}, \code{\link{hemibrain_read_neurons}}
 hemibrain_get_meta <- function(x, ...){
   # Get information from neuprint
-  nmeta = neuprintr::neuprint_get_meta(x, ...)
+  nmeta = neuprintr::neuprint_get_meta(x, possibleFields = neuprintr::neuprint_get_fields(), ...)
   if(!nrow(nmeta)){
     warning("No meta data could be retieved, returning NULL")
     NULL
@@ -107,8 +107,12 @@ hemibrain_get_meta <- function(x, ...){
     nmeta$connectivity.type[is.na(nmeta$connectivity.type)] = "uncertain"
 
     # Add lineage information
-    nmeta2 = merge(nmeta,hemibrainr::hemibrain_hemilineages, all.x = TRUE, all.y = FALSE)
-    nmeta2$FAFB = NULL
+    hemibrain_hemilineages <- dplyr::rename(.data = hemibrainr::hemibrain_hemilineages, lineage_type = type)
+    hemibrain_hemilineages <- hemibrain_hemilineages[!duplicated(hemibrain_hemilineages$cell_body_fiber),]
+    nmeta2 <- dplyr::left_join(nmeta,
+                              hemibrain_hemilineages,
+                              by=c("cellBodyFiber"="cell_body_fiber"))
+    nmeta2$FAFB <- NULL
 
     # Neuron class
     nmeta$class = NA
@@ -130,9 +134,21 @@ hemibrain_get_meta <- function(x, ...){
     nmeta$class[nmeta$bodyid%in%hemibrainr::cent.ids] = "LHCENT"
     nmeta$class[nmeta$bodyid%in%hemibrainr::lc.ids] = "LCPN"
 
-    # Add match information
-    nmeta2$FAFB.match = hemibrainr::hemibrain_matched[as.character(nmeta2$bodyid),"match"]
-    nmeta2$FAFB.match.quality = hemibrainr::hemibrain_matched[as.character(nmeta2$bodyid),"quality"]
+    # Correct soma location
+    if(!is.null(nmeta2$somaLocation)){
+      nmeta2$somaLocation <- sapply(nmeta2$somaLocation, function(entry){
+        if(grepl('list',entry)){
+          gsub("^list\\(|\\).*","",entry)
+        }else{
+          entry
+        }
+      })
+      nmeta2$somaLocation[nmeta2$somaLocation=="NA"]=NA
+    }
+
+    # # Add match information
+    # nmeta2$FAFB.match = hemibrainr::hemibrain_matched[as.character(nmeta2$bodyid),"match"]
+    # nmeta2$FAFB.match.quality = hemibrainr::hemibrain_matched[as.character(nmeta2$bodyid),"quality"]
 
     # Add olfactory layer information
     nmeta2$layer = hemibrainr::hemibrain_olfactory_layers[match(nmeta2$bodyid,hemibrainr::hemibrain_olfactory_layers$node),"layer_mean"]
@@ -143,14 +159,14 @@ hemibrain_get_meta <- function(x, ...){
     }
 
     # Add split information
-    selcols = c("soma.edit", "skeletonization", "edited.cable",
+    selcols = c("soma_edit", "skeletonization", "edited_cable",
                 "axon_outputs", "dend_outputs", "axon_inputs",
                 "dend_inputs", "total_outputs_density", "total_inputs_density",
                 "axon_outputs_density", "dend_outputs_density", "axon_inputs_density",
                 "dend_inputs_density", "total_length", "axon_length", "dend_length",
                 "pd_length", "segregation_index")
     selcols = intersect(selcols, colnames(hemibrainr::hemibrain_metrics))
-    #selcols=setdiff(colnames(hemibrainr::hemibrain_metrics), colnames(nmeta2))
+    selcols = setdiff(selcols, colnames(nmeta2))
     hemibrain_metrics_sel = hemibrainr::hemibrain_metrics[as.character(nmeta2$bodyid), selcols]
     nmeta2 = cbind(nmeta2, hemibrain_metrics_sel)
     rownames(nmeta2) = nmeta2$bodyid

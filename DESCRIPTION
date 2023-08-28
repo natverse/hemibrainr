@@ -58,6 +58,7 @@ Imports:
     jpeg,
     png,
     googledrive,
+    rdrop2,
     jsonlite,
     plyr,
     catmaid,

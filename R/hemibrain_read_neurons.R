@@ -20,13 +20,13 @@
 #' @param googlesheet logical, whether or not manually checked somas should be read from the \href{https://docs.google.com/spreadsheets/d/1YjkVjokXL4p4Q6BR-rGGGKWecXU370D1YMc1mgUYr8E/edit#gid=1524900531}{Google Sheet}
 #' @param remote logical. Whether not to use \code{hemibrain_neurons} to try  to read neurons stored on the hemibrainr google drive, and mounted with either rclone or google filestream.
 #' @param clean whether or not to set synapse-less branches to \code{Label = 0}.
-#' @param local \code{FALSE} or path. By default (\code{FALSE}) data is read from \code{options()$Drive_hemibrain_data}), but the user can specify an alternative path.
+#' @param local \code{FALSE} or path. By default (\code{FALSE}) data is read from \code{options()$remote_connectome_data}), but the user can specify an alternative path.
 #' @param scaling the factor by which neuron coordinates in raw voxel space should be multiplied. The default scales to microns.
 #' @param dotprops logical. Whether or not to retrieve a \code{nat::dotprops} object, i.e. vector cloud representations of neurons for NBLASTing.
 #' The dotprops object will be in JRC2018FIBF micron space.
 #' @param folder the sub-folder in which to look for a \code{nat::neuronlistfh} .rds file and its data, representing hemibrain neurons. The function will look for this
 #' folder in the location: \code{hemibrainr:::good_savedir(local=local)},
-#' by default the mounted Google drive (\code{options()$Gdrive_hemibrain_data}) or locally ((\code{options()$hemibrain_data}))
+#' by default the mounted Google drive (\code{options()$remote_connectome_data}) or locally ((\code{options()$hemibrain_data}))
 #' @param swc logical. When using neurons with \code{hemibrain_neurons} from the Google drive, whether to read \code{.swc} files (if \code{TRUE}), or a neuronlistfh object (default).
 #' @param zip logical. If \code{TRUE} then \code{nat::neuronlistz} is used to read neurons from a \code{.zip} archive. Otherwise, \code{nat::neuronlistfh} is used to read neurons from a \code{.rds} file with a linked 'data' folder.
 #' The \code{.zip} method is preferred. Both methods load a dynamic neuronlist, which only loads skeleton data into memory at the point where it is processed.
@@ -74,7 +74,7 @@ hemibrain_read_neurons<-function(x = NULL,
          specify a location from which to read saved a save neuronlistfh object using 'local'. See
          ?hemibrain_download_neurons for details on the latter option.")
   }
-  if(isFALSE(dir.exists(options()$Gdrive_hemibrain_data))){
+  if(isFALSE(dir.exists(options()$remote_connectome_data))){
     remote = FALSE
     warning("Cannnot find mounted drive for hemibrainr, from which to read preprocessed neurons. See ?hemibrainr_set_drive ")
   }
@@ -381,7 +381,7 @@ hemibrain_neurons <- function(x = NULL,
       warning("zip set to FALSE, when swc is TRUE")
       zip = FALSE
     }
-    swc.folder = file.path(options()$Gdrive_hemibrain_data,folder,"swc")
+    swc.folder = file.path(options()$remote_connectome_data,folder,"swc")
     swc.list = list.files(swc.folder, full.names = TRUE, pattern = "swc")
     if(!is.null(x)){
       swc.list = swc.list[grepl(paste(x,collapse="|"),swc.list)]

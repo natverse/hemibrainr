@@ -35,7 +35,7 @@ With \href{https://rclone.org/drive/}{rclone sheet} you can mount it wherever yo
 \code{file.path(getwd(),"hemibrainr_data/")}}
 }
 \value{
-Sets options \code{Gdrive_hemibrain_data}
+Sets options \code{remote_connectome_data}
 }
 \description{
 One can read precomputed data available on the hemibrain Google Team

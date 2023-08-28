@@ -42,7 +42,7 @@
 #'  is for internal use by the \href{https://www.zoo.cam.ac.uk/research/groups/connectomics}{Drosophila Connectomics Group}.
 #'  The other one (\code{"hemibrainr"}) is shared with those who would like access. Contact us by email to request access.
 #'
-#' @return Sets options \code{Gdrive_hemibrain_data}
+#' @return Sets options \code{remote_connectome_data}
 #'
 #' @examples
 #' \donttest{
@@ -96,22 +96,22 @@ hemibrainr_set_drive <- function(drive = "hemibrainr",
   }
   drive = file.path(path, drive)
   if(drive.type!="rclone"){
-    options(Gdrive_hemibrain_data = file.path(drive))
+    options(remote_connectome_data = file.path(drive))
   }
-  if(dir.exists(options()$Gdrive_hemibrain_data)){
+  if(dir.exists(options()$remote_connectome_data)){
     found = "found"
   }else{
     found = "not found"
   }
   try(hemibrainr_google_login(),silent=TRUE)
-  msg = sprintf("Google drive %s, path set to: %s", found, options()$Gdrive_hemibrain_data)
+  msg = sprintf("Google drive %s, path set to: %s", found, options()$remote_connectome_data)
   message(msg)
 }
 
 #' @name hemibrainr_set_drive
 #' @export
 hemibrainr_team_drive <- function(){
-  basename(options()$Gdrive_hemibrain_data)
+  basename(options()$remote_connectome_data)
 }
 
 #' Read precomputed hemibrain data from the hemibrainr Google Drive
@@ -124,7 +124,7 @@ hemibrainr_team_drive <- function(){
 #'   edgelist  (\code{hemibrain_elist}) for all hemibrain neurons, broken down by axon and dendrite
 #'   assignments. Hemibrain related NBLASTs retrieved using \code{\link{hemibrain_nblast}}.
 #'
-#' @param local \code{FALSE} or path. By default (\code{FALSE}) data is read from \code{options()$Drive_hemibrain_data}),
+#' @param local \code{FALSE} or path. By default (\code{FALSE}) data is read from \code{options()$remote_connectome_data}),
 #' but the user can specify an alternative path.
 #' @param folder A subfolder on the hemibrain team drive or your local data folder
 #'   containing the data object to read.

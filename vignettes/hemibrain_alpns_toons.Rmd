@@ -34,7 +34,7 @@ library(ComplexHeatmap)
 library(LaCroixColoR)
 
 # Else, it wants to see it on the mounted team drive, here
-options("Gdrive_hemibrain_data")
+options("remote_connectome_data")
 
 # If this does not give a path to the hemibrainr google drive...
 ## But you do have access, and have set up rclone

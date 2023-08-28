@@ -50,7 +50,7 @@ And now, let's test by looking at some few information available through `hemibr
 library(hemibrainr)
 
 # Else, it wants to see it on the mounted team drive, here
-options("Gdrive_hemibrain_data")
+options("remote_connectome_data")
 
 # See matches, you can do this without hemibrain Google Team Drive access
 View(hemibrain_matched)

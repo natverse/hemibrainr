@@ -77,7 +77,7 @@ with the data stored on Google drive - but can take a quick tour here:
 library(hemibrainr)
 
 # Else, it wants to see it on the mounted team drive, here
-options("Gdrive_hemibrain_data")
+options("remote_connectome_data")
 
 # We can load meta data for all neurons in hemibrain
 db = hemibrain_neurons()
@@ -203,13 +203,13 @@ length(db)
 plot3d(hemibrain_neurons[1:10])
 
 # Specifically, from here
-options("Gdrive_hemibrain_data")
+options("remote_connectome_data")
 
 # unmounts
 hemibrainr_rclone_unmount()
 
 # And now we are back to:
-options("Gdrive_hemibrain_data")
+options("remote_connectome_data")
 ```
 
 For more detailed instructions, see [this
