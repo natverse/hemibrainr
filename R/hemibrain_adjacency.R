@@ -85,7 +85,7 @@ grouped_adjacency <- function(inputids=NULL, outputids=NULL,
   if(length(threshold)>2)
     stop("Only two threshold levels allowed!")
 
-  if(is.matrix(inputids)){
+  if(is.matrix(inputids) ||isTRUE(attr(class(inputids), "package") == "Matrix")) {
     am <- inputids
     inputids=rownames(am)
     outputids=colnames(am)
