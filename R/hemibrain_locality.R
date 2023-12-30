@@ -61,10 +61,11 @@ hemibrain_compartment_metrics <- function(x, resample = 10, delta = 62.5, locali
 # hidden
 compartment_metrics <- function(x, resample = 10, delta = 62.5, locality = FALSE, ...){
   syns = x$connectors # tryCatch(hemibrain_extract_synapses(x), error = function(e) NULL)
+  labd = ifelse("label" %in% colnames(x$d), "label", "Label")
   lab = ifelse("label" %in% colnames(syns), "label", "Label")
   # Axon-dendrite split?
-  if(!(sum(x$d$Label%in%c(2,"axon"))&sum(x$d$Label%in%c(3,"dendrite")))){
-    warning("Axon / dendrite missing")
+  if(!(sum(x$d[[labd]]%in%c(2,"axon"))&sum(x$d[[labd]]%in%c(3,"dendrite")))){
+    warning("axon/dendrite missing")
     total_length = tryCatch(summary(x)$cable.length, error = function(e) NA)
     total_outputs = NA
     total_inputs = NA
@@ -262,7 +263,7 @@ projection_score.neuron <- function(x,
   dend.mid = colMeans(nat::xyzmatrix(dend.res))
 
   # Euclidean distance between them
-  euc.dist = dist(rbind(axon.mid, dend.mid), method = "euclidean")[[1]]
+  euc.dist = stats::dist(rbind(axon.mid, dend.mid), method = "euclidean")[1]
   euc.dist
 
 }
