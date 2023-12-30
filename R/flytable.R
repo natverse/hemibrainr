@@ -2,16 +2,16 @@
 
 # hidden
 flytable_meta <- function(){
-  ft=fafbseg::flytable_query("select _id, root_id, root_630, supervoxel_id, proofread, status, pos_x, pos_y, pos_z, nucleus_id, soma_x, soma_y, soma_z, side, ito_lee_hemilineage, hartenstein_hemilineage, top_nt, flow, super_class, cell_class, cell_type, hemibrain_type, root_duplicated from info")
-  ft$flywire_xyz = apply(ft[,c("pos_x", "pos_y", "pos_z")], 1, paste_coords)
-  ft = as.data.frame(ft)
+  ft <- fafbseg::flytable_query("select _id, root_id, root_630, root_720, supervoxel_id, proofread, status, pos_x, pos_y, pos_z, nucleus_id, soma_x, soma_y, soma_z, side, ito_lee_hemilineage, hartenstein_hemilineage, top_nt, flow, super_class, cell_class, cell_type, hemibrain_type, cb_type, root_duplicated, known_nt from info")
+  ft$flywire_xyz <- apply(ft[,c("pos_x", "pos_y", "pos_z")], 1, paste_coords)
+  ft <- as.data.frame(ft)
   ft
 }
 
 # hidden
 flytable_soma <- function(){
-  ft=fafbseg::flytable_query("select _id, root_id, supervoxel_id, proofread, soma_x, soma_y, soma_z, nucleus_id, side, ito_lee_hemilineage, top_nt, cell_class, cell_type from info")
-  ft = as.data.frame(ft)
+  ft <- fafbseg::flytable_query("select _id, root_id, supervoxel_id, proofread, soma_x, soma_y, soma_z, nucleus_id, side, ito_lee_hemilineage, top_nt, cell_class, cell_type from info")
+  ft <- as.data.frame(ft)
   ft
 }
 
