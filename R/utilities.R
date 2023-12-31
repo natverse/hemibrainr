@@ -614,11 +614,13 @@ update.neuronlistfh <- function(x = NULL,
             x = nat::union(x, old.neurons)
             message(length(x), " given neurons combined with ", length(old.neurons), " old neurons from extant: ", file)
           }
+        }else{
+          x = nat::union(x, old.neurons)
         }
       }
     }
   }
-  if(nat::is.neuronlist(x)){
+  if(nat::is.neuronlist(x)&&length(x)){
     if(dbClass=="DB1"){try(file.remove(data))}
     if(!is.null(meta)){
       if(!all(names(x)%in%rownames(meta))){
@@ -647,7 +649,9 @@ update.neuronlistfh <- function(x = NULL,
         file.copy(from = file, to = temp.zip, overwrite = TRUE)
       }
       given.neurons = try(nat::write.neurons(x, dir = file, format='qs', include.data.frame = TRUE, Force = TRUE, ...), silent = FALSE)
-      if(inherits("try-class",given.neurons)){
+      oldfh = nat::neuronlistz(file)
+      good = try(nat::as.neuronlist(oldfh[[1]]),silent = FALSE)
+      if(inherits("try-class",given.neurons)||all(class(good)!="try-error")){
         try(file.copy(to = file, from = temp.zip, overwrite = TRUE), silent = TRUE)
         try(suppress(file.remove(temp.zip)), silent = TRUE)
         warning("could not create neuronlistz object")
