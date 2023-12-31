@@ -47,6 +47,7 @@
 #' @export
 hemibrain_compartment_metrics <- function(x, resample = 10, delta = 62.5, locality = FALSE, ...){
   mets = nat::nlapply(x, compartment_metrics, resample = resample, delta = delta, locality = locality, ...)
+  mets = mets[!unlist(sapply(mets, is.null))]
   mets.df = as.data.frame(do.call(rbind, mets))
   mets.df$id = names(mets)
   if(nrow(mets.df)==length(x)){
