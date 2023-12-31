@@ -816,7 +816,7 @@ update_metdata <- function(neurons, meta, id, correction = TRUE){
   }
   df = matchColClasses(meta, df)
   dfn = suppress(dplyr::left_join(df, meta))
-  rownames(dfn) = rownames(df)
+  rownames(dfn) = dfn[[id]]
   matched = match(dfn[[id]], meta[[id]])
   matched.good = !is.na(matched)
   shared.cols = intersect(colnames(dfn[,]),colnames(meta))
