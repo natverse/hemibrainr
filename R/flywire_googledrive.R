@@ -91,6 +91,7 @@
 flywire_neurons <- function(x = NULL,
                             WithConnectors = FALSE,
                             local = FALSE,
+                            version = NULL,
                             brain = c("FlyWire", "JRCFIB2018Fraw","JRCFIB2018F","FAFB","FAFB14","JFRC2", "JFRC2013","JRC2018F","FCWB"),
                             mirror = FALSE,
                             type = c("neurons", "swc","dotprops","cut_dotprops"),
@@ -115,7 +116,11 @@ flywire_neurons <- function(x = NULL,
   # Get Google drive folder
   savedir = good_savedir(local = local)
   neuronsdir = file.path(savedir,"flywire_neurons/")
-  fhdir = file.path(neuronsdir,brain,"/")
+  if(!is.null(version)){
+    fhdir = file.path(neuronsdir,version,brain,"/")
+  }else{
+    fhdir = file.path(neuronsdir,brain,"/")
+  }
 
   # Get synapses from private drive
   if(type%in%c("dotprops","cut_dotprops")){
@@ -1087,6 +1092,184 @@ matches_update <- function(matching_sheet = options()$hemibrainr_matching_gsheet
   d = do.call(plyr::rbind.fill, tracing.list)
   colnames(d) = snakecase::to_snake_case(colnames(d))
   d
+}
+
+
+# flywire read swc files
+flywire_read_swc <- function(swc,
+                             meta = NULL,
+                             ids = NULL,
+                             id = 'root_id',
+                             template = "Flywire",
+                             nams = NULL){
+  if(!is.null(ids)){
+    fw.skels <- nat::read.neurons(swc,
+                                  pattern = paste(ids,collapse="|"),
+                                  OmitFailures = TRUE)
+  }else{
+    fw.skels <- nat::read.neurons(swc,
+                                  OmitFailures = TRUE)
+  }
+  if(is.null(nams)){
+    fw.skels <- fw.skels[!duplicated(names(fw.skels))]
+    attr(fw.skels,"df") <- data.frame(root_id=names(fw.skels))
+  }else{
+    new.nams <- nams[names(fw.skels)]
+    new.nams[is.na(new.nams)] = names(fw.skels)[is.na(new.nams)]
+    fw.skels <- fw.skels[!duplicated(new.nams)]
+    attr(fw.skels,"df") <- data.frame(root_id=new.nams)
+  }
+  fw.skels[,"dataset"] = "flywire"
+  nat.templatebrains::regtemplate(fw.skels) = regtemplate
+  if(!is.null(meta)){
+    meta <- meta[!duplicated(meta$root_id),]
+    fw.skels <- hemibrainr:::update_metdata(fw.skels, meta = meta, id = id)
+  }
+  fw.skels
+}
+
+flywire_read_synapse_csvs <- function(save.path,
+                                      prepost = NULL,
+                                      numCores = NULL,
+                                      process = TRUE,
+                                      flywire.cleft.threshold = 50,
+                                      nt.cols = c("gaba", "acetylcholine", "glutamate",
+                                                  "octopamine", "serotonin", "dopamine",
+                                                  "neither")){
+  if(!is.null(numCores)){
+    cl <- parallel::makeCluster(2L)
+  }else{
+    cl = NULL
+  }
+  files <- list.files(save.path, full.names = TRUE)
+  message("Reading synapses: ")
+  synapse.csvs <- pbapply::pblapply(files, function(file){
+    root_id <- gsub("\\.csv","",basename(file))
+    csv <- try(as.data.frame(suppressMessages(readr::read_csv(file, col_types = hemibrainr:::sql_col_types))))
+    if(is.data.frame(csv)){
+      if(nrow(csv)){
+        csv$root_id <- root_id
+        if(process){
+          csv <- flywire_process_synapses(csv,
+                                          prepost=prepost,
+                                          flywire.cleft.threshold = flywire.cleft.threshold,
+                                          nt.cols = nt.cols)
+          csv$treenode_id <- NULL
+        }else{
+          csv
+        }
+      }else{
+        NULL
+      }
+    }else{
+      NULL
+    }
+  },
+  cl = cl)
+  if(!is.null(cl)){
+    parallel::stopCluster(cl)
+  }
+  synapse.csvs <- synapse.csvs[sapply(synapse.csvs,is.data.frame)]
+  do.call(plyr::rbind.fill, synapse.csvs)
+}
+
+flywire_process_synapses <-function(fw.synapses,
+                                    prepost = NULL,
+                                    flywire.cleft.threshold = 50,
+                                    nt.cols = c("gaba", "acetylcholine", "glutamate", "octopamine", "serotonin", "dopamine", "neither")){
+  colnames(fw.synapses) <- snakecase::to_snake_case(colnames(fw.synapses))
+  key.cols <- c("offset", "connector_id", "treenode_id", "x", "y", "z", "scores", "cleft_scores",
+                "syn_top_p", "syn_top_nt", "gaba", "acetylcholine", "glutamate",
+                "octopamine", "serotonin", "dopamine", "prepost", "pre_id", "post_id",
+                "inside", "strahler_order", "label", "geodesic_distance", "geodesic_distance_norm")
+  fw.synapses <- fw.synapses[,!duplicated(colnames(fw.synapses))]
+  fw.synapses <- fw.synapses %>%
+    dplyr::rename(syn_top_p = top_p,
+                  syn_top_nt = top_nt)
+  missin.cols <- setdiff(key.cols,colnames(fw.synapses))
+  for(m in missin.cols){
+    warning("missing synapse column: ", m, " for rootid: ", fw.synapses$root_id[[1]])
+    fw.synapses[[m]] <- NA
+  }
+  if(!all(key.cols%in%colnames(fw.synapses))){
+    warning("not all column names found, dropping a synapse list")
+    return(NULL)
+  }
+  fw.synapses = fw.synapses %>%
+    dplyr::filter(cleft_scores>flywire.cleft.threshold,
+                  pre_id != post_id) %>%
+    dplyr::select(c(offset, connector_id, treenode_id,
+                    x, y, z,
+                    scores, cleft_scores,
+                    syn_top_p, syn_top_nt,
+                    gaba, acetylcholine, glutamate, octopamine, serotonin, dopamine,
+                    prepost,
+                    #segmentid_pre, segmentid_post,
+                    #pre_svid, post_svid,
+                    pre_id, post_id,
+                    inside, strahler_order, label,
+                    geodesic_distance, geodesic_distance_norm
+    )) %>%
+    dplyr::mutate(label = hemibrainr:::standard_compartments(label)) %>%
+    dplyr::group_by(pre_id, post_id, prepost, label) %>%
+    dplyr::mutate(count = dplyr::n(),
+                  geodesic_distance = as.numeric(geodesic_distance),
+                  geodesic_distance_norm = as.numeric(geodesic_distance_norm)
+    )%>%
+    dplyr::ungroup() %>%
+    as.data.frame(stringsAsFactors = FALSE)
+  if(!is.null(prepost)){
+    if(prepost==0){
+      fw.synapses <- fw.synapses %>%
+        dplyr::filter(prepost==0)  %>%
+        dplyr::rowwise() %>%
+        dplyr::mutate(syn_top_nt = nt.cols[which.max(c(gaba, acetylcholine, glutamate, octopamine, serotonin, dopamine))]) %>%
+        dplyr::mutate(syn_top_p = max(c(gaba, acetylcholine, glutamate, octopamine, serotonin, dopamine))) %>%
+        dplyr::ungroup()
+    }else{
+      fw.synapses <- fw.synapses %>%
+        dplyr::filter(prepost==1) %>%
+        dplyr::rowwise() %>%
+        dplyr::mutate(syn_top_nt = nt.cols[which.max(c(gaba, acetylcholine, glutamate, octopamine, serotonin, dopamine))]) %>%
+        dplyr::mutate(syn_top_p = max(c(gaba, acetylcholine, glutamate, octopamine, serotonin, dopamine))) %>%
+        dplyr::ungroup()
+    }
+  }
+  fw.synapses <- round_dataframe(fw.synapses, digits = 4)
+  fw.synapses
+}
+
+flywire_read_metrics_csvs <- function(save.path){
+  files <- list.files(save.path, full.names = TRUE)
+  message("Reading metrics: ")
+  metrics.csvs <- pbapply::pblapply(files, function(file){
+    root_id <- gsub("\\.csv","",basename(file))
+    csv <- try(suppressMessages(readr::read_csv(file, col_types = hemibrainr:::sql_col_types)))
+    csv
+  })
+  metrics.csvs <- metrics.csvs[sapply(metrics.csvs,is.data.frame)]
+  do.call(plyr::rbind.fill, metrics.csvs)
+}
+
+flywire_read_swc_split <-function(swc, synapses, meta, ids = NULL, regtemplate = "Flywire"){
+  message("Reading skeletons: ")
+  fw.skels <- flywire_read_swc(swc = swc,
+                               ids = ids,
+                               meta = fw.meta)
+  pb <- progress::progress_bar$new(total = length(fw.skels))
+  message("reading synapses: ")
+  for(id in names(fw.skels)){
+    pb$tick()
+    file <- file.path(synapses,paste0(id,".csv"))
+    csv <- suppressMessages(readr::read_csv(file, col_types = hemibrainr:::sql_col_types))
+    csv <- flywire_process_synapses(csv)
+    fw.skels[match(id,names(fw.skels))][[1]]$connectors <- csv
+  }
+  fw.skels <- nat::nlapply(fw.skels, function(neuron){
+    class(neuron) <- c("catmaidneuron","neuprintneuron","neuron")
+    neuron
+  })
+  fw.skels
 }
 
 
