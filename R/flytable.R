@@ -1,8 +1,16 @@
 ##### Flywire-Hemibrain matches
 
 # hidden
-flytable_meta <- function(){
-  ft <- fafbseg::flytable_query("select _id, root_id, root_630, root_720, supervoxel_id, proofread, status, pos_x, pos_y, pos_z, nucleus_id, soma_x, soma_y, soma_z, side, ito_lee_hemilineage, hartenstein_hemilineage, top_nt, flow, super_class, cell_class, cell_type, hemibrain_type, cb_type, 0root_duplicated, known_nt from info")
+flytable_meta <- function(optic=FALSE){
+  ft <- fafbseg::flytable_query("select _id, root_id, root_630, root_783, supervoxel_id, proofread, status, pos_x, pos_y, pos_z, nucleus_id, soma_x, soma_y, soma_z, side, ito_lee_hemilineage, hartenstein_hemilineage, top_nt, flow, super_class, cell_class, cell_type, hemibrain_type, cb_type, root_duplicated, known_nt from info")
+  if(optic){
+    ft.optic <- fafbseg::flytable_query('select * from optic')
+    ft.optic <- ft.optic[,intersect(colnames(ft.optic),colnames(ft))]
+    ft.optic <- ft.optic[!ft.optic$root_id%in%ft$root_id,]
+    ft.all <- plyr::rbind.fill(ft,ft.optic)
+    ft <- ft.all %>%
+      dplyr::filter(!duplicated(root_id))
+  }
   ft$flywire_xyz <- apply(ft[,c("pos_x", "pos_y", "pos_z")], 1, paste_coords)
   ft <- as.data.frame(ft)
   ft
