@@ -615,7 +615,12 @@ update.neuronlistfh <- function(x = NULL,
             message(length(x), " given neurons combined with ", length(old.neurons), " old neurons from extant: ", file)
           }
         }else{
-          x = nat::union(x, old.neurons)
+          if(is.null(x)){
+            x = old.neurons
+          }else{
+            x = nat::union(x, old.neurons)
+            message(length(x), " given neurons combined with ", length(old.neurons), " old neurons from extant: ", file)
+          }
         }
       }
     }
