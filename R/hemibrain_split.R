@@ -849,32 +849,34 @@ add_Label <-function(x, PointNo = NULL, Label = 2, erase = FALSE, lock = NULL, i
 #' @export
 add_Label.neuron <- function(x, PointNo = NULL, Label = 2, erase = FALSE, lock = NULL, internal.assignments = FALSE, ...){
   Label = as.numeric(Label[1])
+  labd = ifelse("label" %in% colnames(x$d), "label", "Label")
+  labc = ifelse("label" %in% colnames(x$connectors), "label", "Label")
   if(!is.null(PointNo)){
     if(!is.null(lock)){
-      locked = x$d$PointNo[x$d$Label%in%lock]
+      locked = x$d$PointNo[x$d[[labd]]%in%lock]
       PointNo = setdiff(PointNo, locked)
     }
     if(erase){
-      erasure = x$d$PointNo[x$d$Label==Label]
-      x$d$Label[match(erasure, x$d$PointNo)] = 0
+      erasure = x$d$PointNo[x$d[[labd]]==Label]
+      x$d[[labd]][match(erasure, x$d$PointNo)] = 0
     }
-    x$d$Label[x$d$PointNo%in%PointNo] = Label
+    x$d[[labd]][x$d$PointNo%in%PointNo] = Label
     if(!is.null(x$connectors)){
       if(erase){
-        x$connectors$Label[x$connectors$treenode_id%in%erasure] = 0
+        x$connectors[[labc]][x$connectors$treenode_id%in%erasure] = 0
       }
-      x$connectors$Label[x$connectors$treenode_id%in%PointNo] = Label
+      x$connectors[[labc]][x$connectors$treenode_id%in%PointNo] = Label
     }
   }else{
     if(!is.null(lock)){
-      locked = x$d$PointNo[x$d$Label%in%lock]
+      locked = x$d$PointNo[x$d[[labd]]%in%lock]
       PointNo = setdiff(x$d$PointNo, locked)
     }else{
       PointNo = x$d$PointNo
     }
-    x$d$Label[x$d$PointNo%in%PointNo] = Label
+    x$d[[labd]][x$d$PointNo%in%PointNo] = Label
     if(!is.null(x$connectors)){
-      x$connectors$Label[x$connectors$treenode_id%in%PointNo] = Label
+      x$connectors[[labc]][x$connectors$treenode_id%in%PointNo] = Label
     }
   }
   if(internal.assignments){
