@@ -141,7 +141,7 @@ add_field.neuron <- function(x, entry, field = "bodyid", ...){
 }
 #' @export
 add_field.neuronlist <- function(x, entry, field = "bodyid", ...){
-  nat::nlapply(x, add_Label.neuron, entry, field = "bodyid", ...)
+  nat::nlapply(x, add_field.neuron, entry, field = "bodyid", ...)
 }
 #' @export
 #' @rdname add_field
