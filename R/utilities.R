@@ -649,6 +649,9 @@ update.neuronlistfh <- function(x = NULL,
     if(dbClass == "HDF5"){
       given.neurons = nat.hdf5::write.neurons.hdf5(x, file = data, ...)
     }else if(dbClass == "ZIP"){
+      if(!length(x)){
+        next
+      }
       temp.zip =  file.path(dirname(file),"temp_neuronlist_archive.zip")
       if(file.exists(file)){
         file.copy(from = file, to = temp.zip, overwrite = TRUE)
@@ -697,6 +700,7 @@ update.neuronlistfh <- function(x = NULL,
     }
     nat::write.neurons(x, dir=swc, format='swc', Force = FALSE, metadata=TRUE)
   }
+  invisible()
 }
 
 # hidden
