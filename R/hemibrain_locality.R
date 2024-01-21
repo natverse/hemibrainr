@@ -64,8 +64,9 @@ compartment_metrics <- function(x, resample = 10, delta = 62.5, locality = FALSE
   syns = x$connectors # tryCatch(hemibrain_extract_synapses(x), error = function(e) NULL)
   labd = ifelse("label" %in% colnames(x$d), "label", "Label")
   lab = ifelse("label" %in% colnames(syns), "label", "Label")
+  both = (sum(x$d[[labd]]%in%c(2,"axon"))&sum(x$d[[labd]]%in%c(3,"dendrite")))
   # Axon-dendrite split?
-  if(!(sum(x$d[[labd]]%in%c(2,"axon"))&sum(x$d[[labd]]%in%c(3,"dendrite")))){
+  if(!sum(x$d[[labd]]%in%c(2,"axon"))&!sum(x$d[[labd]]%in%c(3,"dendrite"))){
     warning("axon/dendrite missing")
     total_length = tryCatch(summary(x)$cable.length, error = function(e) NA)
     total_outputs = NA
@@ -80,33 +81,38 @@ compartment_metrics <- function(x, resample = 10, delta = 62.5, locality = FALSE
     dend_outputs_density = NA
     axon_inputs_density = NA
     dend_inputs_density = NA
-    axon_length= NA
-    dend_length= NA
-    pd_length= NA
+    axon_length = NA
+    dend_length = NA
+    pd_length = NA
     segregation_index = NA
     overlap_locality = NA
   }else{
 
     # Synapses
-    axon_outputs = tryCatch(sum(syns$prepost==0&syns[[lab]]%in%c(2,"axon")), error = function(e) NA)
-    dend_outputs = tryCatch(sum(syns$prepost==0&syns[[lab]]%in%c(3,"dendrite")), error = function(e) NA)
-    axon_inputs = tryCatch(sum(syns$prepost==1&syns[[lab]]%in%c(2,"axon")), error = function(e) NA)
-    dend_inputs = tryCatch(sum(syns$prepost==1&syns[[lab]]%in%c(3,"dendrite")), error = function(e) NA)
-    total_outputs = tryCatch(sum(syns$prepost==0), error = function(e) NA)
-    total_inputs = tryCatch(sum(syns$prepost==1), error = function(e) NA)
+    axon_outputs = tryCatch(sum(syns$prepost==0&syns[[lab]]%in%c(2,"axon")), error = function(e) 0)
+    dend_outputs = tryCatch(sum(syns$prepost==0&syns[[lab]]%in%c(3,"dendrite")), error = function(e) 0)
+    axon_inputs = tryCatch(sum(syns$prepost==1&syns[[lab]]%in%c(2,"axon")), error = function(e) 0)
+    dend_inputs = tryCatch(sum(syns$prepost==1&syns[[lab]]%in%c(3,"dendrite")), error = function(e) 0)
+    total_outputs = tryCatch(sum(syns$prepost==0), error = function(e) 0)
+    total_inputs = tryCatch(sum(syns$prepost==1), error = function(e) 0)
 
     # Segregation
-    si = tryCatch(x$AD.segregation.index, error = function(e) NA)
-    if(locality){
-      locality.score = tryCatch(overlap_locality(x, resample = resample, delta = delta, ...), error = function(e) NA)
+    if(both){
+      si = round(tryCatch(x$AD.segregation.index, error = function(e) NA),6)
+      if(locality){
+        locality.score = tryCatch(overlap_locality(x, resample = resample, delta = delta, ...), error = function(e) NA)
+      }else{
+        locality.score = NA
+      }
     }else{
       locality.score = NA
+      si = NA
     }
 
     # Cable length
-    axon_length = tryCatch(summary(axonic_cable(x))$cable.length, error = function(e) NA)
-    dend_length = tryCatch(summary(dendritic_cable(x))$cable.length, error = function(e) NA)
-    pd_length = tryCatch(summary(primary_dendrite_cable(x))$cable.length, error = function(e) NA)
+    axon_length = tryCatch(summary(axonic_cable(x))$cable.length, error = function(e) 0)
+    dend_length = tryCatch(summary(dendritic_cable(x))$cable.length, error = function(e) 0)
+    pd_length = tryCatch(summary(primary_dendrite_cable(x))$cable.length, error = function(e) 0)
     total_length = tryCatch(summary(x)$cable.length, error = function(e) NA)
   }
 
@@ -134,6 +140,7 @@ compartment_metrics <- function(x, resample = 10, delta = 62.5, locality = FALSE
   if(!locality){
     met$overlap_locality = NULL
   }
+  met = t(apply(met, 1, function(row) ifelse(is.nan(row),0,row)))
   met = apply(met,2,function(c) signif(c, digits = 6))
   t(as.data.frame(met, stringsAsFactors = FALSE))
 }
@@ -244,6 +251,7 @@ projection_score.neuron <- function(x,
   # Axon-dendrite split?
   if(!(sum(x$d$Label%in%c(2,"axon"))&sum(x$d$Label%in%c(3,"dendrite")))){
     warning("Axon / dendrite missing")
+    return(NA)
   }
 
   # Extract compartment cable
