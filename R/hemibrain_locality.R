@@ -84,8 +84,8 @@ compartment_metrics <- function(x, resample = 10, delta = 62.5, locality = FALSE
     axon_length = NA
     dend_length = NA
     pd_length = NA
-    segregation_index = NA
-    overlap_locality = NA
+    si = NA
+    locality.score = NA
   }else{
 
     # Synapses
