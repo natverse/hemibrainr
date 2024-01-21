@@ -36,7 +36,7 @@
 #' @seealso \code{\link{flow_centrality}}
 #' @importFrom stats sd
 #' @importFrom nat xyzmatrix
-plot3d_split = function(someneuronlist,
+plot3d_split <- function(someneuronlist,
                         prepost = c("BOTH","PRE","POST"),
                         col = c("#1BB6AF", "#EF7C12", "#C70E7B", "#8FDA04", "#4D4D4D", "#FC6882"),
                         splitnode = FALSE,
