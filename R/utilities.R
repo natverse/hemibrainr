@@ -659,7 +659,7 @@ update.neuronlistfh <- function(x = NULL,
       given.neurons = try(nat::write.neurons(x, dir = file, format='qs', include.data.frame = TRUE, Force = TRUE, ...), silent = FALSE)
       oldfh = nat::neuronlistz(file)
       good = try(nat::as.neuronlist(oldfh[[1]]),silent = FALSE)
-      if(inherits("try-class",given.neurons)||all(class(good)!="try-error")){
+      if(inherits("try-class",given.neurons)||all(class(good)=="try-error")){
         try(file.copy(to = file, from = temp.zip, overwrite = TRUE), silent = TRUE)
         try(suppress(file.remove(temp.zip)), silent = TRUE)
         warning("could not create neuronlistz object")
