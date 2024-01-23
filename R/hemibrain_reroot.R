@@ -399,7 +399,7 @@ remove_bad_synapses.neuron <- function(x,
                                        ...){
   method = match.arg(method)
   x.safe = x
-  split = !is.null(x$AD.segregation.index) && method == "split"
+  split = (!is.null(x$AD.segregation.index)||!is.null(x$connectors$Label)||!is.null(x$connectors$label)) && method == "split"
   if(method=='split'&&!split){
     stop('method split cannot be used on unsplit neurons')
   }
@@ -428,20 +428,22 @@ remove_bad_synapses.neuron <- function(x,
     x$connectors[soma.nodes,"status"]="on_soma"
     x$connectors[pnt.nodes,"status"]="on_pnt"
     x$connectors[pd.nodes,"status"]="on_pd"
-  }else{
+  }else if(soma){
     primary.branch.point = primary_branchpoint(x, primary_neurite = TRUE, first = primary.branchpoint)
-    pnt = suppressWarnings(unique(unlist(igraph::shortest_paths(graph = nat::as.ngraph(x),
-                                                                from = nat::rootpoints(x),
-                                                                to = primary.branch.point,
-                                                                mode = "all")$vpath)))
-    x$connectors[x$connectors$treenode_id%in%pnt,"status"]="on_pnt"
-    syns = unique(x$connectors$treenode_id)
-    syns = (1:nrow(x$d))[match(syns,x$d$PointNo)]
-    # not within radius of pnt
-    dists = igraph::distances(nat::as.ngraph(x), v = pnt, to = syns, mode = "all")
-    dists = apply(dists, 2, function(x) sum(x<min.nodes.from.pnt))
-    names(dists) = syns
-    x$connectors[!x$connectors$treenode_id %in% names(dists)[as.numeric(dists)==0],"status"]="near_pnt"
+    if(!is.na(primary.branch.point)){
+      pnt = suppressWarnings(unique(unlist(igraph::shortest_paths(graph = nat::as.ngraph(x),
+                                                                  from = nat::rootpoints(x),
+                                                                  to = primary.branch.point,
+                                                                  mode = "all")$vpath)))
+      x$connectors[x$connectors$treenode_id%in%pnt,"status"]="on_pnt"
+      syns = unique(x$connectors$treenode_id)
+      syns = (1:nrow(x$d))[match(syns,x$d$PointNo)]
+      # not within radius of pnt
+      dists = igraph::distances(nat::as.ngraph(x), v = pnt, to = syns, mode = "all")
+      dists = apply(dists, 2, function(x) sum(x<min.nodes.from.pnt))
+      names(dists) = syns
+      x$connectors[!x$connectors$treenode_id %in% names(dists)[as.numeric(dists)==0],"status"]="near_pnt"
+    }
   }
   if(soma){
     # not within radius of soma
