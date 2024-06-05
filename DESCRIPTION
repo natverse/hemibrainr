@@ -31,7 +31,8 @@ Suggests:
     fastcluster,
     reticulate,
     doParallel,
-    qs
+    qs,
+    rdrop2
 VignetteBuilder: knitr
 Depends:
     R (>= 3.1),
@@ -58,7 +59,6 @@ Imports:
     jpeg,
     png,
     googledrive,
-    rdrop2,
     jsonlite,
     plyr,
     catmaid,
@@ -83,8 +83,9 @@ Remotes:
     natverse/nat.nblast,
     natverse/nat,
     natverse/nat.flybrains,
-    schlegelp/nat.hdf5
+    schlegelp/nat.hdf5,
+    karthik/rdrop2
 Language: en-GB
-RoxygenNote: 7.2.1
+RoxygenNote: 7.3.1
 URL: https://github.com/flyconnectome/hemibrainr, https://flyconnectome.github.io/hemibrainr
 BugReports: https://github.com/flyconnectome/hemibrainr/issues
