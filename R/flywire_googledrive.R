@@ -438,7 +438,7 @@ flywire_failed <-function(local = FALSE, folder = "flywire_neurons/", sql = FALS
 }
 
 # hidden
-sql_col_types = readr::cols(.default = "c",
+sql_col_types <- readr::cols(.default = "c",
                             edits = "i",
                             total.edits = "i",
                             total_edits = "i",
@@ -512,6 +512,7 @@ sql_col_types = readr::cols(.default = "c",
                             scores = 'n',
                             cleft_scores = 'n',
                             top_nt = "c",
+                            top_nt_p = 'n',
                             gaba  = "n",
                             acetylcholine  = "n",
                             glutamate  = "n",
@@ -534,6 +535,8 @@ sql_col_types = readr::cols(.default = "c",
                             confidence = "n",
                             bodyid = "c",
                             root_id = "c",
+                            pre_id = "c",
+                            post_id = "c",
                             pre = "c",
                             hemibrain_nblast_1 = "c",
                             hemibrain_nblast_2 = "c",
@@ -558,7 +561,9 @@ sql_col_types = readr::cols(.default = "c",
                             match_conf_nt_p='n',
                             prod_i='n',
                             sum_a='n',
-                            conf_nt = 'c')
+                            conf_nt = 'c',
+                            dcv_count = 'i',
+                            dcv_density = 'n')
 
 #' @rdname flywire_googledrive_data
 #' @export

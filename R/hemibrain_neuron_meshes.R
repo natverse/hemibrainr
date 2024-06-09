@@ -87,8 +87,8 @@ hemibrain_neuron_mesh <- function(bodyids, lod, cloudvolume.url, method='vf') {
     stop("Failed to read segid: ", bodyids)
   }
   # we get back a dict where the key is a python 64 bit int
-  #cmesh=reticulate::py_get_item(cm, li)
-  cmesh = cm[[bodyids]]
+  cmesh=reticulate::py_get_item(cm, li)
+  #cmesh = cm[[bodyids]]
   m=cvmesh2mesh(cmesh, method=method)
   m
 }
