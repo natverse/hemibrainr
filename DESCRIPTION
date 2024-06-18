@@ -32,7 +32,11 @@ Suggests:
     reticulate,
     doParallel,
     qs,
-    rdrop2
+    rdrop2,
+    arrow,
+    doSNOW,
+    ggplot2,
+    gridExtra
 VignetteBuilder: knitr
 Depends:
     R (>= 3.1),
