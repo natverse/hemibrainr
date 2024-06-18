@@ -33,7 +33,7 @@
   }
 
   # Set googlesheets API key
-  try(hemibrainr_google_login())
+  # try(hemibrainr_google_login())
 
   # Set Google sheets of interest
   hemibrainr_matching_gsheet = ifelse(!is.null(getOption("hemibrainr_matching_gsheet")),getOption("hemibrainr_matching_gsheet"),"1OSlDtnR3B1LiB5cwI5x5Ql6LkZd8JOS5bBr-HTi0pOw")
