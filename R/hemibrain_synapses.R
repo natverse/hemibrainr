@@ -569,7 +569,7 @@ hemibrain_ntplot.neuronlist <- function(x,
     do.call(gridExtra::grid.arrange, c(plist, ncol=nCol))
   }else{
     syns.nt = lapply(x, function(y) y$connectors)
-    syns.nt = do.call(pluyr::rbind.fill, syns.nt)
+    syns.nt = do.call(plyr::rbind.fill, syns.nt)
     syns.nt$id = "collapse"
     hemibrain_ntplot.data.frame(syns.nt)
   }

@@ -10,6 +10,7 @@ flywire_neurons(
   x = NULL,
   WithConnectors = FALSE,
   local = FALSE,
+  version = NULL,
   brain = c("FlyWire", "JRCFIB2018Fraw", "JRCFIB2018F", "FAFB", "FAFB14", "JFRC2",
     "JFRC2013", "JRC2018F", "FCWB"),
   mirror = FALSE,

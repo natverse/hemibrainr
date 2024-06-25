@@ -286,6 +286,8 @@ remote_upload <- function(file,
                                verbose = verbose)
       }
     }else if(remote=="dropbox"){
+      if(!requireNamespace('rdrop2', quietly = T))
+        stop("Please install suggested package rdrop2 to use Dropbox")
       rdrop2::drop_upload(file = file,
                           path = path,
                           mode = "overwrite",
