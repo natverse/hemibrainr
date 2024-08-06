@@ -439,7 +439,7 @@ flow_centrality.neuron <- function(x,
   x$max.flow.centrality = as.numeric(ais)
   x$split <- TRUE
   x$tags$split <- TRUE
-  x <- hemibrain_neuron_class
+  x <- hemibrain_neuron_class(x)
   class(x) <- c("splitneuron",class(x))
   x
 }
