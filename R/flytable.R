@@ -1,8 +1,9 @@
 ##### Flywire-Hemibrain matches
 
 # hidden
-flytable_meta <- function(optic=FALSE){
-  ft <- fafbseg::flytable_query("select _id, root_id, root_630, root_783, supervoxel_id, proofread, status, pos_x, pos_y, pos_z, nucleus_id, soma_x, soma_y, soma_z, side, ito_lee_hemilineage, hartenstein_hemilineage, top_nt, flow, super_class, cell_class, cell_type, hemibrain_type, cb_type, root_duplicated, known_nt from info")
+flytable_meta <- function(optic=FALSE,
+                          consolidate_types = TRUE){
+  ft <- fafbseg::flytable_query("select _id, root_id, root_630, root_783, supervoxel_id, proofread, status, pos_x, pos_y, pos_z, nucleus_id, soma_x, soma_y, soma_z, side, ito_lee_hemilineage, hartenstein_hemilineage, top_nt, flow, super_class, cell_class, cell_type, hemibrain_type, cb_type, morphology_group, root_duplicated, known_nt, known_nt_source from info")
   if(optic){
     ft.optic <- fafbseg::flytable_query('select * from optic')
     ft.optic <- ft.optic[,intersect(colnames(ft.optic),colnames(ft))]
@@ -10,6 +11,16 @@ flytable_meta <- function(optic=FALSE){
     ft.all <- plyr::rbind.fill(ft,ft.optic)
     ft <- ft.all %>%
       dplyr::filter(!duplicated(root_id))
+  }
+  if(consolidate_types){
+    ft <- ft %>%
+      dplyr::mutate(cell_type = case_when(
+      !is.na(cell_type) ~ cell_type,
+      !is.na(hemibrain_type) ~ hemibrain_type,
+      !is.na(cb_type) ~ cb_type,
+      !is.na(morphology_group) ~ morphology_group,
+      TRUE ~ cell_type
+    ))
   }
   ft$flywire_xyz <- apply(ft[,c("pos_x", "pos_y", "pos_z")], 1, paste_coords)
   ft <- as.data.frame(ft)
