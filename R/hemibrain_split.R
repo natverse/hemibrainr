@@ -437,7 +437,8 @@ flow_centrality.neuron <- function(x,
   }
   x$AD.segregation.index = segregation.index
   x$max.flow.centrality = as.numeric(ais)
-  x$split <- x$tags$split = TRUE
+  x$split <- TRUE
+  x$tags$split <- TRUE
   x <- hemibrain_neuron_class
   class(x) <- c("splitneuron",class(x))
   x
