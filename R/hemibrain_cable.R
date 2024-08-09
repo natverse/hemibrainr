@@ -460,3 +460,33 @@ prune_vertices.neuprintneuron <- function (x, verticestoprune, invert = FALSE, .
   class(y) = c("neuprintneuron", "neuron")
   y
 }
+
+
+#' @rdname extract_cable
+cable_width<-function(x, ...) UseMethod("cable_width")
+
+#' @export
+cable_width.neuronlist <- function(x, ...){
+  unlist(sapply(x,cable_width.neuron, ...))
+}
+
+#' @export
+cable_width.neuron <- function(x, ...){
+  points = x$d
+  width = intersect(c("w","W","r","R"),colnames(points))
+  if(!length(with)){
+    return(NA)
+  }else{
+    width=width[1]
+  }
+  values=points[[width]]
+  values=values[!is.na(values)]
+  if(!length(values)){
+    return(NA)
+  }else{
+    median(values, na.rm = TRUE)
+  }
+}
+
+
+
