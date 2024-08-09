@@ -73,8 +73,12 @@ compartment_metrics <- function(x, resample = 10, delta = 62.5, locality = FALSE
     total_inputs = NA
     axon_outputs = NA
     dend_outputs = NA
+    pd_outputs = NA
+    pn_outputs = NA
     axon_inputs = NA
     dend_inputs = NA
+    pd_inputs = NA
+    pn_inputs = NA
     total_outputs_density = NA
     total_inputs_density = NA
     axon_outputs_density = NA
@@ -98,6 +102,10 @@ compartment_metrics <- function(x, resample = 10, delta = 62.5, locality = FALSE
     dend_outputs = tryCatch(sum(syns$prepost==0&syns[[lab]]%in%c(3,"dendrite")), error = function(e) 0)
     axon_inputs = tryCatch(sum(syns$prepost==1&syns[[lab]]%in%c(2,"axon")), error = function(e) 0)
     dend_inputs = tryCatch(sum(syns$prepost==1&syns[[lab]]%in%c(3,"dendrite")), error = function(e) 0)
+    pd_outputs = tryCatch(sum(syns$prepost==0&syns[[lab]]%in%c(4,"primary_dendrite")), error = function(e) 0)
+    pn_outputs = tryCatch(sum(syns$prepost==0&syns[[lab]]%in%c(7,"primary_neurite")), error = function(e) 0)
+    pd_inputs = tryCatch(sum(syns$prepost==1&syns[[lab]]%in%c(4,"primary_dendrite")), error = function(e) 0)
+    pn_inputs = tryCatch(sum(syns$prepost==1&syns[[lab]]%in%c(7,"primary_neurite")), error = function(e) 0)
     total_outputs = tryCatch(sum(syns$prepost==0), error = function(e) 0)
     total_inputs = tryCatch(sum(syns$prepost==1), error = function(e) 0)
 
@@ -123,9 +131,9 @@ compartment_metrics <- function(x, resample = 10, delta = 62.5, locality = FALSE
 
     # Cable width
     axon_width = tryCatch(cable_width(axonic_cable(x)), error = function(e) 0)
-    dend_width = tryCatch(cable_width(axonic_cable(x)), error = function(e) 0)
-    pd_width = tryCatch(cable_width(axonic_cable(x)), error = function(e) 0)
-    pn_width = tryCatch(cable_width(axonic_cable(x)), error = function(e) 0)
+    dend_width = tryCatch(cable_width(dendritic_cable(x)), error = function(e) 0)
+    pd_width = tryCatch(cable_width(primary_dendrite_cable(x)), error = function(e) 0)
+    pn_width = tryCatch(cable_width(primary_neurite_cable(x)), error = function(e) 0)
   }
 
   # Assemble
@@ -136,6 +144,10 @@ compartment_metrics <- function(x, resample = 10, delta = 62.5, locality = FALSE
              dend_outputs = nullToNA(dend_outputs),
              axon_inputs = nullToNA(axon_inputs),
              dend_inputs = nullToNA(dend_inputs),
+             pd_outputs = nullToNA(pd_outputs),
+             pn_outputs = nullToNA(pn_outputs),
+             pd_inputs = nullToNA(pd_inputs),
+             pn_inputs = nullToNA(pn_inputs),
              total_outputs_density = nullToNA(total_outputs)/nullToNA(total_length),
              total_inputs_density = nullToNA(total_inputs)/nullToNA(total_length),
              axon_outputs_density = nullToNA(axon_outputs)/nullToNA(axon_length),
@@ -297,6 +309,58 @@ projection_score.neuron <- function(x,
 
 
 
+segregation_index.neuronlist <- function(x, ...){
+  nat::nlapply(x, segregation_index.neuron, ...)
+}
+
+segregation_index.neuron <- function(x, ...){
+  si <- segregation_index(x)
+  x$AD.segregation.index <- si
+  x
+}
+
+segregation_index <- function(neuron){
+  nodes = neuron$d
+  if(is.null(nodes)){
+    return(NA)
+  }else if (!nrow(nodes)){
+    return(NA)
+  }
+  connectors = neuron$connectors
+  if(is.null(connectors)){
+    return(NA)
+  }else if (!nrow(connectors)){
+    return(NA)
+  }
+  label1 <- ifelse("Label"%in%colnames(nodes),"Label","label")
+  label2 <- ifelse("Label"%in%colnames(connectors),"Label","label")
+  dendrites = subset(nodes, nodes[[label1]] == 3)
+  dendrites.post = nrow(subset(connectors, connectors$prepost == 1 & connectors[[label2]] %in% c("dendrite","3")))
+  dendrites.pre = nrow(subset(connectors, connectors$prepost == 0  & connectors[[label2]] %in% c("dendrite","3")))
+  dendrites.both = dendrites.post + dendrites.pre
+  dendrites.pi = dendrites.post/dendrites.both
+  dendrites.si = -(dendrites.pi * log(dendrites.pi) + (1 -dendrites.pi) * log(1 - dendrites.pi))
+  if (is.nan(dendrites.si)) {
+    dendrites.si = 0
+  }
+  axon = subset(nodes, nodes[[label1]] == 2)
+  axon.post = nrow(subset(connectors, connectors$prepost == 1 & connectors[[label2]] %in% c("axon","2")))
+  axon.pre = nrow(subset(connectors, connectors$prepost == 0  & connectors[[label2]] %in% c("axon","2")))
+  axon.both = axon.post + axon.pre
+  axon.pi = axon.post/axon.both
+  axon.si = -(axon.pi * log(axon.pi) + (1 - axon.pi) * log(1 -axon.pi))
+  if (is.nan(axon.si)) {
+    axon.si = 0
+  }
+  entropy.score = (1/(dendrites.both + axon.both)) * ((axon.si *axon.both) + (dendrites.si * dendrites.both))
+  both.comps = (dendrites.post + axon.post)/(dendrites.both +axon.both)
+  control.score = -(both.comps * log(both.comps) + (1 - both.comps) *log(1 - both.comps))
+  segregation.index = 1 - (entropy.score/control.score)
+  if(is.na(segregation.index)||is.nan(segregation.index)) {
+    segregation.index = 0
+  }
+  segregation.index
+}
 
 
 
