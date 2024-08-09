@@ -84,6 +84,11 @@ compartment_metrics <- function(x, resample = 10, delta = 62.5, locality = FALSE
     axon_length = NA
     dend_length = NA
     pd_length = NA
+    pn_length = NA
+    axon_width = NA
+    dend_width = NA
+    pd_width = NA
+    pn_width = NA
     si = NA
     locality.score = NA
   }else{
@@ -113,7 +118,14 @@ compartment_metrics <- function(x, resample = 10, delta = 62.5, locality = FALSE
     axon_length = tryCatch(summary(axonic_cable(x))$cable.length, error = function(e) 0)
     dend_length = tryCatch(summary(dendritic_cable(x))$cable.length, error = function(e) 0)
     pd_length = tryCatch(summary(primary_dendrite_cable(x))$cable.length, error = function(e) 0)
+    pn_length = tryCatch(summary(primary_neurite_cable(x))$cable.length, error = function(e) 0)
     total_length = tryCatch(summary(x)$cable.length, error = function(e) NA)
+
+    # Cable width
+    axon_width = tryCatch(cable_width(axonic_cable(x)), error = function(e) 0)
+    dend_width = tryCatch(cable_width(axonic_cable(x)), error = function(e) 0)
+    pd_width = tryCatch(cable_width(axonic_cable(x)), error = function(e) 0)
+    pn_width = tryCatch(cable_width(axonic_cable(x)), error = function(e) 0)
   }
 
   # Assemble
@@ -134,6 +146,11 @@ compartment_metrics <- function(x, resample = 10, delta = 62.5, locality = FALSE
              axon_length= nullToNA(axon_length),
              dend_length= nullToNA(dend_length),
              pd_length= nullToNA(pd_length),
+             pn_length=nullToNA(pn_length),
+             axon_width= nullToNA(axon_width),
+             dend_width= nullToNA(dend_width),
+             pd_width= nullToNA(pd_width),
+             pn_width=nullToNA(pn_width),
              segregation_index = nullToNA(si),
              overlap_locality = nullToNA(locality.score), stringsAsFactors = FALSE),
              error = function(e) NULL)
