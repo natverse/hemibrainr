@@ -215,7 +215,24 @@ flow_centrality.neuron <- function(x,
     primary.dendrite = 0.9
     highs = subset(rownames(nodes), nodes[, "flow.cent"] >= (primary.dendrite * high))
   }
-  highs = as.numeric(unique(unlist(igraph::shortest_paths(n,highs, to = highs, mode = "all")))) # fill in any missed points
+  highs = as.numeric(unique(unlist(igraph::shortest_paths(n, highs, to = highs, mode = "all")))) # fill in any missed points
+  select.highs = highs[!highs%in%c(root,bps)] # the cut point cannot be a branch point
+  ais = select.highs[nodes[select.highs,"flow.cent"] >= high ] # Point of highest flow
+  if(!length(ais)){
+    select.highs = highs[!highs%in%c(root)] # this won't work well as cut has children
+    ais = select.highs[nodes[select.highs,"flow.cent"] >= high ] # Point of highest flow
+  }
+  if(length(ais) > 0) {
+    children =  sapply(ais, function(ais.pos)
+      length(unlist(igraph::ego(n, 1, nodes = ais.pos, mode = "in", mindist = 0))[-1])==1)
+    ais = ais[children]
+    if(length(ais) > 0) {
+      runstosoma = unlist(lapply(ais, function(x) length(unlist(igraph::shortest_paths(n,x, to = root)$vpath))))
+      ais = as.numeric(ais[match(min(runstosoma), runstosoma)])
+    }
+    ais = ais[1]
+  }
+  ### Primary neurite
   if(soma){
     primary.branch.point = primary_branchpoint(x, primary_neurite = TRUE, first = primary.branchpoint)
     if(is.na(primary.branch.point)){
@@ -228,12 +245,6 @@ flow_centrality.neuron <- function(x,
   primary.branch.points = p.n[p.n%in%nat::branchpoints(nodes)]
   primary.branch.point.downstream = suppressWarnings(unique(unlist(igraph::shortest_paths(n, as.numeric(primary.branch.point), to = as.numeric(leaves), mode = "in")$vpath)))
   p.n = p.n[1:ifelse(sum(p.n%in%highs)>1,min(which(p.n%in%highs)),length(p.n))]
-  select.highs = highs[!highs%in%c(root)]
-  ais = select.highs[nodes[select.highs,"flow.cent"] >= high ] # Point of highest flow
-  if (length(ais) > 0) {
-    runstosoma = unlist(lapply(ais, function(x) length(unlist(igraph::shortest_paths(n,x, to = root)$vpath))))
-    ais = as.numeric(ais[match(min(runstosoma), runstosoma)])
-  }
   ### Put the main branches into two groups, which will become axon and dendrite
   if(ais %in% c(primary.branch.points)){
     down = unlist(igraph::ego(n, 1, nodes = ais, mode = "in", mindist = 0))[-1]
@@ -244,7 +255,13 @@ flow_centrality.neuron <- function(x,
       downstreams[[i]] = downstream
     }
     downstream.lengths = sapply(downstreams,length)
+
+    in.flow.per.branch <- sapply(downstreams,function(positions) sum(nodes[positions,"post"],na.rm=TRUE))
+    out.flow.per.branch <- sapply(downstreams,function(positions) sum(nodes[positions,"pre"],na.rm=TRUE))
+    flow.per.branch <-in.flow.per.branch-out.flow.per.branch
+
     two.main.branches = downstreams[(1:length(downstreams))[order(downstream.lengths,decreasing = TRUE)][1:2]]
+
     upstream = two.main.branches[[1]]
     downstream = two.main.branches[[2]]
   }else{
@@ -316,6 +333,10 @@ flow_centrality.neuron <- function(x,
   }
   ### Assign axon versus dendrite
   if (grepl("synapses", split)) {
+    ### Set branches with no flow to Label = 0
+    nulls = which(nodes$flow==0)
+    nulls = setdiff(nulls,c(p.d,p.n,root))
+    nodes[nulls,"Label"] = 0
     ## flow in and out of 'upstream' complex
     upstream.out = sum(nodes[upstream.unclassed,"pre"])
     upstream.in = sum(nodes[upstream.unclassed,"post"])
@@ -424,10 +445,6 @@ flow_centrality.neuron <- function(x,
   if (is.na(segregation.index)) {
     segregation.index = 0
   }
-  ### Set branches with no flow to Label = 0
-  nulls = which(nodes$flow==0)
-  nulls = setdiff(nulls,c(p.d,p.n,root))
-  nodes[nulls,"Label"] = 0
   ### record key points
   x$d = nodes
   x = internal_assignments(x)
@@ -462,6 +479,18 @@ flow_centrality.neuronlist <- function(x,
                          ...)
   neurons
 }
+
+# # library(bancr)
+# choose_banc()
+# neurons <- banc_read_l2skel("720575941559458675")
+# neurons <- nat:::resample.neuronlist(neurons, 100, OmitFailures = TRUE)
+# bc.neurons.rerooted <- banc_reroot(neurons)
+# id.updated <- banc_latestid(names(bc.neurons.rerooted))
+# bc.neurons.rerooted <- hemibrainr::add_field_seq(bc.neurons.rerooted, entries=id.updated, field="id")
+# bc.neurons.syns <- nlapply(bc.neurons.rerooted,
+#                            banc_add_synapses,
+#                            id = NULL)
+# bc.neurons.flow <- flow_centrality(bc.neurons.syns)
 
 #' Get the positions of key points in a 'split' neuron
 #'
