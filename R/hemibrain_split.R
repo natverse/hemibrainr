@@ -222,11 +222,11 @@ flow_centrality.neuron <- function(x,
     select.highs = highs[!highs%in%c(root)] # this won't work well as cut has children
     ais = select.highs[nodes[select.highs,"flow.cent"] >= high ] # Point of highest flow
   }
-  if(length(ais) > 0) {
+  if(length(ais) > 1) {
     children =  sapply(ais, function(ais.pos)
-      length(unlist(igraph::ego(n, 1, nodes = ais.pos, mode = "in", mindist = 0))[-1])==1)
+      length(unlist(igraph::ego(n, 1, nodes = ais.pos, mode = "in", mindist = 0))[-1])<2)
     ais = ais[children]
-    if(length(ais) > 0) {
+    if(length(ais) > 1) {
       runstosoma = unlist(lapply(ais, function(x) length(unlist(igraph::shortest_paths(n,x, to = root)$vpath))))
       ais = as.numeric(ais[match(min(runstosoma), runstosoma)])
     }
@@ -480,12 +480,12 @@ flow_centrality.neuronlist <- function(x,
   neurons
 }
 
-# # library(bancr)
+# library(bancr)
 # choose_banc()
 # neurons <- banc_read_l2skel("720575941559458675")
 # neurons <- nat:::resample.neuronlist(neurons, 100, OmitFailures = TRUE)
 # bc.neurons.rerooted <- banc_reroot(neurons)
-# id.updated <- banc_latestid(names(bc.neurons.rerooted))p.d
+# id.updated <- banc_latestid(names(bc.neurons.rerooted))
 # bc.neurons.rerooted <- hemibrainr::add_field_seq(bc.neurons.rerooted, entries=id.updated, field="id")
 # bc.neurons.syns <- nlapply(bc.neurons.rerooted,
 #                            banc_add_synapses,
