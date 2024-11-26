@@ -245,6 +245,7 @@ flow_centrality.neuron <- function(x,
   primary.branch.points = p.n[p.n%in%nat::branchpoints(nodes)]
   primary.branch.point.downstream = suppressWarnings(unique(unlist(igraph::shortest_paths(n, as.numeric(primary.branch.point), to = as.numeric(leaves), mode = "in")$vpath)))
   p.n = p.n[1:ifelse(sum(p.n%in%highs)>1,min(which(p.n%in%highs)),length(p.n))]
+  p.d = as.numeric(unique(unlist(igraph::shortest_paths(n, primary.branch.point, to = highs, mode = "all"))))
   ### Put the main branches into two groups, which will become axon and dendrite
   if(ais %in% c(primary.branch.points)){
     down = unlist(igraph::ego(n, 1, nodes = ais, mode = "in", mindist = 0))[-1]
@@ -335,7 +336,7 @@ flow_centrality.neuron <- function(x,
   if (grepl("synapses", split)) {
     ### Set branches with no flow to Label = 0
     nulls = which(nodes$flow==0)
-    nulls = setdiff(nulls,c(p.d,p.n,root))
+    nulls = setdiff(nulls,c(p.n,p.d,root))
     nodes[nulls,"Label"] = 0
     ## flow in and out of 'upstream' complex
     upstream.out = sum(nodes[upstream.unclassed,"pre"])
@@ -403,7 +404,6 @@ flow_centrality.neuron <- function(x,
       }
     }
   }
-  p.d = as.numeric(unique(unlist(igraph::shortest_paths(n, primary.branch.point, to = highs, mode = "all"))))
   pd.dists = tryCatch(igraph::distances(n, v = p.d, to = as.numeric(p.d), mode = c("all")),error = function(e) NA)
   linkers = suppress(tryCatch(rownames(which(pd.dists == max(pd.dists), arr.ind = TRUE)),error = function(e) NULL))
   nodes[p.d, "Label"] = 4
@@ -485,7 +485,7 @@ flow_centrality.neuronlist <- function(x,
 # neurons <- banc_read_l2skel("720575941559458675")
 # neurons <- nat:::resample.neuronlist(neurons, 100, OmitFailures = TRUE)
 # bc.neurons.rerooted <- banc_reroot(neurons)
-# id.updated <- banc_latestid(names(bc.neurons.rerooted))
+# id.updated <- banc_latestid(names(bc.neurons.rerooted))p.d
 # bc.neurons.rerooted <- hemibrainr::add_field_seq(bc.neurons.rerooted, entries=id.updated, field="id")
 # bc.neurons.syns <- nlapply(bc.neurons.rerooted,
 #                            banc_add_synapses,
