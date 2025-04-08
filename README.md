@@ -50,6 +50,8 @@ library(hemibrainr)
 
 ### Using hemibrainr
 
+notes: *the functions that depoend on google drive and neuron matching are now outdated 2025.04.08, for many use cases user flyconnectome/bancr and the BANC dataset or the FAFB dataset is prefferable*
+
 *hemibrainr* contains tools with which to quickly work with
 [hemibrain](https://neuprint.janelia.org/help/videos?dataset=hemibrain)
 and
