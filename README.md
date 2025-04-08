@@ -29,6 +29,8 @@ The hemibrain connectome comprises the region of the fly brain depicted
 below. It is \~21,662 \~full neurons, 9.5 million synapses and is about
 \~35% complete in this region:
 
+notes: *the functions that depend on google drive and neuron matching are now outdated 2025.04.08, for many use cases user flyconnectome/bancr and the BANC dataset or the FAFB dataset is prefferable*
+
 <center>
 
 ![hemibrain](https://raw.githubusercontent.com/natverse/hemibrainr/master/inst/images/hemibrain.png)
@@ -49,8 +51,6 @@ library(hemibrainr)
 ```
 
 ### Using hemibrainr
-
-notes: *the functions that depoend on google drive and neuron matching are now outdated 2025.04.08, for many use cases user flyconnectome/bancr and the BANC dataset or the FAFB dataset is prefferable*
 
 *hemibrainr* contains tools with which to quickly work with
 [hemibrain](https://neuprint.janelia.org/help/videos?dataset=hemibrain)
